@@ -57,7 +57,10 @@ public sealed class MusicCommandTests : IAsyncDisposable
     {
         var context = await RunAsync(arguments.Split(' '));
 
-        Assert.Equal((CommandOutputLevel.Error, "Usage: music [track]"), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "Usage: music [track]"),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
         Assert.Empty(_music.Played);
     }
 
@@ -68,7 +71,10 @@ public sealed class MusicCommandTests : IAsyncDisposable
 
         var context = await RunAsync("tavern04");
 
-        Assert.Equal((CommandOutputLevel.Error, "tavern04 could not play."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "tavern04 could not play."),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
     }
 
     [Fact]
@@ -100,7 +106,10 @@ public sealed class MusicCommandTests : IAsyncDisposable
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         await _fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(2)));
-        _mobiles.EnterWorld(new MobileEntity { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _mobiles.EnterWorld(
+            new MobileEntity
+                { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         var context = new CommandContext(".music", "music", arguments, CommandSourceType.InGame, session);
 
         await new MusicCommand(_music, _mobiles, _fixture.Loop, localization).ExecuteAsync(context);

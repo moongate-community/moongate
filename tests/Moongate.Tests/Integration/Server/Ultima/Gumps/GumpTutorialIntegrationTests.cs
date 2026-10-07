@@ -44,7 +44,10 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
         _fixture = await BroadcastFixture.CreateAsync();
         _session = await _fixture.AddAsync(7);
 
-        foreach (var file in Directory.GetFiles(Path.Combine(RepositoryRoot(), "moongate_root", "scripts", "gumps"), "*.lua"))
+        foreach (var file in Directory.GetFiles(
+                     Path.Combine(RepositoryRoot(), "moongate_root", "scripts", "gumps"),
+                     "*.lua"
+                 ))
         {
             _scripts.Write($"gumps/{Path.GetFileName(file)}", await File.ReadAllTextAsync(file));
         }
@@ -59,10 +62,18 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
             function probe.closed() return probe_closed end
             """
         );
-        var gumpTemplates = (await new GumpsLoader(new DirectoriesConfig(Path.Combine(RepositoryRoot(), "moongate_root"), ["templates"]))
-                                 .LoadDataAsync()).Entities
-                                                  .Append(new() { Id = "probe", File = "probe.xml", Root = System.Xml.Linq.XElement.Parse("""<gump id="probe"><text x="1" y="1">p</text></gump>""") })
-                                                  .ToArray();
+        var gumpTemplates = (await new GumpsLoader(
+                    new DirectoriesConfig(Path.Combine(RepositoryRoot(), "moongate_root"), ["templates"])
+                )
+                .LoadDataAsync()).Entities
+            .Append(
+                new()
+                {
+                    Id = "probe", File = "probe.xml",
+                    Root = System.Xml.Linq.XElement.Parse("""<gump id="probe"><text x="1" y="1">p</text></gump>""")
+                }
+            )
+            .ToArray();
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
@@ -82,15 +93,22 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<LogModule>();
         _container.AddScriptModule<GumpModule>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>((evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         gumpScripts = new GumpScriptService(_engine, _loop, options);
         await gumpScripts.StartAsync();
@@ -149,20 +167,13 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private void Answer(int gump, int button, Dictionary<int, string>? texts = null)
     {
-        _gumps.Opened[gump].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = texts ?? [] }
-        );
+        _gumps.Opened[gump]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = texts ?? [] }
+            );
     }
 
     private static string RepositoryRoot()
@@ -175,5 +186,13 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

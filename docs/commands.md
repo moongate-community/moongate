@@ -28,6 +28,8 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | --- | --- | --- | --- | --- | --- |
 | [`help`](commands/help.md) | `help [command]` | Yes | Yes | Regular | Every role |
 | [`echo`, `e`](commands/echo.md) | `echo <text>` | Yes | Yes | Regular | Every role |
+| [`version`](commands/version.md) | `version` | Yes | Yes | Regular | Every role |
+| [`uptime`](commands/uptime.md) | `uptime` | Yes | Yes | Regular | Every role |
 | [`time`](commands/time.md) | `time` | No | Yes | Regular | Game |
 | [`console`](commands/console.md) | `console lock` | Yes | No | — | Every role |
 | [`script`](commands/script.md) | `script reload <file>` / `script metrics` | Yes | No | — | Game |
@@ -41,12 +43,17 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`initial_spawn`](commands/initial_spawn.md) | `initial_spawn` | Yes | Yes | Administrator | Game |
 | [`globallight`](commands/globallight.md) | `globallight [0-31]` | Yes | Yes | GameMaster | Game |
 | [`spawn`](commands/spawn.md) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
-| [`set`](commands/set.md) | `set <hits\|mana\|stamina\|hunger\|thirst> <value>`, then target a mobile | No | Yes | GameMaster | Game |
+| [`set`](commands/set.md) | `set <hits\|mana\|stamina\|hunger\|thirst\|criminal> <value>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`add`](commands/add.md) | `add <template>`, then target a spot | No | Yes | GameMaster | Game |
 | [`remove`](commands/remove.md) | `remove`, then target an NPC or an item on the ground | No | Yes | GameMaster | Game |
+| [`kill`](commands/kill.md) | `kill`, then target an NPC | No | Yes | GameMaster | Game |
+| [`resurrect`](commands/resurrect.md) | `resurrect`, then target a corpse | No | Yes | GameMaster | Game |
+| [`animate`](commands/animate.md) | `animate <action>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Yes | GameMaster | Game |
+| [`gmtools`](commands/gmtools.md) | `gmtools` | No | Yes | GameMaster | Game |
 | [`moongate`](commands/moongate.md) | `moongate <x>,<y>,<z> [map]` | No | Yes | GameMaster | Game |
+| [`jail`](commands/jail.md) | `jail [name]` | No | Yes | GameMaster | Game |
 | [`fame`](commands/fame.md) | `fame <0..32000>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`karma`](commands/karma.md) | `karma <-32000..32000>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`weather`](commands/weather.md) | `weather [none\|rain\|snow\|storm]` | No | Yes | GameMaster | Game |
@@ -57,12 +64,37 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`lock`](commands/lock.md) | `lock`, then target a door | No | Yes | GameMaster | Game |
 | [`unlock`](commands/unlock.md) | `unlock`, then target a door | No | Yes | GameMaster | Game |
 | [`key`](commands/key.md) | `key`, then target a door | No | Yes | GameMaster | Game |
+| [`book`](commands/book.md) | `book <template> [name=value ...]` | No | Yes | GameMaster | Game |
+| [`create_check`](commands/create_check.md) | `create_check <1..2000000000>` | No | Yes | GameMaster | Game |
+| [`add_gold`](commands/add_gold.md) | `add_gold <1..60000>`, then target a mobile | No | Yes | GameMaster | Game |
+
+### From a script
+
+A script runs any of these commands with the `commands` module of Lua:
+
+```lua
+commands.execute("season", "winter")          -- as the console: every power, no player
+commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
+```
+
+- `commands.execute(name, ...)` runs the command as the server console does. A command that needs a
+  player, such as one that opens a target cursor, answers that it works in game only. What the
+  command answers is written in the server log.
+- `commands.execute_as(player, name, ...)` runs it as that player: with the level of its account,
+  so a command above it is refused, and with its session, so a cursor opens for it. The player
+  reads what the command answers.
+- The arguments follow the name, one each: strings, numbers and booleans. They are joined by
+  spaces into one line, so an argument with a space in it is read as two.
+- Both answer `true` when the command was started and `false` when there is nothing to run: an
+  empty name, a line end in the name or in an argument, a player that is not in the world. The
+  command runs on its own, as one typed in game does: the script does not wait for it and does
+  not get what it answered.
 
 ### By who uses them
 
 - **Everyone:** `help`, `echo`, `time`.
-- **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `where`, `go`, `moongate`, `fame`, `karma`, `globallight`,
-  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`.
+- **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `moongate`, `fame`, `karma`, `globallight`,
+  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
 - **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a
   game master uses.

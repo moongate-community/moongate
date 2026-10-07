@@ -24,7 +24,10 @@ public sealed class NetworkEncryptionConfigTests
             var config = new NetworkEncryptionConfig { Mode = NetworkEncryptionMode.Required, ClientVersion = version };
             Assert.Throws<InvalidOperationException>(config.Validate);
         }
-        Assert.Throws<InvalidOperationException>(() => new NetworkEncryptionConfig { Mode = (NetworkEncryptionMode)99 }.Validate());
+
+        Assert.Throws<InvalidOperationException>(() =>
+            new NetworkEncryptionConfig { Mode = (NetworkEncryptionMode)99 }.Validate()
+        );
         var server = new MoongateServerConfig();
         server.Network.Encryption = null!;
         Assert.Throws<InvalidOperationException>(server.Validate);
@@ -33,11 +36,13 @@ public sealed class NetworkEncryptionConfigTests
     [Fact]
     public void Toml_EnhancedVersionRoundTripsAndAppearsInStartupDescription()
     {
-        var config = TomlUtils.Deserialize<MoongateServerConfig>("""
+        var config = TomlUtils.Deserialize<MoongateServerConfig>(
+            """
             [network.encryption]
             mode = "Optional"
             client_version = "67.0.117.0"
-            """)!;
+            """
+        )!;
         config.Validate();
         var roundtrip = TomlUtils.Deserialize<MoongateServerConfig>(TomlUtils.Serialize(config))!;
         Assert.Equal(NetworkEncryptionMode.Optional, roundtrip.Network.Encryption.Mode);

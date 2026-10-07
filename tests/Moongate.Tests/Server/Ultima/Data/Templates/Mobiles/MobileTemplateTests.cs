@@ -79,7 +79,10 @@ public sealed class MobileTemplateTests
 
         foreach (var loaded in new[] { template, back })
         {
-            Assert.Equal(("guard", "base_human", "{gender}", "the guard"), (loaded.Id, loaded.BaseId, loaded.NameList, loaded.Title));
+            Assert.Equal(
+                ("guard", "base_human", "{gender}", "the guard"),
+                (loaded.Id, loaded.BaseId, loaded.NameList, loaded.Title)
+            );
             Assert.Equal((400, MobileGenderType.Random, RaceType.Human), (loaded.Body, loaded.Gender, loaded.Race));
             Assert.Equal([0x203B, 0x203C], loaded.Hair);
             Assert.Equal((96, 120), (loaded.Strength!.Value.Min, loaded.Strength.Value.Max));
@@ -106,7 +109,11 @@ public sealed class MobileTemplateTests
     {
         var toml = TomlUtils.Serialize(new MobileTemplate { Id = "orc", Equipment = [new() { Items = ["club"] }] });
 
-        foreach (var key in new[] { "base_id", "name", "body", "gender", "race", "strength", "hits", "skills", "resistances", "sounds", "notoriety", "karma", "loot", "gold", "visibility", "tags", "hue", "script_id" })
+        foreach (var key in new[]
+                 {
+                     "base_id", "name", "body", "gender", "race", "strength", "hits", "skills", "resistances", "sounds",
+                     "notoriety", "karma", "loot", "gold", "visibility", "tags", "hue", "script_id", "flee_at"
+                 })
         {
             Assert.DoesNotContain($"{key} =", toml);
             Assert.DoesNotContain($"[{key}]", toml);
@@ -116,6 +123,8 @@ public sealed class MobileTemplateTests
     [Theory,
      InlineData("strength = \"1d6-10\"\n", "strength"),
      InlineData("hits = -1\n", "hits"),
+     InlineData("flee_at = -2\n", "flee_at"),
+     InlineData("flee_at = 101\n", "flee_at"),
      InlineData("gold = -5\n", "gold"),
      InlineData("[skills]\nnot_a_skill = 50\n", "skills"),
      InlineData("[skills]\ntactics = \"1d30+100\"\n", "skills"),
@@ -147,6 +156,8 @@ public sealed class MobileTemplateTests
     [Fact]
     public void Validate_AValidTemplate_Passes()
     {
-        TomlUtils.Deserialize<MobileTemplate>("id = \"orc\"\nstrength = \"1d25+95\"\n[skills]\ntactics = 80\n[[equipment]]\nitems = [\"club\"]\n")!.Validate();
+        TomlUtils.Deserialize<MobileTemplate>(
+            "id = \"orc\"\nstrength = \"1d25+95\"\n[skills]\ntactics = 80\n[[equipment]]\nitems = [\"club\"]\n"
+        )!.Validate();
     }
 }

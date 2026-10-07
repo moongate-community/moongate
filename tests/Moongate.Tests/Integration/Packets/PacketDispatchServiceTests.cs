@@ -265,7 +265,8 @@ public sealed class PacketDispatchServiceTests
         using var container = CreateContainer();
         var sessions = new SessionService(fixture.Loop);
         var session = sessions.GetOrCreate(fixture.Client);
-        var listener = new RecordingSessionClosedListener(fixture.Loop, sessions) { Throw = new InvalidOperationException("listener") };
+        var listener = new RecordingSessionClosedListener(fixture.Loop, sessions)
+            { Throw = new InvalidOperationException("listener") };
         container.RegisterInstance<ISessionClosedListener>(listener);
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();

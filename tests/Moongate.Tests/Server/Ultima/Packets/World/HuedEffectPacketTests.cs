@@ -23,7 +23,8 @@ public sealed class HuedEffectPacketTests
 
         Assert.Equal(
             Convert.FromHexString(
-                "C0" + "02" + "00000000" + "00000000" + "3728" + "0640" + "065C" + "05" + "0640" + "065C" + "05" + "0A" + "0A" +
+                "C0" + "02" + "00000000" + "00000000" + "3728" + "0640" + "065C" + "05" + "0640" + "065C" + "05" + "0A" +
+                "0A" +
                 "0000" + "01" + "00" + "00000000" + "00000000"
             ),
             PacketCodec.Encode(new HuedEffectPacket(effect))
@@ -43,7 +44,8 @@ public sealed class HuedEffectPacketTests
 
         Assert.Equal(
             Convert.FromHexString(
-                "C0" + "00" + "00000002" + "000088E5" + "36D4" + "0064" + "00C8" + "FD" + "006E" + "00CD" + "14" + "07" + "00" +
+                "C0" + "00" + "00000002" + "000088E5" + "36D4" + "0064" + "00C8" + "FD" + "006E" + "00CD" + "14" + "07" +
+                "00" +
                 "0000" + "00" + "01" + "0000047F" + "00000004"
             ),
             PacketCodec.Encode(new HuedEffectPacket(effect))

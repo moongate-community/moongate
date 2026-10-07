@@ -12,6 +12,8 @@ namespace Moongate.Server.Services.Admin;
 /// </summary>
 public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
 {
+    private const int MaxUsernameLength = 255;
+
     private readonly RedisConnectionService _redis;
     private readonly string _prefix;
 
@@ -19,17 +21,11 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
     {
     }
 
-    internal RedisAdminLoginThrottle(RedisConnectionService redis, string prefix)
-    {
-        _redis = redis;
-        _prefix = prefix;
-    }
-
     public async Task<bool> TryAcquireAsync(string peerAddress, string username, CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username);
 
-        if (username.Length > 255 || !IPAddress.TryParse(peerAddress, out var peer))
+        if (username.Length > MaxUsernameLength || !IPAddress.TryParse(peerAddress, out var peer))
         {
             throw new ArgumentException("Invalid administrative login throttle inputs.");
         }
@@ -46,6 +42,12 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
         );
 
         return (long)result == 1;
+    }
+
+    internal RedisAdminLoginThrottle(RedisConnectionService redis, string prefix)
+    {
+        _redis = redis;
+        _prefix = prefix;
     }
 
     private static string Digest(string value)

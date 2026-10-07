@@ -24,8 +24,8 @@ public interface ILocationService
 
     /// <summary>
     ///     Finds the places <paramref name="text" /> names, whatever its case. First what is named exactly so: a place
-    ///     by its name or by the last of its categories and its name, such as <c>entrance</c>,
-    ///     <c>covetous entrance</c> or <c>dungeons covetous entrance</c>; else a category, which gives its first place.
+    ///     by its name or by the last of its categories and its name, such as <c>entrance</c>, <c>covetous entrance</c>
+    ///     or <c>dungeons covetous entrance</c>; else a category, which gives its first place.
     ///     When nothing is named so, the places whose name ends with those words, such as <c>haven</c> for
     ///     <c>Old Haven</c>.
     /// </summary>

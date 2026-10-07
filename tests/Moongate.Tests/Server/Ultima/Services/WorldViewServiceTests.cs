@@ -76,7 +76,10 @@ public sealed class WorldViewServiceTests
         ClearSent();
 
         Enter(2, 1496, 1628, AriaSession);
-        Assert.DoesNotContain(_sender.Sent, packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id);
+        Assert.DoesNotContain(
+            _sender.Sent,
+            packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id
+        );
 
         ClearSent();
         var carla = Mobile(4, 1497, 1628);
@@ -132,7 +135,10 @@ public sealed class WorldViewServiceTests
         _mobiles.MoveTo(aria, aria.Map, new Point3D(1490, 1628, 0));
         _view.Moved(aria, new Point3D(1470, 1628, 0), false);
 
-        Assert.DoesNotContain(_sender.Sent, packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id);
+        Assert.DoesNotContain(
+            _sender.Sent,
+            packet => packet is MobileIncomingPacket incoming && incoming.Serial == boris.Id
+        );
     }
 
     [Fact]
@@ -150,8 +156,12 @@ public sealed class WorldViewServiceTests
 
         var bySession = _sender.Sent.Zip(_sender.SentSessionIds).ToLookup(pair => pair.Second, pair => pair.First);
         Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(bySession[BorisSession])).Serial);
-        Assert.True((Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden) != 0);
-        Assert.True((Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[AriaSession])).Flags & MobileFlagsType.Hidden) != 0);
+        Assert.True(
+            (Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden) != 0
+        );
+        Assert.True(
+            (Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[AriaSession])).Flags & MobileFlagsType.Hidden) != 0
+        );
     }
 
     [Fact]
@@ -169,7 +179,10 @@ public sealed class WorldViewServiceTests
         var bySession = _sender.Sent.Zip(_sender.SentSessionIds).ToLookup(pair => pair.Second, pair => pair.First);
         Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(bySession[BorisSession])).Serial);
         // The staff saw it all along: only its flags change.
-        Assert.Equal(MobileFlagsType.None, Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden);
+        Assert.Equal(
+            MobileFlagsType.None,
+            Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[CarlaSession])).Flags & MobileFlagsType.Hidden
+        );
         Assert.IsType<MobileMovingPacket>(Assert.Single(bySession[AriaSession]));
     }
 
@@ -184,8 +197,28 @@ public sealed class WorldViewServiceTests
 
         _view.MobileFlagsChanged(aria);
 
-        Assert.All(_sender.Sent, packet => Assert.True((Assert.IsType<MobileMovingPacket>(packet).Flags & MobileFlagsType.WarMode) != 0));
+        Assert.All(
+            _sender.Sent,
+            packet => Assert.True((Assert.IsType<MobileMovingPacket>(packet).Flags & MobileFlagsType.WarMode) != 0)
+        );
         Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
+    }
+
+    [Fact]
+    public void MobileFlagsChanged_OfACriminal_ShowsItGrey()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        aria.Criminal = true;
+        ClearSent();
+
+        _view.MobileFlagsChanged(aria);
+
+        Assert.Equal(2, _sender.Sent.Count);
+        Assert.All(
+            _sender.Sent,
+            packet => Assert.Equal(NotorietyType.Criminal, Assert.IsType<MobileMovingPacket>(packet).Notoriety)
+        );
     }
 
     [Fact]
@@ -203,10 +236,24 @@ public sealed class WorldViewServiceTests
             packet =>
             {
                 var animation = Assert.IsType<MobileAnimationPacket>(packet);
-                Assert.Equal((aria.Id, 32, 7, 2), (animation.Serial, animation.Action, animation.FrameCount, animation.RepeatCount));
+                Assert.Equal(
+                    (aria.Id, 32, 7, 2),
+                    (animation.Serial, animation.Action, animation.FrameCount, animation.RepeatCount)
+                );
             }
         );
         Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
+    }
+
+    [Fact]
+    public void MobileAnimated_Backwards_TellsTheClientToPlayTheActionInReverse()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        ClearSent();
+
+        _view.MobileAnimated(aria, 21, 10, 1, false);
+
+        Assert.False(Assert.IsType<MobileAnimationPacket>(Assert.Single(_sender.Sent)).Forward);
     }
 
     [Fact]
@@ -447,6 +494,211 @@ public sealed class WorldViewServiceTests
         Assert.True(shown.HighSeas);
     }
 
+    [Theory, InlineData(true), InlineData(false)]
+    public void ACorpse_TellsTheClientItsBodyInThePlaceOfTheAmount_AndTheWayItLies(bool newClient)
+    {
+        var corpse = Ground(0x40000050, 1500, 1628);
+        corpse.ItemId = 0x2006;
+        corpse.SetProp("corpse.body", 0x0011);
+        corpse.SetProp("corpse.direction", 2);
+        var aria = Mobile(2, 1496, 1628);
+        _mobiles.EnterWorld(aria);
+
+        _view.Entered(aria, AriaSession, newClient ? null : new ClientVersion(6, 0, 14, 2));
+
+        var shown = Assert.Single(_sender.Sent);
+        Assert.Equal(
+            (0x0011, 2),
+            shown is WorldItemSaPacket sa
+                ? (sa.Amount, sa.Light)
+                : (((WorldItemPacket)shown).Amount, ((WorldItemPacket)shown).Light)
+        );
+        // The item itself is one corpse, not seventeen.
+        Assert.Equal(1, corpse.Amount);
+    }
+
+    [Fact]
+    public void ACorpseWhosePropsAScriptSpoiled_IsShownAsAPlainItem_NotAnError()
+    {
+        var corpse = Ground(0x40000050, 1500, 1628);
+        corpse.ItemId = 0x2006;
+        corpse.SetProp("corpse.body", "an orc");
+        corpse.SetProp("corpse.direction", -3);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        var shown = Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal((1, 0), (shown.Amount, shown.Light));
+    }
+
+    [Fact]
+    public void WhatIsNotACorpse_KeepsItsAmount_WhateverItsProps()
+    {
+        var gold = Ground(0x40000050, 1500, 1628);
+        gold.Amount = 30;
+        gold.SetProp("corpse.body", 0x0011);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal(30, Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent)).Amount);
+    }
+
+    [Fact]
+    public void AHumanCorpse_IsFollowedByWhatItIsDrawnWearing_ItsHairAndItsBeard()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        shirt.Hue = new Hue(0x0026);
+        Inside(corpse, 0x40000062, 0x0EED);
+        corpse.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt}");
+        corpse.SetProp("corpse.hair", 0x203B);
+        corpse.SetProp("corpse.hair_hue", 0x0455);
+        corpse.SetProp("corpse.beard", 0x203E);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal(
+            [typeof(WorldItemSaPacket), typeof(ContainerContentPacket), typeof(CorpseEquipmentPacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
+        var content = _sender.Sent.OfType<ContainerContentPacket>().Single();
+        var equipment = _sender.Sent.OfType<CorpseEquipmentPacket>().Single();
+        var hair = _mobiles.HairSerial(corpse.Id);
+        var beard = _mobiles.BeardSerial(corpse.Id);
+        // The gold lies in the corpse but nobody wore it.
+        Assert.Equal(
+            [(shirt.Id, 0x1517, (ushort)0x0026), (hair, 0x203B, (ushort)0x0455), (beard, 0x203E, (ushort)0)],
+            content.Items.Select(entry => (entry.Serial, entry.ItemId, entry.Hue.Value))
+        );
+        Assert.All(content.Items, entry => Assert.Equal(corpse.Id, entry.Container));
+        Assert.Equal(corpse.Id, equipment.Corpse);
+        Assert.Equal(
+            [(LayerType.Shirt, shirt.Id), (LayerType.Hair, hair), (LayerType.FacialHair, beard)],
+            equipment.Items.Select(item => (item.Layer, item.Serial))
+        );
+    }
+
+    [Fact]
+    public void ABaldBeardlessCorpse_TakesNoVirtualSerial_AndACorpseThatIsGoneGivesItsOwnBack()
+    {
+        var bald = HumanCorpse();
+        var shirt = Inside(bald, 0x40000061, 0x1517);
+        bald.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt}");
+        var before = _mobiles.HairSerial(new Serial(0x00000F01));
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        // The next serial handed out is the one right after: the corpse took none.
+        Assert.Equal(before.Value + 1, _mobiles.HairSerial(new Serial(0x00000F02)).Value);
+
+        bald.SetProp("corpse.hair", 0x203B);
+        _view.ItemAppeared(bald);
+        var taken = _mobiles.HairSerial(bald.Id);
+        _view.ItemDisappeared(bald);
+
+        Assert.NotEqual(taken, _mobiles.HairSerial(bald.Id));
+    }
+
+    [Fact]
+    public void AHumanCorpse_IsNotDrawnWearingAnItemHiddenFromTheViewer()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        var cloak = Inside(corpse, 0x40000062, 0x1515);
+        cloak.Visibility = AccountType.GameMaster;
+        corpse.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt},{cloak.Id.Value}:{(int)LayerType.Cloak}");
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal([shirt.Id], _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => item.Serial));
+        Assert.Equal([shirt.Id], _sender.Sent.OfType<ContainerContentPacket>().Single().Items.Select(entry => entry.Serial));
+    }
+
+    [Fact]
+    public void AHumanCorpse_IsNotDrawnWearingWhatWasTakenOutOfIt()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        var cloak = Inside(corpse, 0x40000062, 0x1515);
+        corpse.SetProp("corpse.worn", $"{shirt.Id.Value}:{(int)LayerType.Shirt},{cloak.Id.Value}:{(int)LayerType.Cloak}");
+        _items.PlaceOnGround(shirt, MapType.Trammel, new Point3D(3000, 3000, 0));
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal(
+            [(LayerType.Cloak, cloak.Id)],
+            _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => (item.Layer, item.Serial))
+        );
+    }
+
+    [Fact]
+    public void AHumanCorpseWithNothingToDraw_OrTheCorpseOfAMonster_IsFollowedByNothing()
+    {
+        HumanCorpse();
+        var orc = Ground(0x40000070, 1501, 1628);
+        orc.ItemId = 0x2006;
+        orc.SetProp("corpse.body", 0x0011);
+        var sword = Inside(orc, 0x40000071, 0x0F5E);
+        orc.SetProp("corpse.worn", $"{sword.Id.Value}:{(int)LayerType.OneHanded}");
+        orc.SetProp("corpse.hair", 0x203B);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Empty(_sender.Sent.OfType<CorpseEquipmentPacket>());
+        Assert.Empty(_sender.Sent.OfType<ContainerContentPacket>());
+    }
+
+    [Fact]
+    public void AHumanCorpseWhoseWornPropAScriptSpoiled_IsDrawnWithWhatStillReads()
+    {
+        var corpse = HumanCorpse();
+        var shirt = Inside(corpse, 0x40000061, 0x1517);
+        var cloak = Inside(corpse, 0x40000062, 0x1515);
+        // Rubbish, a layer that does not exist, no layer, a second item on a taken layer, a serial that is not inside.
+        corpse.SetProp(
+            "corpse.worn",
+            $"x:y,{cloak.Id.Value}:200,{cloak.Id.Value}:0,{shirt.Id.Value}:5,{cloak.Id.Value}:5,999:6,"
+        );
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal(
+            [(LayerType.Shirt, shirt.Id)],
+            _sender.Sent.OfType<CorpseEquipmentPacket>().Single().Items.Select(item => (item.Layer, item.Serial))
+        );
+    }
+
+    [Fact]
+    public void MobileDied_ShowsTheDeathToThoseWhoSeeIt_NotToItself()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        Enter(4, 3000, 3000, CarlaSession);
+        ClearSent();
+
+        _view.MobileDied(aria, new Serial(0x40000010));
+
+        var death = Assert.IsType<DeathAnimationPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal((aria.Id, new Serial(0x40000010)), (death.Mobile, death.Corpse));
+        Assert.Equal([BorisSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void MobileDied_OfAHiddenMobile_IsForTheStaffOnly()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var carla = Mobile(4, 1497, 1628);
+        _mobiles.EnterWorld(carla);
+        _view.Entered(carla, CarlaSession, null, AccountType.GameMaster);
+        aria.Hidden = true;
+        ClearSent();
+
+        _view.MobileDied(aria, default);
+
+        Assert.Equal([CarlaSession], _sender.SentSessionIds);
+    }
+
     [Fact]
     public void Entered_AnOldClient_GetsTheOldPacket()
     {
@@ -539,7 +791,10 @@ public sealed class WorldViewServiceTests
         view.Entered(aria, AriaSession, null);
 
         Assert.Equal(
-            [typeof(MobileIncomingPacket), typeof(PropertyListInfoPacket), typeof(PropertyListInfoPacket), typeof(WorldItemSaPacket), typeof(PropertyListInfoPacket)],
+            [
+                typeof(MobileIncomingPacket), typeof(PropertyListInfoPacket), typeof(PropertyListInfoPacket),
+                typeof(WorldItemSaPacket), typeof(PropertyListInfoPacket)
+            ],
             sender.Sent.Select(packet => packet.GetType())
         );
         Assert.Equal(
@@ -564,7 +819,10 @@ public sealed class WorldViewServiceTests
 
         view.WornItemChanged(aria, shirt);
 
-        Assert.Equal([typeof(WornItemPacket), typeof(PropertyListInfoPacket)], sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(WornItemPacket), typeof(PropertyListInfoPacket)],
+            sender.Sent.Select(packet => packet.GetType())
+        );
     }
 
     [Fact]
@@ -596,7 +854,10 @@ public sealed class WorldViewServiceTests
         _view.Teleported(aria, MapType.Trammel, old);
 
         var sent = _sender.Sent.Select((packet, index) => (_sender.SentSessionIds[index], packet)).ToList();
-        Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial);
+        Assert.Equal(
+            aria.Id,
+            Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial
+        );
         Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(sent, to => to.Item1 == 30).packet).Serial);
         var own = sent.Where(to => to.Item1 == AriaSession).Select(to => to.packet).ToList();
         Assert.Equal(cara.Id, Assert.IsType<MobileIncomingPacket>(own[0]).Serial);
@@ -625,7 +886,10 @@ public sealed class WorldViewServiceTests
         _view.Teleported(aria, MapType.Trammel, old);
 
         var sent = _sender.Sent.Select((packet, index) => (_sender.SentSessionIds[index], packet)).ToList();
-        Assert.Equal(aria.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial);
+        Assert.Equal(
+            aria.Id,
+            Assert.IsType<RemoveEntityPacket>(Assert.Single(sent, to => to.Item1 == BorisSession).packet).Serial
+        );
         Assert.Equal(aria.Id, Assert.IsType<MobileIncomingPacket>(Assert.Single(sent, to => to.Item1 == 30).packet).Serial);
         // As ModernUO's ClearScreen: the mover's client is told to drop what it saw on the old map.
         var own = sent.Where(to => to.Item1 == AriaSession).Select(to => to.packet).ToList();
@@ -651,7 +915,10 @@ public sealed class WorldViewServiceTests
 
         _view.Teleported(orc, MapType.Trammel, old);
 
-        Assert.Equal([typeof(RemoveEntityPacket), typeof(MobileIncomingPacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(RemoveEntityPacket), typeof(MobileIncomingPacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
         Assert.Equal([BorisSession, 30L], _sender.SentSessionIds);
     }
 
@@ -672,8 +939,8 @@ public sealed class WorldViewServiceTests
         view.ShowItemTo(boris, hidden);
 
         var shown = _sender.Sent.Select((packet, index) => (packet, _sender.SentSessionIds[index]))
-                           .Where(sent => sent.packet is WorldItemSaPacket)
-                           .Select(sent => sent.Item2);
+            .Where(sent => sent.packet is WorldItemSaPacket)
+            .Select(sent => sent.Item2);
         Assert.Equal([BorisSession, BorisSession, BorisSession], shown);
     }
 
@@ -727,7 +994,9 @@ public sealed class WorldViewServiceTests
 
         _view.ItemAppeared(blocker);
 
-        var sent = _sender.Sent.OfType<WorldItemSaPacket>().Zip(_sender.SentSessionIds).ToDictionary(pair => pair.Second, pair => pair.First.ItemId);
+        var sent = _sender.Sent.OfType<WorldItemSaPacket>()
+            .Zip(_sender.SentSessionIds)
+            .ToDictionary(pair => pair.Second, pair => pair.First.ItemId);
         Assert.Equal((0x21A4, 0x1183), (sent[AriaSession], sent[BorisSession]));
     }
 
@@ -903,6 +1172,24 @@ public sealed class WorldViewServiceTests
         Assert.Equal([2, 0], _sender.Sent.OfType<WorldItemSaPacket>().Select(packet => packet.Light));
     }
 
+    private ItemEntity HumanCorpse()
+    {
+        var corpse = Ground(0x40000060, 1500, 1628);
+        corpse.ItemId = 0x2006;
+        corpse.SetProp("corpse.body", 0x0190);
+
+        return corpse;
+    }
+
+    private ItemEntity Inside(ItemEntity container, uint serial, int graphic)
+    {
+        var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = graphic, Amount = 1 };
+        item.PutInContainer(container.Id, new Point2D(40, 60));
+        _items.Add([item]);
+
+        return item;
+    }
+
     private ItemEntity Ground(uint serial, int x, int y, string template = "gold")
     {
         var item = new ItemEntity { Id = new Serial(serial), TemplateId = template, ItemId = 0x0EED, Amount = 1 };
@@ -938,14 +1225,13 @@ public sealed class WorldViewServiceTests
     private List<long> SessionsToldOf(MobileEntity mobile)
     {
         return _sender.Sent
-                      .Zip(_sender.SentSessionIds)
-                      .Where(
-                          pair => pair.First is MobileIncomingPacket incoming && incoming.Serial == mobile.Id ||
-                                  pair.First is MobileMovingPacket moving && moving.Serial == mobile.Id
-                      )
-                      .Select(pair => pair.Second)
-                      .Distinct()
-                      .ToList();
+            .Zip(_sender.SentSessionIds)
+            .Where(pair => pair.First is MobileIncomingPacket incoming && incoming.Serial == mobile.Id ||
+                           pair.First is MobileMovingPacket moving && moving.Serial == mobile.Id
+            )
+            .Select(pair => pair.Second)
+            .Distinct()
+            .ToList();
     }
 
     private MobileEntity Enter(uint serial, int x, int y, long session)

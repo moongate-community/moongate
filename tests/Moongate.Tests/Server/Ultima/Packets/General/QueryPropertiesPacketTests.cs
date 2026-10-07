@@ -8,7 +8,9 @@ public sealed class QueryPropertiesPacketTests
     [Fact]
     public void TryParse_ReadsEverySerial()
     {
-        Assert.True(QueryPropertiesPacket.TryParse(Convert.FromHexString("D6000B" + "40000010" + "00000002"), out var packet));
+        Assert.True(
+            QueryPropertiesPacket.TryParse(Convert.FromHexString("D6000B" + "40000010" + "00000002"), out var packet)
+        );
 
         Assert.Equal([new Serial(0x40000010), new Serial(0x00000002)], packet.Serials);
     }

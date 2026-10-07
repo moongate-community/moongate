@@ -1,0 +1,565 @@
+title = "Taming Dragons"
+author = "Wyrd Beastmaster"
+content = """  I have not much to
+tell about dragons. The
+sole time I approached
+one with an eye
+towards taming it,
+my initial attempts at
+calming it met with
+failure. It fixed a
+
+massive beady eye
+upon me, and began
+its slithering
+approach, intending no
+doubt to insert me
+into its maw and bear
+down with its teeth.
+  However, as I was
+
+engaged in what
+remains to this day
+the most terrifying
+combat of my life,
+the dragon suddenly
+whirled as if in a
+panic, ran a short
+distance, took off into
+
+the air, then
+transformed into a
+whirlwind. Lastly, it
+exploded, showering
+gouts of black blood
+and heaving, stinking
+flesh upon miles of
+countryside. The
+
+fireball was massive,
+enough to light a city,
+I should surmise.
+  I never did discover
+the exact cause of
+this strange behavior,
+except to assume that
+it was not typical for
+
+this reptilian species.
+My best guesses
+revolve around a
+magical fracture in
+the nature of reality,
+which is far too
+esoteric a territory
+for one of my limited
+
+scholarship.
+  Hence my basic
+advice to those who
+seek to tame a
+dragon-be sure that
+thou hast mastered
+the twin skills of
+taming animals, and
+
+running away very
+very fast."""
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
+[translations.cze]
+title = "Krocení draků"
+content = """O dracích vám mnoho
+nepovím. Když jsem se
+jedinkrát přiblížil k
+jednomu s úmyslem ho
+ochočit, mé první
+pokusy o uklidnění
+selhaly. Upřel na mě
+
+obrovské korálkové oko
+a začal se ke mně
+plazivě blížit,
+nepochybně s úmyslem
+vložit mě do své tlamy
+a sevřít zuby.
+Avšak zatímco jsem
+
+sváděl boj, který
+dodnes zůstává
+nejděsivějším bojem
+mého života, drak se
+náhle otočil jako v
+panice, odběhl kousek,
+vzlétl do
+
+vzduchu a potom se
+proměnil ve vír.
+Nakonec vybuchl a na
+míle krajiny rozmetal
+přívaly černé krve a
+zmítajícího se,
+páchnoucího masa. Ta
+
+ohnivá koule byla
+ohromná, odhaduji, že
+by stačila osvětlit
+město.
+Nikdy jsem nezjistil
+přesnou příčinu tohoto
+podivného chování, jen
+jsem předpokládal, že
+pro
+
+tento plazí druh není
+obvyklé. Mé nejlepší
+dohady se točí kolem
+kouzelné trhliny v
+povaze skutečnosti, což
+je oblast příliš
+esoterická pro někoho s
+mou omezenou
+
+učeností.
+Má základní rada pro
+ty, kdo chtějí ochočit
+draka, tedy zní: ujisti
+se, že ovládáš obě
+dovednosti, krocení
+zvířat a
+
+velmi, velmi rychlý
+útěk."""
+[translations.fre]
+title = "Apprivoiser les dragons"
+content = """Je n’ai pas grand-chose
+à raconter sur les
+dragons. La seule fois
+où j’en approchai un
+dans l’intention de
+l’apprivoiser, mes
+premières tentatives
+pour le calmer
+échouèrent. Il fixa un
+
+énorme œil perçant sur
+moi et commença à
+s’approcher en
+ondulant, avec sans
+doute l’intention de
+m’introduire dans sa
+gueule et de refermer
+ses dents. Cependant,
+alors que j’étais
+
+engagé dans ce qui
+demeure à ce jour le
+combat le plus
+terrifiant de ma vie,
+le dragon pivota
+soudain comme pris de
+panique, courut sur une
+courte distance,
+s’éleva dans
+
+les airs, puis se
+transforma en
+tourbillon. Enfin, il
+explosa, faisant
+pleuvoir des gerbes de
+sang noir et de chair
+palpitante et puante
+sur des milles de
+campagne. La
+
+boule de feu était
+énorme, suffisante, je
+suppose, pour éclairer
+une ville. Je ne
+découvris jamais la
+cause exacte de cet
+étrange comportement,
+sinon pour supposer
+qu’il n’était pas
+habituel chez
+
+cette espèce
+reptilienne. Mes
+meilleures conjectures
+tournent autour d’une
+fracture magique dans
+la nature de la
+réalité, domaine bien
+trop ésotérique pour
+quelqu’un dont le
+savoir est aussi
+
+limité que le mien.
+Aussi mon conseil
+fondamental à ceux qui
+cherchent à apprivoiser
+un dragon est-il le
+suivant : assurez-vous
+de maîtriser ces deux
+compétences,
+apprivoiser les animaux
+et
+
+fuir très, très vite."""
+[translations.ger]
+title = "Drachen zähmen"
+content = """Ich habe nicht viel
+über Drachen zu
+erzählen. Das einzige
+Mal, als ich mich einem
+näherte, um ihn zu
+zähmen, scheiterten
+meine ersten Versuche,
+ihn zu beruhigen. Er
+richtete ein
+
+gewaltiges Knopfauge
+auf mich und begann
+sich schlängelnd zu
+nähern, zweifellos in
+der Absicht, mich in
+seinen Rachen zu
+stecken und mit den
+Zähnen zuzubeißen.
+Doch als ich
+
+in das verwickelt war,
+was bis heute der
+schrecklichste Kampf
+meines Lebens bleibt,
+wirbelte der Drache
+plötzlich wie in Panik
+herum, lief ein kurzes
+Stück, erhob sich in
+
+die Luft und
+verwandelte sich dann
+in einen Wirbelwind.
+Schließlich explodierte
+er und überschüttete
+meilenweite Landschaft
+mit Güssen schwarzen
+Blutes und zuckendem,
+stinkendem Fleisch. Der
+
+Feuerball war gewaltig,
+groß genug, eine Stadt
+zu erhellen, möchte ich
+vermuten.
+Ich habe nie die genaue
+Ursache dieses
+seltsamen Verhaltens
+entdeckt, außer
+anzunehmen, dass es für
+
+diese Reptilienart
+nicht gewöhnlich war.
+Meine besten
+Vermutungen kreisen um
+einen magischen Bruch
+im Wesen der
+Wirklichkeit, ein
+Gebiet, das für
+jemanden mit meiner
+begrenzten
+
+Gelehrsamkeit viel zu
+geheimnisvoll ist.
+Daher mein
+grundlegender Rat an
+jene, die einen Drachen
+zähmen wollen: Seid
+sicher, dass Ihr die
+beiden Fertigkeiten des
+Tierzähmens und des
+
+sehr, sehr schnellen
+Davonlaufens
+beherrscht."""
+[translations.ita]
+title = "Addomesticare i draghi"
+content = """Non ho molto da
+raccontare sui draghi.
+L'unica volta che mi
+avvicinai a uno con
+l'intenzione di
+addomesticarlo, i miei
+primi tentativi di
+calmarlo fallirono.
+Fissò un
+
+enorme occhio
+scintillante su di me e
+cominciò ad avvicinarsi
+strisciando, senza
+dubbio con l'intenzione
+di infilarmi nelle
+fauci e stringere i
+denti.
+Tuttavia, mentre ero
+
+impegnato in quello che
+resta ancora oggi il
+combattimento più
+terrificante della mia
+vita, il drago si voltò
+d'un tratto come in
+preda al panico, corse
+per un breve tratto, si
+levò nell'
+
+aria e poi si trasformò
+in un turbine. Infine
+esplose, riversando
+fiotti di sangue nero e
+carne palpitante e
+fetida su miglia di
+campagna. La
+
+palla di fuoco era
+enorme, abbastanza da
+illuminare una città,
+suppongo.
+Non scoprii mai la
+causa esatta di quello
+strano comportamento,
+se non presumendo che
+non fosse tipico di
+
+questa specie di
+rettili. Le mie
+migliori supposizioni
+riguardano una frattura
+magica nella natura
+della realtà, un campo
+fin troppo esoterico
+per una persona dalla
+mia limitata
+
+cultura.
+Da qui il mio consiglio
+fondamentale a chi
+cerca di addomesticare
+un drago: assicuratevi
+di padroneggiare le due
+abilità di
+addomesticare gli
+animali e
+
+correre via molto,
+molto velocemente."""
+[translations.pol]
+title = "Oswajanie smoków"
+content = """Niewiele mam do
+powiedzenia o smokach.
+Jedyny raz, kiedy
+zbliżyłem się do
+jednego z zamiarem
+oswojenia, moje
+pierwsze próby
+uspokojenia go
+zawiodły. Wbił we mnie
+
+ogromne paciorkowate
+oko i zaczął sunąć ku
+mnie, bez wątpienia
+zamierzając wsadzić
+mnie w swą paszczę i
+zacisnąć zęby.
+Jednak gdy
+
+toczyłem walkę, która
+do dziś pozostaje
+najstraszliwszą w moim
+życiu, smok nagle
+obrócił się jak w
+panice, przebiegł
+krótki dystans, wzbił
+się w
+
+powietrze, po czym
+przemienił w trąbę
+powietrzną. Wreszcie
+wybuchł, rozsiewając
+strugi czarnej krwi
+oraz drgające, cuchnące
+mięso na wiele mil
+okolicy.
+
+Kula ognia była
+ogromna, dość wielka,
+by, jak sądzę,
+oświetlić miasto.
+Nigdy nie odkryłem
+dokładnej przyczyny
+tego dziwnego
+zachowania, poza
+założeniem, że nie było
+ono typowe dla
+
+tego gatunku gadów.
+Moje najlepsze domysły
+dotyczą magicznego
+pęknięcia w naturze
+rzeczywistości,
+dziedziny zbyt tajemnej
+dla kogoś o mojej
+ograniczonej
+
+wiedzy.
+Zatem moja podstawowa
+rada dla chcących
+oswoić smoka brzmi:
+upewnijcie się, że
+opanowaliście dwie
+umiejętności, oswajanie
+zwierząt oraz
+
+bardzo, bardzo szybkie
+uciekanie."""
+[translations.por]
+title = "Domando dragões"
+content = """Não tenho muito a dizer
+sobre dragões. Na única
+vez em que me aproximei
+de um com a intenção de
+domá-lo, minhas
+primeiras tentativas de
+acalmá-lo fracassaram.
+Ele fixou um
+
+enorme olho miúdo em
+mim e começou a se
+aproximar rastejando,
+sem dúvida pretendendo
+me enfiar em sua
+bocarra e apertar os
+dentes.
+Contudo, enquanto eu
+estava
+
+envolvido no que até
+hoje continua sendo o
+combate mais
+aterrorizante de minha
+vida, o dragão
+subitamente girou, como
+em pânico, correu uma
+curta distância, alçou
+voo
+
+e então se transformou
+num redemoinho. Por
+fim, explodiu,
+despejando grandes
+jorros de sangue negro
+e carne que se agitava,
+fétida, sobre
+quilômetros de campo. A
+
+bola de fogo era
+imensa, suficiente para
+iluminar uma cidade,
+suponho.
+Nunca descobri a causa
+exata desse estranho
+comportamento, exceto
+por supor que não era
+típico
+
+dessa espécie
+reptiliana. Minhas
+melhores hipóteses
+giram em torno de uma
+fratura mágica na
+natureza da realidade,
+um território esotérico
+demais para alguém de
+meus limitados
+
+conhecimentos.
+Por isso, meu conselho
+básico àqueles que
+procuram domar um
+dragão: tenha certeza
+de que domina as duas
+habilidades de domar
+animais e
+
+correr para longe
+muito, muito depressa."""
+[translations.spa]
+title = "Domar dragones"
+content = """No tengo mucho que
+contar sobre los
+dragones. La única vez
+que me acerqué a uno
+con intención de
+domarlo, mis primeros
+intentos de calmarlo
+fracasaron. Fijó en mí
+un
+
+enorme ojo pequeño y
+brillante y comenzó a
+acercarse reptando, sin
+duda con intención de
+introducirme en sus
+fauces y apretar con
+los dientes. Sin
+embargo, mientras
+estaba
+
+inmerso en lo que sigue
+siendo el combate más
+aterrador de mi vida,
+el dragón giró de
+pronto como presa del
+pánico, corrió un
+trecho, se elevó en
+
+el aire y luego se
+transformó en un
+torbellino. Por último
+explotó, arrojando
+chorros de sangre negra
+y carne palpitante y
+hedionda sobre
+kilómetros de campo. La
+
+bola de fuego era
+inmensa, suficiente
+para iluminar una
+ciudad, supongo. Nunca
+descubrí la causa
+exacta de aquel extraño
+comportamiento, salvo
+suponer que no era
+habitual en
+
+esta especie
+reptiliana. Mis mejores
+conjeturas giran en
+torno a una fractura
+mágica en la naturaleza
+de la realidad,
+territorio demasiado
+esotérico para alguien
+de mis limitados
+
+conocimientos. Por
+ello, mi consejo básico
+para quienes desean
+domar un dragón es
+este: aseguraos de
+dominar las dos
+habilidades de
+domesticar animales y
+
+huir muy, muy deprisa."""

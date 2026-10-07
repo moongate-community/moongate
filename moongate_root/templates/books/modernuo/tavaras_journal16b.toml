@@ -1,0 +1,547 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Sixteen, Later :
+ 
+We ran. What could
+we do?  We ran back
+towards the entrance,
+cutting at them when
+we could.  T'was a
+nightmare, and yet
+
+nothing to prepare us
+for what would come.
+We were almost there,
+the entrance to this
+abhorred crypt in
+sight.  Then the earth
+shook with such a
+force that we were
+
+dropped to our hands
+and knees, stumbling
+in the darkness with
+those... those things
+surely behind us.
+The noise of falling
+rock and crumbling
+stone drowned out our
+
+piteous cries.  No sign
+of the entrance
+remained.
+We owe our lives to
+Bergen, whose wits
+returned quickly.
+That he could make us
+hurry back into the
+
+main antechamber...
+actually run back
+towards those eldritch
+dead that stalked us.
+But we did, the
+strength of his
+convictions enough for
+us in the moment.
+
+And at our campsite
+we erected our last
+defense, a pitiable
+wall of wood and
+stone, anything at
+hand that might block
+the tide of those
+nightmare creatures.
+
+And I sit against it
+even now.  I can hear
+their moans, their
+wailing cries in the
+distance - they'll be
+here soon, even at the
+unhurried pace of the
+shuffling dead."""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Deník: Objevení hrobky"
+content = """Den šestnáctý, později:
+ 
+Utíkali jsme. Co jsme
+mohli dělat? Utíkali
+jsme zpět ke vchodu a
+sekali do nich, když
+jsme mohli. Byla to
+noční můra, a přece
+
+nic z toho nás
+nepřipravilo na to, co
+přijde. Byli jsme už
+téměř tam, vstup do té
+odporné krypty na
+dohled. Pak se země
+otřásla takovou silou,
+že jsme
+
+padli na ruce a kolena,
+klopýtali v temnotě s
+těmi... těmi věcmi
+jistě za zády. Hluk
+padajících skal a
+drobícího se kamene
+přehlušil naše
+
+žalostné výkřiky. Po
+vchodu nezůstala ani
+stopa.
+Za své životy vděčíme
+válečníkovi Bergen,
+který se rychle
+vzpamatoval. Že nás
+dokázal přimět spěchat
+zpět do
+
+hlavní předsíně...
+skutečně utíkat zpět k
+těm nadpřirozeným
+mrtvým, kteří nás
+pronásledovali. Ale
+udělali jsme to, síla
+jeho přesvědčení nám v
+té chvíli stačila.
+
+A v našem tábořišti
+jsme postavili poslední
+obranu, ubohou stěnu ze
+dřeva a kamene, z
+čehokoli po ruce, co by
+mohlo zadržet příval
+těch bytostí z noční
+můry.
+
+A já o ni sedím opřená
+i nyní. Slyším jejich
+sténání a naříkavé
+výkřiky v dálce – brzy
+tu budou, i při tom
+neuspěchaném tempu
+šourajících se mrtvých."""
+[translations.fre]
+title = "Journal : découverte du tombeau"
+content = """Seizième jour, plus
+tard :
+ 
+Nous avons couru. Que
+pouvions-nous faire ?
+Nous avons couru vers
+l’entrée, les frappant
+quand nous le pouvions.
+C’était un cauchemar,
+et pourtant
+
+rien qui nous préparât
+à ce qui allait suivre.
+Nous y étions presque,
+l’entrée de cette
+crypte abhorrée en vue.
+Alors la terre trembla
+avec une telle force
+que nous fûmes
+
+jetés sur les mains et
+les genoux, trébuchant
+dans l’obscurité avec
+ces... ces choses
+sûrement derrière nous.
+Le bruit des rochers
+tombant et des pierres
+s’effondrant noya nos
+
+cris pitoyables. Aucune
+trace de l’entrée ne
+subsistait.
+Nous devons la vie à
+Bergen, qui retrouva
+rapidement ses esprits.
+Qu’il ait pu nous faire
+regagner en hâte l’
+
+antichambre
+principale... courir
+réellement vers ces
+morts surnaturels qui
+nous traquaient. Mais
+nous l’avons fait : la
+force de ses
+convictions nous a
+suffi sur le moment.
+
+Et sur notre lieu de
+campement, nous avons
+dressé notre dernière
+défense, un pitoyable
+mur de bois et de
+pierre, tout ce qui
+nous tombait sous la
+main et pouvait barrer
+la marée de ces
+créatures de cauchemar.
+
+Et je suis encore
+assise contre lui.
+J’entends leurs
+gémissements, leurs
+hurlements plaintifs au
+loin ; ils seront ici
+bientôt, même au rythme
+sans hâte des morts
+traînant les pieds."""
+[translations.ger]
+title = "Tagebuch: Entdeckung des Grabes"
+content = """Sechzehnter Tag,
+später:
+ 
+Wir rannten. Was
+konnten wir tun? Wir
+rannten zum Eingang
+zurück und hieben auf
+sie ein, wo wir
+konnten. Es war ein
+Albtraum, und doch
+
+nichts, was uns auf das
+vorbereitet hätte, was
+noch kommen sollte. Wir
+waren fast dort, der
+Eingang zu dieser
+verhassten Gruft in
+Sicht. Dann bebte die
+Erde mit solcher
+Gewalt, dass wir
+
+auf Hände und Knie
+fielen und in der
+Dunkelheit stolperten,
+jene ... jene Dinge
+gewiss hinter uns. Der
+Lärm fallender Felsen
+und zerbröckelnden
+Steins übertönte unsere
+
+jämmerlichen Schreie.
+Vom Eingang blieb keine
+Spur.
+Wir verdanken unser
+Leben Bergen, der rasch
+wieder zu Verstand kam.
+Dass er uns dazu
+bringen konnte, in die
+
+Hauptvorhalle
+zurückzueilen ...
+tatsächlich auf jene
+unheimlichen Toten
+zuzurennen, die uns
+nachstellten. Doch wir
+taten es, die Stärke
+seiner Überzeugung
+genügte uns in diesem
+Augenblick.
+
+Und an unserem
+Lagerplatz errichteten
+wir unsere letzte
+Verteidigung, eine
+jämmerliche Mauer aus
+Holz und Stein, allem,
+was zur Hand war und
+die Flut dieser
+Albtraumkreaturen
+aufhalten mochte.
+
+Noch jetzt sitze ich an
+sie gelehnt. Ich höre
+ihr Stöhnen, ihre
+klagenden Schreie in
+der Ferne – sie werden
+bald hier sein, selbst
+im gemächlichen Tempo
+der schlurfenden Toten."""
+[translations.ita]
+title = "Diario: scoperta della Tomba"
+content = """Giorno Sedici, Più
+Tardi :
+ 
+Siamo fuggiti. Cosa
+potevamo fare? Siamo
+corsi verso l'ingresso,
+colpendoli quando
+potevamo. Era un
+incubo, eppure
+
+nulla poteva prepararci
+a ciò che sarebbe
+venuto. Eravamo quasi
+arrivati, l'ingresso di
+questa cripta aborrita
+era in vista. Poi la
+terra ha tremato con
+tale forza che siamo
+
+caduti su mani e
+ginocchia, inciampando
+nell'oscurità con
+quelle... quelle cose
+sicuramente dietro di
+noi. Il rumore della
+roccia che cadeva e
+della pietra che si
+sgretolava ha soffocato
+le nostre
+
+grida pietose.
+Dell'ingresso non
+restava traccia.
+Dobbiamo la vita a
+Bergen, che è tornato
+in sé rapidamente. È
+riuscito a farci
+affrettare indietro
+verso l'
+
+anticamera
+principale... a farci
+correre davvero verso
+quegli arcani morti che
+ci braccavano. Ma lo
+abbiamo fatto: la forza
+delle sue convinzioni
+ci è bastata in quel
+momento.
+
+E al nostro
+accampamento abbiamo
+eretto la nostra ultima
+difesa, un misero muro
+di legno e pietra,
+qualunque cosa a
+portata di mano che
+potesse arginare
+l'ondata di quelle
+creature da incubo.
+
+E siedo appoggiata a
+esso anche ora. Sento i
+loro gemiti, le loro
+grida lamentose in
+lontananza: saranno qui
+presto, persino al
+passo lento dei morti
+strascicanti."""
+[translations.pol]
+title = "Dziennik: odkrycie Grobowca"
+content = """Dzień szesnasty,
+później:
+ 
+Uciekliśmy. Cóż
+mogliśmy zrobić?
+Uciekliśmy ku wejściu,
+tnąc ich, kiedy
+mogliśmy. To był
+koszmar, a jednak
+
+nic nie przygotowało
+nas na to, co miało
+nadejść. Byliśmy niemal
+u celu, wejście do tej
+znienawidzonej krypty
+już w zasięgu wzroku.
+Wtedy ziemia zatrzęsła
+się z taką siłą, że
+
+padliśmy na dłonie i
+kolana, potykając się w
+ciemności z tymi...
+tymi rzeczami z
+pewnością za nami.
+Hałas padających skał i
+kruszących się kamieni
+zagłuszył nasze
+
+żałosne krzyki. Nie
+pozostał żaden ślad
+wejścia. Zawdzięczamy
+życie Bergen, który
+szybko odzyskał
+przytomność umysłu.
+Zdołał zmusić nas do
+pośpiesznego powrotu do
+
+głównego przedsionka...
+rzeczywiście do biegu z
+powrotem ku tym
+niesamowitym zmarłym,
+którzy nas ścigali. Ale
+zrobiliśmy to; siła
+jego przekonania
+wystarczyła nam w
+tamtej chwili.
+
+A w obozowisku
+wznieśliśmy ostatnią
+obronę, żałosny mur z
+drewna i kamienia, ze
+wszystkiego, co było
+pod ręką i mogło
+zatrzymać falę tych
+koszmarnych stworzeń.
+
+Nawet teraz siedzę przy
+nim. Słyszę ich jęki,
+ich zawodzące krzyki w
+oddali — wkrótce tu
+będą, nawet
+niespiesznym krokiem
+powłóczących nogami
+zmarłych."""
+[translations.por]
+title = "Diário: descoberta da tumba"
+content = """Décimo sexto dia, mais
+tarde:
+ 
+Corremos. O que
+podíamos fazer?
+Corremos de volta para
+a entrada, golpeando-os
+quando podíamos. Era um
+pesadelo e, ainda
+assim,
+
+nada que nos preparasse
+para o que viria.
+Estávamos quase lá, com
+a entrada dessa cripta
+abominável à vista.
+Então a terra tremeu
+com tamanha força que
+fomos
+
+lançados de quatro,
+tropeçando na
+escuridão, com
+aquelas... aquelas
+coisas certamente atrás
+de nós. O ruído das
+rochas caindo e da
+pedra se despedaçando
+abafou nossos
+
+gritos lastimosos. Não
+restava sinal da
+entrada.
+Devemos nossas vidas a
+Bergen, que recuperou
+rapidamente a presença
+de espírito. Que ele
+conseguisse nos fazer
+correr de volta para a
+
+antecâmara principal...
+realmente correr de
+volta em direção
+àqueles mortos
+sobrenaturais que nos
+perseguiam. Mas
+corremos, a força de
+suas convicções
+bastando para nós
+naquele momento.
+
+E, em nosso
+acampamento, erguemos
+nossa última defesa,
+uma miserável parede de
+madeira e pedra,
+qualquer coisa à mão
+que pudesse deter a
+maré daquelas criaturas
+de pesadelo.
+
+E estou sentada contra
+ela mesmo agora. Posso
+ouvir seus gemidos,
+seus gritos lastimosos
+ao longe: estarão aqui
+em breve, mesmo no
+passo sem pressa dos
+mortos que se arrastam."""
+[translations.spa]
+title = "Diario: descubrimiento de la tumba"
+content = """Día dieciséis, más
+tarde:
+ 
+Corrimos. ¿Qué podíamos
+hacer? Corrimos de
+vuelta a la entrada,
+cortándolos cuando
+podíamos. Era una
+pesadilla, pero aun así
+
+nada podía prepararnos
+para lo que vendría.
+Casi habíamos llegado;
+la entrada de esta
+cripta aborrecida
+estaba a la vista.
+Entonces la tierra
+tembló con tal fuerza
+que caímos
+
+de manos y rodillas,
+tropezando en la
+oscuridad con esas...
+esas cosas seguramente
+detrás de nosotros. El
+ruido de las rocas al
+caer y de la piedra al
+desmoronarse ahogó
+nuestros
+
+gritos lastimeros. No
+quedó rastro de la
+entrada. Debemos la
+vida a Bergen, que
+recuperó pronto el
+juicio. Que pudiera
+hacernos apresurarnos
+de vuelta a la
+
+antecámara principal...
+correr de verdad hacia
+aquellos muertos
+sobrenaturales que nos
+acechaban. Pero lo
+hicimos; la fuerza de
+sus convicciones nos
+bastó en aquel momento.
+
+Y en nuestro campamento
+levantamos nuestra
+última defensa, un muro
+lamentable de madera y
+piedra, cualquier cosa
+a mano que pudiera
+bloquear la marea de
+aquellas criaturas de
+pesadilla.
+
+Incluso ahora estoy
+sentada contra él. Oigo
+sus gemidos, sus
+lamentos lejanos:
+pronto estarán aquí,
+aun al paso lento de
+los muertos que
+arrastran los pies."""

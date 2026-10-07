@@ -46,8 +46,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
         _busContainer = new Container();
         _busContainer.RegisterMoongateEventBus();
         _bus = _busContainer.Resolve<IMoongateEventBus>();
-        _bus.SubscribeAll(
-            (e, _) =>
+        _bus.SubscribeAll((e, _) =>
             {
                 _published.Add(e);
 
@@ -55,62 +54,68 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
             }
         );
         var loaders = new StubDataLoaderService()
-                      .With(
-                          new MobileTemplate
-                          {
-                              Id = "guard", Race = RaceType.Human, Gender = MobileGenderType.Random, NameList = "{gender}",
-                              Equipment =
-                              [
-                                  new MobileEquipmentEntry { Items = ["helm"] },
-                                  new MobileEquipmentEntry { Items = ["skirt"], Gender = GenderType.Female },
-                                  new MobileEquipmentEntry { Items = ["pants"], Gender = GenderType.Male },
-                                  new MobileEquipmentEntry { Items = ["second_helm"] },
-                                  new MobileEquipmentEntry { Items = ["torch_on_wall"] }
-                              ]
-                          },
-                          new MobileTemplate { Id = "shapeless", Name = "a shapeless thing" },
-                          new MobileTemplate
-                          {
-                              Id = "rich_guard", Body = 400, Gender = MobileGenderType.Male, Gold = DiceSpec.FromValue(70000),
-                              Loot = ["gems", "gems"],
-                              Equipment = [new MobileEquipmentEntry { Items = ["helm"] }, new MobileEquipmentEntry { Items = ["second_helm"] }]
-                          },
-                          new MobileTemplate { Id = "plain", Body = 17 },
-                          new MobileTemplate { Id = "lost_loot", Body = 17, Loot = ["vanished"] },
-                          new MobileTemplate
-                          {
-                              Id = "broken", Body = 17, Equipment = [new MobileEquipmentEntry { Items = ["missing_at_runtime"] }]
-                          }
-                      )
-                      .With(
-                          new ItemTemplate { Id = "helm", ItemId = new Serial(0x140A) },
-                          new ItemTemplate { Id = "second_helm", ItemId = new Serial(0x140B) },
-                          new ItemTemplate { Id = "skirt", ItemId = new Serial(0x1516) },
-                          new ItemTemplate { Id = "pants", ItemId = new Serial(0x152E) },
-                          new ItemTemplate { Id = "torch_on_wall", ItemId = new Serial(0x0A12) },
-                          new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
-                          new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
-                          new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13) }
-                      )
-                      .With(new LootTemplate { Id = "gems", Entries = [new LootEntry { ItemId = "ruby" }] })
-                      .With(new ContainerContent { Name = "default", Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true })
-                      .With(
-                          new RaceContent
-                          {
-                              Race = RaceType.Human, Name = "Human",
-                              Male = new RaceGenderContent { Body = 400 }, Female = new RaceGenderContent { Body = 401 }
-                          }
-                      )
-                      .With(new NameList { Id = "male", Names = ["Aaron"] }, new NameList { Id = "female", Names = ["Alice"] });
+            .With(
+                new MobileTemplate
+                {
+                    Id = "guard", Race = RaceType.Human, Gender = MobileGenderType.Random, NameList = "{gender}",
+                    Equipment =
+                    [
+                        new MobileEquipmentEntry { Items = ["helm"] },
+                        new MobileEquipmentEntry { Items = ["skirt"], Gender = GenderType.Female },
+                        new MobileEquipmentEntry { Items = ["pants"], Gender = GenderType.Male },
+                        new MobileEquipmentEntry { Items = ["second_helm"] },
+                        new MobileEquipmentEntry { Items = ["torch_on_wall"] }
+                    ]
+                },
+                new MobileTemplate { Id = "shapeless", Name = "a shapeless thing" },
+                new MobileTemplate
+                {
+                    Id = "rich_guard", Body = 400, Gender = MobileGenderType.Male, Gold = DiceSpec.FromValue(70000),
+                    Loot = ["gems", "gems"],
+                    Equipment =
+                    [
+                        new MobileEquipmentEntry { Items = ["helm"] }, new MobileEquipmentEntry { Items = ["second_helm"] }
+                    ]
+                },
+                new MobileTemplate { Id = "plain", Body = 17 },
+                new MobileTemplate { Id = "lost_loot", Body = 17, Loot = ["vanished"] },
+                new MobileTemplate
+                {
+                    Id = "broken", Body = 17, Equipment = [new MobileEquipmentEntry { Items = ["missing_at_runtime"] }]
+                }
+            )
+            .With(
+                new ItemTemplate { Id = "helm", ItemId = new Serial(0x140A) },
+                new ItemTemplate { Id = "second_helm", ItemId = new Serial(0x140B) },
+                new ItemTemplate { Id = "skirt", ItemId = new Serial(0x1516) },
+                new ItemTemplate { Id = "pants", ItemId = new Serial(0x152E) },
+                new ItemTemplate { Id = "torch_on_wall", ItemId = new Serial(0x0A12) },
+                new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) },
+                new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
+                new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13) }
+            )
+            .With(new LootTemplate { Id = "gems", Entries = [new LootEntry { ItemId = "ruby" }] })
+            .With(
+                new ContainerContent
+                    { Name = "default", Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true }
+            )
+            .With(
+                new RaceContent
+                {
+                    Race = RaceType.Human, Name = "Human",
+                    Male = new RaceGenderContent { Body = 400 }, Female = new RaceGenderContent { Body = 401 }
+                }
+            )
+            .With(new NameList { Id = "male", Names = ["Aaron"] }, new NameList { Id = "female", Names = ["Alice"] });
         var tiles = new FakeTileDataService()
-                    .Item(0x140A, TileFlagType.Wearable, 0, layer: (byte)LayerType.Helm)
-                    .Item(0x140B, TileFlagType.Wearable, 0, layer: (byte)LayerType.Helm)
-                    .Item(0x1516, TileFlagType.Wearable, 0, layer: (byte)LayerType.OuterLegs)
-                    .Item(0x152E, TileFlagType.Wearable, 0, layer: (byte)LayerType.Pants)
-                    .Item(0x0A12, TileFlagType.None, 0, layer: 29)
-                    .Item(0x0E75, TileFlagType.Container, 0, layer: (byte)LayerType.Backpack)
-                    .Item(0x0EED, TileFlagType.Generic, 0)
-                    .Item(0x0F13, TileFlagType.None, 0);
+            .Item(0x140A, TileFlagType.Wearable, 0, layer: (byte)LayerType.Helm)
+            .Item(0x140B, TileFlagType.Wearable, 0, layer: (byte)LayerType.Helm)
+            .Item(0x1516, TileFlagType.Wearable, 0, layer: (byte)LayerType.OuterLegs)
+            .Item(0x152E, TileFlagType.Wearable, 0, layer: (byte)LayerType.Pants)
+            .Item(0x0A12, TileFlagType.None, 0, layer: 29)
+            .Item(0x0E75, TileFlagType.Container, 0, layer: (byte)LayerType.Backpack)
+            .Item(0x0EED, TileFlagType.Generic, 0)
+            .Item(0x0F13, TileFlagType.None, 0);
         var itemTemplates = new ItemTemplateService(loaders);
         var itemFactory = new ItemFactoryService(itemTemplates, tiles, _host.Owner);
         _factory = new MobileFactoryService(
@@ -129,12 +134,6 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
         );
     }
 
-    public async Task DisposeAsync()
-    {
-        _busContainer.Dispose();
-        await _host.DisposeAsync();
-    }
-
     [Fact]
     public async Task SpawnAsync_SavesTheMobileInTheMobileRange_Dressed_ByGender_ConflictsGoToTheBackpack()
     {
@@ -144,7 +143,9 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
         Assert.InRange(mobile.Id.Value, Serial.MinMobile, Serial.MaxMobile);
         var loaded = (await _mobiles.GetByIdAsync(mobile.Id))!;
         Assert.Equal(("guard", MapType.Felucca, new Point3D(10, 20, 0)), (loaded.TemplateId, loaded.Map, loaded.Location));
-        var worn = (await _items.QueryAsync(item => item.MobileId == mobile.Id)).Select(item => item.TemplateId).Order().ToList();
+        var worn = (await _items.QueryAsync(item => item.MobileId == mobile.Id)).Select(item => item.TemplateId)
+            .Order()
+            .ToList();
         Assert.Equal(mobile.Gender == GenderType.Male ? ["backpack", "helm", "pants"] : ["backpack", "helm", "skirt"], worn);
         Assert.Equal(worn.Count - 1, spawned.Equipment.Count);
         var packedItems = await _items.QueryAsync(item => item.ContainerId == spawned.Backpack.Id);
@@ -190,8 +191,11 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     [Fact]
     public async Task SpawnAsync_ALootTableThatVanished_RollsTheWholeSpawnBack()
     {
-        await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _factory.SpawnAsync("lost_loot", MapType.Felucca, new Point3D(10, 20, 0))
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _factory.SpawnAsync(
+                "lost_loot",
+                MapType.Felucca,
+                new Point3D(10, 20, 0)
+            )
         );
 
         Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "lost_loot"));
@@ -201,8 +205,11 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     [Fact]
     public async Task SpawnAsync_OutsideTheMap_WritesNothingAndPublishesNothing()
     {
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-            () => _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(500, 20, 0))
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _factory.SpawnAsync(
+                "guard",
+                MapType.Felucca,
+                new Point3D(500, 20, 0)
+            )
         );
 
         Assert.Empty(_published);
@@ -212,8 +219,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     [Fact]
     public async Task SpawnAsync_PublishesTheEventsInOrder_AndBeforeSpawnChangesAreSaved()
     {
-        _bus.Subscribe<MobileBeforeSpawnEvent>(
-            (e, _) =>
+        _bus.Subscribe<MobileBeforeSpawnEvent>((e, _) =>
             {
                 e.Mobile.Name = "Captain Rook";
 
@@ -245,8 +251,11 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     [Fact]
     public async Task SpawnAsync_ATemplateWithNoBodyAndNoRace_IsRejectedBeforeAnything()
     {
-        var exception = await Assert.ThrowsAsync<InvalidDataException>(
-            () => _factory.SpawnAsync("shapeless", MapType.Felucca, new Point3D(10, 20, 0))
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() => _factory.SpawnAsync(
+                "shapeless",
+                MapType.Felucca,
+                new Point3D(10, 20, 0)
+            )
         );
 
         Assert.Contains("'shapeless'", exception.Message);
@@ -258,8 +267,11 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     public async Task SpawnAsync_AnEquipmentFailure_RollsTheMobileBack()
     {
         // The loader would have caught this item; here it vanishes after startup, so the item lookup throws.
-        await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _factory.SpawnAsync("broken", MapType.Felucca, new Point3D(10, 20, 0))
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _factory.SpawnAsync(
+                "broken",
+                MapType.Felucca,
+                new Point3D(10, 20, 0)
+            )
         );
 
         Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "broken"));
@@ -270,8 +282,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     public async Task SpawnAsync_ABeforeSpawnMoveOutsideTheMap_IsRejected_AndAMoveInsideIsWhereItIsSaved()
     {
         var move = new Point3D(300, 20, 0);
-        _bus.Subscribe<MobileBeforeSpawnEvent>(
-            (e, _) =>
+        _bus.Subscribe<MobileBeforeSpawnEvent>((e, _) =>
             {
                 e.Mobile.Location = move;
 
@@ -279,8 +290,11 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
             }
         );
 
-        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-            () => _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0))
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => _factory.SpawnAsync(
+                "guard",
+                MapType.Felucca,
+                new Point3D(10, 20, 0)
+            )
         );
         Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "guard"));
 
@@ -295,8 +309,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     public async Task SpawnAsync_AFailureAfterTheMobileUpsert_LeavesItWithoutASerial()
     {
         MobileEntity? seen = null;
-        _bus.Subscribe<MobileBeforeSpawnEvent>(
-            (e, _) =>
+        _bus.Subscribe<MobileBeforeSpawnEvent>((e, _) =>
             {
                 seen = e.Mobile;
 
@@ -304,8 +317,11 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
             }
         );
 
-        await Assert.ThrowsAsync<KeyNotFoundException>(
-            () => _factory.SpawnAsync("broken", MapType.Felucca, new Point3D(10, 20, 0))
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => _factory.SpawnAsync(
+                "broken",
+                MapType.Felucca,
+                new Point3D(10, 20, 0)
+            )
         );
 
         Assert.Equal(Serial.Zero, seen!.Id);
@@ -315,8 +331,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     public async Task SpawnAsync_CancelledAfterTheCommit_StillReturnsTheSavedMobile()
     {
         using var cancellation = new CancellationTokenSource();
-        _bus.Subscribe<MobileMovedToWorldEvent>(
-            (_, _) =>
+        _bus.Subscribe<MobileMovedToWorldEvent>((_, _) =>
             {
                 cancellation.Cancel();
 
@@ -324,7 +339,12 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
             }
         );
 
-        var spawned = await _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0), cancellationToken: cancellation.Token);
+        var spawned = await _factory.SpawnAsync(
+            "guard",
+            MapType.Felucca,
+            new Point3D(10, 20, 0),
+            cancellationToken: cancellation.Token
+        );
 
         Assert.NotNull(await _mobiles.GetByIdAsync(spawned.Mobile.Id));
         Assert.Contains(_published, e => e is MobileAfterSpawnEvent);
@@ -340,5 +360,11 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
 
         Assert.Equal(1, (await _mobiles.GetByIdAsync(spawned.Mobile.Id))!.Hits);
         await Assert.ThrowsAsync<InvalidOperationException>(() => _factory.SaveAsync(_factory.Create("guard")));
+    }
+
+    public async Task DisposeAsync()
+    {
+        _busContainer.Dispose();
+        await _host.DisposeAsync();
     }
 }

@@ -1,0 +1,1601 @@
+title = "A Grammar of Orcish"
+author = "Yorick of Yew"
+content = """This volume, and
+others in the series,
+are sponsored by
+donations from Lord
+Blackthorn, ever a
+supporter of
+understanding the
+other sentient races
+
+of Britannia.
+-
+ 
+  The Orcish tongue
+may fall unpleasingly
+'pon the ear, yet it
+has within it a
+complex grammar oft
+
+misunderstood by
+those who merely
+hear the few broken
+words of English our
+orcish brothers
+manage without
+education.
+  These are the basic
+
+rules of orcish:
+  Orcish has five
+tenses: present, past,
+future imperfect,
+present interjectional,
+and prehensile.
+  Examples: gugroflu,
+gugrofloog, gugrobo,
+
+gugroglu!, gugrogug.
+  All transitive verbs
+in the prehensile
+tense end in \"ug.\"
+  Examples:
+urgleighug,
+biggugdaghgug,
+curdakalmug.
+
+  All present
+interjectional
+conjugations start
+with the letter G
+unless the contain the
+third declensive
+accent of the letter U.
+  Examples:
+
+ghothudunglug, but not
+azhbuugub.
+  The past tense can
+only refer to events
+since the last meal,
+but the prehensile
+tense can refer to
+any event within
+
+reach.
+  The present tense
+is conjugated like the
+future imperfect
+tense, when the
+interrogative mode is
+used by pitching the
+sound a quarter-tone
+
+higher.
+Orcish hath no
+concept of person, as
+in first person, third
+person, I, we, etc.
+  Orcish grammar
+relies upon the three
+cardinal rules of
+
+accretion, prefixing,
+and agglutination, in
+addition to pitch. In
+the former, phonemes
+combine into larger
+words which may
+contain full phrasal
+significance. In the
+
+second, prefixing
+specific phonetic
+sounds changes the
+subject of the
+sentence into object,
+interrogative,
+addressed individual,
+or dinner.
+
+  Agglutination occurs
+whenever four of the
+same letter are
+present in a word, in
+which case, any two
+of them may be
+removed or slurred.
+  Pitch changes the
+
+phoneme value of
+individual syllables,
+thus completely
+altering what a word
+may mean. The
+classic example is
+\"Aktgluthugrot
+bigglogubuu
+
+dargilgaglug lublublub\"
+which can mean \"You
+are such a pretty
+girl,\" \"My mother ate
+your primroses,\" or
+\"Jellyfish nose paints
+alms potato,\"
+depending on pitch.
+
+  Orcish poetry often
+relies upon repeating
+the same phrase in
+multiple pitches, even
+changing pitch
+midword. None of
+this great art is
+translatable.
+
+  The orcish language
+uses the following
+vowels: ab, ad, ag, akt,
+at, augh, auh, azh, e,
+i, o, oo, u, uu. The
+vowel sound a is not
+recognized as a vowel
+and does not exist in
+
+their alphabet.
+The orcish alphabet is
+best learned using the
+classic rhyme
+repeated at 23
+different pitches:
+   Lugnog ghu blat
+suggaroglug,
+
+Gaghbuu dakdar ab
+highugbo,
+  Gothnogbuim ad
+gilgubbugbuilug
+Bilgeaugh thurggulg
+stuiggro!
+ 
+A translation of the
+
+first pitch:
+Eat food, the first
+letter is ab,
+Kill people, next letter
+is ad,
+I forget the rest
+But augh is in there
+somewhere!
+
+ 
+  What follows is a
+complete phonetic
+library of the orcish
+language:
+ab, ad, ag, akt, alm,
+at, augh, auh, azh,
+ba, ba, bag, bar, baz,
+
+bid, bilge, bo, bog, bog,
+brui, bu, buad, bug,
+bug, buil, buim, bum,
+buo, buor, buu, ca,
+car, clog, cro, cuk,
+cur, da, dagh, dagh,
+dak, dar, deak, der,
+dil, dit, dor, dre, dri,
+
+dru, du, dud, duf,
+dug, dug, duh, dun,
+eag, eg, egg, eichel,
+ek, ep, ewk, faugh,
+fid, flu, fog, foo,
+foz, fruk, fu, fub,
+fud, fun, fup, fur,
+gaa, gag, gagh, gan,
+
+gar, gh, gha, ghat,
+ghed, ghig, gho, ghu,
+gig, gil, gka, glu, glu,
+glug, gna, gno, gnu,
+gol, gom, goth, grunt,
+grut, gu, gub, gub,
+gug, gug, gugh, guk,
+guk,"""
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
+[translations.cze]
+title = "Mluvnice skřetí řeči"
+content = """Tento svazek i další z
+této řady jsou
+podporovány dary od Lord
+Blackthorn, jenž vždy
+podporuje porozumění
+ostatním rozumným rasám
+
+země Britannia.
+-
+ 
+Skřetí jazyk může uchu
+znít nelibě, přesto
+obsahuje složitou
+mluvnici, často
+
+nepochopenou těmi, kdo
+slyší jen těch několik
+lámaných anglických slov,
+která naši skřetí bratři
+zvládají bez vzdělání.
+Toto jsou základní
+
+pravidla skřetí řeči:
+Skřetí řeč má pět časů:
+přítomný, minulý, budoucí
+nedokonavý, přítomný
+citoslovečný a chápavý.
+Příklady: gugroflu,
+gugrofloog, gugrobo,
+
+gugroglu!, gugrogug.
+Všechna přechodná slovesa
+v chápavém čase končí na
+„ug“.
+Příklady:
+urgleighug,
+biggugdaghgug,
+curdakalmug.
+
+Všechna časování
+přítomného citoslovečného
+času začínají písmenem G,
+pokud neobsahují třetí
+skloňovací přízvuk
+písmene U.
+Příklady:
+
+ghothudunglug, nikoli
+však azhbuugub.
+Minulý čas se může
+vztahovat pouze k
+událostem od posledního
+jídla, ale chápavý čas
+může označovat jakoukoli
+událost v
+
+dosahu.
+Přítomný čas se časuje
+stejně jako budoucí
+nedokonavý, používá-li se
+tázací způsob zvýšením
+tónu o čtvrt tónu
+
+výše.
+Skřetí řeč nezná pojem
+osoby, jako první osoba,
+třetí osoba, já, my a
+podobně.
+Skřetí mluvnice se vedle
+výšky tónu opírá o tři
+hlavní pravidla:
+
+přirůstání, přidávání
+předpon a aglutinaci. V
+prvním se fonémy spojují
+do větších slov, která
+mohou obsahovat význam
+celé fráze. Ve
+
+druhém připojení určitých
+fonetických zvuků na
+začátek mění podmět věty
+v předmět, otázku,
+osloveného jedince nebo
+večeři.
+
+K aglutinaci dochází,
+kdykoli se ve slově
+nacházejí čtyři stejná
+písmena; v takovém
+případě lze kterákoli dvě
+odstranit nebo setřít ve
+výslovnosti.
+Výška tónu mění
+
+fonémovou hodnotu
+jednotlivých slabik a tím
+úplně mění význam slova.
+Klasickým příkladem je
+„Aktgluthugrot
+bigglogubuu
+
+dargilgaglug lublublub“,
+což může znamenat „Jsi
+tak hezká dívka“, „Moje
+matka snědla tvé
+prvosenky“ nebo „Medúza
+nos maluje almužny
+brambora“, podle výšky
+tónu.
+
+Skřetí poezie se často
+zakládá na opakování
+stejné fráze v různých
+výškách tónu, přičemž se
+tón mění i uprostřed
+slova. Nic z tohoto
+velkého umění nelze
+přeložit.
+
+Skřetí jazyk užívá
+následující samohlásky:
+ab, ad, ag, akt, at,
+augh, auh, azh, e, i, o,
+oo, u, uu. Samohláskový
+zvuk a není uznáván za
+samohlásku a neexistuje v
+
+jejich abecedě.
+Skřetí abeceda se nejlépe
+učí pomocí klasické
+říkanky opakované ve 23
+různých výškách tónu:
+   Lugnog ghu blat
+suggaroglug,
+
+Gaghbuu dakdar ab
+highugbo,
+  Gothnogbuim ad
+gilgubbugbuilug
+Bilgeaugh thurggulg
+stuiggro!
+ 
+Překlad
+
+první výšky tónu:
+Jez jídlo, první
+písmeno je ab,
+Zabíjej lidi, další
+písmeno je ad,
+Zbytek si nepamatuji,
+Ale augh tam někde
+je!
+
+ 
+Následuje úplný fonetický
+soupis skřetího jazyka:
+ab, ad, ag, akt, alm,
+at, augh, auh, azh,
+ba, ba, bag, bar, baz,
+
+bid, bilge, bo, bog, bog,
+brui, bu, buad, bug,
+bug, buil, buim, bum,
+buo, buor, buu, ca,
+car, clog, cro, cuk,
+cur, da, dagh, dagh,
+dak, dar, deak, der,
+dil, dit, dor, dre, dri,
+
+dru, du, dud, duf,
+dug, dug, duh, dun,
+eag, eg, egg, eichel,
+ek, ep, ewk, faugh,
+fid, flu, fog, foo,
+foz, fruk, fu, fub,
+fud, fun, fup, fur,
+gaa, gag, gagh, gan,
+
+gar, gh, gha, ghat,
+ghed, ghig, gho, ghu,
+gig, gil, gka, glu, glu,
+glug, gna, gno, gnu,
+gol, gom, goth, grunt,
+grut, gu, gub, gub,
+gug, gug, gugh, guk,
+guk,"""
+[translations.fre]
+title = "Grammaire de l’orque"
+content = """Ce volume et les autres
+de la série sont financés
+par les dons de Lord
+Blackthorn, qui a
+toujours soutenu la
+compréhension des autres
+races douées de raison
+
+de Britannia.
+-
+ 
+La langue orque peut être
+désagréable à l’oreille,
+mais elle possède une
+grammaire complexe,
+souvent
+
+mal comprise de ceux qui
+n’entendent que les
+quelques mots d’anglais
+maladroits que nos frères
+orques parviennent à
+prononcer sans
+instruction. Voici les
+règles
+
+fondamentales de l’orque
+: l’orque a cinq temps :
+le présent, le passé, le
+futur imparfait, le
+présent interjectionnel
+et le préhensile.
+Exemples : gugroflu,
+gugrofloog, gugrobo,
+
+gugroglu!, gugrogug. Tous
+les verbes transitifs au
+temps préhensile se
+terminent par « ug ».
+Exemples : urgleighug,
+biggugdaghgug,
+curdakalmug.
+
+Toutes les conjugaisons
+au présent
+interjectionnel
+commencent par la lettre
+G, sauf si elles
+contiennent le troisième
+accent déclensionnel de
+la lettre U. Exemples :
+
+ghothudunglug, mais pas
+azhbuugub. Le passé ne
+peut désigner que des
+événements survenus
+depuis le dernier repas,
+mais le préhensile peut
+désigner n’importe quel
+événement à
+
+portée. Le présent se
+conjugue comme le futur
+imparfait lorsque l’on
+emploie le mode
+interrogatif en élevant
+le son d’un quart de ton
+
+supplémentaire. L’orque
+n’a aucune notion de
+personne, comme la
+première personne, la
+troisième personne, je,
+nous, etc. La grammaire
+orque repose sur les
+trois règles cardinales
+de
+
+l’accrétion, de la
+préfixation et de
+l’agglutination, en plus
+de la hauteur du son.
+Dans la première, les
+phonèmes se combinent en
+mots plus grands,
+susceptibles de contenir
+le sens de phrases
+entières. Dans la
+
+deuxième, la préfixation
+de sons phonétiques
+précis transforme le
+sujet de la phrase en
+objet, en interrogatif,
+en individu auquel on
+s’adresse ou en dîner.
+
+L’agglutination survient
+dès que quatre
+exemplaires de la même
+lettre sont présents dans
+un mot ; on peut alors en
+supprimer ou en escamoter
+deux quelconques. La
+hauteur du son modifie la
+
+valeur phonémique des
+différentes syllabes,
+altérant ainsi
+complètement le sens
+possible d’un mot.
+L’exemple classique est «
+Aktgluthugrot bigglogubuu
+
+dargilgaglug lublublub »,
+qui peut signifier « Vous
+êtes une si jolie fille
+», « Ma mère a mangé vos
+primevères » ou « Nez de
+méduse peint aumônes
+pomme de terre », selon
+la hauteur du son.
+
+La poésie orque repose
+souvent sur la répétition
+de la même phrase à
+différentes hauteurs,
+voire sur un changement
+de hauteur au milieu d’un
+mot. Rien de ce grand art
+n’est traduisible.
+
+La langue orque utilise
+les voyelles suivantes :
+ab, ad, ag, akt, at,
+augh, auh, azh, e, i, o,
+oo, u, uu. Le son
+vocalique a n’est pas
+reconnu comme une voyelle
+et n’existe pas dans
+
+leur alphabet. L’alphabet
+orque s’apprend au mieux
+grâce à la comptine
+classique répétée à 23
+hauteurs différentes :
+Lugnog ghu blat
+suggaroglug,
+
+Gaghbuu dakdar ab
+highugbo,
+Gothnogbuim ad
+gilgubbugbuilug
+Bilgeaugh thurggulg
+stuiggro!
+ 
+Traduction de la
+
+première hauteur :
+Mange nourriture, la
+première lettre est ab,
+Tue gens, la lettre
+suivante est ad,
+J’oublie le reste
+Mais augh est quelque
+part là-dedans !
+
+ 
+Voici un répertoire
+phonétique complet de la
+langue orque :
+ab, ad, ag, akt, alm, at,
+augh, auh, azh, ba, ba,
+bag, bar, baz,
+
+bid, bilge, bo, bog, bog,
+brui, bu, buad, bug, bug,
+buil, buim, bum, buo,
+buor, buu, ca, car, clog,
+cro, cuk, cur, da, dagh,
+dagh, dak, dar, deak,
+der, dil, dit, dor, dre,
+dri,
+
+dru, du, dud, duf, dug,
+dug, duh, dun, eag, eg,
+egg, eichel, ek, ep, ewk,
+faugh, fid, flu, fog,
+foo, foz, fruk, fu, fub,
+fud, fun, fup, fur, gaa,
+gag, gagh, gan,
+
+gar, gh, gha, ghat, ghed,
+ghig, gho, ghu, gig, gil,
+gka, glu, glu, glug, gna,
+gno, gnu, gol, gom, goth,
+grunt, grut, gu, gub,
+gub, gug, gug, gugh, guk,
+guk,"""
+[translations.ger]
+title = "Eine Grammatik des Orkischen"
+content = """Dieser Band und die
+anderen dieser Reihe
+werden durch Spenden von
+Lord Blackthorn
+gefördert, der stets das
+Verständnis der anderen
+vernunftbegabten Völker
+
+Britannias unterstützt.
+-
+ 
+Die orkische Sprache mag
+dem Ohr missfallen, doch
+birgt sie eine
+vielschichtige Grammatik,
+die oft
+
+von jenen missverstanden
+wird, die nur die wenigen
+gebrochenen englischen
+Worte hören, welche
+unsere orkischen Brüder
+ohne Unterricht zustande
+bringen.
+Dies sind die
+grundlegenden
+
+Regeln des Orkischen:
+Das Orkische hat fünf
+Zeitformen: Gegenwart,
+Vergangenheit,
+unvollendete Zukunft,
+interjektionale Gegenwart
+und greifende Zeitform.
+Beispiele: gugroflu,
+gugrofloog, gugrobo,
+
+gugroglu!, gugrogug.
+Alle transitiven Verben
+in der greifenden
+Zeitform enden auf „ug“.
+Beispiele:
+urgleighug,
+biggugdaghgug,
+curdakalmug.
+
+Alle Konjugationen der
+interjektionalen
+Gegenwart beginnen mit
+dem Buchstaben G, sofern
+sie nicht den dritten
+deklinierenden Akzent des
+Buchstabens U enthalten.
+Beispiele:
+
+ghothudunglug, aber nicht
+azhbuugub.
+Die Vergangenheit kann
+sich nur auf Ereignisse
+seit der letzten Mahlzeit
+beziehen, doch die
+greifende Zeitform kann
+sich auf jedes Ereignis
+innerhalb der
+
+Reichweite beziehen.
+Die Gegenwart wird wie
+die unvollendete Zukunft
+konjugiert, wenn der
+Fragemodus benutzt wird,
+indem man den Laut einen
+Viertelton
+
+höher ansetzt.
+Das Orkische kennt keine
+Person im Sinne von
+erster Person, dritter
+Person, ich, wir usw.
+Die orkische Grammatik
+beruht neben der Tonhöhe
+auf den drei Grundregeln
+der
+
+Anlagerung, Präfigierung
+und Agglutination. Bei
+der ersten verbinden sich
+Phoneme zu größeren
+Wörtern, die die
+Bedeutung ganzer Sätze
+enthalten können. Bei der
+
+zweiten verwandelt das
+Voranstellen bestimmter
+phonetischer Laute das
+Subjekt des Satzes in ein
+Objekt, eine Frage, eine
+angesprochene Person oder
+ein Abendessen.
+
+Agglutination tritt auf,
+sobald vier gleiche
+Buchstaben in einem Wort
+vorkommen; in diesem Fall
+dürfen beliebige zwei
+davon weggelassen oder
+verschliffen werden.
+Die Tonhöhe verändert den
+
+Phonemwert einzelner
+Silben und damit
+vollkommen die mögliche
+Bedeutung eines Wortes.
+Das klassische Beispiel
+lautet „Aktgluthugrot
+bigglogubuu
+
+dargilgaglug lublublub“
+und kann je nach Tonhöhe
+„Du bist so ein hübsches
+Mädchen“, „Meine Mutter
+hat deine Primeln
+gegessen“ oder
+„Quallennase malt
+Almosenkartoffel“
+bedeuten.
+
+Orkische Dichtung beruht
+oft darauf, denselben
+Satz in mehreren Tonhöhen
+zu wiederholen und sogar
+mitten im Wort die
+Tonhöhe zu wechseln.
+Nichts von dieser großen
+Kunst ist übersetzbar.
+
+Die orkische Sprache
+verwendet die folgenden
+Vokale: ab, ad, ag, akt,
+at, augh, auh, azh, e, i,
+o, oo, u, uu. Der
+Vokallaut a wird nicht
+als Vokal anerkannt und
+kommt in
+
+ihrem Alphabet nicht vor.
+Das orkische Alphabet
+lernt man am besten mit
+dem klassischen Reim, der
+in 23 verschiedenen
+Tonhöhen wiederholt wird:
+Lugnog ghu blat
+suggaroglug,
+
+Gaghbuu dakdar ab
+highugbo,
+Gothnogbuim ad
+gilgubbugbuilug
+Bilgeaugh thurggulg
+stuiggro!
+ 
+Eine Übersetzung der
+
+ersten Tonhöhe:
+Iss Nahrung, der erste
+Buchstabe ist ab,
+Töte Leute, der nächste
+Buchstabe ist ad,
+Den Rest habe ich
+vergessen
+Aber augh steckt irgendwo
+darin!
+
+ 
+Es folgt ein
+vollständiger
+phonetischer Bestand der
+orkischen Sprache:
+ab, ad, ag, akt, alm,
+at, augh, auh, azh,
+ba, ba, bag, bar, baz,
+
+bid, bilge, bo, bog, bog,
+brui, bu, buad, bug,
+bug, buil, buim, bum,
+buo, buor, buu, ca,
+car, clog, cro, cuk,
+cur, da, dagh, dagh,
+dak, dar, deak, der,
+dil, dit, dor, dre, dri,
+
+dru, du, dud, duf,
+dug, dug, duh, dun,
+eag, eg, egg, eichel,
+ek, ep, ewk, faugh,
+fid, flu, fog, foo,
+foz, fruk, fu, fub,
+fud, fun, fup, fur,
+gaa, gag, gagh, gan,
+
+gar, gh, gha, ghat,
+ghed, ghig, gho, ghu,
+gig, gil, gka, glu, glu,
+glug, gna, gno, gnu,
+gol, gom, goth, grunt,
+grut, gu, gub, gub,
+gug, gug, gugh, guk,
+guk,"""
+[translations.ita]
+title = "Una grammatica della lingua degli orchi"
+content = """Questo volume, e gli
+altri della serie, sono
+patrocinati dalle
+donazioni di Lord
+Blackthorn, da sempre
+sostenitore della
+comprensione delle altre
+razze senzienti
+
+di Britannia.
+-
+ 
+La lingua degli orchi può
+risultare sgradevole
+all'orecchio, eppure
+racchiude una grammatica
+complessa spesso
+
+fraintesa da chi ascolta
+soltanto le poche parole
+stentate d'inglese che i
+nostri fratelli orchi
+riescono a pronunciare
+senza istruzione.
+Queste sono le regole
+fondamentali
+
+della lingua degli orchi:
+La lingua degli orchi ha
+cinque tempi: presente,
+passato, futuro
+imperfetto, presente
+interiettivo e prensile.
+Esempi: gugroflu,
+gugrofloog, gugrobo,
+
+gugroglu!, gugrogug.
+Tutti i verbi transitivi
+al tempo prensile
+terminano in «ug».
+Esempi:
+urgleighug,
+biggugdaghgug,
+curdakalmug.
+
+Tutte le coniugazioni del
+presente interiettivo
+iniziano con la lettera
+G, a meno che contengano
+il terzo accento
+declinativo della lettera
+U.
+Esempi:
+
+ghothudunglug, ma non
+azhbuugub.
+Il passato può riferirsi
+soltanto a eventi
+successivi all'ultimo
+pasto, ma il tempo
+prensile può riferirsi a
+qualsiasi evento a
+
+portata di mano.
+Il presente si coniuga
+come il futuro imperfetto
+quando si usa il modo
+interrogativo alzando il
+suono di un quarto di
+tono.
+
+La lingua degli orchi non
+ha il concetto di
+persona, come prima
+persona, terza persona,
+io, noi, ecc.
+La grammatica degli orchi
+si basa sulle tre regole
+cardinali di
+
+accrescimento,
+prefissazione e
+agglutinazione, oltre
+all'altezza del tono. Nel
+primo caso, i fonemi si
+combinano in parole più
+grandi che possono
+contenere il significato
+di frasi intere. Nel
+
+secondo, anteporre
+specifici suoni fonetici
+trasforma il soggetto
+della frase in oggetto,
+interrogativo, individuo
+cui ci si rivolge o cena.
+
+L'agglutinazione avviene
+ogni volta che una parola
+contiene quattro lettere
+uguali, nel qual caso due
+qualsiasi di esse possono
+essere eliminate o
+pronunciate
+indistintamente.
+L'altezza del tono cambia
+il
+
+valore fonemico delle
+singole sillabe,
+alterando dunque
+completamente ciò che una
+parola può significare.
+L'esempio classico è
+«Aktgluthugrot
+bigglogubuu
+
+dargilgaglug lublublub»,
+che può significare «Sei
+una ragazza così
+graziosa», «Mia madre ha
+mangiato le tue primule»
+o «Naso medusa dipinge
+elemosine patata»,
+secondo l'altezza del
+tono.
+
+La poesia degli orchi si
+basa spesso sulla
+ripetizione della stessa
+frase a diverse altezze,
+cambiando persino tono
+nel mezzo di una parola.
+Nulla di questa grande
+arte è traducibile.
+
+La lingua degli orchi usa
+le seguenti vocali: ab,
+ad, ag, akt, at, augh,
+auh, azh, e, i, o, oo, u,
+uu. Il suono vocalico a
+non è riconosciuto come
+vocale e non esiste nel
+
+loro alfabeto.
+L'alfabeto degli orchi si
+impara meglio usando la
+classica filastrocca
+ripetuta a 23 altezze
+diverse:
+   Lugnog ghu blat
+suggaroglug,
+
+Gaghbuu dakdar ab
+highugbo,
+  Gothnogbuim ad
+gilgubbugbuilug
+Bilgeaugh thurggulg
+stuiggro!
+ 
+Una traduzione della
+
+prima altezza:
+Mangia cibo, la prima
+lettera è ab,
+Uccidi gente, la prossima
+lettera è ad,
+Dimentico il resto
+Ma augh è là in mezzo da
+qualche parte!
+
+ 
+Segue una biblioteca
+fonetica completa della
+lingua degli orchi:
+ab, ad, ag, akt, alm, at,
+augh, auh, azh, ba, ba,
+bag, bar, baz,
+
+bid, bilge, bo, bog, bog,
+brui, bu, buad, bug, bug,
+buil, buim, bum, buo,
+buor, buu, ca, car, clog,
+cro, cuk, cur, da, dagh,
+dagh, dak, dar, deak,
+der, dil, dit, dor, dre,
+dri,
+
+dru, du, dud, duf, dug,
+dug, duh, dun, eag, eg,
+egg, eichel, ek, ep, ewk,
+faugh, fid, flu, fog,
+foo, foz, fruk, fu, fub,
+fud, fun, fup, fur, gaa,
+gag, gagh, gan,
+
+gar, gh, gha, ghat, ghed,
+ghig, gho, ghu, gig, gil,
+gka, glu, glu, glug, gna,
+gno, gnu, gol, gom, goth,
+grunt, grut, gu, gub,
+gub, gug, gug, gugh, guk,
+guk,"""
+[translations.pol]
+title = "Gramatyka języka orków"
+content = """Ten tom oraz pozostałe w
+serii powstały dzięki
+datkom Lord Blackthorn,
+który zawsze wspiera
+zrozumienie innych
+rozumnych ras
+
+Britannia. -
+ 
+Język orków może brzmieć
+niemiło dla ucha, lecz
+posiada złożoną
+gramatykę, często
+
+błędnie rozumianą przez
+tych, którzy słyszą
+jedynie kilka kaleczonych
+angielskich słów, jakimi
+nasi orczy bracia radzą
+sobie bez nauki.
+Oto podstawowe
+
+reguły języka orków:
+Orczy ma pięć czasów:
+teraźniejszy, przeszły,
+przyszły niedokonany,
+teraźniejszy
+wykrzyknikowy oraz
+chwytny.
+Przykłady: gugroflu,
+gugrofloog, gugrobo,
+
+gugroglu!, gugrogug.
+Wszystkie czasowniki
+przechodnie w czasie
+chwytnym kończą się na
+„ug”.
+Przykłady: urgleighug,
+biggugdaghgug,
+curdakalmug.
+
+Wszystkie odmiany czasu
+teraźniejszego
+wykrzyknikowego zaczynają
+się literą G, chyba że
+zawierają trzeci akcent
+deklinacyjny litery U.
+Przykłady:
+
+ghothudunglug, lecz nie
+azhbuugub.
+Czas przeszły może
+odnosić się jedynie do
+wydarzeń od ostatniego
+posiłku, lecz czas
+chwytny może odnosić się
+do każdego wydarzenia w
+
+zasięgu.
+Czas teraźniejszy
+odmienia się jak przyszły
+niedokonany, gdy stosuje
+się tryb pytający przez
+podniesienie wysokości
+dźwięku o ćwierć tonu
+
+wyżej. Orczy nie ma
+pojęcia osoby, jak
+pierwsza osoba, trzecia
+osoba, ja, my itd.
+Gramatyka orcza opiera
+się na trzech
+podstawowych regułach:
+
+akrecji, prefiksacji i
+aglutynacji, a także na
+wysokości dźwięku. W
+pierwszej fonemy łączą
+się w większe słowa,
+które mogą zawierać
+znaczenie całych fraz. W
+
+drugiej dodanie
+określonych dźwięków
+fonetycznych jako
+przedrostków zmienia
+podmiot zdania w
+dopełnienie, pytanie,
+osobę, do której się
+mówi, albo obiad.
+
+Aglutynacja występuje,
+gdy w słowie znajdują się
+cztery takie same litery;
+wtedy dowolne dwie można
+usunąć lub wymówić
+niewyraźnie.
+Wysokość dźwięku zmienia
+
+wartość fonemiczną
+poszczególnych sylab,
+całkowicie zmieniając
+znaczenie słowa.
+Klasycznym przykładem
+jest „Aktgluthugrot
+bigglogubuu
+
+dargilgaglug lublublub”,
+co może znaczyć „Jesteś
+taką piękną dziewczyną”,
+„Moja matka zjadła twoje
+pierwiosnki” albo „Meduzi
+nos maluje jałmużny
+ziemniak”, zależnie od
+wysokości dźwięku.
+
+Orcza poezja często
+opiera się na powtarzaniu
+tej samej frazy na
+różnych wysokościach,
+nawet ze zmianą tonu w
+środku słowa. Nic z tej
+wielkiej sztuki nie da
+się przetłumaczyć.
+
+Język orków używa
+następujących samogłosek:
+ab, ad, ag, akt, at,
+augh, auh, azh, e, i, o,
+oo, u, uu. Dźwięk a nie
+jest uznawany za
+samogłoskę i nie
+występuje w
+
+ich alfabecie. Orczego
+alfabetu najlepiej uczyć
+się za pomocą klasycznej
+rymowanki powtarzanej na
+23 różnych wysokościach:
+Lugnog ghu blat
+suggaroglug,
+
+Gaghbuu dakdar ab
+highugbo,
+Gothnogbuim ad
+gilgubbugbuilug
+Bilgeaugh thurggulg
+stuiggro!
+ 
+Przekład
+
+pierwszej wysokości:
+Jedz jedzenie, pierwszą
+literą jest ab,
+Zabijaj ludzi, następna
+litera to ad,
+Resztę zapomniałem,
+Ale augh gdzieś tam jest!
+
+ 
+Poniżej pełna biblioteka
+fonetyczna języka orków:
+ab, ad, ag, akt, alm, at,
+augh, auh, azh, ba, ba,
+bag, bar, baz,
+
+bid, bilge, bo, bog, bog,
+brui, bu, buad, bug, bug,
+buil, buim, bum, buo,
+buor, buu, ca, car, clog,
+cro, cuk, cur, da, dagh,
+dagh, dak, dar, deak,
+der, dil, dit, dor, dre,
+dri,
+
+dru, du, dud, duf, dug,
+dug, duh, dun, eag, eg,
+egg, eichel, ek, ep, ewk,
+faugh, fid, flu, fog,
+foo, foz, fruk, fu, fub,
+fud, fun, fup, fur, gaa,
+gag, gagh, gan,
+
+gar, gh, gha, ghat, ghed,
+ghig, gho, ghu, gig, gil,
+gka, glu, glu, glug, gna,
+gno, gnu, gol, gom, goth,
+grunt, grut, gu, gub,
+gub, gug, gug, gugh, guk,
+guk,"""
+[translations.por]
+title = "Uma gramática do orc"
+content = """Este volume e os demais
+da série são patrocinados
+por doações de Lord
+Blackthorn, sempre um
+defensor da compreensão
+das outras raças
+sencientes
+
+de Britannia.
+-
+ 
+A língua orc pode soar
+desagradável ao ouvido,
+mas possui uma gramática
+complexa frequentemente
+
+mal compreendida por
+aqueles que apenas ouvem
+as poucas palavras
+fragmentadas de inglês
+que nossos irmãos orcs
+conseguem usar sem
+instrução.
+Estas são as regras
+básicas
+
+do orc:
+O orc tem cinco tempos:
+presente, passado, futuro
+imperfeito, presente
+interjeicional e
+preênsil.
+Exemplos: gugroflu,
+gugrofloog, gugrobo,
+
+gugroglu!, gugrogug.
+Todos os verbos
+transitivos no tempo
+preênsil terminam em
+\"ug\".
+Exemplos:
+urgleighug,
+biggugdaghgug,
+curdakalmug.
+
+Todas as conjugações do
+presente interjeicional
+começam com a letra G, a
+menos que contenham o
+terceiro acento
+declinativo da letra U.
+Exemplos:
+
+ghothudunglug, mas não
+azhbuugub.
+O passado só pode se
+referir a acontecimentos
+desde a última refeição,
+mas o tempo preênsil pode
+se referir a qualquer
+acontecimento ao
+
+alcance.
+O presente é conjugado
+como o futuro imperfeito,
+quando o modo
+interrogativo é usado
+elevando o som em um
+quarto de tom.
+
+O orc não possui o
+conceito de pessoa, como
+em primeira pessoa,
+terceira pessoa, eu, nós
+etc.
+A gramática orc se apoia
+nas três regras
+fundamentais de
+
+acreção, prefixação e
+aglutinação, além da
+altura do som. Na
+primeira, os fonemas se
+combinam em palavras
+maiores, que podem conter
+o significado de uma
+frase inteira. Na
+
+segunda, a prefixação de
+sons fonéticos
+específicos transforma o
+sujeito da frase em
+objeto, interrogativo,
+indivíduo a quem se
+dirige ou jantar.
+
+A aglutinação ocorre
+sempre que quatro letras
+iguais estão presentes
+numa palavra; nesse caso,
+quaisquer duas delas
+podem ser removidas ou
+pronunciadas de forma
+indistinta.
+A altura do som altera o
+
+valor fonêmico de sílabas
+individuais, mudando
+assim completamente o que
+uma palavra pode
+significar. O exemplo
+clássico é
+\"Aktgluthugrot
+bigglogubuu
+
+dargilgaglug lublublub\"
+que pode significar
+\"Você é uma menina tão
+bonita\", \"Minha mãe
+comeu suas prímulas\" ou
+\"Nariz de água-viva
+pinta esmolas batata\",
+dependendo da altura do
+som.
+
+A poesia orc
+frequentemente se baseia
+em repetir a mesma frase
+em várias alturas,
+chegando a mudar a altura
+no meio da palavra. Nada
+dessa grande arte é
+traduzível.
+
+A língua orc usa as
+seguintes vogais: ab, ad,
+ag, akt, at, augh, auh,
+azh, e, i, o, oo, u, uu.
+O som vocálico a não é
+reconhecido como vogal e
+não existe em
+
+seu alfabeto.
+O alfabeto orc é melhor
+aprendido usando a rima
+clássica repetida em 23
+alturas diferentes:
+   Lugnog ghu blat
+suggaroglug,
+
+Gaghbuu dakdar ab
+highugbo,
+  Gothnogbuim ad
+gilgubbugbuilug
+Bilgeaugh thurggulg
+stuiggro!
+ 
+Uma tradução da
+
+primeira altura:
+Coma comida, a primeira
+letra é ab,
+Mate pessoas, a próxima
+letra
+é ad,
+Esqueço o resto
+Mas augh está em algum
+lugar aí!
+
+ 
+O que segue é uma
+biblioteca fonética
+completa da língua orc:
+ab, ad, ag, akt, alm,
+at, augh, auh, azh,
+ba, ba, bag, bar, baz,
+
+bid, bilge, bo, bog, bog,
+brui, bu, buad, bug,
+bug, buil, buim, bum,
+buo, buor, buu, ca,
+car, clog, cro, cuk,
+cur, da, dagh, dagh,
+dak, dar, deak, der,
+dil, dit, dor, dre, dri,
+
+dru, du, dud, duf,
+dug, dug, duh, dun,
+eag, eg, egg, eichel,
+ek, ep, ewk, faugh,
+fid, flu, fog, foo,
+foz, fruk, fu, fub,
+fud, fun, fup, fur,
+gaa, gag, gagh, gan,
+
+gar, gh, gha, ghat,
+ghed, ghig, gho, ghu,
+gig, gil, gka, glu, glu,
+glug, gna, gno, gnu,
+gol, gom, goth, grunt,
+grut, gu, gub, gub,
+gug, gug, gugh, guk,
+guk,"""
+[translations.spa]
+title = "Una gramática del orco"
+content = """Este volumen, y los demás
+de la serie, se financian
+con donaciones de Lord
+Blackthorn, siempre
+partidario de comprender
+a las demás razas
+inteligentes
+
+de Britannia. -
+ 
+La lengua orca puede
+resultar desagradable al
+oído, pero encierra una
+gramática compleja que a
+menudo
+
+malinterpretan quienes
+solo oyen las pocas
+palabras de inglés
+entrecortado que nuestros
+hermanos orcos consiguen
+pronunciar sin educación.
+Estas son las reglas
+
+básicas del orco: el orco
+tiene cinco tiempos:
+presente, pasado, futuro
+imperfecto, presente
+interjeccional y prensil.
+Ejemplos: gugroflu,
+gugrofloog, gugrobo,
+
+gugroglu!, gugrogug.
+Todos los verbos
+transitivos en tiempo
+prensil terminan en
+\"ug\". Ejemplos:
+urgleighug,
+biggugdaghgug,
+curdakalmug.
+
+Todas las conjugaciones
+del presente
+interjeccional comienzan
+con la letra G, salvo que
+contengan el tercer
+acento declinativo de la
+letra U. Ejemplos:
+
+ghothudunglug, pero no
+azhbuugub. El pasado solo
+puede referirse a sucesos
+ocurridos desde la última
+comida, pero el tiempo
+prensil puede referirse a
+cualquier suceso al
+
+alcance. El presente se
+conjuga como el futuro
+imperfecto cuando se
+emplea el modo
+interrogativo, elevando
+el tono del sonido un
+cuarto de tono.
+
+El orco no tiene concepto
+de persona, como primera
+persona, tercera persona,
+yo, nosotros, etc. La
+gramática orca se basa en
+las tres reglas
+cardinales de
+
+acreción, prefijación y
+aglutinación, además del
+tono. En la primera, los
+fonemas se combinan en
+palabras mayores que
+pueden contener el
+significado de frases
+completas. En la
+
+segunda, la prefijación
+de sonidos fonéticos
+concretos convierte el
+sujeto de la oración en
+objeto, interrogación,
+individuo al que se habla
+o cena.
+
+La aglutinación ocurre
+cuando una palabra
+contiene cuatro letras
+iguales, en cuyo caso
+pueden eliminarse o
+arrastrarse dos
+cualesquiera. El tono
+cambia el
+
+valor fonémico de las
+sílabas individuales,
+alterando así por
+completo lo que una
+palabra puede significar.
+El ejemplo clásico es
+\"Aktgluthugrot
+bigglogubuu
+
+dargilgaglug lublublub\",
+que puede significar
+\"Eres una muchacha tan
+bonita\", \"Mi madre se
+comió tus prímulas\" o
+\"Nariz de medusa pinta
+limosna patata\", según
+el tono.
+
+La poesía orca suele
+repetir la misma frase en
+varios tonos, llegando
+incluso a cambiar de tono
+a mitad de palabra. Nada
+de este gran arte es
+traducible.
+
+La lengua orca utiliza
+las siguientes vocales:
+ab, ad, ag, akt, at,
+augh, auh, azh, e, i, o,
+oo, u, uu. El sonido
+vocálico a no se reconoce
+como vocal y no existe en
+
+su alfabeto. La mejor
+forma de aprender el
+alfabeto orco es mediante
+la rima clásica repetida
+en 23 tonos distintos:
+Lugnog ghu blat
+suggaroglug,
+
+Gaghbuu dakdar ab
+highugbo, Gothnogbuim ad
+gilgubbugbuilug Bilgeaugh
+thurggulg stuiggro!
+ 
+Una traducción del
+
+primer tono: Come comida,
+la primera letra es ab,
+Mata gente, la siguiente
+letra es ad, Olvido lo
+demás ¡Pero augh está por
+ahí en alguna parte!
+
+ 
+Lo que sigue es una
+biblioteca fonética
+completa de la lengua
+orca: ab, ad, ag, akt,
+alm, at, augh, auh, azh,
+ba, ba, bag, bar, baz,
+
+bid, bilge, bo, bog, bog,
+brui, bu, buad, bug, bug,
+buil, buim, bum, buo,
+buor, buu, ca, car, clog,
+cro, cuk, cur, da, dagh,
+dagh, dak, dar, deak,
+der, dil, dit, dor, dre,
+dri,
+
+dru, du, dud, duf, dug,
+dug, duh, dun, eag, eg,
+egg, eichel, ek, ep, ewk,
+faugh, fid, flu, fog,
+foo, foz, fruk, fu, fub,
+fud, fun, fup, fur, gaa,
+gag, gagh, gan,
+
+gar, gh, gha, ghat, ghed,
+ghig, gho, ghu, gig, gil,
+gka, glu, glu, glug, gna,
+gno, gnu, gol, gom, goth,
+grunt, grut, gu, gub,
+gub, gug, gug, gugh, guk,
+guk,"""

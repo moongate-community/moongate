@@ -17,9 +17,13 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class LightServiceTests : IAsyncLifetime
 {
-    private static readonly RegionContent Despise = new() { Map = MapType.Trammel, Name = "Despise", Type = RegionType.Dungeon };
+    private static readonly RegionContent Despise = new()
+        { Map = MapType.Trammel, Name = "Despise", Type = RegionType.Dungeon };
+
     private static readonly RegionContent Jail = new() { Map = MapType.Trammel, Name = "Jail", Type = RegionType.Jail };
-    private static readonly RegionContent MedusasLair = new() { Map = MapType.Trammel, Name = "Medusas Lair", Parent = "Despise" };
+
+    private static readonly RegionContent MedusasLair = new()
+        { Map = MapType.Trammel, Name = "Medusas Lair", Parent = "Despise" };
 
     private readonly StubClockService _clock = new();
     private readonly RecordingTimerService _timers = new();
@@ -131,6 +135,21 @@ public sealed class LightServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SetOverride_OnTheLoop_SendsTheLevelAtOnce_WithoutWaiting()
+    {
+        await LoginAsync(1);
+        _clock.Time = new GameTime(1, 0);
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        _light.SetOverride(25);
+        Assert.Equal((25, 25), (_light.Override, _light.LevelFor(Mobile())));
+        _light.SetOverride(null);
+
+        Assert.Null(_light.Override);
+        Assert.Equal([(1L, 12), (1L, 25), (1L, 12)], Sent());
+    }
+
+    [Fact]
     public void LevelFor_ADungeonIsDark_AndAJailDim_WhateverTheTime()
     {
         var mobile = Mobile();
@@ -226,11 +245,6 @@ public sealed class LightServiceTests : IAsyncLifetime
         Assert.Empty(_timers.Timers);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private async Task LoginAsync(long id)
     {
         await _fixture.AddAsync(id);
@@ -241,10 +255,10 @@ public sealed class LightServiceTests : IAsyncLifetime
     private List<(long, int)> Sent()
     {
         return _fixture.Sender.Sent
-                       .Select((packet, index) => (packet, index))
-                       .Where(pair => pair.packet is GlobalLightLevelPacket)
-                       .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((GlobalLightLevelPacket)pair.packet).Level))
-                       .ToList();
+            .Select((packet, index) => (packet, index))
+            .Where(pair => pair.packet is GlobalLightLevelPacket)
+            .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((GlobalLightLevelPacket)pair.packet).Level))
+            .ToList();
     }
 
     private void FireChecks(string timer, int count)
@@ -270,5 +284,10 @@ public sealed class LightServiceTests : IAsyncLifetime
     private static MobileEntity Mobile()
     {
         return new() { Id = new Serial(9), Map = MapType.Trammel };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

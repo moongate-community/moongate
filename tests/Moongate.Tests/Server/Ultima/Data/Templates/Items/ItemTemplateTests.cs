@@ -68,7 +68,10 @@ public sealed class ItemTemplateTests
     [Fact]
     public void Visibility_Unset_IsNotWrittenSoTheBaseTemplateDecides()
     {
-        Assert.DoesNotContain("visibility", TomlUtils.Serialize(new ItemTemplate { Id = "orcspawn", BaseId = "base_spawner" }));
+        Assert.DoesNotContain(
+            "visibility",
+            TomlUtils.Serialize(new ItemTemplate { Id = "orcspawn", BaseId = "base_spawner" })
+        );
     }
 
     [Theory, InlineData("gm"), InlineData("7")]
@@ -128,7 +131,11 @@ public sealed class ItemTemplateTests
     {
         var toml = TomlUtils.Serialize(new ItemTemplate { Id = "lamp" });
 
-        foreach (var key in new[] { "weight", "amount", "stackable", "layer", "buy_price", "sell_price", "decays", "decay_minutes", "loot_type", "tags", "movable" })
+        foreach (var key in new[]
+                 {
+                     "weight", "amount", "stackable", "layer", "buy_price", "sell_price", "decays", "decay_minutes",
+                     "loot_type", "tags", "movable"
+                 })
         {
             Assert.DoesNotContain(key + " ", toml);
         }

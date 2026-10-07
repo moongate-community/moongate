@@ -1,10 +1,13 @@
 // POL protocol port; see THIRD-PARTY-NOTICES.md for origin and license.
+
 using Moongate.Network.Packets.Data.Encryption;
 using Moongate.Network.Packets.Types.Encryption;
 
 namespace Moongate.Network.Packets.Encryption;
 
-/// <summary>Stateful client-to-server POL login stream cipher.</summary>
+/// <summary>
+///     Stateful client-to-server POL login stream cipher.
+/// </summary>
 public sealed class UoLoginCipher
 {
     private readonly UoEncryptionProfile _profile;
@@ -18,7 +21,9 @@ public sealed class UoLoginCipher
         _high = ((seed ^ 0x43210000) >> 16) | ((~seed ^ 0xABCDFFFF) & 0xFFFF0000);
     }
 
-    /// <summary>Transforms bytes in place, preserving stream position between calls.</summary>
+    /// <summary>
+    ///     Transforms bytes in place, preserving stream position between calls.
+    /// </summary>
     public void Transform(Span<byte> data)
     {
         if (_profile.Type == UoEncryptionType.None)
@@ -44,7 +49,7 @@ public sealed class UoLoginCipher
                         _high = (_profile.Key1 >> (int)(5 * high * high)) + high * _profile.Key1 +
                                 low * low * 0x35CE9581 + 0x07AFCC37;
                         _low = (_profile.Key2 >> (int)(3 * low * low)) + low * _profile.Key2 -
-                               _high * _high * 0x4C3A1353 + 0x16EF783F;
+                            _high * _high * 0x4C3A1353 + 0x16EF783F;
                         break;
                     default:
                         _high = (((((high >> 1) | (low << 31)) ^ _profile.Key1) >> 1) | (low << 31)) ^ _profile.Key1;

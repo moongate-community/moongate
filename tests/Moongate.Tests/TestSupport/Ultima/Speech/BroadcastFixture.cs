@@ -22,32 +22,28 @@ public sealed class BroadcastFixture : IAsyncDisposable
     public MobileService Mobiles { get; }
     public StubPacketSendService Sender { get; } = new();
 
-    private BroadcastFixture(SessionFixture network)
-    {
-        Network = network;
-        Sessions = new(network.Loop);
-        Mobiles = new(new StubMovementService(), Sectors);
-    }
-
     public static async Task<BroadcastFixture> CreateAsync()
     {
         return new(await SessionFixture.CreateAsync());
     }
 
-    public async Task<GameSession> AddAsync(long id, bool entered = true, bool connected = true, MapType map = MapType.Trammel)
+    public async Task<GameSession> AddAsync(
+        long id, bool entered = true, bool connected = true, MapType map = MapType.Trammel
+    )
     {
         var connection = new ControlledNetworkConnection(id);
         _connections.Add(connection);
         var session = Sessions.GetOrCreate(connection);
         await Network.ExecuteOnLoopAsync(() =>
-        {
-            session.Set(SessionKeys.CharacterId, new Serial((uint)id));
-
-            if (entered)
             {
-                Mobiles.EnterWorld(new MobileEntity { Id = new Serial((uint)id), Name = "Player", Map = map });
+                session.Set(SessionKeys.CharacterId, new Serial((uint)id));
+
+                if (entered)
+                {
+                    Mobiles.EnterWorld(new MobileEntity { Id = new Serial((uint)id), Name = "Player", Map = map });
+                }
             }
-        });
+        );
 
         if (!connected)
         {
@@ -55,6 +51,13 @@ public sealed class BroadcastFixture : IAsyncDisposable
         }
 
         return session;
+    }
+
+    private BroadcastFixture(SessionFixture network)
+    {
+        Network = network;
+        Sessions = new(network.Loop);
+        Mobiles = new(new StubMovementService(), Sectors);
     }
 
     public async ValueTask DisposeAsync()

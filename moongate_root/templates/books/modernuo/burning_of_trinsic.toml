@@ -1,0 +1,1677 @@
+title = "The Burning of Trinsic"
+author = "Japheth of Trinsic"
+content = """    'Twas a sight to
+see, the sunlight
+falling lightly on the
+sandstone walls of
+Trinsic 'pon a
+morning in spring.
+    Children ran along
+the parapets and
+
+walkways, their
+laughter and running
+providing music to the
+daybreak, despite
+their oft-ragged
+clothing.
+    And I was one of
+those young ones,
+
+letting my joy rise
+up to the skies.
+    Little did we all
+know of the darker
+days that would lie
+ahead, for we were
+too young.
+    Had we but gained
+
+access to the quiet
+councils held in the
+Paladin tower as it
+faced the sea,
+councils lit by
+candlelight and
+worry, we would
+have learned more of
+
+the fears of
+imminent attack from
+the forest, where
+foul creatures born
+of dank caves and
+darkness were
+marauding ever more
+often into the lands
+
+around Trinsic's
+moat.
+    But we were
+children! The
+parapets and the moat
+were places to play,
+not stout defenses,
+and we gave no
+
+thought to the
+necessities that must
+have required their
+construction.
+    We used to reach
+the sheltered
+orchards on the lee
+side of the parapet
+
+walls, where the
+southern river cut
+through the city, by
+swimming across the
+water.
+    The rich folk who
+lived in the great
+manses there would
+
+shout from their
+windows and shake
+their fists, for we
+would run through
+their gardens and
+tear up the delicate
+foxgloves and
+orfleurs with our
+
+unshod dirty feet.
+Then we would dive
+into the water and
+splash merrily to the
+fruit trees.
+    The southern
+river lazily slid
+under the an ungated
+
+arch in the mighty
+wall, and we would
+lay on the grassy
+bank and watch it
+gurgle by the lily
+pads.
+    That spring that
+pleasant spot became
+
+the doorway through
+which our city of
+Trinsic let in the
+monstrous deformed
+humanoids that
+savaged us. I lay upon
+that grassy bank and
+watched them wade
+
+in, their coarse hair
+wet and matted, algae
+and muck festooning
+their wild brows.
+    They caught sight
+of a quicksilver girl
+with bright blond hair
+and lively eyes. Her
+
+name was Leyla, and
+that spring I had held
+fond dreams of
+holding her hand and
+sharing flavored ice
+while dangling our
+feet off the small
+bridge by Smugglers
+
+Gate.
+    And I said nothing
+when they caught
+her, and did not cry
+out when they
+dragged her off
+through that breach in
+our wall, and did not
+
+warn the city when I
+saw the helmeted orc
+captains call the
+charge upon the
+mansions.
+    Blame me not, for
+I was but a child, and
+one who hid in the
+
+branches of the peach
+trees, all a-tremble
+whilst I watched the
+smoke rise from Sean
+the tailor's, and fire
+lash out at the roof of
+witchy Eleanor's
+tavern.
+
+    To this day I have
+had no word of
+Leyla, and to this
+day the smell of
+burning wood can
+conjure terrible
+dreams. Yet with the
+eyes of adulthood, 'tis
+
+possible to examine
+the flaws in the
+defense of Trinsic on
+that fateful day, and
+the reasons why our
+walls are now
+double-thick, and
+why our buildings
+
+are now built as
+fortresses within a
+somber fortified city.
+    While I can look
+out from the top of
+the new Paladin
+tower, and spy the
+mighty white sails
+
+across the barrier
+island, and can
+descry the small
+hollow south of the
+city where gypsies
+are wont to camp, I
+can also envision the
+city as it might be
+
+burning, and I bless
+the bargain we made:
+space for safety,
+grace for sturdiness,
+and wood for stone.
+    Whilst I live, I
+shall not see Trinsic
+burn, and no more
+
+cries of little girls
+will haunt the sleep
+of our fair citizens.
+    - Japheth, Paladin
+Guildmaster of the
+City of Trinsic"""
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
+[translations.cze]
+title = "Vypálení Trinsic"
+content = """    Byla to nádherná
+podívaná, když za
+jarního rána sluneční
+světlo lehce dopadalo
+na pískovcové hradby
+Trinsic.
+    Děti běhaly po
+cimbuří a
+
+ochozech; jejich smích
+a dupot provázely
+rozbřesk hudbou,
+navzdory jejich často
+otrhaným šatům.
+    A já byl jedním z
+těch malých,
+
+kteří nechávali svou
+radost stoupat k
+nebesům.
+    Pramálo jsme tušili
+o temnějších dnech, jež
+nás čekaly, neboť jsme
+byli příliš mladí.
+    Kdybychom jen měli
+
+přístup k tichým
+poradám konaným ve věži
+paladinů hledící k
+moři, poradám
+osvětleným svícemi a
+obavami, dozvěděli
+bychom se více o
+
+strachu z
+bezprostředního útoku z
+lesa, kde ohavné
+bytosti zrozené z
+vlhkých jeskyní a
+temnoty stále častěji
+podnikaly nájezdy do
+krajiny
+
+kolem příkopu Trinsic.
+    Ale byli jsme děti!
+Cimbuří i příkop pro
+nás byly místem na
+hraní, nikoli pevnou
+obranou, a nepřemýšleli
+jsme
+
+o nezbytnostech, jež si
+musely vyžádat jejich
+stavbu.
+    Do chráněných sadů
+v závětří hradeb,
+
+tam, kde jižní řeka
+protínala město, jsme
+se dostávali plaváním
+přes vodu.
+    Boháči, kteří tam
+žili ve velikých
+sídlech,
+
+křičeli z oken a
+hrozili pěstmi, neboť
+jsme jim běhali
+zahradami a svýma
+špinavýma bosýma nohama
+vytrhávali jemné
+náprstníky a orfleury.
+
+Potom jsme skočili do
+vody a vesele se
+šploucháním zamířili k
+ovocným stromům.
+    Jižní řeka líně
+protékala pod obloukem
+bez brány
+
+v mohutné hradbě a my
+leželi na travnatém
+břehu a sledovali, jak
+klokotá kolem
+leknínových listů.
+    Toho jara se tento
+příjemný kout stal
+
+dveřmi, jimiž naše
+město Trinsic vpustilo
+obludné znetvořené
+humanoidy, kteří nás
+zplundrovali. Ležel
+jsem na tom travnatém
+břehu a sledoval, jak
+se brodí
+
+dovnitř; jejich hrubé
+chlupy byly mokré a
+slepené, divoká obočí
+jim zdobily řasy a
+bahno.
+    Zahlédli čilou
+dívku se zářivě plavými
+vlasy a živýma očima.
+Její
+
+jméno bylo Leyla a toho
+jara jsem choval něžné
+sny o tom, jak ji držím
+za ruku a dělíme se o
+ochucenou tříšť,
+zatímco necháváme nohy
+viset z malého mostu u
+Smugglers
+
+Gate.
+    A já neřekl nic,
+když ji chytili,
+nevykřikl, když ji
+odvlekli tou mezerou v
+naší hradbě, a
+
+nevaroval město, když
+jsem viděl, jak skřetí
+kapitáni s přilbami
+velí k útoku na sídla.
+    Nevyčítejte mi to,
+neboť jsem byl pouhé
+dítě; dítě, které se
+skrývalo ve
+
+větvích broskvoní a
+celé roztřesené
+sledovalo kouř
+stoupající od krejčího
+Sean a plameny
+šlehající po střeše
+hostince čarodějné
+Eleanor.
+
+    Dodnes nemám o
+dívce Leyla žádné
+zprávy a dodnes mi pach
+hořícího dřeva dokáže
+přivolat děsivé sny.
+Přesto lze očima
+dospělosti
+
+zkoumat chyby v obraně
+Trinsic onoho osudného
+dne a důvody, proč jsou
+nyní naše hradby
+dvojnásobně silné a
+proč naše budovy
+
+dnes stojí jako
+pevnosti uvnitř
+pochmurného opevněného
+města.
+    Ačkoli mohu
+vyhlížet z vrcholu nové
+věže paladinů a
+zahlédnout mohutné bílé
+plachty
+
+za bariérovým ostrovem
+i spatřit malou
+prohlubeň jižně od
+města, kde obvykle
+táboří cikáni, dokážu
+si zároveň představit
+město v plamenech
+
+a žehnám výměně, kterou
+jsme učinili: prostoru
+za bezpečí, půvabu za
+pevnost a dřeva za
+kámen.
+    Dokud budu živ,
+neuvidím Trinsic hořet
+a již žádné
+
+výkřiky malých dívek
+nebudou pronásledovat
+spánek našich dobrých
+občanů.
+    – Japheth, mistr
+cechu paladinů města
+Trinsic"""
+[translations.fre]
+title = "L’incendie de Trinsic"
+content = """    Quel spectacle que
+le soleil effleurant
+les murailles de grès
+de Trinsic par un matin
+de printemps. Les
+enfants couraient le
+long des parapets et
+des
+
+passerelles, leurs
+rires et leurs courses
+mettant l’aube en
+musique, malgré leurs
+vêtements souvent en
+haillons. Et j’étais
+l’un de ces enfants,
+
+laissant ma joie
+s’élever jusqu’aux
+cieux. Nous ne savions
+guère quels jours plus
+sombres nous
+attendaient, car nous
+étions trop jeunes. Si
+seulement nous avions
+eu
+
+accès aux conseils
+discrets tenus dans la
+tour des Paladins, face
+à la mer, conseils
+éclairés de chandelles
+et d’inquiétude, nous
+en aurions appris
+davantage sur
+
+la crainte d’une
+attaque imminente
+depuis la forêt, où des
+créatures ignobles,
+nées de grottes humides
+et de ténèbres,
+ravageaient de plus en
+plus souvent les terres
+
+autour des douves de
+Trinsic. Mais nous
+étions des enfants !
+Les parapets et les
+douves étaient des
+terrains de jeu, point
+de solides défenses, et
+nous ne pensions
+nullement
+
+aux nécessités qui
+avaient dû imposer leur
+construction. Nous
+avions coutume de
+rejoindre les vergers
+abrités sous le vent
+des
+
+murailles, là où la
+rivière du sud
+traversait la ville, en
+nageant de l’autre
+côté. Les riches
+habitants des grandes
+demeures qui s’y
+trouvaient
+
+criaient depuis leurs
+fenêtres en brandissant
+le poing, car nous
+courions dans leurs
+jardins et arrachions
+les délicates digitales
+et les orfleurs avec
+nos
+
+pieds nus et sales.
+Puis nous plongions
+dans l’eau et
+barbotions gaiement
+jusqu’aux arbres
+fruitiers. La rivière
+du sud glissait
+paresseusement sous une
+arche dépourvue de
+grille,
+
+percée dans l’imposante
+muraille, et nous nous
+étendions sur la berge
+herbeuse pour la
+regarder gargouiller
+parmi les nénuphars. Ce
+printemps-là, cet
+endroit agréable devint
+
+la porte par laquelle
+notre ville de Trinsic
+laissa entrer les
+monstrueux humanoïdes
+difformes qui nous
+dévastèrent. Allongé
+sur cette berge
+herbeuse, je les
+regardai entrer
+
+à gué, leurs poils
+rêches trempés et
+emmêlés, des algues et
+de la boue ornant leurs
+fronts sauvages. Ils
+aperçurent une fillette
+vive comme le
+vif-argent, aux cheveux
+d’un blond éclatant et
+aux yeux pétillants.
+Elle
+
+s’appelait Leyla, et ce
+printemps-là j’avais
+tendrement rêvé de lui
+tenir la main et de
+partager une glace
+parfumée, nos pieds
+pendant au bord du
+petit pont près de
+Smugglers Gate.
+
+Et je ne dis rien
+lorsqu’ils la
+saisirent, je ne criai
+pas lorsqu’ils
+l’emmenèrent par cette
+brèche dans notre
+muraille, et je n’
+
+avertis pas la ville
+lorsque je vis les
+capitaines orques
+casqués ordonner
+l’assaut contre les
+demeures. Ne me blâmez
+point, car je n’étais
+qu’un enfant, caché
+dans les
+
+branches des pêchers,
+tout tremblant, tandis
+que je regardais la
+fumée monter de chez
+Sean le tailleur et les
+flammes fouetter le
+toit de la taverne
+d’Eleanor la sorcière.
+
+    À ce jour, je n’ai
+eu aucune nouvelle de
+Leyla, et à ce jour
+l’odeur du bois brûlé
+peut évoquer des rêves
+terribles. Pourtant,
+avec les yeux de l’âge
+adulte, il est
+
+possible d’examiner les
+failles de la défense
+de Trinsic en ce jour
+fatal, ainsi que les
+raisons pour lesquelles
+nos murs ont désormais
+une double épaisseur et
+nos bâtiments
+
+sont maintenant
+construits comme des
+forteresses au sein
+d’une sombre cité
+fortifiée. Si je peux
+contempler, du sommet
+de la nouvelle tour des
+Paladins, les
+puissantes voiles
+blanches
+
+au-delà de
+l’île-barrière et
+discerner le petit
+vallon au sud de la
+ville où les bohémiens
+ont coutume de camper,
+je peux aussi imaginer
+la ville telle qu’elle
+pourrait être
+
+en proie aux flammes,
+et je bénis le marché
+que nous avons conclu :
+l’espace contre la
+sécurité, la grâce
+contre la solidité et
+le bois contre la
+pierre. Tant que je
+vivrai, je ne verrai
+pas Trinsic brûler, et
+plus aucun
+
+cri de petite fille ne
+hantera le sommeil de
+nos bons citoyens. —
+Japheth, maître de la
+guilde des Paladins de
+la ville de Trinsic"""
+[translations.ger]
+title = "Der Brand von Trinsic"
+content = """    Es war ein schöner
+Anblick, wie das
+Sonnenlicht an einem
+Frühlingsmorgen sanft
+auf die Sandsteinmauern
+von Trinsic fiel.
+    Kinder liefen über
+die Brustwehren und
+
+Wehrgänge; ihr Lachen
+und Laufen verlieh dem
+Tagesanbruch Musik,
+trotz ihrer oft
+zerlumpten Kleidung.
+    Und ich war einer
+dieser jungen Menschen,
+
+der seine Freude zum
+Himmel aufsteigen ließ.
+    Wir ahnten wenig
+von den finsteren
+Tagen, die vor uns
+lagen, denn wir waren
+zu jung.
+    Hätten wir nur
+
+Zutritt zu den stillen
+Beratungen im
+Paladinturm am Meer
+erhalten, Beratungen im
+Licht von Kerzen und
+Sorgen, so hätten wir
+mehr erfahren über
+
+die Furcht vor einem
+bevorstehenden Angriff
+aus dem Wald, wo
+abscheuliche Geschöpfe,
+geboren in feuchten
+Höhlen und Finsternis,
+immer häufiger
+plündernd in die Lande
+
+um Trinsics Graben
+eindrangen.
+    Doch wir waren
+Kinder! Brustwehren und
+Graben waren
+Spielplätze, keine
+starken Befestigungen,
+und wir dachten nicht
+
+an die Notwendigkeiten,
+die ihren Bau erfordert
+haben mussten.
+    Zu den geschützten
+Obstgärten im
+Windschatten der
+Brustwehrmauern,
+
+wo der südliche Fluss
+die Stadt durchquerte,
+gelangten wir
+gewöhnlich schwimmend.
+    Die reichen Leute,
+die dort in den großen
+Herrenhäusern wohnten,
+
+riefen aus ihren
+Fenstern und
+schüttelten die Fäuste,
+denn wir rannten durch
+ihre Gärten und
+zertraten die zarten
+Fingerhüte und Orfleurs
+mit unseren
+
+schmutzigen bloßen
+Füßen. Dann sprangen
+wir ins Wasser und
+planschten fröhlich zu
+den Obstbäumen hinüber.
+    Der südliche Fluss
+glitt träge unter einem
+torlosen
+
+Bogen in der mächtigen
+Mauer hindurch, und wir
+lagen am grasigen Ufer
+und sahen zu, wie er an
+den Seerosenblättern
+vorbeigurgelte.
+    In jenem Frühling
+wurde dieser angenehme
+Ort
+
+zum Eingang, durch den
+unsere Stadt Trinsic
+die monströsen,
+missgestalteten
+menschenähnlichen Wesen
+hereinließ, die uns
+verheerten. Ich lag an
+diesem grasigen Ufer
+und sah zu, wie sie
+hereinwateten,
+
+ihr grobes Haar nass
+und verfilzt, Algen und
+Schlamm auf ihren
+wilden Brauen.
+    Sie erblickten ein
+flinkes Mädchen mit
+hellblondem Haar und
+lebhaften Augen. Ihr
+
+Name war Leyla, und in
+jenem Frühling hatte
+ich schöne Träume davon
+gehegt, ihre Hand zu
+halten und Fruchteis
+mit ihr zu teilen,
+während wir die Füße
+von der kleinen Brücke
+beim Smugglers
+
+Gate baumeln ließen.
+    Und ich sagte
+nichts, als sie sie
+packten, und schrie
+nicht auf, als sie sie
+durch jene Lücke in
+unserer Mauer
+fortschleppten, und ich
+
+warnte die Stadt nicht,
+als ich die behelmten
+Orkhauptleute den Sturm
+auf die Herrenhäuser
+befehlen sah.
+    Tadelt mich nicht,
+denn ich war nur ein
+Kind, und eines, das
+sich in den
+
+Ästen der Pfirsichbäume
+versteckte, am ganzen
+Leib zitternd, während
+ich den Rauch von Sean
+dem Schneider
+aufsteigen und das
+Feuer nach dem Dach der
+Schenke der hexenhaften
+Eleanor schlagen sah.
+
+    Bis heute habe ich
+nichts von Leyla
+gehört, und bis heute
+kann der Geruch
+brennenden Holzes
+schreckliche Träume
+heraufbeschwören. Doch
+mit den Augen eines
+Erwachsenen ist es
+
+möglich, die Schwächen
+von Trinsics
+Verteidigung an jenem
+verhängnisvollen Tag zu
+untersuchen, und die
+Gründe, warum unsere
+Mauern nun doppelt so
+dick sind und warum
+unsere Gebäude
+
+nun als Festungen
+innerhalb einer
+düsteren befestigten
+Stadt errichtet werden.
+    Zwar kann ich von
+der Spitze des neuen
+Paladinturms
+hinausblicken und die
+mächtigen weißen Segel
+
+jenseits der
+vorgelagerten Insel
+erspähen und die kleine
+Senke südlich der Stadt
+erkennen, in der
+Zigeuner gewöhnlich
+lagern, doch kann ich
+mir die Stadt auch
+vorstellen, wie sie
+
+brennen könnte, und ich
+segne den Handel, den
+wir eingingen: Raum
+gegen Sicherheit, Anmut
+gegen Festigkeit und
+Holz gegen Stein.
+    Solange ich lebe,
+werde ich Trinsic nicht
+brennen sehen, und
+keine weiteren
+
+Schreie kleiner Mädchen
+werden den Schlaf
+unserer guten Bürger
+heimsuchen.
+    - Japheth,
+Gildenmeister der
+Paladine der Stadt
+Trinsic"""
+[translations.ita]
+title = "L’incendio di Trinsic"
+content = """    Era uno spettacolo
+da vedere, il sole che
+cadeva lieve sulle mura
+di arenaria di Trinsic
+in un mattino di
+primavera.
+    I bambini correvano
+lungo i parapetti e i
+
+camminamenti, e il loro
+riso e il loro correre
+offrivano musica
+all'alba, nonostante
+gli abiti spesso
+stracciati.
+    E io ero uno di
+quei piccoli,
+
+lasciando che la mia
+gioia salisse fino al
+cielo.
+    Ben poco sapevamo
+tutti dei giorni più
+bui che ci attendevano,
+poiché eravamo troppo
+giovani.
+    Se solo avessimo
+avuto
+
+accesso ai silenziosi
+consigli tenuti nella
+torre dei Paladini
+affacciata sul mare,
+consigli illuminati
+dalle candele e dalla
+preoccupazione, avremmo
+saputo di più dei
+
+timori di un attacco
+imminente dalla
+foresta, dove creature
+ripugnanti nate da
+grotte umide e
+dall'oscurità si
+spingevano a
+saccheggiare sempre più
+spesso le terre
+
+intorno al fossato di
+Trinsic.
+    Ma eravamo bambini!
+I parapetti e il
+fossato erano luoghi
+dove giocare, non
+solide difese, e non
+pensavamo
+
+alle necessità che
+dovevano averne
+richiesto la
+costruzione.
+    Raggiungevamo i
+frutteti riparati sul
+lato sottovento delle
+mura dei parapetti,
+
+dove il fiume
+meridionale
+attraversava la città,
+nuotando da una riva
+all'altra.
+    I ricchi che
+vivevano là nelle
+grandi dimore
+
+gridavano dalle
+finestre e agitavano i
+pugni, poiché correvamo
+nei loro giardini e
+calpestavamo le
+delicate digitali e gli
+orfleur coi nostri
+
+piedi scalzi e sporchi.
+Poi ci tuffavamo
+nell'acqua e
+sguazzavamo allegri
+fino agli alberi da
+frutto.
+    Il fiume
+meridionale scorreva
+pigro sotto un arco
+privo di cancello
+
+nel possente muro, e
+noi ci stendevamo sulla
+riva erbosa e lo
+guardavamo gorgogliare
+accanto alle foglie di
+ninfea.
+    Quella primavera
+quel luogo piacevole
+divenne
+
+la porta attraverso cui
+la nostra città di
+Trinsic lasciò entrare
+i mostruosi umanoidi
+deformi che ci
+devastarono. Giacevo su
+quella riva erbosa e li
+guardavo entrare
+
+guadando, il loro pelo
+grossolano bagnato e
+aggrovigliato, alghe e
+fango a ornare le loro
+fronti selvagge.
+    Scorsero una
+bambina vivace come
+argento vivo, dai
+capelli biondi
+splendenti e dagli
+occhi vispi. Il suo
+
+nome era Leyla, e
+quella primavera avevo
+cullato dolci sogni di
+tenerle la mano e
+condividere ghiaccio
+aromatizzato mentre
+lasciavamo penzolare i
+piedi dal ponticello
+presso Smugglers
+
+Gate.
+    E non dissi nulla
+quando la presero, e
+non gridai quando la
+trascinarono via
+attraverso quella
+breccia nel nostro
+muro, e non
+
+avvertii la città
+quando vidi i capitani
+orchi con l'elmo
+ordinare l'assalto alle
+dimore.
+    Non biasimatemi,
+poiché ero solo un
+bambino, un bambino che
+si nascondeva fra i
+
+rami dei peschi, tutto
+tremante mentre
+guardava il fumo
+levarsi dalla bottega
+di Sean il sarto e il
+fuoco sferzare il tetto
+della taverna della
+stregonesca Eleanor.
+
+    Ancora oggi non ho
+avuto notizie di Leyla,
+e ancora oggi l'odore
+del legno bruciato può
+evocare sogni
+terribili. Eppure, con
+gli occhi dell'età
+adulta, è
+
+possibile esaminare le
+falle nelle difese di
+Trinsic in quel giorno
+fatale, e le ragioni
+per cui le nostre mura
+hanno ora doppio
+spessore e per cui i
+nostri edifici
+
+sono ora costruiti come
+fortezze dentro una
+cupa città fortificata.
+    Mentre posso
+guardare dalla cima
+della nuova torre dei
+Paladini e scorgere le
+possenti vele bianche
+
+oltre l'isola barriera,
+e distinguere la
+piccola conca a sud
+della città dove gli
+zingari sogliono
+accamparsi, posso anche
+immaginare la città
+come potrebbe apparire
+
+in fiamme, e benedico
+lo scambio che abbiamo
+fatto: spazio in cambio
+di sicurezza, grazia in
+cambio di robustezza e
+legno in cambio di
+pietra.
+    Finché vivrò, non
+vedrò Trinsic bruciare,
+e mai più
+
+le grida delle bambine
+tormenteranno il sonno
+dei nostri nobili
+cittadini.
+    - Japheth, Maestro
+della Gilda dei
+Paladini della Città di
+Trinsic"""
+[translations.pol]
+title = "Spalenie Trinsic"
+content = """    Był to widok godny
+ujrzenia: słoneczne
+światło padające
+łagodnie na mury
+Trinsic z piaskowca
+pewnego wiosennego
+poranka.
+    Dzieci biegały po
+blankach i
+
+chodnikach, ich śmiech
+i tupot przygrywały
+świtowi, mimo często
+poszarpanej odzieży.
+    I ja byłem jednym z
+tych malców,
+
+pozwalając swej radości
+wzlatywać pod niebiosa.
+    Niewiele
+wiedzieliśmy o
+mroczniejszych dniach,
+które miały nadejść,
+gdyż byliśmy zbyt
+młodzi.
+    Gdybyśmy tylko
+uzyskali
+
+dostęp do cichych narad
+w wieży Paladynów
+zwróconej ku morzu,
+narad oświetlonych
+świecami i troską,
+dowiedzielibyśmy się
+więcej o
+
+obawach przed bliskim
+atakiem z lasu, gdzie
+ohydne stworzenia
+zrodzone w wilgotnych
+jaskiniach i mroku
+coraz częściej
+zapuszczały się na
+ziemie
+
+wokół fosy Trinsic.
+    Lecz byliśmy
+dziećmi! Blanki i fosa
+były miejscami zabawy,
+nie mocną obroną, i nie
+zastanawialiśmy się
+
+nad koniecznością,
+która musiała wymusić
+ich budowę.
+    Do zacisznych sadów
+po zawietrznej stronie
+murów, tam, gdzie
+południowa rzeka
+przecinała miasto,
+
+docieraliśmy,
+przepływając wodę.
+    Bogacze mieszkający
+tam w wielkich dworach
+
+krzyczeli z okien i
+potrząsali pięściami,
+gdyż biegaliśmy po ich
+ogrodach i niszczyliśmy
+delikatne naparstnice
+oraz orfleury swymi
+
+bosymi, brudnymi
+stopami. Potem
+wskakiwaliśmy do wody i
+wesoło chlapiąc,
+płynęliśmy ku drzewom
+owocowym.
+    Południowa rzeka
+leniwie przesuwała się
+pod pozbawionym bramy
+
+łukiem w potężnym
+murze, a my leżeliśmy
+na trawiastym brzegu i
+patrzyliśmy, jak
+bulgocze obok liści
+lilii wodnych.
+    Tej wiosny owo
+przyjemne miejsce stało
+się
+
+wejściem, przez które
+nasze miasto Trinsic
+wpuściło potworne,
+zdeformowane humanoidy,
+które nas spustoszyły.
+Leżałem na tym
+trawiastym brzegu i
+patrzyłem, jak brodzą
+
+do środka, z szorstkimi
+włosami mokrymi i
+skołtunionymi, z
+glonami i błotem
+oblepiającymi dzikie
+czoła.
+    Dostrzegli ruchliwą
+jak żywe srebro
+dziewczynkę o jasnych
+blond włosach i żywych
+oczach. Jej
+
+imię brzmiało Leyla, a
+tej wiosny snułem czułe
+marzenia o trzymaniu
+jej za rękę i dzieleniu
+się smakowym lodem, gdy
+zwieszalibyśmy stopy z
+małego mostku przy
+Smugglers
+
+Gate.
+    I nie powiedziałem
+nic, gdy ją pochwycili,
+nie krzyknąłem, kiedy
+wywlekli ją przez tę
+wyrwę w naszym murze, i
+nie
+
+ostrzegłem miasta,
+kiedy zobaczyłem, jak
+orczy kapitanowie w
+hełmach nakazują szturm
+na dwory.
+    Nie wińcie mnie,
+gdyż byłem tylko
+dzieckiem, które skryło
+się w
+
+gałęziach brzoskwiń i
+drżało całe, patrząc,
+jak dym wznosi się od
+pracowni krawca Sean, a
+ogień smaga dach
+gospody czarowniczej
+Eleanor.
+
+    Do dziś nie mam
+żadnych wieści o Leyla
+i do dziś zapach
+płonącego drewna
+potrafi przywołać
+straszliwe sny. Jednak
+oczami dorosłego można
+
+przyjrzeć się wadom
+obrony Trinsic owego
+pamiętnego dnia, a
+także powodom, dla
+których nasze mury są
+dziś dwa razy grubsze,
+zaś nasze budynki
+
+wznoszone są niczym
+twierdze w ponurym
+warownym mieście.
+    Choć mogę spojrzeć
+ze szczytu nowej wieży
+Paladynów i dostrzec
+potężne białe żagle
+
+za wyspą osłaniającą
+wybrzeże, a także
+wypatrzyć małą nieckę
+na południe od miasta,
+gdzie zwykli obozować
+Cyganie, potrafię też
+wyobrazić sobie miasto,
+jak mogłoby
+
+płonąć, i błogosławię
+nasz układ: przestrzeń
+za bezpieczeństwo,
+wdzięk za solidność,
+drewno za kamień.
+    Póki żyję, nie
+ujrzę Trinsic w
+płomieniach, a krzyki
+małych dziewczynek już
+nie
+
+będą nawiedzać snów
+naszych zacnych
+obywateli.
+    — Japheth, mistrz
+Gildii Paladynów miasta
+Trinsic"""
+[translations.por]
+title = "O incêndio de Trinsic"
+content = """    Era um espetáculo
+digno de se ver, a luz
+do sol pousando
+suavemente sobre as
+muralhas de arenito de
+Trinsic numa manhã de
+primavera.
+    As crianças corriam
+ao longo dos parapeitos
+e
+
+passagens, suas risadas
+e corridas dando música
+ao amanhecer, apesar
+das roupas muitas vezes
+esfarrapadas.
+    E eu era um
+daqueles pequenos,
+
+deixando minha alegria
+subir até os céus.
+    Pouco sabíamos dos
+dias mais sombrios que
+nos aguardavam, pois
+éramos jovens demais.
+    Se tivéssemos tido
+
+acesso às silenciosas
+reuniões realizadas na
+torre dos Paladinos,
+voltada para o mar,
+reuniões iluminadas por
+velas e preocupação,
+teríamos aprendido mais
+sobre
+
+os temores de um ataque
+iminente vindo da
+floresta, onde
+criaturas repugnantes
+nascidas de cavernas
+úmidas e da escuridão
+saqueavam cada vez mais
+as terras
+
+em torno do fosso de
+Trinsic.
+    Mas éramos
+crianças! Os parapeitos
+e o fosso eram lugares
+para brincar, não
+defesas resistentes, e
+não pensávamos
+
+nas necessidades que
+deviam ter exigido sua
+construção.
+    Costumávamos chegar
+aos pomares abrigados
+do lado protegido dos
+muros do parapeito,
+
+onde o rio do sul
+cortava a cidade,
+nadando pela água.
+    Os ricos que
+moravam nas grandes
+mansões ali
+
+gritavam de suas
+janelas e sacudiam os
+punhos, pois corríamos
+por seus jardins e
+arrancávamos as
+delicadas dedaleiras e
+orfleurs com nossos
+
+pés sujos e descalços.
+Depois mergulhávamos na
+água e íamos, com
+alegres respingos, até
+as árvores frutíferas.
+    O rio do sul
+deslizava
+preguiçosamente sob um
+arco sem portão
+
+na poderosa muralha, e
+nos deitávamos na
+margem coberta de grama
+para vê-lo gorgolejar
+entre as folhas de
+nenúfar.
+    Naquela primavera,
+esse lugar agradável se
+tornou
+
+a porta pela qual nossa
+cidade de Trinsic
+deixou entrar os
+monstruosos humanoides
+deformados que nos
+devastaram. Eu estava
+deitado naquela margem
+gramada e os vi entrar
+
+vadeando, com seus
+pelos ásperos molhados
+e emaranhados, algas e
+lama adornando suas
+sobrancelhas selvagens.
+    Eles avistaram uma
+menina ligeira como
+mercúrio, de cabelos
+loiros brilhantes e
+olhos vivazes. Seu
+
+nome era Leyla, e
+naquela primavera eu
+sonhara carinhosamente
+em segurar sua mão e
+compartilhar gelo
+saborizado enquanto
+balançávamos os pés na
+pequena ponte junto ao
+Portão dos
+Contrabandistas.
+
+E eu não disse nada
+quando a pegaram, nem
+gritei quando a
+arrastaram por aquela
+abertura em nossa
+muralha, nem
+
+avisei a cidade quando
+vi os capitães orcs de
+elmo ordenarem o ataque
+às mansões.
+    Não me culpe, pois
+eu era apenas uma
+criança, uma criança
+que se escondia nos
+
+galhos dos
+pessegueiros, toda
+trêmula, enquanto
+observava a fumaça
+subir da alfaiataria de
+Sean e o fogo açoitar o
+telhado da taverna da
+bruxa Eleanor.
+
+    Até hoje não tive
+notícias de Leyla, e
+até hoje o cheiro de
+madeira queimada pode
+evocar sonhos
+terríveis. Ainda assim,
+com os olhos da idade
+adulta, é
+
+possível examinar as
+falhas na defesa de
+Trinsic naquele dia
+fatídico, as razões
+pelas quais nossas
+muralhas agora têm o
+dobro da espessura e
+por que nossos
+edifícios
+
+agora são construídos
+como fortalezas dentro
+de uma cidade
+fortificada e sombria.
+    Embora eu possa
+olhar do topo da nova
+torre dos Paladinos e
+avistar as poderosas
+velas brancas
+
+além da ilha-barreira,
+e distinguir a pequena
+depressão ao sul da
+cidade onde os ciganos
+costumam acampar,
+também posso imaginar a
+cidade enquanto
+
+arde em chamas, e
+abençoo a troca que
+fizemos: espaço por
+segurança, graça por
+resistência e madeira
+por pedra.
+    Enquanto eu viver,
+não verei Trinsic
+queimar, e nunca mais
+os
+
+gritos de meninas
+pequenas assombrarão o
+sono de nossos honrados
+cidadãos.
+    - Japheth, mestre
+da Guilda dos Paladinos
+da Cidade de Trinsic"""
+[translations.spa]
+title = "El incendio de Trinsic"
+content = """    Era un espectáculo
+digno de verse: la luz
+del sol posándose
+suavemente sobre las
+murallas de arenisca de
+Trinsic una mañana de
+primavera. Los niños
+corrían por los
+parapetos y
+
+las pasarelas; sus
+risas y carreras ponían
+música al amanecer,
+pese a sus ropas, a
+menudo harapientas. Y
+yo era uno de aquellos
+pequeños,
+
+dejando que mi alegría
+ascendiera al cielo.
+Poco sabíamos de los
+días sombríos que nos
+aguardaban, pues éramos
+demasiado jóvenes. Si
+hubiéramos podido
+acceder
+
+a los discretos
+consejos celebrados en
+la torre de los
+paladines que miraba al
+mar, consejos
+iluminados por velas y
+preocupaciones,
+habríamos sabido más
+sobre
+
+el temor a un ataque
+inminente desde el
+bosque, donde horribles
+criaturas nacidas en
+cuevas húmedas y
+tinieblas incursionaban
+cada vez con más
+frecuencia en las
+tierras
+
+que rodeaban el foso de
+Trinsic. ¡Pero éramos
+niños! Los parapetos y
+el foso eran lugares de
+juego, no defensas
+firmes, y no pensábamos
+
+en las necesidades que
+habían obligado a
+construirlos. Solíamos
+llegar a los huertos
+protegidos al abrigo de
+los muros del parapeto,
+
+donde el río del sur
+atravesaba la ciudad,
+nadando por el agua.
+Los ricos que vivían
+allí, en sus grandes
+mansiones,
+
+gritaban desde las
+ventanas y agitaban los
+puños, pues corríamos
+por sus jardines y
+destrozábamos las
+delicadas dedaleras y
+los orfleurs con
+nuestros
+
+pies descalzos y
+sucios. Luego nos
+zambullíamos y
+chapoteábamos
+alegremente hasta los
+frutales. El río del
+sur se deslizaba
+perezosamente bajo un
+arco sin puerta
+
+en la poderosa muralla,
+y nosotros nos
+tendíamos en la orilla
+cubierta de hierba para
+verlo borbotear junto a
+los nenúfares. Aquella
+primavera, ese
+agradable rincón se
+convirtió en
+
+la entrada por la que
+nuestra ciudad de
+Trinsic dejó pasar a
+los monstruosos
+humanoides deformes que
+nos asolaron. Yo estaba
+tendido en la orilla de
+hierba y los vi vadear
+
+el agua, con el pelo
+áspero, mojado y
+apelmazado, y las cejas
+salvajes cubiertas de
+algas y lodo. Vieron a
+una muchacha vivaz, de
+brillante cabello rubio
+y ojos despiertos. Se
+
+llamaba Leyla, y
+aquella primavera yo
+había soñado con
+ternura que le tomaría
+la mano y
+compartiríamos un
+helado mientras
+balanceábamos los pies
+desde el pequeño puente
+junto a Smugglers
+
+Gate. Y no dije nada
+cuando la atraparon, no
+grité cuando la
+arrastraron por aquella
+brecha de nuestra
+muralla, ni
+
+avisé a la ciudad al
+ver a los capitanes
+orcos, con sus cascos,
+ordenar el asalto a las
+mansiones. No me
+culpéis: era solo un
+niño, un niño que se
+escondía entre las
+
+ramas de los
+melocotoneros,
+temblando por entero
+mientras veía el humo
+elevarse de la casa de
+Sean el sastre y las
+llamas azotar el tejado
+de la taberna de la
+brujesca Eleanor.
+
+    Hasta el día de hoy
+no he recibido noticias
+de Leyla, y hasta el
+día de hoy el olor de
+la madera quemada puede
+traerme sueños
+terribles. Sin embargo,
+con los ojos de un
+adulto, es
+
+posible examinar las
+fallas en la defensa de
+Trinsic aquel día
+fatídico y los motivos
+por los que ahora
+nuestros muros tienen
+el doble de grosor y
+nuestros edificios
+
+se construyen como
+fortalezas dentro de
+una ciudad sobria y
+fortificada. Aunque
+pueda mirar desde lo
+alto de la nueva torre
+de los paladines y
+divisar las poderosas
+velas blancas
+
+más allá de la isla
+barrera, y aunque pueda
+distinguir la pequeña
+hondonada al sur de la
+ciudad donde suelen
+acampar los gitanos,
+también puedo imaginar
+la ciudad
+
+en llamas, y bendigo el
+trato que hicimos:
+espacio a cambio de
+seguridad, gracia a
+cambio de solidez y
+madera a cambio de
+piedra. Mientras viva
+no volveré a ver arder
+Trinsic, y nunca más
+
+los gritos de las niñas
+perturbarán el sueño de
+nuestros buenos
+ciudadanos. —Japheth,
+maestro del gremio de
+paladines de la ciudad
+de Trinsic"""

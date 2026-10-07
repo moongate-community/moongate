@@ -1,5 +1,6 @@
 [[mobile]]
 id = "giantblackwidow"
+script_id = "monster"
 name = "a giant black widow"
 body = 157
 strength = "1d25+75"
@@ -27,6 +28,7 @@ death = 391
 
 [[mobile]]
 id = "dreadspider"
+script_id = "monster"
 name = "a dread spider"
 body = 11
 strength = "1d25+195"
@@ -54,6 +56,7 @@ death = 391
 
 [[mobile]]
 id = "frostspider"
+script_id = "monster"
 name = "a frost spider"
 body = 20
 strength = "1d25+75"
@@ -82,6 +85,7 @@ death = 1174
 
 [[mobile]]
 id = "giantspider"
+script_id = "monster"
 name = "a giant spider"
 body = 28
 strength = "1d25+75"
@@ -110,6 +114,7 @@ death = 391
 
 [[mobile]]
 id = "teradrone"
+script_id = "monster"
 name = "terathan drone"
 body = 71
 strength = "1d30+35"
@@ -137,6 +142,7 @@ death = 598
 
 [[mobile]]
 id = "terawarrior"
+script_id = "monster"
 name = "terathan warrior"
 body = 70
 strength = "1d50+165"
@@ -165,6 +171,7 @@ death = 593
 
 [[mobile]]
 id = "teraavenger"
+script_id = "monster"
 name = "terathan avenger"
 body = 152
 skin_hue = 1645
@@ -195,6 +202,8 @@ death = 593
 
 [[mobile]]
 id = "teramatriarch"
+script_id = "monster"
+flee_at = -1
 name = "terathan matriarch"
 body = 72
 skin_hue = 0

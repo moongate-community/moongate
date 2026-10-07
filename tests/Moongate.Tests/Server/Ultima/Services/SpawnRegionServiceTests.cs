@@ -58,7 +58,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task TheFirstSpawnAfterTheStart_FillsTheRegionToItsMax_ThenItGoesByCall()
     {
         _initialFill = true;
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 1, max: 5, minMinutes: 5, maxMinutes: 5));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", call: 1, max: 5, minMinutes: 5, maxMinutes: 5));
         await AddLiveAsync("forest");
 
         await TickAsync();
@@ -74,7 +74,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         // 600 seconds: the regions' own first spawn is far away.
         await StartAsync(
-            new ScriptedRandom(600),
+            new ScriptedRangeRandom(600),
             Spawn("forest", call: 1, max: 5, minMinutes: 30, maxMinutes: 30),
             Spawn("glade", call: 1, max: 3, minMinutes: 30, maxMinutes: 30)
         );
@@ -90,7 +90,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     [Fact]
     public async Task WithoutTheInitialFill_TheFirstSpawnGoesByCall()
     {
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 1, max: 5));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", call: 1, max: 5));
 
         await TickAsync();
 
@@ -101,7 +101,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task TheFirstSpawn_ComesWithinTheMinTime()
     {
         // 300 seconds of the 10 minutes.
-        await StartAsync(new ScriptedRandom(300), Spawn("forest", minMinutes: 10, maxMinutes: 20));
+        await StartAsync(new ScriptedRangeRandom(300), Spawn("forest", minMinutes: 10, maxMinutes: 20));
 
         await TickAsync();
         Assert.Empty(_npcs.Spawns);
@@ -114,7 +114,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     [Fact]
     public async Task TheFirstSpawn_ComesWithinTenMinutesEvenForALongMinTime()
     {
-        await StartAsync(new ScriptedRandom(int.MaxValue), Spawn("bank", minMinutes: 480, maxMinutes: 480));
+        await StartAsync(new ScriptedRangeRandom(int.MaxValue), Spawn("bank", minMinutes: 480, maxMinutes: 480));
 
         _clock.Advance(TimeSpan.FromMinutes(10));
         await TickAsync();
@@ -126,7 +126,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task ADueRegion_SpawnsCallNpcs_WhereTheMovementPlacesThem()
     {
         _movement.SpawnZ = (_, _) => 7;
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 2, max: 5, x1: 10, y1: 20, x2: 10, y2: 20));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", call: 2, max: 5, x1: 10, y1: 20, x2: 10, y2: 20));
 
         await TickAsync();
 
@@ -139,7 +139,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     [Fact]
     public async Task TheLiveNpcsOfARegion_CountAgainstItsMax()
     {
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 3, max: 4));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", call: 3, max: 4));
         await AddLiveAsync("forest");
         await AddLiveAsync("forest");
         await AddLiveAsync("elsewhere");
@@ -152,7 +152,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     [Fact]
     public async Task AFullRegion_SpawnsNothing_UntilOneOfItsNpcsIsGone()
     {
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", max: 1, minMinutes: 5, maxMinutes: 5));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", max: 1, minMinutes: 5, maxMinutes: 5));
         var live = await AddLiveAsync("forest");
 
         await TickAsync();
@@ -168,7 +168,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task TheNextSpawn_ComesBetweenTheMinAndMaxTime()
     {
         // The first spawn at once, then the next roll: 90 seconds over the 5 minutes.
-        await StartAsync(new ScriptedRandom(0, 0, 0, 0, 0, 390), Spawn("forest", max: 5, minMinutes: 5, maxMinutes: 10));
+        await StartAsync(new ScriptedRangeRandom(0, 0, 0, 0, 0, 390), Spawn("forest", max: 5, minMinutes: 5, maxMinutes: 10));
         await TickAsync();
 
         _clock.Advance(TimeSpan.FromSeconds(389));
@@ -198,7 +198,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         var tries = 0;
         _movement.SpawnZ = (_, _) => ++tries > 100 ? 0 : null;
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", minMinutes: 30, maxMinutes: 30));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", minMinutes: 30, maxMinutes: 30));
 
         // The hundred picks, then the look over the area that finds a spot: the region keeps trying.
         await TickAsync();
@@ -221,7 +221,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var inside = Spawn("house", x1: 10, y1: 10, x2: 10, y2: 10);
         inside.OnlyOutside = true;
         var anywhere = Spawn("hall", x1: 10, y1: 10, x2: 10, y2: 10);
-        await StartAsync(new ScriptedRandom(0), inside, anywhere);
+        await StartAsync(new ScriptedRangeRandom(0), inside, anywhere);
 
         await TickAsync();
 
@@ -236,7 +236,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         preferred.PrefZ = 7;
         var fixedZ = Spawn("fixed");
         fixedZ.Z = 30;
-        await StartAsync(new ScriptedRandom(0), Spawn("default"), preferred, fixedZ);
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("default"), preferred, fixedZ);
 
         await TickAsync();
 
@@ -246,7 +246,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     [Fact]
     public async Task ASpawnedNpc_KeepsItsRegionAndHomeArea()
     {
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", x1: 10, y1: 20, x2: 30, y2: 40));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", x1: 10, y1: 20, x2: 30, y2: 40));
 
         await TickAsync();
 
@@ -263,7 +263,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         var trammel = Spawn("trammel_forest");
         trammel.Map = MapType.Trammel;
-        await StartAsync(new ScriptedRandom(0), trammel);
+        await StartAsync(new ScriptedRangeRandom(0), trammel);
 
         await TickAsync();
 
@@ -274,7 +274,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AFailedSpawn_DoesNotStopTheOthers()
     {
         _npcs.SpawnFailure = new InvalidOperationException("boom");
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 2, max: 2));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", call: 2, max: 2));
 
         await TickAsync();
         _npcs.SpawnFailure = null;
@@ -289,7 +289,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         var staff = await AddPlayerAsync(1, AccountType.GameMaster);
         await AddPlayerAsync(2, AccountType.Regular);
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", name: "Yew Woods", call: 2, max: 2));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", name: "Yew Woods", call: 2, max: 2));
 
         await TickAsync();
 
@@ -300,26 +300,33 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task TheStaff_HearHowFullTheWorldIs()
     {
         var staff = await AddPlayerAsync(1, AccountType.GameMaster);
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", name: "Yew Woods", call: 1, max: 4), Spawn("glade", max: 4));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", name: "Yew Woods", call: 1, max: 4), Spawn("glade", max: 4));
         await AddLiveAsync("forest");
         await AddLiveAsync("glade");
         await AddLiveAsync("glade");
 
         await TickAsync();
 
-        Assert.Equal((staff, "Spawn: 2 NPCs in 2 regions: Yew Woods 1, glade 1 - world 3/8 (37%)"), Assert.Single(Notices()));
+        Assert.Equal(
+            (staff, "Spawn: 2 NPCs in 2 regions: Yew Woods 1, glade 1 - world 3/8 (37%)"),
+            Assert.Single(Notices())
+        );
     }
 
     [Fact]
     public async Task TheStaff_HearAtMostFiveRegionsByName()
     {
         await AddPlayerAsync(1, AccountType.Administrator);
-        var spawns = Enumerable.Range(1, 7).Select(index => Spawn($"r{index}", name: $"R{index}", call: index == 7 ? 2 : 1, max: 2));
-        await StartAsync(new ScriptedRandom(0), spawns.ToArray());
+        var spawns = Enumerable.Range(1, 7)
+            .Select(index => Spawn($"r{index}", name: $"R{index}", call: index == 7 ? 2 : 1, max: 2));
+        await StartAsync(new ScriptedRangeRandom(0), spawns.ToArray());
 
         await TickAsync();
 
-        Assert.Equal("Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more - world 0/14 (0%)", Assert.Single(Notices()).Text);
+        Assert.Equal(
+            "Spawn: 8 NPCs in 7 regions: R7 2, R1 1, R2 1, R3 1, R4 1 and 2 more - world 0/14 (0%)",
+            Assert.Single(Notices()).Text
+        );
     }
 
     [Fact]
@@ -328,7 +335,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         _movement.SwimZ = (_, _) => -5;
         var ocean = Spawn("ocean", x1: 10, y1: 20, x2: 10, y2: 20);
         ocean.MobileIds = ["dolphin"];
-        await StartAsync(new ScriptedRandom(0), ocean);
+        await StartAsync(new ScriptedRangeRandom(0), ocean);
 
         await TickAsync();
 
@@ -343,7 +350,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         ocean.MobileIds = ["dolphin"];
         // Water only where the picks never land: the area has a spot, so the region keeps trying.
         _movement.SwimZ = (x, y) => x == 12 && y == 12 ? -5 : null;
-        await StartAsync(new ScriptedRandom(0), ocean);
+        await StartAsync(new ScriptedRangeRandom(0), ocean);
 
         await TickAsync();
         Assert.Empty(_npcs.Spawns);
@@ -360,7 +367,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         // Rolls: the first spawn at once, then dolphin (0) with no water in 100 tries, then rabbit (1) on land.
         var mixed = Spawn("coast", call: 2, max: 2, x1: 10, y1: 10, x2: 10, y2: 10);
         mixed.MobileIds = ["dolphin", "rabbit"];
-        await StartAsync(new ScriptedRandom([0, 0, .. Enumerable.Repeat(0, 300), 1]), mixed);
+        await StartAsync(new ScriptedRangeRandom([0, 0, .. Enumerable.Repeat(0, 300), 1]), mixed);
 
         await TickAsync();
 
@@ -375,7 +382,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var pier = Spawn("pier", x1: 10, y1: 10, x2: 10, y2: 10);
         pier.MobileIds = ["dolphin"];
         pier.OnlyOutside = true;
-        await StartAsync(new ScriptedRandom(0), pier);
+        await StartAsync(new ScriptedRangeRandom(0), pier);
 
         await TickAsync();
 
@@ -389,7 +396,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         _movement.SwimZ = (_, _) => -5;
         var shore = Spawn("shore", x1: 10, y1: 20, x2: 10, y2: 20);
         shore.MobileIds = ["walrus"];
-        await StartAsync(new ScriptedRandom(0), shore);
+        await StartAsync(new ScriptedRangeRandom(0), shore);
 
         await TickAsync();
 
@@ -401,7 +408,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         // 120 seconds of the 5 minutes.
         await StartAsync(
-            new ScriptedRandom(120),
+            new ScriptedRangeRandom(120),
             Spawn("forest", name: "Yew Woods", max: 4, minMinutes: 5, maxMinutes: 5, x1: 10, y1: 10, x2: 20, y2: 20),
             Spawn("glade", max: 2, minMinutes: 5, maxMinutes: 5, x1: 15, y1: 15, x2: 30, y2: 30),
             Spawn("elsewhere", x1: 100, y1: 100, x2: 110, y2: 110)
@@ -412,7 +419,10 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var here = await _service.RegionsAtAsync(MapType.Felucca, 16, 16);
 
         Assert.Equal(
-            [new("forest", "Yew Woods", 1, 4, TimeSpan.FromSeconds(90), false), new SpawnRegionStatus("glade", null, 0, 2, TimeSpan.FromSeconds(90), false)],
+            [
+                new("forest", "Yew Woods", 1, 4, TimeSpan.FromSeconds(90), false),
+                new SpawnRegionStatus("glade", null, 0, 2, TimeSpan.FromSeconds(90), false)
+            ],
             here
         );
         Assert.Empty(await _service.RegionsAtAsync(MapType.Trammel, 16, 16));
@@ -423,7 +433,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         // As ModernUO's wild life spawners of Tokuno left in the open sea.
         _movement.SpawnZ = (_, _) => null;
-        await StartAsync(new ScriptedRandom(0), Spawn("sea"));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("sea"));
 
         await TickAsync();
         // The hundred picks, then each of the nine cells of the area.
@@ -444,7 +454,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         _movement.SwimZ = (x, y) => x == 10 && y == 10 ? null : -5;
         var sea = Spawn("sea");
         sea.MobileIds = ["dolphin"];
-        await StartAsync(new ScriptedRandom(0), sea);
+        await StartAsync(new ScriptedRangeRandom(0), sea);
 
         await TickAsync();
 
@@ -456,7 +466,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         var tries = 0;
         _movement.SpawnZ = (_, _) => ++tries > 100 ? 0 : null;
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", minMinutes: 30, maxMinutes: 30));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", minMinutes: 30, maxMinutes: 30));
 
         await TickAsync();
         Assert.True(Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10)).Retrying);
@@ -469,7 +479,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     [Fact]
     public async Task RegionsAtAsync_AnOverdueSpawn_IsDueNow()
     {
-        await StartAsync(new ScriptedRandom(0), Spawn("forest"));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest"));
         _clock.Advance(TimeSpan.FromMinutes(3));
 
         Assert.Equal(TimeSpan.Zero, Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10)).NextSpawnIn);
@@ -479,7 +489,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task StopAsync_CancelsTheSpawnsStillToCome()
     {
         _npcs.Gate = new();
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", call: 3, max: 3));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", call: 3, max: 3));
         await _fixture.Network.ExecuteOnLoopAsync(() => _timers.Fire(TimerId()));
 
         // The spawns run off the loop: stopping before the first one began would cancel all three.
@@ -494,7 +504,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         var broken = Spawn("broken");
         broken.Areas = [];
-        await StartAsync(new ScriptedRandom(0), broken, Spawn("forest", minMinutes: 30, maxMinutes: 30));
+        await StartAsync(new ScriptedRangeRandom(0), broken, Spawn("forest", minMinutes: 30, maxMinutes: 30));
 
         await TickAsync();
         Assert.Single(_npcs.Spawns);
@@ -510,7 +520,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     {
         await AddPlayerAsync(1, AccountType.GameMaster);
         // The notice needs {3}, which is never given.
-        await StartAsync(new ScriptedRandom(0), [(CommandMessages.SpawnedInOneRegion, "{3}")], Spawn("forest"));
+        await StartAsync(new ScriptedRangeRandom(0), [(CommandMessages.SpawnedInOneRegion, "{3}")], Spawn("forest"));
 
         await TickAsync();
 
@@ -521,7 +531,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     [Fact]
     public async Task StopAsync_UnregistersTheTimer()
     {
-        await StartAsync(new ScriptedRandom(0), Spawn("forest"));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest"));
         var timer = TimerId();
 
         await _service.StopAsync();
@@ -529,16 +539,10 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         Assert.Equal([timer], _timers.Unregistered);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _service.StopAsync();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
     public async Task AnItemRegion_SpawnsItsItemOnTheGround_AndNoNpc()
     {
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", x: 30, y: 40));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt", x: 30, y: 40));
 
         await TickAsync();
 
@@ -550,7 +554,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AnItemRegion_MarksItsItemsWithItsId_AndStopsAtItsMax()
     {
         _itemSpawns.Items = _items;
-        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt"));
 
         await TickAsync();
         await TickAsync();
@@ -572,7 +576,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AnItemOfARegionThatDecayed_FreesItsSlot()
     {
         _itemSpawns.Items = _items;
-        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt"));
         await TickAsync();
         await TickAsync();
         Assert.Single(_itemSpawns.Spawns);
@@ -588,16 +592,19 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AnItemOfARegionThatLeftTheGround_FreesItsSlot()
     {
         _itemSpawns.Items = _items;
-        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt"));
         await TickAsync();
         var bag = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
         bag.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0));
 
-        await _fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await _fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 _items.Add([bag]);
-                _items.MoveToContainer(_items.Items.Single(item => item.TemplateId == "treasure_chest"), bag.Id, new Point2D(1, 1));
+                _items.MoveToContainer(
+                    _items.Items.Single(item => item.TemplateId == "treasure_chest"),
+                    bag.Id,
+                    new Point2D(1, 1)
+                );
             }
         );
         await TickAsync();
@@ -609,12 +616,13 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task TheItemsOfARegionAlreadyInTheWorldAtTheStart_AreCounted()
     {
         _itemSpawns.Items = _items;
-        var chest = new ItemEntity { Id = new Serial(0x40000700), TemplateId = "treasure_chest", ItemId = 0x0E41, Amount = 1 };
+        var chest = new ItemEntity
+            { Id = new Serial(0x40000700), TemplateId = "treasure_chest", ItemId = 0x0E41, Amount = 1 };
         chest.PlaceOnGround(MapType.Felucca, new Point3D(10, 10, 0));
         chest.SetProp(SpawnRegionService.RegionProp, "crypt");
         _items.Add([chest]);
         // A second cell is free: only the count keeps a new chest away.
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", x2: 11));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt", x2: 11));
 
         await TickAsync();
 
@@ -642,7 +650,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task ARegionWithMoreItemsThanCells_FillsItsCellsAndKeepsTrying()
     {
         _itemSpawns.Items = _items;
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 2, x: 30, y: 40));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt", max: 2, x: 30, y: 40));
 
         await TickAsync();
         await TickAsync();
@@ -655,7 +663,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AnItemRegion_DoesNotSpawnOnACellWhereTheItemOfAnotherRegionLies()
     {
         _itemSpawns.Items = _items;
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", x: 30, y: 40), Chests("vault", x: 30, y: 40));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt", x: 30, y: 40), Chests("vault", x: 30, y: 40));
 
         await TickAsync();
         await TickAsync();
@@ -671,7 +679,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var carpet = new ItemEntity { Id = new Serial(0x40000701), TemplateId = "decoration", ItemId = 0x0AC6, Amount = 1 };
         carpet.PlaceOnGround(MapType.Felucca, new Point3D(30, 40, 0));
         _items.Add([carpet]);
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", x: 30, y: 40));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt", x: 30, y: 40));
 
         await TickAsync();
 
@@ -684,7 +692,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var barrel = new ItemEntity { Id = new Serial(0x40000701), TemplateId = "decoration", ItemId = 0x0E77, Amount = 1 };
         barrel.PlaceOnGround(MapType.Felucca, new Point3D(10, 10, 0));
         _items.Add([barrel]);
-        await StartAsync(new ScriptedRandom(0), Spawn("forest", x2: 10, y2: 10));
+        await StartAsync(new ScriptedRangeRandom(0), Spawn("forest", x2: 10, y2: 10));
 
         await TickAsync();
 
@@ -695,7 +703,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AnNpcAndAnItemRegion_DoNotCountEachOther()
     {
         _itemSpawns.Items = _items;
-        await StartAsync(new ScriptedRandom(0), Chests("crypt"), Spawn("forest"));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt"), Spawn("forest"));
 
         await TickAsync();
 
@@ -707,7 +715,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AnItemRegion_TellsTheStaffNothing_AndIsNoPartOfTheWorldProgress()
     {
         var staff = await AddPlayerAsync(7, AccountType.GameMaster);
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 3), Spawn("forest", name: "Yew Woods", max: 2));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt", max: 3), Spawn("forest", name: "Yew Woods", max: 2));
 
         await TickAsync();
 
@@ -718,7 +726,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task OnlyItemsSpawned_NoNoticeIsSent()
     {
         await AddPlayerAsync(7, AccountType.GameMaster);
-        await StartAsync(new ScriptedRandom(0), Chests("crypt"));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt"));
 
         await TickAsync();
 
@@ -730,7 +738,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task AnItemThatCannotBeSpawned_LeavesTheOthersToSpawn()
     {
         _itemSpawns.SpawnFailure = new IOException("The database is gone.");
-        await StartAsync(new ScriptedRandom(0), Chests("crypt"), Spawn("forest"));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt"), Spawn("forest"));
 
         await TickAsync();
 
@@ -741,7 +749,7 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     public async Task RegionsAt_CountsTheLiveItemsOfAnItemRegion()
     {
         _itemSpawns.Items = _items;
-        await StartAsync(new ScriptedRandom(0), Chests("crypt", max: 2, x: 30, y: 40));
+        await StartAsync(new ScriptedRangeRandom(0), Chests("crypt", max: 2, x: 30, y: 40));
         await TickAsync();
 
         var status = Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 30, 40));
@@ -796,13 +804,13 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     private async Task StartAsync(System.Random random, (int Id, string Text)[] messages, params SpawnTemplate[] spawns)
     {
         var data = new StubDataLoaderService()
-                   .With(spawns)
-                   .With(new NpcListTemplate { Id = "unused" })
-                   .With(
-                       new MobileTemplate { Id = "rabbit", Body = 205 },
-                       new MobileTemplate { Id = "dolphin", Body = 151, Movement = MobileMovementType.Water },
-                       new MobileTemplate { Id = "walrus", Body = 221, Movement = MobileMovementType.Both }
-                   );
+            .With(spawns)
+            .With(new NpcListTemplate { Id = "unused" })
+            .With(
+                new MobileTemplate { Id = "rabbit", Body = 205 },
+                new MobileTemplate { Id = "dolphin", Body = 151, Movement = MobileMovementType.Water },
+                new MobileTemplate { Id = "walrus", Body = 221, Movement = MobileMovementType.Both }
+            );
         (int Id, string Text)[] defaults =
         [
             (CommandMessages.SpawnedInOneRegion, "Spawn: {0} ({1}): {2} NPCs"),
@@ -848,7 +856,8 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
 
     private async Task<MobileEntity> AddLiveAsync(string region)
     {
-        var npc = new MobileEntity { Id = new Serial(_nextSerial++), Name = "Rabbit", TemplateId = "rabbit", Map = MapType.Felucca };
+        var npc = new MobileEntity
+            { Id = new Serial(_nextSerial++), Name = "Rabbit", TemplateId = "rabbit", Map = MapType.Felucca };
         npc.SetProp(SpawnRegionService.RegionProp, region);
         await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(npc));
 
@@ -866,9 +875,15 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
     private List<(long Session, string Text)> Notices()
     {
         return _fixture.Sender.Sent
-                       .Select((packet, index) => (packet, index))
-                       .Where(pair => pair.packet is UnicodeSpeechMessagePacket)
-                       .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((UnicodeSpeechMessagePacket)pair.packet).Text))
-                       .ToList();
+            .Select((packet, index) => (packet, index))
+            .Where(pair => pair.packet is UnicodeSpeechMessagePacket)
+            .Select(pair => (_fixture.Sender.SentSessionIds[pair.index], ((UnicodeSpeechMessagePacket)pair.packet).Text))
+            .ToList();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _service.StopAsync();
+        await _fixture.DisposeAsync();
     }
 }

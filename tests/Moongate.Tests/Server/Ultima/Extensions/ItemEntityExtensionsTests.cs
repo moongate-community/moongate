@@ -21,9 +21,9 @@ public sealed class ItemEntityExtensionsTests
     );
 
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                  .Item(0x0EED, TileFlagType.Generic, 0, name: "gold coin%s%")
-                                                  .Item(0x103B, TileFlagType.None, 0, name: "loa%ves/f% of bread")
-                                                  .Item(0x13B9, TileFlagType.Wearable, 0, name: "longsword");
+        .Item(0x0EED, TileFlagType.Generic, 0, name: "gold coin%s%")
+        .Item(0x103B, TileFlagType.None, 0, name: "loa%ves/f% of bread")
+        .Item(0x13B9, TileFlagType.Wearable, 0, name: "longsword");
 
     [Fact]
     public void DisplayName_OwnName_Wins()

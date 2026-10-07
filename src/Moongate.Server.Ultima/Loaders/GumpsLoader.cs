@@ -77,6 +77,32 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
         return Task.FromResult(new DataLoaderResult<GumpTemplate> { Entities = gumps });
     }
 
+    /// <summary>
+    ///     Checks a gump made at runtime, such as one built from Lua or with its slots filled, as a file is checked:
+    ///     against the schema, the rules the schema cannot say, and the gumps its <c>open</c> buttons name.
+    /// </summary>
+    /// <exception cref="InvalidDataException">
+    ///     The gump breaks a rule; the message says which.
+    /// </exception>
+    public static void Validate(string source, XElement root, Func<string, bool> gumpExists)
+    {
+        var document = new XDocument(new XElement(root));
+        document.Validate(
+            Schema.Value,
+            (_, args) => throw new InvalidDataException($"{source}: {args.Message}"),
+            false
+        );
+        CheckRules(source, root);
+
+        foreach (var button in root.Descendants("button"))
+        {
+            if (button.Attribute("open")?.Value is { } target && !gumpExists(target))
+            {
+                throw new InvalidDataException($"{source}: a button opens gump '{target}', which does not exist.");
+            }
+        }
+    }
+
     private static GumpTemplate Load(string path)
     {
         var settings = new XmlReaderSettings
@@ -104,7 +130,7 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
             throw new InvalidDataException($"{path}: line {exception.LineNumber}: {exception.Message}", exception);
         }
 
-        var root = document.Root!;
+        var root = document.Root ?? throw new InvalidDataException($"{path}: the gump has no root element.");
         CheckRules(path, root);
 
         foreach (var button in root.Descendants("button"))
@@ -117,31 +143,9 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
             }
         }
 
-        return new() { Id = (string)root.Attribute("id")!, File = path, Root = root };
-    }
+        var id = (string?)root.Attribute("id") ?? throw new InvalidDataException($"{path}: the gump has no id.");
 
-    /// <summary>
-    ///     Checks a gump made at runtime, such as one built from Lua or with its slots filled, as a file is checked:
-    ///     against the schema, the rules the schema cannot say, and the gumps its <c>open</c> buttons name.
-    /// </summary>
-    /// <exception cref="InvalidDataException">The gump breaks a rule; the message says which.</exception>
-    public static void Validate(string source, XElement root, Func<string, bool> gumpExists)
-    {
-        var document = new XDocument(new XElement(root));
-        document.Validate(
-            Schema.Value,
-            (_, args) => throw new InvalidDataException($"{source}: {args.Message}"),
-            false
-        );
-        CheckRules(source, root);
-
-        foreach (var button in root.Descendants("button"))
-        {
-            if (button.Attribute("open")?.Value is { } target && !gumpExists(target))
-            {
-                throw new InvalidDataException($"{source}: a button opens gump '{target}', which does not exist.");
-            }
-        }
+        return new() { Id = id, File = path, Root = root };
     }
 
     private static void CheckRules(string path, XElement root)
@@ -167,7 +171,8 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
     {
         string? reason = element.Name.LocalName switch
         {
-            "button" when new[] { "on_click", "id", "page", "open" }.Count(name => element.Attribute(name) is not null) != 1 =>
+            "button" when new[] { "on_click", "id", "page", "open" }.Count(name => element.Attribute(name) is not null) !=
+                          1 =>
                 "a button needs exactly one of on_click, id, page or open",
             "html" when element.Attribute("cliloc") is not null && element.Attribute("message") is not null =>
                 "an html takes a cliloc or message, not both",
@@ -224,7 +229,8 @@ public sealed class GumpsLoader : IDataLoader<GumpTemplate>
 
     private static XmlSchemaSet LoadSchema()
     {
-        using var stream = typeof(GumpsLoader).Assembly.GetManifestResourceStream(SchemaResource)!;
+        using var stream = typeof(GumpsLoader).Assembly.GetManifestResourceStream(SchemaResource) ??
+                           throw new InvalidOperationException($"Missing embedded resource {SchemaResource}.");
         var schemas = new XmlSchemaSet();
         schemas.Add(null, XmlReader.Create(stream));
         schemas.Compile();

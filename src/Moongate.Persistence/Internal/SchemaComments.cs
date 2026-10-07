@@ -18,7 +18,8 @@ internal static class SchemaComments
     }
 
     /// <summary>
-    ///     Gets whether <paramref name="tokens" /> remove a comment (<c>IS NULL</c> or <c>IS ''</c>): what a model without
+    ///     Gets whether <paramref name="tokens" /> remove a comment ( <c>IS NULL</c> or <c>IS ''</c>): what a model
+    ///     without
     ///     its XML docs asks for, never a change to keep.
     /// </summary>
     public static bool IsRemoval(IReadOnlyList<string> tokens)

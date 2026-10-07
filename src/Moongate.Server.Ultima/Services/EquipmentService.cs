@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -17,8 +18,13 @@ public sealed class EquipmentService : IEquipmentService
     private readonly ITileDataService _tiles;
     private readonly IItemService _items;
 
-    public EquipmentService(IItemTemplateService templates, ITileDataService tiles, IItemService items)
+    private readonly IInventoryMutationGuard? _inventory;
+
+    public EquipmentService(
+        IItemTemplateService templates, ITileDataService tiles, IItemService items, IInventoryMutationGuard? inventory = null
+    )
     {
+        _inventory = inventory;
         _templates = templates;
         _tiles = tiles;
         _items = items;
@@ -49,6 +55,11 @@ public sealed class EquipmentService : IEquipmentService
 
     public bool CanWear(Serial mobile, ItemEntity item, LayerType layer)
     {
+        if (_inventory?.Allows(item, mobile) == false)
+        {
+            return false;
+        }
+
         if (!IsWornFromThePaperdoll(layer))
         {
             return false;

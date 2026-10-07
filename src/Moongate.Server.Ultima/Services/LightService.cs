@@ -14,7 +14,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     ModernUO's light cycle: one repeating <c>light_cycle</c> timer every 5 seconds sends each player in the world the
+///     ModernUO's light cycle: one repeating <c>light_cycle</c> timer every 5 seconds sends each player in the world
+///     the
 ///     light of its time of day when it differs from the last one sent.
 /// </summary>
 public sealed class LightService : ILightService
@@ -31,7 +32,9 @@ public sealed class LightService : ILightService
     private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(5);
 
     private readonly ILogger _logger = Log.ForContext<LightService>();
-    private static readonly HashSet<string> LampPostKinds = new(StringComparer.Ordinal) { "LampPost1", "LampPost2", "LampPost3" };
+
+    private static readonly HashSet<string> LampPostKinds = new(StringComparer.Ordinal)
+        { "LampPost1", "LampPost2", "LampPost3" };
 
     private readonly ConcurrentDictionary<Serial, int> _sent = new();
     private readonly Dictionary<Serial, bool> _lampPosts = [];
@@ -70,11 +73,11 @@ public sealed class LightService : ILightService
     {
         _items = items;
         _itemScripts = itemScripts;
-        _regionsByName = new(
-            () => data.GetEntities<RegionContent>()
-                      .Where(region => region.Name is not null)
-                      .GroupBy(region => (region.Map, region.Name!))
-                      .ToDictionary(group => group.Key, group => group.First())
+        // Safe: the Where keeps only regions with a name.
+        _regionsByName = new(() => data.GetEntities<RegionContent>()
+            .Where(region => region.Name is not null)
+            .GroupBy(region => (region.Map, region.Name!))
+            .ToDictionary(group => group.Key, group => group.First())
         );
         _clock = clock;
         _sessions = sessions;
@@ -122,22 +125,6 @@ public sealed class LightService : ILightService
         return ClockLevel(mobile.Map, mobile.Location.X);
     }
 
-    private int ClockLevel(MapType map, int x)
-    {
-        var time = _clock.GetTime(map, x);
-        var day = _world.DayLight;
-        var night = _world.NightLight;
-
-        // ModernUO's bands: two hours of fade on each side of the night.
-        return time.Hours switch
-        {
-            < 4 => night,
-            < 6 => night + ((time.Hours - 4) * 60 + time.Minutes) * (day - night) / 120,
-            < 22 => day,
-            _ => day + ((time.Hours - 22) * 60 + time.Minutes) * (night - day) / 120
-        };
-    }
-
     public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)
     {
         _regions[player.Id] = current;
@@ -175,18 +162,34 @@ public sealed class LightService : ILightService
         return level;
     }
 
+    public void SetOverride(int? level)
+    {
+        _override = level ?? NoOverride;
+        Send();
+        CheckLampPosts();
+    }
+
     public async Task SetOverrideAsync(int? level, CancellationToken cancellationToken = default)
     {
-        var work = new LoopActionWorkItem(
-            () =>
-            {
-                _override = level ?? NoOverride;
-                Send();
-                CheckLampPosts();
-            }
-        );
+        var work = new LoopActionWorkItem(() => SetOverride(level));
         await _loop.PostAsync(work, cancellationToken);
         await work.Completion;
+    }
+
+    private int ClockLevel(MapType map, int x)
+    {
+        var time = _clock.GetTime(map, x);
+        var day = _world.DayLight;
+        var night = _world.NightLight;
+
+        // ModernUO's bands: two hours of fade on each side of the night.
+        return time.Hours switch
+        {
+            < 4  => night,
+            < 6  => night + ((time.Hours - 4) * 60 + time.Minutes) * (day - night) / 120,
+            < 22 => day,
+            _    => day + ((time.Hours - 22) * 60 + time.Minutes) * (night - day) / 120
+        };
     }
 
     // A plain region inside a dungeon or a jail, such as the lairs of the Abyss, is lit as its parent, as ModernUO's

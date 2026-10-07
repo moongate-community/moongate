@@ -5,6 +5,26 @@ namespace Moongate.Tests.TestSupport.Realms;
 
 internal sealed class RecordingGameHandoffStore : IGameHandoffStore
 {
+
+    public ValueTask<PendingHandoff?> RedeemAsync(
+        string realmId,
+        Guid instanceId,
+        uint authKey,
+        string username,
+        string password,
+        CancellationToken token = default
+    )
+    {
+        throw new NotSupportedException();
+    }
+
+    public ValueTask RevokeAsync(string realmId, uint authKey, CancellationToken token = default)
+    {
+        _revoked.Add((realmId, authKey));
+
+        return ValueTask.CompletedTask;
+    }
+
     private readonly List<(string RealmId, uint AuthKey)> _revoked = [];
 
     public IReadOnlyList<(string RealmId, uint AuthKey)> Revoked => _revoked;
@@ -40,24 +60,5 @@ internal sealed class RecordingGameHandoffStore : IGameHandoffStore
         }
 
         return NextAuthKey;
-    }
-
-    public ValueTask<PendingHandoff?> RedeemAsync(
-        string realmId,
-        Guid instanceId,
-        uint authKey,
-        string username,
-        string password,
-        CancellationToken token = default
-    )
-    {
-        throw new NotSupportedException();
-    }
-
-    public ValueTask RevokeAsync(string realmId, uint authKey, CancellationToken token = default)
-    {
-        _revoked.Add((realmId, authKey));
-
-        return ValueTask.CompletedTask;
     }
 }

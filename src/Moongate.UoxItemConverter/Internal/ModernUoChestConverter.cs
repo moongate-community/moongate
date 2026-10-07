@@ -7,7 +7,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts the treasure chests of ModernUO's spawners (<c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>,
+///     Converts the treasure chests of ModernUO's spawners (
+///     <c>Distribution/Data/Spawns/&lt;era&gt;/&lt;map&gt;/*.json</c>,
 ///     the entries named <c>TreasureChestLevel1</c> to <c>4</c>) into spawn regions of items, one per spawner
 ///     with chests, and
 ///     writes them as <c>&lt;map&gt;/treasure_chests.toml</c>, replacing that of a previous run. The creatures of the
@@ -80,6 +81,7 @@ internal static class ModernUoChestConverter
         foreach (var (mapName, spawns) in byMap)
         {
             var path = Path.Combine(destination, mapName, FileName);
+            // Safe: GetDirectoryName is null only for a root or empty path, not a file combined under a folder.
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             TomlUtils.SerializeToFile(new SpawnTemplateFile { Spawn = spawns }, path);
             output.WriteLine($"spawns/{mapName}/{FileName} ({spawns.Count} chest region(s))");

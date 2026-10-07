@@ -10,7 +10,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     Puts an item made from an item template on the ground where the game master targets: <c>add &lt;template&gt;</c>.
+///     Puts an item made from an item template on the ground where the game master targets:
+///     <c>add &lt;template&gt;</c>.
 ///     A container comes with the gold and the loot of its template, as one a spawn region makes.
 /// </summary>
 public sealed class AddCommand : ICommandExecutor
@@ -54,7 +55,9 @@ public sealed class AddCommand : ICommandExecutor
 
         if (!_templates.TryGet(templateId, out _))
         {
-            context.PrintError(_localization.Text(CommandMessages.UnknownItemTemplate, "Unknown item template: {0}", templateId));
+            context.PrintError(
+                _localization.Text(CommandMessages.UnknownItemTemplate, "Unknown item template: {0}", templateId)
+            );
 
             return;
         }
@@ -75,7 +78,12 @@ public sealed class AddCommand : ICommandExecutor
 
         try
         {
-            var item = await _spawns.SpawnAsync(templateId, target.Map, target.Location, cancellationToken: context.CancellationToken);
+            var item = await _spawns.SpawnAsync(
+                templateId,
+                target.Map,
+                target.Location,
+                cancellationToken: context.CancellationToken
+            );
             var spot = item.GroundLocation ?? target.Location;
             context.Print(
                 _localization.Text(
@@ -94,7 +102,9 @@ public sealed class AddCommand : ICommandExecutor
         {
             // The exception is English and technical: the GM gets the reason from the log.
             _logger.Error(exception, "Adding {Template} failed", templateId);
-            context.PrintError(_localization.Text(CommandMessages.AddFailed, "The item could not be added. Check the server logs."));
+            context.PrintError(
+                _localization.Text(CommandMessages.AddFailed, "The item could not be added. Check the server logs.")
+            );
         }
     }
 }

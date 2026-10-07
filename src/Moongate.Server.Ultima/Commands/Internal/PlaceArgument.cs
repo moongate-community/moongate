@@ -6,8 +6,9 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Commands.Internal;
 
 /// <summary>
-///     Reads the place a command is given, as <c>go</c> and <c>moongate</c> take it: <c>&lt;x&gt;,&lt;y&gt;,&lt;z&gt;</c>
-///     then at most the name of a map. The numbers may be split by commas or by spaces.
+///     Reads the place a command is given, as <c>go</c> and <c>moongate</c> take it:
+///     <c>&lt;x&gt;,&lt;y&gt;,&lt;z&gt;</c> then at most the name of a map. The numbers may be split by commas or by
+///     spaces.
 /// </summary>
 internal static class PlaceArgument
 {

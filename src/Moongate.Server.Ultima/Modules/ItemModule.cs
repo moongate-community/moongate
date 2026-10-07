@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using System.Diagnostics.CodeAnalysis;
 using Lua;
 using Moongate.Core.Geometry;
@@ -8,6 +9,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Data.Items;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -23,8 +25,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Modules;
 
 /// <summary>
-///     The <c>item</c> Lua module: an item script reads and changes its item by serial, as
-///     <c>item.consume(serial)</c>. A serial that is not a live item gives <c>false</c> or <c>nil</c>, never an error.
+///     The <c>item</c> Lua module: an item script reads and changes its item by serial, as <c>item.consume(serial)</c>.
+///     A serial that is not a live item gives <c>false</c> or <c>nil</c>, never an error.
 ///     Worn items cannot be consumed or deleted yet, nor an item a player holds on the cursor, nor a container that
 ///     still holds items.
 /// </summary>
@@ -45,7 +47,7 @@ public sealed class ItemModule
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly ISectorService _sectors;
-    private readonly IItemFactoryService? _factory;
+    private readonly IItemHandlingService _handling;
     private readonly IItemSerialPool? _serials;
     private readonly IContainerLayoutService? _layouts;
     private readonly ITileDataService? _tiles;
@@ -53,6 +55,8 @@ public sealed class ItemModule
     private readonly ILootService? _loot;
     private readonly IEquipmentService? _equipment;
     private readonly IItemTimerService? _timers;
+
+    private readonly IInventoryMutationGuard? _inventory;
 
     public ItemModule(
         IItemService items,
@@ -63,21 +67,23 @@ public sealed class ItemModule
         IMobileService mobiles,
         ISpeechService speech,
         ISectorService sectors,
-        IItemFactoryService? factory = null,
+        IItemHandlingService handling,
         IItemSerialPool? serials = null,
         IContainerLayoutService? layouts = null,
         ITileDataService? tiles = null,
         IItemTemplateService? templates = null,
         ILootService? loot = null,
         IEquipmentService? equipment = null,
-        IItemTimerService? timers = null
+        IItemTimerService? timers = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _timers = timers;
         _equipment = equipment;
         _loot = loot;
         _templates = templates;
-        _factory = factory;
+        _handling = handling;
         _serials = serials;
         _layouts = layouts;
         _tiles = tiles;
@@ -95,31 +101,29 @@ public sealed class ItemModule
     ///     Makes a new item from a template and puts it in the backpack of <paramref name="mobile" />;
     ///     <c>item.give(user, "gold", 100)</c>. The owner sees it at once and its next save keeps it.
     /// </summary>
-    [ScriptFunction(helpText: "Makes an item from a template in the mobile's backpack and gives its serial; nil for an unknown mobile or template, a mobile without a backpack or an amount the template cannot have.")]
+    [ScriptFunction(
+        helpText:
+        "Makes an item from a template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. Nil for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack), or when no serial is ready: the server keeps 64 in reserve and refills them in the background, so making more in one go gives nil for the rest; try again later."
+    )]
     public long? Give(long mobile, string template, int? amount = null)
     {
-        if (mobile is <= 0 or > uint.MaxValue ||
-            !_mobiles.TryGet(new Serial((uint)mobile), out var owner) ||
-            _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
-            Make(template, amount) is not { } item)
-        {
-            return null;
-        }
-
-        var position = _layouts?.RandomGridPosition(backpack.ItemId) ?? new Point2D(44, 65);
-        item.PutInContainer(backpack.Id, position, ContainerSlotUtils.FirstFree(_items.GetContents(backpack.Id)));
-        _items.Add([item]);
-        Refresh(item);
-
-        return item.Id.Value;
+        return mobile is > 0 and <= uint.MaxValue &&
+               _mobiles.TryGet(new Serial((uint)mobile), out var owner) &&
+               _handling.Give(owner, template, amount) is { } item
+            ? item.Id.Value
+            : null;
     }
 
     /// <summary>
-    ///     Rolls a loot table of <c>templates/loots</c> once, or <paramref name="rolls" /> times, and puts what it gives
+    ///     Rolls a loot table of <c>templates/loots</c> once, or <paramref name="rolls" /> times, and puts what it
+    ///     gives
     ///     into a container, or into the backpack of a mobile; <c>item.add_loot(chest, "fillable_baker")</c>,
     ///     <c>item.add_loot(chest, "fillable_baker", 4)</c>. A roll may give nothing.
     /// </summary>
-    [ScriptFunction(helpText: "Rolls a loot table once, or rolls times, into a container, or into the backpack of a mobile, and gives how many items it added; 0 for rolls that give nothing, an unknown table or something that is no container.")]
+    [ScriptFunction(
+        helpText:
+        "Rolls a loot table of templates/loots once, or rolls times, into a container, or into the backpack of a mobile, and gives how many items it added; 0 for rolls that give nothing, an unknown table or something that is no container; fewer than the roll gave when the container is full (125 items) or no item serial is at hand."
+    )]
     public int AddLoot(long container, string table, int rolls = 1)
     {
         if (_loot is null ||
@@ -128,6 +132,11 @@ public sealed class ItemModule
             string.IsNullOrWhiteSpace(table) ||
             !_loot.TryGet(table, out _) ||
             TargetContainer(container) is not { } target)
+        {
+            return 0;
+        }
+
+        if (_inventory?.Allows(target) == false)
         {
             return 0;
         }
@@ -165,13 +174,18 @@ public sealed class ItemModule
     }
 
     /// <summary>
-    ///     Makes a new item from a template on the ground; <c>item.create("gold", MapType.Trammel, 1500, 1600, 10, 50)</c>.
+    ///     Makes a new item from a template on the ground;
+    ///     <c>item.create("gold", MapType.Trammel, 1500, 1600, 10, 50)</c>.
     ///     The players around see it and the world save keeps it.
     /// </summary>
-    [ScriptFunction(helpText: "Makes an item from a template on the ground at x, y, z of the map and gives its serial; nil for an unknown template, a spot outside the map, a z outside -128 to 127 or an amount the template cannot have.")]
+    [ScriptFunction(
+        helpText:
+        "Makes an item from a template on the ground at x, y, z of the map, seen by the players around, and gives its serial; nil for an unknown template, a spot outside the map, a z outside -128 to 127, an amount the template cannot have, or when no serial is ready, as item.give."
+    )]
     public long? Create(string template, MapType map, int x, int y, int z, int? amount = null)
     {
-        if (z is < sbyte.MinValue or > sbyte.MaxValue || !_sectors.IsInside(map, x, y) || Make(template, amount) is not { } item)
+        if (z is < sbyte.MinValue or > sbyte.MaxValue || !_sectors.IsInside(map, x, y) ||
+            Make(template, amount) is not { } item)
         {
             return null;
         }
@@ -190,6 +204,32 @@ public sealed class ItemModule
     public string? Template(long serial)
     {
         return TryGetItem(serial, out var item) ? item.TemplateId : null;
+    }
+
+    /// <summary>
+    ///     Gets the script of the item's template; <c>item.script(serial) == "dye_tub"</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The script_id of the item's template, such as 'door' or 'dye_tub'; nil for an item whose template has no script, or an unknown item."
+    )]
+    public string? Script(long serial)
+    {
+        return TryGetTemplate(serial, out var template) && !string.IsNullOrEmpty(template.ScriptId)
+            ? template.ScriptId
+            : null;
+    }
+
+    /// <summary>
+    ///     Gets whether a dye tub can give the item its hue; <c>item.dyeable(serial)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the item's template is dyeable, as clothing is: a dye tub can give it its hue; false for an unknown item."
+    )]
+    public bool Dyeable(long serial)
+    {
+        return TryGetTemplate(serial, out var template) && template.Dyeable == true;
     }
 
     /// <summary>
@@ -222,57 +262,24 @@ public sealed class ItemModule
     /// <summary>
     ///     Takes <paramref name="amount" /> units off the item, deleting it at 0; <c>item.consume(serial, 1)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Takes amount units (default 1) off the item, deleting it at 0; false when fewer are left or a player holds it.")]
+    [ScriptFunction(
+        helpText:
+        "Takes amount units (default 1) off the item, deleting it at 0, and shows the change to the owner or the players around a ground stack; false for a worn item, an amount below 1, fewer units left or an item a player holds on the cursor."
+    )]
     public bool Consume(long serial, int amount = 1)
     {
-        if (amount < 1 || !TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item) || item.Amount < amount)
-        {
-            return false;
-        }
-
-        if (item.Amount == amount)
-        {
-            return Delete(serial);
-        }
-
-        item.Amount -= amount;
-        Refresh(item);
-
-        return true;
+        return TryGetItem(serial, out var item) && _handling.Consume(item, amount);
     }
 
     /// <summary>
-    ///     Deletes the item; <c>item.delete(serial)</c>. A carried item's row is deleted by its owner's next save, a ground
+    ///     Deletes the item; <c>item.delete(serial)</c>. A carried item's row is deleted by its owner's next save, a
+    ///     ground
     ///     item's by the world save.
     /// </summary>
     [ScriptFunction(helpText: "Deletes the item; false for a worn item, a held item or a container that still holds items.")]
     public bool Delete(long serial)
     {
-        if (!TryGetItem(serial, out var item) ||
-            item.MobileId is not null ||
-            IsHeld(item) ||
-            _items.GetContents(item.Id).Count > 0)
-        {
-            return false;
-        }
-
-        if (item.GroundLocation is not null)
-        {
-            _view.ItemDisappeared(item);
-            _items.Absorb(item);
-
-            return true;
-        }
-
-        if (OwnerSession(item) is { } session)
-        {
-            _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
-        }
-
-        // Its owner's next save deletes the row, or the world save for an item nobody carries.
-        _items.Absorb(item);
-
-        return true;
+        return TryGetItem(serial, out var item) && _handling.Delete(item);
     }
 
     /// <summary>
@@ -280,7 +287,10 @@ public sealed class ItemModule
     ///     the language of that client; <c>item.message_cliloc(serial, player, 1042958, "3:05")</c>. The arguments fill
     ///     the <c>~1_NAME~</c> places of the text, split by tabs.
     /// </summary>
-    [ScriptFunction(helpText: "A label over the item seen only by that player, with a text of the client by its number, in the client's language; args fill its ~1_NAME~ places, split by tabs. False when the player or the item is not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "A label over the item seen only by that player, with a text of the client by its number, in the client's language; args fill its ~1_NAME~ places, split by tabs. False when the player or the item is not in the world."
+    )]
     public bool MessageCliloc(long serial, long player, int cliloc, string? args = null)
     {
         if (cliloc <= 0 ||
@@ -298,7 +308,10 @@ public sealed class ItemModule
     ///     Shows <paramref name="text" /> as a label over the item to <paramref name="player" /> only;
     ///     <c>item.message(serial, player, "You drink the potion.")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "A label over the item seen only by that player; false when the player is not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "A label over the item seen only by that player (cut to 128 characters); false for blank text, an unknown item or a player not in the world."
+    )]
     public bool Message(long serial, long player, string text)
     {
         if (string.IsNullOrWhiteSpace(text) ||
@@ -330,16 +343,26 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "A value the item keeps across restarts: a string, a number or a bool; nil when it has none.")]
     public object? GetProp(long serial, string key)
     {
-        return TryGetItem(serial, out var item) && item.Props is { } props && props.TryGetValue(key, out var value) ? value : null;
+        return TryGetItem(serial, out var item) && item.Props is { } props && props.TryGetValue(key, out var value)
+            ? value
+            : null;
     }
 
     /// <summary>
     ///     Keeps <paramref name="value" /> as the prop <paramref name="key" /> of the item, saved with it by the world save,
     ///     or removes it for <c>nil</c>; <c>item.set_prop(serial, "vega.greeted", 3)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Keeps a string, a number or a bool on the item across restarts, nil removes it; false for a table, a function or a blank key.")]
+    [ScriptFunction(
+        helpText:
+        "Keeps a string, a number or a bool on the item across restarts, saved by the world save or its owner's save; nil removes it. False for a table, a function, a blank key or a timer.<name> key, which the item's timers use."
+    )]
     public bool SetProp(long serial, string key, object? value = null)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
         // The timer props are the item's timers: only item.start_timer and item.stop_timer write them.
         if (string.IsNullOrWhiteSpace(key) ||
             key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal) ||
@@ -366,12 +389,20 @@ public sealed class ItemModule
     }
 
     /// <summary>
-    ///     Gives the item a name of its own, or with nil takes it back to its template's; <c>item.set_name(serial, "a
-    ///     rusty key")</c>. The players who see the item see the new name.
+    ///     Gives the item a name of its own, or with nil takes it back to its template's;
+    ///     <c>item.set_name(serial, "a rusty key")</c>. The players who see the item see the new name.
     /// </summary>
-    [ScriptFunction(helpText: "Sets the item's own name (cut to 128 characters), nil gives it back its template's; false for a worn or held item.")]
+    [ScriptFunction(
+        helpText:
+        "Sets the item's own name (cut to 128 characters), nil gives it back its template's, shown to the players who see it; false for a worn or held item."
+    )]
     public bool SetName(long serial, string? name = null)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
         if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
         {
             return false;
@@ -396,10 +427,18 @@ public sealed class ItemModule
     /// <summary>
     ///     Changes the item's hue; <c>item.set_hue(serial, 0x0026)</c>. The players who see the item see it change.
     /// </summary>
-    [ScriptFunction(helpText: "Changes the item's hue (0 to 65535), shown to the players who see it; false for a worn or held item.")]
+    [ScriptFunction(
+        helpText: "Changes the item's hue (0 to 65535), shown to the players who see it; false for a worn or held item."
+    )]
     public bool SetHue(long serial, int hue)
     {
-        if (hue is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
+        if (hue is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item) || item.MobileId is not null ||
+            IsHeld(item))
         {
             return false;
         }
@@ -414,9 +453,17 @@ public sealed class ItemModule
     ///     Sets how many units the stack holds; <c>item.set_amount(serial, 20)</c>. To take units off and delete the
     ///     stack at 0, use <c>item.consume</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Sets the stack's amount (1 to 60000); false for an item that does not stack, a worn or held item or an amount out of range.")]
+    [ScriptFunction(
+        helpText:
+        "Sets the stack's amount (1 to 60000), shown to the players who see it; false for a worn or held item, an amount out of range, or an amount above 1 on an item that does not stack, as its template or its graphic says."
+    )]
     public bool SetAmount(long serial, int amount)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
         if (amount is < 1 or > MaximumAmount ||
             !TryGetItem(serial, out var item) ||
             item.MobileId is not null ||
@@ -435,17 +482,23 @@ public sealed class ItemModule
     /// <summary>
     ///     Gets the container the item lies in; <c>item.container(serial)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serial of the container the item lies in; nil for an item on the ground, a worn one or an unknown one.")]
+    [ScriptFunction(
+        helpText:
+        "The serial of the container the item lies in; nil for an item on the ground, a worn one or an unknown one."
+    )]
     public long? Container(long serial)
     {
         return TryGetItem(serial, out var item) && item.ContainerId is { } container ? container.Value : null;
     }
 
     /// <summary>
-    ///     Gets the items lying directly in a container as a list of serials; <c>for _, inside in
-    ///     ipairs(item.contents(bag)) do ... end</c>.
+    ///     Gets the items lying directly in a container as a list of serials;
+    ///     <c>for _, inside in ipairs(item.contents(bag)) do ... end</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the items lying directly in the container, as a list; empty for an empty or unknown container.")]
+    [ScriptFunction(
+        helpText:
+        "The serials of the items lying directly in the container, as a list; empty for an empty or unknown container."
+    )]
     public LuaTable Contents(long serial)
     {
         var table = new LuaTable();
@@ -467,10 +520,19 @@ public sealed class ItemModule
     ///     Moves the item into a container, or into the backpack of a mobile; <c>item.move_into(serial, bag)</c>,
     ///     <c>item.move_into(serial, user)</c>. Those who saw it where it was lose it and the new owner sees it.
     /// </summary>
-    [ScriptFunction(helpText: "Moves the item into a container, or into a mobile's backpack; false for a worn or held item, a target that is not a container, a container put into itself or into what it holds, or an item one mobile carries moved to another mobile.")]
+    [ScriptFunction(
+        helpText:
+        "Moves the item into a container, or into a mobile's backpack; those who saw it lose it and the new owner sees it. No weight or item limit is checked. False for a worn or held item, a target that is not a container, a container put into itself or into what it holds, or an item one mobile carries moved to another mobile (a trade, not supported yet)."
+    )]
     public bool MoveInto(long serial, long container)
     {
-        if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item) || TargetContainer(container) is not { } target)
+        if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item) ||
+            TargetContainer(container) is not { } target)
+        {
+            return false;
+        }
+
+        if (_inventory?.Allows(item, target.Id) == false)
         {
             return false;
         }
@@ -517,13 +579,22 @@ public sealed class ItemModule
     }
 
     /// <summary>
-    ///     Puts the item on a mobile, on the layer its template gives it; <c>item.equip(serial, user)</c>. The layer must
+    ///     Puts the item on a mobile, on the layer its template gives it; <c>item.equip(serial, user)</c>. The layer
+    ///     must
     ///     be free. Those who saw the item where it was lose it and everyone around sees it worn; its script's
     ///     <c>can_equip</c> is not asked.
     /// </summary>
-    [ScriptFunction(helpText: "Puts the item on the mobile, on its template's layer; false for a worn or held item, a stack, an item without a layer or one the mobile cannot wear, a taken layer, a mobile not in the world, or an item another mobile carries.")]
+    [ScriptFunction(
+        helpText:
+        "Puts the item on the mobile, on its template's layer, seen by everyone around; its script runs on_equip, its can_equip is not asked. False for a worn or held item, a stack, an item without a layer or one the mobile cannot wear, a taken layer, a mobile not in the world, or an item another mobile carries."
+    )]
     public bool Equip(long serial, long mobile)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded, new Serial((uint)mobile)) == false)
+        {
+            return false;
+        }
+
         if (_equipment is null ||
             !TryGetItem(serial, out var item) ||
             item.MobileId is not null ||
@@ -563,7 +634,10 @@ public sealed class ItemModule
     ///     Gets the items of a template inside a container, at any depth, or among everything a mobile wears and
     ///     carries; <c>for _, coins in ipairs(item.find(user, "gold")) do ... end</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the items of a template inside a container, at any depth, or worn and carried by a mobile, as a list; empty when there is none, or for an unknown container or mobile.")]
+    [ScriptFunction(
+        helpText:
+        "The serials of the items of a template inside a container, at any depth, or worn and carried by a mobile (not what lies in its bank), as a list; empty when there is none, or for an unknown container or mobile."
+    )]
     public LuaTable Find(long holder, string template)
     {
         var table = new LuaTable();
@@ -578,8 +652,8 @@ public sealed class ItemModule
 
         // On a mobile, what lies in the bank is not carried, as world.carries.
         var held = serial.IsItem
-                       ? Inside(serial)
-                       : _items.GetOwnedBy(serial).Where(item => _items.GetWornRoot(item)?.Layer != LayerType.Bank);
+            ? Inside(serial)
+            : _items.GetOwnedBy(serial).Where(item => _items.GetWornRoot(item)?.Layer != LayerType.Bank);
 
         foreach (var inside in held)
         {
@@ -593,13 +667,22 @@ public sealed class ItemModule
     }
 
     /// <summary>
-    ///     Starts a timer the item keeps, or starts it again from now; <c>item.start_timer(serial, "close", 20)</c>. When
+    ///     Starts a timer the item keeps, or starts it again from now; <c>item.start_timer(serial, "close", 20)</c>.
+    ///     When
     ///     its time comes the item's script runs <c>on_timer(serial, name)</c>. It is saved with the item, so it also
     ///     runs after a restart.
     /// </summary>
-    [ScriptFunction(helpText: "Starts, or starts again, a timer of the item that runs on_timer(serial, name) of its script after that many seconds, also after a restart; false for an unknown item, a blank name or one over 32 characters, or seconds not above 0 or over a year.")]
+    [ScriptFunction(
+        helpText:
+        "Starts, or starts again from now, a timer of the item that runs on_timer(serial, name) of its script after that many seconds, also after a restart; one whose script has no on_timer, or fails, is dropped with a warning in the log. False for an unknown item, a blank name or one over 32 characters, or seconds not above 0 or over a year."
+    )]
     public bool StartTimer(long serial, string name, double seconds)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
         return _timers is not null &&
                TryGetItem(serial, out var item) &&
                double.IsFinite(seconds) &&
@@ -613,13 +696,21 @@ public sealed class ItemModule
     [ScriptFunction(helpText: "Stops a timer of the item; false for an unknown item or when it has no timer of that name.")]
     public bool StopTimer(long serial, string name)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
         return _timers is not null && TryGetItem(serial, out var item) && _timers.Stop(item, name);
     }
 
     /// <summary>
     ///     Gets the seconds a timer of the item still has to run; <c>item.timer(serial, "close")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The seconds a timer of the item still has to run, 0 when it is due; nil for an unknown item or when it has no timer of that name.")]
+    [ScriptFunction(
+        helpText:
+        "The seconds a timer of the item still has to run, 0 when it is due; nil for an unknown item or when it has no timer of that name."
+    )]
     public double? Timer(long serial, string name)
     {
         return _timers is not null && TryGetItem(serial, out var item) ? _timers.Remaining(item, name)?.TotalSeconds : null;
@@ -638,10 +729,19 @@ public sealed class ItemModule
     ///     Changes the item's graphic, such as a door opening; <c>item.set_item_id(serial, 0x0676)</c>. The players in
     ///     range see a ground item change, the owner an item in its containers.
     /// </summary>
-    [ScriptFunction(helpText: "Changes the item's graphic (0 to 65535), shown to the players who see it; false for a worn or held item.")]
+    [ScriptFunction(
+        helpText:
+        "Changes the item's graphic (0 to 65535), as a door opening, shown to the players around a ground item or the owner of a carried one; an item inside a container on the ground changes without being shown again. False for an unknown, worn or held item or a graphic out of range."
+    )]
     public bool SetItemId(long serial, int graphic)
     {
-        if (graphic is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
+        if (graphic is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item) || item.MobileId is not null ||
+            IsHeld(item))
         {
             return false;
         }
@@ -656,9 +756,17 @@ public sealed class ItemModule
     ///     Sets the shape of the light a light source gives, by LightType name, or clears it with nil;
     ///     <c>item.set_light(serial, "circle150")</c>. The players who see the item are shown it again.
     /// </summary>
-    [ScriptFunction(helpText: "Sets the item's light shape by name, such as circle150 or west_big, nil clears it; false for an unknown shape or a worn or held item.")]
+    [ScriptFunction(
+        helpText:
+        "Sets the item's light shape by LightType name, such as circle150, circle300 or west_big, nil clears it; the players who see the item are shown it again, and the client draws the light only for a lit graphic. False for an unknown shape or a worn or held item."
+    )]
     public bool SetLight(long serial, string? type = null)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
         if (!TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
         {
             return false;
@@ -706,7 +814,10 @@ public sealed class ItemModule
     ///     Gets whether a mobile is on the map of a ground item and within <paramref name="range" /> tiles of it, as
     ///     the view range counts them; <c>item.in_range(serial, user, 2)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the mobile is on the map of a ground item and within range tiles of it, the larger of the two differences; false for an item not on the ground, a mobile not in the world or a negative range.")]
+    [ScriptFunction(
+        helpText:
+        "Whether the mobile is on the map of a ground item and within range tiles of it, the larger of the two differences; false for an item not on the ground, a mobile not in the world or a negative range."
+    )]
     public bool InRange(long serial, long mobile, int range)
     {
         if (range < 0 ||
@@ -727,9 +838,17 @@ public sealed class ItemModule
     ///     Moves a ground item on its map, such as a door swinging; <c>item.move_to(serial, x, y, z)</c>. The players
     ///     around the old spot lose it and those around the new one see it.
     /// </summary>
-    [ScriptFunction(helpText: "Moves a ground item to x, y, z on its map; false for an item not on the ground, a spot outside the map or a z outside -128 to 127.")]
+    [ScriptFunction(
+        helpText:
+        "Moves a ground item to x, y, z on its map: the players around the old spot lose it, those around the new one see it, and a decaying item's decay starts again; false for an item not on the ground, a spot outside the map or a z outside -128 to 127."
+    )]
     public bool MoveTo(long serial, int x, int y, int z)
     {
+        if (TryGetItem(serial, out var guarded) && _inventory?.Allows(guarded) == false)
+        {
+            return false;
+        }
+
         // Outside the map's grid the item would be taken off its sector and never put back: seen by nobody.
         if (z is < sbyte.MinValue or > sbyte.MaxValue ||
             !TryGetItem(serial, out var item) ||
@@ -751,7 +870,10 @@ public sealed class ItemModule
     ///     Plays <paramref name="sound" /> where the item is, on the ground or on the mobile carrying it, for the players
     ///     within 15 cells; <c>item.play_sound(serial, 0xEA)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) where the item is, on the ground or with its owner; false for an unknown item or sound.")]
+    [ScriptFunction(
+        helpText:
+        "Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; false for an unknown item, a sound out of range or an item inside a container on the ground."
+    )]
     public bool PlaySound(long serial, int sound)
     {
         if (sound is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item))
@@ -779,31 +901,7 @@ public sealed class ItemModule
     // A new item of the template with a serial of its own, nowhere yet; null when it cannot be made.
     private ItemEntity? Make(string template, int? amount)
     {
-        if (_factory is null || _serials is null || string.IsNullOrWhiteSpace(template))
-        {
-            return null;
-        }
-
-        ItemEntity item;
-
-        try
-        {
-            item = _factory.Create(template, amount);
-        }
-        catch (Exception exception) when (exception is KeyNotFoundException or ArgumentException)
-        {
-            return null;
-        }
-
-        // Taken last: an item that cannot be made must not use up a serial.
-        if (!_serials.TryTake(out var serial))
-        {
-            return null;
-        }
-
-        item.Id = serial;
-
-        return item;
+        return _handling.Make(template, amount);
     }
 
     // The item a serial names when it is a container, or the backpack of the mobile it names.
@@ -867,6 +965,14 @@ public sealed class ItemModule
         return _tiles.TryGetItem(item.ItemId, out var tile) && (tile.Flags & TileFlagType.Generic) != 0;
     }
 
+    private bool TryGetTemplate(long serial, [NotNullWhen(true)] out ItemTemplate? template)
+    {
+        template = null;
+
+        return TryGetItem(serial, out var item) && _templates is not null &&
+               _templates.TryGet(item.TemplateId, out template);
+    }
+
     private bool TryGetItem(long serial, [NotNullWhen(true)] out ItemEntity? item)
     {
         item = null;
@@ -877,22 +983,14 @@ public sealed class ItemModule
     // Shows a changed item again: to the players around it on the ground, or to its owner in a container.
     private void Refresh(ItemEntity item)
     {
-        if (item.GroundLocation is not null)
-        {
-            _view.ItemAppeared(item);
-        }
-        else if (OwnerSession(item) is { } session)
-        {
-            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
-            _sender.TrySend(session.SessionId, _tooltips.Info(item));
-        }
+        _handling.Refresh(item);
     }
 
     // Lifted onto a player's cursor: it keeps the place it was taken from until it is dropped, so it must not be
     // drawn there again.
     private bool IsHeld(ItemEntity item)
     {
-        return _sessions.GetAll().Any(session => session.Get(ItemSessionKeys.Held)?.Item == item.Id);
+        return _handling.IsHeld(item);
     }
 
     private GameSession? OwnerSession(ItemEntity item)

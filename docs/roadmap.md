@@ -16,8 +16,9 @@ This is an order, not a schedule: there are no dates. A phase is done when its s
 The foundations are in place: network, login, persistence, world data, sectors, regions, spawns,
 decoration, gumps, Lua scripting. A player can log in, walk a populated world, open doors, use the
 bank, take a teleporter or a moongate, open a treasure chest in a dungeon and a crate in a shop.
-NPCs walk around what stands in their way. What is missing is the gameplay: nothing can be fought,
-learned, bought or built yet.
+NPCs walk around what stands in their way. Players and NPCs fight with fists, swords or bows, die and come back as ghosts, train their skills and
+are defended by the guards of the towns. What is missing is the rest of the gameplay: nothing can be
+bought, cast, crafted or built yet.
 
 Each step below carries its state: ✅ done, 🟡 partly done, ❌ not started.
 
@@ -52,10 +53,9 @@ its own: it comes with the priority that gives it its rule.
 | Training dummies, archery buttes and dart boards (107 placed) | Skill gain (1.2) | 2 |
 | Locks and lockpicking of the treasure chests and of the town containers | Skill check (1.2) | 2 |
 | Traps of the chests, and the 490 traps placed in the dungeons | Damage (2.1) | 4 |
-| Ankhs that resurrect (44 placed) | Death (2.3) | 4 |
 | Wands in the treasure chests | Spells (4.3) | 7 |
 | Forges and anvils that craft | Crafting (5.2) | 8 |
-| Chess and checker boards, bulletin and bounty boards (98 placed) | Chat and boards (6.3) | 9 |
+| Chess and checker boards and bounty boards (the [bulletin boards](bulletin-boards.md) work) | Chat and boards (6.3) | 9 |
 | The 621 addons of the shops and inns (anvils, ovens, beds, looms), skipped by `.decorate` | Addons (7.4) | 10 |
 | The 87 spawners of quest characters, skipped by `.decorate` | Quests ([Later](#later)) | After 10 |
 
@@ -74,7 +74,7 @@ rules.
 
 POL leaves almost all gameplay to scripts, and Sphere and UOX3 do the same through triggers. All
 three show that the core has to expose these things before combat, magic or crafting can be
-written. The [scripting page](scripting.md#available-host-functions) lists what Lua has today.
+written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has today.
 
 | Step | State | What | Why it comes here |
 | --- | --- | --- | --- |
@@ -91,19 +91,19 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
 | 1.1 | ✅ | **Regeneration** of hits, mana and stamina; hunger and thirst, food that is eaten and drinks that are drunk | Nothing depends on anything else; visible in the first fight | |
-| 1.2 | ❌ | **Skill use, check and gain**; stat gain; caps and locks. Stats and skills are stored; nothing uses them | The progression of the game; every later system calls the skill check | UOX3 `skills.dfn` (61 skills: stat weights, gain curves), ModernUO `skills.json` |
+| 1.2 | ✅ | **Skill use, check and gain**; stat gain; caps and locks. A [skill](skills.md) is used from the client, checked by `skill.check`, gained under the skill cap and the total cap and locked up, down or locked from the skill window; a successful check raises strength, dexterity and intelligence as ModernUO's classic rule, to 100 each and 225 in all, with their own locks. Hiding is the first skill script; the others come with their systems | The progression of the game; every later system calls the skill check | UOX3 `skills.dfn` (61 skills: stat weights, gain curves), ModernUO `skills.json` |
 | 1.3 | ❌ | **Timed effects**: one mechanism for poison, curses, blessings, polymorph, hiding; the buff bar shows them | Magic, potions and combat all need it | |
-| 1.4 | 🟡 | **Containers on the ground**, with item and weight limits; weight and overloading. Done: a container on the ground opens, items go in and out of it, 125 at most; left: the weight limits and overloading | Corpses, vendors, chests and houses need them | |
-| 1.5 | 🟡 | **Context menus and old-style menus**. Done: the text prompt (`prompt.ask`) | Vendors, pets, crafting and guilds open through them | |
-| 1.6 | ❌ | **Item combat fields** in the templates and the converter: damage, speed, armour, hit points, strength requirement | Combat reads them; the converter drops them today | UOX3 `items/gear/` |
+| 1.4 | ✅ | **Containers on the ground**, with item and weight limits; weight and overloading: a container on the ground opens, items go in and out of it, 125 at most and up to its limit of stones; a player carries 40 stones and 3.5 a point of strength, and moving overloaded or running costs stamina | Corpses, vendors, chests and houses need them | |
+| 1.5 | 🟡 | **Context menus and old-style menus**. Done: the text prompt (`prompt.ask`), and [context menus](context-menus.md) with the server's entries and the ones a Lua script adds | Vendors, pets, crafting and guilds open through them | |
+| 1.6 | ✅ | **Item combat fields** in the templates and the converter: damage, speed, armour, hit points, strength requirement | Combat reads them; the converter reads them from UOX3 now | UOX3 `items/gear/` |
 
 ## Phase 2: combat
 
 | Step | State | What | Why it comes here |
 | --- | --- | --- | --- |
-| 2.1 | ❌ | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability | The core loop of the game |
-| 2.2 | ❌ | **Aggressor lists** | Notoriety, guards and loot rights rest on them |
-| 2.3 | ❌ | **Death, corpse, ghost, resurrection**; healer NPCs and shrines | Gives combat a result |
+| 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists or a weapon, the swing timer, the hit by skill, the damage and the armor of an NPC or of what a player wears, and archery with a bow or a crossbow, for a player and for an NPC. Left: parry, durability | The core loop of the game |
+| 2.2 | ❌ | **Aggressor lists**. Today only the [murder report](death.md#murder-counts) keeps who attacked an innocent, for `aggressor_seconds`; no attack timeouts and no loot rights | Notoriety, guards and loot rights rest on them |
+| 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC or a player dies by a fight, `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried; a player stays as a [ghost](death.md#death-of-a-player) and comes back at an ankh or at a healer, by `.resurrect` or `mobile.resurrect`. Left: bones, bounties and the places of the evil healers | Gives combat a result |
 | 2.4 | ❌ | **Bandages and healing** | Needed as soon as damage exists |
 | 2.5 | ❌ | **Combat events for Lua**: attack, hit, miss, damage, death, resurrect | Lets content change the rules |
 | 2.6 | ❌ | **Combat settings**: swing speed, damage rules, corpse decay | A shard owner expects to tune them |
@@ -113,10 +113,10 @@ written. The [scripting page](scripting.md#available-host-functions) lists what 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
 | 3.1 | 🟡 | **Pathfinding** and movement that checks items and mobiles. Done: the A* path search, `npc.walk_to`, and items that block; mobiles do not block yet | AI cannot chase without it | |
-| 3.2 | 🟡 | **NPC AI**: melee, archer, mage, animal, fleeing; NPC memory of who attacked. Today a Lua script on a tick, wandering, and `monster.lua`, the melee AI without the fight, on the undead of the graveyards | The 29,000 spawned NPCs become content | UOX3 NPC tags dropped today (`NPCAI`, `FLEEAT`, `SPATTACK`), ModernUO `npc-speeds.json` |
-| 3.3 | 🟡 | **Loot on corpses**, carving, fame and karma gain. Loot is rolled into the backpack at spawn; there are no corpses | Reward for the fight | UOX3 `carve.dfn` (102 tables) |
-| 3.4 | 🟡 | **Notoriety**: criminal and murderer flags, name colours, murder counts. Today the name colour of the mobile template | Makes PvP rule-bound | |
-| 3.5 | ❌ | **Region rules and guards**: guarded towns, no recall, no gate, no housing | Makes towns safe | ModernUO `regions.json` (typed regions), UOX3 `regions.dfn` (179 rule sets) |
+| 3.2 | 🟡 | **NPC AI**: melee, archer, mage, animal, fleeing; NPC memory of who attacked. Done: archers (an NPC with a bow shoots, and so does a player), creatures that run when hurt. Left: mages. Today a Lua script on a tick, wandering, `monster.lua`, the melee AI, on the 200 or so evil and chaotic templates, which go for the players and the townsfolk and which the guards kill, and the animals (`animal.lua`, `scared_animal.lua`) on the shared `common/creature.lua` | The 29,000 spawned NPCs become content | UOX3 NPC tags dropped today (`NPCAI` values, `SPATTACK`), ModernUO `npc-speeds.json` |
+| 3.3 | 🟡 | **Loot on corpses**, carving, fame and karma gain. Loot is rolled into the backpack at spawn and lies in the corpse of a dead NPC; no carving, fame or karma | Reward for the fight | UOX3 `carve.dfn` (102 tables) |
+| 3.4 | 🟡 | **Notoriety**: criminal and murderer flags, name colours, murder counts. Done: the criminal flag with its timer, [murder counts](death.md#murder-counts) with the report gump of the victim, a red name from five murders, as ModernUO's. Left: other crimes, bounties; the name colour of an NPC is the one of its mobile template | Makes PvP rule-bound | |
+| 3.5 | 🟡 | **Region rules and guards**: guarded towns, no recall, no gate, no housing. Done: guarded regions, the guards that arrest a criminal or a monster, called by saying "guards" or standing in the town, and archer guards in Ilshenar and Malas. Left: the guards do not punish a player, and no rules for recall, gate or housing | Makes towns safe | ModernUO `regions.json` (typed regions), UOX3 `regions.dfn` (179 rule sets) |
 
 ## Phase 4: economy and magic
 
@@ -124,7 +124,7 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
-| 4.1 | 🟡 | **Vendors**: buy, sell, restock; skill trainers; bank checks, deposit and withdraw by speech. Done: the bank box | Gives gold a use | UOX3 `shoplist.dfn` (38 lists used by 86 NPCs); prices are converted already |
+| 4.1 | 🟡 | **Vendors**: buy, sell, restock; skill trainers. Done: the bank box, balance, deposit and withdraw by speech, bank checks, gold handed to the banker | Gives gold a use | UOX3 `shoplist.dfn` (38 lists used by 86 NPCs); prices are converted already |
 | 4.2 | ❌ | **Secure trade** between players | Player economy | |
 | 4.3 | ❌ | **Spell casting and Magery**: spellbooks, reagents, scrolls, words of power, the 64 spells | Half of all characters cast | UOX3 `spells.dfn` (mana, reagents, delay, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebooks** | The way players travel; needs the region rules of 3.5 | |
@@ -145,7 +145,7 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 | --- | --- | --- | --- |
 | 6.1 | ❌ | **Party** | Needs nothing else; a small shard lives on group play |
 | 6.2 | ❌ | **Guilds**, with war and alliance colours | Needs notoriety (3.4) |
-| 6.3 | ❌ | **Chat, bulletin boards, books, profile** | Independent, small |
+| 6.3 | 🟡 | **Chat, bulletin boards, books, profile** | Independent, small. [Bulletin boards](bulletin-boards.md) are done |
 
 ## Phase 7: houses and boats
 
@@ -167,7 +167,7 @@ These do not depend on the gameplay phases and are done when an operator needs t
 - Account bans, IP limits, login attempt limits, packet throttles.
 - Staff tools: a props gump, an add menu, area commands. The named places of
   [`.go`](commands/go.md) and their gump are done.
-- GM page queue, help and stuck menu, jail.
+- GM page queue, help and stuck menu. The [jail](jail.md) is done.
 - Commands written in Lua.
 
 ## Later

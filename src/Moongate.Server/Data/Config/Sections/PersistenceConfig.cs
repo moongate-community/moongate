@@ -42,6 +42,8 @@ public sealed class PersistenceConfig
         Validate(mode);
         migrationsDirectory = ResolveMigrationsDirectory(migrationsDirectory);
 
+        // Safe: Validate(mode) above throws when migrations are generated without a migrations_directory,
+        // so migrationsDirectory is non-null here whenever AutoGenerateMigrations is set.
         var development = AutoGenerateMigrations
             ? new DevelopmentMigrationOptions(
                 migrationsDirectory!,
@@ -127,11 +129,13 @@ public sealed class PersistenceConfig
 
         if ((mode & ServerMode.Login) != 0)
         {
+            // Safe: Validate(mode) above throws when the section of an active mode is null.
             Accounts!.Validate();
         }
 
         if ((mode & ServerMode.Game) != 0)
         {
+            // Safe: Validate(mode) above throws when the section of an active mode is null.
             Realm!.Validate();
         }
     }

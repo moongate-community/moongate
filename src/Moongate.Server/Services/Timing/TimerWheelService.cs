@@ -309,6 +309,7 @@ public sealed class TimerWheelService : ITimerService
                         break;
                     }
 
+                    // Safe: _ready.Count was checked above, so Min exists.
                     entry = _ready.Min!;
                     _ready.Remove(entry);
                     entry.Ready = false;
@@ -489,6 +490,7 @@ public sealed class TimerWheelService : ITimerService
 
         if (entry.Node is not null)
         {
+            // Safe: a linked node that is still on the entry always belongs to a list.
             entry.Node.List!.Remove(entry.Node);
             entry.Node = null;
         }

@@ -32,6 +32,7 @@ public sealed class MobileTemplatesLoaderTests
             name_list = "orc"
             body = 17
             script_id = "wander"
+            flee_at = -1
             strength = "1d25+95"
             skills = { tactics = "60", wrestling = "50" }
             resistances = { fire = "20", cold = "10" }
@@ -54,13 +55,17 @@ public sealed class MobileTemplatesLoaderTests
         var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
         var captain = templates["orc_captain"];
-        Assert.Equal(("orc", (int?)17, "1d25+95", "the Captain"), (captain.NameList, captain.Body, captain.Strength.ToString(), captain.Title));
+        Assert.Equal(
+            ("orc", (int?)17, "1d25+95", "the Captain"),
+            (captain.NameList, captain.Body, captain.Strength.ToString(), captain.Title)
+        );
         Assert.Equal(("90", "50"), (captain.Skills!["tactics"].ToString(), captain.Skills["wrestling"].ToString()));
         Assert.Equal(("30", "10"), (captain.Resistances!.Fire.ToString(), captain.Resistances.Cold.ToString()));
         Assert.Equal(((int?)0x45B, (int?)0x45D), (captain.Sounds!.Idle, captain.Sounds.Death));
         Assert.Equal(["a", "b"], captain.Tags!.Keys.Order());
         Assert.Equal(["axe"], Assert.Single(captain.Equipment!).Items);
         Assert.Equal("wander", captain.ScriptId);
+        Assert.Equal(-1, captain.FleeAt);
 
         captain.Skills["wrestling"] = DiceSpec.FromValue(1);
         Assert.Equal("50", templates["base_orc"].Skills!["wrestling"].ToString());
@@ -173,7 +178,10 @@ public sealed class MobileTemplatesLoaderTests
                     new NameList { Id = "male", Names = ["Aaron"] },
                     new NameList { Id = "female", Names = ["Alice"] }
                 )
-                .With(new ItemTemplate { Id = "club", ItemId = new Serial(0x13B4) }, new ItemTemplate { Id = "axe", ItemId = new Serial(0x0F49) })
+                .With(
+                    new ItemTemplate { Id = "club", ItemId = new Serial(0x13B4) },
+                    new ItemTemplate { Id = "axe", ItemId = new Serial(0x0F49) }
+                )
                 .With(new LootTemplate { Id = "gems", Entries = [new LootEntry()] })
         );
     }

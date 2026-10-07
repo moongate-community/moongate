@@ -5,15 +5,23 @@ namespace Moongate.Server.Ultima.Types.Effects;
 /// </summary>
 public enum EffectKindType : byte
 {
-    /// <summary>Flies from the source to the target.</summary>
+    /// <summary>
+    ///     Flies from the source to the target.
+    /// </summary>
     Moving = 0,
 
-    /// <summary>A lightning bolt striking the source.</summary>
+    /// <summary>
+    ///     A lightning bolt striking the source.
+    /// </summary>
     Lightning = 1,
 
-    /// <summary>Stays at a point of the map.</summary>
+    /// <summary>
+    ///     Stays at a point of the map.
+    /// </summary>
     FixedLocation = 2,
 
-    /// <summary>Stays on an object and follows it.</summary>
+    /// <summary>
+    ///     Stays on an object and follows it.
+    /// </summary>
     FixedObject = 3
 }

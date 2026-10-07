@@ -56,7 +56,9 @@ public sealed class NpcSenseIntegrationTests : IDisposable
         );
         _npcScripts = new(
             _engine,
-            new MobileTemplateService(new StubDataLoaderService().With(new MobileTemplate { Id = "orc", ScriptId = "watcher" })),
+            new MobileTemplateService(
+                new StubDataLoaderService().With(new MobileTemplate { Id = "orc", ScriptId = "watcher" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
@@ -106,13 +108,6 @@ public sealed class NpcSenseIntegrationTests : IDisposable
         );
     }
 
-    public void Dispose()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-    }
-
     private Moongate.Scripting.Interfaces.IScriptModuleRegistry RegisterContainer()
     {
         _container.RegisterMoongateEventBus();
@@ -141,5 +136,12 @@ public sealed class NpcSenseIntegrationTests : IDisposable
             Id = new Serial(serial), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
             Location = new Point3D(x, y, 0), Direction = DirectionType.North
         };
+    }
+
+    public void Dispose()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
     }
 }

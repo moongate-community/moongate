@@ -21,6 +21,8 @@ public interface IMobileTemplateService
     /// <summary>
     ///     Gets the template with id <paramref name="id" />, matching case.
     /// </summary>
-    /// <exception cref="KeyNotFoundException">No template has that id.</exception>
+    /// <exception cref="KeyNotFoundException">
+    ///     No template has that id.
+    /// </exception>
     MobileTemplate Get(string id);
 }

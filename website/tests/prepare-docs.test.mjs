@@ -98,3 +98,72 @@ test('coverage insertion preserves inline marker documentation before the report
   assert.match(page, /commit `abc1234`/);
   assert.equal(page.match(/<!-- coverage-summary -->/g)?.length, 1);
 });
+
+async function addTranslation(options, source, body, hash) {
+  const { createHash } = await import('node:crypto');
+  const file = join(options.websiteRoot, 'translations/it/start/overview.md');
+  await mkdir(join(options.websiteRoot, 'translations/it/start'), { recursive: true });
+  await writeFile(file, `<!-- translation: ${JSON.stringify({ sourceHash: hash ?? createHash('sha256').update(source).digest('hex'), title: 'Panoramica' })} -->\n\n${body}`);
+}
+
+test('imports Italian with original section anchors, localized links and translation edit URL', async t => {
+  const options = await fixture(t);
+  const source = '# Title\n\n## Installation\n\n[Next](README.md#installation)\n';
+  await writeFile(join(options.repositoryRoot, 'README.md'), source);
+  await addTranslation(options, source, '# Titolo\n\n## Installazione\n\n[Avanti](README.md#installation)\n');
+  assert.equal((await prepareDocs(options)).pages, 2);
+  const page = await readFile(join(options.generated, 'it/start/overview.md'), 'utf8');
+  assert.match(page, /slug: "it\/start\/overview"/);
+  assert.match(page, /id="installation"/);
+  assert.match(page, /\/it\/start\/overview\/#installation/);
+  assert.match(page, /edit\/develop\/website\/translations\/it\/start\/overview.md/);
+  assert.doesNotMatch(page, /translation:|sourceHash/);
+});
+test('stale translation is reported and removed from output for English fallback', async t => {
+  const options = await fixture(t);
+  const source = await readFile(join(options.repositoryRoot, 'README.md'), 'utf8');
+  await addTranslation(options, source, source);
+  await prepareDocs(options);
+  await writeFile(join(options.repositoryRoot, 'README.md'), source + '\nChanged.\n');
+  const warnings = [];
+  assert.equal((await prepareDocs({ ...options, warn: message => warnings.push(message) })).pages, 1);
+  assert.match(warnings.join(), /Stale translation.*start\/overview/);
+  await assert.rejects(access(join(options.generated, 'it/start/overview.md')));
+});
+test('generated references reject translation sources without changing old output', async t => {
+  const options = await fixture(t);
+  options.entries[0].englishOnly = true;
+  const source = await readFile(join(options.repositoryRoot, 'README.md'), 'utf8');
+  await addTranslation(options, source, source);
+  await assert.rejects(prepareDocs(options), /English-only/);
+  assert.equal(await readFile(join(options.generated, 'stale.md'), 'utf8'), 'last successful build');
+});
+
+test('strict catalog validation reports missing, stale and unexpected translations', async t => {
+  const { checkTranslations } = await import('../scripts/check-translations.mjs');
+  const options = await fixture(t);
+  assert.match((await checkTranslations(options)).join(), /it\/start\/overview/);
+  const source = await readFile(join(options.repositoryRoot, 'README.md'), 'utf8');
+  await addTranslation(options, source, source);
+  assert.deepEqual(await checkTranslations(options), []);
+  await writeFile(join(options.repositoryRoot, 'README.md'), source + '\nChange.\n');
+  assert.match((await checkTranslations(options)).join(), /Stale translation/);
+  await writeFile(join(options.websiteRoot, 'translations/it/unexpected.md'), 'unexpected');
+  assert.match((await checkTranslations(options)).join(), /Unexpected translation/);
+});
+
+test('invalid translation code preserves the last complete output', async t => {
+  const options = await fixture(t);
+  const source = '# Title\n\n```sh\nfoo\n```\n';
+  await writeFile(join(options.repositoryRoot, 'README.md'), source);
+  await addTranslation(options, source, source.replace('foo', 'bar'));
+  await assert.rejects(prepareDocs(options), /changed code/);
+  assert.equal(await readFile(join(options.generated, 'stale.md'), 'utf8'), 'last successful build');
+});
+
+test('manifest slugs cannot occupy the reserved Italian namespace', async t => {
+  const options = await fixture(t);
+  options.entries[0].slug = 'it/start/overview';
+  await assert.rejects(prepareDocs(options), /Invalid documentation slug/);
+  assert.equal(await readFile(join(options.generated, 'stale.md'), 'utf8'), 'last successful build');
+});

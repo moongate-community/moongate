@@ -38,7 +38,12 @@ internal static class TargetedMobileValue
         }
 
         if (context.Arguments.Length != 1 ||
-            !int.TryParse(context.Arguments[0], NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var value) ||
+            !int.TryParse(
+                context.Arguments[0],
+                NumberStyles.AllowLeadingSign,
+                CultureInfo.InvariantCulture,
+                out var value
+            ) ||
             value < minimum ||
             value > maximum)
         {
@@ -49,7 +54,12 @@ internal static class TargetedMobileValue
             return;
         }
 
-        var target = await targets.RequestAsync(session, TargetCursorType.Object, TargetFlagsType.Neutral, context.CancellationToken);
+        var target = await targets.RequestAsync(
+            session,
+            TargetCursorType.Object,
+            TargetFlagsType.Neutral,
+            context.CancellationToken
+        );
 
         if (target.Kind != TargetResultType.Object)
         {

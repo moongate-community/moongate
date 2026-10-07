@@ -1,0 +1,23 @@
+# What it is for:
+#   Readable documents whose text is saved on their individual item: the
+#   scroll opens a parchment, the book opens the client's own book with a
+#   cover and pages. A document of templates/books may give its item another
+#   graphic with item_id, such as the cover of a book.
+# Fields:
+#   script_id delegates double click to book.open; stackable must be false.
+
+[[item]]
+id = "readable_scroll"
+item_id = 0x14ED
+name = "a scroll"
+script_id = "readable_scroll"
+stackable = false
+weight = 1
+
+[[item]]
+id = "readable_book"
+item_id = 0x0FF1
+name = "a book"
+script_id = "readable_book"
+stackable = false
+weight = 1

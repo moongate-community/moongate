@@ -11,7 +11,8 @@ namespace Moongate.Server.Bootstrap.Internal;
 /// <summary>
 ///     What <c>persistence.auto_apply_migrations</c> does before the persistence check: it adds to the migrations
 ///     directory the bundled core SQL it lacks, then applies the pending reviewed SQL of the targets this process
-///     uses, and of the plugin bundles in its plugins directory, through the migration runner. It never generates SQL; with <c>auto_generate_migrations</c> also on, the
+///     uses, and of the plugin bundles in its plugins directory, through the migration runner. It never generates SQL;
+///     with <c>auto_generate_migrations</c> also on, the
 ///     development start applies, so only the copy runs here.
 /// </summary>
 internal static class StartupMigrations
@@ -32,6 +33,7 @@ internal static class StartupMigrations
         }
 
         // The directory the persistence options read, and the plugins whose SQL the runner applies with the core's.
+        // Safe: a default is passed, so the resolved directory is never null.
         var migrationsDirectory = persistence.ResolveMigrationsDirectory(Path.Combine(directories.Root, "migrations"))!;
 
         foreach (var created in BundledMigrations.CopyMissing(bundledDirectory, migrationsDirectory))

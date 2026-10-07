@@ -1,8 +1,11 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
@@ -21,7 +24,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 ///     Drops the item the player holds (0x08) into a container their character carries, onto a carried stack of the
 ///     same kind (they merge), into the container of a carried item it was dropped on, into a container lying on the
 ///     ground within reach or one inside it (onto a pile of the same kind there, they merge), on the ground within 2
-///     tiles, or onto a ground stack of the same kind within reach; anything else bounces the item back to where it was. The hand
+///     tiles, or onto a ground stack of the same kind within reach; dropped on an NPC within 2 tiles, the NPC's script is
+///     asked to take it ( <c>on_drag_drop</c>); anything else bounces the item back to where it was. The hand
 ///     is always freed: 0x25 shows the item where it really is, and a ground item is shown to everyone in range.
 /// </summary>
 /// <remarks>
@@ -33,6 +37,26 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     public const string DropFunction = "on_drop";
     public const string CanDropFunction = "can_drop";
     public const string CanInsertFunction = "can_insert";
+
+    /// <summary>
+    ///     The function of an NPC's script that is asked to take an item a player drops on the NPC.
+    /// </summary>
+    public const string DragDropFunction = "on_drag_drop";
+
+    /// <summary>
+    ///     How many tiles away a player gives an item to an NPC, as it drops one on the ground.
+    /// </summary>
+    public const int GiveRange = 2;
+
+    /// <summary>
+    ///     The client's "That is too far away."
+    /// </summary>
+    public const int TooFarMessage = 500446;
+
+    /// <summary>
+    ///     The client's "That container cannot hold more weight."
+    /// </summary>
+    public const int TooHeavyMessage = 1080016;
 
     private const short OnIcon = -1;
     private const int MaxStack = 60_000;
@@ -49,6 +73,13 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
+    private readonly IWeightService? _weight;
+    private readonly ISpeechService? _speech;
+    private readonly IFatigueService? _fatigue;
+    private readonly IContainerCapacityService? _capacity;
+
+    private readonly IInventoryMutationGuard? _inventory;
+    private readonly INpcScriptService? _npcScripts;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -59,9 +90,21 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         IPacketSendService sender,
         ITooltipService tooltips,
         IItemScriptService? scripts = null,
-        IBankService? bank = null
+        IBankService? bank = null,
+        IWeightService? weight = null,
+        ISpeechService? speech = null,
+        IFatigueService? fatigue = null,
+        IContainerCapacityService? capacity = null,
+        IInventoryMutationGuard? inventory = null,
+        INpcScriptService? npcScripts = null
     )
     {
+        _npcScripts = npcScripts;
+        _inventory = inventory;
+        _capacity = capacity;
+        _weight = weight;
+        _speech = speech;
+        _fatigue = fatigue;
         _bank = bank;
         _tooltips = tooltips;
         _scripts = scripts;
@@ -75,14 +118,31 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
     public void Handle(GameSession session, DropRequestPacket packet)
     {
+        if (_inventory is not null && (!_inventory.AllowsOwner(session.CharacterId) ||
+                                       (_items.TryGet(packet.Item, out var guarded) && !_inventory.Allows(guarded)) ||
+                                       (session.Get(ItemSessionKeys.Held) is { } hand &&
+                                        _items.TryGet(hand.Item, out var heldItem) && !_inventory.Allows(heldItem)) ||
+                                       (_items.TryGet(packet.Destination, out var destination) &&
+                                        !_inventory.Allows(destination))))
+        {
+            return;
+        }
+
         var held = session.Get(ItemSessionKeys.Held);
         session.Set(ItemSessionKeys.Held, null);
+
+        // A ghost keeps nothing in its hands: what it held went into its corpse.
+        if (_mobiles.TryGet(session.CharacterId, out var ghost) && ghost.IsDead)
+        {
+            return;
+        }
 
         if (held is not null && held.Item != packet.Item && _items.TryGet(held.Item, out var other))
         {
             // The hand is freed either way, so the held item must go back where it still is.
             _logger.Debug("Session {SessionId} named {Item} while holding {Held}", session.SessionId, packet.Item, other);
             HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender, _tooltips);
+            LoadChanged(session, false);
 
             return;
         }
@@ -101,7 +161,13 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             _logger.Debug("{Item} refuses to be dropped: it bounces back", item);
             HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+            LoadChanged(session, false);
 
+            return;
+        }
+
+        if (TakenByNpc(session, item, packet.Destination))
+        {
             return;
         }
 
@@ -111,9 +177,17 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         bool AllowsInto(ItemEntity container)
         {
-            // A container its script removed while it was asked receives nothing.
-            return verdict ??= Ask(session, held, container, CanInsertFunction, dropper, (long)item.Id.Value) &&
+            // Its limit of stones first; then its script, and a container the script removed while it was asked
+            // receives nothing.
+            return verdict ??= HoldsTheWeight(session, container, item) &&
+                               Ask(session, held, container, CanInsertFunction, dropper, (long)item.Id.Value) &&
                                _items.TryGet(container.Id, out _);
+        }
+
+        // Put down as an item of its own, it needs a place in the container; joining a pile it needs none.
+        bool PlacesInto(ItemEntity container)
+        {
+            return HasTheRoom(session, container, item) && AllowsInto(container);
         }
 
         // Taken off the paperdoll: players who came into range while it was held still see it worn.
@@ -144,7 +218,14 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return;
         }
 
-        if (mobile is not null && TryMergeInChest(mobile, item, packet.Destination, AllowsInto, out var chestStack, out var holder))
+        if (mobile is not null && TryMergeInChest(
+                mobile,
+                item,
+                packet.Destination,
+                AllowsInto,
+                out var chestStack,
+                out var holder
+            ))
         {
             // As on the ground: the character's leave saves the grown pile and deletes the absorbed item.
             _items.Release(chestStack, session.CharacterId);
@@ -170,7 +251,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
                 return;
             }
         }
-        else if (mobile is not null && TryPlaceOnTheGround(mobile, item, packet, AllowsInto, out var chest))
+        else if (mobile is not null && TryPlaceOnTheGround(mobile, item, packet, PlacesInto, out var chest))
         {
             // Its row still says the character carries it: the character's leave saves where it lies now.
             _items.Release(item, session.CharacterId);
@@ -182,7 +263,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
             return;
         }
-        else if (TryPlace(session, item, packet, AllowsInto))
+        else if (TryPlace(session, item, packet, PlacesInto))
         {
             TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
@@ -195,6 +276,101 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
 
         HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+        LoadChanged(session, false);
+    }
+
+    // Dropped on an NPC within reach: its script is asked to take the item, and only an answer of true takes it. The
+    // item is on no cursor while the script runs, so the script may move or delete it; what it did is then shown to the
+    // giver. Any other answer leaves the drop to the other rules, which bounce it.
+    private bool TakenByNpc(GameSession session, ItemEntity item, Serial destination)
+    {
+        if (_npcScripts is null ||
+            !destination.IsMobile ||
+            destination == session.CharacterId ||
+            !_mobiles.TryGet(destination, out var npc) ||
+            !npc.IsNpc ||
+            !_mobiles.TryGet(session.CharacterId, out var giver) ||
+            giver.Map != npc.Map)
+        {
+            return false;
+        }
+
+        // As ModernUO: a player gives from 2 tiles, the staff from anywhere. The client lets go of an item a tile
+        // farther than that, so the player is told why it came back.
+        if (session.AccountType < AccountType.GameMaster && !giver.Location.InRange(npc.Location, GiveRange))
+        {
+            _speech?.TellCliloc(giver, TooFarMessage);
+
+            return false;
+        }
+
+        var wearer = item.MobileId is { } wearerId && _mobiles.TryGet(wearerId, out var worn) ? worn : null;
+        var answer = _npcScripts.Run(npc, DragDropFunction, (long)giver.Id.Value, (long)item.Id.Value);
+
+        if (answer is not { Kind: ScriptResultKind.Completed, Values: [true, ..] })
+        {
+            return false;
+        }
+
+        if (item.MobileId is null)
+        {
+            TakenOff(wearer, item);
+        }
+
+        // Gone, or with someone else: the giver's client forgets it. Else it is shown where the script left it.
+        if (!_items.TryGet(item.Id, out _) ||
+            (item.ContainerId is not null && _items.GetOwner(item) != session.CharacterId))
+        {
+            _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
+        }
+        else
+        {
+            HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+        }
+
+        LoadChanged(session, false);
+
+        return true;
+    }
+
+    // As ModernUO: a container takes its limit of stones from a player, anything from the staff.
+    private bool HoldsTheWeight(GameSession session, ItemEntity container, ItemEntity item)
+    {
+        if (_weight is null || session.AccountType >= AccountType.GameMaster || _weight.Holds(container, item))
+        {
+            return true;
+        }
+
+        if (_mobiles.TryGet(session.CharacterId, out var mobile))
+        {
+            _speech?.TellCliloc(mobile, TooHeavyMessage);
+        }
+
+        return false;
+    }
+
+    // A container takes as many items as its limit says from a player, any number from the staff.
+    private bool HasTheRoom(GameSession session, ItemEntity container, ItemEntity item)
+    {
+        if (_capacity is null || session.AccountType >= AccountType.GameMaster || _capacity.HasRoom(container, item))
+        {
+            return true;
+        }
+
+        if (_mobiles.TryGet(session.CharacterId, out var mobile))
+        {
+            _speech?.TellCliloc(mobile, IContainerCapacityService.FullMessage);
+        }
+
+        return false;
+    }
+
+    private void LoadChanged(GameSession session, bool warn)
+    {
+        if (_fatigue is not null && _mobiles.TryGet(session.CharacterId, out var mobile))
+        {
+            _fatigue.LoadChanged(session, mobile, warn);
+        }
     }
 
     // The item counts as held while a script is asked, so item.delete, item.consume and the like refuse it and the
@@ -217,6 +393,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private void Dropped(GameSession session, ItemEntity item)
     {
         _scripts?.Queue(item, DropFunction, (long)session.CharacterId.Value);
+        LoadChanged(session, true);
     }
 
     private void TakenOff(MobileEntity? wearer, ItemEntity item)
@@ -236,6 +413,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         out ItemEntity stack
     )
     {
+        // Safe: the out value is only used when the lookup succeeds.
         if (!_items.TryGet(destination, out stack!) ||
             stack.Id == item.Id ||
             stack.ContainerId is null ||
@@ -258,6 +436,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     // Onto a ground stack of the same kind within reach: the stack grows and the held item is absorbed.
     private bool TryMergeOnGround(MobileEntity mobile, ItemEntity item, Serial destination, out ItemEntity stack)
     {
+        // Safe: the out value is only used when the lookup succeeds.
         if (!_items.TryGet(destination, out stack!) ||
             stack.Id == item.Id ||
             stack.GroundLocation is null ||
@@ -286,8 +465,10 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         out ItemEntity chest
     )
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         chest = null!;
 
+        // Safe: the out value is only used when the lookup succeeds.
         if (!_items.TryGet(destination, out stack!) ||
             stack.Id == item.Id ||
             stack.ContainerId is null ||
@@ -342,7 +523,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return false;
         }
 
-        return TryPut(item, container, target.GridLocation!.Value, packet.GridIndex, allowsInto);
+        return TryPut(item, container, target.GridLocation.Value, packet.GridIndex, allowsInto);
     }
 
     // Into a container lying on the ground within reach, such as a treasure chest, or into one inside it; dropped on an
@@ -355,6 +536,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         out ItemEntity chest
     )
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         chest = null!;
 
         if (!packet.Destination.IsItem ||
@@ -380,7 +562,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             // Dropped on an item inside: beside it.
             container = holder;
-            position = target.GridLocation!.Value;
+            position = target.GridLocation.Value;
         }
         else
         {
@@ -396,10 +578,13 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     // What lies in a bank box is reached only while the bank is open.
     private bool CanAccess(GameSession session, ItemEntity target)
     {
-        return _bank is null || !_mobiles.TryGet(session.CharacterId, out var character) || _bank.CanAccess(session, character, target);
+        return _bank is null || !_mobiles.TryGet(session.CharacterId, out var character) ||
+               _bank.CanAccess(session, character, target);
     }
 
-    private bool TryPut(ItemEntity item, ItemEntity container, Point2D position, int gridIndex, Func<ItemEntity, bool> allowsInto)
+    private bool TryPut(
+        ItemEntity item, ItemEntity container, Point2D position, int gridIndex, Func<ItemEntity, bool> allowsInto
+    )
     {
         if (Encloses(item, container) || !allowsInto(container))
         {

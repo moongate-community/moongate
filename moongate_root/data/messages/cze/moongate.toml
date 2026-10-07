@@ -144,7 +144,7 @@
 30121 = "Položí na zem, kam zamíříš, předmět ze šablony předmětu: add <template>."
 30122 = "Odstranit lze jen předmět ležící na zemi."
 30126 = "{0}: {1} je nyní {2}."
-30127 = "Nastaví životy, manu, výdrž, hlad nebo žízeň zaměřené bytosti: set <hits|mana|stamina|hunger|thirst> <hodnota>."
+30127 = "Nastaví životy, manu, výdrž, hlad nebo žízeň zaměřené bytosti, nebo z ní udělá zločince: set <hits|mana|stamina|hunger|thirst|criminal> <hodnota>."
 
 # Moongate: texts of the item scripts.
 30114 = "Tento moongate zřejmě nikam nevede."
@@ -155,3 +155,79 @@
 30130 = "Jsi příliš plný, než abys mohl dál pít!"
 30131 = "Je to prázdné."
 30132 = "Piješ a máš menší žízeň."
+30133 = "Jsi přetížený: neseš {0} kam. z {1}."
+30134 = "Vstupuješ do: {0}."
+30135 = "Opouštíš: {0}."
+30136 = "Nyní jsi pod ochranou stráží: {0}."
+30137 = "Opouštíš ochranu stráží: {0}."
+30138 = "Svých činů budeš litovat, lotře!"
+
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 and 30150 of the jail command, 30148-30149 the reason of a sentence).
+30139 = "Byl jsi uvězněn na {0} dní."
+30140 = "Odpykal sis svůj trest. Byla ti stržena pokuta {0} zlatých."
+30141 = "Odpykal sis svůj trest."
+30142 = "Byl jsi propuštěn z vězení."
+30143 = "{0} si odpykal {1} dní v cele {2}, od {3} do {4}, a zaplatil pokutu {5} zlatých. Uvěznil: {6}."
+30144 = "Otevře gump vězení: vypíše cely, přenese tě do jedné z nich a uvězní nebo propustí postavu; jail <jméno> jej otevře na hráči toho jména, ať je online, nebo ne."
+30145 = "Vězení není nastaveno: chybí data/jail.toml."
+30146 = "To není postava."
+30147 = "Chybí gump vězení: templates/gumps/jail_sentence.xml."
+30148 = "Byl jsi uvězněn na {0} dní: {1}"
+30149 = "Důvod: {0}"
+30150 = "Žádná postava se nejmenuje {0}."
+
+# Moongate: texts of death (30151 the name of a corpse, 30152-30154 of the kill command).
+30151 = "ostatky: {0}"
+30152 = "Zabije vybrané NPC: zemře na místě a zanechá mrtvolu."
+30153 = "{0} je mrtev."
+30154 = "{0} nemůže zemřít."
+
+# Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
+30155 = "Před dalším příspěvkem musíš počkat {0} sekund."
+30156 = "Ta zpráva není tvoje."
+30157 = "Nástěnka je zaneprázdněná: zkus to za chvíli znovu."
+
+# Moongate: texts of the animate command (30158-30159).
+30158 = "Přiměje vybranou postavu nebo NPC provést akci jejího těla: animate <akce>."
+30159 = "{0} provádí akci {1}."
+
+# Moongate: texts of the version and uptime commands (30160-30163).
+30160 = "Ukáže verzi serveru, zda jde o sestavení Debug nebo Release, a kdy bylo sestaveno."
+30161 = "Moongate {0} \"{1}\" ({2}), sestaveno {3}."
+30162 = "Ukáže, jak dlouho server běží a odkdy."
+30163 = "Běží {0}, od {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Vzkřísí NPC, jehož mrtvolu vybereš: zrodí se znovu tam, kde mrtvola leží."
+30165 = "{0} je zpět."
+30166 = "To není mrtvola."
+30167 = "Tuto mrtvolu nelze vzkřísit."
+
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "Ve vězení nemůžeš používat dovednosti."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Vyzvednout přílohy"
+30170 = "Přílohy jsou ve tvém batohu."
+30171 = "V batohu není místo na všechny přílohy."
+30172 = "Tyto přílohy nelze vyzvednout."
+30173 = "Tvůj batoh je zaneprázdněný. Zkus to za chvíli."
+30174 = "Přílohy se nepodařilo doručit. Zkus to za chvíli."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Bankovní šek na {0} zlatých je ve tvém batohu."
+30176 = "Šek nebyl vytvořen: nemáš batoh, nebo je plný."
+30177 = "Vloží do tvého batohu bankovní šek na uvedenou částku (1 až 2000000000)."
+30178 = "{1} zlatých je v batohu postavy {0}."
+30179 = "{0} nemá batoh, nebo je plný."
+30180 = "Vloží hromádku zlata (1 až 60000) do batohu postavy nebo NPC, které označíš."
+
+# Moongate: book command (30181-30184).
+30181 = "Dokument {0} není v templates/books."
+30182 = "Dokument {0} je ve tvém batohu."
+30183 = "Dokument {0} nelze vytvořit. Zkontroluj jeho hodnoty a dostupnost batohu."
+30184 = "Vloží dokument z templates/books do tvého batohu: book <template> [name=value ...]."
+
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Otevře gump nástrojů game mastera: boční panel s nástroji a jejich příkazy, zatím počasí."
+30186 = "Chybí gump gmtools: templates/gumps/gmtools.xml."

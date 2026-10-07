@@ -41,8 +41,9 @@ public class BodiesLoader : IDataLoader<BodyContent>
 
     public async Task<DataLoaderResult<BodyContent>> LoadDataAsync(CancellationToken cancellationToken = default)
     {
-        var bodiesFile = await TomlUtils.DeserializeFromFileAsync<BodyContentFile>(bodiesFilePath, null, cancellationToken) ??
-                         new BodyContentFile();
+        var bodiesFile =
+            await TomlUtils.DeserializeFromFileAsync<BodyContentFile>(bodiesFilePath, null, cancellationToken) ??
+            new BodyContentFile();
         var types = new SortedDictionary<int, BodyType>();
 
         Add(types, bodiesFile.Human, BodyType.Human);

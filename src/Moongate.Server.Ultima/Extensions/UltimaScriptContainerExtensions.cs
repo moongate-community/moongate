@@ -3,6 +3,8 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Types.Effects;
+using Moongate.Server.Ultima.Types.Bank;
+using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Server.Ultima.Types.Weather;
@@ -34,15 +36,25 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<MobileModule>();
         container.AddScriptModule<TargetModule>();
+        container.AddScriptModule<HuePickerModule>();
+        container.AddScriptModule<SkillModule>();
+        container.AddScriptModule<CombatModule>();
         container.AddScriptModule<PromptModule>();
         container.AddScriptModule<GumpModule>();
         container.AddScriptModule<BankModule>();
         container.AddScriptModule<EffectModule>();
         container.AddScriptModule<MoongatesModule>();
         container.AddScriptModule<LocationsModule>();
-        // No module function takes it: registered so on_speech can compare its keywords with names.
+        container.AddScriptModule<JailModule>();
+        container.AddScriptModule<BookModule>();
+        container.AddScriptModule<CommandsModule>();
+        container.AddScriptModule<BoardModule>();
+        // No module function takes them: registered so on_speech can compare its keywords and its type with names.
         container.RegisterScriptEnum<SpeechKeywordType>();
+        container.RegisterScriptEnum<SpeechType>();
         container.RegisterScriptEnum<DirectionType>();
+        container.RegisterScriptEnum<JailResultType>();
+        container.RegisterScriptEnum<BankResultType>();
         container.RegisterScriptEnum<SkillType>();
         container.RegisterScriptEnum<SeasonType>();
         container.RegisterScriptEnum<WeatherKindType>();

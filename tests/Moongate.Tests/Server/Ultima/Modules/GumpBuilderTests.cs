@@ -140,7 +140,10 @@ public sealed class GumpBuilderTests : IAsyncLifetime
 
         Run("gump.open(7, 'with_slot', {})");
 
-        Assert.Equal(("with_slot", "rows", 7L), (_scripts.Calls[0].Gump, _scripts.Calls[0].Function, _scripts.Calls[0].Args[1]));
+        Assert.Equal(
+            ("with_slot", "rows", 7L),
+            (_scripts.Calls[0].Gump, _scripts.Calls[0].Function, _scripts.Calls[0].Args[1])
+        );
         Assert.Equal("{ page 0 }{ text 1 1 0 0 }{ text 105 210 0 1 }", _gumps.Opened[0].Gump.Layout.Build().Layout);
     }
 
@@ -160,7 +163,8 @@ public sealed class GumpBuilderTests : IAsyncLifetime
      InlineData("g:button{ x = 1, y = 1, up = 1, down = 2, on_click = '__reserved' }", "reserved")]
     public void Send_ABuiltGumpTheChecksRefuse_FailsWithTheReason(string control, string expected)
     {
-        var exception = Assert.ThrowsAny<Exception>(() => Run($"local g = gump.create('menu') {control} return gump.send(7, g)"));
+        var exception =
+            Assert.ThrowsAny<Exception>(() => Run($"local g = gump.create('menu') {control} return gump.send(7, g)"));
 
         Assert.Contains(expected, exception.Message);
         Assert.Empty(_gumps.Opened);
@@ -175,23 +179,20 @@ public sealed class GumpBuilderTests : IAsyncLifetime
     [Fact]
     public void ASlotFunctionThatFails_OpensNothing()
     {
-        _scripts.CallResult = Moongate.Scripting.Data.Scripts.ScriptResult.Failed(new("gumps/with_slot.lua", 1, "boom", null));
+        _scripts.CallResult =
+            Moongate.Scripting.Data.Scripts.ScriptResult.Failed(new("gumps/with_slot.lua", 1, "boom", null));
 
         Assert.False(Run("return gump.open(7, 'with_slot', {})")[0].Read<bool>());
         Assert.Empty(_gumps.Opened);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private void Answer(int button, int gump = 0)
     {
-        _gumps.Opened[gump].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
-        );
+        _gumps.Opened[gump]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
+            );
     }
 
     private LuaValue[] Run(string chunk)
@@ -206,7 +207,13 @@ public sealed class GumpBuilderTests : IAsyncLifetime
         );
         var data = new StubDataLoaderService().With(new GumpTemplate { Id = "with_slot", File = "a.xml", Root = withSlot });
         var templates = new GumpTemplateService(_gumps, data, _fixture.Network.Loop, _fixture.Sessions);
-        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts), _fixture.Network.Loop);
+        var module = new GumpModule(
+            _fixture.Sessions,
+            _gumps,
+            templates,
+            new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts),
+            _fixture.Network.Loop
+        );
 
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
@@ -214,5 +221,10 @@ public sealed class GumpBuilderTests : IAsyncLifetime
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

@@ -99,12 +99,15 @@ internal static class PostgreSqlDataExporter
 
         await using (writer.ConfigureAwait(false))
         {
-            await WriteHeaderAsync(writer, connection.Database, createdAt, skipped, skippedSequences, blocking).ConfigureAwait(false);
+            await WriteHeaderAsync(writer, connection.Database, createdAt, skipped, skippedSequences, blocking)
+                .ConfigureAwait(false);
 
             // The header reaches the stream first: the snapshot was taken by the catalog queries above.
             await writer.FlushAsync(cancellationToken).ConfigureAwait(false);
 
             await writer.WriteLineAsync("BEGIN;").ConfigureAwait(false);
+            // Validate deferrable references and integrity triggers after every table has been restored.
+            await writer.WriteLineAsync("SET CONSTRAINTS ALL DEFERRED;").ConfigureAwait(false);
             await writer.WriteLineAsync().ConfigureAwait(false);
 
             if (tables.Count > 0)
@@ -153,7 +156,8 @@ internal static class PostgreSqlDataExporter
         while (pending.Count > 0)
         {
             var next = pending.FirstOrDefault(table => references.All(reference =>
-                    reference.Table != table.Oid || !known.Contains(reference.Referenced) || written.Contains(reference.Referenced)
+                    reference.Table != table.Oid || !known.Contains(reference.Referenced) ||
+                    written.Contains(reference.Referenced)
                 )
             );
 
@@ -212,40 +216,40 @@ internal static class PostgreSqlDataExporter
         var ordered = new List<PostgreSqlExportTable>();
 
         await using (var command = new NpgsqlCommand(TablesSql, connection))
-        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
-        {
-            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
             {
-                var table = new PostgreSqlExportTable
+                while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                 {
-                    Oid = reader.GetInt64(0),
-                    Schema = reader.GetString(1),
-                    Name = reader.GetString(2)
-                };
+                    var table = new PostgreSqlExportTable
+                    {
+                        Oid = reader.GetInt64(0),
+                        Schema = reader.GetString(1),
+                        Name = reader.GetString(2)
+                    };
 
-                if (!reader.GetBoolean(3))
-                {
-                    skipped.Add(table);
+                    if (!reader.GetBoolean(3))
+                    {
+                        skipped.Add(table);
 
-                    continue;
+                        continue;
+                    }
+
+                    tables.Add(table.Oid, table);
+                    ordered.Add(table);
                 }
-
-                tables.Add(table.Oid, table);
-                ordered.Add(table);
             }
-        }
 
         await using (var command = new NpgsqlCommand(ColumnsSql, connection))
-        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
-        {
-            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
             {
-                if (tables.TryGetValue(reader.GetInt64(0), out var table))
+                while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                 {
-                    table.Columns.Add(reader.GetString(1));
+                    if (tables.TryGetValue(reader.GetInt64(0), out var table))
+                    {
+                        table.Columns.Add(reader.GetString(1));
+                    }
                 }
             }
-        }
 
         return ordered;
     }
@@ -276,16 +280,17 @@ internal static class PostgreSqlDataExporter
         var names = new List<string>();
 
         await using (var command = new NpgsqlCommand(SequencesSql, connection))
-        await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
-        {
-            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
             {
-                var name = PostgreSqlExportTable.Quote(reader.GetString(0)) + "." + PostgreSqlExportTable.Quote(reader.GetString(1));
+                while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                {
+                    var name = PostgreSqlExportTable.Quote(reader.GetString(0)) + "." +
+                               PostgreSqlExportTable.Quote(reader.GetString(1));
 
-                // A sequence the role cannot read has no known value: writing one would reset it on restore.
-                (reader.GetBoolean(2) ? names : skipped).Add(name);
+                    // A sequence the role cannot read has no known value: writing one would reset it on restore.
+                    (reader.GetBoolean(2) ? names : skipped).Add(name);
+                }
             }
-        }
 
         var statements = new List<string>(names.Count);
 
@@ -315,7 +320,8 @@ internal static class PostgreSqlDataExporter
     )
     {
         var version = typeof(PostgreSqlDataExporter).Assembly
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion ?? "unknown";
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
+            ?.InformationalVersion ?? "unknown";
 
         await writer.WriteLineAsync("-- Moongate SQL backup").ConfigureAwait(false);
         await writer.WriteLineAsync($"-- Database: {database}").ConfigureAwait(false);

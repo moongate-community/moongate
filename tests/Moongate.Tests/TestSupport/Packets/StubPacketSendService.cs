@@ -14,12 +14,14 @@ public sealed class StubPacketSendService : IPacketSendService
     ///     Gets every packet handed to TrySend, in order, except those of the types passed to <see cref="Ignore{T}" />.
     /// </summary>
     public List<IOutgoingPacket> Sent { get; } = [];
+
     public List<long> SentSessionIds { get; } = [];
 
     /// <summary>
     ///     Gets the packets of the ignored types, in order, kept apart from <see cref="Sent" />.
     /// </summary>
     public List<IOutgoingPacket> Ignored { get; } = [];
+
     public INetworkConnection? ExpectedConnection { get; private set; }
     public bool RejectTerminalSend { get; init; }
 

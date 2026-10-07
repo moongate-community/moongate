@@ -18,9 +18,9 @@ public sealed class RegionEventPublisherTests
         using var container = new Container();
         container.RegisterMoongateEventBus();
         var events = container.Resolve<IMoongateEventBus>();
-        var published = new TaskCompletionSource<PlayerRegionChangedEvent>(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var subscription = events.Subscribe<PlayerRegionChangedEvent>(
-            (change, _) =>
+        var published =
+            new TaskCompletionSource<PlayerRegionChangedEvent>(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var subscription = events.Subscribe<PlayerRegionChangedEvent>((change, _) =>
             {
                 published.TrySetResult(change);
 
@@ -45,8 +45,7 @@ public sealed class RegionEventPublisherTests
         container.RegisterMoongateEventBus();
         var events = container.Resolve<IMoongateEventBus>();
         var called = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var subscription = events.Subscribe<PlayerRegionChangedEvent>(
-            (_, _) =>
+        using var subscription = events.Subscribe<PlayerRegionChangedEvent>((_, _) =>
             {
                 called.TrySetResult();
 

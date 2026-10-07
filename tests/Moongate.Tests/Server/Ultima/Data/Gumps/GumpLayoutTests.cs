@@ -19,11 +19,24 @@ public sealed class GumpLayoutTests
         { new GumpItem { X = 1, Y = 2, ItemId = 0x0EED, Hue = 1153 }, "{ tilepichue 1 2 3821 1153 }" },
         { new GumpButton { X = 20, Y = 80, Up = 4005, Down = 4007, ButtonId = 2 }, "{ button 20 80 4005 4007 1 0 2 }" },
         { new GumpButton { X = 20, Y = 80, Up = 4005, Down = 4007, Page = 3 }, "{ button 20 80 4005 4007 0 3 0 }" },
-        { new GumpCheckbox { X = 1, Y = 2, Off = 210, On = 211, Checked = true, SwitchId = 100 }, "{ checkbox 1 2 210 211 1 100 }" },
+        {
+            new GumpCheckbox { X = 1, Y = 2, Off = 210, On = 211, Checked = true, SwitchId = 100 },
+            "{ checkbox 1 2 210 211 1 100 }"
+        },
         { new GumpRadio { X = 1, Y = 2, Off = 208, On = 209, SwitchId = 7 }, "{ radio 1 2 208 209 0 7 }" },
-        { new GumpHtmlLocalized { X = 1, Y = 2, Width = 3, Height = 4, Cliloc = 1046257, Background = true, Scrollbar = true }, "{ xmfhtmlgump 1 2 3 4 1046257 1 1 }" },
-        { new GumpHtmlLocalized { X = 1, Y = 2, Width = 3, Height = 4, Cliloc = 1011011, Color = 0x7FFF }, "{ xmfhtmlgumpcolor 1 2 3 4 1011011 0 0 32767 }" },
-        { new GumpHtmlLocalized { X = 1, Y = 2, Width = 3, Height = 4, Cliloc = 1070000, Args = "Fido\tTwo" }, "{ xmfhtmltok 1 2 3 4 0 0 0 1070000 @Fido\tTwo@ }" },
+        {
+            new GumpHtmlLocalized
+                { X = 1, Y = 2, Width = 3, Height = 4, Cliloc = 1046257, Background = true, Scrollbar = true },
+            "{ xmfhtmlgump 1 2 3 4 1046257 1 1 }"
+        },
+        {
+            new GumpHtmlLocalized { X = 1, Y = 2, Width = 3, Height = 4, Cliloc = 1011011, Color = 0x7FFF },
+            "{ xmfhtmlgumpcolor 1 2 3 4 1011011 0 0 32767 }"
+        },
+        {
+            new GumpHtmlLocalized { X = 1, Y = 2, Width = 3, Height = 4, Cliloc = 1070000, Args = "Fido\tTwo" },
+            "{ xmfhtmltok 1 2 3 4 0 0 0 1070000 @Fido\tTwo@ }"
+        },
         { new GumpTooltip { Cliloc = 1011036 }, "{ tooltip 1011036 }" },
         { new GumpTooltip { Cliloc = 1070722, Args = "Hello" }, "{ tooltip 1070722 @Hello@ }" },
         { new GumpItemProperty { Serial = 0x40000001 }, "{ itemproperty 1073741825 }" },
@@ -50,7 +63,8 @@ public sealed class GumpLayoutTests
 
         try
         {
-            var layout = new GumpLayout().Add(new GumpPage { Page = 1 }).Add(new GumpImage { X = -10, Y = -2, GumpId = 5, Hue = 33 });
+            var layout = new GumpLayout().Add(new GumpPage { Page = 1 })
+                .Add(new GumpImage { X = -10, Y = -2, GumpId = 5, Hue = 33 });
 
             Assert.Equal("{ page 1 }{ gumppic -10 -2 5 hue=33 }", layout.Build().Layout);
         }
@@ -64,8 +78,8 @@ public sealed class GumpLayoutTests
     public void ClilocArguments_CannotBreakTheLayout()
     {
         var layout = new GumpLayout()
-                     .Add(new GumpHtmlLocalized { Cliloc = 1070000, Args = "x@ }{ button 0 0 1 2 1 0 9 }" })
-                     .Add(new GumpTooltip { Cliloc = 1070722, Args = "a@b{c}" });
+            .Add(new GumpHtmlLocalized { Cliloc = 1070000, Args = "x@ }{ button 0 0 1 2 1 0 9 }" })
+            .Add(new GumpTooltip { Cliloc = 1070722, Args = "a@b{c}" });
 
         Assert.Equal(
             "{ xmfhtmltok 0 0 0 0 0 0 0 1070000 @x  button 0 0 1 2 1 0 9 @ }{ tooltip 1070722 @abc@ }",
@@ -106,7 +120,9 @@ public sealed class GumpLayoutTests
         layout.Add(new GumpHtml { X = 1, Y = 2, Width = 3, Height = 4, Text = "<b>Hello</b>", Scrollbar = true });
         layout.Add(new GumpText { X = 9, Y = 9, Hue = 0, Text = "Hello" });
         layout.Add(new GumpTextEntry { X = 1, Y = 2, Width = 3, Height = 4, Hue = 0, EntryId = 5, Text = "" });
-        layout.Add(new GumpTextEntry { X = 1, Y = 2, Width = 3, Height = 4, Hue = 0, EntryId = 6, Text = "World", MaxLength = 20 });
+        layout.Add(
+            new GumpTextEntry { X = 1, Y = 2, Width = 3, Height = 4, Hue = 0, EntryId = 6, Text = "World", MaxLength = 20 }
+        );
 
         var built = layout.Build();
 

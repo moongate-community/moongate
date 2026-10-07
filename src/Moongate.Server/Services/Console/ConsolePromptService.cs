@@ -54,12 +54,6 @@ public sealed class ConsolePromptService : IConsolePromptService
     {
     }
 
-    internal ConsolePromptService(IConsoleDriver driver, bool interactive)
-    {
-        _driver = driver;
-        _interactive = interactive;
-    }
-
     /// <inheritdoc />
     public void HidePrompt()
     {
@@ -187,6 +181,12 @@ public sealed class ConsolePromptService : IConsolePromptService
                 _driver.ResetColor();
             }
         );
+    }
+
+    internal ConsolePromptService(IConsoleDriver driver, bool interactive)
+    {
+        _driver = driver;
+        _interactive = interactive;
     }
 
     private void ClearPromptRow()

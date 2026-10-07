@@ -622,13 +622,41 @@ public sealed class PersistenceSaveTests
     }
 
     [Fact]
+    public async Task SaveAllAsync_AnUnchangedEntityTheSourceAsksToRewrite_IsWrittenAgain_AndReported()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var deletions = new RecordingDeletionSource();
+        var live = new CharacterEntity { Id = new(1), Name = "Aria" };
+        var store = owner.RegisterEntity<CharacterEntity>(
+            () => [live],
+            e => new() { Id = e.Id, Name = e.Name },
+            deletions: deletions
+        );
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        await owner.SaveAllAsync();
+
+        // Its row went away behind the save, as with a cascade: the live entity did not change.
+        await store.DeleteAsync(new(1));
+        deletions.Rewrites.Add(new(1));
+        await owner.SaveAllAsync();
+
+        Assert.Equal("Aria", (await store.GetByIdAsync(new(1)))!.Name);
+        Assert.Equal([new Serial(1)], Assert.Single(deletions.RewritesReported));
+    }
+
+    [Fact]
     public async Task SaveAllAsync_AFailedSave_DoesNotReportTheDeletions()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
         await using var owner = FacadeFixture.Create(database);
         var deletions = new RecordingDeletionSource();
         var store = owner.RegisterEntity<CharacterEntity>(() => [], e => new() { Id = e.Id }, deletions: deletions);
-        owner.RegisterEntity<InventoryEntity>(() => throw new InvalidOperationException("capture failed"), e => new() { Id = e.Id });
+        owner.RegisterEntity<InventoryEntity>(
+            () => throw new InvalidOperationException("capture failed"),
+            e => new() { Id = e.Id }
+        );
         await owner.InitializeAsync();
         await store.UpsertAsync(new() { Id = new(2) });
         deletions.Pending.Add(new(2));
@@ -691,7 +719,10 @@ public sealed class PersistenceSaveTests
         await using var owner = FacadeFixture.Create(database);
         var live = new CharacterEntity { Id = new(1), Name = "Aria" };
         var present = true;
-        var store = owner.RegisterEntity<CharacterEntity>(() => present ? [live] : [], e => new() { Id = e.Id, Name = e.Name });
+        var store = owner.RegisterEntity<CharacterEntity>(
+            () => present ? [live] : [],
+            e => new() { Id = e.Id, Name = e.Name }
+        );
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
         await owner.SaveAllAsync();

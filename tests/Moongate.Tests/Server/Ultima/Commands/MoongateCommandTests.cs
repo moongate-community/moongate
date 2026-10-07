@@ -33,10 +33,14 @@ public sealed class MoongateCommandTests : IAsyncDisposable
     private readonly MobileService _mobiles;
     private readonly ItemService _items;
     private readonly RecordingWorldViewService _view = new();
+
     private readonly FakeItemFactoryService _factory = new(
         new ItemTemplateService(
             new StubDataLoaderService().With(
-                new ItemTemplate { Id = "moongate", ItemId = new Serial(0x0F6C), Name = "moongate", ScriptId = "moongate", Movable = false }
+                new ItemTemplate
+                {
+                    Id = "moongate", ItemId = new Serial(0x0F6C), Name = "moongate", ScriptId = "moongate", Movable = false
+                }
             )
         ),
         new FakeTileDataService()
@@ -74,7 +78,10 @@ public sealed class MoongateCommandTests : IAsyncDisposable
     {
         await RunAsync("2500,500,0", map);
 
-        Assert.Equal((long)MapType.Felucca, Assert.Single(_sectors.GetItemsInRange(MapType.Trammel, Feet, 0)).Props!["teleport.map"]);
+        Assert.Equal(
+            (long)MapType.Felucca,
+            Assert.Single(_sectors.GetItemsInRange(MapType.Trammel, Feet, 0)).Props!["teleport.map"]
+        );
     }
 
     [Theory,
@@ -106,7 +113,10 @@ public sealed class MoongateCommandTests : IAsyncDisposable
     [Fact]
     public async Task Texts_AreInTheServerLanguage()
     {
-        var context = await RunAsync(["1,1,1"], TestLocalization.With((30111, "Un moongate per {0} ({1}, {2}, {3}) è ai tuoi piedi.")));
+        var context = await RunAsync(
+            ["1,1,1"],
+            TestLocalization.With((30111, "Un moongate per {0} ({1}, {2}, {3}) è ai tuoi piedi."))
+        );
 
         Assert.Equal("Un moongate per trammel (1, 1, 1) è ai tuoi piedi.", Assert.Single(context.Output).Text);
     }
@@ -136,7 +146,9 @@ public sealed class MoongateCommandTests : IAsyncDisposable
         _mobiles.EnterWorld(new MobileEntity { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = Feet });
         var context = new CommandContext(".moongate", "moongate", arguments, CommandSourceType.InGame, session);
 
-        await new MoongateCommand(_mobiles, _sectors, _items, _factory, _view, _fixture.Loop, localization).ExecuteAsync(context);
+        await new MoongateCommand(_mobiles, _sectors, _items, _factory, _view, _fixture.Loop, localization).ExecuteAsync(
+            context
+        );
 
         return context;
     }

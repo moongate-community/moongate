@@ -15,27 +15,31 @@ public sealed class LogModule
     /// <summary>
     ///     Numeric value of the Debug level.
     /// </summary>
-    [ScriptConstant("LEVEL_DEBUG")] public static readonly int LevelDebug = (int)LogEventLevel.Debug;
+    [ScriptConstant("LEVEL_DEBUG", "Numeric value of the Serilog Debug level.")]
+    public static readonly int LevelDebug = (int)LogEventLevel.Debug;
 
     /// <summary>
     ///     Numeric value of the Information level.
     /// </summary>
-    [ScriptConstant("LEVEL_INFO")] public static readonly int LevelInfo = (int)LogEventLevel.Information;
+    [ScriptConstant("LEVEL_INFO", "Numeric value of the Serilog Information level.")]
+    public static readonly int LevelInfo = (int)LogEventLevel.Information;
 
     /// <summary>
     ///     Numeric value of the Warning level.
     /// </summary>
-    [ScriptConstant("LEVEL_WARNING")] public static readonly int LevelWarning = (int)LogEventLevel.Warning;
+    [ScriptConstant("LEVEL_WARNING", "Numeric value of the Serilog Warning level.")]
+    public static readonly int LevelWarning = (int)LogEventLevel.Warning;
 
     /// <summary>
     ///     Numeric value of the Error level.
     /// </summary>
-    [ScriptConstant("LEVEL_ERROR")] public static readonly int LevelError = (int)LogEventLevel.Error;
+    [ScriptConstant("LEVEL_ERROR", "Numeric value of the Serilog Error level.")]
+    public static readonly int LevelError = (int)LogEventLevel.Error;
 
     /// <summary>
     ///     Writes a Debug event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.
     /// </summary>
-    [ScriptFunction(helpText: "Logs at DEBUG.")]
+    [ScriptFunction(helpText: "Logs at DEBUG: the message is a Serilog template whose properties the extra arguments fill.")]
     public void Debug(string message, params object?[] args)
     {
         Write(LogEventLevel.Debug, message, args);
@@ -44,7 +48,7 @@ public sealed class LogModule
     /// <summary>
     ///     Writes an Error event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.
     /// </summary>
-    [ScriptFunction(helpText: "Logs at ERROR.")]
+    [ScriptFunction(helpText: "Logs at ERROR: the message is a Serilog template whose properties the extra arguments fill.")]
     public void Error(string message, params object?[] args)
     {
         Write(LogEventLevel.Error, message, args);
@@ -53,7 +57,7 @@ public sealed class LogModule
     /// <summary>
     ///     Writes an Information event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.
     /// </summary>
-    [ScriptFunction(helpText: "Logs at INFO.")]
+    [ScriptFunction(helpText: "Logs at INFO: the message is a Serilog template whose properties the extra arguments fill.")]
     public void Info(string message, params object?[] args)
     {
         Write(LogEventLevel.Information, message, args);
@@ -62,7 +66,9 @@ public sealed class LogModule
     /// <summary>
     ///     Writes a Warning event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.
     /// </summary>
-    [ScriptFunction(helpText: "Logs at WARNING.")]
+    [ScriptFunction(
+        helpText: "Logs at WARNING: the message is a Serilog template whose properties the extra arguments fill."
+    )]
     public void Warning(string message, params object?[] args)
     {
         Write(LogEventLevel.Warning, message, args);

@@ -53,7 +53,10 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         Assert.True(Run(MapType.Malas) == 0, CombinedOutput);
 
         var spawns = Read("malas", "modernuo_outdoors");
-        Assert.Equal(["malas_modernuo_shared_outdoors_0", "malas_modernuo_shared_outdoors_1"], spawns.Select(spawn => spawn.Id));
+        Assert.Equal(
+            ["malas_modernuo_shared_outdoors_0", "malas_modernuo_shared_outdoors_1"],
+            spawns.Select(spawn => spawn.Id)
+        );
 
         var hart = spawns[0];
         Assert.Equal(MapType.Malas, hart.Map);
@@ -77,7 +80,8 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         WriteSpawners(
             "shared/tokuno/YomutsoMines.json",
             Spawner(100, 80, 0, 5, 2, "00:05:00", "00:10:00", "EarthElemental"),
-            Spawner(700, 1200, 25, 5, 2, "00:05:00", "00:10:00", "GreatHart").Replace("\"map\": \"Malas\"", "\"map\": \"Tokuno\""),
+            Spawner(700, 1200, 25, 5, 2, "00:05:00", "00:10:00", "GreatHart")
+                .Replace("\"map\": \"Malas\"", "\"map\": \"Tokuno\""),
             Spawner(701, 1201, 25, 5, 2, "00:05:00", "00:10:00", "GreatHart").Replace(", \"map\": \"Malas\",", ",")
         );
 
@@ -101,7 +105,10 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
     [Theory, InlineData(MapType.Tokuno, MapType.Malas), InlineData(MapType.Malas, MapType.Tokuno)]
     public void Run_ARegionMovedToAnotherConvertedMap_SurvivesItsOldFiles_WhateverTheOrder(MapType first, MapType second)
     {
-        WriteSpawners("shared/tokuno/YomutsoMines.json", Spawner(100, 80, 0, 5, 2, "00:05:00", "00:10:00", "EarthElemental"));
+        WriteSpawners(
+            "shared/tokuno/YomutsoMines.json",
+            Spawner(100, 80, 0, 5, 2, "00:05:00", "00:10:00", "EarthElemental")
+        );
         WriteSpawners("shared/malas/Vendors.json", Spawner(10, 10, 0, 2, 1, "00:05:00", "00:10:00", "Minter"));
         Directory.CreateDirectory(Path.Combine(Destination, "malas"));
         File.WriteAllText(Path.Combine(Destination, "malas", "modernuo_gone.toml"), "");
@@ -119,10 +126,11 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
     {
         WriteSpawners(
             "post-uoml/malas/South.json",
-            Spawner(500, 500, 0, 10, 10, "00:05:00", "00:10:00", "GreatHart", "Slith").Replace(
-                "\"entries\": [",
-                "\"entries\": [{ \"name\": \"Minter\", \"maxCount\": 1, \"probability\": 100 },"
-            )
+            Spawner(500, 500, 0, 10, 10, "00:05:00", "00:10:00", "GreatHart", "Slith")
+                .Replace(
+                    "\"entries\": [",
+                    "\"entries\": [{ \"name\": \"Minter\", \"maxCount\": 1, \"probability\": 100 },"
+                )
         );
 
         Assert.True(Run(MapType.Malas) == 0, CombinedOutput);
@@ -130,7 +138,10 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         // ModernUO: at most one banker; the other 9 picks split between the hart and the unknown slith.
         var spawns = Read("malas", "modernuo_south");
         Assert.Equal(
-            [("malas_modernuo_post_uoml_south_0", "great_hart", 5), ("malas_modernuo_post_uoml_south_0_banker", "banker", 1)],
+            [
+                ("malas_modernuo_post_uoml_south_0", "great_hart", 5),
+                ("malas_modernuo_post_uoml_south_0_banker", "banker", 1)
+            ],
             spawns.Select(spawn => (spawn.Id, Assert.Single(spawn.MobileIds), spawn.Max))
         );
     }
@@ -141,7 +152,8 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         var twice = "{ \"name\": \"Minter\", \"maxCount\": 1, \"probability\": 100 },";
         WriteSpawners(
             "shared/malas/Bedlam.json",
-            Spawner(500, 500, 0, 10, 10, "00:05:00", "00:10:00", "GreatHart").Replace("\"entries\": [", "\"entries\": [" + twice + twice)
+            Spawner(500, 500, 0, 10, 10, "00:05:00", "00:10:00", "GreatHart")
+                .Replace("\"entries\": [", "\"entries\": [" + twice + twice)
         );
 
         Assert.True(Run(MapType.Malas) == 0, CombinedOutput);
@@ -157,16 +169,21 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
     {
         WriteSpawners(
             "shared/tokuno/TownsLife.json",
-            Spawner(713, 1351, 25, 0, 4, "00:05:00", "00:10:00", "GreatHart").Replace("\"map\": \"Malas\"", "\"map\": \"Tokuno\"").Replace(
-                "\"team\": 0,",
-                "\"team\": 0, \"spawnBounds\": { \"start\": { \"x\": 693, \"y\": 1331, \"z\": -128 }, \"end\": { \"x\": 733, \"y\": 1371, \"z\": 40 } },"
-            )
+            Spawner(713, 1351, 25, 0, 4, "00:05:00", "00:10:00", "GreatHart")
+                .Replace("\"map\": \"Malas\"", "\"map\": \"Tokuno\"")
+                .Replace(
+                    "\"team\": 0,",
+                    "\"team\": 0, \"spawnBounds\": { \"start\": { \"x\": 693, \"y\": 1331, \"z\": -128 }, \"end\": { \"x\": 733, \"y\": 1371, \"z\": 40 } },"
+                )
         );
 
         Assert.True(Run(MapType.Tokuno) == 0, CombinedOutput);
 
         var spawn = Assert.Single(Read("tokuno", "modernuo_towns_life"));
-        Assert.Equal((693, 1331, 733, 1371, 40), (spawn.Areas[0].X1, spawn.Areas[0].Y1, spawn.Areas[0].X2, spawn.Areas[0].Y2, spawn.Z));
+        Assert.Equal(
+            (693, 1331, 733, 1371, 40),
+            (spawn.Areas[0].X1, spawn.Areas[0].Y1, spawn.Areas[0].X2, spawn.Areas[0].Y2, spawn.Z)
+        );
     }
 
     [Fact]
@@ -176,7 +193,10 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         Directory.CreateDirectory(Path.Combine(Destination, "malas"));
         File.WriteAllText(Path.Combine(Destination, "malas", "modernuo_vendors.toml"), "");
 
-        Assert.Equal(2, ModernUoSpawnConverter.Run(Source, [MapType.Malas], Path.Combine(_root, "nowhere"), Destination, _output, _error));
+        Assert.Equal(
+            2,
+            ModernUoSpawnConverter.Run(Source, [MapType.Malas], Path.Combine(_root, "nowhere"), Destination, _output, _error)
+        );
 
         Assert.Contains("no mobile templates", _error.ToString(), StringComparison.Ordinal);
         Assert.True(File.Exists(Path.Combine(Destination, "malas", "modernuo_vendors.toml")));
@@ -187,7 +207,8 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
     {
         WriteSpawners(
             "post-uoml/termur/Outdoors.json",
-            Spawner(100, 100, 0, 5, 2, "00:05:00", "00:10:00", "Slith", "GreatHart").Replace("\"map\": \"Malas\"", "\"map\": \"TerMur\""),
+            Spawner(100, 100, 0, 5, 2, "00:05:00", "00:10:00", "Slith", "GreatHart")
+                .Replace("\"map\": \"Malas\"", "\"map\": \"TerMur\""),
             Spawner(200, 200, 0, 5, 2, "00:05:00", "00:10:00", "Slith").Replace("\"map\": \"Malas\"", "\"map\": \"TerMur\"")
         );
 
@@ -224,14 +245,6 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         Assert.Contains("does not exist", _error.ToString(), StringComparison.Ordinal);
     }
 
-    public void Dispose()
-    {
-        if (Directory.Exists(_root))
-        {
-            Directory.Delete(_root, true);
-        }
-    }
-
     private int Run(params MapType[] maps)
     {
         return ModernUoSpawnConverter.Run(Source, maps, Mobiles, Destination, _output, _error);
@@ -249,9 +262,14 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         File.WriteAllText(path, "[" + string.Join(",", spawners) + "]");
     }
 
-    private static string Spawner(int x, int y, int z, int homeRange, int count, string minDelay, string maxDelay, params string[] names)
+    private static string Spawner(
+        int x, int y, int z, int homeRange, int count, string minDelay, string maxDelay, params string[] names
+    )
     {
-        var entries = string.Join(",", names.Select(name => $$"""{ "name": "{{name}}", "maxCount": {{count}}, "probability": 100 }"""));
+        var entries = string.Join(
+            ",",
+            names.Select(name => $$"""{ "name": "{{name}}", "maxCount": {{count}}, "probability": 100 }""")
+        );
 
         return $$"""
                  {
@@ -260,5 +278,13 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
                    "homeRange": {{homeRange}}, "walkingRange": 2, "entries": [{{entries}}]
                  }
                  """;
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_root))
+        {
+            Directory.Delete(_root, true);
+        }
     }
 }

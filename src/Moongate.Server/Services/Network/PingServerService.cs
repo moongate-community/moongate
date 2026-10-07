@@ -30,7 +30,9 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
 
     private bool _stopped;
 
-    internal IReadOnlyList<IPEndPoint> LocalEndpoints => _sockets.Select(socket => (IPEndPoint)socket.LocalEndPoint!).ToArray();
+    // Safe: sockets are bound before they are listed.
+    internal IReadOnlyList<IPEndPoint> LocalEndpoints =>
+        _sockets.Select(socket => (IPEndPoint)socket.LocalEndPoint!).ToArray();
 
     public PingServerService(PingServerOptions options)
     {
@@ -61,6 +63,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
             }
 
             // Read here and not in the loop: a stop right after the start disposes the socket before the loop runs.
+            // Safe: sockets are bound before they are listed.
             var local = (IPEndPoint)socket.LocalEndPoint!;
             _sockets.Add(socket);
             _loops.Add(Task.Run(() => EchoAsync(socket, local, _stopping.Token)));
@@ -106,6 +109,24 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
         _loops.Clear();
     }
 
+    /// <summary>
+    ///     Tells whether a datagram gets its echo: not when it is over the size limit, and not when it comes from the
+    ///     ping port itself, which is another ping server's echo and would bounce between the two forever.
+    /// </summary>
+    internal static bool IsAnswered(int size, int senderPort, int localPort, int maxDatagramSize)
+    {
+        return size <= maxDatagramSize && senderPort != localPort;
+    }
+
+    /// <summary>
+    ///     Tells whether the loop waits before the next receive: yes for an error that can come back at once and spin
+    ///     the loop, no for one that only means this ping is lost.
+    /// </summary>
+    internal static bool NeedsPause(SocketError error)
+    {
+        return error is not (SocketError.MessageSize or SocketError.ConnectionReset);
+    }
+
     private async Task EchoAsync(Socket socket, IPEndPoint local, CancellationToken cancellationToken)
     {
         // One byte more than the limit, so a datagram over it is seen as such instead of being cut to the limit.
@@ -117,7 +138,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
             try
             {
                 var received = await socket.ReceiveFromAsync(buffer, SocketFlags.None, sender, cancellationToken)
-                                           .ConfigureAwait(false);
+                    .ConfigureAwait(false);
 
                 if (!IsAnswered(received, GetPort(sender), local.Port, _options.MaxDatagramSize))
                 {
@@ -125,7 +146,7 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
                 }
 
                 await socket.SendToAsync(buffer.AsMemory(0, received), SocketFlags.None, sender, cancellationToken)
-                            .ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -150,24 +171,6 @@ public sealed class PingServerService : IMoongateStartupService, IDisposable
                 return;
             }
         }
-    }
-
-    /// <summary>
-    ///     Tells whether a datagram gets its echo: not when it is over the size limit, and not when it comes from the
-    ///     ping port itself, which is another ping server's echo and would bounce between the two forever.
-    /// </summary>
-    internal static bool IsAnswered(int size, int senderPort, int localPort, int maxDatagramSize)
-    {
-        return size <= maxDatagramSize && senderPort != localPort;
-    }
-
-    /// <summary>
-    ///     Tells whether the loop waits before the next receive: yes for an error that can come back at once and spin
-    ///     the loop, no for one that only means this ping is lost.
-    /// </summary>
-    internal static bool NeedsPause(SocketError error)
-    {
-        return error is not (SocketError.MessageSize or SocketError.ConnectionReset);
     }
 
     // The port sits in network byte order after the two bytes of the address family, for IPv4 and IPv6 alike.

@@ -48,13 +48,16 @@ public sealed class BroadcastServiceTests
 
         Assert.Equal(2, sent);
         Assert.Equal(new long[] { 1, 2 }, fixture.Sender.SentSessionIds.Order());
-        Assert.All(fixture.Sender.Sent, message =>
-        {
-            var packet = Assert.IsType<UnicodeSpeechMessagePacket>(message);
-            Assert.Equal("Hello, Britannia! è 世界", packet.Text);
-            Assert.Equal(SpeechType.System, packet.Type);
-            Assert.Equal("System", packet.Name);
-        });
+        Assert.All(
+            fixture.Sender.Sent,
+            message =>
+            {
+                var packet = Assert.IsType<UnicodeSpeechMessagePacket>(message);
+                Assert.Equal("Hello, Britannia! è 世界", packet.Text);
+                Assert.Equal(SpeechType.System, packet.Type);
+                Assert.Equal("System", packet.Name);
+            }
+        );
     }
 
     [Fact]

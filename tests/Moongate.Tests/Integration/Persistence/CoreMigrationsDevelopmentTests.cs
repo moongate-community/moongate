@@ -15,7 +15,12 @@ public sealed class CoreMigrationsDevelopmentTests
     [Fact]
     public async Task TheShippedAuthSql_LeavesNothingToGenerate()
     {
-        await AssertNothingGeneratedAsync("auth", "AccountMigrations", PersistenceDatabaseTarget.Accounts, typeof(AccountEntity));
+        await AssertNothingGeneratedAsync(
+            "auth",
+            "AccountMigrations",
+            PersistenceDatabaseTarget.Accounts,
+            typeof(AccountEntity)
+        );
     }
 
     [Fact]
@@ -27,7 +32,9 @@ public sealed class CoreMigrationsDevelopmentTests
             PersistenceDatabaseTarget.Realm,
             typeof(MobileEntity),
             typeof(ItemEntity),
-            typeof(WorldStateEntity)
+            typeof(WorldStateEntity),
+            typeof(JailSentenceEntity),
+            typeof(BulletinMessageEntity)
         );
     }
 
@@ -41,11 +48,15 @@ public sealed class CoreMigrationsDevelopmentTests
             "COMMENT ON COLUMN world.items.x IS 'only in the database'",
             typeof(MobileEntity),
             typeof(ItemEntity),
-            typeof(WorldStateEntity)
+            typeof(WorldStateEntity),
+            typeof(JailSentenceEntity),
+            typeof(BulletinMessageEntity)
         );
     }
 
-    private static Task AssertNothingGeneratedAsync(string target, string shipped, PersistenceDatabaseTarget database, params Type[] entities)
+    private static Task AssertNothingGeneratedAsync(
+        string target, string shipped, PersistenceDatabaseTarget database, params Type[] entities
+    )
     {
         return AssertNothingGeneratedAsync(target, shipped, database, null, entities);
     }

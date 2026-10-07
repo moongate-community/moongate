@@ -2,6 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Data.Templates.Items;
@@ -38,7 +39,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
             id=0x0f6b
             movable=1
             color=0x0010
-            weightmax=10
+            weightmax=40050
             }
             """
         );
@@ -53,7 +54,8 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.Equal("torch", item.Name);
         Assert.True(item.Movable);
         Assert.Equal(new Hue(0x0010), item.Hue!.Value.Resolve());
-        Assert.Equal(10, item.MaxWeight);
+        // UOX3 counts a container's limit in hundredths of a stone too: 400.5 stones, kept whole and rounded up.
+        Assert.Equal(401, item.MaxWeight);
         Assert.Null(item.BaseId);
     }
 
@@ -146,6 +148,71 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_DyesTheDyeTubAndWhatUox3CallsDyeable_GetTheirScriptsAndTheFlag()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [base_clothing]
+            {
+            id=0x1f03
+            dyeable=1
+            }
+            [0x1517]
+            {
+            get=base_clothing
+            name=shirt
+            id=0x1517
+            }
+            [0x204e]
+            {
+            get=base_clothing
+            name=death shroud
+            id=0x204e
+            dyeable=0
+            }
+            [0x2b68]
+            {
+            name=snowy cloak
+            id=0x2b68
+            dye=1
+            }
+            [0x0fa9]
+            {
+            name=dyes
+            id=0x0fa9
+            type=208
+            }
+            [0x0fab]
+            {
+            name=dying tub
+            id=0x0fab
+            }
+            [0x0f5e]
+            {
+            name=broadsword
+            id=0x0f5e
+            }
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        var byName = items.Values.Where(item => item.Id != "base_clothing").ToDictionary(item => item.Name!);
+        Assert.True(items["base_clothing"].Dyeable);
+        // The shirt has it from its base, written once.
+        Assert.Null(byName["shirt"].Dyeable);
+        Assert.False(byName["death shroud"].Dyeable);
+        Assert.True(byName["snowy cloak"].Dyeable);
+        Assert.Null(byName["broadsword"].Dyeable);
+        // UOX3 types the dyes in the block and the tub by its graphic, in itemtypes.dfn.
+        Assert.Equal("dyes", byName["dyes"].ScriptId);
+        Assert.Equal("dye_tub", byName["dying tub"].ScriptId);
+        Assert.True(string.IsNullOrEmpty(byName["broadsword"].ScriptId));
+    }
+
+    [Fact]
     public void Run_TheBaseFields_AreConverted()
     {
         _dirs.WriteSource(
@@ -171,7 +238,9 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var item = Assert.Single(TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item);
+        var item = Assert.Single(
+            TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item
+        );
         Assert.Equal(0.02m, item.Weight);
         Assert.Equal(5, item.Amount!.Value.Resolve());
         Assert.True(item.Stackable);
@@ -188,16 +257,21 @@ public sealed class UoxItemConverterCommandTests : IDisposable
      InlineData("", null, null)]
     public void Run_OneValueOrNone_SetsBothPricesOrNeither(string valueLine, int? buy, int? sell)
     {
-        _dirs.WriteSource("items.dfn", $$"""
-            [lamp]
-            {
-            id=0x0a22
-            {{valueLine}}
-            }
-            """);
+        _dirs.WriteSource(
+            "items.dfn",
+            $$"""
+              [lamp]
+              {
+              id=0x0a22
+              {{valueLine}}
+              }
+              """
+        );
 
         Assert.Equal(0, Run());
-        var item = Assert.Single(TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item);
+        var item = Assert.Single(
+            TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item
+        );
         Assert.Equal((buy, sell), (item.BuyPrice, item.SellPrice));
     }
 
@@ -210,16 +284,21 @@ public sealed class UoxItemConverterCommandTests : IDisposable
      InlineData("decay=0", null)]
     public void Run_MovableFollowsUox3_AndUnsetMeansTiledata(string line, bool? movable)
     {
-        _dirs.WriteSource("items.dfn", $$"""
-            [lamp]
-            {
-            id=0x0a22
-            {{line}}
-            }
-            """);
+        _dirs.WriteSource(
+            "items.dfn",
+            $$"""
+              [lamp]
+              {
+              id=0x0a22
+              {{line}}
+              }
+              """
+        );
 
         Assert.Equal(0, Run());
-        var item = Assert.Single(TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item);
+        var item = Assert.Single(
+            TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item
+        );
 
         if (line.StartsWith("decay"))
         {
@@ -242,13 +321,13 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         _dirs.WriteSource(
             "items.dfn",
             $$"""
-            [orcspawn]
-            {
-            name=Orc Spawner
-            id=0x1f13
-            {{visibleLine}}
-            }
-            """
+              [orcspawn]
+              {
+              name=Orc Spawner
+              id=0x1f13
+              {{visibleLine}}
+              }
+              """
         );
 
         var exitCode = Run();
@@ -476,9 +555,12 @@ public sealed class UoxItemConverterCommandTests : IDisposable
 
         Assert.True(exitCode == 0, CombinedOutput);
         var items = TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!
-                             .Item.ToDictionary(item => item.Id);
+            .Item.ToDictionary(item => item.Id);
         var glacial = items["glacialstaff"];
-        Assert.Equal(("0x0df1_magic_staff", 0u, "glacial staff", "0x0480"), (glacial.BaseId, glacial.ItemId.Value, glacial.Name, glacial.Hue.ToString()));
+        Assert.Equal(
+            ("0x0df1_magic_staff", 0u, "glacial staff", "0x0480"),
+            (glacial.BaseId, glacial.ItemId.Value, glacial.Name, glacial.Hue.ToString())
+        );
         Assert.Equal(("0x0df1_magic_staff", "frost staff"), (items["frost_staff"].BaseId, items["frost_staff"].Name));
         Assert.Equal("0x0df1_magic_staff", items["plain_staff"].BaseId);
     }
@@ -511,7 +593,8 @@ public sealed class UoxItemConverterCommandTests : IDisposable
 
         Assert.True(exitCode == 0, CombinedOutput);
         var loot = Assert.Single(
-            TomlUtils.DeserializeFromFile<LootTemplateFile>(Path.Combine(_dirs.LootDestinationDirectory, "staffs.toml"))!.Loot
+            TomlUtils.DeserializeFromFile<LootTemplateFile>(Path.Combine(_dirs.LootDestinationDirectory, "staffs.toml"))!
+                .Loot
         );
         Assert.Equal("glacialstaff", Assert.Single(loot.Entries).ItemId);
     }
@@ -1035,6 +1118,83 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_ReadsTheCombatFieldsOfWeaponsAndArmor_AndTheKindOfWeaponByGraphic()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            "[base_longsword]\n{\nid=0x0f60\nlayer=1\n}\n" +
+            "[0x0f60_t2a]\n{\nget=base_longsword\ndamage=5 33\nspd=35\nstr=25\nhp=31 90\n}\n" +
+            "[ringmail_tunic]\n{\nid=0x13ec\nlayer=13\ndef=22\nstr=20\nhp=41 51\n}\n" +
+            "[bow]\n{\nid=0x13b2\nlayer=2\ndamage=9 41\nspd=25\n}\n" +
+            "[mace]\n{\nid=0x0f5c\nlayer=1\ndamage=8 32\nspd=40\n}\n" +
+            "[spear]\n{\nid=0x0f62\nlayer=2\ndamage=2 36\nspd=50\n}\n" +
+            "[bardiche]\n{\nid=0x0f4d\nlayer=2\ndamage=5 49\nspd=25\n}\n" +
+            "[flat]\n{\nid=0x1234\nlayer=1\ndamage=3\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        // The kind goes on the item that has the graphic; its eras inherit it, and only add numbers.
+        Assert.Equal(WeaponType.Sword, items["base_longsword"].WeaponType);
+        var era = items["0x0f60_t2a"];
+        Assert.Equal(
+            (5, 33, 35, 25, 90),
+            (era.DamageMin!.Value, era.DamageMax!.Value, era.Speed!.Value, era.StrengthRequired!.Value, era.MaxHits!.Value)
+        );
+        Assert.Null(era.WeaponType);
+        var tunic = items["ringmail_tunic"];
+        Assert.Equal((22, 20, 51), (tunic.ArmorRating!.Value, tunic.StrengthRequired!.Value, tunic.MaxHits!.Value));
+        Assert.Null(tunic.DamageMax);
+        Assert.Equal(
+            (WeaponType.Bow, WeaponType.Mace, WeaponType.Fencing, WeaponType.PoleArm),
+            (items["bow"].WeaponType!.Value, items["mace"].WeaponType!.Value, items["spear"].WeaponType!.Value,
+                items["bardiche"].WeaponType!.Value)
+        );
+        // A graphic UOX3 does not list is fought with fists: no kind, and a damage of one number is both ends.
+        Assert.Null(items["flat"].WeaponType);
+        Assert.Equal((3, 3), (items["flat"].DamageMin!.Value, items["flat"].DamageMax!.Value));
+    }
+
+    [Fact]
+    public void Run_TheOtherNamesOfUox3_LoDamageHiDamageAndSpeed_AreReadToo()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            "[practice_sword]\n{\nid=0x13b9\nlayer=1\nlodamage=2\nhidamage=8\nspeed=25\n}\n" +
+            "[both]\n{\nid=0x13b8\nlayer=1\ndamage=5 9\nlodamage=1\nhidamage=2\nspd=30\nspeed=99\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        Assert.Equal(
+            (2, 8, 25),
+            (items["practice_sword"].DamageMin!.Value, items["practice_sword"].DamageMax!.Value,
+                items["practice_sword"].Speed!.Value)
+        );
+        // damage= and spd= win when a block has both.
+        Assert.Equal(
+            (5, 9, 30),
+            (items["both"].DamageMin!.Value, items["both"].DamageMax!.Value, items["both"].Speed!.Value)
+        );
+    }
+
+    [Fact]
+    public void Run_ACombatFieldThatIsNotANumber_IsLeftOut()
+    {
+        _dirs.WriteSource("items.dfn", "[sword]\n{\nid=0x0f60\nlayer=1\ndamage=lots\nspd=fast\nstr=\ndef=-3\nhp=0 0\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var sword = ReadItems()["sword"];
+        Assert.Equal(
+            (null, null, null, null, null, null),
+            (sword.DamageMax, sword.Speed, sword.StrengthRequired, sword.ArmorRating, sword.MaxHits, (int?)null)
+        );
+    }
+
+    [Fact]
     public void Run_NumbersMayBeHex_AsUox3Reads()
     {
         _dirs.WriteSource("items.dfn", "[ring]\n{\nid=0x108a\nlayer=0x08\nweight=0x64\n}\n");
@@ -1084,7 +1244,10 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     [Fact]
     public void Run_Visible0_IsVisibleToEveryone_OverridingAHiddenParent()
     {
-        _dirs.WriteSource("items.dfn", "[base_spawner]\n{\nid=0x1f14\nvisible=1\n}\n[d_woodbox_1]\n{\nget=base_spawner\nid=0x09aa\nvisible=0\n}\n");
+        _dirs.WriteSource(
+            "items.dfn",
+            "[base_spawner]\n{\nid=0x1f14\nvisible=1\n}\n[d_woodbox_1]\n{\nget=base_spawner\nid=0x09aa\nvisible=0\n}\n"
+        );
 
         Assert.True(Run() == 0, CombinedOutput);
 
@@ -1110,18 +1273,34 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     [Fact]
     public void Run_BadOptionsOrSource_ExitWith2()
     {
-        Assert.Equal(2, UoxItemConverterCommand.Run(_dirs.SourceDirectory, _dirs.DestinationDirectory, null, _output, _error, mobileSource: "npc"));
+        Assert.Equal(
+            2,
+            UoxItemConverterCommand.Run(
+                _dirs.SourceDirectory,
+                _dirs.DestinationDirectory,
+                null,
+                _output,
+                _error,
+                mobileSource: "npc"
+            )
+        );
         Assert.Contains("go together", _error.ToString());
-        Assert.Equal(2, UoxItemConverterCommand.Run(Path.Combine(_dirs.SourceDirectory, "missing"), _dirs.DestinationDirectory, null, _output, _error));
+        Assert.Equal(
+            2,
+            UoxItemConverterCommand.Run(
+                Path.Combine(_dirs.SourceDirectory, "missing"),
+                _dirs.DestinationDirectory,
+                null,
+                _output,
+                _error
+            )
+        );
         Assert.Contains("Source does not exist", _error.ToString());
-        Assert.Equal(2, UoxItemConverterCommand.Run(_dirs.SourceDirectory, _dirs.DestinationDirectory, null, _output, _error));
+        Assert.Equal(
+            2,
+            UoxItemConverterCommand.Run(_dirs.SourceDirectory, _dirs.DestinationDirectory, null, _output, _error)
+        );
         Assert.Contains("No .dfn files", _error.ToString());
-    }
-
-    private Dictionary<string, ItemTemplate> ReadItems(string file = "items.toml")
-    {
-        return TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, file))!
-                        .Item.ToDictionary(item => item.Id);
     }
 
     [Fact]
@@ -1181,8 +1360,10 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run(scriptsSource: _dirs.ScriptsSourceDirectory);
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var items = TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, "lighting.toml"))!
-                             .Item.ToDictionary(item => item.Id, item => item.ScriptId);
+        var items = TomlUtils.DeserializeFromFile<ItemTemplateFile>(
+                Path.Combine(_dirs.DestinationDirectory, "lighting.toml")
+            )!
+            .Item.ToDictionary(item => item.Id, item => item.ScriptId);
         Assert.Equal("light", items["0x0a28_candle"]);
         Assert.Equal("light", items["special_lamp"]);
         Assert.True(string.IsNullOrEmpty(items["0x0675_metal_door"]));
@@ -1199,6 +1380,12 @@ public sealed class UoxItemConverterCommandTests : IDisposable
 
         Assert.Equal(2, exitCode);
         Assert.Contains("jse_fileassociations.scp", _error.ToString());
+    }
+
+    private Dictionary<string, ItemTemplate> ReadItems(string file = "items.toml")
+    {
+        return TomlUtils.DeserializeFromFile<ItemTemplateFile>(Path.Combine(_dirs.DestinationDirectory, file))!
+            .Item.ToDictionary(item => item.Id);
     }
 
     private int Run(bool includeLootDestination = true, string? scriptsSource = null)

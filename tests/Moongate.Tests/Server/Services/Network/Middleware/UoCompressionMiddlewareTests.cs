@@ -90,8 +90,8 @@ public sealed class UoCompressionMiddlewareTests
         sessions.GetOrCreate(fixture.Client).NetworkSession.EnableCompression();
         var middleware = new UoCompressionMiddleware(sessions);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            async () => await middleware.ProcessSendAsync(fixture.Client, new byte[300_000])
+        await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await middleware.ProcessSendAsync(fixture.Client, new byte[300_000])
         );
     }
 }

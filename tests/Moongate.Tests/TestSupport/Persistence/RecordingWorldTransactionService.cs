@@ -22,7 +22,9 @@ public sealed class RecordingWorldTransactionService : IWorldTransactionService
 
     public Task? Hold { get; set; }
 
-    public async Task ExecuteAsync(Func<IPersistenceTransaction, Task> operation, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(
+        Func<IPersistenceTransaction, Task> operation, CancellationToken cancellationToken = default
+    )
     {
         if (Hold is not null)
         {
@@ -55,6 +57,11 @@ public sealed class RecordingWorldTransactionService : IWorldTransactionService
         public Transaction(RecordingWorldTransactionService owner)
         {
             _owner = owner;
+        }
+
+        public Task InsertAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class, IMoongateEntity
+        {
+            return GetDataAccess<T>().UpsertAsync(entity, cancellationToken);
         }
 
         public Task<T?> GetByIdForUpdateAsync<T>(Serial id, CancellationToken cancellationToken = default)

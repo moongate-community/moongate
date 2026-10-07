@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -45,17 +46,25 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _otherDagger = Item(0x40000005, 1);
     private readonly ItemEntity _bolts = new() { Id = new(0x40000006), TemplateId = "bolts", ItemId = 0x1BFB, Amount = 10 };
     private readonly ItemEntity _shirt = new() { Id = new(0x40000008), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
-    private readonly ItemEntity _otherShirt = new() { Id = new(0x40000009), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
+
+    private readonly ItemEntity _otherShirt = new()
+        { Id = new(0x40000009), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
+
     private readonly StubItemSerialPool _pool = new();
     private readonly StubBankService _bank = new();
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(new ItemTemplate { Id = "statue", ItemId = new Serial(0x0EED), Movable = false })
     );
+
     private const int ChestGraphic = 0x0E41;
 
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                  .Item(0x0EED, TileFlagType.Generic, 0)
-                                                  .Item(ChestGraphic, TileFlagType.Container, 0, weight: 255);
+        .Item(0x0EED, TileFlagType.Generic, 0)
+        .Item(ChestGraphic, TileFlagType.Container, 0, weight: 255);
+
+    private readonly RecordingFatigueService _fatigue = new();
+    private readonly RecordingMurderService _murders = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -66,7 +75,9 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         var sectors = TestSectors.Create();
         _items = TestItems.Create(sectors, sight: _sight);
         _mobiles = new(new StubMovementService(), sectors);
-        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) });
+        _mobiles.EnterWorld(
+            new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) }
+        );
         _backpack.Equip(Aria, LayerType.Backpack);
         _coins.PutInContainer(_backpack.Id, new Point2D(44, 65));
         _dagger.PutInContainer(_backpack.Id, new Point2D(60, 80));
@@ -96,6 +107,16 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_ALift_ShowsThePlayerItsWeightAgain_WithoutAWarning()
+    {
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 1);
+
+        Assert.False(Assert.Single(_fatigue.Loads).Warn);
+    }
+
+    [Fact]
     public async Task Handle_PartOfAWornStack_IsRefused()
     {
         // Splitting it would leave two items on one layer, which no save can write.
@@ -109,6 +130,20 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         Assert.Null(_session.Get(ItemSessionKeys.Held));
         Assert.Equal(5, torches.Amount);
         Assert.Single(_items.GetWorn(Aria), item => item.Layer == LayerType.TwoHanded);
+    }
+
+    [Fact]
+    public async Task Handle_AGhost_LiftsNothing()
+    {
+        await StartAsync(Aria);
+        Assert.True(_mobiles.TryGet(Aria, out var aria));
+        aria.AccountId = new Serial(0x42);
+        aria.Body = 0x0192;
+
+        await LiftAsync(_dagger.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        AssertRefused(LiftRejectReasonType.CannotLift, _dagger);
     }
 
     [Fact]
@@ -294,8 +329,15 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         await LiftAsync(ruby.Id, 1);
 
         Assert.Null(_session.Get(ItemSessionKeys.Held));
-        Assert.Equal([typeof(LiftRejectPacket), typeof(ContainerItemUpdatePacket)], _sender.Sent.Select(packet => packet.GetType()));
-        Assert.Equal((ruby.Id, chest.Id), (((ContainerItemUpdatePacket)_sender.Sent[1]).Item.Serial, ((ContainerItemUpdatePacket)_sender.Sent[1]).Item.Container));
+        Assert.Equal(
+            [typeof(LiftRejectPacket), typeof(ContainerItemUpdatePacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
+        Assert.Equal(
+            (ruby.Id, chest.Id),
+            (((ContainerItemUpdatePacket)_sender.Sent[1]).Item.Serial,
+                ((ContainerItemUpdatePacket)_sender.Sent[1]).Item.Container)
+        );
         Assert.Empty(_view.Calls);
     }
 
@@ -358,8 +400,26 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(reached ? new HeldItem(ruby.Id) : null, _session.Get(ItemSessionKeys.Held));
         Assert.Equal(reached ? [] : [typeof(LiftRejectPacket)], _sender.Sent.Select(packet => packet.GetType()));
         // The chest stays where it is; those who look into it see the ruby go.
-        Assert.Equal(reached ? [$"ContainedDisappeared {ruby.Id.Value} in {chest.Id.Value} except {Aria.Value}"] : [], _view.Calls);
+        Assert.Equal(
+            reached ? [$"ContainedDisappeared {ruby.Id.Value} in {chest.Id.Value} except {Aria.Value}"] : [],
+            _view.Calls
+        );
         Assert.True(_items.IsLyingOnGround(chest));
+    }
+
+    [Fact]
+    public async Task Handle_AnItemOfAChestOnTheGround_IsToldToTheMurderServiceAsLooted_AFloorItemIsNot()
+    {
+        var (chest, ruby) = GroundChest(1497);
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 1);
+        Assert.Empty(_murders.Calls);
+
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(ItemSessionKeys.Held, null));
+        await LiftAsync(ruby.Id, 1);
+
+        Assert.Equal([$"Looted {Aria.Value} {chest.Id.Value}"], _murders.Calls);
     }
 
     [Fact]
@@ -575,7 +635,10 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(new HeldItem(_coins.Id), _session.Get(ItemSessionKeys.Held));
         Assert.Equal(30, _coins.Amount);
         Assert.True(_items.TryGet(new Serial(0x40000100), out var rest));
-        Assert.Equal((220, _backpack.Id, new Point2D(44, 65)), (rest.Amount, rest.ContainerId!.Value, rest.GridLocation!.Value));
+        Assert.Equal(
+            (220, _backpack.Id, new Point2D(44, 65)),
+            (rest.Amount, rest.ContainerId!.Value, rest.GridLocation!.Value)
+        );
         var update = Assert.IsType<ContainerItemUpdatePacket>(Assert.Single(_sender.Sent));
         Assert.Equal((rest.Id, 220), (update.Item.Serial, update.Item.Amount));
         Assert.Equal(rest.Id, Assert.IsType<PropertyListInfoPacket>(Assert.Single(_sender.Ignored)).Serial);
@@ -660,10 +723,16 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private void AssertRefused(LiftRejectReasonType reason, ItemEntity item)
     {
-        Assert.Equal([typeof(LiftRejectPacket), typeof(ContainerItemUpdatePacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(LiftRejectPacket), typeof(ContainerItemUpdatePacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
         Assert.Equal(reason, ((LiftRejectPacket)_sender.Sent[0]).Reason);
         var update = (ContainerItemUpdatePacket)_sender.Sent[1];
-        Assert.Equal((item.Id, item.ContainerId!.Value, item.GridX!.Value), (update.Item.Serial, update.Item.Container, (short)update.Item.GridX));
+        Assert.Equal(
+            (item.Id, item.ContainerId!.Value, item.GridX!.Value),
+            (update.Item.Serial, update.Item.Container, (short)update.Item.GridX)
+        );
     }
 
     private async Task StartAsync(Serial? character)
@@ -680,9 +749,27 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts, _bank, _templates, _sessions);
+        var handler = new LiftRequestPacketHandler(
+            _items,
+            _mobiles,
+            _view,
+            _pool,
+            _tiles,
+            _sender,
+            TestTooltips.Create(_items, _mobiles),
+            _scripts,
+            _bank,
+            _templates,
+            _sessions,
+            _fatigue,
+            murders: _murders
+        );
 
-        return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
+        return _fixture.ExecuteOnLoopAsync(() => handler.Handle(
+                _session,
+                new LiftRequestPacket { Item = item, Amount = amount }
+            )
+        );
     }
 
     // A chest two rows from Aria at the given x, with a ruby inside.

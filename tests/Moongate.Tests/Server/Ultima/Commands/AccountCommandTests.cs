@@ -28,7 +28,9 @@ public sealed class AccountCommandTests
      InlineData(new[] { "create" }, new string[0]),
      InlineData(new[] { "create", "alice" }, new string[0]),
      InlineData(new[] { "create", "alice", "secret", "Regular" }, new string[0])]
-    public void GetArgumentCompletions_OffersTheActionsAndTheirFixedValues_NeverAUserOrAPassword(string[] previous, string[] expected)
+    public void GetArgumentCompletions_OffersTheActionsAndTheirFixedValues_NeverAUserOrAPassword(
+        string[] previous, string[] expected
+    )
     {
         Assert.Equal(expected, new AccountCommand(null!).GetArgumentCompletions(previous));
     }

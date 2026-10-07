@@ -15,7 +15,8 @@ public sealed class RecordingEffectService : IEffectService
 
     public List<(Serial Target, MapType Map, Point3D Location, EffectOptions Options)> On { get; } = [];
 
-    public List<(MapType Map, Serial Source, Point3D From, Serial Target, Point3D To, EffectOptions Options)> Moving { get; } = [];
+    public List<(MapType Map, Serial Source, Point3D From, Serial Target, Point3D To, EffectOptions Options)>
+        Moving { get; } = [];
 
     public List<(Serial Target, MapType Map, Point3D Location, Hue Hue)> Lightning { get; } = [];
 

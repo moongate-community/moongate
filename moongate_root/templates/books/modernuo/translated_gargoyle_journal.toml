@@ -1,0 +1,702 @@
+title = "Translated Journal"
+author = "Velis"
+content = """This text has been
+translated from a
+gargoyle's journal
+following his capture
+and subsequent
+reeducation.
+ 
+          -Velis
+
+I write this in the
+hopes that someday a
+soul of pure heart and
+mind will read it.  We
+are not the evil beings
+that our cousin
+gargoyles have made
+us out to be.  We
+
+consider them
+uncivilized and they
+have no concept of the
+Principles.  To you
+who reads this, I beg
+for your help in
+saving my brethern
+and preserving my
+
+race.  We stand at the
+edge of destruction as
+does the rest of the
+world.  Once it was
+written law that we
+would not allow the
+knowledge of our
+civilization to spread
+
+into the world, no we
+are left with little
+choice...contact the
+outside world in the hopes
+of finding help to save
+it or becoming the
+unwilling bringers of
+its damnation.
+
+   I fear my capture is
+certain, the
+controllers grow ever
+closer to my hiding
+place and I know if
+they discover me, my
+fate will be as that of
+my brothers.
+
+Although we resisted
+with all our strength
+it is now clear that we
+must have assistance
+or our people will be
+gone.  And if our
+oppressor achieves
+his goals our race will
+
+surely be joined buy
+others.
+   Those of us who
+have not yet been
+taken hope to open a
+path from the outside
+world into the city.
+We believe we have
+
+found weak areas in
+the mountains that we
+can successfully
+knock through with
+our limited supplies.
+We will have to work
+quickly and the risk
+of being discovered is
+
+great, but no choice
+remains...
+
+
+
+
+
+Kai Hohiro, 12pm.
+10.11.2001
+first one to be here"""
+item_template = "readable_book"
+item_id = 0x0FF2
+[translations]
+[translations.cze]
+title = "Přeložený deník"
+content = """Tento text byl přeložen z
+deníku chrliče po jeho
+zajetí a následné
+převýchově.
+ 
+          –Velis
+
+Píši v naději, že to
+jednoho dne přečte duše
+čistého srdce a mysli.
+Nejsme zlé bytosti, jakými
+nás líčí naši příbuzní
+chrliči. My
+
+je považujeme za
+necivilizované a nemají
+žádné ponětí o Principech.
+Tebe, kdo toto čteš,
+prosím o pomoc při
+záchraně mých bratří a
+zachování mé
+
+rasy. Stojíme na pokraji
+zkázy stejně jako zbytek
+světa. Kdysi bylo psaným
+zákonem, že nedovolíme,
+aby se znalosti naší
+civilizace šířily
+
+do světa; nyní nám nezbývá
+mnoho možností... navázat
+styk s vnějším světem v
+naději, že najdeme pomoc k
+jeho záchraně, nebo se
+stát nedobrovolnými
+strůjci jeho zatracení.
+
+Obávám se, že mé zajetí je
+jisté; ovladači se
+přibližují k mému úkrytu a
+vím, že pokud mě objeví,
+můj osud bude stejný jako
+osud mých bratrů.
+
+Ačkoli jsme vzdorovali ze
+všech sil, nyní je jasné,
+že musíme získat pomoc,
+jinak náš lid zanikne. A
+pokud náš utlačovatel
+dosáhne svých cílů, k naší
+rase
+
+se jistě připojí další.
+Ti z nás, kteří dosud
+nebyli odvedeni, doufají,
+že otevřou cestu z
+vnějšího světa do města.
+Věříme, že jsme
+
+našli slabá místa v
+horách, jimiž se s našimi
+omezenými zásobami můžeme
+úspěšně probít. Budeme
+muset pracovat rychle a
+riziko odhalení je
+
+veliké, ale žádná volba
+nezbývá...
+
+
+
+
+
+Kai Hohiro, 12:00.
+10.11.2001
+první, kdo tu byl"""
+[translations.fre]
+title = "Journal traduit"
+content = """Ce texte a été traduit du
+journal d’une gargouille
+après sa capture et sa
+rééducation.
+ 
+          — Velis
+
+J’écris ceci dans l’espoir
+qu’un jour une âme au cœur
+et à l’esprit purs le
+lira. Nous ne sommes pas
+les êtres maléfiques que
+nos cousines gargouilles
+ont fait de nous. Nous
+
+les considérons comme non
+civilisées, et elles n’ont
+aucune notion des
+Principes. À vous qui
+lisez ceci, je demande
+votre aide pour sauver mes
+frères et préserver ma
+
+race. Nous sommes au bord
+de la destruction, comme
+le reste du monde. Jadis,
+la loi écrite voulait que
+nous ne permettions pas au
+savoir de notre
+civilisation de se
+répandre
+
+dans le monde ;
+maintenant, il nous reste
+peu de choix... contacter
+le monde extérieur dans
+l’espoir de trouver de
+l’aide pour le sauver, ou
+devenir les porteurs
+involontaires de sa
+damnation.
+
+Je crains que ma capture
+soit certaine : les
+contrôleurs se rapprochent
+toujours davantage de ma
+cachette, et je sais que
+s’ils me découvrent, mon
+sort sera celui de mes
+frères.
+
+Bien que nous ayons
+résisté de toutes nos
+forces, il est maintenant
+clair que nous devons
+recevoir de l’aide ou
+notre peuple disparaîtra.
+Et si notre oppresseur
+atteint ses objectifs,
+notre race sera
+
+sûrement rejointe par
+d’autres. Ceux d’entre
+nous qui n’ont pas encore
+été pris espèrent ouvrir
+un chemin du monde
+extérieur vers la ville.
+Nous croyons avoir
+
+trouvé des endroits
+fragiles dans les
+montagnes que nous
+pourrons réussir à percer
+avec nos moyens limités.
+Nous devrons travailler
+vite, et le risque d’être
+découverts est
+
+grand, mais il ne reste
+aucun choix...
+
+
+
+
+
+Kai Hohiro, 12 h.
+10.11.2001
+premier à être ici"""
+[translations.ger]
+title = "Übersetztes Tagebuch"
+content = """Dieser Text wurde nach der
+Gefangennahme und
+anschließenden Umerziehung
+eines Gargoyles aus dessen
+Tagebuch übersetzt.
+ 
+    -Velis
+
+Ich schreibe dies in der
+Hoffnung, dass eines Tages
+eine Seele mit reinem
+Herzen und Geist es lesen
+wird. Wir sind nicht die
+bösen Wesen, als die
+unsere Gargoyle-Vettern
+uns dargestellt haben. Wir
+
+halten sie für
+unzivilisiert, und sie
+haben keinen Begriff von
+den Prinzipien. Dich, der
+du dies liest, bitte ich
+um Hilfe, meine Brüder zu
+retten und mein
+
+Volk zu bewahren. Wir
+stehen am Rande der
+Vernichtung, ebenso wie
+der Rest der Welt. Einst
+war es geschriebenes
+Gesetz, dass wir nicht
+zulassen würden, das
+Wissen unserer
+Zivilisation
+
+in die Welt zu verbreiten;
+nun bleibt uns kaum eine
+Wahl ... die Außenwelt zu
+kontaktieren, in der
+Hoffnung, Hilfe zu finden,
+um sie zu retten, oder die
+unfreiwilligen Bringer
+ihrer Verdammnis zu
+werden.
+
+Ich fürchte, meine
+Gefangennahme ist gewiss;
+die Lenker kommen meinem
+Versteck immer näher, und
+ich weiß, wenn sie mich
+entdecken, wird mein
+Schicksal das meiner
+Brüder sein.
+
+Obwohl wir uns mit all
+unserer Kraft gewehrt
+haben, ist nun klar, dass
+wir Hilfe brauchen, sonst
+wird unser Volk
+verschwinden. Und wenn
+unser Unterdrücker seine
+Ziele erreicht, werden
+sich unserem Volk
+
+gewiss andere
+hinzugesellen.
+Jene von uns, die noch
+nicht gefangen wurden,
+hoffen, einen Weg von der
+Außenwelt in die Stadt zu
+öffnen. Wir glauben,
+
+schwache Stellen in den
+Bergen gefunden zu haben,
+die wir mit unseren
+begrenzten Vorräten
+erfolgreich durchbrechen
+können. Wir müssen schnell
+arbeiten, und die Gefahr,
+entdeckt zu werden, ist
+
+groß, doch es bleibt keine
+Wahl ...
+
+
+
+
+
+Kai Hohiro, 12 Uhr
+mittags.
+10.11.2001
+der Erste hier"""
+[translations.ita]
+title = "Diario tradotto"
+content = """Questo testo è stato
+tradotto dal diario di un
+gargoyle dopo la sua
+cattura e la successiva
+rieducazione.
+ 
+          -Velis
+
+Scrivo nella speranza che
+un giorno un'anima dal
+cuore e dalla mente puri
+lo legga. Non siamo gli
+esseri malvagi che i
+nostri cugini gargoyle ci
+hanno fatto apparire. Noi
+
+li consideriamo incivili e
+non hanno alcun concetto
+dei Princìpi. A te che
+leggi, imploro il tuo
+aiuto per salvare i miei
+fratelli e preservare la
+mia
+
+razza. Siamo sull'orlo
+della distruzione, così
+come il resto del mondo.
+Un tempo era legge scritta
+che non avremmo permesso
+alle conoscenze della
+nostra civiltà di
+diffondersi
+
+nel mondo; ora ci rimane
+poca scelta...contattare
+il mondo esterno nella
+speranza di trovare aiuto
+per salvarlo o diventare
+gli involontari portatori
+della sua dannazione.
+
+Temo che la mia cattura
+sia certa: i controllori
+si avvicinano sempre più
+al mio nascondiglio e so
+che, se mi scoprono, il
+mio destino sarà quello
+dei miei fratelli.
+
+Sebbene abbiamo resistito
+con tutte le nostre forze,
+è ora chiaro che dobbiamo
+avere assistenza o il
+nostro popolo scomparirà.
+E se il nostro oppressore
+raggiunge i suoi
+obiettivi, alla nostra
+razza
+
+si uniranno certamente
+altre.
+Quelli fra noi che non
+sono ancora stati presi
+sperano di aprire una via
+dal mondo esterno alla
+città. Crediamo di aver
+
+trovato punti deboli nelle
+montagne che possiamo
+sfondare con successo
+usando le nostre scarse
+provviste. Dovremo
+lavorare rapidamente e il
+rischio di essere scoperti
+è
+
+grande, ma non resta
+scelta...
+
+
+
+
+
+Kai Hohiro, 12:00.
+10.11.2001
+il primo a essere qui"""
+[translations.pol]
+title = "Przetłumaczony dziennik"
+content = """Ten tekst przetłumaczono z
+dziennika gargulca po jego
+pojmaniu i późniejszej
+reedukacji.
+ 
+    — Velis
+
+Piszę to w nadziei, że
+kiedyś przeczyta to dusza
+czystego serca i umysłu.
+Nie jesteśmy złymi
+istotami, jakimi uczyniły
+nas nasze kuzynowskie
+gargulce. My
+
+uważamy je za
+niecywilizowane, nie mają
+żadnego pojęcia o
+Zasadach. Ciebie, który to
+czytasz, błagam o pomoc w
+ocaleniu moich braci i
+zachowaniu mojej
+
+rasy. Stoimy na skraju
+zagłady, tak jak reszta
+świata. Niegdyś zapisane
+prawo zabraniało nam
+rozpowszechniać wiedzę o
+naszej cywilizacji
+
+w świecie; teraz nie
+pozostaje nam wielki
+wybór... nawiązać kontakt
+ze światem zewnętrznym w
+nadziei znalezienia
+pomocy, by go ocalić, albo
+stać się mimowolnymi
+zwiastunami jego
+potępienia.
+
+Obawiam się, że pojmanie
+mnie jest pewne;
+kontrolerzy podchodzą
+coraz bliżej mej kryjówki
+i wiem, że gdy mnie
+odkryją, spotka mnie los
+moich braci.
+
+Choć opieraliśmy się ze
+wszystkich sił, teraz jest
+jasne, że musimy uzyskać
+pomoc, inaczej nasz lud
+zniknie. A jeśli nasz
+ciemięzca osiągnie cele,
+do naszej rasy
+
+z pewnością dołączą inne.
+Ci z nas, których jeszcze
+nie zabrano, mają nadzieję
+otworzyć drogę ze świata
+zewnętrznego do miasta.
+Wierzymy, że
+
+znaleźliśmy słabe miejsca
+w górach, przez które
+zdołamy się przebić
+naszymi ograniczonymi
+zasobami. Będziemy musieli
+pracować szybko, a ryzyko
+odkrycia jest
+
+wielkie, lecz nie
+pozostaje żaden wybór...
+
+
+
+
+
+Kai Hohiro, 12:00.
+10.11.2001 pierwszy, który
+tu dotarł"""
+[translations.por]
+title = "Diário traduzido"
+content = """Este texto foi traduzido
+do diário de uma gárgula
+após sua captura e
+subsequente reeducação.
+ 
+          -Velis
+
+Escrevo isto na esperança
+de que um dia uma alma de
+coração e mente puros o
+leia. Não somos os seres
+malignos que nossas primas
+gárgulas nos fizeram
+parecer. Nós
+
+as consideramos
+incivilizadas, e elas não
+têm noção dos Princípios.
+A você que lê isto,
+imploro sua ajuda para
+salvar meus irmãos e
+preservar minha
+
+raça. Estamos à beira da
+destruição, assim como o
+restante do mundo. Antes
+era lei escrita que não
+permitiríamos que o
+conhecimento de nossa
+civilização se espalhasse
+
+pelo mundo; agora nos
+resta pouca escolha...
+entrar em contato com o
+mundo exterior na
+esperança de encontrar
+ajuda para salvá-lo, ou
+nos tornar os
+involuntários portadores
+de sua condenação.
+
+Temo que minha captura
+seja certa; os
+controladores se aproximam
+cada vez mais de meu
+esconderijo, e sei que, se
+me descobrirem, meu
+destino será o de meus
+irmãos.
+
+Embora tenhamos resistido
+com toda a nossa força,
+agora está claro que
+precisamos de ajuda, ou
+nosso povo desaparecerá.
+E, se nosso opressor
+alcançar seus objetivos,
+nossa raça
+
+certamente terá a
+companhia de outras.
+Aqueles de nós que ainda
+não foram capturados
+esperam abrir um caminho
+do mundo exterior para a
+cidade. Acreditamos ter
+
+encontrado pontos frágeis
+nas montanhas que podemos
+romper com nossos
+suprimentos limitados.
+Teremos de trabalhar
+depressa, e o risco de
+sermos descobertos é
+
+grande, mas não resta
+escolha...
+
+
+
+
+
+Kai Hohiro, 12h.
+10.11.2001
+primeiro a estar aqui"""
+[translations.spa]
+title = "Diario traducido"
+content = """Este texto se ha traducido
+del diario de una gárgola
+tras su captura y
+posterior reeducación.
+ 
+          -Velis
+
+Escribo con la esperanza
+de que algún día lo lea un
+alma de corazón y mente
+puros. No somos los seres
+malignos que nuestras
+primas gárgolas han hecho
+creer. Las
+
+consideramos incivilizadas
+y no tienen concepto
+alguno de los Principios.
+A ti que lees esto, te
+suplico que nos ayudes a
+salvar a mis hermanos y
+preservar mi
+
+raza. Estamos al borde de
+la destrucción, como el
+resto del mundo. Antes era
+ley escrita que no
+permitiríamos que los
+conocimientos de nuestra
+civilización se
+extendieran
+
+al mundo; ahora nos quedan
+pocas opciones...
+contactar con el mundo
+exterior con la esperanza
+de encontrar ayuda para
+salvarlo, o convertirnos
+en portadores
+involuntarios de su
+condenación.
+
+Temo que mi captura sea
+segura; los controladores
+se acercan cada vez más a
+mi escondite, y sé que si
+me descubren mi destino
+será el de mis hermanos.
+
+Aunque resistimos con
+todas nuestras fuerzas,
+ahora está claro que
+necesitamos ayuda o
+nuestro pueblo
+desaparecerá. Y si nuestro
+opresor alcanza sus
+objetivos, a nuestra raza
+
+sin duda se unirán otras.
+Quienes aún no hemos sido
+apresados esperamos abrir
+un camino del mundo
+exterior a la ciudad.
+Creemos que hemos
+
+encontrado zonas débiles
+en las montañas que
+podemos atravesar con
+nuestros escasos
+suministros. Tendremos que
+trabajar deprisa y el
+riesgo de ser descubiertos
+es
+
+grande, pero no queda otra
+opción...
+
+
+
+
+
+Kai Hohiro, 12:00.
+10.11.2001 el primero en
+estar aquí"""

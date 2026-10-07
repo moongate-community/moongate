@@ -16,8 +16,15 @@ namespace Moongate.Tests.Server.Ultima.Commands;
 public sealed class DecorateCommandTests : IAsyncDisposable
 {
     private readonly StubPacketSendService _sender = new();
+
     private readonly StubDecorationService _decorations = new(
-        new DecorationFileResult("britannia", "britain", 1180, 3, new Dictionary<string, int> { ["Spawner"] = 4, ["Teleporter"] = 8 }),
+        new DecorationFileResult(
+            "britannia",
+            "britain",
+            1180,
+            3,
+            new Dictionary<string, int> { ["Spawner"] = 4, ["Teleporter"] = 8 }
+        ),
         new DecorationFileResult("trammel", "moonglow", 10, 0, new Dictionary<string, int>())
     );
 
@@ -69,13 +76,17 @@ public sealed class DecorateCommandTests : IAsyncDisposable
     [Fact]
     public async Task ADecorationStartedByAnotherAtTheSameMoment_SaysItIsRunning()
     {
-        var decorations = new StubDecorationService { Failure = new InvalidOperationException("A decoration is already running.") };
+        var decorations = new StubDecorationService
+            { Failure = new InvalidOperationException("A decoration is already running.") };
         decorations.BeforeRun = () => decorations.IsRunning = true;
         var context = new CommandContext("decorate", "decorate", [], CommandSourceType.Console, null);
 
         await new DecorateCommand(decorations, _sender).ExecuteAsync(context);
 
-        Assert.Equal((CommandOutputLevel.Error, "A decoration is already running."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "A decoration is already running."),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
     }
 
     [Theory, InlineData("cancel"), InlineData(null)]
@@ -97,7 +108,10 @@ public sealed class DecorateCommandTests : IAsyncDisposable
 
         await new DecorateCommand(_decorations, _sender).ExecuteAsync(context);
 
-        Assert.Equal("Decoration done: 1190 placed, 3 already there, 12 skipped in 2 files.", Assert.Single(context.Output).Text);
+        Assert.Equal(
+            "Decoration done: 1190 placed, 3 already there, 12 skipped in 2 files.",
+            Assert.Single(context.Output).Text
+        );
         Assert.Empty(_sender.Sent);
     }
 
@@ -108,7 +122,10 @@ public sealed class DecorateCommandTests : IAsyncDisposable
 
         await new DecorateCommand(_decorations, _sender).ExecuteAsync(context);
 
-        Assert.Equal((CommandOutputLevel.Error, "Usage: decorate"), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "Usage: decorate"),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
         Assert.Equal(0, _decorations.Calls);
     }
 
@@ -151,7 +168,10 @@ public sealed class DecorateCommandTests : IAsyncDisposable
             )
         );
 
-        Assert.StartsWith("Decoro britannia/britain: 1180 piazzati", _sender.Sent.OfType<UnicodeSpeechMessagePacket>().First().Text);
+        Assert.StartsWith(
+            "Decoro britannia/britain: 1180 piazzati",
+            _sender.Sent.OfType<UnicodeSpeechMessagePacket>().First().Text
+        );
         Assert.StartsWith("Decorazione finita: 1190 piazzati", Assert.Single(context.Output).Text);
     }
 

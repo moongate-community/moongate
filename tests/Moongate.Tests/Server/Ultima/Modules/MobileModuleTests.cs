@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Weight;
 using Lua;
 using Lua.Standard;
 using Moongate.Core.Geometry;
@@ -13,17 +14,21 @@ using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
 
 public sealed class MobileModuleTests
 {
+    private readonly RecordingCrimeService _crimes = new();
+    private readonly StubDeathService _death = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingMobileStateService _state = new();
@@ -32,19 +37,24 @@ public sealed class MobileModuleTests
     private readonly ItemService _items = TestItems.Create();
     private readonly StubMusicService _music = new();
     private readonly RecordingLightService _light = new();
+
     private readonly RegionService _regions = new(
         new StubDataLoaderService().With(
             new RegionContent
             {
-                Map = MapType.Felucca, Name = "Britain", Areas = [new RegionAreaContent { X1 = 1400, Y1 = 1500, X2 = 1700, Y2 = 1800 }]
+                Map = MapType.Felucca, Name = "Britain",
+                Areas = [new RegionAreaContent { X1 = 1400, Y1 = 1500, X2 = 1700, Y2 = 1800 }]
             }
         )
     );
+
     private readonly MobileEntity _orc = new()
     {
-        Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Felucca, Location = new Point3D(3000, 3000, 0),
+        Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Felucca,
+        Location = new Point3D(3000, 3000, 0),
         Body = 17, Strength = 96, Hits = 50, HitsMax = 58, Direction = DirectionType.West
     };
+
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca,
@@ -79,7 +89,9 @@ public sealed class MobileModuleTests
     [Fact]
     public void Stats_GivesTheMobilesNumbers()
     {
-        var result = Run("local stats = mobile.stats(256) return stats.body, stats.strength, stats.hits, stats.hits_max, mobile.stats(999)");
+        var result = Run(
+            "local stats = mobile.stats(256) return stats.body, stats.strength, stats.hits, stats.hits_max, mobile.stats(999)"
+        );
 
         Assert.Equal([17, 96, 50, 58], result[..4].Select(value => value.Read<int>()));
         Assert.Equal(LuaValue.Nil, result[4]);
@@ -103,7 +115,9 @@ public sealed class MobileModuleTests
     [Fact]
     public void PlayMusic_PlaysItToAPlayerOnly()
     {
-        var result = Run("return mobile.play_music(2, 'Britain1'), mobile.play_music(256, 'Britain1'), mobile.play_music(999, 'Britain1')");
+        var result = Run(
+            "return mobile.play_music(2, 'Britain1'), mobile.play_music(256, 'Britain1'), mobile.play_music(999, 'Britain1')"
+        );
 
         Assert.True(result[0].Read<bool>());
         Assert.False(result[1].Read<bool>());
@@ -129,7 +143,9 @@ public sealed class MobileModuleTests
     [Fact]
     public void SetProp_WithNil_RemovesIt()
     {
-        var result = Run("mobile.set_prop(2, 'quest.step', 2) return mobile.set_prop(2, 'quest.step'), mobile.get_prop(2, 'quest.step')");
+        var result = Run(
+            "mobile.set_prop(2, 'quest.step', 2) return mobile.set_prop(2, 'quest.step'), mobile.get_prop(2, 'quest.step')"
+        );
 
         Assert.True(result[0].Read<bool>());
         Assert.Equal(LuaValue.Nil, result[1]);
@@ -280,7 +296,10 @@ public sealed class MobileModuleTests
             "mobile.set_hunger(2, -4), mobile.hunger(2), mobile.hunger(999), mobile.set_hunger(999, 5)"
         );
 
-        Assert.Equal([20, 7, 20, 0], new[] { result[0], result[2], result[4], result[6] }.Select(value => value.Read<int>()));
+        Assert.Equal(
+            [20, 7, 20, 0],
+            new[] { result[0], result[2], result[4], result[6] }.Select(value => value.Read<int>())
+        );
         Assert.All(new[] { result[1], result[3], result[5] }, value => Assert.True(value.Read<bool>()));
         Assert.Equal((LuaValue.Nil, false), (result[7], result[8].Read<bool>()));
         Assert.Equal(0, _aria.Hunger);
@@ -295,10 +314,147 @@ public sealed class MobileModuleTests
             "mobile.set_thirst(2, -4), mobile.thirst(2), mobile.thirst(999), mobile.set_thirst(999, 5)"
         );
 
-        Assert.Equal([20, 7, 20, 0], new[] { result[0], result[2], result[4], result[6] }.Select(value => value.Read<int>()));
+        Assert.Equal(
+            [20, 7, 20, 0],
+            new[] { result[0], result[2], result[4], result[6] }.Select(value => value.Read<int>())
+        );
         Assert.All(new[] { result[1], result[3], result[5] }, value => Assert.True(value.Read<bool>()));
         Assert.Equal((LuaValue.Nil, false), (result[7], result[8].Read<bool>()));
         Assert.Equal((0, 20), (_aria.Thirst, _aria.Hunger));
+    }
+
+    [Fact]
+    public void Weight_AndMaxWeight_AreTheStonesTheMobileCarriesAndMayCarry()
+    {
+        var result = Run("return mobile.weight(2), mobile.max_weight(2), mobile.weight(999), mobile.max_weight(999)");
+
+        Assert.Equal((37, 215), (result[0].Read<int>(), result[1].Read<int>()));
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[2], result[3]));
+    }
+
+    [Fact]
+    public void Kill_HandsTheMobileAndItsKillerToTheDeath_AndGivesItsAnswer()
+    {
+        var result = Run($"return mobile.kill({_orc.Id.Value}, 2), mobile.kill({_orc.Id.Value}), mobile.kill(999)");
+
+        Assert.Equal([true, true, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal([(_orc, (MobileEntity?)_aria), (_orc, null)], _death.Killed);
+    }
+
+    [Fact]
+    public async Task Resurrect_ACorpse_IsTrue_AndTheRaisingIsStarted()
+    {
+        var corpse = new ItemEntity { Id = new Serial(0x40000900), TemplateId = "corpse", ItemId = 0x2006, Amount = 1 };
+        corpse.PlaceOnGround(MapType.Felucca, new Point3D(3000, 3000, 0));
+        _items.Add([corpse]);
+
+        Assert.True(Run("return mobile.resurrect(0x40000900)")[0].Read<bool>());
+
+        var until = DateTime.UtcNow + TimeSpan.FromSeconds(5);
+
+        while (DateTime.UtcNow < until)
+        {
+            lock (_death.Raised)
+            {
+                if (_death.Raised.Count > 0)
+                {
+                    break;
+                }
+            }
+
+            await Task.Delay(10);
+        }
+
+        lock (_death.Raised)
+        {
+            Assert.Equal([corpse.Id], _death.Raised);
+        }
+    }
+
+    [Fact]
+    public void Notoriety_IsTheOneOthersSee_ARedMurdererAndAGreyCriminalIncluded()
+    {
+        _orc.Notoriety = NotorietyType.Invulnerable;
+        _aria.AccountId = new Serial(0x42);
+
+        var result = Run("return mobile.notoriety(256), mobile.notoriety(2), mobile.notoriety(999)");
+        _aria.Criminal = true;
+        var criminal = Run("return mobile.notoriety(2)")[0].Read<string>();
+        _aria.Kills = 5;
+        var murderer = Run("return mobile.notoriety(2)")[0].Read<string>();
+
+        Assert.Equal(
+            ("invulnerable", "innocent", true),
+            (result[0].Read<string>(), result[1].Read<string>(), result[2].Type == LuaValueType.Nil)
+        );
+        Assert.Equal(("criminal", "murderer"), (criminal, murderer));
+    }
+
+    [Fact]
+    public void Murders_AreTheCountsOfTheMobile_AndIsMurdererIsRedFromFiveKills()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Kills = 4;
+        _aria.ShortTermMurders = 2;
+
+        var before = Run(
+            "return mobile.murders(2).kills, mobile.murders(2).short_term, mobile.is_murderer(2), mobile.murders(999), mobile.is_murderer(999)"
+        );
+        _aria.Kills = 5;
+
+        Assert.Equal(
+            (4, 2, false, true, false),
+            (before[0].Read<int>(), before[1].Read<int>(), before[2].Read<bool>(), before[3].Type == LuaValueType.Nil,
+                before[4].Read<bool>())
+        );
+        Assert.True(Run("return mobile.is_murderer(2)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void Resurrect_ADeadPlayer_RaisesItAtOnce_AndIsDeadSaysWhoIs()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 0x0192;
+
+        var result = Run("return mobile.is_dead(2), mobile.resurrect(2), mobile.is_dead(999)");
+
+        Assert.Equal([true, true, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal([_aria], _death.PlayersRaised);
+        Assert.Empty(_death.Raised);
+    }
+
+    [Fact]
+    public void Resurrect_WhatIsNoCorpse_IsFalse_AndStartsNothing()
+    {
+        // The backpack of the fixture, a mobile, nothing.
+        var result = Run(
+            "return mobile.resurrect(0x40000001), mobile.resurrect(2), mobile.resurrect(0x40FFFFFF), mobile.resurrect(-1)"
+        );
+
+        Assert.All(result, value => Assert.False(value.Read<bool>()));
+        Assert.Empty(_death.Raised);
+    }
+
+    [Fact]
+    public void Kill_WhatTheDeathRefuses_SuchAsAPlayer_IsFalse()
+    {
+        _death.Kills = false;
+
+        Assert.False(Run("return mobile.kill(2)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void Criminal_SaysWhetherTheMobileIsOne_AndSetCriminalMakesOrPardonsIt()
+    {
+        var result = Run(
+            "local before = mobile.criminal(2) " +
+            "return before, mobile.set_criminal(2, true), mobile.criminal(2), mobile.set_criminal(2, false), " +
+            "mobile.criminal(2), mobile.criminal(999), mobile.set_criminal(999, true)"
+        );
+
+        Assert.Equal([false, true, true, true, false], result.Take(5).Select(value => value.Read<bool>()));
+        Assert.Equal((LuaValue.Nil, false), (result[5], result[6].Read<bool>()));
+        Assert.Equal(["criminal 2", "pardon 2"], _crimes.Calls);
     }
 
     [Fact]
@@ -309,7 +465,10 @@ public sealed class MobileModuleTests
 
         var result = Run("return mobile.body_type(2), mobile.body_type(256), mobile.body_type(999)");
 
-        Assert.Equal(((int)BodyType.Human, (int)BodyType.Monster, LuaValue.Nil), (result[0].Read<int>(), result[1].Read<int>(), result[2]));
+        Assert.Equal(
+            ((int)BodyType.Human, (int)BodyType.Monster, LuaValue.Nil),
+            (result[0].Read<int>(), result[1].Read<int>(), result[2])
+        );
 
         // A body the file does not list is empty.
         _orc.Body = 5000;
@@ -319,7 +478,9 @@ public sealed class MobileModuleTests
     [Fact]
     public void MessageCliloc_TellsThePlayerATextOfItsClient()
     {
-        var result = Run("return mobile.message_cliloc(2, 500867), mobile.message_cliloc(2, 1042958, '3:05'), mobile.message_cliloc(2, 0), mobile.message_cliloc(999, 500867)");
+        var result = Run(
+            "return mobile.message_cliloc(2, 500867), mobile.message_cliloc(2, 1042958, '3:05'), mobile.message_cliloc(2, 0), mobile.message_cliloc(999, 500867)"
+        );
 
         Assert.Equal([true, true, false, false], result.Select(value => value.Read<bool>()));
         Assert.Equal([(_aria, 500867, ""), (_aria, 1042958, "3:05")], _speech.ToldClilocs);
@@ -370,7 +531,8 @@ public sealed class MobileModuleTests
         Assert.Equal((10, 80, 120, -500), (change.Hits, change.HitsMax, change.Strength, change.Karma));
         Assert.Equal(
             (null, null, null, null, null, null, null),
-            (change.Dexterity, change.Intelligence, change.Mana, change.ManaMax, change.Stamina, change.StaminaMax, change.Fame)
+            (change.Dexterity, change.Intelligence, change.Mana, change.ManaMax, change.Stamina, change.StaminaMax,
+                change.Fame)
         );
     }
 
@@ -387,7 +549,8 @@ public sealed class MobileModuleTests
         var change = Assert.Single(_state.Stats).Change;
         Assert.Equal(
             (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
-            (change.Strength, change.Dexterity, change.Intelligence, change.Hits, change.HitsMax, change.Mana, change.ManaMax,
+            (change.Strength, change.Dexterity, change.Intelligence, change.Hits, change.HitsMax, change.Mana,
+                change.ManaMax,
                 change.Stamina, change.StaminaMax, change.Fame, change.Karma)
         );
     }
@@ -421,7 +584,9 @@ public sealed class MobileModuleTests
     {
         _state.Skills.Add(new() { Skill = SkillType.Magery, Base = 505, Cap = 1200, Lock = SkillLockType.Locked });
 
-        var result = Run("local s = mobile.skill(0x100, 25) return s.value, s.cap, s.lock, mobile.skill(0x100, 0).value, mobile.skill(0x999, 25)");
+        var result = Run(
+            "local s = mobile.skill(0x100, 25) return s.value, s.cap, s.lock, mobile.skill(0x100, 0).value, mobile.skill(0x999, 25)"
+        );
 
         Assert.Equal([50.5, 120.0], result[..2].Select(value => value.Read<double>()));
         Assert.Equal("locked", result[2].Read<string>());
@@ -516,7 +681,9 @@ public sealed class MobileModuleTests
     [Fact]
     public void SetHiddenFrozenAndWarMode_OfAnUnknownMobile_AreFalse()
     {
-        var result = Run("return mobile.set_hidden(0x999, true), mobile.set_frozen(0x999, true), mobile.set_war_mode(0x999, true)");
+        var result = Run(
+            "return mobile.set_hidden(0x999, true), mobile.set_frozen(0x999, true), mobile.set_war_mode(0x999, true)"
+        );
 
         Assert.Equal([false, false, false], result.Select(value => value.Read<bool>()));
         Assert.Empty(_state.Flags);
@@ -527,7 +694,27 @@ public sealed class MobileModuleTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenStringLibrary();
-        new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new MobileModule(_mobiles, _teleports, _speech, _items, _music, _regions, _light, _state, _view, new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human }, new BodyContent { Body = new(17), Type = BodyType.Monster })));
+        new LuaModuleBinder(NoThreadGuard.Instance).Bind(
+            state,
+            new MobileModule(
+                _mobiles,
+                _teleports,
+                _speech,
+                _items,
+                _music,
+                _regions,
+                _light,
+                _state,
+                _view,
+                new StubDataLoaderService().With(
+                    new BodyContent { Body = new(400), Type = BodyType.Human },
+                    new BodyContent { Body = new(17), Type = BodyType.Monster }
+                ),
+                new StubWeightService { CarriedStones = 37, MaximumStones = 215 },
+                _crimes,
+                _death
+            )
+        );
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
     }

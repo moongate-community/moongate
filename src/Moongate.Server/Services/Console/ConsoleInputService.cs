@@ -29,17 +29,6 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     {
     }
 
-    internal ConsoleInputService(
-        IConsolePromptService prompt,
-        ICommandSystemService commands,
-        IConsoleKeySource keys
-    )
-    {
-        _prompt = prompt;
-        _commands = commands;
-        _keys = keys;
-    }
-
     /// <inheritdoc />
     public Task StartAsync()
     {
@@ -76,6 +65,17 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
 
         _prompt.HidePrompt();
+    }
+
+    internal ConsoleInputService(
+        IConsolePromptService prompt,
+        ICommandSystemService commands,
+        IConsoleKeySource keys
+    )
+    {
+        _prompt = prompt;
+        _commands = commands;
+        _keys = keys;
     }
 
     private static bool IsNoKey(ConsoleKeyInfo key)
@@ -309,8 +309,8 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         if (previous.Count == 0)
         {
             return _commands.GetRegisteredCommands()
-                            .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
-                            .SelectMany(definition => definition.Aliases);
+                .Where(definition => definition.Source.HasFlag(CommandSourceType.Console))
+                .SelectMany(definition => definition.Aliases);
         }
 
         return _commands.GetArgumentCompletions(previous[0], previous.Skip(1).ToArray());

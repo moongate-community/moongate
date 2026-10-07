@@ -122,10 +122,10 @@ public class ItemEntity : IMoongateEntity
             ItemLocationType.None;
 
     [Column(IsIgnore = true)]
-    public Point3D? GroundLocation => Map is null ? null : new Point3D(X!.Value, Y!.Value, Z!.Value);
+    public Point3D? GroundLocation => Map is null ? null : new Point3D(X.Value, Y.Value, Z.Value);
 
     [Column(IsIgnore = true)]
-    public Point2D? GridLocation => ContainerId is null ? null : new Point2D(GridX!.Value, GridY!.Value);
+    public Point2D? GridLocation => ContainerId is null ? null : new Point2D(GridX.Value, GridY.Value);
 
     /// <summary>
     ///     Puts the item on the ground of <paramref name="map" /> at <paramref name="location" />.
@@ -214,7 +214,10 @@ public class ItemEntity : IMoongateEntity
     ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />, or <paramref name="defaultValue" /> when
     ///     the item does not have it.
     /// </summary>
-    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The prop holds a value that does not convert to <typeparamref name="T" />.
+    /// </exception>
+    // Safe: default of a generic value, only returned when no value is stored.
     public T GetProp<T>(string key, T defaultValue = default!)
     {
         return TryGetProp<T>(key, out var value) ? value : defaultValue;
@@ -223,7 +226,9 @@ public class ItemEntity : IMoongateEntity
     /// <summary>
     ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />; false when the item does not have it.
     /// </summary>
-    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The prop holds a value that does not convert to <typeparamref name="T" />.
+    /// </exception>
     public bool TryGetProp<T>(string key, out T value)
     {
         return PropsDictionary.TryGet(Props, key, out value);
@@ -260,9 +265,9 @@ public class ItemEntity : IMoongateEntity
         var where = Location switch
         {
             ItemLocationType.Container => $"in {ContainerId}",
-            ItemLocationType.Equipped => $"on {MobileId} layer {Layer}",
-            ItemLocationType.Ground => $"at {Map} {GroundLocation}",
-            _ => "nowhere"
+            ItemLocationType.Equipped  => $"on {MobileId} layer {Layer}",
+            ItemLocationType.Ground    => $"at {Map} {GroundLocation}",
+            _                          => "nowhere"
         };
 
         return $"{Id} \"{Name ?? TemplateId}\" (0x{ItemId:X4}){amount} {where}";

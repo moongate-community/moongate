@@ -12,13 +12,6 @@ internal sealed class AdminRedisFixture : IAsyncDisposable
     public RedisAdminSessionStore Store { get; }
     public RedisAdminLoginThrottle Throttle { get; }
 
-    private AdminRedisFixture(RedisConnectionService redis)
-    {
-        Redis = redis;
-        Store = new(redis, Prefix);
-        Throttle = new(redis, Prefix);
-    }
-
     public static async Task<AdminRedisFixture> CreateAsync()
     {
         var endpoint = RedisTestServer.ConnectionString;
@@ -36,6 +29,13 @@ internal sealed class AdminRedisFixture : IAsyncDisposable
     public static string Digest()
     {
         return Convert.ToHexString(SHA256.HashData(RandomNumberGenerator.GetBytes(32)));
+    }
+
+    private AdminRedisFixture(RedisConnectionService redis)
+    {
+        Redis = redis;
+        Store = new(redis, Prefix);
+        Throttle = new(redis, Prefix);
     }
 
     public async ValueTask DisposeAsync()

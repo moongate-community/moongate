@@ -18,7 +18,9 @@ public sealed class ItemTimerServiceTests
     private readonly ItemTimerQueue _queue;
     private readonly ItemService _items;
     private readonly ItemTimerService _timers;
-    private readonly ItemEntity _door = new() { Id = new Serial(0x40000001), TemplateId = "door", ItemId = 0x0675, Amount = 1 };
+
+    private readonly ItemEntity _door = new()
+        { Id = new Serial(0x40000001), TemplateId = "door", ItemId = 0x0675, Amount = 1 };
 
     public ItemTimerServiceTests()
     {
@@ -28,6 +30,31 @@ public sealed class ItemTimerServiceTests
         _scripts.Scripted.Add("door");
         _door.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
         _items.Add([_door]);
+    }
+
+    [Fact]
+    public async Task Check_ReservedInventoryKeepsDueTimerWithoutRunningScript()
+    {
+        var reservations = new Moongate.Server.Ultima.Services.Items.InventoryReservationService(new StubGameLoop());
+        var guard = new Moongate.Server.Ultima.Services.Items.InventoryMutationGuard(
+            new Lazy<Moongate.Server.Ultima.Interfaces.IItemService>(() => _items),
+            reservations
+        );
+        var service = new ItemTimerService(_wheel, _queue, _items, _scripts, _clock, guard);
+        _items.Equip(_door, new(2), LayerType.Backpack);
+        await service.StartAsync();
+        service.Start(_door, "close", TimeSpan.FromSeconds(1));
+        reservations.TryReserve(new(2), Task.CompletedTask);
+        _clock.Advance(TimeSpan.FromSeconds(2));
+        Check();
+        Assert.True(_door.TryGetProp<long>("timer.close", out _));
+        Assert.Empty(_scripts.Calls);
+        Assert.False(service.Start(_door, "new", TimeSpan.FromSeconds(1)));
+        Assert.False(service.Stop(_door, "close"));
+        reservations.Release(new(2));
+        Check();
+        Assert.Single(_scripts.Calls);
+        Assert.False(_door.TryGetProp<long>("timer.close", out _));
     }
 
     [Fact]
@@ -138,7 +165,8 @@ public sealed class ItemTimerServiceTests
         Assert.Equal(2, _scripts.Calls.Count);
     }
 
-    [Theory, InlineData("", 5), InlineData(" ", 5), InlineData("close", 0), InlineData("close", -1), InlineData("close", 40000000)]
+    [Theory, InlineData("", 5), InlineData(" ", 5), InlineData("close", 0), InlineData("close", -1),
+     InlineData("close", 40000000)]
     public void Start_ABlankNameOrADelayOutOfRange_IsRefused(string name, int seconds)
     {
         Assert.False(_timers.Start(_door, name, TimeSpan.FromSeconds(seconds)));

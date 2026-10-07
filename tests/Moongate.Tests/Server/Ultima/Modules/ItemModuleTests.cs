@@ -33,14 +33,16 @@ public sealed class ItemModuleTests : IAsyncLifetime
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly ItemService _items;
     private readonly StubItemSerialPool _serials = new();
+
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                 .Item(0x0EED, TileFlagType.Generic, 0)
-                                                 .Item(0x0E75, TileFlagType.Container, 0)
-                                                 .Item(0x0E76, TileFlagType.Container, 0);
+        .Item(0x0EED, TileFlagType.Generic, 0)
+        .Item(0x0E75, TileFlagType.Container, 0)
+        .Item(0x0E76, TileFlagType.Container, 0);
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
-            new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) },
+            new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E), Dyeable = true, ScriptId = "blade" },
             new ItemTemplate { Id = "bag", ItemId = new Serial(0x0E76) },
             new ItemTemplate { Id = "shirt", ItemId = new Serial(0x1517), Layer = LayerType.Shirt },
             // The graphic does not stack by its tiledata, the template says it does.
@@ -49,10 +51,18 @@ public sealed class ItemModuleTests : IAsyncLifetime
             new ItemTemplate { Id = "relic", ItemId = new Serial(0x0EED), Stackable = false }
         )
     );
-    private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
-    private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", Name = "a potion", ItemId = 0x0F0E, Amount = 3 };
-    private readonly ItemEntity _ground = new() { Id = new Serial(0x40000003), TemplateId = "potion", ItemId = 0x0F0E, Amount = 2 };
-    private readonly ItemEntity _sword = new() { Id = new Serial(0x40000004), TemplateId = "sword", ItemId = 0x0F5E, Amount = 1 };
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _potions = new()
+        { Id = new Serial(0x40000002), TemplateId = "potion", Name = "a potion", ItemId = 0x0F0E, Amount = 3 };
+
+    private readonly ItemEntity _ground = new()
+        { Id = new Serial(0x40000003), TemplateId = "potion", ItemId = 0x0F0E, Amount = 2 };
+
+    private readonly ItemEntity _sword = new()
+        { Id = new Serial(0x40000004), TemplateId = "sword", ItemId = 0x0F5E, Amount = 1 };
 
     private readonly SettableClock _clock = new();
 
@@ -80,7 +90,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
     [Fact]
     public void NameAmountAndOwner_DescribeTheItem()
     {
-        var result = Run("return item.name(0x40000002), item.amount(0x40000002), item.owner(0x40000002), item.owner(0x40000003), item.name(0x40000003)");
+        var result = Run(
+            "return item.name(0x40000002), item.amount(0x40000002), item.owner(0x40000002), item.owner(0x40000003), item.name(0x40000003)"
+        );
 
         Assert.Equal("a potion", result[0].Read<string>());
         Assert.Equal(3, result[1].Read<int>());
@@ -92,7 +104,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
     [Fact]
     public void UnknownSerial_IsNilOrFalse()
     {
-        var result = Run("return item.name(12), item.amount(12), item.consume(12), item.delete(12), item.message(12, 2, 'x')");
+        var result = Run(
+            "return item.name(12), item.amount(12), item.consume(12), item.delete(12), item.message(12, 2, 'x')"
+        );
 
         Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[0], result[1]));
         Assert.All(result[2..], value => Assert.False(value.Read<bool>()));
@@ -116,7 +130,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
     [Fact]
     public void ItemId_AndSetItemId_OnTheGround_ChangeTheGraphicAndShowIt()
     {
-        var result = Run("local before = item.item_id(0x40000003) return before, item.set_item_id(0x40000003, 0x0676), item.item_id(0x40000003)");
+        var result = Run(
+            "local before = item.item_id(0x40000003) return before, item.set_item_id(0x40000003, 0x0676), item.item_id(0x40000003)"
+        );
 
         Assert.Equal((0x0F0E, true, 0x0676), (result[0].Read<int>(), result[1].Read<bool>(), result[2].Read<int>()));
         Assert.Equal(0x0676, _ground.ItemId);
@@ -126,7 +142,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
     [Fact]
     public void SetLight_OnTheGround_KeepsTheShapeByName_AndNilClearsIt()
     {
-        var result = Run("return item.set_light(0x40000003, 'circle150'), item.set_light(0x40000003, 'Circle225'), item.set_light(0x40000003, 'moonbeam')");
+        var result = Run(
+            "return item.set_light(0x40000003, 'circle150'), item.set_light(0x40000003, 'Circle225'), item.set_light(0x40000003, 'moonbeam')"
+        );
 
         Assert.Equal((true, true, false), (result[0].Read<bool>(), result[1].Read<bool>(), result[2].Read<bool>()));
         Assert.Equal("circle225", _ground.Props!["light"]);
@@ -232,7 +250,8 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Contains(_fixture.Sender.Sent, packet => packet is RemoveEntityPacket);
     }
 
-    [Theory, InlineData("item.consume(0x40000002, 4)"), InlineData("item.consume(0x40000002, 0)"), InlineData("item.consume(0x40000004)")]
+    [Theory, InlineData("item.consume(0x40000002, 4)"), InlineData("item.consume(0x40000002, 0)"),
+     InlineData("item.consume(0x40000004)")]
     public void Consume_TooManyNoneOrWorn_IsFalseAndChangesNothing(string call)
     {
         var result = Run("return " + call);
@@ -299,12 +318,17 @@ public sealed class ItemModuleTests : IAsyncLifetime
     [Fact]
     public void MessageCliloc_IsALabelOfTheClientsOwnTextOverTheItem_WithItsArguments()
     {
-        var result = Run("return item.message_cliloc(0x40000002, 2, 1042958, '3:05'), item.message_cliloc(0x40000002, 2, 1042955)");
+        var result = Run(
+            "return item.message_cliloc(0x40000002, 2, 1042958, '3:05'), item.message_cliloc(0x40000002, 2, 1042955)"
+        );
 
         Assert.Equal([true, true], result.Select(value => value.Read<bool>()));
         Assert.Equal([2L, 2L], _fixture.Sender.SentSessionIds);
         var labels = _fixture.Sender.Sent.Cast<LocalizedMessagePacket>().ToList();
-        Assert.Equal((_potions.Id, _potions.ItemId, 1042958, "3:05"), (labels[0].Serial, labels[0].Graphic, labels[0].Cliloc, labels[0].Arguments));
+        Assert.Equal(
+            (_potions.Id, _potions.ItemId, 1042958, "3:05"),
+            (labels[0].Serial, labels[0].Graphic, labels[0].Cliloc, labels[0].Arguments)
+        );
         Assert.Equal((1042955, ""), (labels[1].Cliloc, labels[1].Arguments));
     }
 
@@ -324,11 +348,6 @@ public sealed class ItemModuleTests : IAsyncLifetime
     {
         Assert.False(Run("return " + call)[0].Read<bool>());
         Assert.Empty(_fixture.Sender.Sent);
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
     }
 
     [Fact]
@@ -380,7 +399,10 @@ public sealed class ItemModuleTests : IAsyncLifetime
 
         Assert.Equal(0x40000100, result[0].Read<long>());
         Assert.True(_items.TryGet(new Serial(0x40000100), out var gold));
-        Assert.Equal((50, (Point3D?)new Point3D(1500, 1600, 10), (MapType?)MapType.Trammel), (gold.Amount, gold.GroundLocation, gold.Map));
+        Assert.Equal(
+            (50, (Point3D?)new Point3D(1500, 1600, 10), (MapType?)MapType.Trammel),
+            (gold.Amount, gold.GroundLocation, gold.Map)
+        );
         Assert.Equal(["Appeared 1073742080"], _view.Calls);
         Assert.Contains(gold, _sectors.GetItemsInRange(MapType.Trammel, new Point3D(1500, 1600, 10), 0));
     }
@@ -388,7 +410,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
     [Fact]
     public void TemplateHueAndContainer_DescribeTheItem()
     {
-        var result = Run("return item.template(0x40000002), item.hue(0x40000002), item.container(0x40000002), item.container(0x40000003), item.template(12)");
+        var result = Run(
+            "return item.template(0x40000002), item.hue(0x40000002), item.container(0x40000002), item.container(0x40000003), item.template(12)"
+        );
 
         Assert.Equal("potion", result[0].Read<string>());
         Assert.Equal(0, result[1].Read<int>());
@@ -397,9 +421,29 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Dyeable_IsWhatTheTemplateOfTheItemSays()
+    {
+        // The sword's template is dyeable, the potion has no template, 12 is no item.
+        var result = Run("return item.dyeable(0x40000004), item.dyeable(0x40000002), item.dyeable(12)");
+
+        Assert.Equal([true, false, false], result.Select(value => value.Read<bool>()));
+    }
+
+    [Fact]
+    public void Script_IsTheScriptOfTheTemplate_OrNil()
+    {
+        var result = Run("return item.script(0x40000004), item.script(0x40000002), item.script(12)");
+
+        Assert.Equal("blade", result[0].Read<string>());
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[1], result[2]));
+    }
+
+    [Fact]
     public void SetNameAndSetHue_ChangeTheItem_AndShowIt()
     {
-        var result = Run("return item.set_name(0x40000003, 'a strange brew'), item.set_hue(0x40000003, 0x26), item.name(0x40000003)");
+        var result = Run(
+            "return item.set_name(0x40000003, 'a strange brew'), item.set_hue(0x40000003, 0x26), item.name(0x40000003)"
+        );
 
         Assert.True(result[0].Read<bool>());
         Assert.True(result[1].Read<bool>());
@@ -575,19 +619,12 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Single(_serials.Serials);
     }
 
-    private ItemEntity GroundChest()
-    {
-        var chest = new ItemEntity { Id = new Serial(0x40000060), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
-        chest.PlaceOnGround(MapType.Trammel, new Point3D(1601, 1600, 0));
-        _items.Add([chest]);
-
-        return chest;
-    }
-
     [Fact]
     public void Contents_ListsWhatLiesDirectlyInTheContainer()
     {
-        var result = Run("local inside = item.contents(0x40000001) return #inside, inside[1], #item.contents(0x40000002), #item.contents(12)");
+        var result = Run(
+            "local inside = item.contents(0x40000001) return #inside, inside[1], #item.contents(0x40000002), #item.contents(12)"
+        );
 
         Assert.Equal([1, 0x40000002, 0, 0], result.Select(value => value.Read<long>()));
     }
@@ -609,7 +646,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
     {
         _serials.Serials.Enqueue(new Serial(0x40000100));
 
-        var result = Run("local bag = item.give(2, 'bag') return item.move_into(0x40000002, bag), item.container(0x40000002) == bag");
+        var result = Run(
+            "local bag = item.give(2, 'bag') return item.move_into(0x40000002, bag), item.container(0x40000002) == bag"
+        );
 
         Assert.True(result[0].Read<bool>());
         Assert.True(result[1].Read<bool>());
@@ -680,7 +719,10 @@ public sealed class ItemModuleTests : IAsyncLifetime
 
         Assert.True(Run("return item.equip(0x40000080, 2)")[0].Read<bool>());
 
-        Assert.Equal([$"ContainedDisappeared {shirt.Id.Value} in {chest.Id.Value} except 0", "Worn 2 1073741952"], _view.Calls);
+        Assert.Equal(
+            [$"ContainedDisappeared {shirt.Id.Value} in {chest.Id.Value} except 0", "Worn 2 1073741952"],
+            _view.Calls
+        );
     }
 
     [Fact]
@@ -689,7 +731,8 @@ public sealed class ItemModuleTests : IAsyncLifetime
         var shirt = Shirt(0x40000080);
         var second = Shirt(0x40000081);
         var others = Shirt(0x40000083);
-        var otherBackpack = new ItemEntity { Id = new Serial(0x40000070), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        var otherBackpack = new ItemEntity
+            { Id = new Serial(0x40000070), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
         otherBackpack.Equip(new Serial(3), LayerType.Backpack);
         shirt.Equip(new Serial(2), LayerType.Shirt);
         second.PutInContainer(_backpack.Id, new Point2D(50, 50));
@@ -785,7 +828,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
         banked.PutInContainer(box.Id, new Point2D(50, 50));
         _items.Add([box, banked]);
 
-        var result = Run("local carried = item.find(2, 'potion') return #carried, carried[1], #item.find(0x400000A0, 'potion')");
+        var result = Run(
+            "local carried = item.find(2, 'potion') return #carried, carried[1], #item.find(0x400000A0, 'potion')"
+        );
 
         // Asked of the bank box itself, its contents are given.
         Assert.Equal([1, 0x40000002, 1], result.Select(value => value.Read<int>()));
@@ -794,7 +839,9 @@ public sealed class ItemModuleTests : IAsyncLifetime
     [Fact]
     public void SetProp_OnATimerKey_IsRefused_TimersAreStartedWithStartTimer()
     {
-        var result = Run("return item.set_prop(0x40000003, 'timer.close', 5), item.set_prop(0x40000003, 'timer.close', 'soon'), item.timer(0x40000003, 'close')");
+        var result = Run(
+            "return item.set_prop(0x40000003, 'timer.close', 5), item.set_prop(0x40000003, 'timer.close', 'soon'), item.timer(0x40000003, 'close')"
+        );
 
         Assert.Equal((false, false, LuaValue.Nil), (result[0].Read<bool>(), result[1].Read<bool>(), result[2]));
         Assert.Null(_ground.Props);
@@ -817,6 +864,15 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.False(Run("return item.in_range(0x40000003, 2, 5)")[0].Read<bool>());
     }
 
+    private ItemEntity GroundChest()
+    {
+        var chest = new ItemEntity { Id = new Serial(0x40000060), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        chest.PlaceOnGround(MapType.Trammel, new Point3D(1601, 1600, 0));
+        _items.Add([chest]);
+
+        return chest;
+    }
+
     private static ItemEntity Shirt(uint serial)
     {
         return new() { Id = new Serial(serial), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
@@ -828,16 +884,17 @@ public sealed class ItemModuleTests : IAsyncLifetime
         state.OpenBasicLibrary();
         state.OpenTableLibrary();
         var factory = new FakeItemFactoryService(_templates, _tiles);
+        var tooltips = TestTooltips.Create(_items, _fixture.Mobiles);
         var module = new ItemModule(
             _items,
             _fixture.Sessions,
             _fixture.Sender,
             _view,
-            TestTooltips.Create(_items, _fixture.Mobiles),
+            tooltips,
             _fixture.Mobiles,
             _speech,
             _sectors,
-            factory,
+            new ItemHandlingService(_items, _fixture.Sessions, _fixture.Sender, _view, tooltips, factory, _serials),
             _serials,
             tiles: _tiles,
             templates: _templates,
@@ -852,7 +909,10 @@ public sealed class ItemModuleTests : IAsyncLifetime
             loot: new LootService(
                 new StubDataLoaderService().With(
                     // What does not stack comes as that many items.
-                    new LootTemplate { Id = "two_things", Entries = [new() { ItemId = "sword", Amount = RangeValueSpec<int>.FromValue(2) }] },
+                    new LootTemplate
+                    {
+                        Id = "two_things", Entries = [new() { ItemId = "sword", Amount = RangeValueSpec<int>.FromValue(2) }]
+                    },
                     new LootTemplate { Id = "nothing", Entries = [new()] }
                 ),
                 factory,
@@ -863,5 +923,10 @@ public sealed class ItemModuleTests : IAsyncLifetime
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

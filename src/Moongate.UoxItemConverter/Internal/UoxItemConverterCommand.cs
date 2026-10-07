@@ -6,15 +6,8 @@ namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
 ///     The converter's real logic, testable in-process: no CLI parsing, no <see cref="Environment.ExitCode" />,
-///     output written to the given writers rather than <see cref="Console" /> directly.
-///     <c>
-///         Program.cs
-///     </c>
-///     is the only caller that goes through
-///     <c>
-///         ConsoleApp.Run
-///     </c>
-///     .
+///     output written to the given writers rather than <see cref="Console" /> directly. <c>Program.cs</c> is the only
+///     caller that goes through <c>ConsoleApp.Run</c>.
 /// </summary>
 internal static class UoxItemConverterCommand
 {
@@ -33,7 +26,8 @@ internal static class UoxItemConverterCommand
         string? spawnsDestination = null
     )
     {
-        if (ValidateOptions(mobileSource, mobileDestination, namesDestination, startingItemsDestination, error) is { } invalid)
+        if (ValidateOptions(mobileSource, mobileDestination, namesDestination, startingItemsDestination, error) is
+            { } invalid)
         {
             return invalid;
         }
@@ -47,7 +41,9 @@ internal static class UoxItemConverterCommand
 
         if (npcListsDestination is not null && mobileSource is null)
         {
-            error.WriteLine("--npc-lists-destination and --spawns-destination need --mobile-source, which holds npc/ and spawn/.");
+            error.WriteLine(
+                "--npc-lists-destination and --spawns-destination need --mobile-source, which holds npc/ and spawn/."
+            );
 
             return 2;
         }
@@ -145,6 +141,7 @@ internal static class UoxItemConverterCommand
         var items = new ItemIndex(idByHeader, blocksByHeader, knownLootIds);
 
         mobileSource = Path.GetFullPath(mobileSource);
+        // Safe: destinations were validated as non-null for this mode.
         var mobileResult = UoxMobileConverter.Run(
             mobileSource,
             Path.GetFullPath(mobileDestination!),
@@ -175,6 +172,7 @@ internal static class UoxItemConverterCommand
             }
         }
 
+        // Safe: destinations were validated as non-null for this mode.
         return npcListsDestination is null
             ? 0
             : UoxSpawnConverter.Run(
@@ -210,7 +208,7 @@ internal static class UoxItemConverterCommand
 
         if (lootDestination is not null)
         {
-            Directory.CreateDirectory(lootDestination!);
+            Directory.CreateDirectory(lootDestination);
         }
 
         foreach (var (file, blocks) in blocksByFile)
@@ -246,6 +244,7 @@ internal static class UoxItemConverterCommand
                     // Each loot table gets its own file, named after its own Id: unlike an item,
                     // reviewing or hand-editing one loot table has no reason to load every other
                     // table defined in the same source .dfn alongside it.
+                    // Safe: lootDestination was validated as non-null for this mode.
                     var lootOutputPath = Path.Combine(lootDestination!, lootTemplate.Id + ".toml");
                     TomlUtils.SerializeToFile(new LootTemplateFile { Loot = [lootTemplate] }, lootOutputPath);
                     lootWritten++;
@@ -266,11 +265,13 @@ internal static class UoxItemConverterCommand
                 templates.Add(template);
             }
 
+            // Safe: a source that is not a directory is a file, which has a parent directory.
             var relative = Path.GetRelativePath(Directory.Exists(source) ? source : Path.GetDirectoryName(source)!, file);
 
             if (templates.Count > 0)
             {
                 var outputPath = Path.Combine(destination, Path.ChangeExtension(relative, ".toml"));
+                // Safe: GetDirectoryName is null only for a root or empty path, not a file combined under a folder.
                 Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
                 TomlUtils.SerializeToFile(new ItemTemplateFile { Item = templates }, outputPath);
                 written += templates.Count;
@@ -306,7 +307,9 @@ internal static class UoxItemConverterCommand
     {
         if ((mobileSource is null) != (mobileDestination is null) || (mobileSource is null) != (namesDestination is null))
         {
-            error.WriteLine("--mobile-source, --mobile-destination and --names-destination go together: give all three or none.");
+            error.WriteLine(
+                "--mobile-source, --mobile-destination and --names-destination go together: give all three or none."
+            );
 
             return 2;
         }
@@ -448,11 +451,7 @@ internal static class UoxItemConverterCommand
     }
 
     /// <summary>
-    ///     Reads every
-    ///     <c>
-    ///         .toml
-    ///     </c>
-    ///     file back from <paramref name="destination" /> and, when given,
+    ///     Reads every <c>.toml</c> file back from <paramref name="destination" /> and, when given,
     ///     <paramref name="lootDestination" />, exactly as a real loader would, and checks that no two
     ///     items or loot tables share an Id and that every <see cref="ItemTemplate.BaseId" />,
     ///     <see cref="LootEntry.ItemId" /> and <see cref="LootEntry.LootTemplateId" /> names something
@@ -542,6 +541,8 @@ internal static class UoxItemConverterCommand
         foreach (var path in Directory.EnumerateFiles(root, "*.toml", SearchOption.AllDirectories))
         {
             var file = TomlUtils.DeserializeFromFile<TFile>(path);
+            // Safe: TomlUtils.Deserialize gives a class an instance with its defaults even for an empty document,
+            // as TomlUtilsTests.Deserialize_EmptyDocument_KeepsModelDefaults checks.
             entities.AddRange(selectEntities(file!));
         }
 

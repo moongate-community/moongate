@@ -1,7 +1,7 @@
 # Writing documentation
 
-Moongate uses [Astro Starlight](https://starlight.astro.build/) for its English
-documentation. The public site uses the GitHub Pages custom domain at
+Moongate uses [Astro Starlight](https://starlight.astro.build/) for its English and Italian
+documentation. English keeps the existing root URLs; Italian authored pages use `/it/`. The public site uses the GitHub Pages custom domain at
 [moongate.sh](https://moongate.sh/).
 Releases publish the site automatically, and the same workflow can be run by hand to publish
 documentation between releases.
@@ -32,7 +32,8 @@ External links are not fetched by the validator.
 
 Keep the source text in its existing location:
 
-- `docs/*.md` contains server, reference, and contributor guides.
+- `docs/*.md` contains server, reference, and contributor guides; the Lua guide is `docs/scripting.md`
+  with its pages in `docs/scripting/`.
 - `src/*/README.md` contains library documentation and NuGet examples.
 - The root `README.md` supplies the overview.
 - `website/src/content/docs/index.mdx` is the authored landing page. Its download
@@ -64,6 +65,13 @@ description comes from `[ScriptModule]`, a function's text from the `helpText` o
 the site agree. Build fails when a module has no description, a function has no help text, or a
 name repeats. Each function has an anchor named after it, such as `/lua/npc/#walk_to`. The dump
 requires the .NET 10 SDK.
+
+An example goes in `website/lua/examples/<module>.md`: one `## <function>` section per function, whose
+body, a sentence and a Lua code block or a note, is put under that function on the module's page. The body
+is Markdown. Build fails for a file that names no module, a section that names no function of the module, a
+repeated or empty section, text before the first section, a file with no section, a code block left open, and
+any other heading inside a section. The test suite checks
+the names too (`PublishedScriptModulesTests`), so renaming a function that has an example fails a pull request.
 
 Help text is written to the pages as HTML, not Markdown, so Lua such as `g:text{...}` or
 `~1_NAME~` prints as written. A constant read through a C# property, such as `engine.version`,
@@ -106,6 +114,54 @@ documents on `develop` or `main` are also converted.
 Missing source files, duplicate slugs, unresolved local links, and broken links
 in the built output fail the build. A failed import keeps the previous generated
 content and the authored homepage intact.
+
+## Translate authored content
+
+English sources remain in their existing locations. Italian translations live at
+`website/translations/it/<manifest-slug>.md`, with the full translated Markdown
+below a metadata comment on the first line:
+
+```markdown
+<!-- translation: {"sourceHash":"<64-character SHA-256 of the English source>","title":"Italian page title"} -->
+
+# Translated original heading
+
+Translated content.
+```
+
+Calculate the source hash with `sha256sum docs/<source>.md` after reviewing the
+complete translation against that exact source. Preserve heading levels and order,
+all code blocks, API identifiers, commands, configuration keys, link destinations,
+and explicit HTML IDs. Translate prose, headings, table descriptions and link labels.
+Relative links are resolved from the English source location, not the translation folder.
+The importer supplies the original English heading anchors so existing fragments keep working.
+
+Links between authored guides stay in the selected language. Lua API references,
+the packet registry, changelog and coverage reports always retain English content;
+do not add translations for these generated references. Lua examples and generated
+help text also stay in English. The Italian navigation links to the English references;
+the language selector on those references leads to the Italian homepage.
+
+The landing pages are authored separately in `website/src/content/docs/index.mdx`
+and `website/src/content/docs/it/index.mdx`. Update both when changing the homepage.
+Sidebar group labels live in `website/sidebar-translations.mjs`; Starlight supplies
+the standard interface translations, supplemented by `website/src/content/i18n/it.json`
+for search messages and remaining labels. The custom download cards and footer contain
+English and Italian labels.
+
+Run the strict catalog check before publishing translated content:
+
+```sh
+npm --prefix website run check:translations
+```
+
+It reports missing translations, outdated source hashes, changed code or links,
+and unexpected translation files. A normal build warns about stale translations
+and uses Starlight's English fallback for missing or stale pages, with a visible
+notice. Never refresh a hash without reviewing and updating the translation.
+Invalid metadata or altered code/link structure fails the import without replacing
+the last successful generated output. Rerun `prepare:docs` after editing a translation
+while the development server is running.
 
 ## Release publication
 

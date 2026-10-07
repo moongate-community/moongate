@@ -1,9 +1,12 @@
 [[mobile]]
 id = "base_daemons"
+script_id = "monster"
 notoriety = "attackable"
 
 [[mobile]]
 id = "balron"
+script_id = "monster"
+flee_at = -1
 name = "a balron"
 name_list = "balron"
 body = 40
@@ -36,6 +39,8 @@ death = 361
 
 [[mobile]]
 id = "daemon"
+script_id = "monster"
+flee_at = -1
 name = "a daemon"
 name_list = "daemon"
 body = 9
@@ -90,6 +95,8 @@ death = 772
 
 [[mobile]]
 id = "icefiend"
+script_id = "monster"
+flee_at = -1
 name = "an ice fiend"
 body = 43
 skin_hue = 1152
@@ -119,6 +126,7 @@ death = 361
 
 [[mobile]]
 id = "imp"
+script_id = "monster"
 name = "an imp"
 name_list = "daemon"
 body = 74
@@ -149,6 +157,7 @@ death = 426
 
 [[mobile]]
 id = "mongbat"
+script_id = "monster"
 name = "a mongbat"
 body = 39
 strength = "1d5+5"
@@ -198,6 +207,7 @@ death = 426
 
 [[mobile]]
 id = "arcanedaemon"
+script_id = "monster"
 name = "an arcane daemon"
 body = 784
 strength = "1d20+130"
@@ -226,6 +236,7 @@ death = 1153
 
 [[mobile]]
 id = "moloch"
+script_id = "monster"
 name = "a moloch"
 body = 785
 strength = "1d30+330"
@@ -251,6 +262,7 @@ death = 772
 
 [[mobile]]
 id = "chaosdaemon"
+script_id = "monster"
 name = "a chaos daemon"
 body = 792
 strength = "1d25+105"
@@ -277,6 +289,7 @@ death = 1005
 
 [[mobile]]
 id = "shadowfiend"
+script_id = "monster"
 base_id = "base_daemons"
 name = "a shadow fiend"
 body = 168

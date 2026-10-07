@@ -39,8 +39,8 @@ internal static class RootDirectoryInitializer
         }
 
         var dataFiles = Directory.Exists(dataDirectory)
-                            ? Directory.GetFiles(dataDirectory, "*", SearchOption.AllDirectories)
-                            : [];
+            ? Directory.GetFiles(dataDirectory, "*", SearchOption.AllDirectories)
+            : [];
 
         if (dataFiles.Length == 0)
         {
@@ -117,6 +117,7 @@ internal static class RootDirectoryInitializer
         foreach (var file in files.Order(StringComparer.Ordinal))
         {
             var path = Path.Combine(destination, Path.GetRelativePath(sourceDirectory, file));
+            // Safe: path is combined with a directory, so it always has a parent.
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             CreateIfMissing(path, File.ReadAllBytes(file), output);
         }

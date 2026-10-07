@@ -25,8 +25,17 @@ internal static class CompletionCatalog
             "init",
             "Prepare a server root",
             [
-                new("--generate-admin-certificate", "Create a TLS certificate and enable the administration API", CompletionValueType.None),
-                new("--admin-certificate-hosts", "Additional DNS names or IP addresses, comma separated", CompletionValueType.Text)
+                new(
+                    "--generate-admin-certificate",
+                    "Create a TLS certificate and enable the administration API",
+                    CompletionValueType.None
+                ),
+                new(
+                    "--admin-certificate-hosts",
+                    "Additional DNS names or IP addresses, comma separated",
+                    CompletionValueType.Text
+                ),
+                new("--no-header", "Leave out the banner", CompletionValueType.None)
             ],
             new("root-directory", "Root directory to initialize", CompletionValueType.Directory)
         ),
@@ -88,6 +97,14 @@ internal static class CompletionCatalog
             [
                 new("--source", "The Distribution/Data/Spawns folder of ModernUO", CompletionValueType.Directory),
                 new("--destination", "The spawns folder", CompletionValueType.Directory)
+            ]
+        ),
+        new(
+            "convert modernuo-books",
+            "Convert ModernUO's static book texts into readable document templates",
+            [
+                new("--source", "The Projects/UOContent folder of ModernUO", CompletionValueType.Directory),
+                new("--destination", "The book templates folder", CompletionValueType.Directory)
             ]
         ),
         new(

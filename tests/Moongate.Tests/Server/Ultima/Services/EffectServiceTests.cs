@@ -83,9 +83,15 @@ public sealed class EffectServiceTests
         Place(fixture, 2, 105, 100);
         var sent = 0;
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () => sent = Service(fixture)
-                .PlayMoving(MapType.Trammel, new Serial(2), Spot, Serial.Zero, Spot, new EffectOptions { Graphic = 1, Particle = 9502 })
+        await fixture.Network.ExecuteOnLoopAsync(() => sent = Service(fixture)
+            .PlayMoving(
+                MapType.Trammel,
+                new Serial(2),
+                Spot,
+                Serial.Zero,
+                Spot,
+                new EffectOptions { Graphic = 1, Particle = 9502 }
+            )
         );
 
         Assert.Equal(0, sent);
@@ -97,13 +103,19 @@ public sealed class EffectServiceTests
         await using var fixture = await BroadcastFixture.CreateAsync();
         await fixture.AddAsync(2);
         Place(fixture, 2, 105, 100);
-        var options = Smoke with { Hue = new Hue(0x47F), RenderMode = EffectRenderModeType.Translucent, Speed = 9, Duration = 32 };
+        var options = Smoke with
+        {
+            Hue = new Hue(0x47F), RenderMode = EffectRenderModeType.Translucent, Speed = 9, Duration = 32
+        };
 
-        await fixture.Network.ExecuteOnLoopAsync(() => Service(fixture).PlayOn(new Serial(0x100), MapType.Trammel, Spot, options));
+        await fixture.Network.ExecuteOnLoopAsync(() =>
+            Service(fixture).PlayOn(new Serial(0x100), MapType.Trammel, Spot, options)
+        );
 
         var effect = Assert.IsType<HuedEffectPacket>(Assert.Single(fixture.Sender.Sent)).Effect;
         Assert.Equal(
-            (EffectKindType.FixedObject, new Serial(0x100), Spot, Spot, true, new Hue(0x47F), EffectRenderModeType.Translucent,
+            (EffectKindType.FixedObject, new Serial(0x100), Spot, Spot, true, new Hue(0x47F),
+                EffectRenderModeType.Translucent,
                 (byte)9, (byte)32),
             (effect.Kind, effect.Source, effect.From, effect.To, effect.FixedDirection, effect.Hue, effect.RenderMode,
                 effect.Speed, effect.Duration)
@@ -123,11 +135,12 @@ public sealed class EffectServiceTests
         Place(fixture, 4, 115, 100);
         Place(fixture, 5, 170, 100);
         var destination = new Point3D(130, 100, 0);
-        var options = new EffectOptions { Graphic = (int)EffectGraphicType.LargeFireball, Speed = 7, Duration = 0, Explodes = true };
+        var options = new EffectOptions
+            { Graphic = (int)EffectGraphicType.LargeFireball, Speed = 7, Duration = 0, Explodes = true };
         var sent = 0;
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () => sent = Service(fixture).PlayMoving(MapType.Trammel, new Serial(2), Spot, new Serial(0x100), destination, options)
+        await fixture.Network.ExecuteOnLoopAsync(() =>
+            sent = Service(fixture).PlayMoving(MapType.Trammel, new Serial(2), Spot, new Serial(0x100), destination, options)
         );
 
         Assert.Equal(3, sent);
@@ -149,8 +162,8 @@ public sealed class EffectServiceTests
         await fixture.AddAsync(2);
         Place(fixture, 2, 105, 100);
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () => Service(fixture).PlayLightning(new Serial(0x100), MapType.Trammel, Spot, new Hue(0x21))
+        await fixture.Network.ExecuteOnLoopAsync(() =>
+            Service(fixture).PlayLightning(new Serial(0x100), MapType.Trammel, Spot, new Hue(0x21))
         );
 
         // As ModernUO's bolt: kind lightning, the target as the source, no graphic, both points the target's.
@@ -177,9 +190,12 @@ public sealed class EffectServiceTests
             Layer = EffectLayerType.Waist
         };
 
-        await fixture.Network.ExecuteOnLoopAsync(() => Service(fixture).PlayOn(new Serial(0x100), MapType.Trammel, Spot, options));
+        await fixture.Network.ExecuteOnLoopAsync(() =>
+            Service(fixture).PlayOn(new Serial(0x100), MapType.Trammel, Spot, options)
+        );
 
-        var byId = fixture.Sender.SentSessionIds.Zip(fixture.Sender.Sent).ToDictionary(pair => pair.First, pair => pair.Second);
+        var byId = fixture.Sender.SentSessionIds.Zip(fixture.Sender.Sent)
+            .ToDictionary(pair => pair.First, pair => pair.Second);
         Assert.IsType<HuedEffectPacket>(byId[classic.SessionId]);
         var particles = Assert.IsType<ParticleEffectPacket>(byId[enhanced.SessionId]).Effect;
         Assert.Equal(
@@ -200,8 +216,8 @@ public sealed class EffectServiceTests
         Place(fixture, 3, 106, 100);
         var sent = 0;
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () => sent = Service(fixture).PlayAt(MapType.Trammel, Spot, new EffectOptions { Particle = 2023 })
+        await fixture.Network.ExecuteOnLoopAsync(() =>
+            sent = Service(fixture).PlayAt(MapType.Trammel, Spot, new EffectOptions { Particle = 2023 })
         );
 
         Assert.Equal(1, sent);
@@ -215,7 +231,12 @@ public sealed class EffectServiceTests
         await using var fixture = await BroadcastFixture.CreateAsync();
         await fixture.AddAsync(2);
         Place(fixture, 2, 110, 100);
-        var service = new EffectService(fixture.Sessions, fixture.Mobiles, fixture.Sender, new WorldConfig { ViewRange = 9 });
+        var service = new EffectService(
+            fixture.Sessions,
+            fixture.Mobiles,
+            fixture.Sender,
+            new WorldConfig { ViewRange = 9 }
+        );
         var sent = 0;
 
         await fixture.Network.ExecuteOnLoopAsync(() => sent = service.PlayAt(MapType.Trammel, Spot, Smoke));
@@ -236,13 +257,13 @@ public sealed class EffectServiceTests
         Assert.True(fixture.Mobiles.TryGet(new Serial(4), out var hidden));
         hidden.Hidden = true;
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 staff.Set(SessionKeys.AccountType, AccountType.GameMaster);
                 Service(fixture).PlayOn(hidden.Id, MapType.Trammel, Spot, Smoke);
                 Service(fixture).PlayLightning(hidden.Id, MapType.Trammel, Spot);
-                Service(fixture).PlayMoving(MapType.Trammel, hidden.Id, Spot, new Serial(2), new Point3D(101, 100, 0), Smoke);
+                Service(fixture)
+                    .PlayMoving(MapType.Trammel, hidden.Id, Spot, new Serial(2), new Point3D(101, 100, 0), Smoke);
             }
         );
 

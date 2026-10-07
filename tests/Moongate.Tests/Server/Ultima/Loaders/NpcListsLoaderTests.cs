@@ -20,7 +20,10 @@ public sealed class NpcListsLoaderTests
 
         var lists = (await Loader(root).LoadDataAsync()).Entities.ToDictionary(list => list.Id);
 
-        Assert.Equal(["orc:3", "trolls:1"], lists["forest"].Entries.Select(entry => $"{entry.MobileId ?? entry.NpcListId}:{entry.Weight}"));
+        Assert.Equal(
+            ["orc:3", "trolls:1"],
+            lists["forest"].Entries.Select(entry => $"{entry.MobileId ?? entry.NpcListId}:{entry.Weight}")
+        );
     }
 
     [Theory,
@@ -30,8 +33,14 @@ public sealed class NpcListsLoaderTests
      InlineData("[[npc_list]]\nid = \"a\"\nentries = [{ mobile_id = \"orc\", npc_list_id = \"a\" }]\n", "both"),
      InlineData("[[npc_list]]\nid = \"a\"\nentries = [{ weight = 2 }]\n", "neither"),
      InlineData("[[npc_list]]\nid = \"a\"\nentries = [{ mobile_id = \"orc\", weight = 0 }]\n", "weight"),
-     InlineData("[[npc_list]]\nid = \"a\"\nentries = [{ npc_list_id = \"b\" }]\n\n[[npc_list]]\nid = \"b\"\nentries = [{ npc_list_id = \"a\" }]\n", "itself"),
-     InlineData("[[npc_list]]\nid = \"a\"\nentries = [{ mobile_id = \"orc\" }]\n\n[[npc_list]]\nid = \"a\"\nentries = [{ mobile_id = \"orc\" }]\n", "twice")]
+     InlineData(
+         "[[npc_list]]\nid = \"a\"\nentries = [{ npc_list_id = \"b\" }]\n\n[[npc_list]]\nid = \"b\"\nentries = [{ npc_list_id = \"a\" }]\n",
+         "itself"
+     ),
+     InlineData(
+         "[[npc_list]]\nid = \"a\"\nentries = [{ mobile_id = \"orc\" }]\n\n[[npc_list]]\nid = \"a\"\nentries = [{ mobile_id = \"orc\" }]\n",
+         "twice"
+     )]
     public async Task LoadDataAsync_ABrokenList_StopsTheLoad(string toml, string reason)
     {
         using var root = new TemporaryDirectory();

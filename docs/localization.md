@@ -64,7 +64,7 @@ chosen language stays in English, so a partial translation still works. The log
 reports how many messages fell back:
 
 ```text
-Found 5594 messages in ita, 3 of them in English
+Found 5648 messages in ita, 3 of them in English
 ```
 
 ### Validation at startup
@@ -194,7 +194,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 
 | Id | Text | Used by |
 | --- | --- | --- |
-| 30000–30004 | Common, Uncommon, Rare, Epic, Legendary | Tooltip rarity |
+| 30000–30004 | Common, Uncommon, Rare, Epic, Legendary | Tooltip rarity; an item shows it only above Common (30000 is kept for scripts and tools) |
 | 30005 | [Cursed] | Tooltip loot type |
 | 30006, 30007 | Weight: 1 stone, Weight: {0} stones | Tooltip weight |
 | 30008–30038, 30050–30052, most of 30055–30112, 30115–30120, 30122 and 30126 | Target canceled., Unknown command: {0}, Usage: {0}, The world has been saved in {0} seconds., {0} now has {1} fame., ... | Command replies and broadcasts (`CommandMessages`) |
@@ -203,6 +203,19 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30123, 30124 | You are hungry., You are starving: your wounds will not heal until you eat. | What a player reads as its hunger drops |
 | 30128, 30129 | You are thirsty., You are parched: your stamina will not come back until you drink. | What a player reads as its thirst drops |
 | 30130–30132 | You are simply too full to drink any more!, It is empty., You drink, and feel less thirsty. | The texts of `scripts/items/drink.lua` |
+| 30133 | You are overloaded: you carry {0} stones of {1}. | What a player reads when it puts something down while carrying more than it may |
+| 30134–30137 | You have entered {0}., You have left {0}., You are now under the protection of the guards of {0}., You have left the protection of the guards of {0}. | What a player reads when it walks into or out of a named place, and when the protection of its guards changes |
+| 30138 | Thou wilt regret thine actions, swine! | What a guard says when it comes for a criminal |
+| 30148, 30149 | You have been jailed for {0} days: {1}, Reason: {0} | What a prisoner reads when a reason was given, and the reason on its release note |
+| 30151 | the remains of {0} | The name of the corpse an NPC leaves |
+| 30152 to 30154 | Kills the NPC you target…, {0} is dead., {0} cannot die. | The `kill` command |
+| 30164 to 30167 | Raises the NPC whose corpse you target…, {0} is back., That is not a corpse., That corpse cannot be raised. | The `resurrect` command |
+| 30155 to 30157 | You must wait {0} seconds before posting again., That message is not yours., The board is busy: post again in a moment. | What a player reads at a [bulletin board](bulletin-boards.md) |
+| 30168 | You may not use skills in jail. | What a prisoner reads when it uses a [skill](skills.md) |
+| 30150 | No character is named {0}. | What `jail <name>` answers when no player has the name |
+| 30160 to 30163 | Shows the version the server runs…, Moongate {0} "{1}" ({2}), built {3}., Shows how long the server has been running…, Up for {0}, since {1}. | The `version` and `uptime` commands |
+| 30181 to 30184 | No document {0} in templates/books., Document {0} is in your backpack., ... | The [`book` command](commands/book.md) replies and help description |
+| 30185, 30186 | Opens the gump of the game master's tools…, The gmtools gump is missing: templates/gumps/gmtools.xml. | The `gmtools` command |
 
 The header of the command texts in `eng/moongate.toml` lists the ids of both sets.
 

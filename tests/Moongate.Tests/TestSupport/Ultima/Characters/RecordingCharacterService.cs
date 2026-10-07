@@ -49,7 +49,9 @@ public sealed class RecordingCharacterService : ICharacterService
         );
     }
 
-    public Task<IReadOnlyList<MobileEntity>> GetCharactersAsync(Serial accountId, CancellationToken cancellationToken = default)
+    public Task<IReadOnlyList<MobileEntity>> GetCharactersAsync(
+        Serial accountId, CancellationToken cancellationToken = default
+    )
     {
         if (Failure is not null)
         {
@@ -74,7 +76,9 @@ public sealed class RecordingCharacterService : ICharacterService
         CancellationToken cancellationToken = default
     )
     {
-        return Task.FromResult<IReadOnlyList<MobileEntity>>(Characters.Where(c => c.DeletionRequestedAt is not null).ToList());
+        return Task.FromResult<IReadOnlyList<MobileEntity>>(
+            Characters.Where(c => c.DeletionRequestedAt is not null).ToList()
+        );
     }
 
     public Task<CharacterDeletionResult> RequestDeletionAsync(
@@ -92,7 +96,10 @@ public sealed class RecordingCharacterService : ICharacterService
 
         return Task.FromResult(
             DeletionResult ??
-            CharacterDeletionResult.Deleted(new MobileEntity { Id = new(1), Name = "deleted" }, [null, null, null, null, null])
+            CharacterDeletionResult.Deleted(
+                new MobileEntity { Id = new(1), Name = "deleted" },
+                [null, null, null, null, null]
+            )
         );
     }
 
@@ -111,7 +118,9 @@ public sealed class RecordingCharacterService : ICharacterService
     /// </summary>
     public int? PlayIndex { get; private set; }
 
-    public Task<CharacterForPlay?> GetForPlayAsync(Serial accountId, int listIndex, CancellationToken cancellationToken = default)
+    public Task<CharacterForPlay?> GetForPlayAsync(
+        Serial accountId, int listIndex, CancellationToken cancellationToken = default
+    )
     {
         PlayIndex = listIndex;
 

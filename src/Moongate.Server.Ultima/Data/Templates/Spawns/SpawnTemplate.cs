@@ -15,7 +15,7 @@ public class SpawnTemplate
     public string Id { get; set; } = string.Empty;
 
     /// <summary>
-    ///     The map, taken from the folder of the file (<c>templates/spawns/felucca/</c>).
+    ///     The map, taken from the folder of the file ( <c>templates/spawns/felucca/</c>).
     /// </summary>
     public MapType Map { get; set; }
 

@@ -1,3 +1,5 @@
+using Moongate.Tests.TestSupport.Ultima.Weight;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
@@ -23,6 +25,7 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     private readonly RecordingWorldViewService _view = new();
 
     private BroadcastFixture _fixture = null!;
+    private readonly StubWeightService _weight = new() { CarriedStones = 37, MaximumStones = 215 };
     private MobileStateService _service = null!;
     private MobileEntity _aria = null!;
     private GameSession _ariaSession = null!;
@@ -35,12 +38,15 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Aria), out _aria!));
         (_aria.Hits, _aria.HitsMax, _aria.Mana, _aria.ManaMax, _aria.Stamina, _aria.StaminaMax) = (50, 60, 9, 10, 18, 20);
         (_aria.Strength, _aria.Dexterity, _aria.Intelligence) = (60, 20, 10);
-        _service = new(_fixture.Mobiles, _fixture.Sessions, _fixture.Sectors, _fixture.Sender, _view, new WorldConfig());
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
+        _service = new(
+            _fixture.Mobiles,
+            _fixture.Sessions,
+            _fixture.Sectors,
+            _fixture.Sender,
+            _view,
+            new WorldConfig(),
+            new Lazy<IWeightService>(() => _weight)
+        );
     }
 
     [Fact]
@@ -49,7 +55,10 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.True(_service.SetStats(_aria, new() { Strength = 80, Mana = 5, Fame = 1200, Karma = -300 }));
 
         Assert.Equal((80, 20, 10), (_aria.Strength, _aria.Dexterity, _aria.Intelligence));
-        Assert.Equal((50, 60, 5, 10, 18, 20), (_aria.Hits, _aria.HitsMax, _aria.Mana, _aria.ManaMax, _aria.Stamina, _aria.StaminaMax));
+        Assert.Equal(
+            (50, 60, 5, 10, 18, 20),
+            (_aria.Hits, _aria.HitsMax, _aria.Mana, _aria.ManaMax, _aria.Stamina, _aria.StaminaMax)
+        );
         Assert.Equal((1200, -300), (_aria.Fame, _aria.Karma));
     }
 
@@ -69,7 +78,10 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     {
         Assert.True(_service.SetStats(_aria, new() { HitsMax = 30, ManaMax = 4, StaminaMax = 100 }));
 
-        Assert.Equal((30, 30, 4, 4, 18, 100), (_aria.Hits, _aria.HitsMax, _aria.Mana, _aria.ManaMax, _aria.Stamina, _aria.StaminaMax));
+        Assert.Equal(
+            (30, 30, 4, 4, 18, 100),
+            (_aria.Hits, _aria.HitsMax, _aria.Mana, _aria.ManaMax, _aria.Stamina, _aria.StaminaMax)
+        );
     }
 
     [Fact]
@@ -107,7 +119,10 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     {
         Assert.True(_service.SetStats(_aria, new() { Mana = 3, StaminaMax = 40 }));
 
-        Assert.Equal([typeof(MobileManaPacket), typeof(MobileStaminaPacket)], _fixture.Sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(MobileManaPacket), typeof(MobileStaminaPacket)],
+            _fixture.Sender.Sent.Select(packet => packet.GetType())
+        );
         var mana = (MobileManaPacket)_fixture.Sender.Sent[0];
         var stamina = (MobileStaminaPacket)_fixture.Sender.Sent[1];
         Assert.Equal((3, 10, 18, 40), (mana.Mana, mana.ManaMax, stamina.Stamina, stamina.StaminaMax));
@@ -119,7 +134,9 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     [InlineData("fame")]
     public void SetStats_AStatTheFameOrTheKarma_SendsThePlayerItsWholeStatus(string what)
     {
-        var change = what == "strength" ? new MobileStatsChange { Strength = 61, Mana = 3 } : new MobileStatsChange { Fame = 5, Mana = 3 };
+        var change = what == "strength"
+            ? new MobileStatsChange { Strength = 61, Mana = 3 }
+            : new MobileStatsChange { Fame = 5, Mana = 3 };
 
         Assert.True(_service.SetStats(_aria, change));
 
@@ -141,7 +158,8 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     {
         var orc = new MobileEntity
         {
-            Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = _aria.Map, Location = _aria.Location, Hits = 40, HitsMax = 40
+            Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = _aria.Map, Location = _aria.Location,
+            Hits = 40, HitsMax = 40
         };
         _fixture.Mobiles.EnterWorld(orc);
 
@@ -215,6 +233,109 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.False(_service.SetSkill(_aria, SkillType.Magery, 500, 70000));
 
         Assert.Empty(_aria.Skills);
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Theory]
+    [InlineData(SkillLockType.Down)]
+    [InlineData(SkillLockType.Locked)]
+    [InlineData(SkillLockType.Up)]
+    public void SetSkillLock_KeepsTheLockOfTheSkill_AndSendsNothing(SkillLockType skillLock)
+    {
+        Assert.True(_service.SetSkillLock(_aria, SkillType.Hiding, skillLock));
+
+        var known = Assert.Single(_aria.Skills);
+        Assert.Equal((SkillType.Hiding, skillLock, 0), (known.Skill, known.Lock, known.Base));
+        // The client already shows the lock it asked for.
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public void SetSkillLock_OfASkillTheMobileHas_ChangesOnlyTheLock()
+    {
+        _service.SetSkill(_aria, SkillType.Hiding, 505, 900);
+        _fixture.Sender.Sent.Clear();
+
+        Assert.True(_service.SetSkillLock(_aria, SkillType.Hiding, SkillLockType.Down));
+
+        var known = Assert.Single(_aria.Skills);
+        Assert.Equal((505, 900, SkillLockType.Down), (known.Base, known.Cap, known.Lock));
+    }
+
+    [Fact]
+    public void SetSkillLock_AnUnknownSkillOrLock_ChangesNothing()
+    {
+        Assert.False(_service.SetSkillLock(_aria, (SkillType)200, SkillLockType.Down));
+        Assert.False(_service.SetSkillLock(_aria, SkillType.Hiding, (SkillLockType)3));
+
+        Assert.Empty(_aria.Skills);
+    }
+
+    [Fact]
+    public void SendStatus_OfTheOwnCharacter_HasTheDamageAndTheArmorOfItsGear_ThatOfAnotherDoesNot()
+    {
+        var gear = new Moongate.Tests.TestSupport.Ultima.Combat.StubCombatGearService { StatusDamage = (9, 59) };
+        gear.Armor[Moongate.Server.Ultima.Types.Combat.ArmorZoneType.Chest] = 12;
+        var service = new MobileStateService(
+            _fixture.Mobiles,
+            _fixture.Sessions,
+            _fixture.Sectors,
+            _fixture.Sender,
+            _view,
+            new WorldConfig(),
+            new Lazy<IWeightService>(() => _weight),
+            new Lazy<ICombatGearService>(() => gear)
+        );
+        Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Boris), out var boris));
+        // The gear is a player's: a mobile with an account.
+        _aria.AccountId = new Serial(0x42);
+
+        service.SendStatus(_ariaSession, _aria);
+        service.SendStatus(_ariaSession, boris);
+
+        var own = Assert.IsType<MobileStatusPacket>(_fixture.Sender.Sent[0]).Status;
+        var other = Assert.IsType<MobileStatusPacket>(_fixture.Sender.Sent[1]).Status;
+        Assert.Equal((9, 59, 12), (own.DamageMin, own.DamageMax, own.PhysicalResistance));
+        Assert.Equal((0, 0), (other.DamageMin, other.DamageMax));
+    }
+
+    [Theory]
+    [InlineData(StatType.Str, StatLockType.Down)]
+    [InlineData(StatType.Dex, StatLockType.Locked)]
+    [InlineData(StatType.Int, StatLockType.Down)]
+    public void SetStatLock_KeepsTheLockOfThatStatOnly_AndShowsTheThreeToItsPlayer(StatType stat, StatLockType statLock)
+    {
+        Assert.True(_service.SetStatLock(_aria, stat, statLock));
+
+        Assert.Equal(
+            (stat == StatType.Str ? statLock : StatLockType.Up, stat == StatType.Dex ? statLock : StatLockType.Up,
+                stat == StatType.Int ? statLock : StatLockType.Up),
+            (_aria.StrLock, _aria.DexLock, _aria.IntLock)
+        );
+        // As ModernUO: the three locks, to its own player only.
+        var packet = Assert.IsType<StatLockInfoPacket>(Assert.Single(_fixture.Sender.Sent));
+        Assert.Equal(
+            (_aria.StrLock, _aria.DexLock, _aria.IntLock),
+            (packet.Strength, packet.Dexterity, packet.Intelligence)
+        );
+        Assert.Equal([Aria], _fixture.Sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void SetStatLock_ToTheLockItHas_SendsNothing()
+    {
+        Assert.True(_service.SetStatLock(_aria, StatType.Str, StatLockType.Up));
+
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public void SetStatLock_AnUnknownStatOrLock_ChangesNothing()
+    {
+        Assert.False(_service.SetStatLock(_aria, (StatType)3, StatLockType.Down));
+        Assert.False(_service.SetStatLock(_aria, StatType.Str, (StatLockType)3));
+
+        Assert.Equal((StatLockType.Up, StatLockType.Up, StatLockType.Up), (_aria.StrLock, _aria.DexLock, _aria.IntLock));
         Assert.Empty(_fixture.Sender.Sent);
     }
 
@@ -318,6 +439,71 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetDead_MakesAGhostHiddenFromTheLiving_TellsItsPlayerItDied_AndSetDeadFalseRaisesIt()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 400;
+
+        _service.SetDead(_aria, true);
+
+        Assert.True(_aria.IsDead);
+        Assert.Equal(402, _aria.Body);
+        Assert.True(_aria.Hidden);
+        Assert.Contains(_fixture.Sender.Sent, packet => packet is DeathStatusPacket);
+
+        _service.SetDead(_aria, false);
+
+        Assert.False(_aria.IsDead);
+        Assert.Equal(400, _aria.Body);
+        Assert.False(_aria.Hidden);
+    }
+
+    [Fact]
+    public void SetDead_AMobileThatWasHidden_IsHiddenAgainWhenRaised_AndOneThatWasNotIsNot()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 400;
+        _aria.Hidden = true;
+
+        _service.SetDead(_aria, true);
+        _service.SetWarMode(_aria, true);
+        _service.SetDead(_aria, false);
+
+        Assert.True(_aria.Hidden);
+        Assert.False(_aria.TryGetProp<bool>("death.hidden", out _));
+
+        _aria.Hidden = false;
+        _service.SetDead(_aria, true);
+        _service.SetDead(_aria, false);
+
+        Assert.False(_aria.Hidden);
+    }
+
+    [Fact]
+    public void SetDead_ForAnNpc_DoesNothing()
+    {
+        _aria.Body = 400;
+
+        _service.SetDead(_aria, true);
+
+        Assert.Equal(400, _aria.Body);
+    }
+
+    [Fact]
+    public void SetWarMode_OfAGhost_ShowsItToTheLivingWhileItIsOn()
+    {
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 400;
+        _service.SetDead(_aria, true);
+
+        _service.SetWarMode(_aria, true);
+        Assert.False(_aria.Hidden);
+
+        _service.SetWarMode(_aria, false);
+        Assert.True(_aria.Hidden);
+    }
+
+    [Fact]
     public void SetFrozen_FreezesAndFrees_AndTellsTheViewOnceForEachChange()
     {
         _service.SetFrozen(_aria, true);
@@ -391,10 +577,27 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SendStatus_OfTheOwnCharacter_CarriesWhatItCarriesAndMayCarry()
+    {
+        _service.SendStatus(_ariaSession, _aria);
+
+        var status = Assert.IsType<MobileStatusPacket>(Assert.Single(_fixture.Sender.Sent)).Status;
+        Assert.Equal((37, 215), (status.Weight, status.MaxWeight));
+    }
+
+    [Fact]
     public void SendSkills_SendsTheWholeList()
     {
         _service.SendSkills(_ariaSession, _aria);
 
-        Assert.Equal(Enum.GetValues<SkillType>().Length, Assert.IsType<SkillsPacket>(Assert.Single(_fixture.Sender.Sent)).Skills.Count);
+        Assert.Equal(
+            Enum.GetValues<SkillType>().Length,
+            Assert.IsType<SkillsPacket>(Assert.Single(_fixture.Sender.Sent)).Skills.Count
+        );
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

@@ -69,6 +69,38 @@ public sealed class MobileEntityPersistenceTests
     }
 
     [Fact]
+    public async Task StatLocks_RoundTrip_AsSmallints_AndAreUpForAMobileThatHasNone()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
+        await coordinator.InitializeAsync();
+        var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
+
+        await orm.Insert(
+                new MobileEntity
+                {
+                    Id = new(1), AccountId = new(42), Name = "Aria",
+                    StrLock = StatLockType.Down, DexLock = StatLockType.Locked
+                }
+            )
+            .ExecuteAffrowsAsync();
+        await orm.Insert(new MobileEntity { Id = new(2), AccountId = new(43), Name = "Boris" }).ExecuteAffrowsAsync();
+        var aria = await orm.Select<MobileEntity>().Where(entity => entity.Name == "Aria").FirstAsync();
+        var boris = await orm.Select<MobileEntity>().Where(entity => entity.Name == "Boris").FirstAsync();
+
+        Assert.Equal((StatLockType.Down, StatLockType.Locked, StatLockType.Up), (aria.StrLock, aria.DexLock, aria.IntLock));
+        Assert.Equal((StatLockType.Up, StatLockType.Up, StatLockType.Up), (boris.StrLock, boris.DexLock, boris.IntLock));
+        Assert.Equal(
+            "smallint",
+            await database.ScalarAsync<string>(
+                "SELECT data_type FROM information_schema.columns WHERE table_schema = 'world' " +
+                "AND table_name = 'mobiles' AND column_name = 'str_lock'"
+            )
+        );
+    }
+
+    [Fact]
     public async Task CreationFields_RoundTrip_WithHuesAsIntegersAndEnumsAsSmallints()
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
@@ -218,10 +250,19 @@ public sealed class MobileEntityPersistenceTests
         await orm.Insert(orc).ExecuteAffrowsAsync();
         var loaded = await orm.Select<MobileEntity>().Where(m => m.Id == orc.Id).FirstAsync();
 
-        Assert.Equal(("orc", "the Brute", (NotorietyType?)NotorietyType.Murderer), (loaded.TemplateId, loaded.Title, loaded.Notoriety));
-        Assert.Equal((50, 60, 10, 20, 30, 40), (loaded.Hits, loaded.HitsMax, loaded.Mana, loaded.ManaMax, loaded.Stamina, loaded.StaminaMax));
+        Assert.Equal(
+            ("orc", "the Brute", (NotorietyType?)NotorietyType.Murderer),
+            (loaded.TemplateId, loaded.Title, loaded.Notoriety)
+        );
+        Assert.Equal(
+            (50, 60, 10, 20, 30, 40),
+            (loaded.Hits, loaded.HitsMax, loaded.Mana, loaded.ManaMax, loaded.Stamina, loaded.StaminaMax)
+        );
         Assert.Equal((1500, -1500, 28), (loaded.Fame, loaded.Karma, loaded.Armor));
-        Assert.Equal((25, 20, 10, 15, 22), (loaded.ResistPhysical, loaded.ResistFire, loaded.ResistCold, loaded.ResistPoison, loaded.ResistEnergy));
+        Assert.Equal(
+            (25, 20, 10, 15, 22),
+            (loaded.ResistPhysical, loaded.ResistFire, loaded.ResistCold, loaded.ResistPoison, loaded.ResistEnergy)
+        );
         Assert.Equal(3, loaded.GetProp<int>("quest_step"));
         Assert.Equal(7L, loaded.GetProp<long>("vega.greeted"));
         Assert.Equal(4.5, loaded.GetProp<double>("vega.weight"));
@@ -320,7 +361,8 @@ public sealed class MobileEntityPersistenceTests
         await host.Owner.InitializeAsync();
         var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
         var requested = new DateTime(2026, 9, 28, 10, 30, 0, DateTimeKind.Utc);
-        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, DeletionRequestedAt = requested };
+        var aria = new MobileEntity
+            { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, DeletionRequestedAt = requested };
 
         await mobiles.UpsertAsync(aria);
 
@@ -337,7 +379,8 @@ public sealed class MobileEntityPersistenceTests
         await CoreMigrationFiles.ApplyAsync(host.Database, "world");
         await host.Owner.InitializeAsync();
         var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
-        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Direction = DirectionType.West };
+        var aria = new MobileEntity
+            { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Direction = DirectionType.West };
 
         await mobiles.UpsertAsync(aria);
 
@@ -358,7 +401,8 @@ public sealed class MobileEntityPersistenceTests
         await host.Owner.InitializeAsync();
         var mobileData = host.Container.Resolve<IDataAccess<MobileEntity>>();
         var itemData = host.Container.Resolve<IDataAccess<ItemEntity>>();
-        var orc = new MobileEntity { Name = "Orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) };
+        var orc = new MobileEntity
+            { Name = "Orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) };
         await mobileData.UpsertAsync(orc);
         var backpack = new ItemEntity { TemplateId = "backpack", ItemId = 0x0E75 };
         backpack.Equip(orc.Id, LayerType.Backpack);

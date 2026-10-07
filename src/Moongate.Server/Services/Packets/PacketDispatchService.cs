@@ -233,6 +233,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
 
         if (_asyncHandlers.TryGetValue(packet.GetType(), out var asyncHandler))
         {
+            // Safe: the executor exists whenever async handlers are registered.
             var executor = _asyncExecutor!;
 
             if (!executor.TryReserve(session, packet, asyncHandler, out var job))
@@ -240,11 +241,13 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
                 return false;
             }
 
+            // Safe: TryReserve returned true, so job is set.
             if (_gameLoop.TryPost(new AsyncPacketDispatchWorkItem(_sessions, job!, executor)))
             {
                 return true;
             }
 
+            // Safe: TryReserve returned true, so job is set.
             executor.Release(job!, false);
 
             return false;

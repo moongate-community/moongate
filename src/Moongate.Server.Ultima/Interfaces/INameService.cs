@@ -13,6 +13,8 @@ public interface INameService
     /// <summary>
     ///     Picks a random name from the list <paramref name="listId" />, ignoring case.
     /// </summary>
-    /// <exception cref="KeyNotFoundException">No list has that id.</exception>
+    /// <exception cref="KeyNotFoundException">
+    ///     No list has that id.
+    /// </exception>
     string RandomName(string listId);
 }

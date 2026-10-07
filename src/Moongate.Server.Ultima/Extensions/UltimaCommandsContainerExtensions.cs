@@ -52,9 +52,16 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.AddDescription
         );
+        container.RegisterCommand<BookCommand>(
+            "book",
+            "Gives a document from templates/books to your backpack: book <template> [name=value ...].",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.BookDescription
+        );
         container.RegisterCommand<SetCommand>(
             "set",
-            "Sets the hits, mana, stamina, hunger or thirst of the mobile you target: set <hits|mana|stamina|hunger|thirst> <value>.",
+            "Sets the hits, mana, stamina, hunger or thirst of the mobile you target, or makes it a criminal: set <hits|mana|stamina|hunger|thirst|criminal> <value>.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.SetDescription
@@ -65,6 +72,27 @@ public static class UltimaCommandsContainerExtensions
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.RemoveDescription
+        );
+        container.RegisterCommand<ResurrectCommand>(
+            "resurrect",
+            "Raises the NPC whose corpse you target: it is born again where the corpse lies.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.ResurrectDescription
+        );
+        container.RegisterCommand<AnimateCommand>(
+            "animate",
+            "Makes the character or NPC you target play an action of its body: animate <action>.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.AnimateDescription
+        );
+        container.RegisterCommand<KillCommand>(
+            "kill",
+            "Kills the NPC you target: it dies where it stands and leaves its corpse.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.KillDescription
         );
         container.RegisterCommand<FameCommand>(
             "fame",
@@ -164,12 +192,40 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.KeyDescription
         );
+        container.RegisterCommand<CreateCheckCommand>(
+            "create_check",
+            "Puts in your backpack a bank check worth the gold you say (1 to 2000000000).",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.CreateCheckDescription
+        );
+        container.RegisterCommand<AddGoldCommand>(
+            "add_gold",
+            "Puts a pile of gold (1 to 60000) in the backpack of the character or NPC you target.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.AddGoldDescription
+        );
         container.RegisterCommand<GoCommand>(
             "go",
             "Takes you to a place: go alone lists the named ones, go <place> goes to one, go <x>,<y>,<z> [map] to a spot.",
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.GoDescription
+        );
+        container.RegisterCommand<GmToolsCommand>(
+            "gmtools",
+            "Opens the gump of the game master's tools: a sidebar of tools and their commands, the weather first.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.GmToolsDescription
+        );
+        container.RegisterCommand<JailCommand>(
+            "jail",
+            "Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character; jail <name> opens it on the player of that name, online or not.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.JailDescription
         );
         container.RegisterCommand<MoongateCommand>(
             "moongate",

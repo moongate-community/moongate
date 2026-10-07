@@ -23,13 +23,18 @@ public sealed class LocalizationModule
     ///     scripts call it as <c>localization.get(id, ...)</c>. A whole Lua number is passed as an integer, so
     ///     <c>{0:x}</c> works on it.
     /// </summary>
-    [ScriptFunction(helpText: "Returns message id with {0}, {1}, ... replaced by the extra arguments.")]
+    [ScriptFunction(
+        helpText:
+        "Returns message id of data/messages in the server's language, with {0}, {1}, ... replaced by the extra arguments."
+    )]
     public string Get(int id, params object?[] values)
     {
-        var converted = values.Select(value => value is double number && double.IsInteger(number) && Math.Abs(number) <= int.MaxValue
-                                                   ? (object)(long)number
-                                                   : value ?? "nil")
-                              .ToArray();
+        var converted = values.Select(value =>
+                value is double number && double.IsInteger(number) && Math.Abs(number) <= int.MaxValue
+                    ? (object)(long)number
+                    : value ?? "nil"
+            )
+            .ToArray();
 
         return _localizationService.Get(id, converted);
     }

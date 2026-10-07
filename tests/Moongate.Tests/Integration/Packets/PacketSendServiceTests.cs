@@ -415,6 +415,39 @@ public sealed class PacketSendServiceTests
     }
 
     [Fact]
+    public async Task TrySend_TheBurstOfADenseView_FitsTheDefaultQueue_WhileTheClientIsStillReadingTheFirstPacket()
+    {
+        // Entering a spot with many items sends them all in one turn of the loop: an item and its tooltip each. The
+        // densest view of the shipped world holds about 800 items.
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var middleware = new ControlledSendMiddleware(true);
+        fixture.Client.AddMiddleware(middleware);
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        await using var connections = await ConnectionRegistryFixture.CreateAsync(fixture.Client);
+        var sender = new PacketSendService(connections.Service);
+        await sender.StartAsync();
+
+        try
+        {
+            Assert.True(sender.TrySend(session.SessionId, new PingPacket(0)));
+            await middleware.Entered.WaitAsync(Timeout);
+
+            for (var packet = 0; packet < 2000; packet++)
+            {
+                Assert.True(sender.TrySend(session.SessionId, new PingPacket((byte)packet)), $"packet {packet} was refused");
+            }
+
+            Assert.True(connections.Service.TryGet(session.SessionId, out _));
+        }
+        finally
+        {
+            middleware.Release();
+            await sender.StopAsync().WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
     public async Task TrySend_RejectsStoppedMissingDetachedAndDisconnectedSessions()
     {
         await using var fixture = await SessionFixture.CreateAsync();

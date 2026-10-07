@@ -116,20 +116,6 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal((race, gender, body, nameList), (x.Race, x.Gender, x.Body, x.NameList));
     }
 
-    private int Run()
-    {
-        return UoxItemConverterCommand.Run(
-            _dirs.SourceDirectory,
-            _dirs.DestinationDirectory,
-            _dirs.LootDestinationDirectory,
-            _output,
-            _error,
-            _dirs.MobileSourceDirectory,
-            _dirs.MobileDestinationDirectory,
-            _dirs.NamesDestinationPath
-        );
-    }
-
     [Fact]
     public void Run_ADoubledHexPrefix_IsReadAsOne()
     {
@@ -150,7 +136,8 @@ public sealed class UoxMobileConverterTests : IDisposable
             "npc/undead.dfn",
             "[skeleton]\n{\nID=0x0032\n}\n[zombie]\n{\nID=0x0003\n}\n[wraith]\n{\nID=0x001a\n}\n[ghoul]\n{\nGET=wraith\n}\n" +
             "[spectre]\n{\nID=0x001a\n}\n[lich]\n{\nID=0x0018\n}\n[headless]\n{\nID=0x001f\n}\n[boneknight]\n{\nGET=skeleton\n}\n[m_banker]\n{\nID=0x0190\nNPCAI=8\n}\n" +
-            "[orc]\n{\nID=0x0011\nNPCAI=2\n}\n"
+            "[orc]\n{\nID=0x0011\nNPCAI=2\n}\n[m_guard]\n{\nID=0x0190\nNPCAI=4\n}\n" +
+            "[fighter]\n{\nID=0x0190\nNPCAI=5\n}\n[bunny]\n{\nID=0x00cd\nNPCAI=6\n}\n[mage]\n{\nID=0x0190\nNPCAI=10\n}\n[evilmage]\n{\nID=0x0190\nNPCAI=11\n}\n[rabbit]\n{\nID=0x00cd\nNPCAI=12\n}\n[chaos]\n{\nID=0x0190\nNPCAI=88\n}\n[merchant]\n{\nID=0x0190\nNPCAI=7\n}\n[orcking]\n{\nGET=orc\n}\n"
         );
 
         Assert.True(Run() == 0, CombinedOutput);
@@ -164,9 +151,40 @@ public sealed class UoxMobileConverterTests : IDisposable
             new[] { "wraith", "ghoul", "spectre", "lich", "headless" },
             id => Assert.Equal("monster", mobiles[id].ScriptId)
         );
+        // UOX3's AI of the town guards.
+        Assert.Equal("guard", mobiles["m_guard"].ScriptId);
         // A template based on one of them takes the script through its base; the others have none yet.
         Assert.True(string.IsNullOrEmpty(mobiles["boneknight"].ScriptId));
-        Assert.True(string.IsNullOrEmpty(mobiles["orc"].ScriptId));
+        // The creatures that go for the players, the animals that keep to themselves and those that run.
+        Assert.All(new[] { "orc", "evilmage", "chaos" }, id => Assert.Equal("monster", mobiles[id].ScriptId));
+        // The good fighters and casters fight criminals only: no script yet.
+        Assert.All(new[] { "fighter", "mage" }, id => Assert.True(string.IsNullOrEmpty(mobiles[id].ScriptId)));
+        Assert.Equal(("animal", "scared_animal"), (mobiles["bunny"].ScriptId, mobiles["rabbit"].ScriptId));
+        // A dummy, 7, has none yet; one based on a monster takes its script through its base.
+        Assert.True(string.IsNullOrEmpty(mobiles["merchant"].ScriptId));
+        Assert.True(string.IsNullOrEmpty(mobiles["orcking"].ScriptId));
+    }
+
+    [Fact]
+    public void Run_FleeAt_IsTheHitPercentUnderWhichTheCreatureRuns_MinusOneForNever()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "npc/undead.dfn",
+            "[zombie]\n{\nID=0x0003\nFLEEAT=-1\n}\n[man]\n{\nID=0x0190\nFLEEAT=20\n}\n[calm]\n{\nID=0x0190\n}\n[bad]\n{\nID=0x0190\nFLEEAT=500\n}\n[zero]\n{\nID=0x0190\nFLEEAT=0\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var mobiles = ReadMobiles("undead.toml");
+        Assert.Equal(
+            ((int?)-1, (int?)20, (int?)null),
+            (mobiles["zombie"].FleeAt, mobiles["man"].FleeAt, mobiles["calm"].FleeAt)
+        );
+        // A value out of 0 to 100 is left out rather than written as a template that cannot load.
+        Assert.Null(mobiles["bad"].FleeAt);
+        // 0 is UOX3's "the default of the server": nothing is written.
+        Assert.Null(mobiles["zero"].FleeAt);
     }
 
     [Fact]
@@ -269,7 +287,7 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal(
             (10, 11, 13, 12),
             (x.Resistances!.Fire!.Value.Roll(), x.Resistances.Cold!.Value.Roll(), x.Resistances.Poison!.Value.Roll(),
-             x.Resistances.Energy!.Value.Roll())
+                x.Resistances.Energy!.Value.Roll())
         );
         Assert.Equal("1d21+49", x.Skills!["magery"].ToString());
         Assert.Equal(65, x.Skills["resisting_spells"].Roll());
@@ -364,7 +382,10 @@ public sealed class UoxMobileConverterTests : IDisposable
             "[CREATURE 0x11]\n{ Orc\nSOUND_STARTATTACK=0x1b0\nSOUND_IDLE=0x1b1\nSOUND_ATTACK=0x1b2\nSOUND_DEFEND=0x1b3\nSOUND_DIE=0x1b4\n}\n" +
             "[CREATURE 0x190]\n{ Human Male\nSOUND_DIE=0x15c\n}\n"
         );
-        _dirs.WriteMobileSource("npc/a.dfn", "[base_orc]\n{\nID=0x0011\n}\n[orc]\n{\nGET=base_orc\n}\n[man]\n{\nID=0x0190\n}\n");
+        _dirs.WriteMobileSource(
+            "npc/a.dfn",
+            "[base_orc]\n{\nID=0x0011\n}\n[orc]\n{\nGET=base_orc\n}\n[man]\n{\nID=0x0190\n}\n"
+        );
 
         Assert.True(Run() == 0, CombinedOutput);
 
@@ -540,6 +561,20 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal(["0x13bb"], equipment[1].Items);
     }
 
+    private int Run()
+    {
+        return UoxItemConverterCommand.Run(
+            _dirs.SourceDirectory,
+            _dirs.DestinationDirectory,
+            _dirs.LootDestinationDirectory,
+            _output,
+            _error,
+            _dirs.MobileSourceDirectory,
+            _dirs.MobileDestinationDirectory,
+            _dirs.NamesDestinationPath
+        );
+    }
+
     private void WriteItemsAndNames()
     {
         _dirs.WriteSource("items.dfn", "[0x0eed]\n{\nid=0x0eed\n}\n");
@@ -553,8 +588,10 @@ public sealed class UoxMobileConverterTests : IDisposable
 
     private Dictionary<string, MobileTemplate> ReadMobiles(string relativePath)
     {
-        return TomlUtils.DeserializeFromFile<MobileTemplateFile>(Path.Combine(_dirs.MobileDestinationDirectory, relativePath))!
-                        .Mobile.ToDictionary(mobile => mobile.Id);
+        return TomlUtils.DeserializeFromFile<MobileTemplateFile>(
+                Path.Combine(_dirs.MobileDestinationDirectory, relativePath)
+            )!
+            .Mobile.ToDictionary(mobile => mobile.Id);
     }
 
     public void Dispose()

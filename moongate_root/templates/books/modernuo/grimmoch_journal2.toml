@@ -1,0 +1,509 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Two :
+ 
+We managed to dig out
+the last of the
+remaining rubble
+today, revealing the
+entirety of the giant
+stone doors that sealed
+
+ol' Khal Ankur and
+his folk up ages ago.
+Actually getting them
+open was another
+matter altogether,
+however.  As the
+workers set to the
+task with picks and
+
+crowbars, I could have
+sworn I saw Lysander
+Gathenwale fiddling
+with something in that
+musty old tome of his.
+ I've no great
+knowledge of things
+magical, but the way
+
+his hand moved over
+that book, and the look
+of concentration on his
+face as he whispered
+something to himself
+looked like every
+description of an
+incantation I've ever
+
+heard.  The strange
+thing is, this set of
+doors that an entire
+crew of excavators
+was laboring over for
+hours, right when
+Gathenwale finishes
+with his mumbling...
+
+well, I swore the doors
+just gave open at the
+exact moment he
+spoke his last bit of
+whisper and shut the
+tome tight in his
+hands.  When he
+looked up, it was
+
+almost as if he was
+expecting the doors to
+be open, rather than
+shocked that they'd
+finally given way."""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Denní zápisky Grimmoch Drummel"
+content = """Den druhý:
+ 
+Dnes jsme dokázali
+odklidit poslední
+zbývající suť a odhalit
+celá obří kamenná
+vrata, která před věky
+uzavřela
+
+starého Khal Ankur a
+jeho lid. Opravdu je
+otevřít však byla
+docela jiná věc.
+Zatímco se dělníci
+pustili do práce s
+krumpáči a
+
+páčidly, přísahal bych,
+že jsem viděl, jak si
+Lysander Gathenwale s
+něčím pohrává v té své
+staré zatuchlé knize. O
+magii toho mnoho nevím,
+ale způsob,
+
+jakým nad tou knihou
+pohyboval rukou, a jeho
+soustředěný výraz, když
+si cosi šeptal,
+připomínaly všechny
+popisy zaklínání, které
+jsem kdy
+
+slyšel. Podivné je, že
+ta vrata, s nimiž se
+celá skupina kopáčů
+lopotila celé hodiny,
+právě když Gathenwale
+dokončil své mumlání...
+
+no, přísahal bych, že
+se vrata prostě
+otevřela přesně ve
+chvíli, kdy došeptal
+poslední kousek a pevně
+sevřel zavřenou knihu v
+rukou. Když vzhlédl,
+
+téměř to vypadalo, že
+očekával otevřená
+vrata, místo aby ho
+překvapilo, že konečně
+povolila."""
+[translations.fre]
+title = "Le journal quotidien de Grimmoch Drummel"
+content = """Deuxième jour :
+ 
+Nous avons réussi
+aujourd’hui à déblayer
+les derniers gravats,
+révélant dans leur
+entier les gigantesques
+portes de pierre qui
+enfermèrent
+
+le vieux Khal Ankur et
+les siens il y a des
+siècles. Les ouvrir
+vraiment fut toutefois
+une tout autre affaire.
+Tandis que les ouvriers
+s’y attelaient avec des
+pioches et des
+
+pieds-de-biche,
+j’aurais juré voir
+Lysander Gathenwale
+tripoter quelque chose
+dans ce vieux grimoire
+qui sent le renfermé.
+Je ne connais pas
+grand-chose à la magie,
+mais la façon dont
+
+sa main se déplaçait
+au-dessus du livre et
+l’expression concentrée
+de son visage, tandis
+qu’il se murmurait
+quelque chose,
+ressemblaient à toutes
+les descriptions
+d’incantations que
+j’aie jamais
+
+entendues. Ce qui est
+étrange, c’est que ces
+portes, sur lesquelles
+une équipe entière de
+fouilleurs peinait
+depuis des heures,
+juste quand Gathenwale
+a fini de marmonner...
+
+eh bien, je jure
+qu’elles se sont
+ouvertes à l’instant
+précis où il prononçait
+son dernier murmure et
+refermait fermement le
+grimoire dans ses
+mains. Quand il a levé
+les yeux, c’était
+
+presque comme s’il
+s’attendait à voir les
+portes ouvertes, plutôt
+que d’être surpris
+qu’elles aient enfin
+cédé."""
+[translations.ger]
+title = "Grimmoch Drummels tägliches Tagebuch"
+content = """Zweiter Tag:
+ 
+Heute ist es uns
+gelungen, die letzten
+verbliebenen Trümmer
+auszugraben und die
+riesigen Steintüren
+vollständig
+freizulegen, die
+
+den alten Khal Ankur
+und sein Volk vor
+Ewigkeiten
+einschlossen. Sie
+tatsächlich zu öffnen,
+war allerdings eine
+ganz andere Sache. Als
+die Arbeiter mit
+Spitzhacken und
+
+Brechstangen ans Werk
+gingen, hätte ich
+schwören können,
+Lysander Gathenwale an
+etwas in seinem
+muffigen alten
+Folianten hantieren zu
+sehen. Ich verstehe
+nicht viel von
+magischen Dingen, doch
+wie
+
+seine Hand über das
+Buch strich und der
+konzentrierte Ausdruck
+auf seinem Gesicht,
+während er etwas vor
+sich hinflüsterte,
+sahen aus wie jede
+Beschreibung einer
+Beschwörung, die ich je
+
+gehört habe. Das
+Seltsame ist: Diese
+Türen, an denen eine
+ganze Mannschaft von
+Ausgräbern stundenlang
+gearbeitet hatte, genau
+als Gathenwale mit
+seinem Gemurmel fertig
+war ...
+
+nun, ich könnte
+schwören, die Türen
+gingen einfach auf,
+genau in dem
+Augenblick, als er
+seinen letzten
+geflüsterten Laut
+aussprach und den
+Folianten fest in
+seinen Händen zuschlug.
+Als er aufblickte, war
+es
+
+beinahe, als hätte er
+erwartet, dass die
+Türen offen sein
+würden, statt
+überrascht zu sein,
+dass sie endlich
+nachgegeben hatten."""
+[translations.ita]
+title = "Il diario quotidiano di Grimmoch Drummel"
+content = """Giorno Due :
+ 
+Siamo riusciti a
+rimuovere oggi le
+ultime macerie rimaste,
+rivelando per intero le
+gigantesche porte di
+pietra che sigillarono
+
+il vecchio Khal Ankur e
+la sua gente secoli fa.
+Aprirle davvero,
+tuttavia, è stata tutta
+un'altra faccenda.
+Mentre gli operai si
+mettevano all'opera con
+picconi e
+
+piedi di porco, avrei
+potuto giurare di aver
+visto Lysander
+Gathenwale armeggiare
+con qualcosa in quel
+suo vecchio tomo
+ammuffito. Non so
+granché di cose
+magiche, ma il modo in
+cui
+
+la sua mano si muoveva
+sopra quel libro e
+l'espressione
+concentrata sul suo
+volto mentre sussurrava
+qualcosa fra sé
+sembravano
+corrispondere a ogni
+descrizione di un
+incantesimo che avessi
+mai
+
+sentito. La cosa strana
+è che queste porte,
+sulle quali un'intera
+squadra di scavatori si
+affannava da ore,
+proprio quando
+Gathenwale finisce di
+borbottare...
+
+be', giuro che le porte
+si sono aperte proprio
+nell'istante in cui ha
+pronunciato l'ultimo
+sussurro e ha chiuso
+saldamente il tomo fra
+le mani. Quando ha
+alzato lo sguardo, era
+
+quasi come se si
+aspettasse che le porte
+fossero aperte, anziché
+essere sorpreso che
+avessero finalmente
+ceduto."""
+[translations.pol]
+title = "Dziennik codzienny Grimmoch Drummel"
+content = """Dzień drugi:
+ 
+Zdołaliśmy dziś wykopać
+resztę gruzu,
+odsłaniając w całości
+olbrzymie kamienne
+drzwi, które wieki temu
+zamknęły
+
+starego Khal Ankur i
+jego lud. Jednak samo
+otwarcie okazało się
+zupełnie inną sprawą.
+Gdy robotnicy zabrali
+się do zadania z
+kilofami i
+
+łomami, przysiągłbym,
+że widziałem, jak
+Lysander Gathenwale
+majstruje przy czymś w
+tym swoim starym,
+zatęchłym tomie. Nie
+mam wielkiej wiedzy o
+magii, ale sposób, w
+jaki
+
+poruszał ręką nad
+księgą, i skupiony
+wyraz twarzy, gdy
+szeptał coś do siebie,
+wyglądały jak każdy
+opis zaklęcia, jaki
+kiedykolwiek
+
+słyszałem. Dziwne było
+to, że te drzwi, nad
+którymi cała załoga
+kopaczy trudziła się
+godzinami, właśnie
+kiedy Gathenwale
+skończył mamrotać...
+
+cóż, przysiągłbym, że
+po prostu ustąpiły
+dokładnie w chwili, gdy
+wypowiedział ostatni
+szept i mocno zamknął
+tom w dłoniach. Gdy
+podniósł wzrok, było
+
+prawie tak, jakby
+oczekiwał otwartych
+drzwi, zamiast dziwić
+się, że wreszcie
+ustąpiły."""
+[translations.por]
+title = "O diário de Grimmoch Drummel"
+content = """Segundo dia:
+ 
+Conseguimos retirar
+hoje o último entulho
+restante, revelando por
+inteiro as enormes
+portas de pedra que
+selaram
+
+o velho Khal Ankur e
+seu povo há eras.
+Abri-las de fato,
+porém, foi outra
+história. Enquanto os
+trabalhadores se
+dedicavam à tarefa com
+picaretas e
+
+pés de cabra, eu
+poderia jurar que vi
+Lysander Gathenwale
+mexendo em alguma coisa
+naquele seu velho tomo
+mofado. Não tenho
+grande conhecimento de
+coisas mágicas, mas a
+maneira como
+
+sua mão se movia sobre
+aquele livro e a
+expressão de
+concentração em seu
+rosto enquanto
+sussurrava algo para si
+mesmo pareciam com
+todas as descrições de
+um encantamento que já
+
+ouvi. O estranho é que
+esse conjunto de
+portas, sobre o qual
+uma equipe inteira de
+escavadores vinha
+trabalhando por horas,
+bem quando Gathenwale
+terminou de
+resmungar...
+
+bem, juro que as portas
+simplesmente se abriram
+no exato momento em que
+ele pronunciou a última
+parte de seu sussurro e
+fechou o tomo
+firmemente entre as
+mãos. Quando levantou
+os olhos, foi
+
+quase como se esperasse
+que as portas
+estivessem abertas, em
+vez de ficar surpreso
+por terem finalmente
+cedido."""
+[translations.spa]
+title = "El diario de Grimmoch Drummel"
+content = """Día dos:
+ 
+Hoy conseguimos retirar
+los últimos escombros y
+dejamos al descubierto
+las enormes puertas de
+piedra que encerraron
+
+al viejo Khal Ankur y a
+los suyos hace siglos.
+Sin embargo, abrirlas
+de verdad fue otra
+cuestión. Mientras los
+trabajadores se
+afanaban con picos y
+
+palancas, habría jurado
+que vi a Lysander
+Gathenwale manipulando
+algo en ese viejo tomo
+mohoso suyo. No sé
+mucho de magia, pero la
+manera
+
+en que movía la mano
+sobre aquel libro, y la
+concentración en su
+rostro mientras se
+susurraba algo,
+parecían encajar con
+todas las descripciones
+de conjuros que he
+
+oído. Lo extraño es que
+esas puertas, sobre las
+que toda una cuadrilla
+de excavadores llevaba
+horas trabajando, justo
+cuando Gathenwale
+terminó de murmurar...
+
+bueno, juraría que se
+abrieron en el preciso
+momento en que
+pronunció su último
+susurro y cerró el tomo
+con fuerza entre las
+manos. Cuando alzó la
+vista,
+
+casi parecía que
+esperaba ver las
+puertas abiertas, en
+lugar de sorprenderse
+de que finalmente
+hubieran cedido."""

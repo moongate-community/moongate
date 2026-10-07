@@ -94,9 +94,18 @@ public class InstallScriptTests
         var result = await install.RunAsync("0.12.0", "linux-x64");
 
         Assert.True(result.ExitCode == 0, result.Output);
-        Assert.Equal("script of completion bash\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "bash", "mgctl")));
-        Assert.Equal("script of completion zsh\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "zsh", "_mgctl")));
-        Assert.Equal("script of completion fish\n", File.ReadAllText(Path.Combine(install.CompletionDirectory, "fish", "mgctl.fish")));
+        Assert.Equal(
+            "script of completion bash\n",
+            File.ReadAllText(Path.Combine(install.CompletionDirectory, "bash", "mgctl"))
+        );
+        Assert.Equal(
+            "script of completion zsh\n",
+            File.ReadAllText(Path.Combine(install.CompletionDirectory, "zsh", "_mgctl"))
+        );
+        Assert.Equal(
+            "script of completion fish\n",
+            File.ReadAllText(Path.Combine(install.CompletionDirectory, "fish", "mgctl.fish"))
+        );
         Assert.Contains("  completion ", result.Output);
     }
 

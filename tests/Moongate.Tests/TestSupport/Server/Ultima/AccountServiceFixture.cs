@@ -20,13 +20,6 @@ internal sealed class AccountServiceFixture : IAsyncDisposable
     public PostgreSqlTestDatabase WorldDatabase => _host.Database;
     public string Password { get; } = Guid.NewGuid().ToString("N")[..30];
 
-    private AccountServiceFixture(HostPersistenceFixture host)
-    {
-        _host = host;
-        Accounts = host.Container.Resolve<IDataAccess<AccountEntity>>();
-        Service = host.Container.Resolve<IAccountService>();
-    }
-
     public static async Task<AccountServiceFixture> CreateAsync()
     {
         var host = await HostPersistenceFixture.CreateAsync(false, true);
@@ -69,6 +62,13 @@ internal sealed class AccountServiceFixture : IAsyncDisposable
         await Accounts.UpsertAsync(account);
 
         return account;
+    }
+
+    private AccountServiceFixture(HostPersistenceFixture host)
+    {
+        _host = host;
+        Accounts = host.Container.Resolve<IDataAccess<AccountEntity>>();
+        Service = host.Container.Resolve<IAccountService>();
     }
 
     public async ValueTask DisposeAsync()

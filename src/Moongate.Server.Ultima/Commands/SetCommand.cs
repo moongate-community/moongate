@@ -11,18 +11,21 @@ using Moongate.Server.Ultima.Types.Targeting;
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     Sets a number of the mobile the game master targets: <c>set hits|mana|stamina|hunger|thirst &lt;value&gt;</c>. Hit
-///     points, mana and stamina stay between 0 and their maximum, hunger and thirst between 0 and 20.
+///     Sets a number of the mobile the game master targets:
+///     <c>set hits|mana|stamina|hunger|thirst|criminal &lt;value&gt;</c>. Hit
+///     points, mana and stamina stay between 0 and their maximum, hunger and thirst between 0 and 20;
+///     criminal makes a criminal of it with anything but 0, and pardons it with 0.
 /// </summary>
 public sealed class SetCommand : ICommandExecutor
 {
-    private const string Usage = "set <hits|mana|stamina|hunger|thirst> <value>";
+    private const string Usage = "set <hits|mana|stamina|hunger|thirst|criminal> <value>";
 
     private readonly ITargetService _targets;
     private readonly IMobileService _mobiles;
     private readonly IMobileStateService _state;
     private readonly IHungerService _hunger;
     private readonly IGameLoopService _loop;
+    private readonly ICrimeService _crimes;
     private readonly ILocalizationService? _localization;
 
     public SetCommand(
@@ -31,9 +34,11 @@ public sealed class SetCommand : ICommandExecutor
         IMobileStateService state,
         IHungerService hunger,
         IGameLoopService loop,
+        ICrimeService crimes,
         ILocalizationService? localization = null
     )
     {
+        _crimes = crimes;
         _localization = localization;
         _targets = targets;
         _mobiles = mobiles;
@@ -52,7 +57,8 @@ public sealed class SetCommand : ICommandExecutor
         }
 
         if (context.Arguments.Length != 2 ||
-            context.Arguments[0].ToLowerInvariant() is not ("hits" or "mana" or "stamina" or "hunger" or "thirst") ||
+            context.Arguments[0].ToLowerInvariant() is not ("hits" or "mana" or "stamina" or "hunger" or "thirst"
+                or "criminal") ||
             !int.TryParse(context.Arguments[1], out var value) ||
             value < 0)
         {
@@ -78,8 +84,7 @@ public sealed class SetCommand : ICommandExecutor
 
         string? name = null;
         var now = 0;
-        var work = new LoopActionWorkItem(
-            () =>
+        var work = new LoopActionWorkItem(() =>
             {
                 if (!_mobiles.TryGet(target.Serial, out var mobile))
                 {
@@ -101,6 +106,19 @@ public sealed class SetCommand : ICommandExecutor
                     case "stamina":
                         _state.SetStats(mobile, new MobileStatsChange { Stamina = value });
                         now = mobile.Stamina;
+
+                        break;
+                    case "criminal":
+                        if (value == 0)
+                        {
+                            _crimes.Pardon(mobile);
+                        }
+                        else
+                        {
+                            _crimes.MakeCriminal(mobile);
+                        }
+
+                        now = mobile.Criminal ? 1 : 0;
 
                         break;
                     case "thirst":

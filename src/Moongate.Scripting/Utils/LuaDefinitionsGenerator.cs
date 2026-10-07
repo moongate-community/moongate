@@ -15,11 +15,8 @@ internal static class LuaDefinitionsGenerator
     private const string LuarcFile = ".luarc.json";
 
     /// <summary>
-    ///     Renders the LuaLS annotation text for every module, its functions and constants, every enum, and the built-in
-    ///     <c>
-    ///         wait
-    ///     </c>
-    ///     .
+    ///     Renders the LuaLS annotation text for every module, its functions and constants, every enum, and the
+    ///     built-in <c>wait</c>.
     /// </summary>
     /// <param name="modules">
     ///     Every module bound at startup, in any order.
@@ -32,15 +29,7 @@ internal static class LuaDefinitionsGenerator
     ///     <c>string</c> when there are none.
     /// </param>
     /// <returns>
-    ///     The contents of
-    ///     <c>
-    ///         definitions.lua
-    ///     </c>
-    ///     . Always uses
-    ///     <c>
-    ///         \n
-    ///     </c>
-    ///     line endings, regardless of platform.
+    ///     The contents of <c>definitions.lua</c>. Always uses <c>\n</c> line endings, regardless of platform.
     /// </returns>
     public static string Render(
         IReadOnlyList<BoundModule> modules,
@@ -132,15 +121,8 @@ internal static class LuaDefinitionsGenerator
     }
 
     /// <summary>
-    ///     Writes
-    ///     <c>
-    ///         definitions.lua
-    ///     </c>
-    ///     and
-    ///     <c>
-    ///         .luarc.json
-    ///     </c>
-    ///     under <paramref name="scriptsDirectory" />, creating the
+    ///     Writes <c>definitions.lua</c> and <c>.luarc.json</c> under <paramref name="scriptsDirectory" />, creating
+    ///     the
     ///     directory if needed.
     /// </summary>
     /// <param name="scriptsDirectory">
@@ -164,7 +146,11 @@ internal static class LuaDefinitionsGenerator
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(scriptsDirectory);
         Directory.CreateDirectory(scriptsDirectory);
-        File.WriteAllText(Path.Combine(scriptsDirectory, DefinitionsFile), Render(modules, enums, eventNames), new UTF8Encoding(false));
+        File.WriteAllText(
+            Path.Combine(scriptsDirectory, DefinitionsFile),
+            Render(modules, enums, eventNames),
+            new UTF8Encoding(false)
+        );
 
         var globals = modules.Select(module => module.Name)
             .Concat(enums.Select(type => type.Name))
@@ -214,11 +200,8 @@ internal static class LuaDefinitionsGenerator
     }
 
     /// <summary>
-    ///     Writes each line of <paramref name="helpText" /> as its own
-    ///     <c>
-    ///         ---
-    ///     </c>
-    ///     comment, so a multi-line summary stays valid
+    ///     Writes each line of <paramref name="helpText" /> as its own <c>---</c> comment, so a multi-line summary
+    ///     stays valid
     ///     LuaLS annotation syntax.
     /// </summary>
     private static void AppendHelp(StringBuilder builder, string helpText)

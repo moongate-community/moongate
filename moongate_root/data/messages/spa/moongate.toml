@@ -144,7 +144,7 @@
 30121 = "Pone en el suelo, donde apuntas, un objeto de una plantilla de objeto: add <template>."
 30122 = "Solo se puede eliminar un objeto que está en el suelo."
 30126 = "{0}: {1} ahora vale {2}."
-30127 = "Establece la vida, el maná, el aguante, el hambre o la sed de la criatura a la que apuntas: set <hits|mana|stamina|hunger|thirst> <valor>."
+30127 = "Establece la vida, el maná, el aguante, el hambre o la sed de la criatura a la que apuntas, o la hace criminal: set <hits|mana|stamina|hunger|thirst|criminal> <valor>."
 
 # Moongate: texts of the item scripts.
 30114 = "Este moongate no parece llevar a ninguna parte."
@@ -155,3 +155,79 @@
 30130 = "¡Estás demasiado lleno para beber más!"
 30131 = "Está vacío."
 30132 = "Bebes, y tienes menos sed."
+30133 = "Vas sobrecargado: llevas {0} piedras de {1}."
+30134 = "Has entrado en {0}."
+30135 = "Has salido de {0}."
+30136 = "Ahora estás bajo la protección de los guardias de {0}."
+30137 = "Has dejado la protección de los guardias de {0}."
+30138 = "¡Lamentarás tus actos, canalla!"
+
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 and 30150 of the jail command, 30148-30149 the reason of a sentence).
+30139 = "Has sido encarcelado durante {0} días."
+30140 = "Has cumplido tu condena. Se te ha cobrado una multa de {0} monedas de oro."
+30141 = "Has cumplido tu condena."
+30142 = "Has sido liberado de la cárcel."
+30143 = "{0} cumplió {1} días en la celda {2}, del {3} al {4}, y pagó una multa de {5} monedas de oro. Encarcelado por {6}."
+30144 = "Abre el gump de la cárcel: lista las celdas, te lleva a una de ellas, y encarcela o libera a un personaje; jail <nombre> lo abre sobre el jugador con ese nombre, conectado o no."
+30145 = "La cárcel no está configurada: falta data/jail.toml."
+30146 = "Eso no es un personaje."
+30147 = "Falta el gump de la cárcel: templates/gumps/jail_sentence.xml."
+30148 = "Has sido encarcelado durante {0} días: {1}"
+30149 = "Motivo: {0}"
+30150 = "Ningún personaje se llama {0}."
+
+# Moongate: texts of death (30151 the name of a corpse, 30152-30154 of the kill command).
+30151 = "los restos de {0}"
+30152 = "Mata al PNJ que selecciones: muere donde está y deja su cadáver."
+30153 = "{0} ha muerto."
+30154 = "{0} no puede morir."
+
+# Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
+30155 = "Debes esperar {0} segundos antes de volver a publicar."
+30156 = "Ese mensaje no es tuyo."
+30157 = "El tablón está ocupado: publica de nuevo en un momento."
+
+# Moongate: texts of the animate command (30158-30159).
+30158 = "Hace que el personaje o PNJ que selecciones ejecute una acción de su cuerpo: animate <acción>."
+30159 = "{0} ejecuta la acción {1}."
+
+# Moongate: texts of the version and uptime commands (30160-30163).
+30160 = "Muestra la versión del servidor, si es una compilación Debug o Release, y cuándo se compiló."
+30161 = "Moongate {0} \"{1}\" ({2}), compilado el {3}."
+30162 = "Muestra cuánto tiempo lleva encendido el servidor y desde cuándo."
+30163 = "Encendido desde hace {0}, desde el {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Resucita al PNJ cuyo cadáver selecciones: renace donde yace el cadáver."
+30165 = "{0} ha vuelto."
+30166 = "Eso no es un cadáver."
+30167 = "Ese cadáver no se puede resucitar."
+
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "No puedes usar habilidades en la cárcel."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Recoger adjuntos"
+30170 = "Los adjuntos están en tu mochila."
+30171 = "Tu mochila no tiene espacio para todos los adjuntos."
+30172 = "Estos adjuntos no se pueden recoger."
+30173 = "Tu mochila está ocupada. Inténtalo de nuevo en breve."
+30174 = "No se pudieron entregar los adjuntos. Inténtalo de nuevo en breve."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Un cheque bancario de {0} monedas de oro está en tu mochila."
+30176 = "No se creó ningún cheque: no tienes mochila, o está llena."
+30177 = "Pone en tu mochila un cheque bancario del valor que indiques (de 1 a 2000000000)."
+30178 = "{1} monedas de oro están en la mochila de {0}."
+30179 = "{0} no tiene mochila, o está llena."
+30180 = "Pone una pila de oro (de 1 a 60000) en la mochila del personaje o PNJ que selecciones."
+
+# Moongate: book command (30181-30184).
+30181 = "No hay ningún documento {0} en templates/books."
+30182 = "El documento {0} está en tu mochila."
+30183 = "No se pudo crear el documento {0}. Comprueba sus valores y la disponibilidad de la mochila."
+30184 = "Pone un documento de templates/books en tu mochila: book <template> [name=value ...]."
+
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Abre el gump de las herramientas del game master: una barra lateral de herramientas y sus comandos, primero el clima."
+30186 = "Falta el gump gmtools: templates/gumps/gmtools.xml."

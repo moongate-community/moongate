@@ -128,11 +128,17 @@ internal static class ConvertCommands
     ///     ModernUO's Distribution/Data/signs.cfg file.
     /// </param>
     /// <param name="destination">
-    ///     The decorations folder (templates/decorations); each folder gets a signs.toml, replacing that of a previous run.
+    ///     The decorations folder (templates/decorations); each folder gets a signs.toml, replacing that of a previous run
+    ///     (Trammel's, the signs of the old Haven, is written set aside as _signs.toml).
     /// </param>
     public static int ModernUoSigns(string source, string destination)
     {
-        return ModernUoSignConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoSignConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 
     /// <summary>
@@ -148,7 +154,12 @@ internal static class ConvertCommands
     /// </param>
     public static int ModernUoTeleporters(string source, string destination)
     {
-        return ModernUoTeleporterConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoTeleporterConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 
     /// <summary>
@@ -163,7 +174,12 @@ internal static class ConvertCommands
     /// </param>
     public static int ModernUoLocations(string source, string destination)
     {
-        return ModernUoLocationConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoLocationConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 
     /// <summary>
@@ -179,6 +195,30 @@ internal static class ConvertCommands
     /// </param>
     public static int ModernUoChests(string source, string destination)
     {
-        return ModernUoChestConverter.Run(Path.GetFullPath(source), Path.GetFullPath(destination), Console.Out, Console.Error);
+        return ModernUoChestConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
+    }
+
+    /// <summary>
+    ///     Converts ModernUO's static BookContent definitions into readable document TOML without executing scripts.
+    /// </summary>
+    /// <param name="source">
+    ///     The Projects/UOContent folder of ModernUO, or a folder containing static book C# definitions.
+    /// </param>
+    /// <param name="destination">
+    ///     The book templates folder to receive one TOML file a book, named after its class; existing generated names are replaced.
+    /// </param>
+    public static int ModernUoBooks(string source, string destination)
+    {
+        return ModernUoBookConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
     }
 }

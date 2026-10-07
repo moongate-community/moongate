@@ -19,6 +19,11 @@ public sealed class WorldItemPacket : BasePacket<WorldItemPacket>, IOutgoingPack
     private const int FixedLength = 16;
     private const int HueLength = 2;
     private const int LightLength = 1;
+    private const uint AmountFlag = 0x80000000; // The serial's high bit: an amount follows.
+    private const int ItemIdMask = 0x3FFF;
+    private const int XMask = 0x7FFF;
+    private const int YMask = 0x3FFF;
+    private const int ExtraFlag = 0x8000; // The high bit of X (light) or Y (hue): an extra field follows.
 
     public override int Length { get; }
 
@@ -57,12 +62,12 @@ public sealed class WorldItemPacket : BasePacket<WorldItemPacket>, IOutgoingPack
         writer.WriteByte(OpCode);
         writer.WriteUInt16BigEndian((ushort)Length);
         // The high bit says an amount follows; every item has one.
-        writer.WriteUInt32BigEndian(Serial.Value | 0x80000000);
-        writer.WriteUInt16BigEndian((ushort)(ItemId & 0x3FFF));
+        writer.WriteUInt32BigEndian(Serial.Value | AmountFlag);
+        writer.WriteUInt16BigEndian((ushort)(ItemId & ItemIdMask));
         writer.WriteUInt16BigEndian((ushort)Amount);
         // The high bit of X says the light (the direction byte) follows Y.
-        writer.WriteUInt16BigEndian((ushort)((Location.X & 0x7FFF) | (hasLight ? 0x8000 : 0)));
-        writer.WriteUInt16BigEndian((ushort)((Location.Y & 0x3FFF) | (hasHue ? 0x8000 : 0)));
+        writer.WriteUInt16BigEndian((ushort)((Location.X & XMask) | (hasLight ? ExtraFlag : 0)));
+        writer.WriteUInt16BigEndian((ushort)((Location.Y & YMask) | (hasHue ? ExtraFlag : 0)));
 
         if (hasLight)
         {

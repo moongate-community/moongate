@@ -14,4 +14,9 @@ public sealed class MovementState
     ///     Gets or sets when the next step is due, in milliseconds of the server clock.
     /// </summary>
     public long NextStepAt { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the running steps taken since the last point of stamina they cost.
+    /// </summary>
+    public int RunSteps { get; set; }
 }

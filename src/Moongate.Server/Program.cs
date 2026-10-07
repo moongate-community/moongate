@@ -28,6 +28,11 @@ using Moongate.Server.Types.Persistence;
 using Moongate.Server.Ultima;
 using Serilog;
 
+// After Ctrl+C or SIGTERM the framework ends the process when the command has not returned in this time, 5 seconds
+// by default. The final world save must fit in it: the first save of a process writes every entity, which takes
+// 8 to 15 seconds for the shipped world, and a save cut half way commits nothing.
+ConsoleApp.Timeout = TimeSpan.FromMinutes(2);
+
 await ConsoleApp.RunAsync(
     args,
     async (
@@ -144,10 +149,7 @@ await ConsoleApp.RunAsync(
         {
             var headerContent = ResourceUtils.GetEmbeddedResourceString(typeof(Program).Assembly, "Assets/header.txt");
 
-            headerContent = headerContent.Replace("{Version}", VersionUtils.GetVersion(typeof(Program).Assembly));
-            headerContent = headerContent.Replace("{Codename}", VersionUtils.GetCodename(typeof(Program).Assembly));
-
-            Console.WriteLine(headerContent);
+            Console.WriteLine(VersionUtils.FormatHeader(headerContent, typeof(Program).Assembly));
         }
 
         Console.WriteLine($"Moongate Server starting with root directory: {serverArgs.RootDirectory}");
@@ -209,6 +211,20 @@ await ConsoleApp.RunAsync(
                             CommandSourceType.Console | CommandSourceType.InGame,
                             AccountType.Regular,
                             CommandMessages.HelpDescriptionText
+                        )
+                        .RegisterCommand<VersionCommand>(
+                            "version",
+                            "Shows the version the server runs, whether it is a Debug or a Release build, and when it was built.",
+                            CommandSourceType.Console | CommandSourceType.InGame,
+                            AccountType.Regular,
+                            CommandMessages.VersionDescription
+                        )
+                        .RegisterCommand<UptimeCommand>(
+                            "uptime",
+                            "Shows how long the server has been running and since when.",
+                            CommandSourceType.Console | CommandSourceType.InGame,
+                            AccountType.Regular,
+                            CommandMessages.UptimeDescription
                         )
                         .RegisterCommand<ConsoleCommand>(
                             "console",

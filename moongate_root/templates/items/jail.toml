@@ -1,0 +1,42 @@
+# ==============================================================================
+# Moongate - templates/items/jail.toml
+#
+# What it is for:
+#   The items of the jail (data/jail.toml): the note a prisoner finds in its
+#   backpack when its sentence ends, and the chest of bread and water of every
+#   cell. A spawn region per cell (templates/spawns/felucca/jail.toml) puts the
+#   chest on the ground; it decays an hour later and the region makes a new,
+#   full one, so the rations are fresh about once an hour.
+#
+# Fields:
+#   base_id        inherits base_item
+#   item_id        the note: a sheet of paper; the chest: a wooden chest
+#   script_id      jail_note (scripts/items/jail_note.lua) shows the text of
+#                  saved book.content or legacy jail.text on a double click
+#   movable        false: players cannot pick the chest up
+#   decays         true, with decay_minutes: an item that cannot be picked up
+#                  decays only when its template gives both
+#   decay_minutes  how long the chest stays before a full one replaces it
+#   loot           the loot tables of templates/loots/jail.toml, each rolled
+#                  once
+# ==============================================================================
+
+[[item]]
+id = "jail_release_note"
+base_id = "base_item"
+item_id = 0x14F0
+name = "a release note"
+rarity = "common"
+script_id = "jail_note"
+stackable = false
+
+[[item]]
+id = "jail_chest"
+base_id = "base_item"
+item_id = 0x0E43
+name = "a chest of rations"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 60
+loot = ["jail_bread", "jail_water"]

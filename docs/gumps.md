@@ -231,7 +231,9 @@ var choice = await templates.AskAsync(session, "decorate_confirm", new Dictionar
 ```
 
 `.decorate` asks this way with `templates/gumps/decorate_confirm.xml`; the other shipped gump is
-`templates/gumps/go.xml`, the travel menu of [`.go`](commands/go.md).
+`templates/gumps/go.xml`, the travel menu of [`.go`](commands/go.md), `templates/gumps/jail_sentence.xml`,
+the gump of [`.jail`](commands/jail.md), and `templates/gumps/gmtools.xml`, the tools of
+[`.gmtools`](commands/gmtools.md): a gump with two slots, a sidebar and a panel.
 
 The answer also carries `answer.Open`, the gump an `open` button names (null for any other
 button), and `answer.Bound`, the values of the controls with `bind` by name. `AskAsync` follows
@@ -258,3 +260,13 @@ The entries are `GumpPage`, `GumpGroup`, `GumpBackground`, `GumpAlphaRegion`, `G
 `GumpImageTiled`, `GumpItem`, `GumpButton`, `GumpCheckbox`, `GumpRadio`, `GumpText`,
 `GumpLabelCropped`, `GumpHtml`, `GumpHtmlLocalized`, `GumpTextEntry`, `GumpTooltip`,
 `GumpItemProperty` and `GumpFlag`.
+
+## Readable letters
+
+The [document parchment](data-files/books.md) shows saved plain text with a
+scrollable body. An eligible letter in the reader's backpack adds a localized
+**Claim attachments** button. The footer reduces the body height to keep it
+inside the parchment. Closing is read-only. Responses follow the same serial,
+type and offered-button validation as other gumps; ownership and the original
+session are checked again before claiming. A successful claim reopens the same
+text without the button; a capacity refusal reopens it for a retry.

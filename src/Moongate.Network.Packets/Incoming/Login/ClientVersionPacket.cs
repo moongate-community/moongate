@@ -20,20 +20,6 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
     {
     }
 
-    private ClientVersionPacket(string version, int length)
-    {
-        PacketValidation.ValidateAscii(version, nameof(version));
-        ArgumentException.ThrowIfNullOrWhiteSpace(version);
-
-        if (length > ushort.MaxValue)
-        {
-            throw new ArgumentException("The client version packet length must fit UInt16.", nameof(version));
-        }
-
-        Version = version;
-        Length = length;
-    }
-
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ClientVersionPacket? packet)
     {
         packet = null;
@@ -57,6 +43,20 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
         packet = new(version, data.Length);
 
         return true;
+    }
+
+    private ClientVersionPacket(string version, int length)
+    {
+        PacketValidation.ValidateAscii(version, nameof(version));
+        ArgumentException.ThrowIfNullOrWhiteSpace(version);
+
+        if (length > ushort.MaxValue)
+        {
+            throw new ArgumentException("The client version packet length must fit UInt16.", nameof(version));
+        }
+
+        Version = version;
+        Length = length;
     }
 
     private static int GetCanonicalLength(string version)

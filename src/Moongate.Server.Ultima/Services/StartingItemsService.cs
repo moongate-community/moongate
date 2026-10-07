@@ -3,8 +3,13 @@ using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Ultima.Data.Characters;
+using Moongate.Server.Ultima.Data.Books;
+using Moongate.Server.Ultima.Interfaces.Books;
+using Moongate.Server.Ultima.Services.Books;
+using Moongate.Server.Ultima.Services.Internal.Books;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
+using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Entities.World;
@@ -31,6 +36,10 @@ public class StartingItemsService : IStartingItemsService
     private readonly MoongatePersistenceService _persistence;
     private readonly StartingItemsConfig _config;
     private readonly ItemsConfig _items;
+    private readonly IBookTemplateService _books;
+    private readonly BookContextFactory _contexts;
+    private readonly LocalizationConfig _localization;
+    private readonly IBookAttachmentPreparationService? _attachments;
 
     public StartingItemsService(
         IDataLoaderService dataLoaderService,
@@ -40,9 +49,14 @@ public class StartingItemsService : IStartingItemsService
         ITileDataService tiles,
         MoongatePersistenceService persistence,
         StartingItemsConfig config,
-        ItemsConfig items
+        ItemsConfig items,
+        IBookTemplateService books,
+        BookContextFactory contexts,
+        LocalizationConfig localization,
+        IBookAttachmentPreparationService? attachments = null
     )
     {
+        _attachments = attachments;
         _dataLoaderService = dataLoaderService;
         _factory = factory;
         _templates = templates;
@@ -51,6 +65,9 @@ public class StartingItemsService : IStartingItemsService
         _persistence = persistence;
         _config = config;
         _items = items;
+        _books = books;
+        _contexts = contexts;
+        _localization = localization;
     }
 
     public Task StartAsync()
@@ -105,6 +122,9 @@ public class StartingItemsService : IStartingItemsService
     )
     {
         var entries = SelectSets(request).SelectMany(set => set.Items).ToList();
+        var context = entries.Any(entry => entry.BookTemplate is not null)
+            ? _contexts.CaptureForCreation(request.PlayerName)
+            : null;
         var given = new List<ItemEntity>();
         var backpack = _factory.Create(_items.BackpackTemplate);
         backpack.Equip(request.MobileId, LayerType.Backpack);
@@ -114,7 +134,7 @@ public class StartingItemsService : IStartingItemsService
 
         foreach (var entry in entries)
         {
-            foreach (var item in CreateEntry(entry, request, backpack, usedLayers, given))
+            foreach (var item in CreateEntry(entry, request, backpack, usedLayers, given, context))
             {
                 await _factory.SaveAsync(transaction, item, cancellationToken);
                 given.Add(item);
@@ -153,17 +173,47 @@ public class StartingItemsService : IStartingItemsService
         StartingItemsRequest request,
         ItemEntity backpack,
         HashSet<LayerType> usedLayers,
-        IReadOnlyList<ItemEntity> given
+        IReadOnlyList<ItemEntity> given,
+        TextTemplateContext? context
     )
     {
         var templateId = entry.Items[BuiltInRng.Next(entry.Items.Count)];
         var template = _templates.Get(templateId);
+        RenderedBook? rendered = null;
+        BookTemplate? source = null;
+        if (entry.BookTemplate is { } book)
+        {
+            if (context is null || string.IsNullOrWhiteSpace(request.PlayerName) || entry.Equip ||
+                !_books.TryGet(book, out source) || source is null ||
+                !BookItemCompatibility.IsCompatible(source, template) ||
+                !_books.TryRender(book, context, _localization.Language, entry.BookValues, out rendered) || rendered is null)
+            {
+                throw new InvalidDataException($"Cannot create starting document '{book}' for item '{templateId}'.");
+            }
+
+            if (source.Attachments.Count > 0 && _attachments is null)
+            {
+                throw new InvalidDataException($"Cannot prepare attachments for starting document '{book}'.");
+            }
+        }
+
         var amount = entry.Amount?.Roll() ?? 1;
         var stacks = template.EffectiveStackable(_tiles);
 
         for (var i = 0; i < (stacks ? 1 : amount); i++)
         {
             var item = _factory.Create(templateId, stacks ? amount : 1, entry.Hue?.Resolve());
+            if (rendered is not null && source is not null)
+            {
+                var payload = _attachments?.Prepare(source);
+                if (payload is not null)
+                {
+                    item.SetProp(BookAttachmentCodec.PropKey, payload);
+                }
+
+                BookDocumentText.Apply(item, rendered);
+            }
+
             ApplyLootType(item, template, entry.Newbie);
 
             if (entry.Equip && template.EffectiveLayer(_tiles) is { } layer && usedLayers.Add(layer))

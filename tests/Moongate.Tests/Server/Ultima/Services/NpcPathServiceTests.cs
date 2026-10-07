@@ -18,9 +18,11 @@ public sealed class NpcPathServiceTests
     private readonly StubPathfindingService _finder = new();
     private readonly ManualTimeProvider _time = new();
     private readonly NpcPathService _paths;
+
     private readonly MobileEntity _orc = new()
     {
-        Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0)
+        Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
+        Location = new Point3D(1600, 1600, 0)
     };
 
     public NpcPathServiceTests()
@@ -209,7 +211,10 @@ public sealed class NpcPathServiceTests
         Assert.Equal(NpcWalkType.Blocked, _paths.Next(_orc, ahead, 0, MovementAbilityType.Walk).Kind);
         _time.Advance(TimeSpan.FromSeconds(2));
         _finder.Finds(DirectionType.NorthEast);
-        Assert.Equal(new NpcPathStep(NpcWalkType.Moving, DirectionType.NorthEast), _paths.Next(_orc, ahead, 0, MovementAbilityType.Walk));
+        Assert.Equal(
+            new NpcPathStep(NpcWalkType.Moving, DirectionType.NorthEast),
+            _paths.Next(_orc, ahead, 0, MovementAbilityType.Walk)
+        );
     }
 
     [Fact]
@@ -236,7 +241,8 @@ public sealed class NpcPathServiceTests
 
         for (var serial = 0x200u; serial < 0x220u; serial++)
         {
-            var npc = new MobileEntity { Id = new Serial(serial), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+            var npc = new MobileEntity
+                { Id = new Serial(serial), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
 
             // A goal straight to the north of a path that leads east: the direction tells a search from a straight step.
             if (_paths.Next(npc, new Point3D(1600, 1500, 0), 0, MovementAbilityType.Walk).Direction == DirectionType.East)
@@ -250,7 +256,10 @@ public sealed class NpcPathServiceTests
 
         _time.Advance(TimeSpan.FromSeconds(1));
         var late = new MobileEntity { Id = new Serial(0x300), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
-        Assert.Equal(DirectionType.East, _paths.Next(late, new Point3D(1600, 1500, 0), 0, MovementAbilityType.Walk).Direction);
+        Assert.Equal(
+            DirectionType.East,
+            _paths.Next(late, new Point3D(1600, 1500, 0), 0, MovementAbilityType.Walk).Direction
+        );
     }
 
     [Fact]

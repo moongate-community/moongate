@@ -1,3 +1,10 @@
+using Moongate.Server.Ultima.Interfaces.Items;
+using Moongate.Server.Ultima.Services.Items;
+using Moongate.Server.Ultima.Handlers.Items;
+using Moongate.Server.Ultima.Services.Titles;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Server.Ultima.Types.Bank;
 using Lua;
 using DryIoc;
 using Moongate.Core.Geometry;
@@ -9,37 +16,37 @@ using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
-using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
-using Moongate.Server.Ultima.Data.Bodies;
-using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Ultima.Types;
 using Moongate.Server.Ultima.Types.Effects;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Speech;
-using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Bank;
+using Moongate.Tests.TestSupport.Ultima.BulletinBoards;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
-using Moongate.Server.Ultima.Types.Mobiles;
-using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Items;
@@ -57,9 +64,15 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly StubClockService _clock = new();
+    private readonly StubBulletinBoardService _boards = new();
+    private readonly StubBankService _bankStub = new();
     private readonly ItemService _items;
-    private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
-    private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _potions = new()
+        { Id = new Serial(0x40000002), TemplateId = "potion", ItemId = 0x0F0E, Amount = 3 };
 
     private readonly SettableClock _time = new();
 
@@ -95,9 +108,19 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _itemTimers = new(_timers, new ItemTimerQueue(_time), _items, new RecordingItemScriptService(), _time);
         _container.RegisterInstance<IItemTimerService>(_itemTimers);
+        _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
-        _container.RegisterInstance<ITeleportService>(new TeleportService(_fixture.Mobiles, _view, _fixture.Sessions, _fixture.Sender, _fixture.Sectors, new StubBankService()));
+        _container.RegisterInstance<ITeleportService>(
+            new TeleportService(
+                _fixture.Mobiles,
+                _view,
+                _fixture.Sessions,
+                _fixture.Sender,
+                _fixture.Sectors,
+                new StubBankService()
+            )
+        );
         _container.RegisterInstance<IMobileStateService>(_mobileState);
         _container.RegisterInstance<IDataLoaderService>(
             new StubDataLoaderService().With(new BodyContent { Body = new(400), Type = BodyType.Human })
@@ -108,8 +131,15 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IEffectService>(_effects);
         _container.AddScriptModule<EffectModule>();
         _container.RegisterScriptEnum<EffectGraphicType>();
-        _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door.")));
+        _container.RegisterInstance(
+            TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door."))
+        );
         _container.AddScriptModule<LocalizationModule>();
+        _container.RegisterInstance<IBulletinBoardService>(_boards);
+        _container.RegisterInstance<IBankService>(_bankStub);
+        _container.AddScriptModule<BankModule>();
+        _container.RegisterScriptEnum<BankResultType>();
+        _container.AddScriptModule<BoardModule>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
                 {
@@ -118,6 +148,49 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
                     return Task.CompletedTask;
                 }
             );
+    }
+
+    [Theory]
+    [InlineData(0x1F9D)]
+    [InlineData(0x09EE)]
+    public async Task UsePacket_ReservedInventoryDoesNotDrinkOrGrantThirst(int graphic)
+    {
+        var reservations = new InventoryReservationService(_loop);
+        var inventory = new InventoryMutationGuard(new Lazy<IItemService>(() => _items), reservations);
+        _container.RegisterInstance<IInventoryMutationGuard>(inventory);
+        var scripts = await StartItemScriptAsync("drink", "potion");
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var player));
+        player.Body = 400;
+        player.Thirst = 2;
+        _potions.ItemId = graphic;
+        _potions.Amount = 1;
+        _potions.SetProp("drink.uses", graphic == 0x1F9D ? 5L : 1L);
+        var data = new StubDataLoaderService();
+        var handler = new UseRequestPacketHandler(
+            _items,
+            _fixture.Mobiles,
+            data,
+            new WorldConfig(),
+            new FakeTileDataService(),
+            new ContainerLayoutService(data),
+            _fixture.Sender,
+            TestTooltips.Create(_items, _fixture.Mobiles),
+            new FameKarmaTitleService(data),
+            scripts,
+            inventory: inventory
+        );
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(player.Id, out var session));
+        reservations.TryReserve(player.Id, Task.CompletedTask);
+        handler.Handle(session, new UseRequestPacket { Target = _potions.Id });
+        Assert.Equal(2, player.Thirst);
+        Assert.Equal(graphic, _potions.ItemId);
+        Assert.Equal(graphic == 0x1F9D ? 5L : 1L, _potions.GetProp<long>("drink.uses"));
+        Assert.Empty(_speech.Sounds);
+        Assert.Empty(_speech.Told);
+        reservations.Release(player.Id);
+        handler.Handle(session, new UseRequestPacket { Target = _potions.Id });
+        Assert.Equal(5, player.Thirst);
+        Assert.Empty(_errors);
     }
 
     [Fact]
@@ -174,7 +247,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
         // One sip of five: three points, the sound and the gesture of drinking; the pitcher is still a pitcher.
-        Assert.Equal((5, 0x1F9D, 4L), (aria.Thirst, _potions.ItemId, Convert.ToInt64(_potions.GetProp<object>("drink.uses"))));
+        Assert.Equal(
+            (5, 0x1F9D, 4L),
+            (aria.Thirst, _potions.ItemId, Convert.ToInt64(_potions.GetProp<object>("drink.uses")))
+        );
         Assert.Equal(0x30, Assert.Single(_speech.Sounds).Sound);
         Assert.Contains("Animated 2 34 5 1", _view.Calls);
         Assert.Equal("You drink, and feel less thirsty.", _speech.Told[^1].Text);
@@ -268,7 +344,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
@@ -307,7 +385,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
@@ -370,11 +450,16 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         scripts.Run(door, "on_use", 2L);
         Assert.Equal((0x0676, new Point3D(1601, 1599, 0)), (door.ItemId, door.GroundLocation!.Value));
 
-        _sectors.Add(new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _sectors.Add(
+            new MobileEntity
+                { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         scripts.Run(door, "on_use", 2L);
         Assert.Equal(0x0676, door.ItemId);
 
-        _sectors.Remove(new MobileEntity { Id = new Serial(0x100), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _sectors.Remove(
+            new MobileEntity { Id = new Serial(0x100), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         scripts.Run(door, "on_use", 2L);
 
         Assert.Empty(_errors);
@@ -452,7 +537,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal((0x0676, 0x0678, (object?)true), (left.ItemId, right.ItemId, left.Props["locked"]));
-        Assert.Equal("Using your key, you open the door.", Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>()).Text);
+        Assert.Equal(
+            "Using your key, you open the door.",
+            Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>()).Text
+        );
     }
 
     [Fact]
@@ -496,7 +584,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var (left, right) = PlaceDoubleDoor();
         var scripts = await StartDoorScriptAsync();
         scripts.Run(left, "on_use", 2L);
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1601, 1600, 0) };
 
         _sectors.Add(orc);
         scripts.Run(right, "on_use", 2L);
@@ -520,7 +609,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         scripts.Run(door, "on_use", 2L);
         // The timer is a prop of the door, so the world save keeps it and a restart does not lose it.
         Assert.Equal(TimeSpan.FromSeconds(20), _itemTimers.Remaining(door, "close"));
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
         _sectors.Add(orc);
 
         // What the timer service does when the time has come.
@@ -576,7 +666,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     [InlineData(null, null, null)]
     // To a map that is not loaded.
     [InlineData(null, 5690L, 4L)]
-    public async Task TheShippedTeleporterScript_OffWithoutADestinationOrToAMapNotLoaded_DoesNothing(bool? active, long? x, long? map)
+    public async Task TheShippedTeleporterScript_OffWithoutADestinationOrToAMapNotLoaded_DoesNothing(
+        bool? active, long? x, long? map
+    )
     {
         var props = new Dictionary<string, object?> { ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL };
 
@@ -647,7 +739,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
         Assert.Equal(expected, _effects.At.Select(effect => effect.Location));
-        Assert.All(_effects.At, effect => Assert.Equal((aria.Map, (int)EffectGraphicType.Smoke), (effect.Map, effect.Options.Graphic)));
+        Assert.All(
+            _effects.At,
+            effect => Assert.Equal((aria.Map, (int)EffectGraphicType.Smoke), (effect.Map, effect.Options.Graphic))
+        );
     }
 
     [Fact]
@@ -661,7 +756,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal(new Point3D(1595, 2489, 20), aria.Location);
-        Assert.Equal([new Point3D(1600, 1600, 0), new Point3D(1595, 2489, 20)], _effects.At.Select(effect => effect.Location));
+        Assert.Equal(
+            [new Point3D(1600, 1600, 0), new Point3D(1595, 2489, 20)],
+            _effects.At.Select(effect => effect.Location)
+        );
         Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
         Assert.Empty(_timers.Timers);
     }
@@ -793,7 +891,8 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var teleporter = PlaceTeleporter(
             new()
             {
-                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Felucca,
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L,
+                ["teleport.map"] = (long)MapType.Felucca,
                 ["sound_id"] = 0x1FEL
             }
         );
@@ -812,7 +911,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     [InlineData(null, false)]
     [InlineData(true, true)]
     [InlineData("true", true)]
-    public async Task TheShippedTeleporterScript_AnNpc_TravelsOnlyThroughATeleporterForCreatures(object? creatures, bool travels)
+    public async Task TheShippedTeleporterScript_AnNpc_TravelsOnlyThroughATeleporterForCreatures(
+        object? creatures, bool travels
+    )
     {
         var props = new Dictionary<string, object?> { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L };
 
@@ -823,7 +924,11 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
 
         var teleporter = PlaceTeleporter(props);
         var scripts = await StartTeleporterScriptAsync();
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+        var orc = new MobileEntity
+        {
+            Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
+            Location = new Point3D(1600, 1600, 0)
+        };
         _fixture.Mobiles.EnterWorld(orc);
 
         scripts.Run(teleporter, "on_npc_move_over", 0x100L);
@@ -836,7 +941,10 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     public async Task TheShippedTeleporterScript_ToItsOwnMap_Teleports()
     {
         var teleporter = PlaceTeleporter(
-            new() { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Trammel }
+            new()
+            {
+                ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["teleport.map"] = (long)MapType.Trammel
+            }
         );
         var scripts = await StartTeleporterScriptAsync();
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
@@ -937,21 +1045,6 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_speech.PlacedSounds);
     }
 
-    private ItemEntity PlaceLight(int graphic, bool? isProtected)
-    {
-        var light = new ItemEntity { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };
-
-        if (isProtected is { } value)
-        {
-            light.Props = new() { ["protected"] = value };
-        }
-
-        light.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
-        _items.Add([light]);
-
-        return light;
-    }
-
     // As ModernUO's Clock: the part of the day, then the time to the minute, as texts of the client over the clock.
     [Theory]
     [InlineData(0, 30, 1042950, "12:30")]
@@ -964,7 +1057,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     [InlineData(16, 0, 1042956, "4:00")]
     [InlineData(20, 0, 1042957, "8:00")]
     [InlineData(23, 59, 1042957, "11:59")]
-    public async Task TheShippedClockScript_TellsThePartOfTheDayAndTheTimeToTheMinute(int hours, int minutes, int part, string exact)
+    public async Task TheShippedClockScript_TellsThePartOfTheDayAndTheTimeToTheMinute(
+        int hours, int minutes, int part, string exact
+    )
     {
         _clock.Time = new(hours, minutes);
         var scripts = await StartItemScriptAsync("clock", "clock");
@@ -981,6 +1076,103 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.All(labels, label => Assert.Equal(clock.Id, label.Serial));
     }
 
+    [Fact]
+    public async Task TheShippedBulletinBoardScript_OpensTheBoardOnWhoDoubleClicksIt()
+    {
+        var scripts = await StartItemScriptAsync("bulletin_board", "bulletin_board");
+        var board = new ItemEntity
+            { Id = new Serial(0x40000090), TemplateId = "bulletin_board", ItemId = 0x1E5E, Amount = 1 };
+        board.PlaceOnGround(MapType.Trammel, new Point3D(1496, 1628, 10));
+        _items.Add([board]);
+
+        var result = scripts.Run(board, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        // Handled: nothing else follows the double click.
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal(board, Assert.Single(_boards.Opened).Board);
+    }
+
+    [Fact]
+    public async Task TheShippedBankCheckScript_CashesTheCheck_AndTellsThePlayerWhatWentIn()
+    {
+        var scripts = await StartItemScriptAsync("bank_check", "bank_check");
+        var check = Check();
+        _bankStub.Worths[check.Id] = 125_000;
+        // The bank takes the whole check: afterwards it is worth nothing.
+        _bankStub.OnCash = item => _bankStub.Worths.Remove(item.Id);
+
+        var result = scripts.Run(check, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal(check, Assert.Single(_bankStub.Cashed).Check);
+        var told = Assert.Single(_speech.ToldClilocs);
+        Assert.Equal((1042763, "125,000"), (told.Cliloc, told.Arguments));
+    }
+
+    // The box had room for sixty thousand: the check keeps the rest, and the player is told what went in.
+    [Fact]
+    public async Task TheShippedBankCheckScript_CashedInPart_TellsOnlyWhatWentIn()
+    {
+        var scripts = await StartItemScriptAsync("bank_check", "bank_check");
+        var check = Check();
+        _bankStub.Worths[check.Id] = 150_000;
+        _bankStub.OnCash = item => _bankStub.Worths[item.Id] = 90_000;
+
+        scripts.Run(check, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal("60,000", Assert.Single(_speech.ToldClilocs).Arguments);
+    }
+
+    [Theory,
+     InlineData(BankResultType.NotInBank, 1047026),
+     InlineData(BankResultType.NoBank, 1047026),
+     InlineData(BankResultType.BankFull, 500390)]
+    public async Task TheShippedBankCheckScript_NotCashed_TellsThePlayerWhy(BankResultType refusal, int cliloc)
+    {
+        var scripts = await StartItemScriptAsync("bank_check", "bank_check");
+        var check = Check();
+        _bankStub.Worths[check.Id] = 5000;
+        _bankStub.Result = refusal;
+
+        var result = scripts.Run(check, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(true, result.Values[0]);
+        Assert.Equal(cliloc, Assert.Single(_speech.ToldClilocs).Cliloc);
+    }
+
+    private ItemEntity PlaceLight(int graphic, bool? isProtected)
+    {
+        var light = new ItemEntity
+            { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };
+
+        if (isProtected is { } value)
+        {
+            light.Props = new() { ["protected"] = value };
+        }
+
+        light.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        _items.Add([light]);
+
+        return light;
+    }
+
+    // A check held by a player: the bank is a stub here, which says where it lies.
+    private ItemEntity Check()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var player));
+        // A player has an account, and only a player has a bank.
+        player.AccountId = new Serial(0x42);
+        var check = new ItemEntity { Id = new Serial(0x40000091), TemplateId = "bank_check", ItemId = 0x14F0, Amount = 1 };
+        check.PutInContainer(_backpack.Id, new Point2D(50, 50), 1);
+        _items.Add([check]);
+
+        return check;
+    }
+
     private async Task<ItemScriptService> StartLightScriptAsync()
     {
         _scripts.Write("items/light.lua", File.ReadAllText(ShippedScript("items/light.lua")));
@@ -989,7 +1181,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_light", ScriptId = "light" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_light", ScriptId = "light" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
@@ -1054,8 +1248,9 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private async Task<ItemScriptService> StartItemScriptAsync(string script, string template)
     {
         _scripts.Write($"items/{script}.lua", File.ReadAllText(ShippedScript($"items/{script}.lua")));
-        // What the teleporter scripts take with require.
+        // What the teleporter scripts and the bank check take with require.
         _scripts.Write("common/teleport.lua", File.ReadAllText(ShippedScript("common/teleport.lua")));
+        _scripts.Write("common/numbers.lua", File.ReadAllText(ShippedScript("common/numbers.lua")));
         var engine = NewEngine();
         _engines.Add(engine);
         await engine.StartAsync();
@@ -1109,25 +1304,15 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         await engine.StartAsync();
         var scripts = new ItemScriptService(
             engine,
-            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_door", ScriptId = "door" })),
+            new ItemTemplateService(
+                new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_door", ScriptId = "door" })
+            ),
             _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
         await scripts.StartAsync();
 
         return scripts;
-    }
-
-    public async Task DisposeAsync()
-    {
-        foreach (var engine in _engines)
-        {
-            engine.Dispose();
-        }
-
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
     }
 
     private LuaScriptEngineService NewEngine()
@@ -1158,5 +1343,17 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        foreach (var engine in _engines)
+        {
+            engine.Dispose();
+        }
+
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

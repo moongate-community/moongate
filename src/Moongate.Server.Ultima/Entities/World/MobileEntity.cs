@@ -6,6 +6,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.Internal;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 
@@ -22,6 +23,11 @@ namespace Moongate.Server.Ultima.Entities.World;
 [Table(Name = "world.mobiles")]
 public class MobileEntity : IMoongateEntity
 {
+    /// <summary>
+    ///     The reported kills from which a player is a murderer, as ModernUO.
+    /// </summary>
+    public const int MurderKills = 5;
+
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
@@ -47,13 +53,19 @@ public class MobileEntity : IMoongateEntity
     [Column(IsIgnore = true)]
     public bool IsNpc => AccountId is null;
 
+    /// <summary>
+    ///     Gets whether the mobile is a dead player: a ghost wears the ghost body of its race and gender, and a player is
+    ///     alive again when its living body is back. It is not a column: the body is what is saved. An NPC is never
+    ///     dead, it leaves the world.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool IsDead => !IsNpc && GhostBodies.IsGhost(Body);
+
     public string Name { get; set; }
 
-    [Column(MapType = typeof(byte))]
-    public GenderType Gender { get; set; }
+    [Column(MapType = typeof(byte))] public GenderType Gender { get; set; }
 
-    [Column(MapType = typeof(byte))]
-    public RaceType Race { get; set; }
+    [Column(MapType = typeof(byte))] public RaceType Race { get; set; }
 
     /// <summary>
     ///     The body id, which follows race and gender (for example 400 for a male human).
@@ -203,9 +215,47 @@ public class MobileEntity : IMoongateEntity
     public int Hunger { get; set; } = 20;
 
     /// <summary>
+    ///     Which way the strength may move: up to rise by use, down to be lowered for another stat, or locked.
+    /// </summary>
+    [Column(MapType = typeof(byte))]
+    public StatLockType StrLock { get; set; } = StatLockType.Up;
+
+    /// <summary>
+    ///     Which way the dexterity may move.
+    /// </summary>
+    [Column(MapType = typeof(byte))]
+    public StatLockType DexLock { get; set; } = StatLockType.Up;
+
+    /// <summary>
+    ///     Which way the intelligence may move.
+    /// </summary>
+    [Column(MapType = typeof(byte))]
+    public StatLockType IntLock { get; set; } = StatLockType.Up;
+
+    /// <summary>
     ///     How quenched the mobile is, from 0 (parched) to 20: it drops with time for a player and rises by drinking.
     /// </summary>
     public int Thirst { get; set; } = 20;
+
+    /// <summary>
+    ///     The long-term murder count: the kills a victim reported. From five the player is a murderer and its name is red.
+    /// </summary>
+    public int Kills { get; set; }
+
+    /// <summary>
+    ///     The short-term murder count, which decays faster than the kills; from five a resurrection costs skills and stats.
+    /// </summary>
+    public int ShortTermMurders { get; set; }
+
+    /// <summary>
+    ///     When the kills lose one, in UTC; null when there are none.
+    /// </summary>
+    public DateTime? KillsDecayAt { get; set; }
+
+    /// <summary>
+    ///     When the short-term murders lose one, in UTC; null when there are none.
+    /// </summary>
+    public DateTime? ShortTermDecayAt { get; set; }
 
     /// <summary>
     ///     Whether the mobile is hidden: the players do not see it, the staff does.
@@ -216,6 +266,53 @@ public class MobileEntity : IMoongateEntity
     ///     Whether the mobile is frozen: it neither steps nor turns.
     /// </summary>
     public bool Frozen { get; set; }
+
+    /// <summary>
+    ///     Until when the mobile is a criminal, in UTC; null for one that is not. Its name is grey until then.
+    /// </summary>
+    public DateTime? CriminalUntil { get; set; }
+
+    /// <summary>
+    ///     Whether the mobile is a criminal now, kept by the crime service from <see cref="CriminalUntil" />. It is not
+    ///     a column: the time is what is saved.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool Criminal { get; set; }
+
+    /// <summary>
+    ///     Gets whether the mobile is a murderer: the kills reported against it reach <see cref="MurderKills" />. It is
+    ///     not a column: the count is what is saved.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool IsMurderer => Kills >= MurderKills;
+
+    /// <summary>
+    ///     Gets the notoriety those who see the mobile are shown: its own, grey while it is a criminal, and a
+    ///     murderer's red before that.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public NotorietyType ShownNotoriety =>
+        Notoriety == NotorietyType.Murderer || IsMurderer ? NotorietyType.Murderer :
+        Criminal ? NotorietyType.Criminal : Notoriety ?? NotorietyType.Innocent;
+
+    /// <summary>
+    ///     When the mobile may use a skill again. It is not a column: the wait does not outlive a restart.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public DateTimeOffset? NextSkillAt { get; set; }
+
+    /// <summary>
+    ///     When the mobile may be told again to wait before another skill. It is not a column.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public DateTimeOffset? NextSkillMessageAt { get; set; }
+
+    /// <summary>
+    ///     When the mobile last took a step, in UTC; null before its first. It is not a column: a bow is drawn by who has
+    ///     stood still for a while, and a restart is as good as that.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public DateTimeOffset? LastMovedAt { get; set; }
 
     /// <summary>
     ///     Whether the mobile is in war mode. It is not a column: a mobile comes back in peace.
@@ -257,7 +354,10 @@ public class MobileEntity : IMoongateEntity
     ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />, or <paramref name="defaultValue" /> when
     ///     the mobile does not have it.
     /// </summary>
-    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The prop holds a value that does not convert to <typeparamref name="T" />.
+    /// </exception>
+    // Safe: default of a generic value, only returned when no value is stored.
     public T GetProp<T>(string key, T defaultValue = default!)
     {
         return TryGetProp<T>(key, out var value) ? value : defaultValue;
@@ -266,7 +366,9 @@ public class MobileEntity : IMoongateEntity
     /// <summary>
     ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />; false when the mobile does not have it.
     /// </summary>
-    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The prop holds a value that does not convert to <typeparamref name="T" />.
+    /// </exception>
     public bool TryGetProp<T>(string key, out T value)
     {
         return PropsDictionary.TryGet(Props, key, out value);
@@ -294,11 +396,19 @@ public class MobileEntity : IMoongateEntity
         var copy = (MobileEntity)MemberwiseClone();
         // Not a column: left in, a change of war mode alone would write the row again.
         copy.WarMode = false;
+        copy.LastMovedAt = null;
+        copy.Criminal = false;
+
+        // Only a character keeps its time: an NPC comes back innocent.
+        if (IsNpc)
+        {
+            copy.CriminalUntil = null;
+        }
+
         copy.Skills =
         [
-            .. Skills.Select(
-                skill => new MobileSkill
-                    { Skill = skill.Skill, Base = skill.Base, Cap = skill.Cap, Lock = skill.Lock }
+            .. Skills.Select(skill => new MobileSkill
+                { Skill = skill.Skill, Base = skill.Base, Cap = skill.Cap, Lock = skill.Lock }
             )
         ];
         copy.Props = Props is null ? null : new Dictionary<string, object?>(Props);

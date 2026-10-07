@@ -57,7 +57,7 @@ public sealed class EntityFingerprintCoverageTests
         var data = new TheoryData<string>();
 
         foreach (var property in typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                          .Where(property => property.SetMethod is not null))
+                     .Where(property => property.SetMethod is not null))
         {
             data.Add(property.Name);
         }
@@ -97,7 +97,8 @@ public sealed class EntityFingerprintCoverageTests
             _ when underlying == typeof(DateTime) => new DateTime(2030, 1, 1, 0, 0, 0, DateTimeKind.Utc),
             _ when underlying == typeof(DateTimeOffset) => new DateTimeOffset(2030, 1, 1, 0, 0, 0, TimeSpan.Zero),
             _ when underlying == typeof(Dictionary<string, object?>) => new Dictionary<string, object?> { ["other"] = 2L },
-            _ when underlying == typeof(List<MobileSkill>) => new List<MobileSkill> { new() { Skill = SkillType.Archery, Base = 5 } },
+            _ when underlying == typeof(List<MobileSkill>) => new List<MobileSkill>
+                { new() { Skill = SkillType.Archery, Base = 5 } },
             _ => throw new InvalidOperationException($"No different value known for {type}: add one.")
         };
     }

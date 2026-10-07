@@ -14,6 +14,8 @@ public sealed class GumpTooltip : GumpEntry
 
     public override void Write(StringBuilder layout, GumpStrings strings)
     {
-        layout.Append(Args is null ? Invariant($"{{ tooltip {Cliloc} }}") : Invariant($"{{ tooltip {Cliloc} @{Arguments(Args)}@ }}"));
+        layout.Append(
+            Args is null ? Invariant($"{{ tooltip {Cliloc} }}") : Invariant($"{{ tooltip {Cliloc} @{Arguments(Args)}@ }}")
+        );
     }
 }

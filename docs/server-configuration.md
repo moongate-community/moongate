@@ -101,9 +101,56 @@ mana_seconds = 7.0                    # The same for mana, with no intelligence 
 hunger_enabled = true                 # Players get hungry; starving, they get no hit points back.
 thirst_enabled = true                 # Players get thirsty; parched, they get no stamina back.
 hunger_minutes = 5                    # Minutes between two points of hunger, and of thirst, lost by a player.
+fatigue_enabled = true                # Running and moving overloaded cost a player stamina.
+
+[ultima.skills]
+total_cap = 700                       # Points the skills of a player add up to at most.
+gain_enabled = true                   # A skill, and a stat, may rise when a skill is tried.
+stat_max = 100                        # The most a player's strength, dexterity or intelligence reaches by use.
+stat_cap = 225                        # The most the three stats of a player add up to.
+stat_gain_minutes = 10                # Minutes a stat waits after it was tried before it is tried again.
+
+[ultima.combat]
+global_attack_speed = 1.0             # Divides the delay between swings: 2 swings twice as often.
+attack_stamina = 0                    # Stamina a swing costs a player; 0 costs nothing.
+npc_damage_rate = 1.0                 # Divides the damage an NPC does to a player.
+max_range = 1                         # Tiles a melee swing reaches.
+combatant_seconds = 60                # Seconds a fighter keeps its target without swinging.
+display_damage_numbers = true         # The damage shows over the one hit.
+archery_stand_still_seconds = 1.0     # Seconds a player must have stood still before it shoots; 0 for none.
+
+[ultima.crime]
+criminal_seconds = 120                # How long a mobile stays a criminal after its last criminal act.
+guards_enabled = true                 # Saying "guards" in a guarded region brings a guard beside a criminal.
+guard_template = "guard"              # The mobile template of a guard that is called.
+archer_guard_template = "archerguard" # The one called in Ilshenar and Malas.
+guard_seconds = 40                    # How long a called guard stays.
+
+[ultima.murder]
+short_term_hours = 8                  # Hours before a short-term murder is forgotten.
+long_term_hours = 40                  # Hours before a reported kill is forgotten.
+report_delay_seconds = 4              # Seconds after a death before the victim is asked to report.
+recently_reported_minutes = 10        # Minutes before the same victim can report the same killer again.
+aggressor_seconds = 120               # Seconds an attack on an innocent keeps the attacker reportable.
 
 [ultima.spawns]
 initial_fill = true                   # The first spawn of each region after the start fills it to its max.
+
+[ultima.jail]
+fine_gold = 500                       # Gold coins taken from a prisoner when its jail sentence ends; 0 takes nothing.
+max_days = 30                         # The longest sentence the jail gump accepts, in real days.
+
+[ultima.bulletin_boards]
+expire_days = 7                       # A thread of a bulletin board goes this many days after its last reply; 0 keeps it.
+max_messages = 50                     # The messages a board holds; its oldest thread goes when it is full.
+thread_seconds = 120                  # The wait between two new threads of one character on a board.
+reply_seconds = 30                    # The wait between two posts of one character on a board.
+
+[ultima.bank]
+max_items = 125                       # Items a bank box holds, bags included; 0 for no limit.
+max_withdraw = 60000                  # Coins a banker hands out at one time.
+min_check = 5000                      # The smallest bank check a banker writes.
+max_check = 1000000                   # The largest.
 
 [persistence]
 auto_sync_schema = false
@@ -218,11 +265,26 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
 | `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
 | `ultima.npcs.think_interval_ms` | From 50 to 60000; default 500, ModernUO's passive speed. How often an NPC near a player thinks. Only NPCs within the 5×5 sectors around a player have a think timer; the others sleep and cost nothing. See [NPC tick](game-loop-and-timers.md#npc-tick). |
-| `ultima.npcs.sense_range` | From 1 to 24; default 8. How near, in cells along X or Y, another mobile must come for an NPC's mobile script to sense it with `on_mobile_in_range`. See [Mobile scripts](scripting.md#mobile-scripts). |
+| `ultima.npcs.sense_range` | From 1 to 24; default 8. How near, in cells along X or Y, another mobile must come for an NPC's mobile script to sense it with `on_mobile_in_range`. See [Mobile scripts](scripting/mobile-scripts.md). |
 | `ultima.regeneration.hits_seconds`, `stamina_seconds`, `mana_seconds` | Each from 0.1 to 3600; defaults 11, 7 and 7, ModernUO's classic rates. The seconds between two points coming back, one point at a time. Mana is the slowest it gets: intelligence and Meditation shorten it by ModernUO's classic curve, down to about a tenth of it. The players in the world are checked every second and an NPC while it thinks, so one asleep far from every player does not regenerate; a rate faster than the check gives the points of the whole interval at once, five at most. A mobile's props `regen.hits`, `regen.mana` and `regen.stamina` (seconds) replace the rate for that mobile. |
 | `ultima.regeneration.hunger_enabled`, `hunger_minutes` | Default `true` and 5 (from 1 to 1440), ModernUO's food decay. Every `hunger_minutes`, counted for each player from when it entered the world (one timer looks at the players every minute), a player in the world loses a point of hunger, from 20 (full) to 0; game masters and administrators do not, and never starve. At 5 the player reads that it is hungry, at 0 that it starves, and while at 0 its hit points do not come back. Off, hunger neither drops nor stops anything. NPCs are never hungry. |
 | `ultima.regeneration.thirst_enabled` | Default `true`. Thirst is counted as hunger is, from 20 (quenched) to 0 and at the same pace (`hunger_minutes`): a player in the world loses a point of each together, and the staff none. At 5 the player reads that it is thirsty, at 0 that it is parched, and while at 0 its stamina does not come back, as in UOX3. Off, thirst neither drops nor stops anything. NPCs are never thirsty. |
+| `ultima.regeneration.fatigue_enabled` | Default `true`. What moving costs a player, with ModernUO's numbers. A player carries what it wears and everything inside, the bank left out, and may carry 40 stones and 3.5 a point of strength; its status bar shows both. Carrying more, every step takes 5 points of stamina and one more every 25 stones over, twice as much running; with none left it does not move and reads the client's "too fatigued to move, because you are carrying too much weight". Running takes a point every 16 steps, and a point a step below a tenth of the stamina; with none left a player walks but does not run. Lifting is never refused: a player that puts down something while overloaded is told so. The staff and NPCs pay nothing. Off, a step costs nothing and is never refused. |
+| `ultima.skills.total_cap`, `ultima.skills.gain_enabled` | 700 (from 1 to 100000) and `true`. The points the [skills](skills.md) of a player add up to at most, ModernUO's 700.0: the nearer the total, the more often a gain lowers another skill whose lock is down, and at the cap a skill rises only when one could be lowered. A total already above a lowered cap is left as it is. With `gain_enabled = false` no skill rises: the checks still pass and fail. NPCs never gain. |
+| `ultima.skills.stat_max`, `ultima.skills.stat_cap`, `ultima.skills.stat_gain_minutes` | 100 (from 1 to 65535), 225 (from 30 to 100000) and 10 (from 0 to 1440; 0 tries a stat at every successful skill). ModernUO's classic [stat gain](skills.md#the-stats): the most a stat reaches by use, the most the three add up to, and the minutes between two tries of one stat. Over a lowered `stat_cap` or `stat_max` a stat is left as it is, but one locked down still gives a point each time another stat is tried. `gain_enabled = false` stops these too. NPCs never gain. |
+| `ultima.combat.global_attack_speed`, `npc_damage_rate` | 1.0 each, above 0 and at most 100. The factor that divides the delay between two [swings](combat.md) (2 swings twice as often, 0.5 half as often) and the number that divides the damage an NPC does to a player (2 halves it). |
+| `ultima.combat.attack_stamina` | 0 (from 0 to 100). The stamina a swing costs a player; ModernUO takes none, UOX3 takes 2. NPCs pay nothing. |
+| `ultima.combat.max_range`, `combatant_seconds` | 1 (from 1 to 24) and 60 (from 1 to 3600). How many tiles a melee swing reaches, and how long a fighter keeps its target without swinging, as ModernUO's minute. |
+| `ultima.combat.archery_stand_still_seconds` | `1.0` (from 0 to 60). The seconds a player holding a bow or a crossbow must have stood still, since its last step, before it can shoot; a turn does not count. 0 asks for nothing. See [Archers](combat.md#archers) |
+| `ultima.combat.display_damage_numbers` | `true`. The damage of a hit shows over the one hit (packet `0x0B`), to the players in the fight. |
+| `ultima.crime.criminal_seconds` | Default 120 (from 1 to 86400), ModernUO's and UOX3's two minutes. A mobile that did a criminal act is a criminal for this long, its name in grey for those who see it; another act starts the time again, and a murderer stays red. The time is saved with a character, so leaving the world does not clear it; an NPC comes back innocent after a restart. A player reads the client's "You've committed a criminal act!!" when it becomes one. Nothing makes a criminal by itself yet: scripts do with `mobile.set_criminal`, the staff with `set criminal`. |
+| `ultima.murder.*` | The murder counts, as ModernUO's. `short_term_hours` (default 8) and `long_term_hours` (default 40), from 1 to 8760: a short-term murder and a reported kill are each forgotten after that time, one by one, in real time, offline hours included (ModernUO counts online time), while the player is in the world or when it comes back. `report_delay_seconds` (default 4), `recently_reported_minutes` (default 10) and `aggressor_seconds` (default 120), from 1 to 86400: how long after its death a player is asked to report who attacked it, how long before it can report the same killer again, and how long an attack on an innocent keeps its attacker reportable. See [Murder counts](death.md#murder-counts). |
+| `ultima.crime.archer_guard_template` | Default `archerguard`. The mobile template of a guard that is called in **Ilshenar** and **Malas**, as ModernUO's `DefaultGuardType`: a guard with a bow, which shoots what it goes for from the bow's range instead of striking from beside it (see [guard.lua](scripting/shipped-scripts.md#guardlua)). Everywhere else the guard of `guard_template` comes. |
+| `ultima.crime.guards_enabled`, `guard_template`, `guard_seconds` | Default `true`, `guard` and 40 (from 1 to 86400). A player that says "guards" in a guarded region, by the keyword of its client in any language or by the plain word, calls the guards: for every criminal within 14 tiles that stands in a guarded region itself, the staff left out, an NPC of `guard_template` appears beside it, on a free tile a step away (on it when none is free), with the teleport effect and sound and says its line (message 30138); a criminal gets one guard at a time. The guard leaves the same way after `guard_seconds`. A guard kills what it goes for with one blow, and an archer guard shoots it. ModernUO is stricter about who can be called on: there, only who did its crime in that town in the last 15 seconds, and a murderer; here, anyone who is a criminal. A called guard bears the prop `guard.summoned`: one a stopped server left in the world is removed at the next start. Off, nobody comes. |
 | `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
+| `ultima.jail.fine_gold`, `ultima.jail.max_days` | Defaults 500 (from 0 to 1,000,000,000) and 30 (from 1 to 3650). The gold taken from a prisoner when its sentence ends, from its backpack and then its bank box, and the longest sentence [`.jail`](commands/jail.md) accepts, in real days; see [Jail](jail.md). |
+| `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Defaults 7 (from 0 to 3650; 0 keeps threads forever), 50 (from 1 to 200), 120 and 30 (from 0 to 86400). How long a thread of a [bulletin board](bulletin-boards.md) lasts after its last reply, how many messages a board holds, and how long a character waits between two new threads and between two posts on one board. |
+| `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Defaults 125 (from 0 to 10000; 0 for no limit), 60000 (from 1 to 60000), 5000 and 1,000,000 (`min_check` from 1 to `max_check`, `max_check` up to 2,000,000,000). The items a [bank box](bank.md) holds, counted with what is inside its bags; the coins a banker hands out for one *withdraw*; the worth of the checks a banker writes. |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the
@@ -298,7 +360,7 @@ normal PID, start listeners/services, or generate runtime files. Stop the affect
 runtime before applying reviewed DDL. See [First start](getting-started.md) for PID
 ownership, logs and troubleshooting, [PostgreSQL persistence](persistence.md) for
 connection, schema and world-save semantics, and
-[Lua scripting](scripting.md) for budgets and sandbox boundaries.
+[Lua scripting](scripting/runtime.md#budgets-and-sandbox) for budgets and sandbox boundaries.
 
 Versioned SQL is applied by `mgctl migrate status|apply --target auth|world`, a process
 of its own. In released artifacts its default root is its own directory, the server's; `--root-directory` and `MOONGATE_ROOT` override

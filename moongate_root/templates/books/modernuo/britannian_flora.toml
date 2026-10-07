@@ -1,0 +1,1272 @@
+title = "Britannian Flora: A Casual Guide"
+author = "Herbert the Lost"
+content = """  Oft 'pon rambling
+through the woods
+avoiding bears have I
+spotted some plant
+whose like I have
+never seen before,
+and concluded that I
+was a blithering idiot
+
+for failing to notice it
+in the past. Equally
+as oft have I
+concluded that I was a
+worse idiot for not
+running faster from
+the bear.
+  While not all my
+
+readers may share
+my proclivities for
+tree-climbing, it
+occurred to me that
+mayhap mine
+information might
+serve some humble
+purpose.
+
+  The two most
+unique flowering
+plants in the
+Britannian
+countryside are the
+orfleur and the
+whiteflower, also
+called white horns.
+
+  The orfleur is
+notable for its
+massive orange-red
+blossoms, which
+dwarf marigolds like
+the sun dwarfs your
+common fireball spell.
+The odor of said
+
+blooms is best
+described as
+peppermint-apple,
+with a dash of garlic.
+'Tis a popular potted
+plant despite, or
+perhaps because of,
+its exotic nature.
+
+  Whiteflowers exude
+a subtle fragrance not
+unlike that of freshly
+shaven wood mixed
+with cool lemon ice.
+Their tall stands
+always droop with the
+heavy weight of the
+
+massive blooms, oft
+as large as a child's
+head.
+  The flowers are so
+large that one may
+scoop out the pollen in
+handfuls, and during
+the spring season
+
+many a prank hath
+been played by idle
+boys 'pon their
+sisters by dumping
+said pollen into their
+clothing drawers,
+causing sneezes for
+days.
+
+  The most
+interesting native tree
+to Britannia is the
+spider tree. The
+reason for its naming
+is obscure, but may
+have to do with the
+twisted gray stalks
+
+from which the
+spherical canopy
+sprouts. 'Tis
+something of a
+misnomer to term
+these \"trunks\" as
+they are spindly and
+flexible. Spider trees
+
+provide a fresh,
+piney smell to a room
+and are therefore
+often potted.
+  In jungle climes,
+one finds the blade
+plant, whose sharp
+leaves oft collect
+
+water for the thirsty
+traveler, yet can
+draw blood easily.
+  The deadliest plant,
+if you can call a
+fungus such, is the
+Exploding Red Spotted
+Toadstool. No pattern
+
+can be discerned to
+its habitats save
+malice, for merely
+approaching results in
+the cap exploding
+with powder, noxious
+gas, and tiny painful
+pellets flying in all
+
+directions.
+Unfortunately, 'tis
+impossible to tell it
+apart from the
+Ordinary Red Spotted
+Toadstool save through
+experimentation.
+  Truly odd among the
+
+varied flora of
+Britannia, however,
+are those which bear
+names clearly alien to
+our tongue. Among
+these I name the
+Tuscany pine (for I
+have never seen a
+
+region of this world
+named Tuscany), the
+o'hii tree, whose very
+name sounds like
+some tropical isle, and
+the welsh poppy,
+which while
+different from the
+
+ordinary poppy in
+color and appearance,
+is prefaced with the
+odd word \"welsh,\"
+which as far as I
+know means to forgo
+paying a debt."""
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
+[translations.cze]
+title = "Květena země Britannia: Nenáročný průvodce"
+content = """Často jsem při toulkách
+lesem a vyhýbání se
+medvědům zahlédl
+rostlinu, jakou jsem
+nikdy předtím neviděl, a
+usoudil, že jsem úplný
+hlupák,
+
+když jsem si jí dříve
+nevšiml. Stejně často
+jsem usoudil, že jsem
+ještě větší hlupák, když
+před medvědem neutíkám
+rychleji.
+Ačkoli ne všichni mí
+
+čtenáři sdílejí mou
+zálibu ve šplhání na
+stromy, napadlo mne, že
+by mé poznatky snad
+mohly posloužit nějakému
+skromnému účelu.
+
+Dvě nejzvláštnější
+kvetoucí rostliny
+venkova země Britannia
+jsou orfleur a bělokvět,
+zvaný též bílé rohy.
+
+Orfleur vyniká mohutnými
+oranžovočervenými květy,
+vedle nichž vypadají
+měsíčky nicotně jako
+obyčejné kouzlo ohnivé
+koule vedle slunce. Vůni
+těchto
+
+květů nejlépe vystihuje
+máta s jablkem a špetkou
+česneku. Je to oblíbená
+rostlina do květináče
+navzdory své exotické
+povaze, nebo snad právě
+díky ní.
+
+Bělokvěty vydechují
+jemnou vůni podobnou
+čerstvým dřevěným
+hoblinám smíšeným s
+chladnou citronovou
+tříští. Jejich vysoké
+stonky se vždy ohýbají
+pod tíhou
+
+mohutných květů, často
+velikých jako dětská
+hlava.
+Květy jsou tak veliké,
+že z nich lze nabírat
+pyl plnými hrstmi, a za
+jarního období
+
+natropili zahálčiví
+chlapci nejednu neplechu
+svým sestrám: sypali jim
+tento pyl do zásuvek s
+oděvy, čímž je nutili
+celé dny kýchat.
+
+Nejzajímavější strom
+původem ze země
+Britannia je pavoučí
+strom. Příčina jeho
+pojmenování je nejasná,
+může však souviset s
+pokroucenými šedými
+stvoly,
+
+z nichž vyrůstá kulovitá
+koruna. Nazývat je
+„kmeny“ je poněkud
+nepřesné, neboť jsou
+vytáhlé a ohebné.
+Pavoučí stromy
+
+dodávají místnosti svěží
+borovou vůni, a proto se
+často pěstují v
+květináčích.
+V džungli nacházíme
+čepelník, jehož ostré
+listy často zachytávají
+
+vodu pro žíznivého
+poutníka, mohou však
+snadno způsobit krvavé
+poranění.
+Nejsmrtelnější
+rostlinou, lze-li tak
+nazvat houbu, je
+vybuchující červeně
+skvrnitá muchomůrka. V
+jejích stanovištích
+
+nelze nalézt žádný řád
+kromě zlovůle: pouhé
+přiblížení způsobí, že
+klobouk vybuchne v
+oblaku prášku,
+jedovatého plynu a
+drobných bolestivých
+kuliček létajících do
+všech
+
+směrů. Naneštěstí ji
+nelze od obyčejné
+červeně skvrnité
+muchomůrky odlišit jinak
+než pokusem.
+Mezi rozmanitou
+
+květenou země Britannia
+jsou však skutečně
+podivné rostliny nesoucí
+jména zjevně cizí našemu
+jazyku. Uvádím mezi nimi
+borovici Tuscany (neboť
+jsem nikdy neviděl
+
+oblast tohoto světa
+jménem Tuscany), strom
+o'hii, jehož samotné
+jméno zní jako název
+tropického ostrova, a
+mák welsh, který se sice
+liší od
+
+obyčejného máku barvou a
+vzhledem, jeho jméno
+však začíná podivným
+slovem „welsh“, jež,
+pokud vím, znamená
+vyhnout se zaplacení
+dluhu."""
+[translations.fre]
+title = "La flore de Britannia : petit guide sans prétention"
+content = """Souvent, en errant dans
+les bois pour éviter les
+ours, ai-je aperçu
+quelque plante dont je
+n’avais jamais vu la
+pareille et conclu que
+j’étais un imbécile fini
+
+pour ne l’avoir point
+remarquée auparavant.
+Tout aussi souvent, j’ai
+conclu que j’étais un
+imbécile plus grand
+encore de ne pas courir
+plus vite pour échapper
+à l’ours. Bien que tous
+mes
+
+lecteurs ne partagent
+pas mon goût pour
+l’escalade des arbres,
+il m’est venu à l’esprit
+que mes renseignements
+pourraient peut-être
+servir à quelque humble
+usage.
+
+Les deux plantes à
+fleurs les plus
+singulières des
+campagnes de Britannia
+sont l’orfleur et la
+fleur blanche, également
+appelée cornes blanches.
+
+L’orfleur se distingue
+par ses énormes fleurs
+rouge orangé, qui
+éclipsent les soucis
+comme le soleil éclipse
+votre vulgaire sort de
+boule de feu. Le parfum
+de ces
+
+fleurs se décrit au
+mieux comme un mélange
+de menthe poivrée et de
+pomme, avec une pointe
+d’ail. C’est une plante
+en pot appréciée malgré
+son caractère exotique,
+ou peut-être à cause de
+lui.
+
+Les fleurs blanches
+exhalent un parfum
+subtil assez semblable à
+celui du bois
+fraîchement raboté, mêlé
+à une glace au citron
+bien fraîche. Leurs
+hautes tiges s’inclinent
+toujours sous le poids
+des
+
+énormes fleurs, souvent
+aussi grosses que la
+tête d’un enfant. Les
+fleurs sont si grandes
+qu’on peut y puiser le
+pollen à pleines mains,
+et au printemps
+
+maint garçon désœuvré a
+joué un tour à ses sœurs
+en déversant ce pollen
+dans leurs tiroirs à
+vêtements, provoquant
+des éternuements pendant
+des jours.
+
+L’arbre indigène le plus
+intéressant de Britannia
+est l’arbre-araignée.
+L’origine de son nom est
+obscure, mais pourrait
+tenir aux tiges grises
+et tordues
+
+d’où jaillit sa ramure
+sphérique. Il est
+quelque peu impropre de
+nommer ces tiges des «
+troncs », car elles sont
+grêles et souples. Les
+arbres-araignées
+
+apportent à une pièce
+une fraîche odeur de pin
+et sont donc souvent
+cultivés en pots. Dans
+les climats de jungle,
+on trouve la
+plante-lame, dont les
+feuilles acérées
+recueillent souvent
+
+de l’eau pour le
+voyageur assoiffé, mais
+peuvent aisément faire
+couler le sang. La
+plante la plus
+meurtrière, si l’on peut
+nommer ainsi un
+champignon, est le
+Champignon Explosif à
+Taches Rouges. On ne
+peut discerner aucune
+règle
+
+quant à ses habitats,
+hormis la malveillance,
+car il suffit de s’en
+approcher pour que son
+chapeau explose en
+poudre, en gaz nocif et
+en minuscules
+projectiles douloureux
+qui volent dans toutes
+les
+
+directions. Hélas, il
+est impossible de le
+distinguer du Champignon
+Ordinaire à Taches
+Rouges, sinon par
+l’expérience. Cependant,
+parmi la
+
+flore variée de
+Britannia, les plantes
+vraiment étranges sont
+celles qui portent des
+noms manifestement
+étrangers à notre
+langue. Je citerai le
+pin de Tuscany (car je
+n’ai jamais vu de
+
+région de ce monde
+appelée Tuscany),
+l’arbre o’hii, dont le
+nom même évoque quelque
+île tropicale, et le
+pavot welsh qui, bien
+que différent du
+
+pavot ordinaire par sa
+couleur et son aspect,
+est précédé de cet
+étrange mot « welsh »,
+qui, à ma connaissance,
+signifie ne pas payer
+une dette."""
+[translations.ger]
+title = "Die Pflanzenwelt Britannias: Ein zwangloser Führer"
+content = """Oft habe ich beim
+Umherstreifen im Wald,
+während ich Bären
+auswich, eine Pflanze
+erblickt, wie ich sie
+noch nie gesehen hatte,
+und geschlossen, dass
+ich ein faselnder
+Dummkopf war,
+
+weil ich sie früher
+nicht bemerkt hatte.
+Ebenso oft habe ich
+geschlossen, dass ich
+ein noch größerer
+Dummkopf war, weil ich
+nicht schneller vor dem
+Bären davonlief.
+Obwohl nicht alle meine
+
+Leser meine Neigung zum
+Baumklettern teilen
+mögen, kam mir der
+Gedanke, meine
+Kenntnisse könnten
+vielleicht einem
+bescheidenen Zweck
+dienen.
+
+Die beiden
+eigentümlichsten
+Blütenpflanzen der
+Landschaft Britannias
+sind die Orfleur und die
+Weißblume, auch Weiße
+Hörner genannt.
+
+Die Orfleur zeichnet
+sich durch ihre
+gewaltigen orange-roten
+Blüten aus, neben denen
+Ringelblumen so klein
+wirken wie ein
+gewöhnlicher
+Feuerballzauber neben
+der Sonne. Der Duft
+dieser
+
+Blüten lässt sich am
+besten als
+Pfefferminz-Apfel mit
+einem Hauch Knoblauch
+beschreiben. Trotz oder
+vielleicht gerade wegen
+ihrer exotischen Natur
+ist sie eine beliebte
+Topfpflanze.
+
+Weißblumen verströmen
+einen zarten Duft, der
+dem frisch gehobelten
+Holzes, vermischt mit
+kühlem Zitroneneis,
+nicht unähnlich ist.
+Ihre hohen Stängel
+hängen stets unter dem
+großen Gewicht der
+
+gewaltigen Blüten herab,
+die oft so groß wie ein
+Kinderkopf sind.
+Die Blüten sind so groß,
+dass man den Pollen
+händeweise
+herausschöpfen kann, und
+im Frühling
+
+haben müßige Knaben
+ihren Schwestern manchen
+Streich gespielt, indem
+sie diesen Pollen in
+deren Kleiderschubladen
+schütteten und so
+tagelanges Niesen
+verursachten.
+
+Der interessanteste in
+Britannia heimische Baum
+ist der Spinnenbaum. Der
+Grund für seinen Namen
+ist unklar, mag aber mit
+den gewundenen grauen
+Stängeln zusammenhängen,
+
+aus denen die
+kugelförmige Krone
+sprießt. Diese „Stämme“
+zu nennen, ist beinahe
+falsch, denn sie sind
+dünn und biegsam.
+Spinnenbäume
+
+verleihen einem Raum
+einen frischen
+Kiefernduft und werden
+daher oft in Töpfen
+gehalten.
+In Dschungelgegenden
+findet man die
+Klingenpflanze, deren
+scharfe Blätter oft
+
+Wasser für den durstigen
+Reisenden sammeln, aber
+leicht Blut fließen
+lassen können.
+Die tödlichste Pflanze,
+sofern man einen Pilz so
+nennen kann, ist der
+Explodierende
+Rotgefleckte Giftpilz.
+Kein Muster
+
+lässt sich in seinen
+Standorten erkennen,
+außer Bosheit, denn
+schon beim Näherkommen
+explodiert der Hut, und
+Pulver, giftiges Gas und
+winzige schmerzhafte
+Kügelchen fliegen in
+alle
+
+Richtungen. Leider lässt
+er sich außer durch
+Versuche nicht vom
+Gewöhnlichen
+Rotgefleckten Giftpilz
+unterscheiden.
+Wahrhaft seltsam unter
+den
+
+vielfältigen Pflanzen
+Britannias sind jedoch
+jene, deren Namen
+unserer Sprache
+offensichtlich fremd
+sind. Unter diesen nenne
+ich die Tuscany-Kiefer
+(denn ich habe nie eine
+
+Gegend dieser Welt
+gesehen, die Tuscany
+heißt), den O'hii-Baum,
+dessen Name schon wie
+eine tropische Insel
+klingt, und den
+Welsh-Mohn, der sich
+zwar vom
+
+gewöhnlichen Mohn in
+Farbe und Aussehen
+unterscheidet, dem aber
+das seltsame Wort
+„welsh“ vorangestellt
+ist, das meines Wissens
+bedeutet, eine Schuld
+nicht zu begleichen."""
+[translations.ita]
+title = "La flora di Britannia: una guida informale"
+content = """Spesso, vagando nei
+boschi per evitare gli
+orsi, ho scorto una
+pianta mai vista prima e
+ho concluso che ero un
+idiota completo
+
+per non averla notata in
+passato. Altrettanto
+spesso ho concluso che
+ero un idiota ancor
+peggiore per non correre
+più veloce dell'orso.
+Sebbene non tutti i miei
+
+lettori condividano la
+mia propensione ad
+arrampicarmi sugli
+alberi, mi è venuto in
+mente che forse le mie
+informazioni potrebbero
+servire a qualche umile
+scopo.
+
+Le due piante da fiore
+più singolari della
+campagna di Britannia
+sono l'orfleur e il
+fiore bianco, detto
+anche corna bianche.
+
+L'orfleur si distingue
+per i suoi enormi fiori
+rosso arancio, che fanno
+sembrare minuscole le
+calendule come il sole
+fa sembrare minuscolo il
+comune incantesimo della
+palla di fuoco. L'odore
+di quei
+
+fiori si descrive al
+meglio come menta
+piperita e mela, con una
+punta d'aglio. È una
+popolare pianta da vaso
+nonostante, o forse
+proprio per, la sua
+natura esotica.
+
+I fiori bianchi emanano
+una delicata fragranza
+non dissimile da quella
+del legno appena
+piallato, mescolata a
+fresco ghiaccio al
+limone. I loro alti
+steli si piegano sempre
+sotto il peso gravoso
+dei
+
+massicci fiori, spesso
+grandi come la testa di
+un bambino.
+I fiori sono tanto
+grandi che se ne può
+raccogliere il polline a
+manciate, e durante la
+primavera
+
+molti scherzi sono stati
+giocati da ragazzi
+oziosi alle loro
+sorelle, riversando quel
+polline nei cassetti dei
+vestiti e causando
+starnuti per giorni.
+
+L'albero nativo di
+Britannia più
+interessante è l'albero
+ragno. Il motivo del suo
+nome è oscuro, ma
+potrebbe avere a che
+fare con i contorti
+fusti grigi
+
+da cui spunta la chioma
+sferica. È piuttosto
+improprio chiamarli
+«tronchi», poiché sono
+esili e flessibili. Gli
+alberi ragno
+
+diffondono nella stanza
+un fresco odore di pino
+e perciò vengono spesso
+coltivati in vaso.
+Nei climi della giungla
+si trova la pianta lama,
+le cui foglie affilate
+spesso raccolgono
+
+acqua per il viaggiatore
+assetato, ma possono
+facilmente far
+sanguinare.
+La pianta più mortale,
+se così si può chiamare
+un fungo, è il Fungo
+Rosso Maculato
+Esplosivo. Non si può
+individuare alcun
+criterio
+
+nei suoi habitat, salvo
+la malizia, poiché il
+solo avvicinarsi fa
+esplodere il cappello in
+polvere, gas nocivo e
+minuscoli granelli
+dolorosi che volano in
+ogni
+
+direzione. Purtroppo è
+impossibile distinguerlo
+dal Fungo Rosso Maculato
+Ordinario se non
+attraverso
+l'esperimento.
+Davvero strane fra le
+
+varie piante di
+Britannia, tuttavia,
+sono quelle che portano
+nomi chiaramente
+estranei alla nostra
+lingua. Fra queste
+nomino il pino Tuscany
+(poiché non ho mai visto
+una
+
+regione di questo mondo
+chiamata Tuscany),
+l'albero o'hii, il cui
+stesso nome suona come
+quello di un'isola
+tropicale, e il papavero
+welsh, che pur
+
+differendo dal comune
+papavero per colore e
+aspetto, è preceduto
+dalla strana parola
+«welsh», che per quanto
+ne so significa evitare
+di pagare un debito."""
+[translations.pol]
+title = "Flora Britannia: swobodny przewodnik"
+content = """Nieraz, wędrując po
+lesie i unikając
+niedźwiedzi,
+spostrzegałem roślinę,
+jakiej nigdy wcześniej
+nie widziałem, i
+dochodziłem do wniosku,
+że byłem skończonym
+głupcem,
+
+skoro nie zauważyłem jej
+w przeszłości. Równie
+często uznawałem, że
+jeszcze większym głupcem
+byłem, nie uciekając
+szybciej przed
+niedźwiedziem.
+Choć nie wszyscy moi
+
+czytelnicy podzielają
+zamiłowanie do wspinania
+się na drzewa, przyszło
+mi do głowy, że może
+moja wiedza mogłaby
+posłużyć jakiemuś
+skromnemu celowi.
+
+Dwie najbardziej
+niezwykłe rośliny
+kwitnące na ziemiach
+Britannia to orfleur
+oraz biały kwiat, zwany
+także białymi rogami.
+
+Orfleur wyróżnia się
+ogromnymi
+pomarańczowoczerwonymi
+kwiatami, przy których
+nagietki wydają się
+maleńkie, jak zwykłe
+zaklęcie kuli ognia przy
+słońcu. Zapach owych
+
+kwiatów najlepiej opisać
+jako miętowo-jabłkowy, z
+odrobiną czosnku. To
+popularna roślina
+doniczkowa mimo swej
+egzotycznej natury, a
+może właśnie dzięki
+niej.
+
+Białe kwiaty wydzielają
+delikatną woń
+przypominającą świeżo
+strugane drewno
+zmieszane z chłodnym
+lodem cytrynowym. Ich
+wysokie łodygi zawsze
+uginają się pod ciężarem
+
+ogromnych kwiatów,
+często wielkości
+dziecięcej głowy.
+Kwiaty są tak wielkie,
+że można wybierać z nich
+pyłek garściami, a
+podczas wiosny
+
+niejeden żart zrobili
+próżnujący chłopcy swym
+siostrom, wsypując ten
+pyłek do ich szuflad z
+ubraniami, przez co
+kichały przez wiele dni.
+
+Najciekawszym drzewem
+rodzimym dla Britannia
+jest drzewo pajęcze.
+Pochodzenie jego nazwy
+jest niejasne, lecz może
+wiązać się ze skręconymi
+szarymi łodygami,
+
+z których wyrasta
+kulista korona.
+Nazywanie ich „pniami”
+jest niezbyt trafne,
+gdyż są cienkie i
+giętkie. Drzewa pajęcze
+
+napełniają pokój świeżym
+sosnowym zapachem,
+dlatego często sadzi się
+je w donicach.
+W klimacie dżungli
+znaleźć można roślinę
+ostrzolistną, której
+ostre liście często
+gromadzą
+
+wodę dla spragnionego
+podróżnego, lecz łatwo
+mogą też puścić krew.
+Najbardziej
+śmiercionośną rośliną,
+jeśli można tak nazwać
+grzyba, jest wybuchający
+czerwony muchomor
+plamisty. Żaden wzorzec
+
+nie rządzi jego
+występowaniem prócz
+złośliwości, gdyż samo
+zbliżenie się powoduje
+wybuch kapelusza, z
+którego proszek, trujący
+gaz i drobne bolesne
+kulki lecą we wszystkich
+
+kierunkach. Niestety, od
+zwyczajnego czerwonego
+muchomora plamistego nie
+sposób odróżnić go
+inaczej niż
+eksperymentalnie.
+Jednak prawdziwie
+osobliwe wśród
+
+rozmaitej flory
+Britannia są rośliny
+noszące nazwy wyraźnie
+obce naszemu językowi.
+Wymienię wśród nich
+sosnę Tuscany (gdyż
+nigdy nie widziałem
+
+krainy tego świata
+zwanej Tuscany), drzewo
+o'hii, którego sama
+nazwa brzmi jak jakaś
+tropikalna wyspa, oraz
+mak welsh, który choć
+różni się od
+
+zwykłego maku barwą i
+wyglądem, poprzedzony
+jest dziwnym słowem
+„welsh”, które, o ile mi
+wiadomo, oznacza
+uchylanie się od spłaty
+długu."""
+[translations.por]
+title = "Flora de Britannia: um guia informal"
+content = """Muitas vezes, ao vagar
+pelos bosques evitando
+ursos, avistei alguma
+planta como nunca tinha
+visto antes e concluí
+que era um completo
+idiota
+
+por não tê-la notado no
+passado. Com a mesma
+frequência, concluí que
+era um idiota ainda pior
+por não correr mais
+depressa do urso.
+Embora nem todos os meus
+
+leitores compartilhem
+minha inclinação para
+subir em árvores,
+ocorreu-me que talvez
+minhas informações
+pudessem servir a algum
+humilde propósito.
+
+As duas plantas floridas
+mais singulares da
+paisagem rural de
+Britannia são a orfleur
+e a flor-branca, também
+chamada de chifres
+brancos.
+
+A orfleur se destaca por
+suas enormes flores
+vermelho-alaranjadas,
+que fazem as calêndulas
+parecerem pequenas como
+o sol faz parecer
+pequeno seu feitiço
+comum de bola de fogo. O
+cheiro dessas
+
+flores pode ser melhor
+descrito como
+hortelã-pimenta com maçã
+e um toque de alho. É
+uma planta popular para
+vasos, apesar de sua
+natureza exótica, ou
+talvez por causa dela.
+
+As flores-brancas exalam
+uma fragrância sutil que
+lembra madeira
+recém-aplainada
+misturada com gelo de
+limão gelado. Suas
+hastes altas sempre se
+curvam sob o grande peso
+das
+
+enormes flores,
+frequentemente do
+tamanho da cabeça de uma
+criança.
+As flores são tão
+grandes que é possível
+retirar o pólen aos
+punhados, e, durante a
+primavera,
+
+muitas travessuras foram
+feitas por meninos
+desocupados às suas
+irmãs, despejando esse
+pólen nas gavetas de
+roupas delas e causando
+espirros por dias.
+
+A árvore nativa mais
+interessante de
+Britannia é a
+árvore-aranha. A razão
+de seu nome é obscura,
+mas pode ter relação com
+os caules cinzentos e
+retorcidos
+
+dos quais brota a copa
+esférica. É um tanto
+impróprio chamá-los de
+\"troncos\", pois são
+finos e flexíveis. As
+árvores-aranha
+
+dão a um cômodo um aroma
+fresco de pinho e, por
+isso, são frequentemente
+plantadas em vasos.
+Nos climas de selva,
+encontra-se a
+planta-lâmina, cujas
+folhas afiadas muitas
+vezes acumulam
+
+água para o viajante
+sedento, mas podem
+facilmente fazê-lo
+sangrar.
+A planta mais mortal, se
+é possível chamar assim
+um fungo, é o Cogumelo
+Explosivo de Manchas
+Vermelhas. Nenhum padrão
+
+pode ser identificado em
+seus habitats, salvo a
+malícia, pois basta
+aproximar-se para que
+seu chapéu exploda em
+pó, gás nocivo e
+pequenas esferas
+dolorosas lançadas em
+todas as
+
+direções. Infelizmente,
+é impossível
+distingui-lo do Cogumelo
+Comum de Manchas
+Vermelhas, exceto por
+experimentação.
+Verdadeiramente
+estranhas entre a
+
+variada flora de
+Britannia, porém, são as
+plantas que levam nomes
+claramente alheios à
+nossa língua. Entre elas
+cito o pinheiro de
+Tuscany (pois nunca vi
+uma
+
+região deste mundo
+chamada Tuscany), a
+árvore o'hii, cujo
+próprio nome soa como
+alguma ilha tropical, e
+a papoula welsh, que,
+embora diferente da
+
+papoula comum em cor e
+aparência, traz antes do
+nome a estranha palavra
+\"welsh\", que, pelo que
+sei, significa deixar de
+pagar uma dívida."""
+[translations.spa]
+title = "Flora de Britannia: una guía informal"
+content = """  A menudo, al vagar por
+el bosque esquivando
+osos, he visto una
+planta como ninguna otra
+que conociera y he
+concluido que era un
+completo idiota
+
+por no haberla advertido
+antes. Y, con igual
+frecuencia, he concluido
+que era aún más idiota
+por no correr más
+deprisa para alejarme
+del oso. Aunque no todos
+mis
+
+lectores compartan mi
+afición a trepar a los
+árboles, se me ocurrió
+que quizá mi información
+pudiera servir para
+algún modesto propósito.
+
+  Las dos plantas con
+flor más singulares de
+los campos de Britannia
+son el orfleur y la flor
+blanca, también llamada
+cuernos blancos.
+
+  El orfleur destaca por
+sus enormes flores
+anaranjadas y rojizas,
+que empequeñecen las
+caléndulas como el sol
+empequeñece un vulgar
+hechizo de bola de
+fuego. El olor de esas
+
+flores se describe mejor
+como menta y manzana con
+una pizca de ajo. Es una
+popular planta de maceta
+a pesar de su naturaleza
+exótica, o quizá
+precisamente por ella.
+
+  Las flores blancas
+desprenden un aroma
+sutil semejante al de la
+madera recién cepillada
+mezclada con helado
+fresco de limón. Sus
+altos tallos siempre se
+inclinan bajo el peso de
+las
+
+enormes flores, que
+suelen ser tan grandes
+como la cabeza de un
+niño. Las flores son tan
+grandes que se puede
+recoger el polen a
+puñados y, durante la
+primavera,
+
+muchos muchachos ociosos
+han gastado bromas a sus
+hermanas vertiendo ese
+polen en los cajones de
+su ropa y provocándoles
+estornudos durante días.
+
+  El árbol autóctono más
+interesante de Britannia
+es el árbol araña. El
+origen de su nombre es
+incierto, pero quizá
+tenga que ver con los
+retorcidos tallos grises
+
+de los que brota su copa
+esférica. Llamarlos
+«troncos» resulta algo
+impropio, pues son
+delgados y flexibles.
+Los árboles araña
+
+aportan a una habitación
+un aroma fresco a pino,
+por lo que a menudo se
+cultivan en macetas. En
+los climas selváticos se
+encuentra la planta
+cuchilla, cuyas hojas
+afiladas suelen acumular
+
+agua para el viajero
+sediento, aunque pueden
+hacer brotar sangre con
+facilidad. La planta más
+mortífera, si es que a
+un hongo se le puede
+llamar planta, es la
+Seta Roja Moteada
+Explosiva. No se aprecia
+patrón
+
+alguno en los lugares
+donde crece, salvo la
+malicia: basta acercarse
+para que su sombrero
+estalle y lance polvo,
+gas nocivo y diminutos y
+dolorosos proyectiles en
+todas
+
+direcciones. Por
+desgracia, es imposible
+distinguirla de la Seta
+Roja Moteada Corriente
+salvo mediante la
+experimentación. Sin
+embargo, entre la
+
+variada flora de
+Britannia resultan
+verdaderamente extrañas
+las plantas cuyos
+nombres son claramente
+ajenos a nuestra lengua.
+Entre ellas cito el pino
+de Tuscany —pues nunca
+he visto una
+
+región de este mundo
+llamada Tuscany—, el
+árbol o'hii, cuyo nombre
+mismo parece el de
+alguna isla tropical, y
+la amapola «welsh», que,
+aunque difiere de la
+
+amapola corriente en
+color y aspecto, lleva
+delante la extraña
+palabra «welsh», que,
+hasta donde sé,
+significa dejar de pagar
+una deuda."""

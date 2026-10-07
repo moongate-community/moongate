@@ -17,11 +17,14 @@ async function htmlFiles(directory, prefix = '') {
 }
 
 function inspectHtml(html) {
-  const ids = new Set(), links = [];
+  const ids = new Set(), duplicates = new Set(), links = [];
   const walk = node => {
     for (const { name, value } of node.attrs ?? []) {
-      if (name === 'id' || (node.tagName === 'a' && name === 'name')) ids.add(value);
-      if (name === 'href' || name === 'src') links.push(value);
+      if (name === 'id' || (node.tagName === 'a' && name === 'name')) {
+        if (ids.has(value)) duplicates.add(value);
+        ids.add(value);
+      }
+      if (name === 'href' || name === 'src' || (node.tagName === 'option' && name === 'value' && value.startsWith('/'))) links.push(value);
       if (name === 'srcset') {
         for (const candidate of srcsetUrls(value)) links.push(candidate.url);
       }
@@ -29,7 +32,19 @@ function inspectHtml(html) {
     for (const child of node.childNodes ?? []) walk(child);
   };
   walk(parse(html));
-  return { ids, links };
+  return { ids, duplicates, links };
+}
+
+// The Lua reference has no manifest entries: its pages are the files the build generated.
+export async function luaPageSlugs(directory) {
+  let files;
+  try {
+    files = await readdir(directory);
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    throw new Error(`No Lua reference pages in ${directory}: run "npm run prepare:lua" before checking links.`);
+  }
+  return files.map(file => (file === 'index.md' ? 'lua' : `lua/${path.basename(file, '.md')}`));
 }
 
 export async function validateSite({ directory, site, basePath, expectedSlugs = [] }) {
@@ -42,6 +57,7 @@ export async function validateSite({ directory, site, basePath, expectedSlugs = 
   }
   const origin = new URL(site).origin;
   for (const [file, document] of documents) {
+    for (const id of document.duplicates) errors.push(`${file}: Duplicate anchor ID ${JSON.stringify(id)}`);
     const route = file === 'index.html' ? '' : file.replace(/index\.html$/, '');
     const pageUrl = new URL(`${basePath}${route}`, origin);
     for (const destination of document.links) {
@@ -74,10 +90,8 @@ export async function validateSite({ directory, site, basePath, expectedSlugs = 
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
-  // The Lua reference has no manifest entries: its pages are the files the build generated.
-  const luaPages = (await readdir(fileURLToPath(new URL('../src/content/docs/lua/', import.meta.url))))
-    .map(file => (file === 'index.md' ? 'lua' : `lua/${path.basename(file, '.md')}`));
-  const expectedSlugs = [...contentEntries.map(entry => entry.slug), ...luaPages];
+  const luaPages = await luaPageSlugs(fileURLToPath(new URL('../src/content/docs/lua/', import.meta.url)));
+  const expectedSlugs = [...contentEntries.map(entry => entry.slug), ...contentEntries.filter(entry => !entry.englishOnly).map(entry => `it/${entry.slug}`), 'it', ...luaPages];
   const errors = await validateSite({
     directory: fileURLToPath(new URL('../dist/', import.meta.url)),
     site: docsSite, basePath: docsBasePath,

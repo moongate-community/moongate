@@ -133,11 +133,11 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
 
                     // The expected close cancels the login mailbox token; delivery must finish before revocation is decided.
                     delivered = await _sender.SendAndDisconnectAsync(
-                            session.SessionId,
-                            connection,
-                            redirect,
-                            CancellationToken.None
-                        );
+                        session.SessionId,
+                        connection,
+                        redirect,
+                        CancellationToken.None
+                    );
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -193,11 +193,11 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
         try
         {
             if (await _sender.SendAndDisconnectAsync(
-                        session.SessionId,
-                        connection,
-                        new LoginDeniedPacket(reason),
-                        CancellationToken.None
-                    ))
+                    session.SessionId,
+                    connection,
+                    new LoginDeniedPacket(reason),
+                    CancellationToken.None
+                ))
             {
                 return;
             }

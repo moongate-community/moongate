@@ -51,6 +51,7 @@ internal static class PropsDictionary
     {
         if (props is null || !props.TryGetValue(key, out var stored) || stored is null)
         {
+            // Safe: default of a generic value, only returned when no value is stored.
             value = default!;
 
             return false;

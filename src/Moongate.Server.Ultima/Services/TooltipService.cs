@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Extensions;
@@ -21,7 +22,8 @@ namespace Moongate.Server.Ultima.Services;
 /// <inheritdoc />
 /// <remarks>
 ///     The texts are the server's, in the server language, through <see cref="ILocalizationService" /> as free text
-///     (as UOX3): blessed and cursed, the weight and the rarity. Names stay the client's clilocs (its item names, the
+///     (as UOX3): blessed and cursed, the weight and, for an item above common, the rarity. Names stay the client's clilocs
+///     (its item names, the
 ///     amount and a mobile's name and title) until the server has translated names. A tooltip depends only on a few
 ///     fields of its item or mobile (<see cref="ItemTooltipKey" />, <see cref="MobileTooltipKey" />), so it is cached by
 ///     them: a change gives another key, and nothing is ever invalidated. The returned lists are shared and must not
@@ -39,13 +41,14 @@ public sealed class TooltipService : ITooltipService
     private const int HighItemNameCliloc = 1078872;
     private const int HighItemGraphic = 0x4000;
     private const int AmountAndNameCliloc = 1050039; // ~1_NUMBER~ ~2_ITEMNAME~
-    private const int MobileNameCliloc = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+    private const int ValueCliloc = 1060738;         // value: ~1_val~
+    private const int MobileNameCliloc = 1050045;    // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 
     private const byte CannotLiftWeight = 255;
 
     // messages/*.toml: the server's own tooltip texts, in the server language.
     private const int RarityMessageBase = 30000; // + rarity
-    private const int BlessedMessage = 9055; // [Blessed], as UOX3
+    private const int BlessedMessage = 9055;     // [Blessed], as UOX3
     private const int CursedMessage = 30005;
     private const int OneStoneMessage = 30006;
     private const int StonesMessage = 30007;
@@ -128,6 +131,7 @@ public sealed class TooltipService : ITooltipService
 
         var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own : (LootType?)null;
         var labelNumber = item.TryGetProp<int>(ItemPropKeys.LabelNumber, out var label) ? label : (int?)null;
+        var worth = BankService.CheckWorth(item);
         var key = new ItemTooltipKey(
             item.TemplateId,
             item.ItemId,
@@ -136,13 +140,21 @@ public sealed class TooltipService : ITooltipService
             item.Rarity,
             lootType,
             item.Movable,
-            labelNumber
+            labelNumber,
+            worth
         );
 
-        return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber));
+        return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber, worth));
     }
 
-    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType, int? labelNumber)
+    public PropertyList Build(MobileEntity mobile)
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        return Cached(_mobileTooltips, new MobileTooltipKey(mobile.Name, mobile.Title), () => BuildMobile(mobile));
+    }
+
+    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType, int? labelNumber, long? worth)
     {
         var list = new PropertyList();
         _templates.TryGet(item.TemplateId, out var template);
@@ -172,23 +184,32 @@ public sealed class TooltipService : ITooltipService
         if (item.Movable ?? template?.EffectiveMovable(_tiles) ?? TiledataWeight(item) < CannotLiftWeight)
         {
             var weight = (int)Math.Ceiling((template?.EffectiveWeight(_tiles) ?? TiledataWeight(item)) * item.Amount);
-            list.AddText(weight == 1 ? _localization.Text(OneStoneMessage, "Weight: 1 stone") : _localization.Text(StonesMessage, "Weight: {0} stones", weight));
+            list.AddText(
+                weight == 1
+                    ? _localization.Text(OneStoneMessage, "Weight: 1 stone")
+                    : _localization.Text(StonesMessage, "Weight: {0} stones", weight)
+            );
         }
 
-        var rarity = _localization.Text(RarityMessageBase + (int)item.Rarity, item.Rarity.ToString());
-        list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
+        // A bank check: what it is worth, as ModernUO.
+        if (worth is { } gold)
+        {
+            list.Add(ValueCliloc, gold.ToString("N0", CultureInfo.InvariantCulture));
+        }
+
+        // Almost everything is common: only what is above it says its rarity.
+        if (item.Rarity > ItemRarityType.Common)
+        {
+            var rarity = _localization.Text(RarityMessageBase + (int)item.Rarity, item.Rarity.ToString());
+            list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
+        }
 
         return list;
     }
 
-    public PropertyList Build(MobileEntity mobile)
-    {
-        ArgumentNullException.ThrowIfNull(mobile);
-
-        return Cached(_mobileTooltips, new MobileTooltipKey(mobile.Name, mobile.Title), () => BuildMobile(mobile));
-    }
-
-    private static PropertyList Cached<TKey>(ConcurrentDictionary<TKey, PropertyList> cache, TKey key, Func<PropertyList> build)
+    private static PropertyList Cached<TKey>(
+        ConcurrentDictionary<TKey, PropertyList> cache, TKey key, Func<PropertyList> build
+    )
         where TKey : notnull
     {
         if (cache.TryGetValue(key, out var cached))
@@ -209,7 +230,10 @@ public sealed class TooltipService : ITooltipService
         // The client needs a single space for an empty prefix or suffix.
         var list = new PropertyList();
         var title = Argument(mobile.Title);
-        list.Add(MobileNameCliloc, $" \t{Argument(mobile.Name) ?? " "}\t{(string.IsNullOrEmpty(title) ? " " : " " + title)}");
+        list.Add(
+            MobileNameCliloc,
+            $" \t{Argument(mobile.Name) ?? " "}\t{(string.IsNullOrEmpty(title) ? " " : " " + title)}"
+        );
 
         return list;
     }
@@ -227,10 +251,14 @@ public sealed class TooltipService : ITooltipService
                     InView(viewer, wearer.Map, wearer.Location));
         }
 
-        return item.Map is { } map &&
-               item.GroundLocation is { } spot &&
-               _items.IsLyingOnGround(item) &&
+        // On the ground, or inside what lies there at any depth, such as a treasure chest or a corpse: read from
+        // where the container is, by who may see both.
+        return _items.GetGroundRoot(item) is { } root &&
+               root.Map is { } map &&
+               root.GroundLocation is { } spot &&
+               _items.IsLyingOnGround(root) &&
                InView(viewer, map, spot) &&
+               account >= VisibilityOf(root) &&
                account >= VisibilityOf(item);
     }
 
@@ -285,11 +313,10 @@ public sealed class TooltipService : ITooltipService
     {
         return rarity switch
         {
-            ItemRarityType.Common => "#FFFFFF",
             ItemRarityType.Uncommon => "#1EFF00",
-            ItemRarityType.Rare => "#0070DD",
-            ItemRarityType.Epic => "#A335EE",
-            _ => "#FF8000"
+            ItemRarityType.Rare     => "#0070DD",
+            ItemRarityType.Epic     => "#A335EE",
+            _                       => "#FF8000"
         };
     }
 }

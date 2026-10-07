@@ -23,5 +23,8 @@ internal interface IPersistenceEntityRegistration
     /// </summary>
     int Written { get; }
 
+    /// <summary>
+    ///     Tells the registration that the captured save was committed to the database.
+    /// </summary>
     void Committed();
 }

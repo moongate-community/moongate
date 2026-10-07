@@ -1,0 +1,31 @@
+# What it is for:
+#   A personal gift letter: .book lettera_100_gold.
+# Fields:
+#   Text is resolved at creation; the gold is delivered once when claimed.
+
+title = "A gift for $player_name"
+author = "Lord British"
+item_template = "readable_scroll"
+content = """
+Dear $player_name,
+
+Please accept these 100 gold coins as a gift.
+Keep this letter in your backpack and claim its attachments to receive them.
+
+May fortune smile upon you!
+"""
+
+[[attachments]]
+item_template = "0x0eed_gold_coin"
+amount = 100
+
+[translations.ita]
+title = "Un dono per $player_name"
+content = """
+Caro $player_name,
+
+Accetta queste 100 monete d'oro in dono.
+Tieni questa lettera nello zaino e premi Ritira allegati per riceverle.
+
+Che la fortuna ti sorrida!
+"""

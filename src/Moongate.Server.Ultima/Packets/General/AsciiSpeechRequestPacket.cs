@@ -15,7 +15,8 @@ namespace Moongate.Server.Ultima.Packets.General;
 ///     Decodes an ASCII speech request (0x03).
 /// </summary>
 [PacketHandler(0x03, PacketSizing.Variable, MinimumLength = 9, Description = "ASCII speech request")]
-public sealed class AsciiSpeechRequestPacket : BasePacket<AsciiSpeechRequestPacket>, IIncomingPacket<AsciiSpeechRequestPacket>
+public sealed class AsciiSpeechRequestPacket
+    : BasePacket<AsciiSpeechRequestPacket>, IIncomingPacket<AsciiSpeechRequestPacket>
 {
     private const byte EncodedFlags = 0xC0;
 

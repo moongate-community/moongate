@@ -13,21 +13,6 @@ public sealed class StartupMigrationsTests : IDisposable
 {
     private readonly TemporaryDirectory _directory = new();
     private readonly RecordingMigrationRunner _runner = new();
-    private readonly List<(string Root, string Migrations, string? Plugins)> _runners = [];
-    private readonly string _bundled;
-    private readonly string _root;
-    private readonly string _migrations;
-
-    public StartupMigrationsTests()
-    {
-        _bundled = Path.Combine(_directory.Path, "distribution-migrations");
-        _root = Path.Combine(_directory.Path, "root");
-        _migrations = Path.Combine(_root, "migrations");
-        Directory.CreateDirectory(Path.Combine(_bundled, "auth"));
-        Directory.CreateDirectory(Path.Combine(_bundled, "world"));
-        File.WriteAllText(Path.Combine(_bundled, "auth/0001_accounts.sql"), "SELECT 1;\n");
-        File.WriteAllText(Path.Combine(_bundled, "world/0001_base.sql"), "SELECT 1;\n");
-    }
 
     [Fact]
     public async Task PrepareAsync_WithAutoApplyOff_TouchesNothing()
@@ -58,7 +43,9 @@ public sealed class StartupMigrationsTests : IDisposable
     [Fact]
     public async Task PrepareAsync_WithGenerationAlsoOn_OnlyCopies_TheDevelopmentStartApplies()
     {
-        await PrepareAsync(new() { AutoApplyMigrations = true, AutoGenerateMigrations = true, MigrationsDirectory = _migrations });
+        await PrepareAsync(
+            new() { AutoApplyMigrations = true, AutoGenerateMigrations = true, MigrationsDirectory = _migrations }
+        );
 
         Assert.True(File.Exists(Path.Combine(_migrations, "world/0001_base.sql")));
         Assert.Empty(_runner.Applied);
@@ -87,6 +74,22 @@ public sealed class StartupMigrationsTests : IDisposable
 
         Assert.Equal((_root, elsewhere, Path.Combine(_root, "plugins")), _runners[^1]);
         Assert.True(File.Exists(Path.Combine(elsewhere, "world/0001_base.sql")));
+    }
+
+    private readonly List<(string Root, string Migrations, string? Plugins)> _runners = [];
+    private readonly string _bundled;
+    private readonly string _root;
+    private readonly string _migrations;
+
+    public StartupMigrationsTests()
+    {
+        _bundled = Path.Combine(_directory.Path, "distribution-migrations");
+        _root = Path.Combine(_directory.Path, "root");
+        _migrations = Path.Combine(_root, "migrations");
+        Directory.CreateDirectory(Path.Combine(_bundled, "auth"));
+        Directory.CreateDirectory(Path.Combine(_bundled, "world"));
+        File.WriteAllText(Path.Combine(_bundled, "auth/0001_accounts.sql"), "SELECT 1;\n");
+        File.WriteAllText(Path.Combine(_bundled, "world/0001_base.sql"), "SELECT 1;\n");
     }
 
     private Task PrepareAsync(PersistenceConfig persistence, ServerMode mode = ServerMode.Standalone)

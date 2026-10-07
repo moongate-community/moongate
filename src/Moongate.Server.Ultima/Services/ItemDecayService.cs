@@ -6,7 +6,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Deletes the ground items whose decay time has passed: one repeating <c>item_decay</c> timer every 5 seconds takes
+///     Deletes the ground items whose decay time has passed: one repeating <c>item_decay</c> timer every 5 seconds
+///     takes
 ///     the due items from the decay queue, as ModernUO's decay scheduler. A decayed container takes its contents with it;
 ///     the world save deletes the rows. Decay does not pause when no player is near.
 /// </summary>

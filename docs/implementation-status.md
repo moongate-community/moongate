@@ -31,6 +31,9 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
   them up; items left on the ground decay.
 - Open the paperdoll, dress and undress (two-handed weapons included).
 - Read tooltips and names of what is in view.
+- Read personalized scrolls and native books from [text templates](data-files/books.md): their text stays fixed when traded.
+  Write titles, authors and pages in writable books carried in the backpack or an open bank box.
+  [Starting items](data-files/starting-items.md#personalized-starting-letters) can deliver them transactionally; the shipped common set includes a welcome letter and a blank writable book.
 - Open doors, and locked doors when carrying their key; light and douse lights.
 - See day and night pass, dark dungeons, and the weather, the season and the music of each region
   (rain, snow, storms).
@@ -39,13 +42,17 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Read the game time and the moon phases where they stand: `.time`.
 - Meet NPCs that wander around their home, greet and answer, and, when their script says so, walk to a
   place or follow someone around what stands in the way.
-- Open the bank box at a banker by saying *bank*, in any client language.
-- Get hit points, mana and stamina back with time, get hungry and thirsty, eat and drink.
+- Open the bank box at a banker by saying *bank*, in any client language; ask the *balance*,
+  *withdraw* and *deposit* gold by speech, have a bank *check* written and cash it with a double
+  click, or drop gold and checks on the banker to deposit them. The box holds a limited number of items: [Bank](bank.md).
+- Get hit points, mana and stamina back with time, get hungry and thirsty, eat and drink; tire by running or by carrying too much.
 - Open the treasure chests of the dungeons and the shop crates that fill up; read a clock; switch war mode.
+- Dye clothes: dyes give a dye tub the hue picked in the client's hue picker, and the tub gives it to the clothing.
 
 ## What a game master can do
 
-- Spawn and remove single NPCs: `.spawn`, `.remove`.
+- Spawn and remove single NPCs: `.spawn`, `.remove`; kill one, which leaves its corpse with what it
+  carried: [`.kill`](commands/kill.md), see [Death and resurrection](death.md).
 - See the spawn regions where they stand: `.spawns`; get a message when regions spawn.
 - Go to any spot of any map, or to one of the 558 named places, by name or from a gump that
   lists them by map and category: [`.go`](commands/go.md); walk through doors.
@@ -53,7 +60,15 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Force the light, the weather or the season, try a music track: `.globallight`, `.weather`,
   `.season`, `.music`.
 - Try any gump on themselves: `.gump`.
+- Send a player or an NPC to a jail cell for some days, or release it, from a gump that lists the
+  cells: [`.jail`](commands/jail.md). The sentence ends by itself, with a fine and a release note.
+  `.jail <name>` jails a player who is offline: the cell is kept and the days start at its login;
+  see [Jail](jail.md).
+- Read, post, reply and remove on the bulletin boards of the towns, each with its own messages;
+  threads expire and a full board lets its oldest thread go: [Bulletin boards](bulletin-boards.md).
 - Set fame and karma, inspect what a target cursor picks: `.fame`, `.karma`, `.where`.
+- Create personalized scrolls and books in your backpack: [`.book`](commands/book.md).
+- Make gold and bank checks out of nothing: `.add_gold`, `.create_check`.
 - Restore a character waiting to be deleted: `.character`.
 
 An administrator also places the decoration, fills the spawn regions again (`.initial_spawn`),
@@ -65,7 +80,7 @@ See all of them in [Commands](commands.md).
 
 - Combat, death, corpses and skill gain.
 - A built-in AI: NPCs only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
-  `on_mobile_in_range`), which can walk them along a [path](scripting.md#walking-a-path) with
+  `on_mobile_in_range`), which can walk them along a [path](scripting/mobile-scripts.md#walking-a-path) with
   `npc.walk_to`; nothing chases, flees or fights by itself.
 - Recall and gate travel, and mounts.
 - Houses and boats (placement, and multis in movement and line of sight).
@@ -87,8 +102,6 @@ See all of them in [Commands](commands.md).
   themselves through Redis leases; the login filters them by account level and hands the player
   over with a one-use ticket.
 - The packets the server handles and sends are listed in the [packet reference](packets.md).
-- The modules and functions Lua scripts can call are listed in the
-  [Lua API reference](https://moongate.sh/lua/), generated from the server's code.
 
 ### World
 
@@ -117,12 +130,14 @@ See all of them in [Commands](commands.md).
 - Sandboxed Lua 5.2 with an instruction budget, `wait`, timers, events, hot reload and editor
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
-  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates` and `locations`.
+  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail`, `board`, `book` and `commands`.
+  Every function they give scripts is listed in the [Lua API reference](https://moongate.sh/lua/),
+  generated from the server's code.
 - Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `gumps/go.lua`, `wander.lua`, `monster.lua`,
+  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `readable_book.lua`, `readable_scroll.lua`, `bulletin_board.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
   `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
   and `gumps/tutorial_list.lua`.
 - Not yet: timers on mobiles, combat and skill events.
@@ -134,6 +149,8 @@ See all of them in [Commands](commands.md).
 - Templates in `templates/`: items, loot, mobiles, NPC lists, spawn regions and decoration, with
   `base_id` inheritance, and the XML gumps of `templates/gumps`. See
   [Loading TOML templates](templates.md) and [Gumps](gumps.md).
+- Plain document sources in `templates/books`, with named variables resolved and saved on individual
+  scrolls and books at creation. [Letter attachments](data-files/books.md#letter-attachments) are frozen per letter and delivered once to its backpack bearer, with deferred weight and atomic capacity checks. The converter ships [62 lore books in eight languages](book-content-import.md) from ModernUO. Native books have covers and turnable pages; writable books let their carrier edit the title, author and pages, with changes saved on the item. See [Readable text templates](data-files/books.md).
 - Client files read from `ultima.ultima_path`: tile data, maps (MUL or UOP) and multis.
 - Messages in 8 languages, ported from UOX3; a language can be split into several toml
   files. See [Localization](localization.md).

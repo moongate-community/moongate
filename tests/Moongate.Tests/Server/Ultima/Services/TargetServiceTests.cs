@@ -21,10 +21,12 @@ public sealed class TargetServiceTests : IAsyncDisposable
 
     private readonly StubPacketSendService _sender = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0)
     };
+
     private readonly List<TargetResult> _results = [];
 
     private SessionFixture _fixture = null!;
@@ -103,8 +105,8 @@ public sealed class TargetServiceTests : IAsyncDisposable
         await OnLoopAsync(() => _targets.Begin(_session, TargetCursorType.Location, TargetFlagsType.Neutral, Record));
         var completed = true;
 
-        await OnLoopAsync(
-            () => completed = _targets.TryComplete(_session, 9, TargetResult.Canceled(TargetCancelType.Canceled))
+        await OnLoopAsync(() =>
+            completed = _targets.TryComplete(_session, 9, TargetResult.Canceled(TargetCancelType.Canceled))
         );
 
         Assert.False(completed);
@@ -165,8 +167,7 @@ public sealed class TargetServiceTests : IAsyncDisposable
     {
         await StartAsync();
         // The target the request replaces starts a new one from its callback.
-        await OnLoopAsync(
-            () => _targets.Begin(
+        await OnLoopAsync(() => _targets.Begin(
                 _session,
                 TargetCursorType.Location,
                 TargetFlagsType.Neutral,
@@ -174,7 +175,12 @@ public sealed class TargetServiceTests : IAsyncDisposable
             )
         );
         using var cancellation = new CancellationTokenSource();
-        var request = _targets.RequestAsync(_session, TargetCursorType.Location, TargetFlagsType.Neutral, cancellation.Token);
+        var request = _targets.RequestAsync(
+            _session,
+            TargetCursorType.Location,
+            TargetFlagsType.Neutral,
+            cancellation.Token
+        );
         Assert.Equal(TargetCancelType.Overridden, (await request.WaitAsync(Timeout)).CancelReason);
 
         await cancellation.CancelAsync();

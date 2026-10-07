@@ -1,0 +1,213 @@
+# ==============================================================================
+# Moongate - templates/spawns/felucca/jail.toml
+#
+# What it is for:
+#   The chests of rations of the jail: one region of items per cell of
+#   data/jail.toml, each a single tile in the north-east corner of its cell,
+#   away from where the prisoner arrives. The chest (item template jail_chest)
+#   decays after an hour and the region puts a full one back a minute or two
+#   later. A shard that adds a cell adds its region here.
+#
+# Fields:
+#   see docs/spawns.md, "Regions of items"
+# ==============================================================================
+
+[[spawn]]
+id = "felucca_jail_chest_1"
+map = "felucca"
+name = "Jail cell 1 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5280
+y1 = 1160
+x2 = 5280
+y2 = 1160
+
+[[spawn]]
+id = "felucca_jail_chest_2"
+map = "felucca"
+name = "Jail cell 2 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5290
+y1 = 1160
+x2 = 5290
+y2 = 1160
+
+[[spawn]]
+id = "felucca_jail_chest_3"
+map = "felucca"
+name = "Jail cell 3 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5300
+y1 = 1160
+x2 = 5300
+y2 = 1160
+
+[[spawn]]
+id = "felucca_jail_chest_4"
+map = "felucca"
+name = "Jail cell 4 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5310
+y1 = 1160
+x2 = 5310
+y2 = 1160
+
+[[spawn]]
+id = "felucca_jail_chest_5"
+map = "felucca"
+name = "Jail cell 5 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5280
+y1 = 1170
+x2 = 5280
+y2 = 1170
+
+[[spawn]]
+id = "felucca_jail_chest_6"
+map = "felucca"
+name = "Jail cell 6 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5290
+y1 = 1170
+x2 = 5290
+y2 = 1170
+
+[[spawn]]
+id = "felucca_jail_chest_7"
+map = "felucca"
+name = "Jail cell 7 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5300
+y1 = 1170
+x2 = 5300
+y2 = 1170
+
+[[spawn]]
+id = "felucca_jail_chest_8"
+map = "felucca"
+name = "Jail cell 8 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5310
+y1 = 1170
+x2 = 5310
+y2 = 1170
+
+[[spawn]]
+id = "felucca_jail_chest_9"
+map = "felucca"
+name = "Jail cell 9 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5290
+y1 = 1180
+x2 = 5290
+y2 = 1180
+
+[[spawn]]
+id = "felucca_jail_chest_10"
+map = "felucca"
+name = "Jail cell 10 rations"
+mobile_ids = []
+npc_list_ids = []
+item_ids = ["jail_chest"]
+max = 1
+min_minutes = 1
+max_minutes = 2
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 5310
+y1 = 1180
+x2 = 5310
+y2 = 1180

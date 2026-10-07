@@ -1,0 +1,16 @@
+export const sidebarTranslations = {
+  'Start here': 'Da dove iniziare',
+  'Run a shard': 'Gestire uno shard',
+  'Scripting and content': 'Script e contenuti',
+  'Lua': 'Lua',
+  'Extend with C#': 'Estendere con C#',
+  'Libraries': 'Librerie',
+  'Contributing': 'Contribuire',
+  'Commands': 'Comandi',
+  'Gumps': 'Gump',
+  'Data files': 'File di dati',
+  'Guide': 'Guida',
+  'Plugins': 'Plugin',
+  'Persistence': 'Persistenza',
+  'Network and game loop': 'Rete e ciclo di gioco',
+};

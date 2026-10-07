@@ -29,33 +29,37 @@ public sealed class TooltipServiceTests
     public TooltipServiceTests()
     {
         var data = new StubDataLoaderService()
-                   .With(
-                       new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
-                       new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Name = "robe of the magi", Weight = 2m },
-                       new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed },
-                       new ItemTemplate { Id = "feather", ItemId = new Serial(0x1BD1), Weight = 0.1m },
-                       new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false },
-                       new ItemTemplate { Id = "teleporter", ItemId = new Serial(0x1BC3), Visibility = AccountType.GameMaster }
-                   )
-                   .With(
-                       new MessageContent { Id = 9055, Text = "[Benedetto]" },
-                       new MessageContent { Id = 30005, Text = "[Maledetto]" },
-                       new MessageContent { Id = 30006, Text = "Peso: 1 pietra" },
-                       new MessageContent { Id = 30007, Text = "Peso: {0} pietre" },
-                       new MessageContent { Id = 30000, Text = "Comune" },
-                       new MessageContent { Id = 30002, Text = "Raro" },
-                       new MessageContent { Id = 30004, Text = "Leggendario" }
-                   );
+            .With(
+                new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
+                new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Name = "robe of the magi", Weight = 2m },
+                new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed },
+                new ItemTemplate { Id = "feather", ItemId = new Serial(0x1BD1), Weight = 0.1m },
+                new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false },
+                new ItemTemplate { Id = "teleporter", ItemId = new Serial(0x1BC3), Visibility = AccountType.GameMaster }
+            )
+            .With(
+                new MessageContent { Id = 9055, Text = "[Benedetto]" },
+                new MessageContent { Id = 30005, Text = "[Maledetto]" },
+                new MessageContent { Id = 30006, Text = "Peso: 1 pietra" },
+                new MessageContent { Id = 30007, Text = "Peso: {0} pietre" },
+                new MessageContent { Id = 30000, Text = "Comune" },
+                new MessageContent { Id = 30002, Text = "Raro" },
+                new MessageContent { Id = 30004, Text = "Leggendario" }
+            );
         var tiles = new FakeTileDataService()
-                    .Item(0x0EED, TileFlagType.Generic, 0)
-                    .Item(0x1F03, TileFlagType.Wearable, 0)
-                    .Item(0x108A, TileFlagType.Wearable, 0)
-                    .Item(0x4001, TileFlagType.None, 0);
+            .Item(0x0EED, TileFlagType.Generic, 0)
+            .Item(0x1F03, TileFlagType.Wearable, 0)
+            .Item(0x108A, TileFlagType.Wearable, 0)
+            .Item(0x4001, TileFlagType.None, 0);
         var sectors = TestSectors.Create();
         _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
-        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1000, 1000, 0) });
-        _mobiles.EnterWorld(new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1010, 1000, 0) });
+        _mobiles.EnterWorld(
+            new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1000, 1000, 0) }
+        );
+        _mobiles.EnterWorld(
+            new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1010, 1000, 0) }
+        );
         _tooltips = new(
             new ItemTemplateService(data),
             tiles,
@@ -120,6 +124,60 @@ public sealed class TooltipServiceTests
         var lines = _tooltips.Build(sign).Entries;
 
         Assert.Equal((1016093, ""), (lines[0].Cliloc, lines[0].Arguments));
+    }
+
+    // A bank check reads what it is worth, as ModernUO's: "value: 5,000".
+    [Fact]
+    public void Build_AnItemWithAWorth_SaysItsValue_WithItsThousands()
+    {
+        var check = Item("bank_check", 0x14F0);
+        check.SetProp("label_number", 1041361L);
+        check.SetProp("bank.worth", 1_250_000L);
+
+        var lines = _tooltips.Build(check).Entries;
+
+        Assert.Equal(1041361, lines[0].Cliloc);
+        Assert.Contains((1060738, "1,250,000"), lines.Select(line => (line.Cliloc, line.Arguments)));
+    }
+
+    [Fact]
+    public void Build_TwoChecksOfDifferentWorth_DoNotShareATooltip()
+    {
+        var first = Item("bank_check", 0x14F0);
+        first.SetProp("bank.worth", 5000L);
+        var second = Item("bank_check", 0x14F0);
+        second.SetProp("bank.worth", 6000L);
+
+        Assert.Contains(_tooltips.Build(first).Entries, line => line.Arguments == "5,000");
+        Assert.Contains(_tooltips.Build(second).Entries, line => line.Arguments == "6,000");
+    }
+
+    // The prop on anything else is worth nothing, as the bank says: only a check shows a value.
+    [Fact]
+    public void Build_WhatIsNotACheck_EvenWithAWorth_HasNoValueLine()
+    {
+        var sword = Item("unknown", 0x0F5E);
+        sword.SetProp("bank.worth", 5000L);
+
+        Assert.DoesNotContain(_tooltips.Build(sword).Entries, line => line.Cliloc == 1060738);
+    }
+
+    [Theory]
+    [InlineData(0L)]
+    [InlineData(-5L)]
+    [InlineData("a lot")]
+    public void Build_ACheckOfNoWorth_HasNoValueLine(object worth)
+    {
+        var check = Item("bank_check", 0x14F0);
+        check.SetProp("bank.worth", worth);
+
+        Assert.DoesNotContain(_tooltips.Build(check).Entries, line => line.Cliloc == 1060738);
+    }
+
+    [Fact]
+    public void Build_AnItemWithoutAWorth_HasNoValueLine()
+    {
+        Assert.DoesNotContain(_tooltips.Build(Item("unknown", 0x0BD8)).Entries, line => line.Cliloc == 1060738);
     }
 
     [Fact]
@@ -194,7 +252,8 @@ public sealed class TooltipServiceTests
         Assert.Equal("2\ta b", _tooltips.Build(robe).Entries[0].Arguments);
     }
 
-    [Theory, InlineData(LootType.Blessed, "[Benedetto]"), InlineData(LootType.Newbied, "[Benedetto]"), InlineData(LootType.Cursed, "[Maledetto]")]
+    [Theory, InlineData(LootType.Blessed, "[Benedetto]"), InlineData(LootType.Newbied, "[Benedetto]"),
+     InlineData(LootType.Cursed, "[Maledetto]")]
     public void Build_TheLootTypeOfTheItem_AddsItsLineInTheServerLanguage(LootType type, string text)
     {
         var robe = Item("robe", 0x1F03);
@@ -220,12 +279,29 @@ public sealed class TooltipServiceTests
         Assert.StartsWith("<BASEFONT COLOR=#", rarity.Arguments);
     }
 
+    // Almost everything is common: saying so on every tooltip tells nothing. Only what is above it says its rarity.
     [Fact]
-    public void Build_ACommonItem_ShowsItsRarityInWhite()
+    public void Build_ACommonItem_ShowsNoRarity()
     {
-        Assert.Contains(
+        Assert.DoesNotContain(
             _tooltips.Build(Item("robe", 0x1F03)).Entries,
-            line => line.Arguments == "<BASEFONT COLOR=#FFFFFF>Comune</BASEFONT>"
+            line => line.Arguments.Contains("Comune") || line.Arguments.Contains("BASEFONT")
+        );
+    }
+
+    [Theory]
+    [InlineData(ItemRarityType.Uncommon)]
+    [InlineData(ItemRarityType.Rare)]
+    [InlineData(ItemRarityType.Epic)]
+    [InlineData(ItemRarityType.Legendary)]
+    public void Build_AnItemAboveCommon_ShowsItsRarity(ItemRarityType rarity)
+    {
+        var robe = Item("robe", 0x1F03);
+        robe.Rarity = rarity;
+
+        Assert.Single(
+            _tooltips.Build(robe).Entries,
+            line => line.Arguments.StartsWith("<BASEFONT COLOR=#", StringComparison.Ordinal)
         );
     }
 
@@ -353,6 +429,39 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
+    public void TryBuildFor_AnItemInsideAContainerOnTheGround_AtAnyDepth_IsBuiltWhenTheContainerIsInView()
+    {
+        // As what lies in a treasure chest, or in the corpse of an NPC.
+        var chest = Placed(0x40000010, item => { });
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1005, 1000, 0));
+        var bag = Placed(0x40000011, item => item.PutInContainer(chest.Id, new Point2D(10, 10)));
+        var coin = Placed(0x40000012, item => item.PutInContainer(bag.Id, new Point2D(10, 10)));
+
+        Assert.True(_tooltips.TryBuildFor(Aria, bag.Id, out _));
+        Assert.True(_tooltips.TryBuildFor(Aria, coin.Id, out _));
+
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1100, 1000, 0));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, coin.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_WhatLiesInAContainerHiddenFromThePlayer_OrIsHiddenItself_IsRefused()
+    {
+        var chest = new ItemEntity { Id = new(0x40000010), TemplateId = "teleporter", ItemId = 0x1BC3, Amount = 1 };
+        _items.Add([chest]);
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1005, 1000, 0));
+        var coin = Placed(0x40000012, item => item.PutInContainer(chest.Id, new Point2D(10, 10)));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, coin.Id, out _));
+        Assert.True(_tooltips.TryBuildFor(Aria, coin.Id, out _, AccountType.GameMaster));
+
+        coin.Visibility = AccountType.Administrator;
+
+        Assert.False(_tooltips.TryBuildFor(Aria, coin.Id, out _, AccountType.GameMaster));
+    }
+
+    [Fact]
     public void TryBuildFor_AGroundItem_IsBuiltOnlyInViewRange()
     {
         var near = Placed(0x40000004, item => { });
@@ -367,7 +476,8 @@ public sealed class TooltipServiceTests
     [Fact]
     public void TryBuildFor_AMobile_IsBuiltOnlyInViewRangeOnTheSameMap()
     {
-        var elsewhere = new MobileEntity { Id = new(0x00000004), Name = "Far", Map = MapType.Felucca, Location = new Point3D(1000, 1000, 0) };
+        var elsewhere = new MobileEntity
+            { Id = new(0x00000004), Name = "Far", Map = MapType.Felucca, Location = new Point3D(1000, 1000, 0) };
         _mobiles.EnterWorld(elsewhere);
 
         Assert.True(_tooltips.TryBuildFor(Aria, Bran, out var list));

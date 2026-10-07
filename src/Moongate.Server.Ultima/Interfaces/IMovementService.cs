@@ -56,7 +56,8 @@ public interface IMovementService
     bool TryGetSwimZ(MapType map, int x, int y, out int z);
 
     /// <summary>
-    ///     Checks one step from <paramref name="from" /> towards <paramref name="direction" />; only its low three bits count, so the running flag is
+    ///     Checks one step from <paramref name="from" /> towards <paramref name="direction" />; only its low three bits count, so
+    ///     the running flag is
     ///     ignored. A diagonal step also needs both cells beside it to be passable.
     /// </summary>
     /// <param name="newZ">

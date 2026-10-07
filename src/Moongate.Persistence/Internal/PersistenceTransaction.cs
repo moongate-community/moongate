@@ -36,6 +36,31 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         _cancellationToken = cancellationToken;
     }
 
+    public Task InsertAsync<T>(T entity, CancellationToken cancellationToken = default) where T : class, IMoongateEntity
+    {
+        return RunAsync(
+            async (orm, transaction, token) =>
+            {
+                ArgumentNullException.ThrowIfNull(entity);
+                if (!entity.Id.IsValid)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(entity), "Insert requires a nonzero explicit identity.");
+                }
+
+                if (_owner.GetTarget(typeof(T)) != Target)
+                {
+                    throw new InvalidOperationException("Transactions cannot cross database targets.");
+                }
+
+                return await orm.Insert(entity)
+                    .WithTransaction(transaction)
+                    .ExecuteAffrowsAsync(token)
+                    .ConfigureAwait(false);
+            },
+            cancellationToken
+        );
+    }
+
     public Task<T?> GetByIdForUpdateAsync<T>(Serial id, CancellationToken cancellationToken = default)
         where T : class, IMoongateEntity
     {
@@ -178,6 +203,27 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
                 }
             }
         }
+    }
+
+    /// <summary>
+    ///     Makes the constraints that can wait be checked when the transaction commits, not at every statement: the
+    ///     rows of a world save come in batches, and a row may be written before the one it points to, as an item
+    ///     before the newer container it lies in.
+    /// </summary>
+    public Task<int> DeferConstraintsAsync(CancellationToken cancellationToken)
+    {
+        return RunAsync(
+            async (_, transaction, token) =>
+            {
+                // Safe: a transaction that was begun always has a connection.
+                await using var command = transaction.Connection!.CreateCommand();
+                command.Transaction = transaction;
+                command.CommandText = "SET CONSTRAINTS ALL DEFERRED";
+
+                return await command.ExecuteNonQueryAsync(token).ConfigureAwait(false);
+            },
+            cancellationToken
+        );
     }
 
     public Task<int> UpsertSnapshotsAsync<T>(T[] snapshots, CancellationToken cancellationToken)

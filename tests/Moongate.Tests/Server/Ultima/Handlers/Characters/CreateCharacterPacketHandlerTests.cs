@@ -25,7 +25,11 @@ public sealed class CreateCharacterPacketHandlerTests
         var (context, _, sender) = await Context(fixture, new Serial(42));
         var characters = new RecordingCharacterService();
 
-        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Equal(new Serial(42), characters.CreatedFor);
         Assert.Equal(
@@ -38,7 +42,10 @@ public sealed class CreateCharacterPacketHandlerTests
             },
             characters.Request
         );
-        Assert.Equal([(SkillType.Alchemy, (byte)50), (SkillType.Magery, (byte)50)], characters.Request.Skills.Select(s => (s.Skill, s.Value)));
+        Assert.Equal(
+            [(SkillType.Alchemy, (byte)50), (SkillType.Magery, (byte)50)],
+            characters.Request.Skills.Select(s => (s.Skill, s.Value))
+        );
         Assert.Equal(0, sender.SentCount);
         Assert.True(fixture.Client.IsConnected);
     }
@@ -51,7 +58,8 @@ public sealed class CreateCharacterPacketHandlerTests
         var character = new MobileEntity { Id = new(7), Name = "Aria" };
         var backpack = new ItemEntity { Id = new(0x40000001), MobileId = character.Id };
         var gold = new ItemEntity { Id = new(0x40000002), ContainerId = backpack.Id };
-        var characters = new RecordingCharacterService { Result = CharacterCreationResult.Created(character, [backpack, gold]) };
+        var characters = new RecordingCharacterService
+            { Result = CharacterCreationResult.Created(character, [backpack, gold]) };
         var enter = new RecordingCharacterEnterWorldService();
 
         await new CreateCharacterPacketHandler(characters, enter).HandleAsync(context, Packet(), CancellationToken.None);
@@ -106,7 +114,11 @@ public sealed class CreateCharacterPacketHandlerTests
             Result = CharacterCreationResult.Refused(CharacterCreationRefusalType.SlotUnavailable)
         };
 
-        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         var popup = Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent));
         Assert.Equal(PopupMessageType.CharacterExists, popup.Type);
@@ -123,7 +135,11 @@ public sealed class CreateCharacterPacketHandlerTests
             Result = CharacterCreationResult.Refused(CharacterCreationRefusalType.TooManyCharacters)
         };
 
-        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Equal(PopupMessageType.LoginSyncError, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
     }
@@ -135,7 +151,11 @@ public sealed class CreateCharacterPacketHandlerTests
         var (context, _, sender) = await Context(fixture, new Serial(42));
         var characters = new RecordingCharacterService { Failure = new InvalidOperationException("database down") };
 
-        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Equal(PopupMessageType.CouldNotAttach, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
         Assert.False(fixture.Client.IsConnected);
@@ -148,7 +168,11 @@ public sealed class CreateCharacterPacketHandlerTests
         var (context, _, _) = await Context(fixture, null);
         var characters = new RecordingCharacterService();
 
-        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(context, Packet(), CancellationToken.None);
+        await new CreateCharacterPacketHandler(characters, new RecordingCharacterEnterWorldService()).HandleAsync(
+            context,
+            Packet(),
+            CancellationToken.None
+        );
 
         Assert.Equal(0, characters.CreateCalls);
         Assert.False(fixture.Client.IsConnected);

@@ -26,6 +26,14 @@ public sealed class LuaFunctionDescriberTests
     }
 
     [Fact]
+    public void Describe_NamesParametersInSnakeCase_AsFunctionsAre()
+    {
+        var names = Describe(typeof(SignatureModule), "twice").Parameters.Select(parameter => parameter.Name);
+
+        Assert.Equal(["repeat_count", "in_sight"], names);
+    }
+
+    [Fact]
     public void Describe_ANullableReturn_EndsWithAQuestionMark()
     {
         Assert.Equal("string?", Describe(typeof(SignatureModule), "walk_to").Returns);
@@ -66,6 +74,15 @@ public sealed class LuaFunctionDescriberTests
     }
 
     [Fact]
+    public void Describe_AFloatDefault_IsWrittenAsItWasDeclared_AndAnEnumDefaultThatNamesNoMemberAsItsNumber()
+    {
+        var parameters = Describe(typeof(DefaultsModule), "scale").Parameters;
+
+        Assert.Equal(new ParameterDescription("factor", "number", true, "0.1"), parameters[0]);
+        Assert.Equal(new ParameterDescription("colour", "ProbeColour|string", true, "7"), parameters[1]);
+    }
+
+    [Fact]
     public void Describe_ADeclaredParameterType_Wins()
     {
         Assert.Equal("EventName", Assert.Single(Describe(typeof(TypedParameterModule), "accept").Parameters).LuaType);
@@ -94,6 +111,8 @@ public sealed class LuaFunctionDescriberTests
         Assert.Equal("1", LuaFunctionDescriber.LuaLiteral(ProbeColour.Green, typeof(ProbeColour)));
         Assert.Equal("0.5", LuaFunctionDescriber.LuaLiteral(0.5, typeof(double)));
         Assert.Equal("math.huge", LuaFunctionDescriber.LuaLiteral(double.PositiveInfinity, typeof(double)));
+        Assert.Equal("0.1", LuaFunctionDescriber.LuaLiteral(0.1f, typeof(float)));
+        Assert.Equal("-math.huge", LuaFunctionDescriber.LuaLiteral(float.NegativeInfinity, typeof(float)));
     }
 
     private static FunctionDescription Describe(Type moduleType, string luaName)

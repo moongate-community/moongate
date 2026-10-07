@@ -324,14 +324,15 @@ public sealed class PathfindingServiceTests
         // A wall of crates across a 16x16 map with a closed door in it and a gap at its far end.
         var map = new FakeMapService(16, 16);
         var tiles = new FakeTileDataService()
-                    .Item(0x0E3D, TileFlagType.Impassable, 10)
-                    .Item(0x0675, TileFlagType.Impassable | TileFlagType.Door, 20);
+            .Item(0x0E3D, TileFlagType.Impassable, 10)
+            .Item(0x0675, TileFlagType.Impassable | TileFlagType.Door, 20);
         var sectors = TestSectors.Create();
         uint serial = 0x40000001;
 
         for (var y = 0; y <= 13; y++)
         {
-            var item = new ItemEntity { Id = new Serial(serial++), TemplateId = "thing", ItemId = y == 5 ? 0x0675 : 0x0E3D, Amount = 1 };
+            var item = new ItemEntity
+                { Id = new Serial(serial++), TemplateId = "thing", ItemId = y == 5 ? 0x0675 : 0x0E3D, Amount = 1 };
             item.PlaceOnGround(MapType.Felucca, new Point3D(8, y, 0));
             sectors.AddItem(item);
         }
@@ -375,7 +376,10 @@ public sealed class PathfindingServiceTests
 
         foreach (var step in steps)
         {
-            Assert.True(_movement.CheckMovement(MapType.Trammel, here, step, MovementAbilityType.Walk, out var z), $"{step} from {here}");
+            Assert.True(
+                _movement.CheckMovement(MapType.Trammel, here, step, MovementAbilityType.Walk, out var z),
+                $"{step} from {here}"
+            );
             var next = here.Move(step);
             here = new Point3D(next.X, next.Y, z);
             cells.Add(here);

@@ -64,6 +64,11 @@ public class SkillContent
     public double GainFactor { get; set; }
 
     /// <summary>
+    ///     The seconds a character waits before another skill after using this one; null when the file gives none.
+    /// </summary>
+    public double? Delay { get; set; }
+
+    /// <summary>
     ///     Gets the total chance, in percent, that a gain of this skill raises a stat.
     /// </summary>
     public double StatTotal => StrScale + DexScale + IntScale;

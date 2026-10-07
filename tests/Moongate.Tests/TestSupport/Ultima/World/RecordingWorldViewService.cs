@@ -9,7 +9,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.TestSupport.Ultima.World;
 
 /// <summary>
-///     Records the calls it gets, in order, as "Entered 2 10", "Moved 2 1496,1628,10 run", "Teleported 2 Trammel 1496,1628,10", "Left 2",
+///     Records the calls it gets, in order, as "Entered 2 10", "Moved 2 1496,1628,10 run", "Teleported 2 Trammel 1496,1628,10",
+///     "Left 2",
 ///     "MobileAppeared 9", "Appeared 7", "ShownTo 2 7" and "Disappeared 7", running <see cref="OnCall" /> first so a
 ///     test can look at the state at that moment.
 /// </summary>
@@ -19,7 +20,9 @@ public sealed class RecordingWorldViewService : IWorldViewService
 
     public Action<string>? OnCall { get; set; }
 
-    public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular)
+    public void Entered(
+        MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular
+    )
     {
         Record($"Entered {mobile.Id.Value} {sessionId}");
     }
@@ -34,6 +37,16 @@ public sealed class RecordingWorldViewService : IWorldViewService
         Record($"Moved {mobile.Id.Value} {oldLocation.X},{oldLocation.Y},{oldLocation.Z}{(running ? " run" : "")}");
     }
 
+    /// <summary>
+    ///     The mobiles whose session has not finished entering the world; every other one has.
+    /// </summary>
+    public HashSet<Serial> NotEntered { get; } = [];
+
+    public bool HasEntered(Serial mobile)
+    {
+        return !NotEntered.Contains(mobile);
+    }
+
     public void Left(MobileEntity mobile)
     {
         Record($"Left {mobile.Id.Value}");
@@ -44,13 +57,29 @@ public sealed class RecordingWorldViewService : IWorldViewService
         Record($"MobileAppeared {mobile.Id.Value}");
     }
 
-    public void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount)
+    public void MobileDied(MobileEntity mobile, Serial corpse)
     {
-        Record($"Animated {mobile.Id.Value} {action} {frameCount} {repeatCount}");
+        Record($"MobileDied {mobile.Id.Value} {corpse.Value}");
+    }
+
+    public void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount, bool forward = true)
+    {
+        Record($"Animated {mobile.Id.Value} {action} {frameCount} {repeatCount}{(forward ? "" : " backwards")}");
+    }
+
+    /// <summary>
+    ///     The objects whose flags were shown again, in order.
+    /// </summary>
+    public List<MobileEntity> Mobiles { get; } = [];
+
+    public void OwnItemRemoved(MobileEntity owner, ItemEntity item)
+    {
+        Record($"OwnItemRemoved {owner.Id.Value} {item.Id.Value}");
     }
 
     public void MobileFlagsChanged(MobileEntity mobile)
     {
+        Mobiles.Add(mobile);
         Record($"FlagsChanged {mobile.Id.Value}");
     }
 

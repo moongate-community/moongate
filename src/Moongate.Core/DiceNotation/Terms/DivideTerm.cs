@@ -4,15 +4,19 @@ using ShaiRandom.Generators;
 namespace Moongate.Core.DiceNotation.Terms;
 
 /// <summary>
-/// Term representing the division operator -- divides the first term by the second.
+///     Term representing the division operator -- divides the first term by the second.
 /// </summary>
 public class DivideTerm : ITerm
 {
     /// <summary>
-    /// Constructor. Takes the two terms to divide.
+    ///     Constructor. Takes the two terms to divide.
     /// </summary>
-    /// <param name="term1">The first term (left-hand side).</param>
-    /// <param name="term2">The second term (right-hand side).</param>
+    /// <param name="term1">
+    ///     The first term (left-hand side).
+    /// </param>
+    /// <param name="term2">
+    ///     The second term (right-hand side).
+    /// </param>
     public DivideTerm(ITerm term1, ITerm term2)
     {
         Term1 = term1;
@@ -20,31 +24,39 @@ public class DivideTerm : ITerm
     }
 
     /// <summary>
-    /// The first term (left-hand side).
+    ///     The first term (left-hand side).
     /// </summary>
     public readonly ITerm Term1;
 
     /// <summary>
-    /// The second term (right-hand side).
+    ///     The second term (right-hand side).
     /// </summary>
     public readonly ITerm Term2;
 
     /// <summary>
-    /// Divides the first term by the second, evaluating those two terms as necessary.
+    ///     Divides the first term by the second, evaluating those two terms as necessary.
     /// </summary>
-    /// <param name="rng">The rng to used -- passed to other terms.</param>
-    /// <returns>The result of evaluating <see cref="Term1" /> / <see cref="Term2" />.</returns>
+    /// <param name="rng">
+    ///     The rng to used -- passed to other terms.
+    /// </param>
+    /// <returns>
+    ///     The result of evaluating <see cref="Term1" /> / <see cref="Term2" />.
+    /// </returns>
     public int GetResult(IEnhancedRandom rng)
     {
         return Divide(Term1.GetResult(rng), Term2.GetResult(rng));
     }
 
     /// <summary>
-    /// Returns a parenthesized string representing the operation.
+    ///     Returns a parenthesized string representing the operation.
     /// </summary>
-    /// <returns>A parenthesized string representing the operation.</returns>
+    /// <returns>
+    ///     A parenthesized string representing the operation.
+    /// </returns>
     /// <inheritdoc />
-    /// <exception cref="DivideByZeroException">The divisor can be 0.</exception>
+    /// <exception cref="DivideByZeroException">
+    ///     The divisor can be 0.
+    /// </exception>
     public (int Min, int Max) GetBounds()
     {
         var (min1, max1) = Term1.GetBounds();

@@ -19,9 +19,9 @@ public sealed class NpcsConfigTests
     [Theory, InlineData(49), InlineData(0), InlineData(-1), InlineData(60001)]
     public void Validate_IntervalOutOfRange_Throws(int interval)
     {
-        var exception = Assert.Throws<InvalidOperationException>(
-            () => new NpcsConfig { ThinkIntervalMs = interval }.Validate()
-        );
+        var exception =
+            Assert.Throws<InvalidOperationException>(() => new NpcsConfig { ThinkIntervalMs = interval }.Validate()
+            );
 
         Assert.Contains("ultima.npcs.think_interval_ms", exception.Message);
     }

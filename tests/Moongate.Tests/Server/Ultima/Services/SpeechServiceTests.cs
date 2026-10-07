@@ -42,6 +42,55 @@ public sealed class SpeechServiceTests
     }
 
     [Fact]
+    public async Task SayCliloc_ReachesThePlayersWhoHearTheSpeaker_AsATextOfTheClient()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var near = await fixture.AddAsync(2);
+        await fixture.AddAsync(3);
+        Place(fixture, 2, 115, 100);
+        Place(fixture, 3, 116, 100);
+        var banker = new MobileEntity
+        {
+            Id = new Serial(0x100), Name = "Bank Teller", Body = 0x0190, Map = MapType.Trammel,
+            Location = new Point3D(100, 100, 0)
+        };
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+        var sent = 0;
+
+        await fixture.Network.ExecuteOnLoopAsync(() => sent = speech.SayCliloc(banker, 1042759, "1,200"));
+
+        Assert.Equal(1, sent);
+        Assert.Equal([near.SessionId], fixture.Sender.SentSessionIds);
+        var message = Assert.IsType<LocalizedMessagePacket>(Assert.Single(fixture.Sender.Sent));
+        Assert.Equal(
+            (banker.Id, 0x0190, 1042759, "Bank Teller", "1,200"),
+            (message.Serial, message.Graphic, message.Cliloc, message.Name, message.Arguments)
+        );
+    }
+
+    [Fact]
+    public async Task SayCliloc_WithAnAffix_SendsTheTextWithWhatIsAppended()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        await fixture.AddAsync(2);
+        Place(fixture, 2, 105, 100);
+        var banker = new MobileEntity
+        {
+            Id = new Serial(0x100), Name = "Bank Teller", Body = 0x0190, Map = MapType.Trammel,
+            Location = new Point3D(100, 100, 0)
+        };
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+
+        await fixture.Network.ExecuteOnLoopAsync(() => speech.SayCliloc(banker, 1042673, "", "5,000"));
+
+        var message = Assert.IsType<LocalizedMessageAffixPacket>(Assert.Single(fixture.Sender.Sent));
+        Assert.Equal(
+            (banker.Id, 0x0190, 1042673, "Bank Teller", "5,000"),
+            (message.Serial, message.Graphic, message.Cliloc, message.Name, message.Affix)
+        );
+    }
+
+    [Fact]
     public async Task Tell_SendsASystemMessageToThatPlayerOnly()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();
@@ -60,11 +109,31 @@ public sealed class SpeechServiceTests
     }
 
     [Fact]
+    public async Task Tell_AndTellCliloc_WithAHue_SendTheTextInThatColour()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        await fixture.AddAsync(2);
+        Assert.True(fixture.Mobiles.TryGet(new Serial(2), out var mobile));
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+
+        await fixture.Network.ExecuteOnLoopAsync(() =>
+            {
+                speech.Tell(mobile!, "You have entered Britain.", 0x3F);
+                speech.TellCliloc(mobile!, 500113, "", 0x22);
+            }
+        );
+
+        Assert.Equal(0x3F, Assert.IsType<UnicodeSpeechMessagePacket>(fixture.Sender.Sent[0]).Hue.Value);
+        Assert.Equal(0x22, Assert.IsType<LocalizedMessagePacket>(fixture.Sender.Sent[1]).Hue);
+    }
+
+    [Fact]
     public async Task Tell_AnNpc_IsFalseAndSendsNothing()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();
         await fixture.AddAsync(2);
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(100, 100, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), Name = "an orc", Map = MapType.Trammel, Location = new Point3D(100, 100, 0) };
         var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
         var told = true;
 
@@ -129,8 +198,7 @@ public sealed class SpeechServiceTests
         var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
         var sent = 0;
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 staff.Set(SessionKeys.AccountType, AccountType.GameMaster);
                 sent = speech.Say(speaker, "psst");
@@ -158,8 +226,7 @@ public sealed class SpeechServiceTests
         var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
         var sent = 0;
 
-        await fixture.Network.ExecuteOnLoopAsync(
-            () =>
+        await fixture.Network.ExecuteOnLoopAsync(() =>
             {
                 staff.Set(SessionKeys.AccountType, AccountType.GameMaster);
                 sent = speech.PlaySound(source, 0x69);

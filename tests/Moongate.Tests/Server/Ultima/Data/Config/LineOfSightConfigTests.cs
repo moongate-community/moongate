@@ -19,7 +19,8 @@ public sealed class LineOfSightConfigTests
     [Theory, InlineData(0), InlineData(-1), InlineData(256)]
     public void Validate_DistanceOutOfRange_Throws(int distance)
     {
-        var exception = Assert.Throws<InvalidOperationException>(() => new LineOfSightConfig { MaxDistance = distance }.Validate());
+        var exception =
+            Assert.Throws<InvalidOperationException>(() => new LineOfSightConfig { MaxDistance = distance }.Validate());
 
         Assert.Contains("max_distance", exception.Message);
     }

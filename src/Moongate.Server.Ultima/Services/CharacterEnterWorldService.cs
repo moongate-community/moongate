@@ -39,6 +39,10 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly ILightService? _light;
     private readonly ISeasonService? _seasons;
     private readonly IWorldViewService _view;
+    private readonly IWeightService? _weight;
+    private readonly ICrimeService? _crimes;
+    private readonly ICombatGearService? _gear;
+    private readonly IMurderService? _murders;
 
     public CharacterEnterWorldService(
         IMobileService mobiles,
@@ -49,9 +53,17 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         IWorldViewService view,
         IMotdService motd,
         ILightService? light = null,
-        ISeasonService? seasons = null
+        ISeasonService? seasons = null,
+        IWeightService? weight = null,
+        ICrimeService? crimes = null,
+        ICombatGearService? gear = null,
+        IMurderService? murders = null
     )
     {
+        _murders = murders;
+        _gear = gear;
+        _crimes = crimes;
+        _weight = weight;
         _light = light;
         _seasons = seasons;
         _mobiles = mobiles;
@@ -68,11 +80,10 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         // A second character on the same session would replace the first and leave it in the world for ever.
         return !session.CharacterId.IsValid &&
                !_sessions.GetAll()
-                         .Any(
-                             other => other.SessionId != session.SessionId &&
-                                      other.AccountId == session.AccountId &&
-                                      other.CharacterId.IsValid
-                         );
+                   .Any(other => other.SessionId != session.SessionId &&
+                                 other.AccountId == session.AccountId &&
+                                 other.CharacterId.IsValid
+                   );
     }
 
     public async Task EnterAsync(
@@ -85,29 +96,32 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         var character = play.Character;
         var admitted = false;
         await context.RunOnGameLoopAsync(
-                session =>
+            session =>
+            {
+                if (!CanEnter(session))
                 {
-                    if (!CanEnter(session))
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    // Together on the loop: a session retirement then always finds the character live.
-                    session.Set(SessionKeys.CharacterId, character.Id);
-                    _mobiles.EnterWorld(character);
+                // Together on the loop: a session retirement then always finds the character live.
+                session.Set(SessionKeys.CharacterId, character.Id);
+                _mobiles.EnterWorld(character);
+                // Before the packets that show it: a criminal that comes back is grey from the first one.
+                _crimes?.Restore(character);
+                _murders?.Restore(character);
 
-                    // Its rows are as its last save left them: what another player took or merged since stays out, and
-                    // is not shown on the character either.
-                    var added = _items.AddLoaded(play.Equipment.Concat(play.Contents)).ToHashSet();
-                    play = play with
-                    {
-                        Equipment = play.Equipment.Where(added.Contains).ToList(),
-                        Contents = play.Contents.Where(added.Contains).ToList()
-                    };
-                    admitted = true;
-                },
-                cancellationToken
-            );
+                // Its rows are as its last save left them: what another player took or merged since stays out, and
+                // is not shown on the character either.
+                var added = _items.AddLoaded(play.Equipment.Concat(play.Contents)).ToHashSet();
+                play = play with
+                {
+                    Equipment = play.Equipment.Where(added.Contains).ToList(),
+                    Contents = play.Contents.Where(added.Contains).ToList()
+                };
+                admitted = true;
+            },
+            cancellationToken
+        );
 
         if (!admitted)
         {
@@ -129,7 +143,11 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
             ))
         {
             // The session closed during the sequence: its leave already ran, so the login never completed.
-            _logger.Information("Session {SessionId} closed while {Character} entered the world", context.SessionId, character);
+            _logger.Information(
+                "Session {SessionId} closed while {Character} entered the world",
+                context.SessionId,
+                character
+            );
 
             return;
         }
@@ -175,10 +193,22 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
             direction,
             character.SkinHue,
             flags,
-            character.Notoriety ?? NotorietyType.Innocent,
+            character.ShownNotoriety,
             _mobiles.GetEquipment(character, play.Equipment)
         );
-        yield return new MobileStatusPacket(_mobiles.GetStatus(character));
+        var status = _mobiles.GetStatus(character);
+
+        if (_gear is not null)
+        {
+            status = _gear.WithGear(status, character);
+        }
+
+        yield return new MobileStatusPacket(
+            _weight is null
+                ? status
+                : status with { Weight = _weight.Carried(character), MaxWeight = _weight.MaxCarried(character) }
+        );
+        yield return new StatLockInfoPacket(character.Id, character.StrLock, character.DexLock, character.IntLock);
         yield return new WarModePacket(false);
         yield return new LoginCompletePacket();
         yield return new CurrentTimePacket(TimeOnly.FromDateTime(DateTime.UtcNow));

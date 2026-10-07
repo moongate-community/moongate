@@ -81,9 +81,9 @@ internal static class PersistenceSchemaCommand
         {
             selectedTarget = migrationTarget switch
             {
-                "auth" => PersistenceDatabaseTarget.Accounts,
+                "auth"  => PersistenceDatabaseTarget.Accounts,
                 "world" => PersistenceDatabaseTarget.Realm,
-                _ => throw new InvalidOperationException("Generate requires --migration-target auth|world.")
+                _       => throw new InvalidOperationException("Generate requires --migration-target auth|world.")
             };
 
             if (migrationOutput is null ||
@@ -122,6 +122,7 @@ internal static class PersistenceSchemaCommand
 
             var sql = "-- Draft generated against the current reference database. Review before applying.\n" +
                       string.Join("\n", selected.Select(change => $"-- {change.ModuleId}\n{change.Ddl}"));
+            // Safe: migrationOutput is validated for Generate mode; a full non-root file path has a directory.
             var path = Path.GetFullPath(migrationOutput!);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             var temporary = path + $".{Guid.NewGuid():N}.tmp";

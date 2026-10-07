@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Data.Locations;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
@@ -13,6 +14,7 @@ using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Data.Templates.Gumps;
+using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
@@ -46,7 +48,6 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
         container.AddUltimaDataLoader<NamesLoader, NameList>(11);
         container.AddUltimaDataLoader<ItemTemplatesLoader, ItemTemplate>(12);
-        container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(13);
         container.AddUltimaDataLoader<LootTemplatesLoader, LootTemplate>(14);
         container.AddUltimaDataLoader<MobileTemplatesLoader, MobileTemplate>(15);
         container.AddUltimaDataLoader<MotdLoader, MotdLine>(16);
@@ -57,6 +58,10 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<GumpsLoader, GumpTemplate>(20);
         container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(21);
         container.AddUltimaDataLoader<LocationsLoader, NamedLocation>(22);
+        container.AddUltimaDataLoader<JailLoader, JailFile>(23);
+        container.AddUltimaDataLoader<BooksLoader, BookTemplate>(24);
+        // Starting items may reference already validated book templates.
+        container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(25);
 
         return container;
     }

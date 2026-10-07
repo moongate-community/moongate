@@ -20,4 +20,5 @@ gets it) until the next game hour rolls it again. See the
 ## See also
 
 - [All commands](../commands.md)
+- [`gmtools`](gmtools.md): the same buttons in a gump
 - [`globallight`](globallight.md)

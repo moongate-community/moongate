@@ -14,8 +14,9 @@ public sealed class RepositoryDecorationFilesTests
 {
     private static readonly string[] Folders =
     [
-        "britannia", "trammel", "felucca", "ilshenar", "malas", "tokuno", "termur", "_ruined_magincia_tram", "_ruined_magincia_fel",
-        "_bounty_boards"
+        "britannia", "trammel", "felucca", "ilshenar", "malas", "tokuno", "termur", "_ruined_magincia_tram",
+        "_ruined_magincia_fel",
+        "_old_magincia", "_bounty_boards"
     ];
 
     [Fact]
@@ -52,9 +53,9 @@ public sealed class RepositoryDecorationFilesTests
     public void EveryDoorFacing_IsADoorFacingType()
     {
         var facings = Blocks()
-                      .Where(block => block.TryGetValue("props", out var props) && ((TomlTable)props).ContainsKey("facing"))
-                      .Select(block => (string)((TomlTable)block["props"])["facing"])
-                      .ToList();
+            .Where(block => block.TryGetValue("props", out var props) && ((TomlTable)props).ContainsKey("facing"))
+            .Select(block => (string)((TomlTable)block["props"])["facing"])
+            .ToList();
 
         Assert.Equal(355, facings.Count);
         Assert.All(facings, facing => Assert.True(EnumNameUtils.TryParse<DoorFacingType>(facing, out _), facing));

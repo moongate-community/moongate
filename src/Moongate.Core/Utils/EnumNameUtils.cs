@@ -38,7 +38,8 @@ public static class EnumNameUtils
 
     /// <summary>
     ///     Reads a name written by <see cref="Format{TEnum}" />, ignoring case and underscores; a
-    ///     <see cref="FlagsAttribute" /> enum also takes names joined by <c>|</c>, and an empty string for zero.
+    ///     <see cref="FlagsAttribute" /> enum also takes names joined by
+    ///     <c>|</c>, and an empty string for zero.
     /// </summary>
     /// <returns>
     ///     False, with <paramref name="value" /> left default, when the text is not a name of the enum.
@@ -114,7 +115,7 @@ public static class EnumNameUtils
         return Type.GetTypeCode(Enum.GetUnderlyingType(typeof(TEnum))) switch
         {
             TypeCode.SByte or TypeCode.Int16 or TypeCode.Int32 or TypeCode.Int64 => unchecked((ulong)Convert.ToInt64(value)),
-            _ => Convert.ToUInt64(value)
+            _                                                                    => Convert.ToUInt64(value)
         };
     }
 }

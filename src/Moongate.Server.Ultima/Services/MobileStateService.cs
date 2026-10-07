@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Data.Movement;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Ultima.Primitives;
 using Moongate.Ultima.Types;
 
@@ -21,6 +22,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class MobileStateService : IMobileStateService
 {
     private const int DefaultSkillCap = 1000;
+    private const string HiddenBeforeDeathProp = "death.hidden";
 
     private readonly IMobileService _mobiles;
     private readonly ISessionService _sessions;
@@ -29,15 +31,25 @@ public sealed class MobileStateService : IMobileStateService
     private readonly IWorldViewService _view;
     private readonly WorldConfig _world;
 
+    // Lazy: the weight service reads the items, whose scripts reach this service through the Lua modules.
+    private readonly Lazy<IWeightService>? _weight;
+
+    // Lazy as the weights: the gear reads the items.
+    private readonly Lazy<ICombatGearService>? _gear;
+
     public MobileStateService(
         IMobileService mobiles,
         ISessionService sessions,
         ISectorService sectors,
         IPacketSendService sender,
         IWorldViewService view,
-        WorldConfig world
+        WorldConfig world,
+        Lazy<IWeightService>? weight = null,
+        Lazy<ICombatGearService>? gear = null
     )
     {
+        _gear = gear;
+        _weight = weight;
         _mobiles = mobiles;
         _sessions = sessions;
         _sectors = sectors;
@@ -48,7 +60,10 @@ public sealed class MobileStateService : IMobileStateService
 
     public bool SetStats(MobileEntity mobile, MobileStatsChange change)
     {
-        if (new[] { change.Strength, change.Dexterity, change.Intelligence, change.HitsMax, change.ManaMax, change.StaminaMax }
+        if (new[]
+            {
+                change.Strength, change.Dexterity, change.Intelligence, change.HitsMax, change.ManaMax, change.StaminaMax
+            }
             .Any(value => value is < 0 or > IMobileStateService.MaxValue))
         {
             return false;
@@ -154,6 +169,65 @@ public sealed class MobileStateService : IMobileStateService
         return true;
     }
 
+    public bool SetSkillLock(MobileEntity mobile, SkillType skill, SkillLockType skillLock)
+    {
+        if (!Enum.IsDefined(skill) || !Enum.IsDefined(skillLock))
+        {
+            return false;
+        }
+
+        var known = mobile.Skills.FirstOrDefault(entry => entry.Skill == skill);
+
+        if (known is null)
+        {
+            known = new() { Skill = skill, Cap = DefaultSkillCap };
+            mobile.Skills.Add(known);
+        }
+
+        known.Lock = skillLock;
+
+        return true;
+    }
+
+    public bool SetStatLock(MobileEntity mobile, StatType stat, StatLockType statLock)
+    {
+        if (!Enum.IsDefined(stat) || !Enum.IsDefined(statLock))
+        {
+            return false;
+        }
+
+        var before = (mobile.StrLock, mobile.DexLock, mobile.IntLock);
+
+        switch (stat)
+        {
+            case StatType.Str:
+                mobile.StrLock = statLock;
+
+                break;
+            case StatType.Dex:
+                mobile.DexLock = statLock;
+
+                break;
+            default:
+                mobile.IntLock = statLock;
+
+                break;
+        }
+
+        // As ModernUO: the three locks, to its own player, when one changed.
+        if (before != (mobile.StrLock, mobile.DexLock, mobile.IntLock) &&
+            _mobiles.IsInWorld(mobile.Id) &&
+            _sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(
+                own.SessionId,
+                new StatLockInfoPacket(mobile.Id, mobile.StrLock, mobile.DexLock, mobile.IntLock)
+            );
+        }
+
+        return true;
+    }
+
     public bool SetName(MobileEntity mobile, string name)
     {
         if (string.IsNullOrWhiteSpace(name) || name.Trim().Length > IMobileStateService.MaxNameLength)
@@ -222,6 +296,43 @@ public sealed class MobileStateService : IMobileStateService
         return true;
     }
 
+    public void SetDead(MobileEntity mobile, bool dead)
+    {
+        if (mobile.IsNpc || mobile.IsDead == dead)
+        {
+            return;
+        }
+
+        var body = dead ? GhostBodies.GhostOf(mobile.Body) : GhostBodies.LivingOf(mobile.Body);
+
+        if (body == mobile.Body)
+        {
+            return;
+        }
+
+        // Hidden first: the players around lose the figure that dies, and the ghost they may see is shown after. What
+        // it was before dying, such as a game master that hid, comes back with it.
+        if (dead)
+        {
+            mobile.SetProp(HiddenBeforeDeathProp, mobile.Hidden);
+        }
+
+        var wasHidden = !dead && mobile.GetProp(HiddenBeforeDeathProp, false);
+
+        if (!dead)
+        {
+            mobile.RemoveProp(HiddenBeforeDeathProp);
+        }
+
+        SetHidden(mobile, dead ? !mobile.WarMode : wasHidden);
+        SetLooks(mobile, body, null);
+
+        if (dead && _sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(own.SessionId, new DeathStatusPacket());
+        }
+    }
+
     public void SetHidden(MobileEntity mobile, bool hidden)
     {
         if (mobile.Hidden == hidden)
@@ -257,6 +368,12 @@ public sealed class MobileStateService : IMobileStateService
         var changed = mobile.WarMode != warMode;
         mobile.WarMode = warMode;
 
+        // A ghost is seen by the living only while it is in war mode.
+        if (mobile.IsDead)
+        {
+            SetHidden(mobile, !warMode);
+        }
+
         if (!_mobiles.IsInWorld(mobile.Id))
         {
             return;
@@ -281,7 +398,22 @@ public sealed class MobileStateService : IMobileStateService
             return;
         }
 
-        _sender.TrySend(session.SessionId, new MobileStatusPacket(_mobiles.GetStatus(target), session.CharacterId != target.Id));
+        var own = session.CharacterId == target.Id;
+        var status = _mobiles.GetStatus(target);
+
+        // Only the whole status, the one of the player's own character, has the weights.
+        if (own && _weight?.Value is { } weight)
+        {
+            status = status with { Weight = weight.Carried(target), MaxWeight = weight.MaxCarried(target) };
+        }
+
+        // As the weights, the damage of the weapon and the armor rating are those of the player's own character.
+        if (own && _gear?.Value is { } gear)
+        {
+            status = gear.WithGear(status, target);
+        }
+
+        _sender.TrySend(session.SessionId, new MobileStatusPacket(status, !own));
     }
 
     public void SendSkills(GameSession session, MobileEntity character)

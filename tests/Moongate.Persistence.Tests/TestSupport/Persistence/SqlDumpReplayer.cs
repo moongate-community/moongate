@@ -4,8 +4,8 @@ using Npgsql;
 namespace Moongate.Persistence.Tests.TestSupport.Persistence;
 
 /// <summary>
-///     Runs an export script the way psql does: statements end with a semicolon, and a
-///     <c>COPY ... FROM stdin;</c> statement is followed by its rows up to a <c>\.</c> line.
+///     Runs an export script the way psql does: statements end with a semicolon, and a <c>COPY ... FROM stdin;</c>
+///     statement is followed by its rows up to a <c>\.</c> line.
 /// </summary>
 public static class SqlDumpReplayer
 {

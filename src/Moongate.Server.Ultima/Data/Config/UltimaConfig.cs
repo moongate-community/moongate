@@ -25,7 +25,21 @@ public class UltimaConfig : IConfigSection
 
     public RegenerationConfig Regeneration { get; set; } = new();
 
+    public CrimeConfig Crime { get; set; } = new();
+
+    public MurderConfig Murder { get; set; } = new();
+
+    public SkillsConfig Skills { get; set; } = new();
+
+    public CombatConfig Combat { get; set; } = new();
+
     public SpawnsConfig Spawns { get; set; } = new();
+
+    public JailConfig Jail { get; set; } = new();
+
+    public BulletinBoardsConfig BulletinBoards { get; set; } = new();
+
+    public BankConfig Bank { get; set; } = new();
 
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
@@ -92,5 +106,54 @@ public class UltimaConfig : IConfigSection
         }
 
         Regeneration.Validate();
+
+        if (Crime is null)
+        {
+            throw new InvalidOperationException("The ultima.crime configuration section cannot be null.");
+        }
+
+        Crime.Validate();
+
+        if (Murder is null)
+        {
+            throw new InvalidOperationException("The ultima.murder configuration section cannot be null.");
+        }
+
+        Murder.Validate();
+
+        if (Skills is null)
+        {
+            throw new InvalidOperationException("The ultima.skills configuration section cannot be null.");
+        }
+
+        Skills.Validate();
+
+        if (Combat is null)
+        {
+            throw new InvalidOperationException("The ultima.combat configuration section cannot be null.");
+        }
+
+        Combat.Validate();
+
+        if (Jail is null)
+        {
+            throw new InvalidOperationException("The ultima.jail configuration section cannot be null.");
+        }
+
+        Jail.Validate();
+
+        if (BulletinBoards is null)
+        {
+            throw new InvalidOperationException("The ultima.bulletin_boards configuration section cannot be null.");
+        }
+
+        BulletinBoards.Validate();
+
+        if (Bank is null)
+        {
+            throw new InvalidOperationException("The ultima.bank configuration section cannot be null.");
+        }
+
+        Bank.Validate();
     }
 }

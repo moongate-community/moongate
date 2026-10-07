@@ -57,6 +57,16 @@ decays = false
 script_id = "clock"
 
 [[item]]
+id = "bulletin_board"
+base_id = "base_item"
+item_id = 0x1E5E
+name = "bulletin board"
+rarity = "common"
+movable = false
+decays = false
+script_id = "bulletin_board"
+
+[[item]]
 id = "decoration_fillable"
 base_id = "base_item"
 item_id = 0x0E3C

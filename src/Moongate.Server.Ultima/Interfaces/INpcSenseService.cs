@@ -5,7 +5,8 @@ namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
 ///     Lets NPC scripts sense the mobiles that come within <c>ultima.npcs.sense_range</c>:
-///     <c>on_mobile_in_range(serial, other)</c>, once when the other mobile enters the range, as UOX3's onEnterRange and
+///     <c>on_mobile_in_range(serial, other)</c>, once when the other mobile enters the range, as UOX3's onEnterRange
+///     and
 ///     POL's EnteredArea. Called on the game loop by the mobile service, after the sectors know the new position.
 /// </summary>
 public interface INpcSenseService
@@ -19,4 +20,12 @@ public interface INpcSenseService
     ///     <paramref name="mobile" /> stepped from <paramref name="oldLocation" /> to where it stands, on the same map.
     /// </summary>
     void Moved(MobileEntity mobile, Point3D oldLocation);
+
+    /// <summary>
+    ///     Queues <c>on_mobile_killed(serial, killed, killer)</c> on each NPC within the sense range of a mobile that
+    ///     was
+    ///     killed, player or NPC, except the killed itself: <c>serial</c> is the NPC that is told, <c>killer</c> is nil
+    ///     when nobody killed it. Queued, not run.
+    /// </summary>
+    void Killed(MobileEntity killed, MobileEntity? killer);
 }

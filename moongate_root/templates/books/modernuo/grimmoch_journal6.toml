@@ -1,0 +1,423 @@
+title = "The daily journal of Grimmoch Drummel"
+author = "Grimmoch"
+content = """Day Six :
+ 
+The camp was
+attacked last night by
+a pack of, well, I don't
+have a clue.  I've never
+seen the like of these
+beasts anywhere.
+
+Huge things, with
+fangs the size of your
+forefinger, covered in
+hair and with the
+strangest arched back
+I've ever seen.  And so
+many of them.  We
+were forced back into
+
+the Tomb for the
+night, just to keep our
+hides on us.  And
+today Gathenwale
+practically orders us
+all to move the entire
+exterior camp into the
+Tomb.  Now, I don't
+
+disagree that we'd be
+well off to use the
+place as a point of
+fortification... but I
+don't like it one bit, in
+any case.  I don't like
+the look of this place,
+nor the sound of it.
+
+The way the wind
+gets into the
+passageways,
+whistling up the
+strangest noises.
+Deep, sustained echoes
+of the wind, not so
+much flute-like as...
+
+well, it sounds
+ridiculous.  In any
+case, we've set to work
+moving the bulk of the
+exterior camp into the
+main antechamber, so
+there's no use moaning
+about it now."""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Denní zápisky Grimmoch Drummel"
+content = """Den šestý:
+ 
+Včera v noci napadla
+tábor smečka, no, nemám
+ponětí čeho. Takové
+bestie jsem ještě nikde
+neviděl.
+
+Obrovské potvory s tesáky
+dlouhými jako ukazovák,
+celé chlupaté a s
+nejpodivnějším vyklenutým
+hřbetem, jaký jsem kdy
+viděl. A bylo jich tolik.
+Museli jsme se na noc
+stáhnout do
+
+hrobky, jen abychom si
+zachránili kůži. A dnes
+nám Gathenwale prakticky
+rozkazuje přestěhovat
+celý venkovní tábor do
+hrobky. Ne že bych
+
+nesouhlasil, že využít
+tohle místo jako opevněné
+stanoviště by nám
+prospělo... ale stejně se
+mi to ani trochu nelíbí.
+Nelíbí se mi vzhled toho
+místa ani jeho zvuk.
+
+Jak vítr proniká do
+chodeb a píská ty
+nejpodivnější zvuky.
+Hluboké, táhlé ozvěny
+větru, ani ne tak jako
+flétna, spíš...
+
+no, zní to směšně.
+Každopádně jsme začali
+přesouvat většinu
+venkovního tábora do
+hlavní předsíně, takže
+teď nemá cenu naříkat."""
+[translations.fre]
+title = "Le journal quotidien de Grimmoch Drummel"
+content = """Sixième jour :
+ 
+Le camp a été attaqué la
+nuit dernière par une
+meute de... eh bien, je
+n’en ai pas la moindre
+idée. Je n’ai jamais vu
+pareilles bêtes nulle
+part.
+
+Des choses énormes, avec
+des crocs gros comme
+votre index, couvertes de
+poils et avec le dos
+arqué le plus étrange que
+j’aie jamais vu. Et il y
+en avait tant. Nous avons
+dû nous replier dans
+
+le Tombeau pour la nuit,
+simplement pour sauver
+notre peau. Et
+aujourd’hui, Gathenwale
+nous ordonne pratiquement
+de déplacer tout le camp
+extérieur à l’intérieur
+du Tombeau. Je ne
+
+conteste pas qu’il serait
+judicieux d’utiliser cet
+endroit comme point
+fortifié... mais cela ne
+me plaît pas du tout,
+quoi qu’il en soit. Je
+n’aime ni l’aspect de cet
+endroit ni les sons qu’on
+y entend.
+
+La façon dont le vent
+s’engouffre dans les
+couloirs, sifflant les
+bruits les plus étranges.
+Des échos profonds et
+soutenus du vent, qui
+ressemblent moins à une
+flûte qu’à...
+
+eh bien, cela paraît
+ridicule. En tout cas,
+nous avons commencé à
+transporter le gros du
+camp extérieur dans
+l’antichambre principale,
+alors cela ne sert plus à
+rien de s’en plaindre."""
+[translations.ger]
+title = "Grimmoch Drummels tägliches Tagebuch"
+content = """Sechster Tag:
+ 
+Letzte Nacht wurde das
+Lager von einem Rudel
+angegriffen, nun, ich
+habe keine Ahnung, wovon.
+Solche Bestien habe ich
+noch nirgends gesehen.
+
+Riesige Dinger, mit
+Fangzähnen so groß wie
+dein Zeigefinger, mit
+Haar bedeckt und mit dem
+seltsamsten gewölbten
+Rücken, den ich je
+gesehen habe. Und so
+viele davon. Wir wurden
+für die Nacht ins
+
+Grab zurückgedrängt, nur
+um unsere Haut zu retten.
+Und heute befiehlt
+Gathenwale uns praktisch
+allen, das gesamte äußere
+Lager ins Grab zu
+verlegen. Nun bin ich
+nicht
+
+dagegen, den Ort als
+befestigten Stützpunkt zu
+nutzen ... aber es
+gefällt mir trotzdem kein
+bisschen. Mir gefällt
+weder der Anblick dieses
+Ortes noch sein Klang.
+
+Wie der Wind in die Gänge
+dringt und die
+seltsamsten Laute pfeift.
+Tiefe, anhaltende Echos
+des Windes, weniger wie
+eine Flöte als ...
+
+nun, es klingt
+lächerlich. Jedenfalls
+haben wir uns daran
+gemacht, den Großteil des
+äußeren Lagers in die
+Hauptvorhalle zu
+verlegen, also bringt es
+jetzt nichts, darüber zu
+jammern."""
+[translations.ita]
+title = "Il diario quotidiano di Grimmoch Drummel"
+content = """Giorno Sei :
+ 
+L'accampamento è stato
+attaccato stanotte da un
+branco di... be', non ne
+ho idea. Non ho mai visto
+bestie simili da nessuna
+parte.
+
+Cose enormi, con zanne
+grandi quanto un dito
+indice, coperte di pelo e
+con la schiena arcuata
+più strana che abbia mai
+visto. E ce n'erano
+tante. Siamo stati
+costretti a ripiegare
+nella
+
+Tomba per la notte, solo
+per salvare la pelle. E
+oggi Gathenwale ci ha
+praticamente ordinato di
+spostare l'intero
+accampamento esterno
+nella Tomba. Ora, non
+
+nego che ci converrebbe
+usare il posto come punto
+fortificato... ma non mi
+piace affatto, in ogni
+caso. Non mi piace
+l'aspetto di questo
+posto, né il suo suono.
+
+Il modo in cui il vento
+penetra nei passaggi,
+fischiando i rumori più
+strani. Echi profondi e
+persistenti del vento,
+non tanto simili a un
+flauto quanto...
+
+be', sembra ridicolo.
+Comunque ci siamo messi
+al lavoro per trasferire
+la maggior parte
+dell'accampamento esterno
+nell'anticamera
+principale, quindi adesso
+è inutile lamentarsi."""
+[translations.pol]
+title = "Dziennik codzienny Grimmoch Drummel"
+content = """Dzień szósty:
+ 
+Obóz zaatakowała zeszłej
+nocy wataha, no cóż, nie
+mam pojęcia czego. Nigdy
+nigdzie nie widziałem
+takich bestii.
+
+Ogromne stwory, z kłami
+wielkości palca
+wskazującego, porośnięte
+sierścią, o
+najdziwniejszym wygiętym
+grzbiecie, jaki
+widziałem. I było ich
+tyle. Musieliśmy wycofać
+się na noc do
+
+Grobowca, żeby ocalić
+własną skórę. A dziś
+Gathenwale niemal
+rozkazuje nam wszystkim
+przenieść cały zewnętrzny
+obóz do Grobowca. Nie
+
+przeczę, że dobrze byłoby
+wykorzystać to miejsce
+jako umocnienie... ale i
+tak ani trochę mi się to
+nie podoba. Nie podoba mi
+się jego wygląd ani
+dźwięki.
+
+Sposób, w jaki wiatr
+wpada w korytarze,
+wywołując gwizdem
+najdziwniejsze odgłosy.
+Głębokie, przeciągłe echa
+wiatru, nie tyle jak
+flet, ile...
+
+cóż, brzmi to
+niedorzecznie. W każdym
+razie zabraliśmy się do
+przenoszenia większości
+zewnętrznego obozu do
+głównego przedsionka,
+więc teraz nie ma co
+narzekać."""
+[translations.por]
+title = "O diário de Grimmoch Drummel"
+content = """Sexto dia:
+ 
+O acampamento foi atacado
+na noite passada por uma
+matilha de... bem, não
+faço ideia. Nunca vi nada
+parecido com essas feras
+em lugar algum.
+
+Coisas enormes, com
+presas do tamanho do seu
+dedo indicador, cobertas
+de pelos e com o dorso
+arqueado mais estranho
+que já vi. E eram tantas.
+Fomos obrigados a recuar
+para dentro
+
+da Tumba durante a noite,
+só para salvar nossa
+pele. E hoje Gathenwale
+praticamente ordena que
+todos nós transfiramos
+todo o acampamento
+externo para a Tumba.
+Agora, eu não
+
+discordo de que seria bom
+usar o lugar como ponto
+de fortificação... mas
+não gosto nada disso, de
+qualquer modo. Não gosto
+do aspecto deste lugar,
+nem de seus sons.
+
+Do jeito como o vento
+entra nas passagens,
+assobiando os ruídos mais
+estranhos. Ecos profundos
+e prolongados do vento,
+não tanto como uma
+flauta, mas como...
+
+bem, parece ridículo. Em
+todo caso, começamos a
+transferir a maior parte
+do acampamento externo
+para a antecâmara
+principal, então não
+adianta reclamar agora."""
+[translations.spa]
+title = "El diario de Grimmoch Drummel"
+content = """Día seis:
+ 
+Anoche el campamento fue
+atacado por una manada
+de... bueno, no tengo ni
+idea. Nunca he visto
+bestias semejantes en
+ninguna parte.
+
+Enormes, con colmillos
+del tamaño de un dedo
+índice, cubiertas de pelo
+y con la espalda arqueada
+más extraña que he visto.
+Y eran tantas. Tuvimos
+que refugiarnos en
+
+la tumba durante la noche
+para salvar el pellejo. Y
+hoy Gathenwale
+prácticamente nos ordena
+trasladar todo el
+campamento exterior al
+interior de la tumba.
+Ahora bien, no
+
+discuto que nos convenga
+usar este lugar como
+fortificación... pero no
+me gusta nada, de todos
+modos. No me gusta su
+aspecto ni cómo suena.
+
+La forma en que el viento
+entra en los pasadizos,
+silbando los ruidos más
+extraños. Ecos profundos
+y sostenidos del viento,
+que no parecen tanto una
+flauta como...
+
+bueno, suena ridículo. En
+cualquier caso, hemos
+empezado a trasladar la
+mayor parte del
+campamento exterior a la
+antecámara principal, así
+que ya no sirve de nada
+quejarse."""

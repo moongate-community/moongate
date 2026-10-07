@@ -36,8 +36,8 @@ public class NetworkConfig
         {
             Enabled = EnablePingServer,
             Endpoints = EnablePingServer
-                            ? ResolveListenAddresses().Select(address => new IPEndPoint(address, PingPort)).ToArray()
-                            : []
+                ? ResolveListenAddresses().Select(address => new IPEndPoint(address, PingPort)).ToArray()
+                : []
         };
     }
 

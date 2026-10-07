@@ -114,6 +114,8 @@ death = 185
 
 [[mobile]]
 id = "frenziedostard"
+script_id = "monster"
+flee_at = -1
 base_id = "horse"
 name = "a frenzied ostard"
 body = 219
@@ -204,6 +206,7 @@ death = 628
 
 [[mobile]]
 id = "nightmare"
+script_id = "monster"
 base_id = "horse"
 name = "a nightmare"
 body = 116
@@ -397,6 +400,7 @@ death = 172
 
 [[mobile]]
 id = "darksteed"
+script_id = "monster"
 base_id = "horse"
 name = "a dark steed"
 body = 114
@@ -449,6 +453,7 @@ death = 172
 
 [[mobile]]
 id = "skeletalmount"
+script_id = "monster"
 base_id = "horse"
 name = "a skeletal steed"
 body = 793
@@ -474,6 +479,7 @@ death = 172
 
 [[mobile]]
 id = "giantbeetle"
+script_id = "monster"
 base_id = "horse"
 name = "a giant beetle"
 body = 791

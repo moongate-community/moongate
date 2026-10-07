@@ -16,7 +16,8 @@ public sealed class GumpTemplateAnswer
     public string? Open { get; init; }
 
     /// <summary>
-    ///     Gets the answers of the controls with <c>bind</c>, by name: a text as a string, a checkbox as a bool, a radio
+    ///     Gets the answers of the controls with <c>bind</c>, by name: a text as a string, a checkbox as a bool, a
+    ///     radio
     ///     group as the long switch id of the radio on (false when none is).
     /// </summary>
     public required IReadOnlyDictionary<string, object> Bound { get; init; }

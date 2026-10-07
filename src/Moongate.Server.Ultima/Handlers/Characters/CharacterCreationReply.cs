@@ -48,7 +48,10 @@ internal static class CharacterCreationReply
         {
             // Before the save: a client that cannot enter the world must not use up a slot.
             logger.Information("Account {AccountId} already has a character in the world", accountId);
-            await context.SendAndDisconnectAsync(new PopupMessagePacket(PopupMessageType.CharacterInWorld), cancellationToken);
+            await context.SendAndDisconnectAsync(
+                new PopupMessagePacket(PopupMessageType.CharacterInWorld),
+                cancellationToken
+            );
 
             return;
         }
@@ -80,6 +83,7 @@ internal static class CharacterCreationReply
             return;
         }
 
+        // Safe: a successful result always carries the character.
         var character = result.Character!;
         logger.Information(
             "Session {SessionId}: account {AccountId} created character {Serial} {Name} ({Race} {Gender}) in slot {Slot} at {Map} {Location}",
@@ -106,7 +110,7 @@ internal static class CharacterCreationReply
         {
             // As RunUO: a full account is reported as a sync error, which sends the client back to the login.
             CharacterCreationRefusalType.TooManyCharacters => PopupMessageType.LoginSyncError,
-            _ => PopupMessageType.CharacterExists
+            _                                              => PopupMessageType.CharacterExists
         };
     }
 }

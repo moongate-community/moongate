@@ -1,4 +1,6 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using System.Collections.Frozen;
+using Moongate.Core.Primitives;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
@@ -27,12 +29,14 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 ///     A container is an item whose graphic has the tiledata Container flag; <see cref="IContainerLayoutService" />
 ///     gives its gump.
 /// </remarks>
-public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
+public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, IUseService
 {
     // The client sets this bit on the serial when the player asks for their own paperdoll.
     private const uint PaperdollRequestFlag = 0x80000000;
     private const int TooFarCliloc = 500446;
+    private const int DeadCliloc = 1019048;
     private const string UseFunction = "on_use";
+    private const string GhostUseFunction = "on_ghost_use";
 
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
@@ -46,6 +50,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private readonly IFameKarmaTitleService _titles;
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
+    private readonly IInventoryMutationGuard? _inventory;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -58,16 +63,20 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         ITooltipService tooltips,
         IFameKarmaTitleService titles,
         IItemScriptService? scripts = null,
-        IBankService? bank = null
+        IBankService? bank = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _bank = bank;
         _tooltips = tooltips;
         _titles = titles;
         _scripts = scripts;
         _items = items;
         _mobiles = mobiles;
-        _bodies = new(() => data.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type));
+        _bodies = new(() =>
+            data.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type)
+        );
         _world = world;
         _tiles = tiles;
         _layouts = layouts;
@@ -142,6 +151,16 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         }
     }
 
+    public void Use(GameSession session, Serial target)
+    {
+        Handle(session, new UseRequestPacket { Target = target });
+    }
+
+    public bool HasPaperdoll(MobileEntity mobile)
+    {
+        return _bodies.Value.TryGetValue(mobile.Body, out var type) && type == BodyType.Human;
+    }
+
     // A container lying on the ground, or inside one, within reach of the character, such as a treasure chest; one too
     // far says so.
     private bool CanOpenOnTheGround(GameSession session, ItemEntity item)
@@ -172,13 +191,36 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
             return true;
         }
 
-        if (_items.GetOwner(item) != character.Id && !_items.CanReach(character, item))
+        if (_inventory?.AllowsOwner(character.Id) == false || _inventory?.Allows(item) == false)
+        {
+            return true;
+        }
+
+        if (_items.GetOwner(item) != character.Id &&
+            (_items.GetGroundRoot(item) is not { } root ||
+             !_items.IsLyingOnGround(root) ||
+             !_items.CanReach(character, root)))
         {
             _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, TooFarCliloc, "", ""));
 
             return true;
         }
 
+        // A ghost uses only what its script says a ghost may, such as an ankh.
+        if (character.IsDead)
+        {
+            // Safe: the only caller, HandleAsync, runs this after its `_scripts is not null` check.
+            var ghost = _scripts!.Run(item, GhostUseFunction, (long)character.Id.Value);
+
+            if (ghost.Kind == ScriptResultKind.Missing)
+            {
+                _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, DeadCliloc, "", ""));
+            }
+
+            return true;
+        }
+
+        // Safe: the only caller, HandleAsync, runs this after its `_scripts is not null` check.
         var result = _scripts!.Run(item, UseFunction, (long)character.Id.Value);
 
         return result.Kind == ScriptResultKind.Suspended ||
@@ -216,7 +258,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
                 Math.Abs(character.Location.X - mobile.Location.X) > _world.ViewRange ||
                 Math.Abs(character.Location.Y - mobile.Location.Y) > _world.ViewRange)
             {
-                _logger.Debug("Session {SessionId} asked for the paperdoll of {Mobile}, out of view", session.SessionId, mobile.Id);
+                _logger.Debug(
+                    "Session {SessionId} asked for the paperdoll of {Mobile}, out of view",
+                    session.SessionId,
+                    mobile.Id
+                );
 
                 return;
             }
@@ -224,11 +270,18 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
 
         if (!_bodies.Value.TryGetValue(mobile.Body, out var type) || type != BodyType.Human)
         {
-            _logger.Debug("Session {SessionId} asked for the paperdoll of {Mobile}, which has no human body", session.SessionId, mobile.Id);
+            _logger.Information(
+                "Session {SessionId} asked for the paperdoll of {Mobile}, which has no human body",
+                session.SessionId,
+                mobile.Id
+            );
 
             return;
         }
 
-        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, PaperdollTitle(mobile), mobile.WarMode, own));
+        _sender.TrySend(
+            session.SessionId,
+            new DisplayPaperdollPacket(mobile.Id, PaperdollTitle(mobile), mobile.WarMode, own)
+        );
     }
 }

@@ -6,7 +6,7 @@ using Moongate.Core.DiceNotation.Terms;
 namespace Moongate.Core.DiceNotation;
 
 /// <summary>
-/// Default class for parsing a string representing a dice expression into a <see cref="DiceExpression" /> instance.
+///     Default class for parsing a string representing a dice expression into a <see cref="DiceExpression" /> instance.
 /// </summary>
 public class Parser : IParser
 {
@@ -24,15 +24,17 @@ public class Parser : IParser
         }.ToFrozenDictionary();
 
     /// <summary>
-    /// Parses the dice expression specified into a <see cref="DiceExpression" /> instance.
+    ///     Parses the dice expression specified into a <see cref="DiceExpression" /> instance.
     /// </summary>
     /// <remarks>
-    /// Breaks the dice expression into postfix form, and evaluates the postfix expression to the
-    /// degree necessary to produce the appropriate chain of <see cref="ITerm" /> instances.
+    ///     Breaks the dice expression into postfix form, and evaluates the postfix expression to the
+    ///     degree necessary to produce the appropriate chain of <see cref="ITerm" /> instances.
     /// </remarks>
-    /// <param name="expression">The expression to parse.</param>
+    /// <param name="expression">
+    ///     The expression to parse.
+    /// </param>
     /// <returns>
-    /// An <see cref="DiceExpression" /> representing the given expression, that can "roll" the expression on command.
+    ///     An <see cref="DiceExpression" /> representing the given expression, that can "roll" the expression on command.
     /// </returns>
     public DiceExpression Parse(string expression)
     {

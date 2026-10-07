@@ -7,8 +7,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Walks POL's integer 3D Bresenham line (<c>realmlos.cpp</c>) and tests each point with ModernUO's rules
-///     (<c>Map.LineOfSight</c>), without allocating.
+///     Walks POL's integer 3D Bresenham line ( <c>realmlos.cpp</c>) and tests each point with ModernUO's rules
+///     ( <c>Map.LineOfSight</c>), without allocating.
 /// </summary>
 public class LineOfSightService : ILineOfSightService
 {

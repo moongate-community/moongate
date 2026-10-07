@@ -23,5 +23,6 @@ next time. An item that is carried, worn or inside a container is left where it 
 ## See also
 
 - [All commands](../commands.md)
+- [`kill`](kill.md)
 - [`spawn`](spawn.md)
 - [`add`](add.md)

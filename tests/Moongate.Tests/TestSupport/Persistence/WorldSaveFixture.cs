@@ -31,59 +31,6 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
     public Exception? CaptureFailure { get; set; }
     public Action? OnCapture { get; set; }
 
-    private WorldSaveFixture(HostPersistenceFixture host, bool autosave)
-    {
-        _host = host;
-        Timers = new(new(), Clock);
-        Loop = new(new(), Timers, Clock);
-        host.Container
-            .AddPersistenceModule<TestPersistenceModule>()
-            .AddPersistenceEntity(
-                () =>
-                {
-                    Assert.True(Loop.IsOnLoopThread);
-                    Captures++;
-                    OnCapture?.Invoke();
-
-                    if (CaptureFailure is not null)
-                    {
-                        throw CaptureFailure;
-                    }
-
-                    return Entities;
-                },
-                entity => new() { Id = entity.Id, Name = entity.Name }
-            );
-
-        if (host.AccountsDatabase is not null)
-        {
-            host.Container
-                .AddPersistenceModule<AccountSnapshotModule>()
-                .AddPersistenceEntity<AccountSnapshotEntity>(
-                    () =>
-                    {
-                        Assert.True(Loop.IsOnLoopThread);
-                        Captures++;
-
-                        return [new() { Id = new(8), Name = "account" }];
-                    },
-                    entity => new() { Id = entity.Id, Name = entity.Name }
-                );
-        }
-
-        Saves = new(
-            Persistence,
-            Loop,
-            Timers,
-            new()
-            {
-                Enabled = autosave, Interval = TimeSpan.FromSeconds(2)
-            },
-            Clock,
-            Operations
-        );
-    }
-
     public async Task BlockWritesAsync(bool accounts = false)
     {
         _blockedDatabase = accounts ? AccountsDatabase! : Database;
@@ -168,6 +115,59 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
         {
             await Task.Delay(10, timeout.Token);
         }
+    }
+
+    private WorldSaveFixture(HostPersistenceFixture host, bool autosave)
+    {
+        _host = host;
+        Timers = new(new(), Clock);
+        Loop = new(new(), Timers, Clock);
+        host.Container
+            .AddPersistenceModule<TestPersistenceModule>()
+            .AddPersistenceEntity(
+                () =>
+                {
+                    Assert.True(Loop.IsOnLoopThread);
+                    Captures++;
+                    OnCapture?.Invoke();
+
+                    if (CaptureFailure is not null)
+                    {
+                        throw CaptureFailure;
+                    }
+
+                    return Entities;
+                },
+                entity => new() { Id = entity.Id, Name = entity.Name }
+            );
+
+        if (host.AccountsDatabase is not null)
+        {
+            host.Container
+                .AddPersistenceModule<AccountSnapshotModule>()
+                .AddPersistenceEntity<AccountSnapshotEntity>(
+                    () =>
+                    {
+                        Assert.True(Loop.IsOnLoopThread);
+                        Captures++;
+
+                        return [new() { Id = new(8), Name = "account" }];
+                    },
+                    entity => new() { Id = entity.Id, Name = entity.Name }
+                );
+        }
+
+        Saves = new(
+            Persistence,
+            Loop,
+            Timers,
+            new()
+            {
+                Enabled = autosave, Interval = TimeSpan.FromSeconds(2)
+            },
+            Clock,
+            Operations
+        );
     }
 
     public async ValueTask DisposeAsync()

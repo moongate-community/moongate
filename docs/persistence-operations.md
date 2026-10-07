@@ -211,3 +211,31 @@ The files are not compressed, not copied anywhere else and not restored by the s
 no automatic reverse migration, so a file does not load onto an older schema, and a newer schema
 may have columns the file cannot fill. For point-in-time recovery or off-site copies, use PostgreSQL's own tools
 next to this.
+
+## Letter attachment claims
+
+Letter rewards are frozen in the item's `book.attachments` string prop. The
+`world.book_attachment_claims` table holds an insert-only receipt keyed by letter
+serial; it has no live world-save source. The receipt and newly materialized
+reward rows commit with the saved letter and required containment parents in one
+world transaction. Receipt insertion locks and checks its referenced letter.
+Deletion cleanup runs at transaction completion: destroying the letter removes
+its receipt, while a save that temporarily deletes and restores a moved letter
+preserves it. Receipts never become live world-save snapshots.
+
+Claims share the persistence-operation barrier with world saves. They briefly
+reserve the claimant's inventory, run database work off the game loop and apply
+the delivered objects on the loop before releasing the reservation. Logout waits
+for settlement before capturing inventory, and shutdown drains claims before
+its final save. Claims do not retry their transaction after an exception: a
+fresh read reconciles the exact receipt and expected item snapshots.
+
+A confirmed rollback leaves the entitlement available. A matching committed
+batch applies once. An uncertain or inconsistent result, failed reconciliation
+or failed postcommit loop application keeps inventory excluded and faults the
+shared barrier; final capture must fail instead of saving stale inventory over
+committed rewards. Inspect the server log and durable receipt/item rows before
+recovery. Never regenerate an issued payload from a changed TOML source.
+
+Apply `0023_book_attachment_claims.sql` through the normal stopped-server
+migration workflow before running the upgraded server.

@@ -16,6 +16,8 @@ public sealed class ItemsConfigTests
     [Theory, InlineData("", "g"), InlineData("b", " ")]
     public void Validate_AnEmptyTemplate_Throws(string backpack, string gold)
     {
-        Assert.Throws<InvalidOperationException>(new ItemsConfig { BackpackTemplate = backpack, GoldTemplate = gold }.Validate);
+        Assert.Throws<InvalidOperationException>(
+            new ItemsConfig { BackpackTemplate = backpack, GoldTemplate = gold }.Validate
+        );
     }
 }

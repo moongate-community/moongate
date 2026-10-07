@@ -16,10 +16,10 @@ public sealed class LineOfSightServiceTests
     public LineOfSightServiceTests()
     {
         _tiles.Item(0x64, TileFlagType.Impassable | TileFlagType.NoShoot, 20)
-              .Item(0x65, TileFlagType.Wall | TileFlagType.Impassable, 20)
-              .Item(0x66, TileFlagType.Window, 20)
-              .Item(0x67, TileFlagType.NoShoot, 5)
-              .Item(0x68, TileFlagType.Surface | TileFlagType.NoShoot, 0);
+            .Item(0x65, TileFlagType.Wall | TileFlagType.Impassable, 20)
+            .Item(0x66, TileFlagType.Window, 20)
+            .Item(0x67, TileFlagType.NoShoot, 5)
+            .Item(0x68, TileFlagType.Surface | TileFlagType.NoShoot, 0);
     }
 
     [Fact]

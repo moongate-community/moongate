@@ -10,19 +10,6 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class GumpServiceTests : IAsyncLifetime
 {
-    private readonly List<(GameSession Session, GumpResponse Response)> _responses = [];
-    private readonly List<(string Gump, GumpCloseReasonType Reason)> _closes = [];
-
-    private BroadcastFixture _fixture = null!;
-    private GameSession _session = null!;
-    private GumpService _gumps = null!;
-
-    public async Task InitializeAsync()
-    {
-        _fixture = await BroadcastFixture.CreateAsync();
-        _session = await _fixture.AddAsync(1);
-        _gumps = new(_fixture.Sender);
-    }
 
     [Fact]
     public async Task Open_WithNoClientVersionYet_SendsTheCompressedGump()
@@ -283,23 +270,32 @@ public sealed class GumpServiceTests : IAsyncLifetime
         Assert.Empty(_responses);
     }
 
+    private readonly List<(GameSession Session, GumpResponse Response)> _responses = [];
+    private readonly List<(string Gump, GumpCloseReasonType Reason)> _closes = [];
+
+    private BroadcastFixture _fixture = null!;
+    private GameSession _session = null!;
+    private GumpService _gumps = null!;
+
+    public async Task InitializeAsync()
+    {
+        _fixture = await BroadcastFixture.CreateAsync();
+        _session = await _fixture.AddAsync(1);
+        _gumps = new(_fixture.Sender);
+    }
+
     private Task OnLoopAsync(Action action)
     {
         return _fixture.Network.ExecuteOnLoopAsync(action);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private GumpInstance Confirm(Action<GameSession, GumpResponse>? onResponse = null, string id = "confirm")
     {
         var layout = new GumpLayout()
-                     .Add(new GumpBackground { GumpId = 9200, Width = 300, Height = 200 })
-                     .Add(new GumpButton { Up = 4005, Down = 4007, ButtonId = 2 })
-                     .Add(new GumpCheckbox { Off = 210, On = 211, SwitchId = 10 })
-                     .Add(new GumpTextEntry { Width = 100, Height = 20, EntryId = 3 });
+            .Add(new GumpBackground { GumpId = 9200, Width = 300, Height = 200 })
+            .Add(new GumpButton { Up = 4005, Down = 4007, ButtonId = 2 })
+            .Add(new GumpCheckbox { Off = 210, On = 211, SwitchId = 10 })
+            .Add(new GumpTextEntry { Width = 100, Height = 20, EntryId = 3 });
 
         return new()
         {
@@ -324,5 +320,10 @@ public sealed class GumpServiceTests : IAsyncLifetime
             Serial = serial ?? sent.Serial, TypeId = typeId ?? sent.TypeId, ButtonId = button, Switches = switches ?? [],
             TextEntries = texts ?? []
         };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

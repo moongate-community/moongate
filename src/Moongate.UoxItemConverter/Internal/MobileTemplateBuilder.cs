@@ -27,12 +27,25 @@ internal static class MobileTemplateBuilder
     // Hair and beard item lists: the race gives hair and beard instead.
     private static readonly HashSet<int> HairItemLists = [13, 14, 15];
 
-    // UOX3's NPCAI of a banker: its script is scripts/mobiles/banker.lua.
-    private const string BankerAi = "8";
+    // UOX3's NPCAI values Moongate has a mobile script for: the town guards (4, scripts/mobiles/guard.lua), the
+    // bankers (8, scripts/mobiles/banker.lua), the creatures that go for everyone (2 evil, 11 evil caster and 88
+    // chaotic: scripts/mobiles/monster.lua, the casters fight in melee until there is magic; the fighter, 5, and the
+    // caster, 10, are the good ones, who fight criminals only, and have none yet), the animals that keep to themselves (6, scripts/mobiles/animal.lua) and those that run (12 scared animal,
+    // scripts/mobiles/scared_animal.lua).
+    private static readonly Dictionary<string, string> AiScripts = new(StringComparer.Ordinal)
+    {
+        ["2"] = "monster",
+        ["4"] = "guard",
+        ["6"] = "animal",
+        ["8"] = "banker",
+        ["11"] = "monster",
+        ["12"] = "scared_animal",
+        ["88"] = "monster"
+    };
 
     // The mobiles a Moongate mobile script is written for, by their UOX3 name; those based on them take it through
-    // base_id. scripts/mobiles/monster.lua is the melee AI without the fight: the undead of the graveyards take it,
-    // the casters among them (wraith, spectre, lich) too until magic exists.
+    // base_id. scripts/mobiles/monster.lua is the melee AI: the undead of the graveyards take it, the casters among
+    // them (wraith, spectre, lich) too until magic exists. The ones UOX3 gives an NPCAI take the script of its value.
     private static readonly Dictionary<string, string> ScriptIds = new(StringComparer.OrdinalIgnoreCase)
     {
         ["skeleton"] = "monster",
@@ -100,9 +113,9 @@ internal static class MobileTemplateBuilder
         {
             template.ScriptId = scriptId;
         }
-        else if (block.Fields.TryGetValue("NPCAI", out var ai) && ai.Trim() == BankerAi)
+        else if (block.Fields.TryGetValue("NPCAI", out var ai) && AiScripts.TryGetValue(ai.Trim(), out var aiScript))
         {
-            template.ScriptId = "banker";
+            template.ScriptId = aiScript;
         }
     }
 
@@ -148,7 +161,7 @@ internal static class MobileTemplateBuilder
                 "0" => RaceType.Human,
                 "1" => RaceType.Elf,
                 "2" => RaceType.Gargoyle,
-                _ => null
+                _   => null
             };
         }
 
@@ -162,7 +175,8 @@ internal static class MobileTemplateBuilder
 
         // UOX3 data has f_ NPCs with the male body ([f_scribe] ID=0x0190) and m_ ones with the female body.
         var prefixGender = block.Header.StartsWith("f_", StringComparison.OrdinalIgnoreCase) ? MobileGenderType.Female :
-                           block.Header.StartsWith("m_", StringComparison.OrdinalIgnoreCase) ? MobileGenderType.Male : (MobileGenderType?)null;
+            block.Header.StartsWith("m_", StringComparison.OrdinalIgnoreCase) ? MobileGenderType.Male :
+            (MobileGenderType?)null;
 
         if (template.Race is not null && prefixGender is { } expected && template.Gender is { } gender && gender != expected)
         {
@@ -175,7 +189,7 @@ internal static class MobileTemplateBuilder
         {
             (MobileGenderType.Female, "male") => "female",
             (MobileGenderType.Male, "female") => "male",
-            _ => template.NameList
+            _                                 => template.NameList
         };
     }
 
@@ -199,7 +213,7 @@ internal static class MobileTemplateBuilder
 
     /// <summary>
     ///     Turns UOX3's <c>lo hi</c> or single value into dice: one value is a constant, two are one die spanning them
-    ///     (<c>96 120</c> is <c>1d25+95</c>). Each value is divided by <paramref name="divisor" /> (skills are in
+    ///     ( <c>96 120</c> is <c>1d25+95</c>). Each value is divided by <paramref name="divisor" /> (skills are in
     ///     tenths) and clamped to <paramref name="max" />. Null when the text is not numbers.
     /// </summary>
     public static DiceSpec? ToDice(string text, int divisor = 1, int max = int.MaxValue)
@@ -222,9 +236,9 @@ internal static class MobileTemplateBuilder
         var offset = low - 1;
         var bonus = offset switch
         {
-            0 => "",
+            0   => "",
             > 0 => $"+{offset}",
-            _ => offset.ToString(CultureInfo.InvariantCulture)
+            _   => offset.ToString(CultureInfo.InvariantCulture)
         };
 
         return DiceSpec.Parse($"1d{high - low + 1}{bonus}");
@@ -323,13 +337,20 @@ internal static class MobileTemplateBuilder
                     template.Gold = Dice(value, context);
 
                     break;
+                case "FLEEAT":
+                    // From 1 to 100, or -1 for never; 0 is UOX3's "the server's default" and a value out of it is left out.
+                    template.FleeAt = UoxNumber.TryParse(value, out var fleeAt) && fleeAt is -1 or (>= 1 and <= 100)
+                        ? fleeAt
+                        : template.FleeAt;
+
+                    break;
                 case "FLAG":
                     template.Notoriety = value.ToUpperInvariant() switch
                     {
                         "INNOCENT" => NotorietyType.Innocent,
-                        "NEUTRAL" => NotorietyType.Attackable,
-                        "EVIL" => NotorietyType.Murderer,
-                        _ => template.Notoriety
+                        "NEUTRAL"  => NotorietyType.Attackable,
+                        "EVIL"     => NotorietyType.Murderer,
+                        _          => template.Notoriety
                     };
 
                     break;

@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
+using Moongate.Server.Ultima.Interfaces.Items;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -17,7 +18,8 @@ namespace Moongate.Server.Ultima.Services;
 ///     Keeps the live items by serial, the ones on the ground in the sector grid, the worn ones by wearer and the
 ///     contents by container, so what a mobile owns or a container holds is found without scanning the world. The
 ///     ground rules are
-///     ModernUO's <c>DropToWorld</c>, simplified: a player reaches 2 tiles in line of sight, and a dropped item lands on
+///     ModernUO's <c>DropToWorld</c>, simplified: a player reaches 2 tiles in line of sight, and a dropped item lands
+///     on
 ///     the highest surface up to 16 above the player's feet, without stacking on other ground items. At startup it
 ///     loads the items lying on the ground with their contents.
 /// </summary>
@@ -35,6 +37,10 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     private readonly ConcurrentDictionary<Serial, ItemEntity> _items = new();
     private readonly ConcurrentDictionary<Serial, Serial?> _tombstones = new();
+
+    // What lies inside a container that changed place: unchanged itself, but the database deletes it with the row the
+    // container was under when that row goes in the same save (a dead NPC's backpack), so the save writes it again.
+    private readonly ConcurrentDictionary<Serial, byte> _rewrites = new();
     private readonly ConcurrentDictionary<Serial, Serial> _released = new();
     private readonly ConcurrentDictionary<Serial, ConcurrentDictionary<Serial, ItemEntity>> _worn = new();
 
@@ -51,6 +57,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     private readonly IItemScriptService? _scripts;
     private readonly IItemDecayQueue? _decay;
     private readonly IItemTimerQueue? _timers;
+    private readonly IInventoryMutationGuard? _inventory;
 
     public IReadOnlyCollection<ItemEntity> Items => _items.Values.ToArray();
 
@@ -62,9 +69,11 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         IGameLoopService loop,
         IItemScriptService? scripts = null,
         IItemDecayQueue? decay = null,
-        IItemTimerQueue? timers = null
+        IItemTimerQueue? timers = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
+        _inventory = inventory;
         _timers = timers;
         _sectors = sectors;
         _movement = movement;
@@ -95,7 +104,30 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Add(IEnumerable<ItemEntity> items)
     {
-        foreach (var item in items)
+        var batch = items.ToList();
+        if (_inventory is not null)
+        {
+            var incoming = batch.ToDictionary(item => item.Id);
+            foreach (var item in batch)
+            {
+                var seen = new HashSet<Serial>();
+                var root = item;
+                while (root.ContainerId is { } parent && incoming.TryGetValue(parent, out var next))
+                {
+                    if (!seen.Add(root.Id))
+                    {
+                        throw new InvalidOperationException("Cannot add cyclic inventory.");
+                    }
+
+                    root = next;
+                }
+
+                EnsureAllowed(root);
+                if (_items.TryGetValue(item.Id, out var previous)) EnsureAllowed(previous);
+            }
+        }
+
+        foreach (var item in batch)
         {
             if (_items.TryGetValue(item.Id, out var previous))
             {
@@ -148,7 +180,13 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Remove(IEnumerable<Serial> serials)
     {
-        foreach (var serial in serials)
+        var batch = serials.ToList();
+        foreach (var serial in batch)
+        {
+            if (_items.TryGetValue(serial, out var item)) EnsureAllowed(item);
+        }
+
+        foreach (var serial in batch)
         {
             if (_items.TryRemove(serial, out var item))
             {
@@ -241,6 +279,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void MoveToContainer(ItemEntity item, Serial container, Point2D position, int gridIndex = 0)
     {
+        EnsureAllowed(item, container);
         var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
@@ -250,28 +289,33 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         item.PutInContainer(container, position, ContainerSlotUtils.FirstFree(others, gridIndex));
         Index(item);
         _decay?.Stop(item);
+        RewriteContents(item);
         WearerChanged(item, wearer);
     }
 
     public void PlaceOnGround(ItemEntity item, MapType map, Point3D location)
     {
+        EnsureAllowed(item);
         var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
         item.PlaceOnGround(map, location);
         _sectors.AddItem(item);
         _decay?.Restart(item);
+        RewriteContents(item);
         WearerChanged(item, wearer);
     }
 
     public void Equip(ItemEntity item, Serial mobile, LayerType layer)
     {
+        EnsureAllowed(item, mobile);
         var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
         item.Equip(mobile, layer);
         Index(item);
         _decay?.Stop(item);
+        RewriteContents(item);
         WearerChanged(item, wearer);
     }
 
@@ -288,7 +332,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public bool TryDropOnGround(MobileEntity mobile, ItemEntity item, int x, int y)
     {
-        if (!IsNear(mobile.Location, x, y) ||
+        if (_inventory?.Allows(item) == false || !IsNear(mobile.Location, x, y) ||
             !_movement.TryGetDropZ(mobile.Map, x, y, mobile.Location.Z + DropCeiling, out var z))
         {
             return false;
@@ -313,6 +357,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Release(ItemEntity item, Serial owner)
     {
+        EnsureAllowed(item);
         _released[item.Id] = owner;
     }
 
@@ -333,23 +378,28 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void Hide(ItemEntity item)
     {
+        EnsureAllowed(item);
         _sectors.RemoveItem(item);
         _decay?.Stop(item);
     }
 
     public void Show(ItemEntity item)
     {
+        EnsureAllowed(item);
         _sectors.AddItem(item);
         _decay?.Restart(item);
     }
 
     public ItemEntity Split(ItemEntity item, int amount, Serial serial)
     {
+        EnsureAllowed(item);
         var rest = item.Snapshot();
         rest.Id = serial;
 
         // The timers stay with the part that keeps the serial: the rest is not a second item waiting for them.
-        foreach (var key in rest.Props?.Keys.Where(key => key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal)).ToList() ?? [])
+        foreach (var key in rest.Props?.Keys
+                     .Where(key => key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal))
+                     .ToList() ?? [])
         {
             rest.RemoveProp(key);
         }
@@ -420,6 +470,39 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         }
     }
 
+    public IReadOnlyCollection<Serial> CaptureRewrites()
+    {
+        return _rewrites.Keys.ToArray();
+    }
+
+    public void RewritesCommitted(IReadOnlyCollection<Serial> serials)
+    {
+        foreach (var serial in serials)
+        {
+            _rewrites.TryRemove(serial, out _);
+        }
+    }
+
+    private void EnsureAllowed(ItemEntity item, Serial? destination = null)
+    {
+        if (_inventory?.Allows(item, destination) == false)
+        {
+            throw new InvalidOperationException("Inventory is reserved for attachment settlement.");
+        }
+    }
+
+    // Everything inside the item, at any depth.
+    private void RewriteContents(ItemEntity item)
+    {
+        var inside = new List<ItemEntity>(GetContents(item.Id));
+
+        for (var index = 0; index < inside.Count; index++)
+        {
+            _rewrites[inside[index].Id] = 0;
+            inside.AddRange(GetContents(inside[index].Id));
+        }
+    }
+
     // From the eyes to just above the spot, as ModernUO checks a drop.
     private bool Sees(MobileEntity mobile, Point3D spot)
     {
@@ -444,6 +527,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     private void AbsorbFor(ItemEntity item, Serial? owner)
     {
+        EnsureAllowed(item);
         // A ground item a player released still has that player's row: the player's save must delete it, or the next
         // login would load it back into the backpack.
         if (_released.TryRemove(item.Id, out var releasedBy))

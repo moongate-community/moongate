@@ -13,8 +13,9 @@ using Serilog;
 namespace Moongate.Server.Ultima.Commands;
 
 /// <summary>
-///     Places the world decoration of <c>templates/decorations</c>: <c>decorate</c>. In game it first asks with the gump
-///     <c>decorate_confirm</c> of <c>templates/gumps</c>, when there is one, and goes on only on its <c>confirm</c> button;
+///     Places the world decoration of <c>templates/decorations</c>: <c>decorate</c>. In game it first asks with the
+///     gump <c>decorate_confirm</c> of <c>templates/gumps</c>, when there is one, and goes on only on its
+///     <c>confirm</c> button;
 ///     every file is reported as it is done; the server log has the same lines, and the totals end the output.
 /// </summary>
 public sealed class DecorateCommand : ICommandExecutor
@@ -60,7 +61,8 @@ public sealed class DecorateCommand : ICommandExecutor
         }
 
         if (context.Session is { } asking && _gumps is not null && _gumps.Exists(ConfirmGump) &&
-            await _gumps.AskAsync(asking, ConfirmGump, new Dictionary<string, string>(), context.CancellationToken) != ConfirmClick)
+            await _gumps.AskAsync(asking, ConfirmGump, new Dictionary<string, string>(), context.CancellationToken) !=
+            ConfirmClick)
         {
             context.Print(_localization.Text(CommandMessages.DecorationCanceled, "Decoration canceled."));
 
@@ -76,8 +78,11 @@ public sealed class DecorateCommand : ICommandExecutor
         }
 
         var progress = context.Session is { } session
-            ? new ActionProgress<DecorationFileResult>(
-                file => SpeechMessageHelper.TrySend(_sender, session, SpeechMessageHelper.CreateSystem(FileLine(file), ProgressHue))
+            ? new ActionProgress<DecorationFileResult>(file => SpeechMessageHelper.TrySend(
+                    _sender,
+                    session,
+                    SpeechMessageHelper.CreateSystem(FileLine(file), ProgressHue)
+                )
             )
             : null;
 
@@ -108,7 +113,9 @@ public sealed class DecorateCommand : ICommandExecutor
         {
             // The exception is English and technical: the administrator gets the reason from the log.
             _logger.Error(exception, "Decorating the world failed");
-            context.PrintError(_localization.Text(CommandMessages.DecorationFailed, "The decoration failed. Check the server logs."));
+            context.PrintError(
+                _localization.Text(CommandMessages.DecorationFailed, "The decoration failed. Check the server logs.")
+            );
         }
     }
 

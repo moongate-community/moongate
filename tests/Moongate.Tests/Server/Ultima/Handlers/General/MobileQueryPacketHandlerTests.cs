@@ -30,14 +30,16 @@ public sealed class MobileQueryPacketHandlerTests : IAsyncLifetime
         var world = new WorldConfig();
         _handler = new(
             _fixture.Mobiles,
-            new MobileStateService(_fixture.Mobiles, _fixture.Sessions, _fixture.Sectors, _fixture.Sender, new RecordingWorldViewService(), world),
+            new MobileStateService(
+                _fixture.Mobiles,
+                _fixture.Sessions,
+                _fixture.Sectors,
+                _fixture.Sender,
+                new RecordingWorldViewService(),
+                world
+            ),
             world
         );
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
     }
 
     [Fact]
@@ -118,5 +120,10 @@ public sealed class MobileQueryPacketHandlerTests : IAsyncLifetime
     private void Handle(MobileQueryType kind, Serial target)
     {
         _handler.Handle(_session, new MobileQueryPacket { Kind = kind, Target = target });
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

@@ -35,6 +35,7 @@ public class MapService : IMapService
         {
             foreach (var map in maps)
             {
+                // Safe: TileMatrix treats a null path as "resolve the map files through the Ultima Files path".
                 var matrix = new TileMatrix(map.FileIndex, (int)map.Map, map.Size.X, map.Size.Y, null!);
                 matrices.Add(map.Map, matrix);
 
@@ -98,6 +99,19 @@ public class MapService : IMapService
         return statics;
     }
 
+    public Task StopAsync()
+    {
+        foreach (var matrix in _matrices.Values)
+        {
+            matrix.Dispose();
+        }
+
+        _matrices = FrozenDictionary<MapType, TileMatrix>.Empty;
+        Maps = [];
+
+        return Task.CompletedTask;
+    }
+
     private TileMatrix GetMatrix(MapType map, int x, int y)
     {
         if (!_matrices.TryGetValue(map, out var matrix))
@@ -114,18 +128,5 @@ public class MapService : IMapService
         }
 
         return matrix;
-    }
-
-    public Task StopAsync()
-    {
-        foreach (var matrix in _matrices.Values)
-        {
-            matrix.Dispose();
-        }
-
-        _matrices = FrozenDictionary<MapType, TileMatrix>.Empty;
-        Maps = [];
-
-        return Task.CompletedTask;
     }
 }

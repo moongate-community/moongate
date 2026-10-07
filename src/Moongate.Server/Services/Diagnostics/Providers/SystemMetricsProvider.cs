@@ -25,12 +25,6 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
         _reader = new ProcessMetricsReader(Process.GetCurrentProcess());
     }
 
-    internal SystemMetricsProvider(TimeProvider timeProvider, IProcessMetricsReader reader)
-    {
-        _timeProvider = timeProvider;
-        _reader = reader;
-    }
-
     public ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -70,6 +64,12 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
         var metrics = CreateMetrics(reading, cpuUsagePercent);
 
         return ValueTask.FromResult<IReadOnlyList<MetricSample>>(Array.AsReadOnly(metrics));
+    }
+
+    internal SystemMetricsProvider(TimeProvider timeProvider, IProcessMetricsReader reader)
+    {
+        _timeProvider = timeProvider;
+        _reader = reader;
     }
 
     private MetricSample[] CreateMetrics(ProcessMetricsReading reading, double? cpuUsagePercent)

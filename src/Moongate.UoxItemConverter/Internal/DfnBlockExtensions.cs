@@ -16,7 +16,8 @@ internal static class DfnBlockExtensions
     }
 
     /// <summary>
-    ///     Gets the targets a block inherits from: its <c>getlbr=</c> when it has one (LBR is UOX3's default era and the
+    ///     Gets the targets a block inherits from: its <c>getlbr=</c> when it has one (LBR is UOX3's default era and
+    ///     the
     ///     era line comes after <c>get=</c>), else its <c>get=</c> targets. The other era tags are ignored.
     /// </summary>
     public static string[] ParentTargets(this DfnBlock block)

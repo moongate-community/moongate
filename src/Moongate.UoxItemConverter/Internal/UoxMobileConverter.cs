@@ -50,9 +50,9 @@ internal static class UoxMobileConverter
         var npcDirectory = Path.Combine(mobileSource, "npc");
         var sourceFiles = Directory.Exists(npcDirectory)
             ? Directory.EnumerateFiles(npcDirectory, "*.dfn", SearchOption.AllDirectories)
-                       .Where(file => !IsSkippedFile(npcDirectory, file))
-                       .Order(StringComparer.Ordinal)
-                       .ToArray()
+                .Where(file => !IsSkippedFile(npcDirectory, file))
+                .Order(StringComparer.Ordinal)
+                .ToArray()
             : [];
         var blocksByFile = new List<(string File, List<DfnBlock> Blocks)>();
         var blocksByHeader = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
@@ -86,23 +86,23 @@ internal static class UoxMobileConverter
         var written = 0;
 
         // First every single template, so a pair can resolve both halves wherever they are defined.
-        var builtByFile = blocksByFile.Select(
-                                          pair => (pair.File, Built: pair.Blocks
-                                                                        .Where(block => ReferenceEquals(blocksByHeader.GetValueOrDefault(block.Header), block))
-                                                                        .Select(block => (Block: block, Template: MobileTemplateBuilder.Build(block, context)))
-                                                                        .ToList())
-                                      )
-                                      .ToList();
+        var builtByFile = blocksByFile.Select(pair => (pair.File, Built: pair.Blocks
+                .Where(block => ReferenceEquals(blocksByHeader.GetValueOrDefault(block.Header), block))
+                .Select(block => (Block: block, Template: MobileTemplateBuilder.Build(block, context)))
+                .ToList())
+            )
+            .ToList();
+        // Safe: only blocks with a built template are kept by the Where filter.
         var byHeader = builtByFile.SelectMany(pair => pair.Built)
-                                  .Where(built => built.Template is not null)
-                                  .ToDictionary(built => built.Block.Header, built => built.Template!, StringComparer.OrdinalIgnoreCase);
+            .Where(built => built.Template is not null)
+            .ToDictionary(built => built.Block.Header, built => built.Template!, StringComparer.OrdinalIgnoreCase);
         var byId = byHeader.Values.ToDictionary(template => template.Id);
 
         foreach (var (file, built) in builtByFile)
         {
             var templates = built.Select(pair => pair.Template ?? MergePair(pair.Block, byHeader, byId, report))
-                                 .OfType<MobileTemplate>()
-                                 .ToList();
+                .OfType<MobileTemplate>()
+                .ToList();
 
             if (templates.Count == 0)
             {
@@ -111,10 +111,13 @@ internal static class UoxMobileConverter
 
             var relative = Path.GetRelativePath(npcDirectory, file);
             var outputPath = Path.Combine(mobileDestination, Path.ChangeExtension(relative, ".toml"));
+            // Safe: GetDirectoryName is null only for a root or empty path, not a file combined under a folder.
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
             TomlUtils.SerializeToFile(new MobileTemplateFile { Mobile = templates }, outputPath);
             written += templates.Count;
-            output.WriteLine($"npc/{relative} -> {Path.GetRelativePath(mobileDestination, outputPath)} ({templates.Count} mobile(s))");
+            output.WriteLine(
+                $"npc/{relative} -> {Path.GetRelativePath(mobileDestination, outputPath)} ({templates.Count} mobile(s))"
+            );
         }
 
         output.WriteLine($"Converted {written} mobile(s).");
@@ -147,12 +150,12 @@ internal static class UoxMobileConverter
     {
         var errors = new List<string>();
         var listIds = (TomlUtils.DeserializeFromFile<NameListFile>(namesDestination)?.Names ?? [])
-                      .Select(list => list.Id)
-                      .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            .Select(list => list.Id)
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
         var mobiles = Directory.Exists(mobileDestination)
             ? Directory.EnumerateFiles(mobileDestination, "*.toml", SearchOption.AllDirectories)
-                       .SelectMany(path => TomlUtils.DeserializeFromFile<MobileTemplateFile>(path)?.Mobile ?? [])
-                       .ToList()
+                .SelectMany(path => TomlUtils.DeserializeFromFile<MobileTemplateFile>(path)?.Mobile ?? [])
+                .ToList()
             : [];
         var ids = new HashSet<string>(StringComparer.Ordinal);
         var itemIds = items.ItemIds;
@@ -171,12 +174,12 @@ internal static class UoxMobileConverter
 
             errors.AddRange(
                 (mobile.Equipment ?? []).SelectMany(entry => entry.Items)
-                                        .Where(item => !itemIds.Contains(item))
-                                        .Select(item => $"mobile '{mobile.Id}' equips item '{item}', which does not exist")
+                .Where(item => !itemIds.Contains(item))
+                .Select(item => $"mobile '{mobile.Id}' equips item '{item}', which does not exist")
             );
             errors.AddRange(
                 (mobile.Loot ?? []).Where(loot => !items.LootIds.Contains(loot))
-                                   .Select(loot => $"mobile '{mobile.Id}' has loot '{loot}', which does not exist")
+                .Select(loot => $"mobile '{mobile.Id}' has loot '{loot}', which does not exist")
             );
 
             if (mobile.NameList is { } list && !list.Contains('{') && !listIds.Contains(list))
@@ -237,13 +240,17 @@ internal static class UoxMobileConverter
     }
 
     // Race and gender may come from a base: walk the base_id chain until each is found.
-    private static (RaceType? Race, MobileGenderType? Gender) Resolve(MobileTemplate template, Dictionary<string, MobileTemplate> byId)
+    private static (RaceType? Race, MobileGenderType? Gender) Resolve(
+        MobileTemplate template, Dictionary<string, MobileTemplate> byId
+    )
     {
         RaceType? race = null;
         MobileGenderType? gender = null;
         var seen = new HashSet<string>();
 
-        for (var current = template; current is not null && seen.Add(current.Id); current = current.BaseId is null ? null : byId.GetValueOrDefault(current.BaseId))
+        for (var current = template;
+             current is not null && seen.Add(current.Id);
+             current = current.BaseId is null ? null : byId.GetValueOrDefault(current.BaseId))
         {
             race ??= current.Race;
             gender ??= current.Gender;

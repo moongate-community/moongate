@@ -17,6 +17,20 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
     public Container Container { get; } = new();
     public MoongatePersistenceService Owner => Container.Resolve<MoongatePersistenceService>();
 
+    public static async Task<HostPersistenceFixture> CreateAsync(bool autoSync = true, bool twoTargets = false)
+    {
+        return new(
+            await new PostgreSqlFixture().CreateDatabaseAsync(),
+            twoTargets ? await new PostgreSqlFixture().CreateDatabaseAsync() : null,
+            autoSync
+        );
+    }
+
+    public void RegisterEntity()
+    {
+        Container.AddPersistenceModule<TestPersistenceModule>().AddPersistenceEntity<TestEntity>();
+    }
+
     private HostPersistenceFixture(PostgreSqlTestDatabase database, PostgreSqlTestDatabase? accountsDatabase, bool autoSync)
     {
         Database = database;
@@ -34,20 +48,6 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
         Container.RegisterInstance(new DirectoriesConfig(_directory.Path, []));
         Container.RegisterInstance(TestConfigDocuments.Empty(_directory.Path));
         Container.RegisterMoongatePersistence(new(targets, autoSync));
-    }
-
-    public static async Task<HostPersistenceFixture> CreateAsync(bool autoSync = true, bool twoTargets = false)
-    {
-        return new(
-            await new PostgreSqlFixture().CreateDatabaseAsync(),
-            twoTargets ? await new PostgreSqlFixture().CreateDatabaseAsync() : null,
-            autoSync
-        );
-    }
-
-    public void RegisterEntity()
-    {
-        Container.AddPersistenceModule<TestPersistenceModule>().AddPersistenceEntity<TestEntity>();
     }
 
     public async ValueTask DisposeAsync()

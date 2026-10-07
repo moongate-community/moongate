@@ -10,7 +10,11 @@ internal static class CommandLine
     {
         ["init"] = [],
         ["migrate"] = ["status", "apply"],
-        ["convert"] = ["uox", "modernuo-spawns", "modernuo-signs", "modernuo-teleporters", "modernuo-locations", "modernuo-chests"],
+        ["convert"] =
+        [
+            "uox", "modernuo-spawns", "modernuo-signs", "modernuo-teleporters", "modernuo-locations", "modernuo-chests",
+            "modernuo-books"
+        ],
         ["completion"] = []
     };
 
@@ -60,7 +64,7 @@ internal static class CommandLine
         // The spelling of mgboot: a root, or its options, without "init".
         if (args[0].StartsWith('-') || LooksLikeAPath(args[0]))
         {
-            return ["init", ..args];
+            return ["init", .. args];
         }
 
         error = $"unknown command '{args[0]}'; to prepare a root of that name, use: mgctl init {args[0]}";

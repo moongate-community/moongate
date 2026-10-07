@@ -50,8 +50,16 @@ public sealed class LocalizationModuleTests
 
         var text = LuaDefinitionsGenerator.Render([bound], []);
 
-        Assert.Contains("---@param id integer\n---@return string?\nfunction localization.text(id) end", text, StringComparison.Ordinal);
-        Assert.Contains("---@param ... any\n---@return string\nfunction localization.get(id, ...) end", text, StringComparison.Ordinal);
+        Assert.Contains(
+            "---@param id integer\n---@return string?\nfunction localization.text(id) end",
+            text,
+            StringComparison.Ordinal
+        );
+        Assert.Contains(
+            "---@param ... any\n---@return string\nfunction localization.get(id, ...) end",
+            text,
+            StringComparison.Ordinal
+        );
     }
 
     private static LuaValue[] Run(string chunk)

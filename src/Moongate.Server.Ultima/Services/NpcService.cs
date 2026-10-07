@@ -30,6 +30,7 @@ public sealed class NpcService : INpcService
     private readonly INpcScriptService? _scripts;
     private readonly IItemScriptService? _itemScripts;
     private readonly INpcPathService? _paths;
+    private readonly IMobileTemplateService? _templates;
 
     public NpcService(
         IMobileFactoryService factory,
@@ -41,9 +42,11 @@ public sealed class NpcService : INpcService
         IGameLoopService loop,
         INpcScriptService? scripts = null,
         IItemScriptService? itemScripts = null,
-        INpcPathService? paths = null
+        INpcPathService? paths = null,
+        IMobileTemplateService? templates = null
     )
     {
+        _templates = templates;
         _paths = paths;
         _factory = factory;
         _mobiles = mobiles;
@@ -68,6 +71,7 @@ public sealed class NpcService : INpcService
             {
                 foreach (var npc in npcs)
                 {
+                    GiveTemplateNotoriety(npc);
                     _mobiles.EnterWorld(npc);
                 }
 
@@ -122,22 +126,23 @@ public sealed class NpcService : INpcService
     public async Task<bool> RemoveAsync(Serial serial, CancellationToken cancellationToken = default)
     {
         var removed = false;
-        await OnLoopAsync(
-            () =>
-            {
-                if (!_mobiles.TryGet(serial, out var npc) || !npc.IsNpc)
-                {
-                    return;
-                }
+        await OnLoopAsync(() => removed = Remove(serial), cancellationToken);
 
-                // Still in the grid: the players around it can be told.
-                _view.Left(npc);
-                _items.Remove(_items.GetOwnedBy(npc.Id).Select(item => item.Id));
-                removed = _mobiles.Delete(npc.Id);
-                _paths?.Forget(npc.Id);
-            },
-            cancellationToken
-        );
+        return removed;
+    }
+
+    public bool Remove(Serial serial)
+    {
+        if (!_mobiles.TryGet(serial, out var npc) || !npc.IsNpc)
+        {
+            return false;
+        }
+
+        // Still in the grid: the players around it can be told.
+        _view.Left(npc);
+        _items.Remove(_items.GetOwnedBy(npc.Id).Select(item => item.Id));
+        var removed = _mobiles.Delete(npc.Id);
+        _paths?.Forget(npc.Id);
 
         return removed;
     }
@@ -147,5 +152,17 @@ public sealed class NpcService : INpcService
         var work = new LoopActionWorkItem(action);
         await _loop.PostAsync(work, cancellationToken);
         await work.Completion;
+    }
+
+    // An NPC saved before its template's notoriety reached it has none: it is given it, and saved with the world.
+    private void GiveTemplateNotoriety(MobileEntity npc)
+    {
+        if (npc.Notoriety is null &&
+            _templates is not null &&
+            npc.TemplateId is { } id &&
+            _templates.TryGet(id, out var template))
+        {
+            npc.Notoriety = NpcNotoriety.Of(template, npc.Body);
+        }
     }
 }

@@ -11,7 +11,7 @@ export const contentEntries = [
   { source: 'docs/implementation-status.md', slug: 'start/implementation-status', title: 'Implementation status', group: 'Start here' },
   { source: 'docs/feature-checklist.md', slug: 'start/feature-checklist', title: 'Feature checklist', group: 'Start here' },
   { source: 'docs/roadmap.md', slug: 'start/roadmap', title: 'Roadmap', group: 'Start here' },
-  { source: 'CHANGELOG.md', slug: 'start/changelog', title: 'Changelog', group: 'Start here' },
+  { source: 'CHANGELOG.md', englishOnly: true, slug: 'start/changelog', title: 'Changelog', group: 'Start here' },
 
   // Run a shard: the operator's pages.
   { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Run a shard' },
@@ -21,6 +21,8 @@ export const contentEntries = [
   { source: 'docs/commands.md', slug: 'server/commands', title: 'Overview', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/help.md', slug: 'server/commands/help', title: 'help', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/echo.md', slug: 'server/commands/echo', title: 'echo', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/version.md', slug: 'server/commands/version', title: 'version', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/uptime.md', slug: 'server/commands/uptime', title: 'uptime', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/console.md', slug: 'server/commands/console', title: 'console', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/script.md', slug: 'server/commands/script', title: 'script', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/account.md', slug: 'server/commands/account', title: 'account', group: 'Run a shard', subgroup: 'Commands' },
@@ -32,24 +34,32 @@ export const contentEntries = [
   { source: 'docs/commands/decorate.md', slug: 'server/commands/decorate', title: 'decorate', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/globallight.md', slug: 'server/commands/globallight', title: 'globallight', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/spawn.md', slug: 'server/commands/spawn', title: 'spawn', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/book.md', slug: 'server/commands/book', title: 'book', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/add.md', slug: 'server/commands/add', title: 'add', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/set.md', slug: 'server/commands/set', title: 'set', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/remove.md', slug: 'server/commands/remove', title: 'remove', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/where.md', slug: 'server/commands/where', title: 'where', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/go.md', slug: 'server/commands/go', title: 'go', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/moongate.md', slug: 'server/commands/moongate', title: 'moongate', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/jail.md', slug: 'server/commands/jail', title: 'jail', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/fame.md', slug: 'server/commands/fame', title: 'fame', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/karma.md', slug: 'server/commands/karma', title: 'karma', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/weather.md', slug: 'server/commands/weather', title: 'weather', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/initial_spawn.md', slug: 'server/commands/initial-spawn', title: 'initial_spawn', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/time.md', slug: 'server/commands/time', title: 'time', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/season.md', slug: 'server/commands/season', title: 'season', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/gmtools.md', slug: 'server/commands/gmtools', title: 'gmtools', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/kill.md', slug: 'server/commands/kill', title: 'kill', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/resurrect.md', slug: 'server/commands/resurrect', title: 'resurrect', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/animate.md', slug: 'server/commands/animate', title: 'animate', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/spawns.md', slug: 'server/commands/spawns', title: 'spawns', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/gump.md', slug: 'server/commands/gump', title: 'gump', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/music.md', slug: 'server/commands/music', title: 'music', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/lock.md', slug: 'server/commands/lock', title: 'lock', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/unlock.md', slug: 'server/commands/unlock', title: 'unlock', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/key.md', slug: 'server/commands/key', title: 'key', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/create_check.md', slug: 'server/commands/create-check', title: 'create_check', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/add_gold.md', slug: 'server/commands/add-gold', title: 'add_gold', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/motd.md', slug: 'server/motd', title: 'Message of the day', group: 'Run a shard' },
   { source: 'docs/persistence-operations.md', slug: 'server/persistence-operations', title: 'Operate PostgreSQL', group: 'Run a shard' },
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Run a shard' },
@@ -57,11 +67,16 @@ export const contentEntries = [
   { source: 'docs/admin-api.md', slug: 'server/admin-api', title: 'Administration API', group: 'Run a shard' },
 
   // Scripting and content: shard content without C#.
-  { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Scripting and content' },
   { source: 'docs/templates.md', slug: 'server/templates', title: 'Loading TOML templates', group: 'Scripting and content' },
   { source: 'docs/gumps.md', slug: 'server/gumps', title: 'Gumps', group: 'Scripting and content', subgroup: 'Gumps' },
   { source: 'docs/gump-tutorial.md', slug: 'server/gump-tutorial', title: 'Your first gump', group: 'Scripting and content', subgroup: 'Gumps' },
   { source: 'docs/bank.md', slug: 'server/bank', title: 'Bank', group: 'Scripting and content' },
+  { source: 'docs/jail.md', slug: 'server/jail', title: 'Jail', group: 'Scripting and content' },
+  { source: 'docs/bulletin-boards.md', slug: 'server/bulletin-boards', title: 'Bulletin boards', group: 'Scripting and content' },
+  { source: 'docs/context-menus.md', slug: 'server/context-menus', title: 'Context menus', group: 'Scripting and content' },
+  { source: 'docs/combat.md', slug: 'server/combat', title: 'Combat', group: 'Scripting and content' },
+  { source: 'docs/death.md', slug: 'server/death', title: 'Death and resurrection', group: 'Scripting and content' },
+  { source: 'docs/skills.md', slug: 'server/skills', title: 'Skills', group: 'Scripting and content' },
   { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },
@@ -70,6 +85,8 @@ export const contentEntries = [
   { source: 'docs/data-files/starting-cities.md', slug: 'server/data-files/starting-cities', title: 'Starting cities', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/moongates.md', slug: 'server/data-files/moongates', title: 'Moongates', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/locations.md', slug: 'server/data-files/locations', title: 'Locations', group: 'Scripting and content', subgroup: 'Data files' },
+  { source: 'docs/data-files/jail.md', slug: 'server/data-files/jail', title: 'Jail', group: 'Scripting and content', subgroup: 'Data files' },
+  { source: 'docs/data-files/books.md', slug: 'server/data-files/books', title: 'Readable text templates', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/skills.md', slug: 'server/data-files/skills', title: 'Skills', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/professions.md', slug: 'server/data-files/professions', title: 'Professions', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/races.md', slug: 'server/data-files/races', title: 'Races', group: 'Scripting and content', subgroup: 'Data files' },
@@ -82,7 +99,19 @@ export const contentEntries = [
   { source: 'docs/data-files/weather.md', slug: 'server/data-files/weather', title: 'Weather', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/regions.md', slug: 'server/data-files/regions', title: 'Regions', group: 'Scripting and content', subgroup: 'Data files' },
   { source: 'docs/data-files/messages.md', slug: 'server/data-files/messages', title: 'Messages', group: 'Scripting and content', subgroup: 'Data files' },
+  { source: 'docs/book-content-import.md', slug: 'server/book-content-import', title: 'Import book texts', group: 'Scripting and content' },
   { source: 'docs/uox3-migration.md', slug: 'server/uox3-migration', title: 'Migrate from UOX3', group: 'Scripting and content' },
+
+  // Lua: the scripting guide. The API reference that follows it in the sidebar is generated; see
+  // `generatedSidebarItems` below.
+  { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/lua-in-moongate.md', slug: 'server/scripting/lua-in-moongate', title: 'Lua in Moongate', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/events.md', slug: 'server/scripting/events', title: 'Events and timers', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/mobile-scripts.md', slug: 'server/scripting/mobile-scripts', title: 'Mobile scripts', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/item-scripts.md', slug: 'server/scripting/item-scripts', title: 'Item scripts', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/shipped-scripts.md', slug: 'server/scripting/shipped-scripts', title: 'Shipped scripts', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/effects.md', slug: 'server/scripting/effects', title: 'Effects', group: 'Lua', subgroup: 'Guide' },
+  { source: 'docs/scripting/runtime.md', slug: 'server/scripting/runtime', title: 'Reload, budgets and editor', group: 'Lua', subgroup: 'Guide' },
 
   // Extend with C#: plugins and the subsystems they plug into.
   { source: 'docs/plugins.md', slug: 'server/plugins', title: 'Writing a plugin', group: 'Extend with C#', subgroup: 'Plugins' },
@@ -111,7 +140,7 @@ export const contentEntries = [
   // Contributing.
   { source: 'CONTRIBUTING.md', slug: 'contributing/getting-started', title: 'Contribute to Moongate', group: 'Contributing' },
   { source: 'docs/documentation.md', slug: 'contributing/documentation', title: 'Writing documentation', group: 'Contributing' },
-  { source: 'docs/test-coverage.md', slug: 'contributing/test-coverage', title: 'Test coverage', group: 'Contributing' },
+  { source: 'docs/test-coverage.md', englishOnly: true, slug: 'contributing/test-coverage', title: 'Test coverage', group: 'Contributing' },
   { source: 'docs/persistence-stress.md', slug: 'contributing/persistence-stress', title: 'Stress-test persistence', group: 'Contributing' },
   { source: 'docs/security-audit.md', slug: 'contributing/security-audit', title: 'Dependency security', group: 'Contributing' },
 ];
@@ -121,5 +150,5 @@ export const sidebarGroups = ['Start here', 'Run a shard', 'Scripting and conten
 // Groups whose pages are generated at build time, so they have no manifest entries: `Lua` holds the API
 // reference that `scripts/build-lua.mjs` writes to `src/content/docs/lua/`.
 export const generatedSidebarItems = {
-  Lua: [{ label: 'API reference', collapsed: true, items: [{ autogenerate: { directory: 'lua' } }] }],
+  Lua: [{ label: 'API reference (English)', translations: { it: 'Riferimento API (inglese)' }, collapsed: true, items: [{ autogenerate: { directory: 'lua' } }] }],
 };

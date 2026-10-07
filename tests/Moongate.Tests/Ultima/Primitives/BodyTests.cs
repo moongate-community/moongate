@@ -22,7 +22,8 @@ public sealed class BodyTests
         Assert.False(body.IsMale);
     }
 
-    [Theory, InlineData(402, true), InlineData(608, true), InlineData(970, true), InlineData(400, false), InlineData(9, false)]
+    [Theory, InlineData(402, true), InlineData(608, true), InlineData(970, true), InlineData(400, false),
+     InlineData(9, false)]
     public void IsGhost_OnlyGhostBodies(int id, bool expected)
     {
         Assert.Equal(expected, new Body((ushort)id).IsGhost);

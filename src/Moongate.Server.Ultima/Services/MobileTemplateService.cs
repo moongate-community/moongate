@@ -17,9 +17,8 @@ public class MobileTemplateService : IMobileTemplateService
 
     public MobileTemplateService(IDataLoaderService dataLoaderService)
     {
-        _templates = new(
-            () => dataLoaderService.GetEntities<MobileTemplate>()
-                                   .ToFrozenDictionary(template => template.Id, StringComparer.Ordinal)
+        _templates = new(() => dataLoaderService.GetEntities<MobileTemplate>()
+            .ToFrozenDictionary(template => template.Id, StringComparer.Ordinal)
         );
     }
 

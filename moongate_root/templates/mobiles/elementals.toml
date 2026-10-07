@@ -1,9 +1,12 @@
 [[mobile]]
 id = "base_elemental"
+script_id = "monster"
 notoriety = "attackable"
 
 [[mobile]]
 id = "airele"
+script_id = "monster"
+flee_at = -1
 name = "an air elemental"
 body = 13
 skin_hue = 30591
@@ -32,6 +35,8 @@ death = 267
 
 [[mobile]]
 id = "earthele"
+script_id = "monster"
+flee_at = -1
 name = "an earth elemental"
 body = 14
 strength = "1d30+125"
@@ -58,6 +63,8 @@ death = 273
 
 [[mobile]]
 id = "fireele"
+script_id = "monster"
+flee_at = -1
 name = "a fire elemental"
 body = 15
 strength = "1d30+125"
@@ -85,6 +92,8 @@ death = 277
 
 [[mobile]]
 id = "waterele"
+script_id = "monster"
+flee_at = -1
 name = "a water elemental"
 body = 16
 skin_hue = 0
@@ -114,6 +123,8 @@ death = 282
 
 [[mobile]]
 id = "bloodele"
+script_id = "monster"
+flee_at = -1
 name = "a blood elemental"
 body = 159
 strength = "1d90+525"
@@ -143,6 +154,8 @@ death = 282
 
 [[mobile]]
 id = "poisonele"
+script_id = "monster"
+flee_at = -1
 name = "a poison elemental"
 body = 162
 strength = "1d90+425"
@@ -172,6 +185,8 @@ death = 267
 
 [[mobile]]
 id = "iceele"
+script_id = "monster"
+flee_at = -1
 name = "an ice elemental"
 body = 161
 strength = "1d30+155"
@@ -199,6 +214,8 @@ death = 273
 
 [[mobile]]
 id = "snowele"
+script_id = "monster"
+flee_at = -1
 name = "a snow elemental"
 body = 163
 strength = "1d30+325"
@@ -225,6 +242,8 @@ death = 267
 
 [[mobile]]
 id = "acidele"
+script_id = "monster"
+flee_at = -1
 name = "an acid elemental"
 body = 158
 strength = "1d30+325"
@@ -253,6 +272,8 @@ death = 282
 
 [[mobile]]
 id = "crystalele"
+script_id = "monster"
+flee_at = -1
 name = "a crystal elemental"
 body = 300
 strength = "1d25+135"
@@ -280,6 +301,8 @@ death = 282
 
 [[mobile]]
 id = "dullcopperele"
+script_id = "monster"
+flee_at = -1
 name = "a dull copper elemental"
 body = 110
 strength = "1d30+225"
@@ -306,6 +329,8 @@ death = 273
 
 [[mobile]]
 id = "shadowironele"
+script_id = "monster"
+flee_at = -1
 name = "a shadow iron elemental"
 body = 111
 strength = "1d30+225"
@@ -332,6 +357,8 @@ death = 273
 
 [[mobile]]
 id = "copperele"
+script_id = "monster"
+flee_at = -1
 name = "a copper elemental"
 body = 109
 strength = "1d30+225"
@@ -358,6 +385,8 @@ death = 273
 
 [[mobile]]
 id = "bronzeele"
+script_id = "monster"
+flee_at = -1
 name = "a bronze elemental"
 body = 108
 strength = "1d30+225"
@@ -384,6 +413,8 @@ death = 273
 
 [[mobile]]
 id = "goldele"
+script_id = "monster"
+flee_at = -1
 name = "a gold elemental"
 body = 166
 strength = "1d30+225"
@@ -410,6 +441,8 @@ death = 273
 
 [[mobile]]
 id = "agapiteele"
+script_id = "monster"
+flee_at = -1
 name = "an agapite elemental"
 body = 107
 strength = "1d30+225"
@@ -436,6 +469,8 @@ death = 273
 
 [[mobile]]
 id = "veriteele"
+script_id = "monster"
+flee_at = -1
 name = "a verite elemental"
 body = 113
 strength = "1d30+225"
@@ -462,6 +497,8 @@ death = 273
 
 [[mobile]]
 id = "valoriteele"
+script_id = "monster"
+flee_at = -1
 name = "a valorite elemental"
 body = 112
 strength = "1d30+225"
@@ -488,6 +525,8 @@ death = 273
 
 [[mobile]]
 id = "energyvortex"
+script_id = "monster"
+flee_at = -1
 name = "an energy vortex"
 body = 164
 strength = 200

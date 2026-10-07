@@ -144,7 +144,7 @@
 30121 = "Pose au sol, là où vous visez, un objet d'un modèle d'objet : add <template>."
 30122 = "Seul un objet posé au sol peut être supprimé."
 30126 = "{0} : {1} vaut maintenant {2}."
-30127 = "Définit les points de vie, le mana, l'endurance, la faim ou la soif de la créature ciblée : set <hits|mana|stamina|hunger|thirst> <valeur>."
+30127 = "Définit les points de vie, le mana, l'endurance, la faim ou la soif de la créature ciblée, ou en fait un criminel : set <hits|mana|stamina|hunger|thirst|criminal> <valeur>."
 
 # Moongate: texts of the item scripts.
 30114 = "Ce moongate ne semble mener nulle part."
@@ -155,3 +155,79 @@
 30130 = "Vous avez trop bu pour boire davantage !"
 30131 = "C'est vide."
 30132 = "Vous buvez, et vous avez moins soif."
+30133 = "Vous êtes surchargé : vous portez {0} pierres sur {1}."
+30134 = "Vous entrez dans : {0}."
+30135 = "Vous quittez : {0}."
+30136 = "Vous êtes maintenant sous la protection des gardes de {0}."
+30137 = "Vous avez quitté la protection des gardes de {0}."
+30138 = "Tu regretteras tes actes, canaille !"
+
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 and 30150 of the jail command, 30148-30149 the reason of a sentence).
+30139 = "Vous avez été emprisonné pour {0} jours."
+30140 = "Vous avez purgé votre peine. Une amende de {0} pièces d'or a été prélevée."
+30141 = "Vous avez purgé votre peine."
+30142 = "Vous avez été libéré de prison."
+30143 = "{0} a purgé {1} jours dans la cellule {2}, du {3} au {4}, et a payé une amende de {5} pièces d'or. Emprisonné par {6}."
+30144 = "Ouvre le gump de la prison : il liste les cellules, vous emmène dans l'une d'elles, et emprisonne ou libère un personnage ; jail <nom> l'ouvre sur le joueur de ce nom, en ligne ou non."
+30145 = "La prison n'est pas configurée : data/jail.toml est absent."
+30146 = "Ce n'est pas un personnage."
+30147 = "Le gump de la prison est absent : templates/gumps/jail_sentence.xml."
+30148 = "Vous avez été emprisonné pour {0} jours : {1}"
+30149 = "Motif : {0}"
+30150 = "Aucun personnage ne s'appelle {0}."
+
+# Moongate: texts of death (30151 the name of a corpse, 30152-30154 of the kill command).
+30151 = "les restes de {0}"
+30152 = "Tue le PNJ que vous ciblez : il meurt sur place et laisse son cadavre."
+30153 = "{0} est mort."
+30154 = "{0} ne peut pas mourir."
+
+# Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
+30155 = "Vous devez attendre {0} secondes avant de publier à nouveau."
+30156 = "Ce message n'est pas le vôtre."
+30157 = "Le tableau est occupé : publiez à nouveau dans un instant."
+
+# Moongate: texts of the animate command (30158-30159).
+30158 = "Fait jouer au personnage ou PNJ ciblé une action de son corps : animate <action>."
+30159 = "{0} joue l'action {1}."
+
+# Moongate: texts of the version and uptime commands (30160-30163).
+30160 = "Affiche la version du serveur, s'il s'agit d'une compilation Debug ou Release, et quand elle a été compilée."
+30161 = "Moongate {0} \"{1}\" ({2}), compilé le {3}."
+30162 = "Affiche depuis combien de temps le serveur tourne et depuis quand."
+30163 = "En marche depuis {0}, depuis le {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Ressuscite le PNJ dont vous ciblez le cadavre : il renaît là où gît le cadavre."
+30165 = "{0} est de retour."
+30166 = "Ce n'est pas un cadavre."
+30167 = "Ce cadavre ne peut pas être ressuscité."
+
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "Vous ne pouvez pas utiliser de compétences en prison."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Récupérer les pièces jointes"
+30170 = "Les pièces jointes sont dans votre sac."
+30171 = "Votre sac ne peut pas contenir toutes les pièces jointes."
+30172 = "Ces pièces jointes ne peuvent pas être récupérées."
+30173 = "Votre sac est occupé. Réessayez bientôt."
+30174 = "Les pièces jointes ne peuvent pas être livrées. Réessayez bientôt."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "Un chèque bancaire de {0} pièces d'or est dans votre sac à dos."
+30176 = "Aucun chèque créé : vous n'avez pas de sac à dos, ou il est plein."
+30177 = "Met dans votre sac à dos un chèque bancaire de la valeur indiquée (de 1 à 2000000000)."
+30178 = "{1} pièces d'or sont dans le sac à dos de {0}."
+30179 = "{0} n'a pas de sac à dos, ou il est plein."
+30180 = "Met une pile d'or (de 1 à 60000) dans le sac à dos du personnage ou du PNJ que vous ciblez."
+
+# Moongate: book command (30181-30184).
+30181 = "Aucun document {0} dans templates/books."
+30182 = "Le document {0} est dans votre sac à dos."
+30183 = "Impossible de créer le document {0}. Vérifiez ses valeurs et la disponibilité du sac à dos."
+30184 = "Met un document de templates/books dans votre sac à dos : book <template> [name=value ...]."
+
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Ouvre le gump des outils du game master : une barre latérale d'outils et leurs commandes, la météo d'abord."
+30186 = "Le gump gmtools est introuvable : templates/gumps/gmtools.xml."

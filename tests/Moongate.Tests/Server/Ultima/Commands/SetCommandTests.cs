@@ -23,8 +23,10 @@ namespace Moongate.Tests.Server.Ultima.Commands;
 public sealed class SetCommandTests : IAsyncDisposable
 {
     private readonly StubTargetService _targets = new();
+    private readonly RecordingCrimeService _crimes = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+
     private readonly MobileEntity _orc = new()
     {
         Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
@@ -47,7 +49,10 @@ public sealed class SetCommandTests : IAsyncDisposable
      // Hunger stays from 0 to 20.
      InlineData("hunger", 99, "an orc: hunger is now 20."),
      InlineData("thirst", 99, "an orc: thirst is now 20."),
-     InlineData("thirst", 4, "an orc: thirst is now 4.")]
+     InlineData("thirst", 4, "an orc: thirst is now 4."),
+     // Anything but 0 makes a criminal, 0 pardons.
+     InlineData("criminal", 1, "an orc: criminal is now 1."),
+     InlineData("criminal", 0, "an orc: criminal is now 0.")]
     public async Task ExecuteAsync_SetsTheNumberOfTheTargetedMobile_AndSaysWhatItIsNow(string what, int value, string said)
     {
         var context = await RunAsync(what, value.ToString());
@@ -64,13 +69,14 @@ public sealed class SetCommandTests : IAsyncDisposable
         Assert.Equal(10, _orc.Hits);
     }
 
-    [Theory, InlineData(), InlineData("hits"), InlineData("luck", "5"), InlineData("hits", "ten"), InlineData("hits", "-1"), InlineData("hits", "1", "2")]
+    [Theory, InlineData(), InlineData("hits"), InlineData("luck", "5"), InlineData("hits", "ten"), InlineData("hits", "-1"),
+     InlineData("hits", "1", "2")]
     public async Task ExecuteAsync_WithoutAKnownNumberAndAValue_PrintsTheUsage(params string[] arguments)
     {
         var context = await RunAsync(arguments);
 
         Assert.Equal(
-            (CommandOutputLevel.Error, "Usage: set <hits|mana|stamina|hunger|thirst> <value>"),
+            (CommandOutputLevel.Error, "Usage: set <hits|mana|stamina|hunger|thirst|criminal> <value>"),
             (Assert.Single(context.Output).Level, context.Output[0].Text)
         );
         Assert.Equal(0, _targets.Requests);
@@ -111,7 +117,7 @@ public sealed class SetCommandTests : IAsyncDisposable
             new SettableClock()
         );
 
-        return new(_targets, _mobiles, _state, hunger, new StubGameLoop());
+        return new(_targets, _mobiles, _state, hunger, new StubGameLoop(), _crimes);
     }
 
     private async Task<CommandContext> RunAsync(params string[] arguments)

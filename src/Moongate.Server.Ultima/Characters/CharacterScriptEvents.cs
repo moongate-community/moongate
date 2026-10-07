@@ -8,7 +8,8 @@ namespace Moongate.Server.Ultima.Characters;
 public static class CharacterScriptEvents
 {
     /// <summary>
-    ///     The fields of <c>character_created</c>: the character's serial and account, name, race and gender (as numbers),
+    ///     The fields of <c>character_created</c>: the character's serial and account, name, race and gender (as
+    ///     numbers),
     ///     and where it starts.
     /// </summary>
     public static IReadOnlyDictionary<string, object?> CharacterCreated(CharacterCreatedEvent evt)
@@ -83,7 +84,8 @@ public static class CharacterScriptEvents
     }
 
     /// <summary>
-    ///     The fields of <c>player_say</c>: the speaker's serial and name, and the text as the others heard it.
+    ///     The fields of <c>player_say</c>: the speaker's serial and name, the text as the others heard it and how
+    ///     it was said, a <c>SpeechType</c>.
     /// </summary>
     public static IReadOnlyDictionary<string, object?> PlayerSay(PlayerSaidEvent evt)
     {
@@ -91,7 +93,8 @@ public static class CharacterScriptEvents
         {
             ["serial"] = (long)evt.Speaker.Id.Value,
             ["name"] = evt.Speaker.Name,
-            ["text"] = evt.Text
+            ["text"] = evt.Text,
+            ["type"] = (long)evt.Type
         };
     }
 

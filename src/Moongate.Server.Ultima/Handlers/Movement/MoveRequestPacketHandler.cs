@@ -17,7 +17,8 @@ namespace Moongate.Server.Ultima.Handlers.Movement;
 /// <summary>
 ///     Moves the session's character one step (0x02): checks the sequence and the speed, then turns or steps it through
 ///     <see cref="IMobileService" /> and answers 0x22, or 0x21 with the real position; the players in range see the step or
-///     the turn through <see cref="IWorldViewService" />; a game master or an administrator walks through doors; the scripted items of the new cell are told of the step through
+///     the turn through <see cref="IWorldViewService" />; a game master or an administrator walks through doors; the scripted
+///     items of the new cell are told of the step through
 ///     <see cref="IMoveOverService" />.
 /// </summary>
 /// <remarks>
@@ -31,6 +32,11 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private const long CreditMs = 200;
     private const byte LastSequence = 255;
 
+    /// <summary>
+    ///     "You have been revealed!"
+    /// </summary>
+    public const int RevealedCliloc = 500814;
+
     private readonly ILogger _logger = Log.ForContext<MoveRequestPacketHandler>();
     private readonly IMobileService _mobiles;
     private readonly IWorldViewService _view;
@@ -38,6 +44,9 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private readonly TimeProvider _time;
     private readonly IBankService? _bank;
     private readonly IMoveOverService? _moveOver;
+    private readonly IFatigueService? _fatigue;
+    private readonly IMobileStateService? _state;
+    private readonly ISpeechService? _speech;
 
     public MoveRequestPacketHandler(
         IMobileService mobiles,
@@ -45,9 +54,15 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         IPacketSendService sender,
         TimeProvider time,
         IBankService? bank = null,
-        IMoveOverService? moveOver = null
+        IMoveOverService? moveOver = null,
+        IFatigueService? fatigue = null,
+        IMobileStateService? state = null,
+        ISpeechService? speech = null
     )
     {
+        _state = state;
+        _speech = speech;
+        _fatigue = fatigue;
         _bank = bank;
         _moveOver = moveOver;
         _mobiles = mobiles;
@@ -100,16 +115,30 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 
         var now = NowMs();
 
-        if (now + CreditMs < state.NextStepAt || _mobiles.TryMove(mobile, packet.Direction, AbilityOf(session)) != MoveResultType.Moved)
+        // Too tired to take it: asked before the world is, paid only for a step that was taken.
+        if (now + CreditMs < state.NextStepAt ||
+            _fatigue?.CanStep(session, mobile, packet.Running) == false ||
+            _mobiles.TryMove(mobile, packet.Direction, AbilityOf(session)) != MoveResultType.Moved)
         {
             Reject(session, state, mobile, packet.Sequence);
 
             return;
         }
 
+        mobile.LastMovedAt = _time.GetUtcNow();
         state.NextStepAt = Math.Max(now, state.NextStepAt) + (packet.Running ? RunDelayMs : WalkDelayMs);
+        _fatigue?.Stepped(session, mobile, packet.Running);
         // As ModernUO, a step closes the bank box.
         _bank?.Close(mobile);
+
+        // And it shows who hid: there is no Stealth yet. The staff hides to watch, and stays hidden.
+        // A ghost hides by being dead: war mode shows it, not a step.
+        if (mobile.Hidden && !mobile.IsDead && session.AccountType < AccountType.GameMaster && _state is not null)
+        {
+            _state.SetHidden(mobile, false);
+            _speech?.TellCliloc(mobile, RevealedCliloc);
+        }
+
         Accept(session, state, mobile, packet.Sequence);
         _view.Moved(mobile, oldLocation, packet.Running);
         // Last: a teleporter on the new cell moves the character again and restarts its sequence.
@@ -127,7 +156,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private void Accept(GameSession session, MovementState state, MobileEntity mobile, byte sequence)
     {
         state.ExpectedSequence = sequence == LastSequence ? (byte)1 : (byte)(sequence + 1);
-        _sender.TrySend(session.SessionId, new MovementAckPacket(sequence, mobile.Notoriety ?? NotorietyType.Innocent));
+        _sender.TrySend(session.SessionId, new MovementAckPacket(sequence, mobile.ShownNotoriety));
     }
 
     private void Reject(GameSession session, MovementState state, MobileEntity mobile, byte sequence)

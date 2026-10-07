@@ -19,7 +19,10 @@ public sealed class MobileEntityTests
             Gender = GenderType.Female, Body = 0x025E, Map = MapType.Trammel, Location = where
         };
 
-        Assert.Equal($"0x00000002 \"Aria\" player of 0x0000002A (Elf Female, body 0x025E) at Trammel {where}", aria.ToString());
+        Assert.Equal(
+            $"0x00000002 \"Aria\" player of 0x0000002A (Elf Female, body 0x025E) at Trammel {where}",
+            aria.ToString()
+        );
     }
 
     [Fact]
@@ -97,5 +100,24 @@ public sealed class MobileEntityTests
             (snapshot.Id, snapshot.Name, snapshot.Location, snapshot.Direction, snapshot.Skills[0].Base,
                 snapshot.GetProp<int>("quest"))
         );
+    }
+
+    [Theory]
+    [InlineData(4, false, NotorietyType.Innocent)]
+    [InlineData(5, true, NotorietyType.Murderer)]
+    [InlineData(9, true, NotorietyType.Murderer)]
+    public void KillsFromFive_MakeAMurderer_WithARedName(int kills, bool murderer, NotorietyType shown)
+    {
+        var aria = new MobileEntity { Id = new(2), AccountId = new Serial(0x2A), Kills = kills };
+
+        Assert.Equal((murderer, shown), (aria.IsMurderer, aria.ShownNotoriety));
+    }
+
+    [Fact]
+    public void ACriminalMurderer_IsStillRed()
+    {
+        var aria = new MobileEntity { Id = new(2), AccountId = new Serial(0x2A), Kills = 5, Criminal = true };
+
+        Assert.Equal(NotorietyType.Murderer, aria.ShownNotoriety);
     }
 }

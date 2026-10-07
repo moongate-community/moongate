@@ -5,7 +5,7 @@ using System.Text.Json;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts the named places of ModernUO's <c>[Go</c> gump (<c>Distribution/Data/Locations/&lt;map&gt;.json</c>,
+///     Converts the named places of ModernUO's <c>[Go</c> gump ( <c>Distribution/Data/Locations/&lt;map&gt;.json</c>,
 ///     nested categories of places) into one data file, <c>locations.toml</c>: a <c>[[location]]</c> per place with its
 ///     map, its categories joined by <c>/</c>, its name and its spot.
 /// </summary>
@@ -69,6 +69,7 @@ internal static class ModernUoLocationConverter
             return 2;
         }
 
+        // Safe: mgctl passes a full file path, whose GetDirectoryName is null only for a root, never a file.
         Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
         File.WriteAllText(destination, Write(places));
         output.WriteLine($"{Path.GetFileName(destination)}: {places.Count} places on {maps} maps");
@@ -112,6 +113,7 @@ internal static class ModernUoLocationConverter
                     return $"the place '{name.GetString()}' has no location [x, y, z].";
                 }
 
+                // Safe: the element kind was checked as a string.
                 places.Add((map, category, name.GetString()!.Trim(), x, y, z));
             }
         }
@@ -132,6 +134,7 @@ internal static class ModernUoLocationConverter
             }
 
             // The separator inside a name would split the category in two.
+            // Safe: the element kind was checked as a string.
             var segment = name.GetString()!.Trim().Replace(CategorySeparator, "-", StringComparison.Ordinal);
             var path = category.Length == 0 ? segment : category + CategorySeparator + segment;
 

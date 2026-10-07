@@ -36,21 +36,47 @@ public sealed class DecorationServiceTests
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
                 new ItemTemplate { Id = "decoration", ItemId = new Serial(0x0A28), Movable = false, Decays = false },
-                new ItemTemplate { Id = "decoration_clock", ItemId = new Serial(0x104B), Movable = false, Decays = false, ScriptId = "clock" },
-                new ItemTemplate { Id = "decoration_fillable", ItemId = new Serial(0x0E3C), Movable = false, Decays = false, ScriptId = "fillable" },
-                new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door" },
+                new ItemTemplate
+                {
+                    Id = "decoration_clock", ItemId = new Serial(0x104B), Movable = false, Decays = false, ScriptId = "clock"
+                },
+                new ItemTemplate
+                {
+                    Id = "decoration_ankh", ItemId = new Serial(0x0003), Movable = false, Decays = false, ScriptId = "ankh"
+                },
+                new ItemTemplate
+                {
+                    Id = "bulletin_board", ItemId = new Serial(0x1E5E), Movable = false, Decays = false,
+                    ScriptId = "bulletin_board"
+                },
+                new ItemTemplate
+                {
+                    Id = "decoration_fillable", ItemId = new Serial(0x0E3C), Movable = false, Decays = false,
+                    ScriptId = "fillable"
+                },
+                new ItemTemplate
+                {
+                    Id = "decoration_door", ItemId = new Serial(0x0675), Movable = false, Decays = false, ScriptId = "door"
+                },
                 new ItemTemplate
                 {
                     Id = "decoration_public_moongate", ItemId = new Serial(0x0F6C), Movable = false, Decays = false,
                     ScriptId = "public_moongate"
                 },
-                new ItemTemplate { Id = "decoration_teleporter", ItemId = new Serial(0x1BC3), Movable = false, Decays = false, ScriptId = "teleporter" },
+                new ItemTemplate
+                {
+                    Id = "decoration_teleporter", ItemId = new Serial(0x1BC3), Movable = false, Decays = false,
+                    ScriptId = "teleporter"
+                },
                 new ItemTemplate
                 {
                     Id = "decoration_keyword_teleporter", ItemId = new Serial(0x1BC3), Movable = false, Decays = false,
                     ScriptId = "keyword_teleport"
                 },
-                new ItemTemplate { Id = "decoration_light", ItemId = new Serial(0x0A28), Movable = false, Decays = false, ScriptId = "light" }
+                new ItemTemplate
+                {
+                    Id = "decoration_light", ItemId = new Serial(0x0A28), Movable = false, Decays = false, ScriptId = "light"
+                }
             )
         );
         _factory = new(templates, new FakeTileDataService());
@@ -73,7 +99,10 @@ public sealed class DecorationServiceTests
             _items.Items,
             item =>
             {
-                Assert.Equal(("decoration", 0x0063, (ushort)5, "a wall"), (item.TemplateId, item.ItemId, item.Hue.Value, item.Name));
+                Assert.Equal(
+                    ("decoration", 0x0063, (ushort)5, "a wall"),
+                    (item.TemplateId, item.ItemId, item.Hue.Value, item.Name)
+                );
                 Assert.Equal(new Point3D(1500, 1600, 10), item.GroundLocation);
                 Assert.Equal(new Dictionary<string, object?> { ["light"] = "Circle225" }, item.Props);
             }
@@ -154,6 +183,58 @@ public sealed class DecorationServiceTests
         Assert.Equal(("decoration_clock", 0x104B), (clock.TemplateId, clock.ItemId));
     }
 
+    [Theory, InlineData(0x1E5E), InlineData(0x1E5F)]
+    public async Task DecorateAsync_ABulletinBoard_UsesTheBoardTemplate_WithTheGraphicOfTheEntry(int graphic)
+    {
+        await Service(File("trammel", Block("BulletinBoard", graphic))).DecorateAsync(_progress);
+
+        var board = Assert.Single(_items.Items);
+        Assert.Equal(("bulletin_board", graphic), (board.TemplateId, board.ItemId));
+    }
+
+    [Theory]
+    [InlineData("AnkhWest", 0x0003, 0x0002, 0, 1)]
+    [InlineData("AnkhWest", 0x1D98, 0x1D97, 0, 1)]
+    [InlineData("AnkhNorth", 0x0004, 0x0005, 1, 0)]
+    [InlineData("AnkhNorth", 0x1E5D, 0x1E5C, 1, 0)]
+    public async Task DecorateAsync_AnAnkh_IsTwoPieces_BothOfTheAnkhTemplate(
+        string type, int main, int other, int dx, int dy
+    )
+    {
+        await Service(File("trammel", Block(type, main))).DecorateAsync(_progress);
+
+        Assert.Equal(2, _items.Items.Count);
+        Assert.All(_items.Items, item => Assert.Equal("decoration_ankh", item.TemplateId));
+        var first = _items.Items.Single(item => item.ItemId == main);
+        var second = _items.Items.Single(item => item.ItemId == other);
+        Assert.Equal(
+            (first.GroundLocation!.Value.X + dx, first.GroundLocation.Value.Y + dy),
+            (second.GroundLocation!.Value.X, second.GroundLocation.Value.Y)
+        );
+    }
+
+    // Bounties do not exist yet: its board stays a thing to look at.
+    [Fact]
+    public async Task DecorateAsync_ABountyBoard_StaysPlain()
+    {
+        await Service(File("trammel", Block("BountyBoard", 0x1E5E))).DecorateAsync(_progress);
+
+        Assert.Equal("decoration", Assert.Single(_items.Items).TemplateId);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_ABulletinBoardPlacedAsPlainDecoration_BecomesABoard_AndCountsAsThere()
+    {
+        var board = new ItemEntity { Id = new Serial(0x40000511), TemplateId = "decoration", ItemId = 0x1E5E, Amount = 1 };
+        _items.Add([board]);
+        _items.PlaceOnGround(board, MapType.Trammel, new Point3D(1500, 1600, 10));
+
+        var result = await Service(File("trammel", Block("BulletinBoard", 0x1E5E))).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), result);
+        Assert.Equal("bulletin_board", board.TemplateId);
+    }
+
     // The parts a tinker makes a clock from tell no time.
     [Theory, InlineData("ClockFrame"), InlineData("ClockParts")]
     public async Task DecorateAsync_ThePartsOfAClock_StayPlain(string type)
@@ -219,12 +300,14 @@ public sealed class DecorationServiceTests
     [Fact]
     public async Task DecorateAsync_ALight_UsesTheLightTemplate_ItsKindsShape_AndIsProtected()
     {
-        await Service(File("trammel", Block("CandleLarge", 0x0A26, props: new() { ["unlit"] = true }))).DecorateAsync(_progress);
+        await Service(File("trammel", Block("CandleLarge", 0x0A26, props: new() { ["unlit"] = true })))
+            .DecorateAsync(_progress);
 
         var candle = Assert.Single(_items.Items);
         Assert.Equal(("decoration_light", 0x0A26), (candle.TemplateId, candle.ItemId));
         Assert.Equal(
-            new Dictionary<string, object?> { ["light"] = "circle150", ["protected"] = true, ["decoration_type"] = "CandleLarge" },
+            new Dictionary<string, object?>
+                { ["light"] = "circle150", ["protected"] = true, ["decoration_type"] = "CandleLarge" },
             candle.Props
         );
     }
@@ -237,7 +320,8 @@ public sealed class DecorationServiceTests
         await Service(File("trammel", block)).DecorateAsync(_progress);
 
         Assert.Equal(
-            new Dictionary<string, object?> { ["light"] = "north_big", ["protected"] = false, ["decoration_type"] = "WallSconce" },
+            new Dictionary<string, object?>
+                { ["light"] = "north_big", ["protected"] = false, ["decoration_type"] = "WallSconce" },
             Assert.Single(_items.Items).Props
         );
     }
@@ -279,7 +363,10 @@ public sealed class DecorationServiceTests
 
         Assert.Equal(new DecorationResult(2, 0, 4, 1), result);
         var report = Assert.Single(_progress.Reports);
-        Assert.Equal(("trammel", "town", 2, 0, 4), (report.Folder, report.Name, report.Placed, report.Present, report.Skipped));
+        Assert.Equal(
+            ("trammel", "town", 2, 0, 4),
+            (report.Folder, report.Name, report.Placed, report.Present, report.Skipped)
+        );
         Assert.Equal(
             new Dictionary<string, int>
             {
@@ -362,7 +449,12 @@ public sealed class DecorationServiceTests
         var file = File(
             "trammel",
             Block("Teleporter", 0x1BC3, destination, new Point3D(1600, 2489, 0)),
-            Block("KeywordTeleporter", 0x1BC3, new Dictionary<string, object>(destination) { ["substring"] = "om" }, new Point3D(1600, 2489, 5))
+            Block(
+                "KeywordTeleporter",
+                0x1BC3,
+                new Dictionary<string, object>(destination) { ["substring"] = "om" },
+                new Point3D(1600, 2489, 5)
+            )
         );
 
         var first = await Service(file).DecorateAsync(_progress);
@@ -380,7 +472,8 @@ public sealed class DecorationServiceTests
     public async Task DecorateAsync_APublicMoongateOfADecorationFile_GetsTheMoongateTemplate()
     {
         // As the gate of the Star Room: a way out, with no destination of its own in moongates.toml.
-        var result = await Service(File("felucca", Block("PublicMoongate", 0x0F6C, new Point3D(5153, 1760, 0)))).DecorateAsync(_progress);
+        var result = await Service(File("felucca", Block("PublicMoongate", 0x0F6C, new Point3D(5153, 1760, 0))))
+            .DecorateAsync(_progress);
 
         Assert.Equal(new DecorationResult(1, 0, 0, 1), result);
         var gate = Assert.Single(_items.Items);
@@ -436,7 +529,11 @@ public sealed class DecorationServiceTests
     [Fact]
     public async Task DecorateAsync_ATeleporterToAnotherMap_KeepsTheMapAsItsNumber()
     {
-        var block = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "Tokuno" });
+        var block = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "Tokuno" }
+        );
 
         await Service(File("trammel", block)).DecorateAsync(_progress);
 
@@ -448,7 +545,11 @@ public sealed class DecorationServiceTests
     [Fact]
     public async Task DecorateAsync_ATeleporterToAnUnknownMap_IsSkipped()
     {
-        var block = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "Tokunoo" });
+        var block = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "Tokunoo" }
+        );
 
         var result = await Service(File("trammel", block)).DecorateAsync(_progress);
 
@@ -460,7 +561,10 @@ public sealed class DecorationServiceTests
     [Fact]
     public async Task DecorateAsync_ATeleporterAlreadyThere_IsNotPlacedAgain()
     {
-        var file = File("trammel", Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) }));
+        var file = File(
+            "trammel",
+            Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) })
+        );
         await Service(file).DecorateAsync(_progress);
 
         var again = await Service(file).DecorateAsync(_progress);
@@ -475,7 +579,11 @@ public sealed class DecorationServiceTests
     [InlineData(13, 2)]
     public async Task DecorateAsync_ASecondTeleporterOnTheSameSpot_IsNotPlaced(int height, int expected)
     {
-        var first = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) });
+        var first = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) }
+        );
         var second = Block(
             "Teleporter",
             0x1BC3,
@@ -492,7 +600,11 @@ public sealed class DecorationServiceTests
     [Fact]
     public async Task DecorateAsync_TwoTeleportersOfOneFileOnTheSameSpot_PlaceOnlyTheFirst()
     {
-        var first = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) });
+        var first = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0) }
+        );
         var second = Block(
             "Teleporter",
             0x1BC3,
@@ -511,7 +623,11 @@ public sealed class DecorationServiceTests
     [Fact]
     public async Task DecorateAsync_ATeleporterToTerMur_KeepsTheMap()
     {
-        var block = Block("Teleporter", 0x1BC3, new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "TerMur" });
+        var block = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(100, 200, 0), ["map_dest"] = "TerMur" }
+        );
 
         await Service(File("trammel", block)).DecorateAsync(_progress);
 
@@ -531,7 +647,8 @@ public sealed class DecorationServiceTests
     [Fact]
     public async Task DecorateAsync_SkipsALocationOutsideTheMap()
     {
-        var result = await Service(File("trammel", Block("Static", 0x0063, new Point3D(9000, 100, 0)))).DecorateAsync(_progress);
+        var result = await Service(File("trammel", Block("Static", 0x0063, new Point3D(9000, 100, 0))))
+            .DecorateAsync(_progress);
 
         Assert.Equal(new DecorationResult(0, 0, 1, 1), result);
         Assert.Equal(1, Assert.Single(_progress.Reports).SkippedByType["outside the map"]);
@@ -609,9 +726,9 @@ public sealed class DecorationServiceTests
         _factory.FailingSave = 2;
 
         var result = await Service(
-                         File("trammel", Block("MetalDoor", 0x0675, new Point3D(100, 100, 0), new Point3D(101, 100, 0)))
-                     )
-                     .DecorateAsync(_progress);
+                File("trammel", Block("MetalDoor", 0x0675, new Point3D(100, 100, 0), new Point3D(101, 100, 0)))
+            )
+            .DecorateAsync(_progress);
 
         Assert.Equal(new DecorationResult(2, 0, 0, 1), result);
         Assert.Equal(2, _items.Items.Count);
@@ -638,10 +755,10 @@ public sealed class DecorationServiceTests
     public async Task DecorateAsync_ReportsEveryFile_AndReturnsTheTotals()
     {
         var result = await Service(
-                         File("trammel", Block("Static", 0x0063)),
-                         File("felucca", Block("Static", 0x0063), Block("Spawner", 0x1F13))
-                     )
-                     .DecorateAsync(_progress);
+                File("trammel", Block("Static", 0x0063)),
+                File("felucca", Block("Static", 0x0063), Block("Spawner", 0x1F13))
+            )
+            .DecorateAsync(_progress);
 
         Assert.Equal(new DecorationResult(2, 0, 1, 2), result);
         Assert.Equal(["trammel", "felucca"], _progress.Reports.Select(report => report.Folder));
@@ -659,7 +776,10 @@ public sealed class DecorationServiceTests
         var result = await Service(File("trammel", Block("Static", 0x0063))).DecorateAsync(_progress);
 
         Assert.Equal(new DecorationResult(3, 0, 0, 2), result);
-        Assert.Equal([("trammel", "town"), ("felucca", "generated_doors")], _progress.Reports.Select(report => (report.Folder, report.Name)));
+        Assert.Equal(
+            [("trammel", "town"), ("felucca", "generated_doors")],
+            _progress.Reports.Select(report => (report.Folder, report.Name))
+        );
 
         var west = Assert.Single(_items.Items, item => item.GroundLocation == new Point3D(200, 300, 5));
         Assert.Equal(("decoration_door", 0x06A5, MapType.Felucca), (west.TemplateId, west.ItemId, west.Map!.Value));

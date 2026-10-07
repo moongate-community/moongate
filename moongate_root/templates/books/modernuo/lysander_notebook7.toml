@@ -1,0 +1,460 @@
+title = "Lysander's Notebook"
+author = "L. Gathenwale"
+content = """Day Seven :
+ 
+The Sewel woman
+pratters on endlessly.
+And she dares to
+speak Thy Name,
+Master!  I wish so
+vehemently to take a
+
+knife to that little
+neck of hers.  She
+struts around the
+chambers of Thy
+Sanctum with her
+repugnant airs, her
+scholarly conjecture
+on this or that.  That I
+
+could peel the skin
+from her face and
+show her how vile and
+ugly she truly is, how
+unworthy of entrance
+to Thy Sanctum.  I
+must take her,
+Master.  I must rend
+
+that little wench to
+pieces.  I ask this gift
+of Thee, that I might
+cleanse Thy Sanctum
+of her presence.  Give
+me the Sewel woman
+and I shall show you
+my mastery of Death,
+
+Master.  I shall cut
+her to bits and scatter
+them before the
+others as a warning.
+I cannot stand her
+presence, I cannot
+abide it.  And
+Drummel!  He is a
+
+pustule that must be
+lanced, a sickness that
+I must cure by blade
+and fire.  Not a trace
+of him will be left
+when I'm done with
+him.  Praises to Thee,
+Master.  I shall honor
+
+Thee with many
+sacrifices, soon
+enough."""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Lysanderův zápisník"
+content = """Den sedmý:
+ 
+Ta ženská Sewel žvaní
+bez konce. A odvažuje se
+vyslovovat Tvé jméno,
+Mistře! Tak vroucně
+toužím přiložit
+
+nůž k jejímu malému
+krčku. Naparuje se v
+komnatách Tvé svatyně se
+svou odpornou
+povýšeností a učenými
+dohady o tom či onom.
+Kéž bych
+
+mohl stáhnout kůži z
+její tváře a ukázat jí,
+jak ohavná a ošklivá
+skutečně je, jak nehodná
+vstupu do Tvé svatyně.
+Musím ji vzít, Mistře.
+Musím roztrhat
+
+tu malou děvku na kusy.
+Žádám od Tebe tento dar,
+abych mohl očistit Tvou
+svatyni od její
+přítomnosti. Dej mi tu
+ženskou Sewel a ukážu
+Ti, jak vládnu smrti,
+
+Mistře. Rozsekám ji na
+kousky a rozházím je
+před ostatními jako
+varování. Nemohu snést
+její přítomnost, nemohu
+ji vydržet. A Drummel!
+Je
+
+vředem, který je třeba
+proříznout, nemocí,
+kterou musím vyléčit
+čepelí a ohněm. Až s ním
+skončím, nezůstane po
+něm ani stopa. Chvála
+Tobě, Mistře. Uctím
+
+Tě mnoha oběťmi již
+brzy."""
+[translations.fre]
+title = "Le carnet de Lysander"
+content = """Septième jour :
+ 
+La femme Sewel bavarde
+sans fin. Et elle ose
+prononcer Ton Nom,
+Maître ! Je désire si
+ardemment porter un
+
+couteau à son petit cou.
+Elle se pavane dans les
+salles de Ton Sanctuaire
+avec ses airs
+répugnants, ses
+conjectures savantes sur
+ceci ou cela. Si je
+pouvais
+
+arracher la peau de son
+visage et lui montrer
+comme elle est
+véritablement vile et
+laide, comme elle est
+indigne d’entrer dans
+Ton Sanctuaire. Je dois
+la prendre, Maître. Je
+dois déchirer
+
+cette petite garce en
+morceaux. Je Te demande
+ce don, pour que je
+puisse purifier Ton
+Sanctuaire de sa
+présence. Donne-moi la
+femme Sewel et je Te
+montrerai ma maîtrise de
+la Mort,
+
+Maître. Je la découperai
+et en disperserai les
+morceaux devant les
+autres en guise
+d’avertissement. Je ne
+supporte pas sa
+présence, je ne peux la
+tolérer. Et Drummel !
+C’est une
+
+pustule qu’il faut
+crever, une maladie que
+je dois guérir par la
+lame et le feu. Il ne
+restera aucune trace de
+lui quand j’en aurai
+terminé. Louanges à Toi,
+Maître. Je T’honorerai
+
+par de nombreux
+sacrifices, bien assez
+tôt."""
+[translations.ger]
+title = "Lysanders Notizbuch"
+content = """Siebter Tag:
+ 
+Das Weib Sewel schwatzt
+unaufhörlich. Und sie
+wagt es, Deinen Namen
+auszusprechen, Meister!
+Wie sehr wünsche ich,
+ein
+
+Messer an ihren kleinen
+Hals zu setzen. Sie
+stolziert durch die
+Kammern Deines
+Heiligtums mit ihrem
+widerwärtigen Gehabe,
+ihren gelehrten
+Vermutungen über dies
+oder jenes. Könnte ich
+doch
+
+ihr die Haut vom Gesicht
+schälen und ihr zeigen,
+wie abscheulich und
+hässlich sie wahrhaft
+ist, wie unwürdig, Dein
+Heiligtum zu betreten.
+Ich muss sie nehmen,
+Meister. Ich muss
+
+diese kleine Dirne in
+Stücke reißen. Ich bitte
+Dich um diese Gabe, auf
+dass ich Dein Heiligtum
+von ihrer Gegenwart
+reinigen möge. Gib mir
+das Weib Sewel, und ich
+werde dir meine
+Herrschaft über den Tod
+zeigen,
+
+Meister. Ich werde sie
+in kleine Stücke
+schneiden und vor den
+anderen als Warnung
+verstreuen. Ich kann
+ihre Gegenwart nicht
+ertragen, ich kann sie
+nicht dulden. Und
+Drummel! Er ist eine
+
+Pustel, die aufgestochen
+werden muss, eine
+Krankheit, die ich mit
+Klinge und Feuer heilen
+muss. Keine Spur wird
+von ihm bleiben, wenn
+ich mit ihm fertig bin.
+Lob sei Dir, Meister.
+Ich werde
+
+Dich mit vielen Opfern
+ehren, schon bald."""
+[translations.ita]
+title = "Il taccuino di Lysander"
+content = """Giorno Sette :
+ 
+La donna Sewel blatera
+senza fine. E osa
+pronunciare il Tuo Nome,
+Padrone! Desidero con
+tanta violenza affondare
+un
+
+coltello in quel suo
+piccolo collo. Si
+pavoneggia nelle stanze
+del Tuo Santuario con le
+sue arie ripugnanti, le
+sue congetture dotte su
+questo e quello. Potessi
+
+strapparle la pelle dal
+volto e mostrarle quanto
+sia davvero vile e
+brutta, quanto indegna
+di entrare nel Tuo
+Santuario. Devo
+prenderla, Padrone. Devo
+strappare
+
+quella piccola
+sgualdrina a pezzi. Ti
+chiedo questo dono,
+affinché possa
+purificare il Tuo
+Santuario dalla sua
+presenza. Dammi la donna
+Sewel e ti mostrerò la
+mia padronanza della
+Morte,
+
+Padrone. La taglierò a
+pezzetti e li spargerò
+davanti agli altri come
+monito. Non sopporto la
+sua presenza, non la
+tollero. E Drummel! È
+una
+
+pustola che va incisa,
+una malattia che devo
+curare con la lama e il
+fuoco. Non ne resterà
+traccia quando avrò
+finito con lui. Lodi a
+Te, Padrone. Ti onorerò
+
+con molti sacrifici,
+abbastanza presto."""
+[translations.pol]
+title = "Notatnik Lysander"
+content = """Dzień siódmy:
+ 
+Kobieta Sewel paple bez
+końca. I ośmiela się
+wypowiadać Twe Imię,
+Mistrzu! Tak gorąco
+pragnę przyłożyć
+
+nóż do tej jej małej
+szyi. Pyszni się w
+komnatach Twego
+Sanktuarium ze swymi
+odrażającymi manierami i
+uczonymi domysłami o tym
+czy tamtym. Gdybym
+
+mógł obedrzeć jej twarz
+ze skóry i pokazać, jak
+podła i szpetna jest
+naprawdę, jak niegodna
+wejścia do Twego
+Sanktuarium. Muszę ją
+wziąć, Mistrzu. Muszę
+rozedrzeć
+
+tę małą dziewkę na
+strzępy. Proszę Cię o
+ten dar, abym mógł
+oczyścić Twe Sanktuarium
+z jej obecności. Daj mi
+kobietę Sewel, a pokażę
+Ci, jak władam Śmiercią,
+
+Mistrzu. Posiekam ją na
+kawałki i rozsypię je
+przed pozostałymi ku
+przestrodze. Nie znoszę
+jej obecności, nie mogę
+jej ścierpieć. A
+Drummel! To
+
+wrzód, który trzeba
+przeciąć, choroba, którą
+muszę uleczyć ostrzem i
+ogniem. Nie zostanie po
+nim ślad, kiedy skończę.
+Chwała Tobie, Mistrzu.
+Uczczę
+
+Cię licznymi ofiarami,
+już wkrótce."""
+[translations.por]
+title = "Caderno de Lysander"
+content = """Sétimo dia:
+ 
+A mulher Sewel tagarela
+sem parar. E ousa
+pronunciar Seu Nome,
+Mestre! Desejo tão
+ardentemente levar uma
+
+faca àquele pescocinho
+dela. Ela se pavoneia
+pelas câmaras de Seu
+Santuário com suas poses
+repugnantes e suas
+conjecturas eruditas
+sobre isto ou aquilo.
+Quem me dera
+
+arrancar a pele de seu
+rosto e mostrar-lhe como
+é de fato vil e feia,
+como é indigna de entrar
+em Seu Santuário.
+Preciso tomá-la, Mestre.
+Preciso rasgar
+
+aquela rameira em
+pedaços. Peço a Você
+esta dádiva, para que eu
+possa purificar Seu
+Santuário da presença
+dela. Dê-me a mulher
+Sewel e mostrarei meu
+domínio da Morte,
+
+Mestre. Vou cortá-la em
+pedaços e espalhá-los
+diante dos outros como
+aviso. Não suporto a
+presença dela, não a
+tolero. E Drummel! Ele é
+uma
+
+pústula que precisa ser
+lancetada, uma doença
+que preciso curar com
+lâmina e fogo. Não
+restará vestígio dele
+quando eu terminar.
+Louvores a Você, Mestre.
+Honrarei
+
+Você com muitos
+sacrifícios, muito em
+breve."""
+[translations.spa]
+title = "Cuaderno de Lysander"
+content = """Día siete:
+ 
+La mujer Sewel parlotea
+sin cesar. ¡Y se atreve
+a pronunciar Tu Nombre,
+Maestro! Deseo con tanta
+vehemencia llevar un
+
+cuchillo a ese
+cuellecito suyo. Se
+pavonea por las cámaras
+de Tu Santuario con sus
+aires repugnantes y sus
+conjeturas eruditas
+sobre esto o aquello.
+Ojalá
+
+pudiera arrancarle la
+piel de la cara y
+mostrarle lo vil y fea
+que es en realidad, lo
+indigna que es de entrar
+en Tu Santuario. Debo
+tomarla, Maestro. Debo
+hacer
+
+pedazos a esa
+mujerzuela. Te pido este
+don para poder limpiar
+Tu Santuario de su
+presencia. Dame a la
+mujer Sewel y Te
+mostraré mi dominio de
+la Muerte,
+
+Maestro. La cortaré en
+trozos y los esparciré
+ante los demás como
+advertencia. No soporto
+su presencia, no puedo
+tolerarla. ¡Y Drummel!
+Es una
+
+pústula que debe
+abrirse, una enfermedad
+que debo curar con hoja
+y fuego. No quedará
+rastro de él cuando
+termine. Alabanzas a Ti,
+Maestro. Te honraré
+
+con muchos sacrificios,
+muy pronto."""

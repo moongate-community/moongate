@@ -4,7 +4,8 @@ using static System.FormattableString;
 namespace Moongate.Server.Ultima.Data.Gumps;
 
 /// <summary>
-///     A client message (cliloc) in a box: <c>xmfhtmlgump</c>; with <see cref="Color" /> <c>xmfhtmlgumpcolor</c>; with <see cref="Args" /> (tab separated) <c>xmfhtmltok</c>.
+///     A client message (cliloc) in a box: <c>xmfhtmlgump</c>; with <see cref="Color" /> <c>xmfhtmlgumpcolor</c>; with
+///     <see cref="Args" /> (tab separated) <c>xmfhtmltok</c>.
 /// </summary>
 public sealed class GumpHtmlLocalized : GumpEntry
 {
@@ -33,7 +34,9 @@ public sealed class GumpHtmlLocalized : GumpEntry
         if (Args is not null)
         {
             layout.Append(
-                Invariant($"{{ xmfhtmltok {box} {Flag(Background)} {Flag(Scrollbar)} {Color ?? 0} {Cliloc} @{Arguments(Args)}@ }}")
+                Invariant(
+                    $"{{ xmfhtmltok {box} {Flag(Background)} {Flag(Scrollbar)} {Color ?? 0} {Cliloc} @{Arguments(Args)}@ }}"
+                )
             );
         }
         else if (Color is { } color)

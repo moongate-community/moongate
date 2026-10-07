@@ -89,8 +89,10 @@ the gender from `races.toml`), name (the template's, else one of `name_list`, wh
 `{gender}` picks the `male` or `female` list), skin, hair and beard (from the template,
 else the race; `hair = []` is bald; females get no beard), stats (unset is 10), hits,
 mana and stamina (which default to strength, intelligence and dexterity), armor, resistances, fame,
-karma and skills (template points × 10, the tenths the mobile stores). `title` and
-`notoriety` stay null: the template's apply.
+karma and skills (template points × 10, the tenths the mobile stores). `title` stays null: the
+template's applies. `notoriety` is the template's, and for a template that has none a human is left with none, which
+reads as innocent, and anything else is `attackable` (grey), as ModernUO's animals and monsters. The NPCs saved
+before this was so are given theirs when the server starts, and saved with the world.
 
 `SpawnAsync(templateId, map, location)`:
 
@@ -275,13 +277,16 @@ own, see [TOML value types](toml-types.md).
 | `ItemId` | The base client graphic; runtime physical properties come from `ITileDataService` unless overridden |
 | `Name`, `Comment` | A display name override, and a designer note nobody reads at runtime |
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
-| `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose functions handle what happens to the item (`on_use`, `on_move_over`, `on_npc_move_over`, `on_speech`, `on_equip`, `on_unequip`, `on_pickup`, `on_drop`, `on_create`, `on_timer`, `on_darkness`) and answer the questions asked before a move (`can_pick_up`, `can_drop`, `can_equip`, `can_insert`); a lower-case Lua identifier, empty for none. See [Item scripts](scripting.md#item-scripts) |
+| `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose functions handle what happens to the item (`on_use`, `on_move_over`, `on_npc_move_over`, `on_speech`, `on_equip`, `on_unequip`, `on_pickup`, `on_drop`, `on_create`, `on_timer`, `on_darkness`) and answer the questions asked before a move (`can_pick_up`, `can_drop`, `can_equip`, `can_insert`); a lower-case Lua identifier, empty for none. See [Item scripts](scripting/item-scripts.md) |
 | `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted". Players cannot pick up what is not movable; game masters and administrators can |
 | `Weight` | Stones to two decimals (`weight = 0.02` for a coin); unset uses the whole-stone tiledata weight |
 | `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |
 | `Stackable` | Unset uses the tiledata `Generic` flag |
 | `Layer` | A `LayerType` name such as `one_handed`; unset uses the tiledata layer |
 | `TwoHandedWeapon` | `two_handed_weapon = true` on a weapon held in both hands (bows, polearms, staves), as POL's `TwoHanded`: worn on `two_handed`, it leaves no hand free. Anything else on `two_handed` (shields, torches) goes in the other hand, with a one-handed weapon. Tiledata cannot tell them apart: it marks shields as weapons and bows as one-handed |
+| `WeaponType`, `DamageMin`, `DamageMax`, `Speed` | The weapon fields of [combat](combat.md): `weapon_type` is `sword`, `axe`, `pole_arm`, `mace`, `fencing`, `bow`, `crossbow` or `thrown`, as UOX3 types a weapon by graphic, and decides the skill, the sounds and the swing; `damage_min` and `damage_max` (0 to 65535) are what a hit does before the bonuses; `speed` (1 to 500) gives the swing delay `15000 / ((stamina + 100) * speed)`. A worn item with a `damage_max` above 0 is a weapon. Inherited by `base_id` |
+| `ArmorRating`, `StrengthRequired`, `MaxHits` | `armor_rating` (0 to 500) is the armor of a piece of armor (a shield's counts for nothing yet); `strength_required` and `max_hits` (durability) are read and kept, not used yet. Inherited by `base_id` |
+| `Dyeable` | `dyeable = true` on what a dye tub can give its hue, as UOX3's `dyeable`: the converted clothing has it from `base_clothing`, and a template takes it away with `dyeable = false` (a death robe). Unset is not dyeable. See [dyes.lua and dye_tub.lua](scripting/shipped-scripts.md#dyeslua-and-dye_tublua) |
 | `BuyPrice`, `SellPrice` | What vendors sell it for and pay for it; unset means vendors do not trade it |
 | `Decays`, `DecayMinutes` | Whether the item decays on the ground, and after how many minutes; unset decays when movable, after 60 minutes, as ModernUO. An item that cannot be picked up decays only when its template has both `decays = true` and `decay_minutes`, as the treasure chests. An item decays when it lies on the ground, is movable (or has both of those) and its template is visible to players. The countdown (`DecayAt`, saved with the item, so downtime counts) starts when it lands on the ground, again when a lifted item bounces back there, and stops when it is picked up, moved into a container or worn; the rest of a split stack keeps the stack's time. A check every 5 seconds deletes the due items, a container with its contents, whether or not a player is near |
 | `Loot`, `Gold` | What a container holds when a [spawn region of items](spawns.md#regions-of-items-treasure-chests) makes it: `loot = ["reagents", "reagents"]` rolls each loot table once (list one twice to roll it twice) and `gold = "1d100+29"` puts that much gold inside, in piles of at most 65,535. Unset takes the base template's, else nothing. Only a spawn region fills the item: one made by a command or a script is empty |
@@ -289,7 +294,7 @@ own, see [TOML value types](toml-types.md).
 | `Tags` | Free script values in an `[item.tags]` table; a child's explicit tags replace the entire base map |
 | `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
 | `Hue` | `HueSpec`, `0` meaning the art's native coloring; a quoted `"min-max"` range picks one per spawn |
-| `MaxItems`, `MaxWeight` | Nullable; set only on a container template |
+| `MaxItems`, `MaxWeight` | Nullable; set only on a container template. `MaxWeight` is the stones a player may put in the container, counting what is in the containers inside it: 400 when unset, no limit for 0. The staff is not limited, nor is a bank box; an item already inside moves around whatever the container weighs. `MaxItems` is the items a player may put in the container, counted with what is inside its bags and against every container around it; joining a pile adds none, the staff is exempt, and unset means no limit. A [bank box](bank.md) takes `ultima.bank.max_items` instead. |
 
 Fields that the client's `tiledata.mul` also carries (weight, stackability, layer,
 movability) are overrides: unset means tiledata, as in POL and ModernUO. The extensions
@@ -336,12 +341,13 @@ to 120; a constant is a bare integer.
 | `Damage`, `Armor` | Dice for an unarmed hit and the natural armour; unset is `1d4` and 0 |
 | `Resistances` | `[mobile.resistances]` with `physical`, `fire`, `cold`, `poison`, `energy`, dice in percent; unset is 0 |
 | `Skills` | `[mobile.skills]`, skill names such as `resisting_spells` or `tactics`, dice in whole points 0 to 120 |
-| `Notoriety` | `innocent`, `ally`, `attackable`, `criminal`, `enemy`, `murderer` or `invulnerable`, the name colour; unset is `innocent` |
+| `Notoriety` | `innocent`, `ally`, `attackable`, `criminal`, `enemy`, `murderer` or `invulnerable`, the name colour; unset is `innocent` for a human and `attackable` for any other body |
 | `Karma`, `Fame` | Dice; karma may be negative |
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
 | `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |
 | `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death`; a mobile script plays them by kind with `npc.play_sound(serial, "idle")` |
-| `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn` and `on_mobile_in_range` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting.md#mobile-scripts) |
+| `FleeAt` | The percent of its hit points (0 to 100) under which a creature that fights runs from the fight, `-1` for one that never does, as UOX3's `FLEEAT`; a base template's is inherited. Unset: the script's own, 20 for a monster and 10 for an animal. See [Creature scripts](scripting/shipped-scripts.md#commoncreaturelua) |
+| `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death` and `on_drag_drop` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting/mobile-scripts.md) |
 | `Visibility` | As in `ItemTemplate` |
 | `Movement` | `land`, `water` (a dolphin: it spawns and swims on the water only) or `both` (a walrus: it walks and swims, and spawns on land else on the water); unset is `land` |
 | `Tags` | Free script values; child keys add to and override parent keys |
@@ -450,7 +456,7 @@ regions spawn at runtime, water mobiles included, is in [NPC spawns](spawns.md).
 ## Decorations
 
 `templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
-lights, furniture, teleporters and the like, about 35,500 placements in the loaded folders (115 files in all). It was
+lights, furniture, teleporters and the like, about 32,800 placements in the 108 loaded files (115 files in all). It was
 converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
 `havenisland.toml`, `havenmine.toml`, which ModernUO lacks) and the shop and world signs of
 ModernUO's `signs.cfg` (`signs.toml`, written by
@@ -458,10 +464,22 @@ ModernUO's `signs.cfg` (`signs.toml`, written by
 teleporters of its `teleporters.json` (`teleporters.toml`, written by
 [`mgctl convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
-`tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
-`_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
-to place its decoration. Files starting with `_` inside a loaded folder (the dungeons, such as
-`britannia/_covetous.toml`) are loaded.
+`tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/`,
+`_old_magincia/` and `_bounty_boards/`. A folder or a file whose name starts with `_` is not loaded: rename
+it without the `_` to place its decoration. `_old_magincia/` is the furniture of Magincia as it
+was before its destruction: the map of a current client holds New Magincia, rebuilt without those
+buildings, so the set stays out; with an old client, move its file to `britannia/`.
+
+The old Haven of Trammel is set aside the same way: `trammel/_haven.toml`,
+`trammel/_haven_additions.toml` and `trammel/_signs.toml`, 631 placements. On the map of a current
+client that town is a ruin, with a third of its buildings gone or broken, so its doors, chests and
+bookcases would stand with no walls around them; Felucca keeps the town at the same place. With an
+old client, rename the three files without the `_`. ModernUO names some of its files with a leading
+underscore (`_covetous.cfg`): here they are `covetous.toml`, or `despise_additions.toml` where a
+plain `despise.toml` exists too, so that the underscore only ever means "not loaded". A world decorated
+before keeps the items it already has: `.decorate` tells what is placed by where it stands, not by
+the file, so the renamed files place nothing twice, and the old Haven's items stay until they are
+removed or the world is decorated anew.
 
 ```toml
 [[decoration]]
@@ -491,14 +509,15 @@ client as its name, unless the item has a name of its own. A teleporter's `point
 `teleport.y` and `teleport.z`, and its `map_dest` the prop `teleport.map`, a `MapType` number.
 A `KeywordTeleporter` takes the template `decoration_keyword_teleporter`, with
 `script_id = "keyword_teleport"` and `visibility = "game_master"`, and keeps its `substring`, `keyword`, `range` and `delay` as props.
-A `Clock` takes the template `decoration_clock`, with `script_id = "clock"`, and tells the time on a
+A `BulletinBoard` takes the template `bulletin_board`, with `script_id = "bulletin_board"`, and
+opens on a double click: see [Bulletin boards](bulletin-boards.md). A `Clock` takes the template `decoration_clock`, with `script_id = "clock"`, and tells the time on a
 double click; one placed as plain decoration by an earlier run becomes a clock where it stands. A
 `Blocker` is plain decoration whose graphic draws nothing and cannot be walked through: players
 are stopped by it unseen, and game masters and administrators see a gravestone in its place, as
 ModernUO shows it.
 A `Fillable...` kind (crate, box, chest, barrel) or a `LibraryBookcase` takes the template
 `decoration_fillable`, with `script_id = "fillable"`: a
-[container that fills up](scripting.md#item-scripts) when it is opened. Its `content_type`
+[container that fills up](scripting/shipped-scripts.md#fillablelua) when it is opened. Its `content_type`
 (`Inn`, `ThiefGuild`) is kept as the name of its table (`inn`, `thief_guild`), a bookcase is a
 `library`, and one placed as plain decoration by an earlier run becomes fillable where it stands.
 A `PublicMoongate` takes the template `decoration_public_moongate`, with

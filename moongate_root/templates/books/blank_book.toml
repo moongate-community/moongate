@@ -1,0 +1,14 @@
+# What it is for:
+#   The blank book every new character starts with, as in ModernUO: twenty
+#   empty pages the character that carries it writes in, with its own name as
+#   the author. data/starting_items.toml gives it; .book blank_book gives one
+#   to a character that already exists.
+# Fields:
+#   writable makes the book one its carrier writes in; pages is how many pages
+#   it has. A writable book needs no content: it starts empty.
+
+title = "a book"
+author = "$player_name"
+item_template = "readable_book"
+writable = true
+pages = 20

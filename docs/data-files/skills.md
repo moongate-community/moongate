@@ -31,8 +31,22 @@ gain_factor = 1.0
 | `str_scale`, `dex_scale`, `int_scale` | The chance, in percent, that a skill gain also raises that stat. |
 | `str_gain`, `dex_gain`, `int_gain` | How much a skill gain favours that stat when a stat rises. |
 | `gain_factor` | How fast the skill rises; 1.0 is normal. |
+| `delay` | Optional. The seconds a character waits before another skill after using this one, from 0 to 3600. Without it, and when the script of the skill returns no number, one second. |
 
-No skill gain system reads this file yet.
+The 23 skills a player uses directly carry ModernUO's waits:
+
+| `delay` | Skills |
+| --- | --- |
+| 30 | `begging`, `stealing`, `detecting_hidden`, `animal_taming` |
+| 10 | `hiding`, `stealth`, `poisoning`, `remove_trap`, `tracking`, `meditation` |
+| 1 | `anatomy`, `animal_lore`, `arms_lore`, `item_identification`, `taste_identification`, `evaluating_intelligence`, `forensic_evaluation`, `cartography`, `inscription`, `spirit_speak`, `peacemaking`, `provocation`, `discordance` |
+
+Where ModernUO's wait depends on the outcome (`meditation`, `spirit_speak`, `hiding`) the file has the
+usual one, and the script of the skill returns the others. Only `hiding` has a script so far: a
+`delay` does nothing until the skill has one.
+
+The [skills](../skills.md) read `gain_factor` when a skill is gained and `delay` when it is used; the
+stat fields are not read yet.
 
 ## Validation at startup
 
@@ -41,7 +55,8 @@ The server stops when:
 - `skills.toml` does not exist or has no `[[skill]]` entries;
 - the ids are not in `SkillType` order without gaps: entry 0 must be `alchemy`
   (value 0), entry 1 `anatomy` (value 1), and so on;
-- an id is a number or not a `SkillType` name.
+- an id is a number or not a `SkillType` name;
+- a `delay` is below 0 or above 3600.
 
 ## See also
 

@@ -7,6 +7,11 @@ namespace Moongate.Scripting.Attributes.Scripts;
 [AttributeUsage(AttributeTargets.Parameter)]
 public sealed class ScriptParameterTypeAttribute : Attribute
 {
+    /// <summary>
+    ///     Gets the Lua type name.
+    /// </summary>
+    public string LuaType { get; }
+
     /// <param name="luaType">
     ///     The Lua type name, as LuaLS reads it.
     /// </param>
@@ -14,9 +19,4 @@ public sealed class ScriptParameterTypeAttribute : Attribute
     {
         LuaType = luaType;
     }
-
-    /// <summary>
-    ///     Gets the Lua type name.
-    /// </summary>
-    public string LuaType { get; }
 }

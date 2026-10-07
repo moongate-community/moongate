@@ -2,19 +2,56 @@
 -- Moongate - scripts/mobiles/banker.lua
 --
 -- What it is for:
---   The bankers: a player who says "bank" nearby gets his bank box opened, as
---   ModernUO's banker does. The client turns the word into the speech keyword
---   SpeechKeywordType.Bank in any language ("banca", "Bank", ...); the plain
---   word is read too, for a client that sends no keywords. The templates
---   banker, m_banker and f_banker and their gypsybanker variants use it.
+--   The bankers, as ModernUO's: a player within 12 tiles says a word and the
+--   banker opens its bank box ("bank"), tells its balance ("balance"), hands
+--   out gold ("withdraw 500"), takes it ("deposit 500") or writes a bank
+--   check for gold of the bank ("check 5000"). The client turns bank,
+--   balance, withdraw and check into speech keywords in any language
+--   ("banca", "saldo", "prelievo"...); the plain word "bank" is read too, for a client
+--   that sends no keywords, and "deposit" is an English word only: the client
+--   has no keyword for it. The amount is the first number of the sentence. A
+--   banker does no business with a criminal. It answers with the client's own
+--   texts, so every player reads them in its language. When several bankers
+--   hear the same words, one answers, turning to who asks. The templates banker, m_banker and
+--   f_banker and their gypsybanker variants use it. How much a banker hands out
+--   at one time is the setting ultima.bank.max_withdraw.
 --
 -- Functions:
 --   on_speech(serial, speaker, text, keywords)  a player speaks within 15
---                                               cells: the bank keyword or
---                                               word opens his bank box
+--                                               cells: the banker answers a
+--                                               bank word said within 12
+--   on_drag_drop(serial, giver, item)           a player drops an item on the
+--                                               banker: gold and bank checks
+--                                               go into its bank, anything
+--                                               else is given back
+--   on_context_menu(serial, player)             the entry the banker adds to
+--                                               its context menu: Open Bank Box
+--   on_context_menu_select(serial, player, id)  the player chose it: the box
+--                                               opens, but not for a criminal
 -- ==============================================================================
 
+local numbers = require("common.numbers")
+
 banker = {}
+
+-- How far a banker hears its customers, in tiles.
+local range = 12
+
+-- The client's texts the banker says.
+local criminal_bank = 500378      -- Thou art a criminal and cannot access thy bank box.
+local criminal_business = 500389  -- I will not do business with a criminal!
+local too_much = 500381           -- Thou canst not withdraw so much at one time!
+local not_enough = 500384         -- Ah, art thou trying to fool me? Thou hast not so much gold!
+local backpack_full = 1048147     -- Your backpack can't hold anything else.
+local withdrawn = 1010005         -- Thou hast withdrawn gold from thy account.
+local balance_is = 1042759        -- Thy current bank balance is ~1_AMOUNT~ gold.
+local deposited = 1042763         -- ~1_AMOUNT~ gold was deposited in your account.
+local bank_full = 500390          -- Your bank box is full.
+local check_too_small = 1010006   -- We cannot create checks for such a paltry amount of gold!
+local check_too_big = 1010007     -- Our policies prevent us from creating checks worth that much!
+local no_room_for_check = 500386  -- There's not enough room in your bankbox for the check!
+local check_written = 1042673     -- Into your bank box I have placed a check in the amount of:
+local not_interested = 501550     -- I am not interested in this.
 
 local function has_keyword(keywords, wanted)
     for _, keyword in ipairs(keywords or {}) do
@@ -26,10 +63,194 @@ local function has_keyword(keywords, wanted)
     return false
 end
 
--- Called when a player says something within 15 cells. Every banker in range opens the same box: the client just
--- shows it once.
-function banker.on_speech(serial, speaker, text, keywords)
-    if has_keyword(keywords, SpeechKeywordType.Bank) or text:lower():find("bank", 1, true) then
+-- What the player asks for: the client's keyword first, then the words it has no keyword for.
+local function command_of(text, keywords)
+    if has_keyword(keywords, SpeechKeywordType.Withdraw) then
+        return "withdraw"
+    elseif has_keyword(keywords, SpeechKeywordType.Balance) then
+        return "balance"
+    elseif has_keyword(keywords, SpeechKeywordType.Bank) then
+        return "bank"
+    elseif has_keyword(keywords, SpeechKeywordType.Check) then
+        return "check"
+    end
+
+    local said = text:lower()
+
+    -- The word alone: "depository" deposits nothing. The space lets the word end the sentence.
+    if (said .. " "):find("%f[%a]deposit%f[%A]") then
+        return "deposit"
+    elseif said:find("bank", 1, true) then
+        return "bank"
+    end
+
+    return nil
+end
+
+-- The first number of the sentence, wherever it stands; nil with none, and for one no bank could hold.
+local function amount_in(text)
+    -- The ten digits of the client's keyboard: %d would also take the digits of other scripts, which are no number here.
+    local digits = text:match("[0-9]+")
+
+    if not digits or #digits > 10 then
+        return nil
+    end
+
+    local amount = tonumber(digits)
+
+    if not amount or amount < 1 or amount > 2000000000 then
+        return nil
+    end
+
+    return amount
+end
+
+local function near(serial, speaker)
+    local here = npc.location(serial)
+    local there = mobile.location(speaker)
+
+    return here and there and here.map == there.map
+        and math.abs(here.x - there.x) <= range and math.abs(here.y - there.y) <= range
+end
+
+local function withdraw(serial, speaker, amount)
+    local result = bank.withdraw(speaker, amount)
+
+    if result == BankResultType.Ok then
+        npc.say_cliloc(serial, withdrawn)
+    elseif result == BankResultType.TooMuch then
+        npc.say_cliloc(serial, too_much)
+    elseif result == BankResultType.NotEnoughGold or result == BankResultType.NoBank then
+        -- A player who never opened its bank has no gold in it.
+        npc.say_cliloc(serial, not_enough)
+    elseif result == BankResultType.BackpackFull then
+        npc.say_cliloc(serial, backpack_full)
+    end
+end
+
+local function deposit(serial, speaker, amount)
+    local result = bank.deposit(speaker, amount)
+
+    if result == BankResultType.Ok then
+        npc.say_cliloc(serial, deposited, numbers.with_thousands(amount))
+    elseif result == BankResultType.NotEnoughGold then
+        npc.say_cliloc(serial, not_enough)
+    elseif result == BankResultType.BankFull then
+        npc.say_cliloc(serial, bank_full)
+    elseif result == BankResultType.NoBank then
+        -- No bank box yet: it is made and shown, and the player asks again.
         bank.open(speaker)
     end
+end
+
+local function write_check(serial, speaker, amount)
+    local result = bank.check(speaker, amount)
+
+    if result == BankResultType.Ok then
+        -- The client writes the amount after the colon of its text.
+        npc.say_cliloc(serial, check_written, "", numbers.with_thousands(amount))
+    elseif result == BankResultType.CheckTooSmall then
+        npc.say_cliloc(serial, check_too_small)
+    elseif result == BankResultType.CheckTooBig then
+        npc.say_cliloc(serial, check_too_big)
+    elseif result == BankResultType.NotEnoughGold or result == BankResultType.NoBank then
+        npc.say_cliloc(serial, not_enough)
+    elseif result == BankResultType.BankFull then
+        npc.say_cliloc(serial, no_room_for_check)
+    end
+end
+
+-- Called when a player says something within 15 cells.
+function banker.on_speech(serial, speaker, text, keywords)
+    local command = command_of(text, keywords)
+
+    if not command then
+        return
+    end
+
+    -- Every banker in range hears the words: the first one serves, and the gold moves once.
+    if not near(serial, speaker) or not bank.attend(speaker) then
+        return
+    end
+
+    -- A banker never walks, so it would face where it was born for ever: it turns to who asks.
+    npc.look_at(serial, speaker)
+
+    if mobile.criminal(speaker) then
+        npc.say_cliloc(serial, command == "bank" and criminal_bank or criminal_business)
+        return
+    end
+
+    if command == "bank" then
+        bank.open(speaker)
+    elseif command == "balance" then
+        npc.say_cliloc(serial, balance_is, numbers.with_thousands(bank.balance(speaker) or 0))
+    else
+        local amount = amount_in(text)
+
+        if not amount then
+            return
+        end
+
+        if command == "withdraw" then
+            withdraw(serial, speaker, amount)
+        elseif command == "check" then
+            write_check(serial, speaker, amount)
+        else
+            deposit(serial, speaker, amount)
+        end
+    end
+end
+
+-- Called when a player drops an item on the banker from 2 tiles or closer. Gold and bank checks go into the
+-- player's bank; true tells the server the item was taken, anything else gives it back.
+function banker.on_drag_drop(serial, giver, given)
+    npc.look_at(serial, giver)
+
+    if mobile.criminal(giver) then
+        npc.say_cliloc(serial, criminal_business)
+        return false
+    end
+
+    local before = bank.balance(giver) or 0
+    local result = bank.deposit_item(giver, given)
+
+    if result == BankResultType.Ok then
+        npc.say_cliloc(serial, deposited, numbers.with_thousands((bank.balance(giver) or 0) - before))
+        return true
+    elseif result == BankResultType.BankFull then
+        npc.say_cliloc(serial, bank_full)
+    elseif result == BankResultType.NotMoney then
+        npc.say_cliloc(serial, not_interested)
+    elseif result == BankResultType.NoBank then
+        -- No bank box yet: it is made and shown, and the player hands the gold again.
+        bank.open(giver)
+    end
+
+    return false
+end
+
+-- The banker's entry of its context menu: the client's own "Open Bank Box", from as far as it hears.
+local open_bank_box = 3006105
+
+function banker.on_context_menu(serial, player)
+    return {
+        { id = "bank", cliloc = open_bank_box, range = range },
+    }
+end
+
+-- Called when the player chose an entry of the menu above.
+function banker.on_context_menu_select(serial, player, id)
+    if id ~= "bank" then
+        return
+    end
+
+    npc.look_at(serial, player)
+
+    if mobile.criminal(player) then
+        npc.say_cliloc(serial, criminal_bank)
+        return
+    end
+
+    bank.open(player)
 end

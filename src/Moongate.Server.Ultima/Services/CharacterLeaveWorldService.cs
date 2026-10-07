@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Interfaces.Items;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Events;
@@ -27,15 +29,21 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
     private readonly IWorldViewService _view;
     private readonly IWorldTransactionService _world;
     private readonly IMoongateEventBus _events;
+    private readonly IInventoryReservationService? _reservations;
+    private readonly Moongate.Server.Core.Interfaces.Services.IGameLoopService? _loop;
 
     public CharacterLeaveWorldService(
         IMobileService mobiles,
         IItemService items,
         IWorldViewService view,
         IWorldTransactionService world,
-        IMoongateEventBus events
+        IMoongateEventBus events,
+        IInventoryReservationService? reservations = null,
+        Moongate.Server.Core.Interfaces.Services.IGameLoopService? loop = null
     )
     {
+        _reservations = reservations;
+        _loop = loop;
         _mobiles = mobiles;
         _items = items;
         _view = view;
@@ -45,9 +53,92 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
 
     public void OnSessionClosed(GameSession session)
     {
+        if (_reservations?.IsReserved(session.CharacterId) == true &&
+            _mobiles.TryGet(session.CharacterId, out var character))
+        {
+            var settlement = _reservations.WaitAsync(character.Id);
+            Track(
+                Task.Run(async () =>
+                    {
+                        await settlement;
+                        Task save = Task.CompletedTask;
+                        var work = new LoopActionWorkItem(() =>
+                            {
+                                if (_mobiles.TryGet(character.Id, out var current) && ReferenceEquals(current, character))
+                                {
+                                    save = CaptureLeaveAsync(session);
+                                }
+                            }
+                        );
+                        // Safe: reservations exist only in the game role, and every game role registers
+                        // the game loop (ServerRoleRegistration.RegisterGame).
+                        var loop = _loop!;
+                        try
+                        {
+                            await loop.PostAsync(work);
+                        }
+                        catch (InvalidOperationException) when (loop.Completion.IsCompleted)
+                        {
+                            await loop.Completion;
+                            throw;
+                        }
+
+                        await Task.WhenAny(work.Completion, loop.Completion);
+                        if (!work.Completion.IsCompleted)
+                        {
+                            await loop.Completion;
+                            throw new InvalidOperationException("The game loop stopped before deferred logout capture.");
+                        }
+
+                        await work.Completion;
+                        await save;
+                    }
+                ),
+                character.AccountId
+            );
+            return;
+        }
+
+        if (_mobiles.TryGet(session.CharacterId, out var leaving))
+        {
+            Track(CaptureLeaveAsync(session), leaving.AccountId);
+        }
+    }
+
+    public Task StartAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public async Task StopAsync()
+    {
+        Task[] pending;
+
+        lock (_gate)
+        {
+            pending = _pending.Keys.ToArray();
+        }
+
+        await Task.WhenAll(pending);
+    }
+
+    public Task WaitForAccountAsync(Serial account)
+    {
+        Task[] pending;
+
+        lock (_gate)
+        {
+            pending = _pending.Where(pair => pair.Value == account).Select(pair => pair.Key).ToArray();
+        }
+
+        return Task.WhenAll(pending);
+    }
+
+    private Task CaptureLeaveAsync(GameSession session)
+    {
         if (!session.CharacterId.IsValid || !_mobiles.TryGet(session.CharacterId, out var character))
         {
-            return;
+            return Task.CompletedTask;
         }
 
         // A lifted ground item still lies where it was: it goes back before the player's items leave.
@@ -74,9 +165,9 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         // One someone carries or wears now is saved by that owner's leave or the world save: writing it here could
         // take a layer that owner's own saved row still holds.
         var released = _items.TakeReleasedOf(character.Id)
-                             .Where(item => !carriedIds.Contains(item.Id) && _items.GetOwner(item) is null)
-                             .Select(item => item.Snapshot())
-                             .ToList();
+            .Where(item => !carriedIds.Contains(item.Id) && _items.GetOwner(item) is null)
+            .Select(item => item.Snapshot())
+            .ToList();
         // Taken on the loop: from now on only this leave deletes them, in the transaction that saves their stacks.
         var merged = _items.TakeTombstonesOf(character.Id);
         _items.Remove(carried.Select(item => item.Id));
@@ -86,24 +177,7 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         items.AddRange(released);
         // Unworn items first: a layer taken off one item is free before another is written onto it.
         items = items.OrderBy(item => item.MobileId is not null).ToList();
-        Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)), character.AccountId);
-    }
-
-    public Task StartAsync()
-    {
-        return Task.CompletedTask;
-    }
-
-    public async Task StopAsync()
-    {
-        Task[] pending;
-
-        lock (_gate)
-        {
-            pending = _pending.Keys.ToArray();
-        }
-
-        await Task.WhenAll(pending);
+        return Task.Run(() => SaveAndPublishAsync(snapshot, items, merged));
     }
 
     private async Task SaveAndPublishAsync(
@@ -115,8 +189,7 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         // One transaction: logging back in before the next world save must never find a merged stack again.
         try
         {
-            await _world.ExecuteAsync(
-                async transaction =>
+            await _world.ExecuteAsync(async transaction =>
                 {
                     await transaction.GetDataAccess<MobileEntity>().UpsertAsync(character);
                     var data = transaction.GetDataAccess<ItemEntity>();
@@ -152,18 +225,6 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         }
     }
 
-    public Task WaitForAccountAsync(Serial account)
-    {
-        Task[] pending;
-
-        lock (_gate)
-        {
-            pending = _pending.Where(pair => pair.Value == account).Select(pair => pair.Key).ToArray();
-        }
-
-        return Task.WhenAll(pending);
-    }
-
     private void Track(Task task, Serial? account)
     {
         lock (_gate)
@@ -176,7 +237,10 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
             {
                 lock (_gate)
                 {
-                    _pending.Remove(completed);
+                    if (completed.IsCompletedSuccessfully)
+                    {
+                        _pending.Remove(completed);
+                    }
                 }
             },
             TaskScheduler.Default

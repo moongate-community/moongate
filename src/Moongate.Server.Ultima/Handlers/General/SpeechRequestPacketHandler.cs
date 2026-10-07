@@ -6,13 +6,16 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Speech;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Speech;
 using Moongate.Server.Ultima.Types.Speech;
 using Serilog;
@@ -20,13 +23,13 @@ using Serilog;
 namespace Moongate.Server.Ultima.Handlers.General;
 
 /// <summary>
-///     Routes normal speech to nearby players and dot-prefixed text to the in-game command system.
+///     Routes what a player says aloud, as an emote, in a whisper or in a yell to the players within its range, and
+///     dot-prefixed text to the in-game command system.
 /// </summary>
-public sealed class SpeechRequestPacketHandler :
-    IAsyncPacketHandler<AsciiSpeechRequestPacket>,
-    IAsyncPacketHandler<UnicodeSpeechRequestPacket>
+public sealed class SpeechRequestPacketHandler
+    : IAsyncPacketHandler<AsciiSpeechRequestPacket>,
+        IAsyncPacketHandler<UnicodeSpeechRequestPacket>
 {
-    private const int SayRange = 15;
     private const int MaximumTextLength = 128;
 
     private static readonly Hue InformationHue = new(0x03B2);
@@ -43,6 +46,7 @@ public sealed class SpeechRequestPacketHandler :
     private readonly INpcSpeechListener? _npcs;
     private readonly IMoongateEventBus? _events;
     private readonly IItemSpeechListener? _items;
+    private readonly IGuardService? _guards;
 
     public SpeechRequestPacketHandler(
         ICommandSystemService commands,
@@ -52,9 +56,11 @@ public sealed class SpeechRequestPacketHandler :
         ILocalizationService? localization = null,
         INpcSpeechListener? npcs = null,
         IMoongateEventBus? events = null,
-        IItemSpeechListener? items = null
+        IItemSpeechListener? items = null,
+        IGuardService? guards = null
     )
     {
+        _guards = guards;
         _items = items;
         _events = events;
         _localization = localization;
@@ -83,13 +89,21 @@ public sealed class SpeechRequestPacketHandler :
         return HandleSpeechAsync(context, packet.Speech, cancellationToken);
     }
 
+    /// <summary>
+    ///     Waits for the in-game commands still running.
+    /// </summary>
+    internal Task WaitForCommandsAsync()
+    {
+        return Task.WhenAll(_running.Values);
+    }
+
     private async ValueTask HandleSpeechAsync(
         PacketContext context,
         SpeechRequestData speech,
         CancellationToken cancellationToken
     )
     {
-        if (speech.Type != SpeechType.Regular ||
+        if (!speech.Type.IsSpoken ||
             string.IsNullOrWhiteSpace(speech.Text) ||
             speech.Text.Length > MaximumTextLength)
         {
@@ -105,6 +119,7 @@ public sealed class SpeechRequestPacketHandler :
             return;
         }
 
+        var range = speech.Type.Range;
         GameSession? invoker = null;
         MobileEntity? said = null;
         var available = await context.RunOnGameLoopAsync(
@@ -134,20 +149,40 @@ public sealed class SpeechRequestPacketHandler :
                     speech with { Text = text }
                 );
 
+                // The living hear a ghost as "oOo"; the dead and the staff hear it as it spoke.
+                var whispered = speaker.IsDead
+                    ? SpeechMessageHelper.CreatePlayer(
+                        speaker.Id,
+                        (ushort)speaker.Body,
+                        speaker.Name,
+                        speech with { Text = GhostSpeech.Garble(text) }
+                    )
+                    : message;
+
                 foreach (var recipient in _sessions.GetAll())
                 {
                     if (recipient.CharacterId.IsValid &&
                         _mobiles.TryGet(recipient.CharacterId, out var mobile) &&
                         mobile.Map == speaker.Map &&
-                        mobile.Location.InRange(speaker.Location, SayRange) &&
-                        !speaker.IsHiddenFrom(recipient.CharacterId, recipient.AccountType))
+                        mobile.Location.InRange(speaker.Location, range) &&
+                        (speaker.IsDead || !speaker.IsHiddenFrom(recipient.CharacterId, recipient.AccountType)))
                     {
-                        SpeechMessageHelper.TrySend(_sender, recipient, message);
+                        var heardAsIs = !speaker.IsDead || mobile.IsDead || recipient.AccountType >= AccountType.GameMaster;
+                        SpeechMessageHelper.TrySend(_sender, recipient, heardAsIs ? message : whispered);
                     }
                 }
 
-                _npcs?.Heard(speaker, text, speech.Keywords);
-                _items?.Heard(speaker, text, speech.Keywords);
+                // The dead are heard by nobody that answers: no NPC, item or guard.
+                if (speaker.IsDead)
+                {
+                    said = speaker;
+
+                    return;
+                }
+
+                _npcs?.Heard(speaker, text, speech.Keywords, speech.Type);
+                _items?.Heard(speaker, text, speech.Keywords, speech.Type);
+                _guards?.Heard(speaker, text, speech.Keywords);
                 said = speaker;
             },
             cancellationToken
@@ -156,7 +191,7 @@ public sealed class SpeechRequestPacketHandler :
         // Off the loop, after everyone around heard it: scripts are told last (the player_say event).
         if (said is not null && _events is not null)
         {
-            await _events.PublishAsync(new PlayerSaidEvent(said, text), CancellationToken.None);
+            await _events.PublishAsync(new PlayerSaidEvent(said, text, speech.Type), CancellationToken.None);
         }
 
         if (!available || !command || invoker is null)
@@ -180,14 +215,6 @@ public sealed class SpeechRequestPacketHandler :
         Track(invoker.SessionId, RunCommandAsync(context, text[1..], invoker));
     }
 
-    /// <summary>
-    ///     Waits for the in-game commands still running.
-    /// </summary>
-    internal Task WaitForCommandsAsync()
-    {
-        return Task.WhenAll(_running.Values);
-    }
-
     // Detached from the packet: a command waiting for the player, such as for a target, must not hold back the
     // session's next packets, the answer included. Its output is sent when it ends.
     private async Task RunCommandAsync(PacketContext context, string commandLine, GameSession invoker)
@@ -206,8 +233,8 @@ public sealed class SpeechRequestPacketHandler :
                 var hue = line.Level switch
                 {
                     CommandOutputLevel.Warning => WarningHue,
-                    CommandOutputLevel.Error => ErrorHue,
-                    _ => InformationHue
+                    CommandOutputLevel.Error   => ErrorHue,
+                    _                          => InformationHue
                 };
 
                 if (!context.TrySend(SpeechMessageHelper.CreateSystem(line.Text, hue)))

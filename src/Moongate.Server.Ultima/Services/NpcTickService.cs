@@ -8,17 +8,21 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     One repeating <c>npc_think</c> timer per awake NPC. The first think comes after a random 1–256 ms (the wheel refuses a zero delay), as ModernUO's
+///     One repeating <c>npc_think</c> timer per awake NPC. The first think comes after a random 1–256 ms (the wheel
+///     refuses a zero delay), as ModernUO's
 ///     AITimer, so NPCs woken together do not think in the same tick.
 /// </summary>
 public sealed class NpcTickService : INpcTickService
 {
     public const string TimerName = "npc_think";
 
+    private const int MaxStartJitterMs = 256;
     private readonly ILogger _logger = Log.ForContext<NpcTickService>();
     private readonly ITimerService _timers;
     private readonly NpcsConfig _config;
+
     private readonly INpcThinker? _thinker;
+
     // Lazy: the regeneration needs the mobiles, which need the sectors, which need this service.
     private readonly Lazy<IRegenerationService>? _regeneration;
     private readonly Dictionary<Serial, string> _awake = [];
@@ -60,7 +64,7 @@ public sealed class NpcTickService : INpcTickService
                 TimerName,
                 TimeSpan.FromMilliseconds(_config.ThinkIntervalMs),
                 () => Think(npc),
-                TimeSpan.FromMilliseconds(Random.Shared.Next(1, 257)),
+                TimeSpan.FromMilliseconds(Random.Shared.Next(1, MaxStartJitterMs + 1)),
                 true
             );
         }

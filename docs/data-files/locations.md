@@ -36,7 +36,7 @@ A place of a map the server does not load is left out, and so is one outside its
 may be missing: `.go` then takes numbers only.
 
 Scripts read the places with `locations.node(path)` and `locations.find(text, map)`; see
-[Scripting](../scripting.md).
+the [`locations` module](https://moongate.sh/lua/locations/).
 
 ## Validation at startup
 

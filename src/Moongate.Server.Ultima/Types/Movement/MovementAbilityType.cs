@@ -7,6 +7,11 @@ namespace Moongate.Server.Ultima.Types.Movement;
 public enum MovementAbilityType : byte
 {
     /// <summary>
+    ///     Moves over nothing.
+    /// </summary>
+    None = 0,
+
+    /// <summary>
     ///     Land, statics and surfaces that are not water.
     /// </summary>
     Walk = 1,

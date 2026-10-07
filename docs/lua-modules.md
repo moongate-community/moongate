@@ -83,7 +83,7 @@ greeting = greeter.hello('Moongate', Tone.Warm)
 function report() return greeting, greeter.DEFAULT_GREETING end
 ```
 
-At startup the engine writes `definitions.lua` for editor completion. The full file begins with a `---@meta` header and the built-in `wait` function, and from a running server also declares the built-in `engine`, `timer`, `events` and `log` modules, the Ultima plugin's `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates` and `locations`, and anything else registered. The excerpt below is what the sample module and its enum produce:
+At startup the engine writes `definitions.lua` for editor completion. The full file begins with a `---@meta` header and the built-in `wait` function, and from a running server also declares the built-in `engine`, `timer`, `events` and `log` modules, the Ultima plugin's `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `hue_picker`, `prompt`, `skill`, `combat`, `gump`, `bank`, `effect`, `moongates` and `locations`, and anything else registered. The excerpt below is what the sample module and its enum produce:
 
 ```lua
 ---@enum Tone
@@ -184,6 +184,9 @@ as `definitions.lua`. A module the shipped server registers, in `AddUltimaScript
 parameters with their defaults. So both texts are required for those modules: the site build
 fails on a module without help text or a function without `helpText`. A module registered by a
 plugin of your own is not listed on the site; its `definitions.lua` entries are still written.
+
+To show an example under a function of a shipped module, add a `## <function>` section to
+`website/lua/examples/<module>.md`; see [Writing documentation](documentation.md).
 
 A callback is taken as a `LuaValue`, which the editor and the site would show as `any`. Mark it
 `[ScriptParameterType("function")] LuaValue callback`, as `timer.after` does, so both show

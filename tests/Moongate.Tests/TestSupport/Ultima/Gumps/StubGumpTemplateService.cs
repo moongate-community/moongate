@@ -21,12 +21,28 @@ public sealed class StubGumpTemplateService : IGumpTemplateService
     /// </summary>
     public Action? WhileAsking { get; set; }
 
+    /// <summary>
+    ///     What
+    ///     <see
+    ///         cref="Open(GameSession, string, IReadOnlyDictionary{string, string}, Action{GameSession, GumpTemplateAnswer}, Action{GameSession, GumpCloseReasonType}?)" />
+    ///     was asked, so a test can answer or close the gump.
+    /// </summary>
+    public List<(GameSession Session, string Id, IReadOnlyDictionary<string, string> Args,
+        Action<GameSession, GumpTemplateAnswer> OnAnswer, Action<GameSession, GumpCloseReasonType>? OnClosed)> Opened
+    {
+        get;
+    } = [];
+
     public bool Exists(string id)
     {
         return Ids.Contains(id);
     }
 
-    public bool TryGet(string id, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out Moongate.Server.Ultima.Data.Templates.Gumps.GumpTemplate? template)
+    public bool TryGet(
+        string id,
+        [System.Diagnostics.CodeAnalysis.NotNullWhen(true)]
+        out Moongate.Server.Ultima.Data.Templates.Gumps.GumpTemplate? template
+    )
     {
         template = null;
 
@@ -52,6 +68,8 @@ public sealed class StubGumpTemplateService : IGumpTemplateService
         Action<GameSession, GumpCloseReasonType>? onClosed = null
     )
     {
+        Opened.Add((session, id, args, onAnswer, onClosed));
+
         return Ids.Contains(id);
     }
 

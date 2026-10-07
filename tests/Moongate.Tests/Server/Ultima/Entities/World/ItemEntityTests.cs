@@ -26,7 +26,8 @@ public sealed class ItemEntityTests
     [Fact]
     public void ToString_Equipped_ShowsItsOwnNameAndTheLayer()
     {
-        var sword = new ItemEntity { Id = new(0x40000013), TemplateId = "longsword", ItemId = 0x13B9, Amount = 1, Name = "Excalibur" };
+        var sword = new ItemEntity
+            { Id = new(0x40000013), TemplateId = "longsword", ItemId = 0x13B9, Amount = 1, Name = "Excalibur" };
         sword.Equip(Mobile, LayerType.OneHanded);
 
         Assert.Equal("0x40000013 \"Excalibur\" (0x13B9) on 0x00000010 layer OneHanded", sword.ToString());
@@ -146,13 +147,17 @@ public sealed class ItemEntityTests
     [Theory, InlineData(40000, 10), InlineData(10, -40000)]
     public void PutInContainer_AGridPointOutsideShort_Throws(int x, int y)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new ItemEntity { Id = new(0x40000003) }.PutInContainer(Backpack, new Point2D(x, y)));
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new ItemEntity { Id = new(0x40000003) }.PutInContainer(Backpack, new Point2D(x, y))
+        );
     }
 
     [Fact]
     public void PutInContainer_AMobileSerial_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new ItemEntity { Id = new(0x40000003) }.PutInContainer(Mobile, new Point2D(0, 0)));
+        Assert.Throws<ArgumentException>(() =>
+            new ItemEntity { Id = new(0x40000003) }.PutInContainer(Mobile, new Point2D(0, 0))
+        );
     }
 
     [Theory, InlineData(0x40000001u), InlineData(0u)]
@@ -165,14 +170,6 @@ public sealed class ItemEntityTests
     public void Equip_TheNoneLayer_Throws()
     {
         Assert.Throws<ArgumentException>(() => new ItemEntity().Equip(Mobile, LayerType.None));
-    }
-
-    private static ItemEntity InContainer()
-    {
-        var item = new ItemEntity { Id = new(0x40000005) };
-        item.PutInContainer(Backpack, new Point2D(10, 20));
-
-        return item;
     }
 
     [Fact]
@@ -262,7 +259,16 @@ public sealed class ItemEntityTests
         Assert.NotSame(coins, snapshot);
         Assert.Equal(
             (new Serial(0x40000012), 250, Backpack, new Point2D(44, 65), 3),
-            (snapshot.Id, snapshot.Amount, snapshot.ContainerId!.Value, snapshot.GridLocation!.Value, snapshot.GetProp<int>("minted"))
+            (snapshot.Id, snapshot.Amount, snapshot.ContainerId!.Value, snapshot.GridLocation!.Value,
+                snapshot.GetProp<int>("minted"))
         );
+    }
+
+    private static ItemEntity InContainer()
+    {
+        var item = new ItemEntity { Id = new(0x40000005) };
+        item.PutInContainer(Backpack, new Point2D(10, 20));
+
+        return item;
     }
 }

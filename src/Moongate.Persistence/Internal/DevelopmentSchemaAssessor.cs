@@ -107,9 +107,11 @@ internal static class DevelopmentSchemaAssessor
 
                 if (isRename)
                 {
+                    // Safe: isRename is true only when oldName is set.
                     renamed.Add(oldName!);
                 }
 
+                // Safe: isRename is true only when oldName is set.
                 if (!attribute.IsIdentity &&
                     existing.TryGetValue(
                         isRename ? oldName! : attribute.Name,

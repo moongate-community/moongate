@@ -1,0 +1,1722 @@
+title = "A Welcome"
+author = "Lord Blackthorn"
+content = """  Greetings to you,
+new member of the
+Trusted.
+  You now read these
+words because you
+have been deemed
+worthy to join the
+ranks of
+
+Britannia's defenders.
+Some will call you a
+betrayer of mankind, I
+say they are
+misguided.  I call you
+a defender for Sosaria
+needs saving from
+itself.
+
+  The forces of order
+once ruled our world.
+Like a great
+darkness over our
+lives we lived under
+the oppressive watch
+of a king who
+dictated our actions
+
+and passed judgment
+on our character.  He
+suppressed our way of
+life by denying our
+freedom and the
+ability to determine
+who we are and what
+we stand for.  Even
+
+today in the absence
+of this man we still
+see the symbol of his
+tyranny, we watch his
+personal guards patrol
+the cities to
+intimidate us, and we
+feel his laws like a
+
+vice on our lives.
+  You are here
+because you choose to
+be free.  Like many
+Britannians you have
+felt the oppression of
+one man's ideas
+weighing down upon
+
+you like chains.  You
+have felt the embrace
+of fear, wondering if
+you face consequence
+for simply having
+ideas not in harmony
+with those forced upon
+you.  You have seen
+
+men fight and die for
+the principles of a
+zealot and wondered,
+'Who will fight for
+my principles should
+they be opposed?'
+You tire of living
+under the shadow of
+
+dreams that do not
+belong to you.  And
+most of all, you have
+wondered what you
+can do to live free.
+  Your journey to
+freedom begins here.
+  I, like you, once
+
+desired my freedom
+from the limits placed
+on me.  I watched in
+disgust as this world
+became engrossed with
+the preaching of
+virtue and none of the
+practice.  I held my
+
+convictions in check,
+fearful of the reaction
+of men blinded by
+belief.  I forced
+myself to bury the
+very ideology that
+made me an individual.
+I was fortunate that
+
+a being of unique
+power and
+unimaginable
+intelligence saw
+through to the true
+person I was, the
+person I was meant to
+be.  Exodus found
+
+within me a man of
+free will,
+determination, and
+incomprehension for
+the plight of
+oppression forced on so
+many Britannians.
+  Exodus has also
+
+chosen you because of
+the strength of your
+character.
+  Many of the men
+who were once my
+peers look upon me
+and see a betrayer of
+humanity.  They
+
+claim my newfound
+form is unnatural and
+wrong.  Because they
+see the unknown in
+me, they show fear.
+They disapprove of
+my choices and in
+their ignorance see
+
+evil.  Yet I hide my
+true self no longer
+from these men.  My
+thoughts and my
+personal morality have
+been liberated in the
+face of the oppression
+that once consumed me.
+
+Where they see a
+man no longer human.
+I see a man that has
+not betrayed his
+humanity but has been
+freed from it.  This
+is the power that has
+been granted to me by
+
+Exodus.  I have been
+given my freedom.  I
+have been released
+from my fears.
+  Exodus will give
+you the power to
+conquer your fears as
+well.
+
+  When your fear
+of this world is gone,
+then the world truly
+belongs to you in a
+way it never has
+before.  You, trusted
+one, will soon be given
+a gift.  Your body,
+
+like mine, will be
+enlightened and raised
+to a level no mortal
+can know.  The power
+to control your own
+destiny will belong to
+you for the first time
+in your life.
+
+  You will, at long
+last, be cleansed of
+fear.
+  Together, with the
+power of Exodus
+behind us, we shall
+finally wage war on
+the oppression that
+
+once held us back
+from our full
+potential.  We shall
+claim this world, and
+reshape it in an image
+of freedom for all of
+us.  Those who once
+told you who you are
+
+and how you should
+live will no longer be
+able to stand in the
+way of your free will.
+Many say you will
+be abandoning your
+humanity but in truth,
+you will be more than
+
+human.
+  You will be freed."""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Uvítání"
+content = """Buď zdráv, nový
+příslušníku
+Důvěryhodných.
+Tato slova nyní čteš,
+protože jsi byl shledán
+hodným vstoupit do řad
+
+obránců země Britannia.
+Někteří tě nazvou
+zrádcem lidstva; já
+říkám, že se mýlí.
+Nazývám tě obráncem,
+neboť Sosaria potřebuje
+zachránit sama před
+sebou.
+
+Síly řádu kdysi vládly
+našemu světu. Jako by
+nad našimi životy
+ležela veliká temnota:
+žili jsme pod tíživým
+dohledem krále, který
+určoval naše skutky
+
+a soudil náš charakter.
+Potlačoval náš způsob
+života tím, že nám
+upíral svobodu i
+možnost určit, kdo jsme
+a za čím stojíme. I
+
+dnes, za nepřítomnosti
+tohoto muže, stále
+vidíme symbol jeho
+tyranie, sledujeme jeho
+osobní stráže, jak
+hlídkují ve městech,
+aby nás zastrašily, a
+cítíme jeho zákony jako
+
+svěrák sevřený kolem
+našich životů.
+Jsi zde, protože ses
+rozhodl být svobodný.
+Jako mnozí obyvatelé
+země Britannia jsi
+cítil, jak na tebe
+útlak myšlenek jediného
+muže doléhá
+
+jako okovy. Cítil jsi
+objetí strachu a
+přemýšlel, zda poneseš
+následky už jen za
+názory, které neladí s
+těmi, jež ti byly
+vnuceny. Viděl jsi,
+
+jak muži bojují a
+umírají za zásady
+fanatika, a ptal ses:
+„Kdo bude bojovat za mé
+zásady, budou-li
+napadeny?“ Unavuje tě
+žít ve stínu
+
+snů, které ti nepatří.
+A především ses ptal,
+co můžeš udělat, abys
+žil svobodně.
+Tvá cesta ke svobodě
+začíná zde.
+Stejně jako ty jsem
+kdysi
+
+toužil po svobodě od
+omezení, jež mi byla
+uložena. S odporem jsem
+sledoval, jak se tento
+svět oddává kázání o
+ctnosti, ale vůbec ji
+neuskutečňuje. Krotil
+jsem
+
+své přesvědčení ze
+strachu před reakcí
+mužů zaslepených vírou.
+Přinutil jsem se
+pohřbít právě tu
+ideologii, která ze mne
+činila svébytného
+člověka. Měl jsem to
+štěstí, že
+
+bytost jedinečné moci a
+nepředstavitelné
+inteligence rozpoznala
+člověka, jímž jsem
+skutečně byl a jímž
+jsem měl být. Exodus ve
+mně nalezl
+
+muže svobodné vůle,
+odhodlání a nepochopení
+pro úděl útlaku vnucený
+tolika obyvatelům země
+Britannia.
+Exodus si také
+
+tebe vyvolil pro sílu
+tvého charakteru.
+Mnozí muži, kteří mi
+kdysi byli rovni, na
+mne hledí a vidí zrádce
+lidstva. Oni
+
+tvrdí, že má nová
+podoba je nepřirozená a
+špatná. Protože ve mně
+vidí cosi neznámého,
+projevují strach.
+Nesouhlasí s mými
+volbami a ve své
+nevědomosti v nich
+spatřují
+
+zlo. Já však před
+těmito muži již
+neskrývám své pravé já.
+Mé myšlenky i má osobní
+morálka byly osvobozeny
+tváří v tvář útlaku,
+který mě kdysi
+stravoval.
+
+Tam, kde oni vidí muže,
+jenž už není člověkem,
+já vidím muže, který
+své lidství nezradil,
+nýbrž byl od něj
+osvobozen. To je moc,
+již mi propůjčil
+
+Exodus. Byla mi dána
+svoboda. Byl jsem
+zbaven svých obav.
+Exodus také tobě dá moc
+překonat tvé obavy.
+
+Až pomine tvůj strach z
+tohoto světa, bude ti
+svět skutečně patřit
+způsobem, jakým ti
+nikdy dříve nepatřil.
+Ty, důvěryhodný, brzy
+obdržíš dar. Tvé tělo
+
+bude stejně jako moje
+osvíceno a povzneseno
+na úroveň, kterou žádný
+smrtelník nemůže
+poznat. Poprvé v životě
+ti bude patřit moc
+řídit vlastní osud.
+
+Konečně budeš očištěn
+od strachu.
+Společně, s mocí Exodus
+za zády, povedeme
+konečně válku proti
+útlaku, který
+
+nám kdysi bránil
+naplnit náš potenciál.
+Přivlastníme si tento
+svět a přetvoříme jej k
+obrazu svobody pro nás
+všechny. Ti, kteří ti
+kdysi říkali, kdo jsi
+
+a jak máš žít, již
+nebudou moci stát v
+cestě tvé svobodné
+vůli. Mnozí říkají, že
+se vzdáš lidství, ale
+ve skutečnosti budeš
+více než
+
+člověk.
+Budeš osvobozen."""
+[translations.fre]
+title = "Bienvenue"
+content = """Salutations à toi,
+nouveau membre des
+Fidèles. Si tu lis
+aujourd’hui ces mots,
+c’est que tu as été
+jugé digne de rejoindre
+les rangs des
+
+défenseurs de
+Britannia. Certains te
+traiteront de traître à
+l’humanité ; je dis
+qu’ils s’égarent. Je te
+nomme défenseur, car
+Sosaria doit être
+sauvée d’elle-même.
+
+Les forces de l’ordre
+régnaient jadis sur
+notre monde. Comme de
+grandes ténèbres pesant
+sur nos vies, nous
+vivions sous la
+surveillance oppressive
+d’un roi qui dictait
+nos actes
+
+et jugeait notre
+caractère. Il étouffait
+notre mode de vie en
+nous refusant la
+liberté et la faculté
+de décider qui nous
+sommes et ce que nous
+défendons. Même
+
+aujourd’hui, en
+l’absence de cet homme,
+nous voyons encore le
+symbole de sa tyrannie,
+nous regardons ses
+gardes personnels
+patrouiller dans les
+villes pour nous
+intimider, et nous
+sentons ses lois serrer
+nos vies comme un
+
+étau. Tu es ici parce
+que tu choisis d’être
+libre. Comme beaucoup
+d’habitants de
+Britannia, tu as senti
+l’oppression des idées
+d’un seul homme peser
+sur
+
+toi comme des chaînes.
+Tu as senti l’étreinte
+de la peur, te
+demandant si tu
+subirais des
+conséquences pour le
+seul fait d’avoir des
+idées contraires à
+celles qui t’étaient
+imposées. Tu as vu
+
+des hommes combattre et
+mourir pour les
+principes d’un
+fanatique, et tu t’es
+demandé : « Qui
+combattra pour mes
+principes si on s’y
+oppose ? » Tu es las de
+vivre dans l’ombre de
+
+rêves qui ne sont pas
+les tiens. Et surtout,
+tu t’es demandé ce que
+tu pouvais faire pour
+vivre libre. Ton voyage
+vers la liberté
+commence ici. Moi,
+comme toi, j’ai jadis
+
+désiré être libéré des
+limites qui m’étaient
+imposées. J’ai regardé
+avec dégoût ce monde
+s’absorber dans la
+prédication de la vertu
+sans jamais la
+pratiquer. J’ai contenu
+mes
+
+convictions, craignant
+la réaction d’hommes
+aveuglés par leurs
+croyances. Je me suis
+forcé à enfouir
+l’idéologie même qui
+faisait de moi un
+individu. J’ai eu la
+chance qu’un
+
+être d’une puissance
+unique et d’une
+intelligence
+inimaginable voie la
+véritable personne que
+j’étais, celle que
+j’étais destiné à
+devenir. Exodus a
+trouvé
+
+en moi un homme de
+libre volonté et de
+détermination, qui ne
+pouvait comprendre le
+fléau de l’oppression
+imposé à tant
+d’habitants de
+Britannia. Exodus t’a
+aussi
+
+choisi pour la force de
+ton caractère. Beaucoup
+des hommes qui étaient
+jadis mes pairs me
+regardent et voient un
+traître à l’humanité.
+Ils
+
+prétendent que ma
+nouvelle forme est
+contre nature et
+mauvaise. Parce qu’ils
+voient en moi
+l’inconnu, ils montrent
+de la peur. Ils
+désapprouvent mes choix
+et, dans leur
+ignorance, voient
+
+le mal. Pourtant, je ne
+cache plus à ces hommes
+mon véritable être. Mes
+pensées et ma morale
+personnelle ont été
+libérées face à
+l’oppression qui me
+dévorait autrefois.
+
+Là où ils voient un
+homme qui n’est plus
+humain. Je vois un
+homme qui n’a pas trahi
+son humanité, mais en a
+été affranchi. Tel est
+le pouvoir que m’a
+accordé
+
+Exodus. J’ai reçu ma
+liberté. J’ai été
+délivré de mes peurs.
+Exodus te donnera, à
+toi aussi, le pouvoir
+de vaincre tes peurs.
+
+Lorsque ta peur de ce
+monde aura disparu,
+alors le monde
+t’appartiendra
+véritablement comme
+jamais auparavant. Toi,
+fidèle, tu recevras
+bientôt un don. Ton
+corps,
+
+comme le mien, sera
+éclairé et élevé à un
+niveau qu’aucun mortel
+ne peut connaître. Pour
+la première fois de ta
+vie, le pouvoir de
+gouverner ton propre
+destin t’appartiendra.
+
+Tu seras enfin purifié
+de la peur. Ensemble,
+soutenus par la
+puissance d’Exodus,
+nous ferons enfin la
+guerre à l’oppression
+qui
+
+nous empêchait jadis
+d’atteindre notre plein
+potentiel. Nous nous
+emparerons de ce monde
+et le refaçonnerons à
+l’image d’une liberté
+qui sera la nôtre à
+tous. Ceux qui jadis te
+disaient qui tu es
+
+et comment tu devais
+vivre ne pourront plus
+faire obstacle à ta
+libre volonté. Beaucoup
+disent que tu
+abandonneras ton
+humanité, mais en
+vérité tu seras plus
+qu’un
+
+humain. Tu seras
+libéré."""
+[translations.ger]
+title = "Ein Willkommensgruß"
+content = """Sei gegrüßt, neues
+Mitglied der
+Vertrauten.
+Du liest diese Worte,
+weil du für würdig
+befunden wurdest, in
+die Reihen von
+
+Britannias Verteidigern
+aufgenommen zu werden.
+Manche werden dich
+einen Verräter an der
+Menschheit nennen; ich
+sage, sie irren. Ich
+nenne dich einen
+Verteidiger, denn
+Sosaria muss vor sich
+selbst gerettet werden.
+
+Einst beherrschten die
+Kräfte der Ordnung
+unsere Welt. Wie eine
+große Finsternis lag es
+über unserem Leben: Wir
+lebten unter der
+bedrückenden Aufsicht
+eines Königs, der
+unsere Handlungen
+bestimmte
+
+und über unseren
+Charakter richtete. Er
+unterdrückte unsere
+Lebensweise, indem er
+uns die Freiheit und
+die Möglichkeit nahm,
+selbst zu bestimmen,
+wer wir sind und wofür
+wir stehen. Selbst
+
+heute, da dieser Mann
+abwesend ist, sehen wir
+noch das Symbol seiner
+Tyrannei, beobachten
+seine Leibwachen, wie
+sie die Städte
+durchstreifen, um uns
+einzuschüchtern, und
+spüren seine Gesetze
+wie einen
+
+Schraubstock um unser
+Leben.
+Du bist hier, weil du
+dich für die Freiheit
+entscheidest. Wie viele
+Britannier hast du
+gefühlt, wie die
+Unterdrückung durch die
+Vorstellungen eines
+einzigen Mannes auf
+
+dir lastete wie Ketten.
+Du hast die Umarmung
+der Angst gespürt und
+dich gefragt, ob dir
+Folgen drohen, nur weil
+deine Gedanken nicht
+mit den dir
+aufgezwungenen
+übereinstimmen. Du hast
+gesehen,
+
+wie Männer für die
+Grundsätze eines
+Eiferers kämpften und
+starben, und dich
+gefragt: „Wer wird für
+meine Grundsätze
+kämpfen, wenn man sich
+ihnen widersetzt?“ Du
+bist es leid, im
+Schatten von
+
+Träumen zu leben, die
+nicht dir gehören. Und
+vor allem hast du dich
+gefragt, was du tun
+kannst, um frei zu
+leben.
+Dein Weg zur Freiheit
+beginnt hier.
+Ich habe wie du einst
+
+meine Freiheit von den
+mir auferlegten Grenzen
+ersehnt. Voller Abscheu
+sah ich zu, wie diese
+Welt ganz vom Predigen
+der Tugend eingenommen
+wurde, ohne sie je
+auszuüben. Ich hielt
+meine
+
+Überzeugungen zurück,
+aus Furcht vor der
+Reaktion von Männern,
+die ihr Glaube blind
+machte. Ich zwang mich,
+genau jene
+Weltanschauung zu
+begraben, die mich zu
+einem eigenen Menschen
+machte. Ich hatte das
+Glück, dass
+
+ein Wesen von
+einzigartiger Macht und
+unvorstellbarer
+Intelligenz den wahren
+Menschen in mir
+erkannte, den Menschen,
+der ich sein sollte.
+Exodus fand
+
+in mir einen Mann mit
+freiem Willen,
+Entschlossenheit und
+Unverständnis für das
+Elend der
+Unterdrückung, das so
+vielen Britanniern
+aufgezwungen wird.
+Exodus hat auch
+
+dich wegen der Stärke
+deines Charakters
+erwählt.
+Viele der Männer, die
+einst meinesgleichen
+waren, sehen mich an
+und erblicken einen
+Verräter an der
+Menschheit. Sie
+
+behaupten, meine neu
+gewonnene Gestalt sei
+unnatürlich und falsch.
+Weil sie in mir das
+Unbekannte sehen,
+zeigen sie Furcht. Sie
+missbilligen meine
+Entscheidungen und
+sehen in ihrer
+Unwissenheit
+
+das Böse. Doch ich
+verberge mein wahres
+Selbst nicht länger vor
+diesen Männern. Meine
+Gedanken und meine
+persönliche Moral sind
+angesichts der
+Unterdrückung befreit
+worden, die mich einst
+aufzehrte.
+
+Wo sie einen Mann
+sehen, der kein Mensch
+mehr ist, sehe ich
+einen Mann, der seine
+Menschlichkeit nicht
+verraten hat, sondern
+von ihr befreit wurde.
+Dies ist die Macht, die
+mir von
+
+Exodus gewährt wurde.
+Ich habe meine Freiheit
+erhalten. Ich bin von
+meinen Ängsten erlöst
+worden.
+Exodus wird auch dir
+die Macht geben, deine
+Ängste zu überwinden.
+
+Wenn deine Furcht vor
+dieser Welt
+verschwunden ist,
+gehört dir die Welt
+wahrhaftig auf eine
+Weise, wie sie dir nie
+zuvor gehört hat. Du,
+Vertrauter, wirst bald
+ein Geschenk erhalten.
+Dein Leib
+
+wird wie meiner
+erleuchtet und auf eine
+Stufe erhoben werden,
+die kein Sterblicher
+kennen kann. Die Macht,
+dein eigenes Schicksal
+zu bestimmen, wird dir
+zum ersten Mal in
+deinem Leben gehören.
+
+Endlich wirst du von
+der Furcht gereinigt
+sein.
+Gemeinsam, mit der
+Macht von Exodus im
+Rücken, werden wir
+endlich Krieg gegen die
+Unterdrückung führen,
+die
+
+uns einst davon
+abhielt, unser volles
+Vermögen zu entfalten.
+Wir werden diese Welt
+für uns beanspruchen
+und sie nach einem Bild
+der Freiheit für uns
+alle umgestalten.
+Diejenigen, die dir
+einst sagten, wer du
+bist
+
+und wie du leben
+sollst, werden deinem
+freien Willen nicht
+länger im Wege stehen
+können. Viele sagen, du
+würdest deine
+Menschlichkeit
+aufgeben, doch in
+Wahrheit wirst du mehr
+als
+
+ein Mensch sein.
+Du wirst befreit sein."""
+[translations.ita]
+title = "Un benvenuto"
+content = """Salute a te, nuovo
+membro dei Fidati.
+Leggi ora queste parole
+perché sei stato
+giudicato degno di
+unirti alle schiere dei
+
+difensori di Britannia.
+Alcuni ti chiameranno
+traditore dell'umanità;
+io dico che sono in
+errore. Ti chiamo
+difensore, perché
+Sosaria ha bisogno di
+essere salvata da se
+stessa.
+
+Le forze dell'ordine un
+tempo dominavano il
+nostro mondo. Come una
+grande oscurità sulle
+nostre vite, vivevamo
+sotto la vigilanza
+opprimente di un re che
+dettava le nostre
+azioni
+
+e giudicava il nostro
+carattere. Soffocava il
+nostro modo di vivere
+negandoci la libertà e
+la facoltà di decidere
+chi siamo e in cosa
+crediamo. Persino
+
+oggi, in assenza di
+quest'uomo, vediamo
+ancora il simbolo della
+sua tirannia,
+osserviamo le sue
+guardie personali
+pattugliare le città
+per intimidirci e
+sentiamo le sue leggi
+come una
+
+morsa sulle nostre
+vite.
+Sei qui perché scegli
+di essere libero. Come
+molti abitanti di
+Britannia, hai sentito
+l'oppressione delle
+idee di un solo uomo
+gravare su
+
+di te come catene. Hai
+sentito l'abbraccio
+della paura,
+chiedendoti se avresti
+subito conseguenze
+semplicemente per avere
+idee in disaccordo con
+quelle che ti venivano
+imposte. Hai visto
+
+uomini combattere e
+morire per i princìpi
+di un fanatico e ti sei
+chiesto: «Chi
+combatterà per i miei
+princìpi, qualora
+vengano osteggiati?»
+Sei stanco di vivere
+all'ombra di
+
+sogni che non ti
+appartengono. E
+soprattutto ti sei
+chiesto cosa puoi fare
+per vivere libero.
+Il tuo viaggio verso la
+libertà comincia qui.
+Io, come te, un tempo
+
+desideravo liberarmi
+dai limiti che mi erano
+imposti. Guardavo con
+disgusto mentre questo
+mondo si lasciava
+assorbire dalla
+predicazione della
+virtù senza metterne
+nulla in pratica.
+Tenevo le mie
+
+convinzioni a freno,
+timoroso della reazione
+di uomini accecati
+dalla fede. Mi
+costringevo a
+seppellire proprio
+l'ideologia che faceva
+di me un individuo.
+Ebbi la fortuna che
+
+un essere dal potere
+unico e
+dall'intelligenza
+inimmaginabile
+scorgesse la vera
+persona che ero, la
+persona che ero
+destinato a essere.
+Exodus trovò
+
+in me un uomo dal
+libero arbitrio, dalla
+ferma volontà, incapace
+di comprendere la piaga
+dell'oppressione
+imposta a tanti
+abitanti di Britannia.
+Exodus ha anche
+
+scelto te per la forza
+del tuo carattere.
+Molti degli uomini che
+un tempo erano miei
+pari mi guardano e
+vedono un traditore
+dell'umanità. Essi
+
+affermano che la mia
+nuova forma è
+innaturale e sbagliata.
+Poiché vedono in me
+l'ignoto, mostrano
+paura. Disapprovano le
+mie scelte e nella loro
+ignoranza vedono
+
+il male. Eppure non
+nascondo più il mio
+vero essere a questi
+uomini. I miei pensieri
+e la mia morale
+personale sono stati
+liberati al cospetto
+dell'oppressione che un
+tempo mi consumava.
+
+Dove loro vedono un
+uomo che non è più
+umano. Io vedo un uomo
+che non ha tradito la
+propria umanità, ma se
+ne è liberato. Questo è
+il potere che mi è
+stato concesso da
+
+Exodus. Mi è stata data
+la libertà. Sono stato
+liberato dalle mie
+paure.
+Exodus darà anche a te
+il potere di vincere le
+tue paure.
+
+Quando la tua paura di
+questo mondo sarà
+scomparsa, allora il
+mondo ti apparterrà
+davvero come mai prima.
+Tu, fidato, riceverai
+presto un dono. Il tuo
+corpo,
+
+come il mio, sarà
+illuminato ed elevato a
+un livello che nessun
+mortale può conoscere.
+Il potere di governare
+il tuo destino ti
+apparterrà per la prima
+volta nella tua vita.
+
+Alla fine sarai
+purificato dalla paura.
+Insieme, con il potere
+di Exodus alle spalle,
+muoveremo finalmente
+guerra all'oppressione
+che
+
+un tempo ci impediva di
+raggiungere il nostro
+pieno potenziale.
+Rivendicheremo questo
+mondo e lo
+rimodelleremo a
+immagine della libertà
+di noi tutti. Coloro
+che un tempo ti
+dicevano chi sei
+
+e come dovresti vivere
+non potranno più
+ostacolare il tuo
+libero arbitrio. Molti
+dicono che abbandonerai
+la tua umanità, ma in
+verità sarai più che
+
+umano.
+Sarai libero."""
+[translations.pol]
+title = "Powitanie"
+content = """Witaj, nowy członku
+Zaufanych.
+Czytasz teraz te słowa,
+gdyż uznano cię za
+godnego wstąpienia w
+szeregi
+
+obrońców Britannia.
+Niektórzy nazwą cię
+zdrajcą ludzkości; ja
+twierdzę, że błądzą.
+Nazywam cię obrońcą,
+ponieważ Sosaria
+potrzebuje ratunku
+przed samą sobą.
+
+Siły ładu niegdyś
+rządziły naszym
+światem. Niczym wielka
+ciemność nad naszym
+życiem wisiało nad nami
+opresyjne spojrzenie
+króla, który dyktował
+nam czyny
+
+i osądzał nasz
+charakter. Tłumił nasz
+sposób życia,
+odmawiając nam wolności
+oraz możliwości
+określenia, kim
+jesteśmy i jakie
+wartości wyznajemy.
+Nawet
+
+dziś, pod nieobecność
+tego człowieka, wciąż
+widzimy symbol jego
+tyranii; patrzymy, jak
+jego osobista straż
+patroluje miasta, by
+nas zastraszać, i
+czujemy jego prawa
+niczym
+
+imadło zaciskające się
+na naszym życiu.
+Jesteś tutaj, ponieważ
+wybierasz wolność. Jak
+wielu mieszkańców
+Britannia, odczułeś
+ucisk idei jednego
+człowieka, ciążących
+
+na tobie niczym
+kajdany. Poczułeś
+uścisk strachu,
+zastanawiając się, czy
+spotkają cię
+konsekwencje jedynie za
+myśli niezgodne z tymi,
+które ci narzucono.
+Widziałeś,
+
+jak ludzie walczą i
+umierają za zasady
+fanatyka, i pytałeś
+siebie: „Kto będzie
+walczył za moje zasady,
+jeśli ktoś im się
+sprzeciwi?”. Nuży cię
+życie w cieniu
+
+marzeń, które nie
+należą do ciebie. A
+nade wszystko
+zastanawiałeś się, co
+możesz uczynić, by żyć
+wolnym.
+Twoja droga do wolności
+zaczyna się tutaj.
+Ja, podobnie jak ty,
+niegdyś
+
+pragnąłem uwolnić się
+od nałożonych na mnie
+ograniczeń. Z odrazą
+patrzyłem, jak ten
+świat pogrąża się w
+głoszeniu cnoty, wcale
+jej nie praktykując.
+Powściągałem
+
+swe przekonania,
+obawiając się reakcji
+ludzi zaślepionych
+wiarą. Zmuszałem się do
+pogrzebania właśnie tej
+ideologii, która
+czyniła mnie odrębną
+jednostką. Miałem
+szczęście, że
+
+istota obdarzona
+wyjątkową mocą i
+niewyobrażalną
+inteligencją dostrzegła
+prawdziwego mnie,
+człowieka, którym
+miałem być. Exodus
+odnalazł
+
+we mnie człowieka
+wolnej woli,
+zdecydowanego i
+niepotrafiącego pojąć
+ciężaru ucisku
+narzuconego tak wielu
+mieszkańcom Britannia.
+Exodus również
+
+ciebie wybrał ze
+względu na siłę twego
+charakteru.
+Wielu ludzi, którzy
+niegdyś byli mi równi,
+patrzy na mnie i widzi
+zdrajcę ludzkości. Oni
+
+twierdzą, że moja nowa
+postać jest
+nienaturalna i zła. Bo
+dostrzegają we mnie
+nieznane, okazują
+strach. Nie pochwalają
+moich wyborów i w swej
+ignorancji widzą
+
+zło. Lecz już nie
+ukrywam przed tymi
+ludźmi swego
+prawdziwego ja. Moje
+myśli i osobista
+moralność zostały
+wyzwolone w obliczu
+ucisku, który niegdyś
+mnie pochłaniał.
+
+Tam, gdzie oni widzą
+człowieka, który
+przestał być ludzki, ja
+widzę człowieka, który
+nie zdradził swego
+człowieczeństwa, lecz
+został od niego
+uwolniony. Oto moc,
+którą obdarzył mnie
+
+Exodus. Otrzymałem
+wolność. Zostałem
+uwolniony od lęków.
+Exodus da i tobie moc
+pokonania twych lęków.
+
+Kiedy przestaniesz bać
+się tego świata,
+naprawdę stanie się on
+twój, jak nigdy
+wcześniej. Ty, zaufany,
+wkrótce otrzymasz dar.
+Twoje ciało,
+
+podobnie jak moje,
+dostąpi oświecenia i
+zostanie wyniesione na
+poziom niedostępny
+śmiertelnikom. Moc
+kierowania własnym
+losem po raz pierwszy w
+życiu będzie należeć do
+ciebie.
+
+Nareszcie zostaniesz
+oczyszczony ze strachu.
+Razem, wsparci mocą
+Exodus, w końcu
+wypowiemy wojnę
+uciskowi, który
+
+niegdyś powstrzymywał
+nas przed osiągnięciem
+pełni naszych
+możliwości. Zawładniemy
+tym światem i nadamy mu
+kształt wolności dla
+nas wszystkich. Ci,
+którzy niegdyś mówili
+ci, kim jesteś
+
+i jak masz żyć, nie
+będą już mogli stać na
+drodze twej wolnej
+woli. Wielu mówi, że
+porzucisz swe
+człowieczeństwo, lecz w
+istocie będziesz czymś
+więcej niż
+
+człowiekiem.
+Zostaniesz wyzwolony."""
+[translations.por]
+title = "Boas-vindas"
+content = """Saudações a você, novo
+membro dos Confiáveis.
+Você agora lê estas
+palavras porque foi
+considerado digno de
+ingressar nas fileiras
+dos
+
+defensores de
+Britannia. Alguns o
+chamarão de traidor da
+humanidade; eu digo que
+estão enganados. Eu o
+chamo de defensor, pois
+Sosaria precisa ser
+salva de si mesma.
+
+As forças da ordem já
+governaram nosso mundo.
+Como uma grande
+escuridão sobre nossas
+vidas, vivíamos sob a
+vigilância opressiva de
+um rei que ditava
+nossas ações
+
+e julgava nosso
+caráter. Ele reprimia
+nosso modo de vida ao
+negar nossa liberdade e
+a capacidade de
+determinar quem somos e
+o que defendemos. Mesmo
+
+hoje, na ausência desse
+homem, ainda vemos o
+símbolo de sua tirania,
+observamos seus guardas
+pessoais patrulharem as
+cidades para nos
+intimidar e sentimos
+suas leis como uma
+
+morsa apertando nossas
+vidas.
+Você está aqui porque
+escolheu ser livre.
+Como muitos habitantes
+de Britannia, sentiu a
+opressão das ideias de
+um único homem pesando
+sobre
+
+você como correntes.
+Sentiu o abraço do
+medo, imaginando se
+sofreria consequências
+simplesmente por ter
+ideias que não estão em
+harmonia com aquelas
+impostas a você. Viu
+
+homens lutarem e
+morrerem pelos
+princípios de um
+fanático e se
+perguntou: 'Quem lutará
+pelos meus princípios
+caso sejam
+contestados?'
+Você se cansou de viver
+à sombra de
+
+sonhos que não lhe
+pertencem. E, acima de
+tudo, se perguntou o
+que pode fazer para
+viver livre.
+Sua jornada rumo à
+liberdade começa aqui.
+Eu, como você, certa
+vez
+
+desejei me libertar dos
+limites que me eram
+impostos. Observei com
+repugnância enquanto
+este mundo se deixava
+consumir pela pregação
+da virtude, sem nenhuma
+prática. Mantive minhas
+
+convicções sob
+controle, temendo a
+reação de homens cegos
+pela crença. Forcei-me
+a enterrar a própria
+ideologia que me
+tornava um indivíduo.
+Tive a sorte de que
+
+um ser de poder
+singular e inteligência
+inimaginável enxergasse
+a pessoa que eu
+realmente era, a pessoa
+que eu estava destinado
+a ser. Exodus encontrou
+
+em mim um homem de
+livre-arbítrio,
+determinação e
+incompreensão diante do
+sofrimento da opressão
+imposta a tantos
+habitantes de
+Britannia.
+Exodus também
+
+escolheu você pela
+força do seu caráter.
+Muitos dos homens que
+antes eram meus iguais
+olham para mim e veem
+um traidor da
+humanidade. Eles
+
+afirmam que minha nova
+forma é antinatural e
+errada. Como veem em
+mim o desconhecido,
+demonstram medo.
+Reprovam minhas
+escolhas e, em sua
+ignorância, enxergam
+
+o mal. Ainda assim, já
+não escondo meu
+verdadeiro eu desses
+homens. Meus
+pensamentos e minha
+moral pessoal foram
+libertados diante da
+opressão que antes me
+consumia.
+
+Onde eles veem um homem
+que já não é humano, eu
+vejo um homem que não
+traiu sua humanidade,
+mas se libertou dela.
+Este é o poder que me
+foi concedido por
+
+Exodus. Recebi minha
+liberdade. Fui
+libertado de meus
+medos.
+Exodus também lhe dará
+o poder de vencer seus
+medos.
+
+Quando seu medo deste
+mundo desaparecer,
+então o mundo realmente
+lhe pertencerá de uma
+maneira como nunca
+antes. Você, membro
+confiável, logo
+receberá um presente.
+Seu corpo,
+
+como o meu, será
+iluminado e elevado a
+um nível que nenhum
+mortal pode conhecer. O
+poder de controlar seu
+próprio destino lhe
+pertencerá pela
+primeira vez na vida.
+
+Você será, enfim,
+purificado do medo.
+Juntos, com o poder de
+Exodus nos apoiando,
+finalmente travaremos
+uma guerra contra a
+opressão que
+
+antes nos impedia de
+alcançar todo o nosso
+potencial. Tomaremos
+este mundo e o
+remodelaremos à imagem
+da liberdade para todos
+nós. Aqueles que antes
+lhe diziam quem você é
+
+e como deveria viver já
+não poderão se colocar
+no caminho de seu
+livre-arbítrio. Muitos
+dizem que você
+abandonará sua
+humanidade, mas, na
+verdade, será mais do
+que
+
+humano.
+Você será libertado."""
+[translations.spa]
+title = "Una bienvenida"
+content = """  Te saludo, nuevo
+miembro de los Leales.
+Lees ahora estas
+palabras porque se te
+ha considerado digno de
+unirte a las filas de
+
+los defensores de
+Britannia. Algunos te
+llamarán traidor a la
+humanidad; yo digo que
+están equivocados. Te
+llamo defensor, pues
+Sosaria necesita ser
+salvada de sí misma.
+
+  Las fuerzas del orden
+gobernaron antaño
+nuestro mundo. Como una
+gran oscuridad sobre
+nuestras vidas,
+vivíamos bajo la mirada
+opresiva de un rey que
+dictaba nuestros actos
+
+y juzgaba nuestro
+carácter. Reprimió
+nuestra forma de vida
+al negarnos la libertad
+y la capacidad de
+decidir quiénes somos y
+qué defendemos. Incluso
+
+hoy, en ausencia de ese
+hombre, seguimos viendo
+el símbolo de su
+tiranía: vemos a sus
+guardias personales
+patrullar las ciudades
+para intimidarnos y
+sentimos sus leyes como
+una
+
+prensa que aprieta
+nuestras vidas. Estás
+aquí porque eliges ser
+libre. Como tantos
+habitantes de
+Britannia, has sentido
+el peso opresivo de las
+ideas de un solo hombre
+
+sobre ti, como cadenas.
+Has sentido el abrazo
+del miedo,
+preguntándote si
+afrontarías castigos
+por el mero hecho de
+tener ideas que no
+estuvieran en
+consonancia con las que
+te imponían. Has visto
+
+a hombres luchar y
+morir por los
+principios de un
+fanático y te has
+preguntado: «¿Quién
+luchará por mis
+principios si alguien
+se opone a ellos?». Te
+has cansado de vivir
+bajo la sombra de
+
+sueños que no te
+pertenecen. Y, por
+encima de todo, te has
+preguntado qué puedes
+hacer para vivir libre.
+Tu camino hacia la
+libertad comienza aquí.
+Yo, como tú, antaño
+
+deseaba liberarme de
+los límites que me
+habían impuesto.
+Observé con repugnancia
+cómo este mundo se
+entregaba a la prédica
+de la virtud sin
+practicarla. Mantuve
+mis
+
+convicciones a raya,
+temeroso de la reacción
+de hombres cegados por
+sus creencias. Me
+obligué a sepultar la
+ideología misma que me
+hacía un individuo.
+Tuve la fortuna de que
+
+un ser de poder
+singular e inteligencia
+inimaginable viera a la
+persona que realmente
+era, a la persona que
+estaba destinado a ser.
+Exodus halló
+
+en mí a un hombre de
+libre albedrío y
+determinación, incapaz
+de comprender la
+opresión que se imponía
+a tantos habitantes de
+Britannia. Exodus
+también te ha
+
+elegido por la
+fortaleza de tu
+carácter. Muchos de los
+hombres que antaño
+fueron mis iguales me
+miran y ven a un
+traidor a la humanidad.
+Ellos
+
+afirman que mi nueva
+forma es antinatural y
+errónea. Como ven en mí
+lo desconocido, sienten
+miedo. Rechazan mis
+decisiones y, en su
+ignorancia, ven
+
+el mal. Sin embargo, ya
+no oculto mi verdadero
+ser a esos hombres. Mis
+pensamientos y mi moral
+personal se han
+liberado de la opresión
+que en otro tiempo me
+consumía.
+
+Donde ellos ven a un
+hombre que ya no es
+humano, yo veo a un
+hombre que no ha
+traicionado su
+humanidad, sino que se
+ha liberado de ella.
+Este es el poder que me
+ha concedido
+
+Exodus. Se me ha
+otorgado mi libertad.
+Se me ha librado de mis
+temores. Exodus te dará
+también el poder de
+vencer los tuyos.
+
+  Cuando tu miedo a
+este mundo desaparezca,
+el mundo te pertenecerá
+de verdad como nunca
+antes. Tú, leal,
+recibirás pronto un
+don. Tu cuerpo,
+
+como el mío, será
+iluminado y elevado a
+un nivel que ningún
+mortal puede conocer.
+Por primera vez en tu
+vida, tendrás el poder
+de gobernar tu propio
+destino.
+
+  Al fin quedarás
+limpio de miedo.
+Juntos, con el poder de
+Exodus a nuestras
+espaldas, emprenderemos
+por fin la guerra
+contra la opresión que
+
+antaño nos impedía
+alcanzar nuestro pleno
+potencial. Reclamaremos
+este mundo y lo
+remodelaremos a imagen
+de la libertad para
+todos nosotros. Quienes
+antaño te dictaban
+quién eras
+
+y cómo debías vivir ya
+no podrán interponerse
+en tu libre albedrío.
+Muchos dicen que
+abandonarás tu
+humanidad, pero, en
+verdad, serás más que
+
+humano. Serás libre."""

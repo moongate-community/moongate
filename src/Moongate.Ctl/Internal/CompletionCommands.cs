@@ -3,7 +3,8 @@ using ConsoleAppFramework;
 namespace Moongate.Ctl.Internal;
 
 /// <summary>
-///     The <c>mgctl completion</c> command: the script that lets a shell complete mgctl's commands and options with TAB.
+///     The <c>mgctl completion</c> command: the script that lets a shell complete mgctl's commands and options with
+///     TAB.
 /// </summary>
 internal static class CompletionCommands
 {
@@ -25,7 +26,9 @@ internal static class CompletionCommands
 
         if (script is null)
         {
-            Console.Error.WriteLine($"mgctl: no completion for '{shell}'; choose {string.Join(", ", CompletionCatalog.Shells)}.");
+            Console.Error.WriteLine(
+                $"mgctl: no completion for '{shell}'; choose {string.Join(", ", CompletionCatalog.Shells)}."
+            );
 
             return 2;
         }

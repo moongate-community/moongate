@@ -34,7 +34,8 @@ public sealed class BroadcastCommandTests
         await using var fixture = await BroadcastFixture.CreateAsync();
         var session = await fixture.AddAsync(1);
         var command = new BroadcastCommand(
-            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender));
+            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender)
+        );
         var context = new CommandContext("  BROADCAST   Hello  世界!  ", "broadcast", ["Hello", "世界!"], source, session);
 
         await command.ExecuteAsync(context);
@@ -51,7 +52,8 @@ public sealed class BroadcastCommandTests
         await using var fixture = await BroadcastFixture.CreateAsync();
         await fixture.AddAsync(1);
         var command = new BroadcastCommand(
-            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender));
+            new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender)
+        );
         var context = new CommandContext(line, "broadcast", [], CommandSourceType.Console, null);
 
         await command.ExecuteAsync(context);

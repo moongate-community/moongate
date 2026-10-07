@@ -70,8 +70,7 @@ public sealed class LuaModuleBinderTests : IDisposable
     [Fact]
     public void Bind_FunctionThatIsGeneric_IsABindingErrorNamingTheMember()
     {
-        var exception = Assert.Throws<InvalidOperationException>(
-            () => _binder.Bind(_state, new GenericFunctionModule())
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new GenericFunctionModule())
         );
 
         Assert.Contains("GenericFunctionModule.Count", exception.Message, StringComparison.Ordinal);
@@ -81,8 +80,7 @@ public sealed class LuaModuleBinderTests : IDisposable
     [Fact]
     public void Bind_FunctionThatIsNotPublic_IsABindingErrorNamingTheMember()
     {
-        var exception = Assert.Throws<InvalidOperationException>(
-            () => _binder.Bind(_state, new PrivateFunctionModule())
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new PrivateFunctionModule())
         );
 
         Assert.Contains("PrivateFunctionModule.Hidden", exception.Message, StringComparison.Ordinal);
@@ -92,8 +90,7 @@ public sealed class LuaModuleBinderTests : IDisposable
     [Fact]
     public void Bind_FunctionThatIsStatic_IsABindingErrorNamingTheMember()
     {
-        var exception = Assert.Throws<InvalidOperationException>(
-            () => _binder.Bind(_state, new StaticFunctionModule())
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new StaticFunctionModule())
         );
 
         Assert.Contains("StaticFunctionModule.Twice", exception.Message, StringComparison.Ordinal);
@@ -176,6 +173,16 @@ public sealed class LuaModuleBinderTests : IDisposable
 
         Assert.Contains("probe.add", exception.Message, StringComparison.Ordinal);
         Assert.Contains("argument #1", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_AMissingArgument_IsNamedInSnakeCase_AsTheDefinitionsNameIt()
+    {
+        _binder.Bind(_state, new SignatureModule());
+
+        var exception = Assert.Throws<LuaRuntimeException>(() => Run("return signature.twice()"));
+
+        Assert.Contains("(repeat_count is required)", exception.Message, StringComparison.Ordinal);
     }
 
     private LuaValue[] Run(string source)

@@ -1,0 +1,178 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/twinoaks.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "fireplace"
+type = "StoneFireplaceEastAddon"
+item_id = 0x0959
+locations = [
+    [1547, 1050, -7],
+    [1547, 1050, 13],
+]
+
+[[decoration]]
+comment = "fireplace"
+type = "StoneFireplaceSouthAddon"
+item_id = 0x0961
+locations = [[1556, 1038, 13]]
+
+[[decoration]]
+comment = "crate"
+type = "MediumCrate"
+item_id = 0x0E3E
+locations = [[1549, 1040, -1]]
+
+[[decoration]]
+comment = "clock"
+type = "Static"
+item_id = 0x104B
+locations = [[1548, 1051, 8]]
+
+[[decoration]]
+comment = "wooden door"
+type = "DarkWoodDoor"
+item_id = 0x06A7
+props = { facing = "east_ccw" }
+locations = [
+    [1549, 1048, 13],
+    [1556, 1048, 13],
+    [1562, 1048, 13],
+]
+
+[[decoration]]
+comment = "wooden door"
+type = "DarkWoodDoor"
+item_id = 0x06AB
+props = { facing = "east_cw" }
+locations = [[1556, 1043, 13]]
+
+[[decoration]]
+comment = "wooden door"
+type = "StrongWoodDoor"
+item_id = 0x06EF
+props = { facing = "north_ccw" }
+locations = [[1565, 1046, -7]]
+
+[[decoration]]
+comment = "wooden door"
+type = "StrongWoodDoor"
+item_id = 0x06ED
+props = { facing = "south_cw" }
+locations = [[1565, 1047, -7]]
+
+[[decoration]]
+comment = "dartboard"
+type = "DartBoard"
+item_id = 0x1E2F
+locations = [[1547, 1046, -7]]
+
+[[decoration]]
+comment = "crate"
+type = "LargeCrate"
+item_id = 0x0E3C
+locations = [
+    [1549, 1040, -4],
+    [1549, 1040, -7],
+    [1549, 1051, -27],
+    [1549, 1052, -27],
+    [1549, 1052, -24],
+]
+
+[[decoration]]
+comment = "dartboard w/knives"
+type = "Static"
+item_id = 0x1E33
+locations = [[1547, 1048, -7]]
+
+[[decoration]]
+comment = "crate"
+type = "MediumCrate"
+item_id = 0x0E3F
+locations = [[1549, 1049, -27]]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "Drawer"
+item_id = 0x0A34
+locations = [[1553, 1049, 13]]
+
+[[decoration]]
+comment = "armoire"
+type = "Armoire"
+item_id = 0x0A53
+locations = [
+    [1553, 1052, 13],
+    [1560, 1054, 13],
+]
+
+[[decoration]]
+comment = "dresser"
+type = "Static"
+item_id = 0x0A3D
+locations = [[1558, 1038, 13]]
+
+[[decoration]]
+comment = "dresser"
+type = "Static"
+item_id = 0x0A3C
+locations = [[1559, 1038, 13]]
+
+[[decoration]]
+comment = "armoire"
+type = "FancyArmoire"
+item_id = 0x0A4D
+locations = [[1561, 1038, 13]]
+
+[[decoration]]
+comment = "bottle of liquor"
+type = "BeverageBottle"
+item_id = 0x099B
+props = { content = "Liquor" }
+locations = [[1555, 1052, -21]]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "Drawer"
+item_id = 0x0A2C
+locations = [[1564, 1049, 13]]
+
+[[decoration]]
+comment = "Tavern"
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1016410 }
+locations = [[1566, 1049, -6]]
+
+[[decoration]]
+comment = "water barrel"
+type = "Static"
+item_id = 0x154D
+locations = [[1555, 1041, -7]]
+
+[[decoration]]
+comment = "fireplace"
+type = "Static"
+item_id = 0x0960
+locations = [[1555, 1038, 13]]
+
+[[decoration]]
+comment = "fireplace"
+type = "Static"
+item_id = 0x095F
+locations = [[1556, 1038, 13]]

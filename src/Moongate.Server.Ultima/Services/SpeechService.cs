@@ -48,6 +48,18 @@ public sealed class SpeechService : ISpeechService
         return SendAround(speaker.Map, speaker.Location, message, speaker);
     }
 
+    public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "", string affix = "")
+    {
+        var body = Math.Clamp(speaker.Body, 0, ushort.MaxValue);
+
+        // A text with something of the server after it travels in a packet of its own.
+        IOutgoingPacket message = affix.Length == 0
+            ? LocalizedMessagePacket.Spoken(speaker.Id, body, cliloc, speaker.Name, arguments)
+            : LocalizedMessageAffixPacket.Spoken(speaker.Id, body, cliloc, speaker.Name, affix, arguments);
+
+        return SendAround(speaker.Map, speaker.Location, message, speaker);
+    }
+
     public int PlaySound(MobileEntity source, int sound)
     {
         return SendAround(source.Map, source.Location, new PlaySoundPacket(sound, source.Location), source);
@@ -58,16 +70,20 @@ public sealed class SpeechService : ISpeechService
         return SendAround(map, location, new PlaySoundPacket(sound, location));
     }
 
-    public bool Tell(MobileEntity player, string text)
+    public bool Tell(MobileEntity player, string text, int? hue = null)
     {
         return _sessions.TryGetByCharacterId(player.Id, out var session) &&
-               SpeechMessageHelper.TrySend(_sender, session, SpeechMessageHelper.CreateSystem(text, SpeechHue));
+               SpeechMessageHelper.TrySend(
+                   _sender,
+                   session,
+                   SpeechMessageHelper.CreateSystem(text, hue is { } colour ? new((ushort)colour) : SpeechHue)
+               );
     }
 
-    public bool TellCliloc(MobileEntity player, int cliloc, string arguments = "")
+    public bool TellCliloc(MobileEntity player, int cliloc, string arguments = "", int? hue = null)
     {
         return _sessions.TryGetByCharacterId(player.Id, out var session) &&
-               _sender.TrySend(session.SessionId, LocalizedMessagePacket.System(cliloc, arguments));
+               _sender.TrySend(session.SessionId, LocalizedMessagePacket.System(cliloc, arguments, hue));
     }
 
     // With a speaker, those who do not see it do not hear it or its sounds either, as ModernUO.

@@ -9,7 +9,7 @@ weight = 2.0
 buy_price = 8
 sell_price = 4
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "roundbasket"
@@ -28,7 +28,7 @@ weight = 5.0
 buy_price = 12
 sell_price = 6
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "barrel"
@@ -53,7 +53,7 @@ weight = 3.0
 buy_price = 10
 sell_price = 5
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "emptytub"
@@ -72,7 +72,7 @@ weight = 2.0
 buy_price = 10
 sell_price = 5
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "bushel"
@@ -90,4 +90,4 @@ movable = false
 weight = 5.0
 decays = false
 hue = 946
-max_weight = 40000
+max_weight = 400

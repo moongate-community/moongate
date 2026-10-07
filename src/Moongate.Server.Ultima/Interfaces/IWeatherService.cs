@@ -6,7 +6,8 @@ using Moongate.Server.Ultima.Types.Weather;
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     The weather of every profile of <c>weather.toml</c>, rolled each game hour (and its temperature each game day), and
+///     The weather of every profile of <c>weather.toml</c>, rolled each game hour (and its temperature each game day),
+///     and
 ///     sent (0x65) to each player from its region's profile, or its map's outside every region; dry inside a building.
 ///     It follows the players through the region changes.
 /// </summary>

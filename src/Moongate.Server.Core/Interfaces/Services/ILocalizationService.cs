@@ -3,8 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 namespace Moongate.Server.Core.Interfaces.Services;
 
 /// <summary>
-///     Gives the texts of <c>data/messages</c> in the server's language, as set by <c>ultima.localization.language</c> in
-///     <c>moongate.toml</c>.
+///     Gives the texts of <c>data/messages</c> in the server's language, as set by <c>ultima.localization.language</c>
+///     in <c>moongate.toml</c>.
 /// </summary>
 public interface ILocalizationService
 {
@@ -14,8 +14,8 @@ public interface ILocalizationService
     string Language { get; }
 
     /// <summary>
-    ///     Gets message <paramref name="id" /> with <c>{0}</c>, <c>{1}</c>, ... replaced by <paramref name="values" /> and
-    ///     <c>{{</c>, <c>}}</c> turned into single braces.
+    ///     Gets message <paramref name="id" /> with <c>{0}</c>, <c>{1}</c>, ... replaced by <paramref name="values" />
+    ///     and <c>{{</c>, <c>}}</c> turned into single braces.
     /// </summary>
     /// <exception cref="KeyNotFoundException">
     ///     No message has this id.

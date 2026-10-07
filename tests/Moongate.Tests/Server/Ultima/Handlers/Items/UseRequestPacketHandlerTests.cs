@@ -41,10 +41,11 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemService _items = TestItems.Create();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly StubPacketSendService _sender = new StubPacketSendService().Ignore<PropertyListInfoPacket>();
+
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
-                                                  .Item(BackpackGraphic, TileFlagType.Container, 0)
-                                                  .Item(BagGraphic, TileFlagType.Container, 0)
-                                                  .Item(PouchGraphic, TileFlagType.Container, 0);
+        .Item(BackpackGraphic, TileFlagType.Container, 0)
+        .Item(BagGraphic, TileFlagType.Container, 0)
+        .Item(PouchGraphic, TileFlagType.Container, 0);
 
     private readonly ItemEntity _backpack = Item(0x40000001, BackpackGraphic);
     private readonly ItemEntity _bag = Item(0x40000002, BagGraphic, "bag");
@@ -172,7 +173,10 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
         await UseAsync(mage.Id);
 
-        Assert.Equal("The Outcast Nystul, the mage", Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).Title);
+        Assert.Equal(
+            "The Outcast Nystul, the mage",
+            Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).Title
+        );
     }
 
     [Fact]
@@ -261,6 +265,32 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AGhostUsingAScriptedItem_RunsItsOnGhostUse()
+    {
+        _scripts.Scripted.Add("dagger");
+        await StartAsync(Aria);
+        Die(Aria);
+
+        await UseAsync(_dagger.Id);
+
+        Assert.Equal(["0x40000003 on_ghost_use 2"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AGhostUsingAnItemWhoseScriptHasNoOnGhostUse_IsToldItIsDead()
+    {
+        _scripts.Scripted.Add("dagger");
+        _scripts.Result = ScriptResult.Missing;
+        await StartAsync(Aria);
+        Die(Aria);
+
+        await UseAsync(_dagger.Id);
+
+        var told = Assert.IsType<LocalizedMessagePacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(1019048, told.Cliloc);
+    }
+
+    [Fact]
     public async Task Handle_AScriptedBagWhoseScriptReturnsNothing_StillOpens()
     {
         _scripts.Scripted.Add("bag");
@@ -313,6 +343,30 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(!reached, _sender.Sent.OfType<LocalizedMessagePacket>().Any(message => message.Cliloc == 500446));
     }
 
+    [Theory]
+    [InlineData("near", true)]
+    [InlineData("far", false)]
+    [InlineData("map", false)]
+    [InlineData("held", false)]
+    public async Task Handle_AScriptedItemInsideAGroundChest_UsesTheReachableRoot(string state, bool reached)
+    {
+        var (chest, note) = GroundChest(state == "far" ? 1003 : 1001);
+        note.TemplateId = "readable_scroll";
+        _scripts.Scripted.Add("readable_scroll");
+        _scripts.Result = ScriptResult.Completed([true]);
+        if (state == "map") _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(1001, 1000, 0));
+        if (state == "held") _items.Hide(chest);
+        await StartAsync(Aria);
+
+        await UseAsync(note.Id);
+
+        Assert.Equal(reached ? ["0x40000021 on_use 2"] : [], _scripts.Calls);
+        Assert.Equal(
+            reached ? 0 : 1,
+            _sender.Sent.OfType<LocalizedMessagePacket>().Count(message => message.Cliloc == 500446)
+        );
+    }
+
     [Theory, InlineData(1002, true), InlineData(1003, false)]
     public async Task Handle_AContainerOnTheGround_OpensOnlyWithinTwoTiles(int x, bool reached)
     {
@@ -323,7 +377,10 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
         if (reached)
         {
-            Assert.Equal([typeof(DisplayContainerPacket), typeof(ContainerContentPacket)], _sender.Sent.Select(packet => packet.GetType()));
+            Assert.Equal(
+                [typeof(DisplayContainerPacket), typeof(ContainerContentPacket)],
+                _sender.Sent.Select(packet => packet.GetType())
+            );
             Assert.Equal(chest.Id, ((DisplayContainerPacket)_sender.Sent[0]).Container);
             Assert.Equal([ruby.Id], ((ContainerContentPacket)_sender.Sent[1]).Items.Select(item => item.Serial));
         }
@@ -376,14 +433,20 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
         await UseAsync(_backpack.Id);
 
-        Assert.Equal([typeof(DisplayContainerPacket), typeof(ContainerContentPacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(
+            [typeof(DisplayContainerPacket), typeof(ContainerContentPacket)],
+            _sender.Sent.Select(packet => packet.GetType())
+        );
         var display = (DisplayContainerPacket)_sender.Sent[0];
         Assert.Equal((_backpack.Id, 0x003C, true), (display.Container, display.Gump, display.HighSeas));
         var content = (ContainerContentPacket)_sender.Sent[1];
         Assert.Equal([_bag.Id, _dagger.Id, _pouch.Id], content.Items.Select(item => item.Serial));
         Assert.True(content.GridBytes);
         // As ModernUO, each item shown is followed by its tooltip revision.
-        Assert.Equal([_bag.Id, _dagger.Id, _pouch.Id], _sender.Ignored.Cast<PropertyListInfoPacket>().Select(info => info.Serial));
+        Assert.Equal(
+            [_bag.Id, _dagger.Id, _pouch.Id],
+            _sender.Ignored.Cast<PropertyListInfoPacket>().Select(info => info.Serial)
+        );
     }
 
     [Fact]
@@ -532,7 +595,19 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             new BodyContent { Body = new(401), Type = BodyType.Human },
             new BodyContent { Body = new(17), Type = BodyType.Monster }
         );
-        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), Titles(), _scripts, _bank);
+        var handler = new UseRequestPacketHandler(
+            _items,
+            _mobiles,
+            bodies,
+            new WorldConfig(),
+            _tiles,
+            layouts,
+            _sender,
+            TestTooltips.Create(_items, _mobiles),
+            Titles(),
+            _scripts,
+            _bank
+        );
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
     }
@@ -560,6 +635,13 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         _items.PlaceOnGround(chest, MapType.Felucca, new Point3D(x, 1000, 0));
 
         return (chest, ruby);
+    }
+
+    private void Die(Serial id)
+    {
+        Assert.True(_mobiles.TryGet(id, out var mobile));
+        mobile.AccountId = new Serial(0x42);
+        mobile.Body = 0x0193;
     }
 
     private static MobileEntity Mobile(Serial id, string name, int body, Point3D location)

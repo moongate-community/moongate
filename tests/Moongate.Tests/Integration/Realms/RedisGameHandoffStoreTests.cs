@@ -134,7 +134,13 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
             ),
             _instanceId
         );
-        var handler = new GameLoginPacketHandler(realm, _store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig());
+        var handler = new GameLoginPacketHandler(
+            realm,
+            _store,
+            new StubDataLoaderService(),
+            new RecordingCharacterService(),
+            new CharactersConfig()
+        );
 
         await handler.HandleAsync(
             context,

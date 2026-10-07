@@ -6,10 +6,10 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Moongate.Ultima.Types;
-
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
+
 namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class NpcTickServiceTests

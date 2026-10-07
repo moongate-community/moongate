@@ -186,7 +186,10 @@ another root, so unset it or pass the same path.
 6. **Stop it.** Press Ctrl+C and let shutdown finish. After a successful startup the
    host runs a final world save before closing PostgreSQL persistence. A failed
    startup or a faulted game loop cannot promise that save. Do not terminate the
-   process while it is waiting for one.
+   process while it is waiting for one. The first save after a start writes the
+   whole world and takes some seconds (8 to 15 for the shipped one); the server
+   waits up to 2 minutes for it after Ctrl+C or SIGTERM. A save cut half way
+   commits nothing: what happened since the last completed save is lost.
 
 To run another standalone instance, give it its own root, distinct login and
 game listener ports, a distinct `realm_directory.realm_id` and `server_index`,
@@ -208,7 +211,7 @@ All server-managed paths below are relative to `--root-directory`:
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `logs/errors/<id>.md` | The report of each exception the server logged, ready to paste into a GitHub issue |
 | `plugins/` | One assembly bundle per plugin directory |
-| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, the Lua modules they share in `common/`, the gump scripts `gumps/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
+| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting/mobile-scripts.md) `mobiles/<script_id>.lua`, the [item scripts](scripting/item-scripts.md) `items/<script_id>.lua`, the Lua modules they share in `common/`, the gump scripts `gumps/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
 | `moongate.pid` | Current process identifier |
 | `moongate.pid.lock` | Lock file used to exclude another instance |
 

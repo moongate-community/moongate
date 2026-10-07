@@ -116,10 +116,12 @@ public sealed class GumpModuleTests : IAsyncLifetime
     {
         Run("gump.open(7, 'ask_name', { greeting = 'Hi' })");
 
-        _gumps.Opened[0].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = "Aria" } }
-        );
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse
+                    { ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = "Aria" } }
+            );
 
         Assert.Equal(2, _gumps.Opened.Count);
         Assert.Equal("Hi Aria", _gumps.Opened[1].Gump.Layout.Build().Strings[0]);
@@ -128,17 +130,13 @@ public sealed class GumpModuleTests : IAsyncLifetime
         Assert.Equal("Aria", Assert.IsType<LuaTable>(Assert.Single(_scripts.Calls).Args[1])["name"].Read<string>());
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private void Answer(int button, int[]? switches = null, Dictionary<int, string>? texts = null)
     {
-        _gumps.Opened[0].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = button, Switches = (switches ?? []).ToHashSet(), Texts = texts ?? [] }
-        );
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = (switches ?? []).ToHashSet(), Texts = texts ?? [] }
+            );
     }
 
     private LuaValue[] Run(string chunk)
@@ -169,12 +167,23 @@ public sealed class GumpModuleTests : IAsyncLifetime
             new GumpTemplate { Id = "greet", File = "c.xml", Root = greet }
         );
         var templates = new GumpTemplateService(_gumps, data, _fixture.Network.Loop, _fixture.Sessions);
-        var module = new GumpModule(_fixture.Sessions, _gumps, templates, new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts), _fixture.Network.Loop);
+        var module = new GumpModule(
+            _fixture.Sessions,
+            _gumps,
+            templates,
+            new Lazy<Moongate.Server.Ultima.Interfaces.IGumpScriptService>(_scripts),
+            _fixture.Network.Loop
+        );
 
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

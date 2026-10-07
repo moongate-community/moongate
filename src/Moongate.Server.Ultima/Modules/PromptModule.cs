@@ -37,7 +37,10 @@ public sealed class PromptModule
     ///     what to type first, with <c>mobile.message</c>. A prompt the player already had ends, its function told
     ///     <c>nil</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Asks the player for a line of text; the function gets the text, up to 128 characters without the spaces around it, or nil when the player escaped, was asked something else or left. False for an NPC or a player not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "Asks the player for a line of text, typed in the journal line; the function gets the text, up to 128 characters without the spaces around it, or nil when the player escaped, typed only spaces, was asked something else or left. Say what to type first with mobile.message. False for an NPC or a player not in the world."
+    )]
     public bool Ask(long player, [ScriptParameterType("function")] LuaValue callback)
     {
         if (callback.Type != LuaValueType.Function)
@@ -90,8 +93,10 @@ public sealed class PromptModule
 
     private bool TryGetSession(long player, out GameSession session)
     {
+        // Safe: out parameter; callers read it only when the method returns true.
         session = null!;
 
+        // Safe: the out value is only used when the lookup succeeds.
         return player is > 0 and <= uint.MaxValue && _sessions.TryGetByCharacterId(new Serial((uint)player), out session!);
     }
 }

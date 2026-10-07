@@ -23,12 +23,14 @@ public sealed class SpawnCommandTests : IAsyncDisposable
 {
     private readonly StubTargetService _targets = new();
     private readonly StubNpcService _npcs = new();
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "orc" },
             new MobileTemplate { Id = "dolphin", Movement = MobileMovementType.Water }
         )
     );
+
     private readonly StubMovementService _movement = new();
 
     private SessionFixture? _fixture;
@@ -70,7 +72,10 @@ public sealed class SpawnCommandTests : IAsyncDisposable
         var context = await RunAsync("dolphin");
 
         Assert.Empty(_npcs.Spawns);
-        Assert.Equal((CommandOutputLevel.Error, "dolphin lives in the water: target the water."), (Assert.Single(context.Output).Level, context.Output[0].Text));
+        Assert.Equal(
+            (CommandOutputLevel.Error, "dolphin lives in the water: target the water."),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
     }
 
     [Fact]
@@ -129,17 +134,17 @@ public sealed class SpawnCommandTests : IAsyncDisposable
         Assert.Equal(0, _targets.Requests);
     }
 
-    private Task<CommandContext> RunAsync(params string[] arguments)
-    {
-        return RunAsync(null, arguments);
-    }
-
     [Fact]
     public async Task ExecuteAsync_Texts_AreInTheServerLanguage()
     {
         var context = await RunAsync(TestLocalization.With((30022, "Modello di creatura sconosciuto: {0}")), "nothing");
 
         Assert.Equal("Modello di creatura sconosciuto: nothing", Assert.Single(context.Output).Text);
+    }
+
+    private Task<CommandContext> RunAsync(params string[] arguments)
+    {
+        return RunAsync(null, arguments);
     }
 
     private async Task<CommandContext> RunAsync(ILocalizationService? localization, params string[] arguments)

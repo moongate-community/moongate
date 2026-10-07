@@ -8,7 +8,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
-///     Loads every <c>*.toml</c> under <c>templates/npc_lists/</c>, recursively, after the mobile templates. An empty or
+///     Loads every <c>*.toml</c> under <c>templates/npc_lists/</c>, recursively, after the mobile templates. An empty
+///     or
 ///     duplicate id, a list without entries, an entry naming both or neither a mobile and a list, a weight below 1, a
 ///     mobile template or list that does not exist, or lists that loop stop the server at startup.
 /// </summary>
@@ -39,7 +40,7 @@ public class NpcListsLoader : IDataLoader<NpcListTemplate>
         if (Directory.Exists(listsDirectoryPath))
         {
             foreach (var path in Directory.EnumerateFiles(listsDirectoryPath, "*.toml", SearchOption.AllDirectories)
-                                          .Order(StringComparer.Ordinal))
+                         .Order(StringComparer.Ordinal))
             {
                 var file = await TomlUtils.DeserializeFromFileAsync<NpcListTemplateFile>(path, null, cancellationToken) ??
                            new NpcListTemplateFile();
@@ -53,13 +54,17 @@ public class NpcListsLoader : IDataLoader<NpcListTemplate>
 
                     if (!byId.TryAdd(list.Id, (list, path)))
                     {
-                        throw new InvalidDataException($"Npc list '{list.Id}' is defined twice: in {byId[list.Id].File} and {path}.");
+                        throw new InvalidDataException(
+                            $"Npc list '{list.Id}' is defined twice: in {byId[list.Id].File} and {path}."
+                        );
                     }
                 }
             }
         }
 
-        var mobileIds = _dataLoaderService.GetEntities<MobileTemplate>().Select(template => template.Id).ToHashSet(StringComparer.Ordinal);
+        var mobileIds = _dataLoaderService.GetEntities<MobileTemplate>()
+            .Select(template => template.Id)
+            .ToHashSet(StringComparer.Ordinal);
 
         foreach (var (list, file) in byId.Values)
         {

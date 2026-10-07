@@ -120,7 +120,7 @@ snapshots; it does not close a connection. Its disconnected state remains termin
 implementations. Always handle absent local metadata.
 
 `NetworkService` construction takes `(NetworkListenerOptions, IConnectionService)`;
-`PacketSendService` takes `(IConnectionService, int capacity = 128)`. Custom hosts must
+`PacketSendService` takes `(IConnectionService, int capacity = 4096)`: the packets a session's queue holds before the session is closed as one that does not read, sized for the burst of a view full of items. Custom hosts must
 add `GameServerService` if they need the UO session/dispatch path. Registering only the raw
 network service intentionally performs no packet decoding or game-session creation.
 

@@ -20,17 +20,29 @@ public sealed class WarModeRequestPacketHandlerTests : IAsyncLifetime
         _session = await _fixture.AddAsync(2);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     [Theory, InlineData(true), InlineData(false)]
     public void Handle_PutsTheCharacterInTheModeAsked(bool warMode)
     {
-        new WarModeRequestPacketHandler(_fixture.Mobiles, _state).Handle(_session, new WarModeRequestPacket { WarMode = warMode });
+        new WarModeRequestPacketHandler(_fixture.Mobiles, _state).Handle(
+            _session,
+            new WarModeRequestPacket { WarMode = warMode }
+        );
 
         Assert.Equal([$"war 2 {warMode}"], _state.Flags);
+    }
+
+    [Fact]
+    public void Handle_PeaceEndsTheFightOfTheCharacter_WarDoesNot()
+    {
+        var combat = new Moongate.Tests.TestSupport.Ultima.Combat.RecordingCombatService();
+        var handler = new WarModeRequestPacketHandler(_fixture.Mobiles, _state, combat);
+
+        handler.Handle(_session, new WarModeRequestPacket { WarMode = true });
+        Assert.Empty(combat.Stopped);
+
+        handler.Handle(_session, new WarModeRequestPacket { WarMode = false });
+
+        Assert.Equal(new Serial(2), Assert.Single(combat.Stopped).Id);
     }
 
     [Fact]
@@ -38,7 +50,10 @@ public sealed class WarModeRequestPacketHandlerTests : IAsyncLifetime
     {
         var stranger = _fixture.Sessions.GetOrCreate(new Moongate.Tests.TestSupport.Network.ControlledNetworkConnection(77));
 
-        new WarModeRequestPacketHandler(_fixture.Mobiles, _state).Handle(stranger, new WarModeRequestPacket { WarMode = true });
+        new WarModeRequestPacketHandler(_fixture.Mobiles, _state).Handle(
+            stranger,
+            new WarModeRequestPacket { WarMode = true }
+        );
 
         Assert.Empty(_state.Flags);
     }
@@ -51,5 +66,10 @@ public sealed class WarModeRequestPacketHandlerTests : IAsyncLifetime
         Assert.True(WarModeRequestPacket.TryParse(Convert.FromHexString(hex), out var packet));
 
         Assert.Equal(warMode, packet.WarMode);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

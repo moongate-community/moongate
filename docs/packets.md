@@ -69,11 +69,21 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: puts the held item on the character, or bounces it back |
 | `0x2E` | `WornItemPacket` | Outgoing | Fixed 15 | — |
 | `0x6E` | `MobileAnimationPacket` | Outgoing | Fixed 14 | — |
+| `0xAF` | `DeathAnimationPacket` | Outgoing | Fixed 13 | — |
+| `0x2C` | `DeathStatusPacket` | Outgoing | Fixed 2 | — |
+| `0x89` | `CorpseEquipmentPacket` | Outgoing | Variable | — |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
-| `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0x12`, `0xB8`, `0xE1` | `TextCommandPacket`, `ProfileRequestPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip; the others are ignored for now |
+| `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
+| `0x95` | `HuePickerResponsePacket` | Incoming | Fixed 9 | `HuePickerResponsePacketHandler`: gives the hue picked to the player's open picker |
+| `0x05` | `AttackRequestPacket` | Incoming | Fixed 5 | `AttackRequestPacketHandler`: the character [fights](combat.md) the mobile; a refused request is answered with `0xAA` and zero |
+| `0x22`, `0xB5`, `0xFB` | `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0xAA` | `CombatantPacket` | Outgoing | Fixed 5 | — |
+| `0x2F` | `SwingPacket` | Outgoing | Fixed 10 | — |
+| `0x0B` | `DamagePacket` | Outgoing | Fixed 7 | — |
+| `0x12` | `TextCommandPacket` | Incoming | Variable | `TextCommandPacketHandler`: kind `0x24` [uses the skill](skills.md) whose number starts the text; the other kinds are ignored for now (Debug log) |
+| `0xB8`, `0xE1`, `0xF0` | `ProfileRequestPacket`, `ClientTypePacket`, `ProtocolExtensionPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip, `0x1A` sets the lock of a stat; the others are ignored for now |
 | `0xD6` | `QueryPropertiesPacket` | Incoming | Variable, at most 500 serials | `QueryPropertiesPacketHandler`: one `0xD6` per object the character sees |
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
 | `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
@@ -85,6 +95,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xC7` | `ParticleEffectPacket` | Outgoing | Fixed 49 | — |
 | `0x1B` | `LoginConfirmPacket` | Outgoing | Fixed 37 | — |
 | `0xBF` | `MapChangePacket` | Outgoing | Variable, 6 (subcommand `0x08`) | — |
+| `0xBF` | `StatLockInfoPacket` | Outgoing | Variable, 12 (subcommand `0x19`) | — |
 | `0xBC` | `SeasonChangePacket` | Outgoing | Fixed 3 | — |
 | `0x4F` | `GlobalLightLevelPacket` | Outgoing | Fixed 2 | — |
 | `0x4E` | `PersonalLightLevelPacket` | Outgoing | Fixed 6 | — |
@@ -93,6 +104,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x11` | `MobileStatusPacket` | Outgoing | Variable, 91 (version 5), or 43 (version 0) for another mobile | — |
 | `0xA1`, `0xA2`, `0xA3` | `MobileHitsPacket`, `MobileManaPacket`, `MobileStaminaPacket` | Outgoing | Fixed 9 | Sent by `MobileStateService`; the hits go to the players around as a share of 100 |
 | `0x3A` | `SkillsPacket` | Outgoing | Variable, minimum 6 | The whole skill list, or one skill that changed |
+| `0x3A` | `SkillLockPacket` | Incoming | Variable, minimum 6 | `SkillLockPacketHandler`: sets the lock of a skill of the character (up, down or locked); a skill or lock that does not exist is ignored |
 | `0x72` | `WarModePacket` | Outgoing | Fixed 5 | — |
 | `0x5B` | `CurrentTimePacket` | Outgoing | Fixed 4 | — |
 | `0x65` | `WeatherPacket` | Outgoing | Fixed 4 | — |
@@ -104,9 +116,11 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xB1` | `GumpResponsePacket` | Incoming | Variable, minimum 23 | `GumpResponsePacketHandler`: hands the checked answer to the gump the player was sent |
 | `0xBF` | `CloseGumpPacket` | Outgoing | Variable, 13 (subcommand `0x04`) | — |
 
-Normal speech (`say`) reaches the speaker and other player characters within 15
-tiles on the same map. Whisper, yell, emote, global chat and the separate chat
-window are not supported yet. A leading `.` invokes the existing command system
+Speech reaches the speaker and the other player characters on the same map within
+its range, as in ModernUO: 15 tiles aloud or as an emote, 1 tile for a whisper, 18
+for a yell. The client chooses the way from what the player types (`; ` whispers,
+`! ` yells, `: ` emotes) and the text goes out unchanged, with its type. Global chat
+and the separate chat window are not supported yet. A leading `.` invokes the existing command system
 privately; `..` escapes one dot. Empty or over-128-character speech is ignored.
 
 `0xAD` is read leniently, as in the other emulators, since a refused packet disconnects the
@@ -266,6 +280,28 @@ waiting for a target does not hold back the session's packets; its output arrive
 A player runs one command at a time: another one meanwhile is refused with "A command is already
 running."
 `.where` (game masters) prints what a target picks.
+
+`IHuePickerService` shows a player the client's hue picker (`0x95`) with a graphic in it and hands
+the hue picked to a callback on the game loop. A player has one picker at a time: a new one ends the
+old with no hue, and so does a closing session. Picker ids count up per session and are not the serial of an
+item, as in ModernUO: an answer with another id, or with no picker open, is ignored, so a
+client cannot recolour anything by sending `0x95` on its own (UOX3 recolours whatever serial the
+packet names). The hue is masked with `0x3FFF` and kept from 2 to 1001, as ModernUO's
+`ClipDyedHue`. A client that closes the picker sends nothing, so the callback may never run: whoever
+opens a picker checks again, in the callback, what was true when it opened.
+
+`IDeathService` kills an NPC ([Death and resurrection](death.md)). The players who see it are sent, in
+this order, the corpse (`0xF3`, or `0x1A` to an old client), the death (`0xAF`: the mobile, its
+corpse, four zero bytes, as ModernUO) and, when the NPC is removed, `0x1D`. The client plays the
+death animation of the body by itself; the server names none. A corpse is the graphic `0x2006` and
+tells the client its body in the place of the amount and the way it lies in the light byte, as
+ServUO does: the item itself keeps amount 1, and both come from its props `corpse.body` and
+`corpse.direction`. After the corpse of a human, elf or gargoyle body come `0x3C`, with the worn
+items still inside it plus its hair and beard under virtual serials, and `0x89`, which names the
+layer of each as the layer plus one and ends with a zero byte: the client draws the corpse dressed. Such a
+body gets no `0xAF`: it is told to play its fall (`0x6E`, action 21) and its corpse comes 1.5 seconds
+later, because ClassicUO deletes the worn items of a mobile that dies by `0xAF` and shows it falling
+naked.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.

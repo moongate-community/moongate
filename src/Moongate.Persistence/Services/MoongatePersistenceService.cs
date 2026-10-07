@@ -291,6 +291,8 @@ public sealed class MoongatePersistenceService : IPersistenceDataExporter, IAsyn
                                         _schema.GetDatabase(group.Key),
                                         async transaction =>
                                         {
+                                            await transaction.DeferConstraintsAsync(token).ConfigureAwait(false);
+
                                             foreach (var write in writes)
                                             {
                                                 await write(transaction, token).ConfigureAwait(false);
@@ -384,6 +386,7 @@ public sealed class MoongatePersistenceService : IPersistenceDataExporter, IAsyn
 
             if (source is not null)
             {
+                // Safe: the `source is null != snapshot is null` check above throws unless both are set or both null.
                 _sources.Add(new PersistenceEntityRegistration<T>(source, snapshot!, deletions));
             }
 

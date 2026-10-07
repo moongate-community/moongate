@@ -1,0 +1,430 @@
+title = "Lysander's Notebook"
+author = "L. Gathenwale"
+content = """Day Two:
+ 
+The woman, Tavara
+Sewel, is unbearable.
+Her entire demeanor
+sickens me.  I would
+take her life for Thee
+now, my Lord.  But I
+
+cannot alert the
+others.  Progress is
+made too slowly, I
+cannot stand this
+perpetual waiting.
+Today I knelt down
+with the workers,
+tossing stones and dirt
+
+aside with my very
+hands as they dug at
+the last of the rubble
+covering the entrance
+to Thy Sanctum.  The
+Sewel woman was
+shocked at my
+demeanor, dirtying
+
+my robes, on my
+knees in the muck as I
+clawed at the rocks.
+She thought I did this
+for those sickly
+scholars, or for her,
+or for what she
+laughably calls 'The
+
+Gift of Discovery', of
+learning.  As if I did
+not know what I went
+to find!  I come for
+Thee, Master.  Soon
+shall I receive Thy
+gifts, Thy blessings.
+Patience, eternal
+
+patience.  I must take
+my lessons well.  I
+have learned from
+Thee, Master, I have."""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Lysanderův zápisník"
+content = """Den druhý:
+ 
+Ta žena, Tavara Sewel,
+je nesnesitelná. Celé
+její chování se mi
+hnusí. Vzal bych jí
+život pro Tebe už teď,
+můj Pane. Ale
+
+nesmím upozornit
+ostatní. Postupujeme
+příliš pomalu, nemohu
+vydržet to věčné
+čekání. Dnes jsem
+poklekl s dělníky a
+vlastníma rukama
+odhazoval kameny a
+hlínu
+
+stranou, když
+odkopávali poslední suť
+zakrývající vstup do
+Tvé svatyně. Ta ženská
+Sewel byla mým chováním
+otřesena: špinil jsem
+
+si roucho, klečel v
+blátě a drápal kamení.
+Myslela, že to dělám
+pro ty neduživé učence
+nebo pro ni nebo pro
+to, co směšně nazývá
+„Darem
+
+objevování“, učením.
+Jako bych nevěděl, co
+jsem přišel najít!
+Přicházím pro Tebe,
+Mistře. Brzy obdržím
+Tvé dary, Tvá
+požehnání. Trpělivost,
+věčná
+
+trpělivost. Musím se
+dobře učit. Naučil jsem
+se od Tebe, Mistře,
+naučil."""
+[translations.fre]
+title = "Le carnet de Lysander"
+content = """Deuxième jour :
+ 
+Cette femme, Tavara
+Sewel, est
+insupportable. Toute
+son attitude me donne
+la nausée. Je prendrais
+sa vie pour Toi dès
+maintenant, mon
+Seigneur. Mais je ne
+
+puis alerter les
+autres. Les progrès
+sont trop lents, je ne
+supporte pas cette
+attente perpétuelle.
+Aujourd’hui, je me suis
+agenouillé avec les
+ouvriers, rejetant
+pierres et terre
+
+à mains nues tandis
+qu’ils déblayaient les
+derniers gravats
+couvrant l’entrée de
+Ton Sanctuaire. La
+femme Sewel a été
+choquée de mon attitude
+: salir
+
+mes robes, à genoux
+dans la boue, en
+grattant les rochers.
+Elle croyait que je
+faisais cela pour ces
+érudits maladifs, ou
+pour elle, ou pour ce
+qu’elle nomme de façon
+risible « Le
+
+Don de la Découverte »,
+de l’apprentissage.
+Comme si je ne savais
+pas ce que j’allais
+trouver ! Je viens à
+Toi, Maître. Bientôt je
+recevrai Tes dons, Tes
+bénédictions. Patience,
+éternelle
+
+patience. Je dois bien
+apprendre mes leçons.
+J’ai appris auprès de
+Toi, Maître, oui."""
+[translations.ger]
+title = "Lysanders Notizbuch"
+content = """Zweiter Tag:
+ 
+Das Weib Tavara Sewel
+ist unerträglich. Ihr
+ganzes Gebaren widert
+mich an. Ich würde ihr
+Leben jetzt für Dich
+nehmen, mein Herr. Doch
+ich
+
+darf die anderen nicht
+alarmieren. Der
+Fortschritt ist zu
+langsam, ich halte
+dieses ewige Warten
+nicht aus. Heute kniete
+ich bei den Arbeitern
+nieder und warf mit
+meinen eigenen Händen
+Steine und Erde
+
+beiseite, während sie
+die letzten Trümmer
+ausgruben, die den
+Eingang zu Deinem
+Heiligtum bedecken. Das
+Weib Sewel war über
+mein Gebaren entsetzt,
+wie ich meine
+
+Roben beschmutzte, im
+Schlamm kniete und an
+den Steinen krallte.
+Sie dachte, ich täte
+dies für jene
+kränklichen Gelehrten
+oder für sie oder für
+das, was sie
+lächerlicherweise „Die
+
+Gabe der Entdeckung“
+nennt, des Lernens. Als
+wüsste ich nicht, was
+ich zu finden gekommen
+bin! Ich komme zu Dir,
+Meister. Bald werde ich
+Deine Gaben, Deine
+Segnungen empfangen.
+Geduld, ewige
+
+Geduld. Ich muss meine
+Lektionen gut lernen.
+Ich habe von Dir
+gelernt, Meister, das
+habe ich."""
+[translations.ita]
+title = "Il taccuino di Lysander"
+content = """Giorno Due:
+ 
+La donna, Tavara Sewel,
+è insopportabile. Tutto
+il suo contegno mi
+disgusta. Prenderei la
+sua vita per Te ora,
+mio Signore. Ma non
+
+posso mettere in
+allarme gli altri. I
+progressi sono troppo
+lenti, non sopporto
+questa attesa perpetua.
+Oggi mi sono
+inginocchiato con gli
+operai, gettando pietre
+e terra
+
+da parte con le mie
+stesse mani mentre
+scavavano le ultime
+macerie che coprivano
+l'ingresso del Tuo
+Santuario. La donna
+Sewel era sconvolta dal
+mio contegno, dal fatto
+che sporcassi
+
+le mie vesti, in
+ginocchio nel fango
+mentre artigliavo le
+rocce. Pensava che lo
+facessi per quegli
+studiosi malaticci, o
+per lei, o per quello
+che ridicolmente chiama
+«Il
+
+Dono della Scoperta»,
+dell'apprendimento.
+Come se non sapessi che
+cosa stavo per trovare!
+Vengo a Te, Padrone.
+Presto riceverò i Tuoi
+doni, le Tue
+benedizioni. Pazienza,
+eterna
+
+pazienza. Devo
+apprendere bene le mie
+lezioni. Ho imparato da
+Te, Padrone, ho
+imparato."""
+[translations.pol]
+title = "Notatnik Lysander"
+content = """Dzień drugi:
+ 
+Ta kobieta, Tavara
+Sewel, jest nieznośna.
+Cała jej postawa budzi
+we mnie odrazę. Już
+teraz odebrałbym jej
+życie dla Ciebie, mój
+Panie. Lecz nie
+
+mogę zaalarmować
+pozostałych. Postępy są
+zbyt wolne, nie mogę
+znieść tego wiecznego
+czekania. Dziś
+uklęknąłem przy
+robotnikach, odrzucając
+kamienie i ziemię
+
+własnymi rękami, gdy
+wykopywali ostatni gruz
+zasłaniający wejście do
+Twego Sanktuarium.
+Kobieta Sewel była
+wstrząśnięta moim
+zachowaniem: brudzeniem
+
+szat, klęczeniem w
+błocie, szarpaniem
+skał. Myślała, że robię
+to dla tych chorowitych
+uczonych albo dla niej,
+albo dla czegoś, co
+śmiesznie nazywa „Darem
+
+Odkrywania”, zdobywania
+wiedzy. Jakbym nie
+wiedział, co zamierzam
+znaleźć! Przybywam do
+Ciebie, Mistrzu.
+Wkrótce otrzymam Twe
+dary, Twe
+błogosławieństwa.
+Cierpliwość, wieczna
+
+cierpliwość. Muszę
+dobrze przyswoić nauki.
+Uczyłem się od Ciebie,
+Mistrzu, naprawdę."""
+[translations.por]
+title = "Caderno de Lysander"
+content = """Segundo dia:
+ 
+A mulher, Tavara Sewel,
+é insuportável. Toda a
+sua postura me enoja.
+Eu tiraria a vida dela
+por Você agora, meu
+Senhor. Mas não
+
+posso alertar os
+outros. O progresso é
+lento demais, não
+aguento esta espera
+perpétua. Hoje me
+ajoelhei com os
+trabalhadores, jogando
+pedras e terra
+
+para o lado com minhas
+próprias mãos enquanto
+eles escavavam o último
+entulho que cobria a
+entrada de Seu
+Santuário. A mulher
+Sewel ficou chocada com
+minha postura, sujando
+
+minhas vestes, de
+joelhos na lama
+enquanto eu arranhava
+as rochas. Ela pensou
+que eu fazia isso por
+aqueles estudiosos
+doentios, ou por ela,
+ou pelo que, de modo
+risível, ela chama de
+'A
+
+Dádiva da Descoberta',
+do aprendizado. Como se
+eu não soubesse o que
+fui encontrar! Venho
+buscar Você, Mestre.
+Logo receberei Suas
+dádivas, Suas bênçãos.
+Paciência, eterna
+
+paciência. Preciso
+aprender bem minhas
+lições. Aprendi com
+Você, Mestre, aprendi."""
+[translations.spa]
+title = "Cuaderno de Lysander"
+content = """Día dos:
+ 
+Esa mujer, Tavara
+Sewel, es insoportable.
+Toda su conducta me
+repugna. Le quitaría la
+vida por Ti ahora
+mismo, mi Señor. Pero
+no
+
+puedo alertar a los
+demás. Avanzamos
+demasiado despacio; no
+soporto esta espera
+perpetua. Hoy me
+arrodillé con los
+trabajadores, apartando
+piedras y tierra
+
+con mis propias manos
+mientras excavaban los
+últimos escombros que
+cubrían la entrada a Tu
+Santuario. La mujer
+Sewel quedó sorprendida
+por mi conducta, al
+verme ensuciar
+
+mis túnicas, de
+rodillas en el barro
+mientras arañaba las
+rocas. Creía que lo
+hacía por esos eruditos
+enfermizos, o por ella,
+o por lo que, de manera
+risible, llama «El
+
+Don del
+Descubrimiento», del
+aprendizaje. ¡Como si
+yo no supiera lo que he
+venido a encontrar!
+Vengo por Ti, Maestro.
+Pronto recibiré Tus
+dones, Tus bendiciones.
+Paciencia, eterna
+
+paciencia. Debo
+aprender bien mis
+lecciones. He aprendido
+de Ti, Maestro, sí que
+lo he hecho."""

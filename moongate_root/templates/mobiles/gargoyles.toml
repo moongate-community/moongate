@@ -1,5 +1,6 @@
 [[mobile]]
 id = "gargoyle"
+script_id = "monster"
 name = "a gargoyle"
 name_list = "list_12"
 body = 4
@@ -28,6 +29,7 @@ death = 376
 
 [[mobile]]
 id = "stonegargoyle"
+script_id = "monster"
 name = "a stone gargoyle"
 body = 67
 skin_hue = 902
@@ -55,6 +57,7 @@ death = 376
 
 [[mobile]]
 id = "enslavedgargoyle"
+script_id = "monster"
 name = "an enslaved gargoyle"
 name_list = "list_12"
 title = "the enslaved gargoyle"
@@ -82,6 +85,7 @@ death = 376
 
 [[mobile]]
 id = "firegargoyle"
+script_id = "monster"
 name = "a fire gargoyle"
 name_list = "fire_gargoyle"
 body = 130
@@ -110,6 +114,7 @@ death = 376
 
 [[mobile]]
 id = "gargoyledestroyer"
+script_id = "monster"
 name = "a gargoyle destroyer"
 name_list = "list_12"
 title = "the gargoyle destroyer"
@@ -143,6 +148,7 @@ death = 376
 
 [[mobile]]
 id = "gargoyleenforcer"
+script_id = "monster"
 name = "a gargoyle enforcer"
 name_list = "list_12"
 title = "the gargoyle enforcer"

@@ -33,6 +33,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
     private readonly WorldPropsService _props = new(new RecordingDataAccess<WorldStateEntity>());
     private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
     private readonly ItemService _items = TestItems.Create();
+
     private readonly RegionService _regions = new(
         new StubDataLoaderService().With(
             new RegionContent
@@ -42,24 +43,31 @@ public sealed class WorldModuleTests : IAsyncLifetime
             },
             new RegionContent
             {
-                Map = MapType.Trammel, Name = "Covetous", Areas = [new RegionAreaContent { X1 = 2400, Y1 = 400, X2 = 2600, Y2 = 600 }]
+                Map = MapType.Trammel, Name = "Covetous",
+                Areas = [new RegionAreaContent { X1 = 2400, Y1 = 400, X2 = 2600, Y2 = 600 }]
             }
         )
     );
+
     private readonly StubLineOfSightService _sight = new();
     private readonly StubMovementService _movement = new() { SpawnZ = (x, _) => x == 1600 ? 7 : null };
     private readonly StubWeatherService _weather = new();
     private readonly StubSeasonService _seasons = new();
+    private readonly RecordingLightService _light = new();
     private readonly ControlledBroadcastService _broadcast = new();
     private BroadcastFixture _fixture = null!;
 
     public WorldModuleTests()
     {
-        _sectors.Add(new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) });
+        _sectors.Add(
+            new MobileEntity
+                { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) }
+        );
         _sectors.Add(
             new MobileEntity
             {
-                Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca, Location = new Point3D(1400, 1600, 0)
+                Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Felucca,
+                Location = new Point3D(1400, 1600, 0)
             }
         );
     }
@@ -89,11 +97,6 @@ public sealed class WorldModuleTests : IAsyncLifetime
         _items.Add([backpack, pouch, key, bank, banked]);
         var gm = await _fixture.AddAsync(3);
         await _fixture.Network.ExecuteOnLoopAsync(() => gm.Set(SessionKeys.AccountType, AccountType.GameMaster));
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
     }
 
     [Theory,
@@ -156,7 +159,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
     [Fact]
     public void Region_NamesTheRegionOfAPlace()
     {
-        var result = Run("return world.region('Trammel', 1500, 1600, 0), world.region('Trammel', 3000, 3000, 0), world.region('Trammel', 1500, 1600, 500)");
+        var result = Run(
+            "return world.region('Trammel', 1500, 1600, 0), world.region('Trammel', 3000, 3000, 0), world.region('Trammel', 1500, 1600, 500)"
+        );
 
         Assert.Equal("Britain", result[0].Read<string>());
         Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[1], result[2]));
@@ -181,7 +186,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
         items.Add([gold]);
         items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1601, 1600, 0));
 
-        var result = Run("local found = world.items_in_range('Trammel', 1600, 1600, 1) return #found, found[1], #world.items_in_range('Trammel', 1500, 1600, 1)");
+        var result = Run(
+            "local found = world.items_in_range('Trammel', 1600, 1600, 1) return #found, found[1], #world.items_in_range('Trammel', 1500, 1600, 1)"
+        );
 
         Assert.Equal([1, 0x40000050, 0], result.Select(value => value.Read<long>()));
     }
@@ -209,10 +216,27 @@ public sealed class WorldModuleTests : IAsyncLifetime
     [Fact]
     public void StandingZ_IsWhereAMobileCanStand_OrNil()
     {
-        var result = Run("return world.standing_z('Trammel', 1600, 1600, 20), world.standing_z('Trammel', 1601, 1600, 20), world.standing_z('Trammel', -5, 1600, 20)");
+        var result = Run(
+            "return world.standing_z('Trammel', 1600, 1600, 20), world.standing_z('Trammel', 1601, 1600, 20), world.standing_z('Trammel', -5, 1600, 20)"
+        );
 
         Assert.Equal(7, result[0].Read<int>());
         Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[1], result[2]));
+    }
+
+    [Fact]
+    public void SpotBeside_IsATileAStepAway_ThatCanBeSteppedOn_OrNil()
+    {
+        var result = Run("local spot = world.spot_beside('Trammel', 1600, 1600, 0) return spot.map, spot.x, spot.y, spot.z");
+
+        Assert.Equal((int)MapType.Trammel, result[0].Read<int>());
+        Assert.Equal(1, Math.Max(Math.Abs(result[1].Read<int>() - 1600), Math.Abs(result[2].Read<int>() - 1600)));
+        Assert.Equal(0, result[3].Read<int>());
+
+        _movement.Allow = false;
+
+        Assert.Equal(LuaValue.Nil, Run("return world.spot_beside('Trammel', 1600, 1600, 0)")[0]);
+        Assert.Equal(LuaValue.Nil, Run("return world.spot_beside('Trammel', -5, 1600, 0)")[0]);
     }
 
     [Fact]
@@ -230,6 +254,174 @@ public sealed class WorldModuleTests : IAsyncLifetime
         Assert.Equal((40, 12), (result[1].Read<int>(), result[2].Read<int>()));
         Assert.Equal(LuaValue.Nil, result[3]);
         Assert.True(result[4].Read<bool>());
+    }
+
+    [Fact]
+    public void LightHere_IsTheLevelOfThePlayer_AndGlobalLightTheOverrideOrNil()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        var before = Run("return world.light_here(2), world.global_light(), world.light_here(256)");
+        _light.SetOverride(26);
+        var after = Run("return world.light_here(2), world.global_light()");
+
+        Assert.Equal((0, LuaValue.Nil, LuaValue.Nil), (before[0].Read<int>(), before[1], before[2]));
+        Assert.Equal((26, 26), (after[0].Read<int>(), after[1].Read<int>()));
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(12)]
+    [InlineData(31)]
+    public void SetGlobalLight_GivesEveryPlayerThatLevel(int level)
+    {
+        Assert.True(Run($"return world.set_global_light({level})")[0].Read<bool>());
+
+        Assert.Equal(level, _light.Override);
+    }
+
+    [Theory]
+    [InlineData(-1)]
+    [InlineData(32)]
+    public void SetGlobalLight_ALevelOutOfRange_ChangesNothing(int level)
+    {
+        Assert.False(Run($"return world.set_global_light({level})")[0].Read<bool>());
+
+        Assert.Equal(0, _light.Calls);
+    }
+
+    [Fact]
+    public void ClearGlobalLight_GoesBackToTheTimeOfDay()
+    {
+        _light.SetOverride(26);
+
+        Assert.True(Run("return world.clear_global_light()")[0].Read<bool>());
+
+        Assert.Null(_light.Override);
+    }
+
+    [Fact]
+    public void SeasonHere_IsTheSeasonTheClientOfThePlayerShows()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        var result = Run("return world.season_here(2) == SeasonType.Fall, world.season_here(256), world.season_here(0)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal([LuaValue.Nil, LuaValue.Nil], result[1..]);
+    }
+
+    [Theory]
+    [InlineData("SeasonType.Spring", SeasonType.Spring)]
+    [InlineData("SeasonType.Summer", SeasonType.Summer)]
+    [InlineData("SeasonType.Fall", SeasonType.Fall)]
+    [InlineData("SeasonType.Winter", SeasonType.Winter)]
+    [InlineData("SeasonType.Desolation", SeasonType.Desolation)]
+    public void SetSeason_SetsTheSeasonOfTheMapOfThePlayer(string season, SeasonType expected)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        Assert.True(Run($"return world.set_season(2, {season})")[0].Read<bool>());
+
+        Assert.Equal([(aria.Map, (SeasonType?)expected)], _seasons.Overrides);
+    }
+
+    [Fact]
+    public void ClearSeason_GivesTheMapItsOwnSeasonBack()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        Assert.True(Run("return world.clear_season(2)")[0].Read<bool>());
+
+        Assert.Equal([(aria.Map, (SeasonType?)null)], _seasons.Overrides);
+    }
+
+    [Theory]
+    [InlineData("world.set_season(256, SeasonType.Winter)")]
+    [InlineData("world.set_season(0, SeasonType.Winter)")]
+    [InlineData("world.set_season(2, SeasonType.Winter)")]
+    [InlineData("world.clear_season(256)")]
+    [InlineData("world.clear_season(2)")]
+    public void SetSeasonAndClearSeason_AnNpcOrAnUnknownPlayer_ChangeNothing(string call)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var npc));
+        npc.AccountId = null;
+
+        Assert.False(Run($"return {call}")[0].Read<bool>());
+
+        Assert.Empty(_seasons.Overrides);
+    }
+
+    [Fact]
+    public void SetSeason_AKindThatDoesNotExist_IsAScriptError()
+    {
+        Assert.Throws<LuaRuntimeException>(() => Run("return world.set_season(2, 9)"));
+
+        Assert.Empty(_seasons.Overrides);
+    }
+
+    [Fact]
+    public void WeatherProfile_IsTheNameOfTheProfileThePlayerStandsIn()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        var result = Run(
+            "return world.weather_profile(2), world.weather_profile(256), world.weather_profile(0), world.weather_profile(-1)"
+        );
+
+        Assert.Equal("temperate", result[0].Read<string>());
+        Assert.Equal([LuaValue.Nil, LuaValue.Nil, LuaValue.Nil], result[1..]);
+    }
+
+    [Fact]
+    public void WeatherProfile_OfAnNpc_IsNil()
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var orc));
+        orc.AccountId = null;
+
+        Assert.Equal(LuaValue.Nil, Run("return world.weather_profile(2)")[0]);
+    }
+
+    [Theory]
+    [InlineData("WeatherKindType.None", WeatherKindType.None)]
+    [InlineData("WeatherKindType.Rain", WeatherKindType.Rain)]
+    [InlineData("WeatherKindType.Snow", WeatherKindType.Snow)]
+    [InlineData("WeatherKindType.Storm", WeatherKindType.Storm)]
+    public void SetWeather_ForcesTheKindOnTheProfileOfThePlayer(string kind, WeatherKindType expected)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        aria.AccountId = new Serial(0x42);
+
+        Assert.True(Run($"return world.set_weather(2, {kind})")[0].Read<bool>());
+
+        Assert.Equal([("temperate", expected)], _weather.Forced);
+    }
+
+    [Theory]
+    [InlineData("world.set_weather(256, WeatherKindType.Rain)")]
+    [InlineData("world.set_weather(0, WeatherKindType.Rain)")]
+    [InlineData("world.set_weather(2, WeatherKindType.Rain)")]
+    public void SetWeather_ANpcOrAnUnknownPlayer_ForcesNothing(string call)
+    {
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var npc));
+        npc.AccountId = null;
+
+        Assert.False(Run($"return {call}")[0].Read<bool>());
+
+        Assert.Empty(_weather.Forced);
+    }
+
+    [Fact]
+    public void SetWeather_AKindThatDoesNotExist_IsAScriptError_AndForcesNothing()
+    {
+        Assert.Throws<LuaRuntimeException>(() => Run("return world.set_weather(2, 7)"));
+
+        Assert.Empty(_weather.Forced);
     }
 
     [Fact]
@@ -287,7 +479,22 @@ public sealed class WorldModuleTests : IAsyncLifetime
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
         binder.Bind(
             state,
-            new WorldModule(_sectors, _clock, _fixture.Sessions, _items, _regions, _sight, _movement, _weather, _seasons, _broadcast, _fixture.Mobiles, _time, _props)
+            new WorldModule(
+                _sectors,
+                _clock,
+                _fixture.Sessions,
+                _items,
+                _regions,
+                _sight,
+                _movement,
+                _weather,
+                _seasons,
+                _broadcast,
+                _fixture.Mobiles,
+                _time,
+                _props,
+                _light
+            )
         );
         binder.BindEnum(state, typeof(MapType));
         binder.BindEnum(state, typeof(MoonPhaseType));
@@ -297,5 +504,10 @@ public sealed class WorldModuleTests : IAsyncLifetime
         state.OpenTableLibrary();
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

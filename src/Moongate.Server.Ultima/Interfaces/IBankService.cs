@@ -1,6 +1,7 @@
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Bank;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
@@ -32,4 +33,50 @@ public interface IBankService : ISessionClosedListener
     ///     a bank box; inside one, only its owner while it is open, or a game master or above.
     /// </summary>
     bool CanAccess(GameSession session, MobileEntity character, ItemEntity item);
+
+    /// <summary>
+    ///     Gets the gold in the player's bank: the coins and the worth of the checks anywhere inside its bank box, bags
+    ///     included; 0 for a player
+    ///     with no bank box yet, null for an NPC.
+    /// </summary>
+    int? Balance(MobileEntity player);
+
+    /// <summary>
+    ///     Moves that many coins from the player's bank to its backpack, onto a pile already there when it fits; when
+    ///     the coins of the bank are not enough the checks give the rest, the last one keeping what is left of it. All
+    ///     or nothing: a refusal moves nothing. The player need not have the box open. A backpack already at its weight
+    ///     takes nothing; any other takes the gold whatever it weighs, as ModernUO.
+    /// </summary>
+    BankResultType Withdraw(MobileEntity player, int amount);
+
+    /// <summary>
+    ///     Moves that many coins from the player's backpack and its bags to its bank box, topping up the piles of the
+    ///     box and then making piles of 60000. All or nothing: a refusal moves nothing.
+    /// </summary>
+    BankResultType Deposit(MobileEntity player, int amount);
+
+    /// <summary>
+    ///     Writes a bank check worth <paramref name="amount" />, between the two bounds of the settings, paid with the
+    ///     coins of the player's bank and put in its bank box. All or nothing.
+    /// </summary>
+    BankResultType WriteCheck(MobileEntity player, int amount);
+
+    /// <summary>
+    ///     Turns a bank check lying inside the player's bank box, at any depth, into coins of the box: the piles there
+    ///     are topped up, then piles of 60000 are made. A box with room for part of it takes what fits and the check
+    ///     keeps the rest; <paramref name="deposited" /> is what went in.
+    /// </summary>
+    BankResultType Cash(MobileEntity player, ItemEntity check, out int deposited);
+
+    /// <summary>
+    ///     Puts a gold pile or a bank check into the bank box of <paramref name="player" />, as when it is handed to a
+    ///     banker: the gold tops up the piles of the box and what is left is a pile of its own; a check goes in worth
+    ///     the same. All or nothing. The item is the player's, or nobody's (on the ground), and on no cursor.
+    /// </summary>
+    BankResultType DepositItem(MobileEntity player, ItemEntity item);
+
+    /// <summary>
+    ///     Gets what a bank check is worth; null for an item that is not one.
+    /// </summary>
+    long? WorthOf(ItemEntity item);
 }

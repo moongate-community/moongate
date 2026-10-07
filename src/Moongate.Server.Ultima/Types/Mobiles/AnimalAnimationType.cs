@@ -1,7 +1,8 @@
 namespace Moongate.Server.Ultima.Types.Mobiles;
 
 /// <summary>
-///     The actions of an animal body, by their number in the client's animation files (UOFiddler's names): what <c>mobile.animate</c> plays on a cat, a horse or a bird.
+///     The actions of an animal body, by their number in the client's animation files (UOFiddler's names): what
+///     <c>mobile.animate</c> plays on a cat, a horse or a bird.
 /// </summary>
 public enum AnimalAnimationType
 {

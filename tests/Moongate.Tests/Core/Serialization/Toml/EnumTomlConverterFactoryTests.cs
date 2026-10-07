@@ -65,11 +65,14 @@ public sealed class EnumTomlConverterFactoryTests
 
         var back = TomlUtils.Deserialize<EnumHolder>(TomlUtils.Serialize(original))!;
 
-        Assert.Equal((original.Account, original.After, original.Optional, original.Flags, original.Last),
-            (back.Account, back.After, back.Optional, back.Flags, back.Last));
+        Assert.Equal(
+            (original.Account, original.After, original.Optional, original.Flags, original.Last),
+            (back.Account, back.After, back.Optional, back.Flags, back.Last)
+        );
     }
 
-    [Theory, InlineData("account = 1"), InlineData("account = 7"), InlineData("account = \"1\""), InlineData("account = \"admin\""), InlineData("flags = \"wet|\"")]
+    [Theory, InlineData("account = 1"), InlineData("account = 7"), InlineData("account = \"1\""),
+     InlineData("account = \"admin\""), InlineData("flags = \"wet|\"")]
     public void Deserialize_ANumberOrAnUnknownName_Throws(string toml)
     {
         Assert.ThrowsAny<Exception>(() => TomlUtils.Deserialize<EnumHolder>(toml));

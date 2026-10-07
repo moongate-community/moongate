@@ -9,8 +9,8 @@ using Moongate.Scripting.Internal;
 namespace Moongate.Scripting.Binding;
 
 /// <summary>
-///     Turns a [ScriptModule] instance into a Lua table. Reflection runs here, once; the delegates it builds never
-///     reflect.
+///     Turns a [ScriptModule] instance into a Lua table. <see cref="LuaModuleDescriber" /> reflects the module once;
+///     the delegates built here never reflect.
 /// </summary>
 public sealed class LuaModuleBinder
 {
@@ -183,9 +183,12 @@ public sealed class LuaModuleBinder
                     {
                         if (!parameter.HasDefaultValue)
                         {
+                            // Safe: parameters of a bound method always carry a name.
                             throw new LuaRuntimeException(
                                 context.State,
-                                new LuaValue($"bad argument #{i + 1} to '{qualified}' ({parameter.Name} is required)")
+                                new LuaValue(
+                                    $"bad argument #{i + 1} to '{qualified}' ({ToSnakeCase(parameter.Name!)} is required)"
+                                )
                             );
                         }
 
@@ -209,6 +212,7 @@ public sealed class LuaModuleBinder
 
                 if (hasParams)
                 {
+                    // Safe: the last parameter is a params array, so it has an element type.
                     var elementType = parameters[^1].ParameterType.GetElementType()!;
                     var extra = Math.Max(0, context.ArgumentCount - fixedCount);
                     var rest = Array.CreateInstance(elementType, extra);

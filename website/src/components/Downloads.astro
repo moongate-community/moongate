@@ -1,6 +1,7 @@
 ---
 import manifest from '../../../.release-please-manifest.json';
 
+const italian = Astro.locals.starlightRoute.locale === 'it';
 const version = manifest['.'];
 const releaseUrl = `https://github.com/moongate-community/moongate/releases/tag/v${version}`;
 const downloadUrl = `https://github.com/moongate-community/moongate/releases/download/v${version}`;
@@ -12,9 +13,9 @@ const platforms = [
 ];
 ---
 
-<p>Release <strong>v{version}</strong>. These archives include the .NET runtime.</p>
+<p>Release <strong>v{version}</strong>. {italian ? 'Questi archivi includono il runtime .NET.' : 'These archives include the .NET runtime.'}</p>
 
-<nav class="docs-paths" aria-label="Release downloads">
+<nav class="docs-paths" aria-label={italian ? 'Download della release' : 'Release downloads'}>
   {platforms.map(({ name, rid, detail }) => (
     <a href={`${downloadUrl}/moongate-${rid}-${version}.tar.gz`}>
       <strong>{name}</strong>
@@ -25,6 +26,6 @@ const platforms = [
 </nav>
 
 <p>
-  <a href={releaseUrl}>Release notes and SHA-256 checksums</a> ·
-  <a href="/start/getting-started/">First-start guide</a>
+  <a href={releaseUrl}>{italian ? 'Note di rilascio e checksum SHA-256' : 'Release notes and SHA-256 checksums'}</a> ·
+  <a href={italian ? '/it/start/getting-started/' : '/start/getting-started/'}>{italian ? 'Guida al primo avvio' : 'First-start guide'}</a>
 </p>

@@ -54,7 +54,10 @@ internal sealed partial class GumpXmlRenderContext
         switch (element.Name.LocalName)
         {
             case "background":
-                _layout.Add(new GumpBackground { X = N("x"), Y = N("y"), GumpId = N("gump"), Width = N("width"), Height = N("height") });
+                _layout.Add(
+                    new GumpBackground
+                        { X = N("x"), Y = N("y"), GumpId = N("gump"), Width = N("width"), Height = N("height") }
+                );
 
                 break;
             case "alpha_region":
@@ -66,7 +69,10 @@ internal sealed partial class GumpXmlRenderContext
 
                 break;
             case "image_tiled":
-                _layout.Add(new GumpImageTiled { X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), GumpId = N("gump") });
+                _layout.Add(
+                    new GumpImageTiled
+                        { X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), GumpId = N("gump") }
+                );
 
                 break;
             case "item":
@@ -81,7 +87,8 @@ internal sealed partial class GumpXmlRenderContext
                 _layout.Add(
                     new GumpLabelCropped
                     {
-                        X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), Hue = N("hue"), Text = Text(element)
+                        X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), Hue = N("hue"),
+                        Text = Text(element)
                     }
                 );
 
@@ -99,7 +106,8 @@ internal sealed partial class GumpXmlRenderContext
                 _layout.Add(
                     new GumpCheckbox
                     {
-                        X = N("x"), Y = N("y"), Off = N("off"), On = N("on"), SwitchId = N("switch"), Checked = Flag(element, "checked")
+                        X = N("x"), Y = N("y"), Off = N("off"), On = N("on"), SwitchId = N("switch"),
+                        Checked = Flag(element, "checked")
                     }
                 );
 
@@ -113,7 +121,8 @@ internal sealed partial class GumpXmlRenderContext
                     _layout.Add(
                         new GumpRadio
                         {
-                            X = Number(radio, "x"), Y = Number(radio, "y"), Off = Number(radio, "off"), On = Number(radio, "on"),
+                            X = Number(radio, "x"), Y = Number(radio, "y"), Off = Number(radio, "off"),
+                            On = Number(radio, "on"),
                             SwitchId = Number(radio, "switch"), Checked = Flag(radio, "checked")
                         }
                     );
@@ -125,7 +134,8 @@ internal sealed partial class GumpXmlRenderContext
                 _layout.Add(
                     new GumpTextEntry
                     {
-                        X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), Hue = N("hue"), EntryId = N("entry"),
+                        X = N("x"), Y = N("y"), Width = N("width"), Height = N("height"), Hue = N("hue"),
+                        EntryId = N("entry"),
                         Text = Fill(Plain(element.Value)), MaxLength = N("max_length")
                     }
                 );
@@ -136,10 +146,15 @@ internal sealed partial class GumpXmlRenderContext
 
                 break;
             case "item_property":
+                // Safe: the XSD requires the serial attribute.
                 _layout.Add(
                     new GumpItemProperty
                     {
-                        Serial = uint.TryParse(Fill(element.Attribute("serial")!.Value), CultureInfo.InvariantCulture, out var serial)
+                        Serial = uint.TryParse(
+                            Fill(element.Attribute("serial")!.Value),
+                            CultureInfo.InvariantCulture,
+                            out var serial
+                        )
                             ? serial
                             : 0
                     }
@@ -189,11 +204,17 @@ internal sealed partial class GumpXmlRenderContext
 
     private void AddButton(XElement element)
     {
-        var button = new GumpButton { X = Number(element, "x"), Y = Number(element, "y"), Up = Number(element, "up"), Down = Number(element, "down") };
+        var button = new GumpButton
+        {
+            X = Number(element, "x"), Y = Number(element, "y"), Up = Number(element, "up"), Down = Number(element, "down")
+        };
 
         if (element.Attribute("page") is not null)
         {
-            _layout.Add(new GumpButton { X = button.X, Y = button.Y, Up = button.Up, Down = button.Down, Page = Number(element, "page") });
+            _layout.Add(
+                new GumpButton
+                    { X = button.X, Y = button.Y, Up = button.Up, Down = button.Down, Page = Number(element, "page") }
+            );
 
             return;
         }

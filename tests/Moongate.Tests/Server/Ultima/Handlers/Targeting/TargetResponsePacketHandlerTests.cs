@@ -27,10 +27,12 @@ public sealed class TargetResponsePacketHandlerTests : IAsyncDisposable
     private readonly StubMovementService _movement = new() { LandingZ = 7 };
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly ItemService _items = TestItems.Create();
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(2), Name = "Aria", Map = MapType.Felucca, Location = new Point3D(5, 5, 0)
     };
+
     private readonly List<TargetResult> _results = [];
 
     private SessionFixture _fixture = null!;
@@ -171,8 +173,7 @@ public sealed class TargetResponsePacketHandlerTests : IAsyncDisposable
     public async Task Handle_ACallbackThatThrows_LeavesNothingPending()
     {
         await StartAsync();
-        await _fixture.ExecuteOnLoopAsync(
-            () => _targets.Begin(
+        await _fixture.ExecuteOnLoopAsync(() => _targets.Begin(
                 _session,
                 TargetCursorType.Location,
                 TargetFlagsType.Neutral,
@@ -204,7 +205,13 @@ public sealed class TargetResponsePacketHandlerTests : IAsyncDisposable
     private async Task PendingAsync()
     {
         await StartAsync();
-        await _fixture.ExecuteOnLoopAsync(() => _targets.Begin(_session, TargetCursorType.Location, TargetFlagsType.Neutral, Record));
+        await _fixture.ExecuteOnLoopAsync(() => _targets.Begin(
+                _session,
+                TargetCursorType.Location,
+                TargetFlagsType.Neutral,
+                Record
+            )
+        );
     }
 
     private Task RespondAsync(int id, uint serial, short x, short y, sbyte z, ushort graphic)

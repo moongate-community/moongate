@@ -14,18 +14,20 @@ public sealed class DecorationsLoaderTests
         "locations = [[1411, 1621, 30], [1411, 1622, -5]]\n";
 
     [Fact]
-    public async Task LoadAsync_SkipsUnderscoreFolders_ButLoadsUnderscoreFiles_AndResolvesTheMaps()
+    public async Task LoadAsync_SkipsUnderscoreFoldersAndFiles_AndResolvesTheMaps()
     {
         using var root = new TemporaryDirectory();
         root.CreateFile("templates/decorations/britannia/britain.toml", Door);
-        root.CreateFile("templates/decorations/britannia/_covetous.toml", Door);
+        root.CreateFile("templates/decorations/britannia/covetous.toml", Door);
+        // Set aside by its name, and not even read.
+        root.CreateFile("templates/decorations/britannia/_old_town.toml", "this is not toml");
         root.CreateFile("templates/decorations/malas/luna.toml", Door);
         root.CreateFile("templates/decorations/_bounty_boards/boards.toml", "this is not toml");
 
         var files = await CreateLoader(root).LoadAsync();
 
         Assert.Equal(
-            ["britannia/_covetous", "britannia/britain", "malas/luna"],
+            ["britannia/britain", "britannia/covetous", "malas/luna"],
             files.Select(file => $"{file.Folder}/{file.Name}")
         );
         Assert.Equal([MapType.Trammel, MapType.Felucca], files[1].Maps);
@@ -36,7 +38,10 @@ public sealed class DecorationsLoaderTests
     public async Task LoadAsync_ReadsTheBlocks_KeepingTheScalarPropsAndThePoints()
     {
         using var root = new TemporaryDirectory();
-        root.CreateFile("templates/decorations/trammel/doors.toml", Door + "\n[[decoration]]\ntype = \"AnvilEastAddon\"\nlocations = [[1, 2, 3]]\n");
+        root.CreateFile(
+            "templates/decorations/trammel/doors.toml",
+            Door + "\n[[decoration]]\ntype = \"AnvilEastAddon\"\nlocations = [[1, 2, 3]]\n"
+        );
 
         var blocks = (await CreateLoader(root).LoadAsync()).Single().Blocks;
 
@@ -80,8 +85,15 @@ public sealed class DecorationsLoaderTests
     {
         var files = await new DecorationsLoader(new DirectoriesConfig(RepositoryRoot(), ["templates"])).LoadAsync();
 
-        Assert.DoesNotContain(files, file => file.Folder.StartsWith('_'));
-        Assert.Equal(34282, files.Sum(file => file.Blocks.Sum(block => block.Locations.Count)));
+        Assert.DoesNotContain(files, file => file.Folder.StartsWith('_') || file.Name.StartsWith('_'));
+        // The old Haven of Trammel is set aside: on the client's map that town is a ruin.
+        Assert.DoesNotContain(
+            files,
+            file => file.Folder == "trammel" && file.Name is "haven" or "haven_additions" or "signs"
+        );
+        // The dungeons and the other sets ModernUO names with an underscore are loaded under a plain name.
+        Assert.Contains(files, file => file is { Folder: "britannia", Name: "covetous" });
+        Assert.Equal(32832, files.Sum(file => file.Blocks.Sum(block => block.Locations.Count)));
     }
 
     private static DecorationsLoader CreateLoader(TemporaryDirectory root)

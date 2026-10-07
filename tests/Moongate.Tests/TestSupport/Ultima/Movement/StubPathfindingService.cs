@@ -14,7 +14,8 @@ public sealed class StubPathfindingService : IPathfindingService
 {
     public PathResult Result { get; set; } = new(PathResultType.NotFound, [], default);
 
-    public List<(MapType Map, Point3D From, Point3D To, MovementAbilityType Ability, bool AllowPartial)> Searches { get; } = [];
+    public List<(MapType Map, Point3D From, Point3D To, MovementAbilityType Ability, bool AllowPartial)> Searches { get; } =
+        [];
 
     /// <summary>
     ///     Makes the next searches find these steps.

@@ -1,0 +1,1200 @@
+title = "The Life of a Travelling Minstrel"
+author = "Sarah of Yew"
+content = """  While 'tis true that
+the musician who
+seeketh only to make
+sweet music for
+herself and for
+others needs little
+more than some
+talent, and stern
+
+practice at the chosen
+instrument, those of
+us who seek the open
+road shall find indeed
+that a greater skill is
+required. Herein
+discover those secrets
+which I have learned
+
+over the years as an
+itinerant performer...
+  Once I was in
+Jhelom, and
+accidentally angered a
+bravo of some local
+repute, whose blade
+flickered all too
+
+eagerly near my
+slender neck (for I
+was young then).
+After various threats
+to \"ruin my pretty
+face\" this bravo
+grabbed my arm in a
+most unseemly
+
+fashion and tossed
+me into a barbaric
+enclosure locally
+entitled a dueling pit.
+My plaintive cries
+for help went
+unheeded by the
+guards, for the
+
+inhabitants of Jhelom
+are eager indeed to
+measure fighting
+prowess at any time!
+  What saved me was
+the ability to
+improvise a melody
+and tune that
+
+satirized the
+proceedings, and
+sufficiently angered
+an onlooker to prod
+him to coming to my
+defense. Once that
+fight was underway,
+I was able to make
+
+good my escape.
+Hence, I regard the
+ability to incite fights
+as indispensable to
+the prudent bard.
+  Upon another
+occasion, 'twas the
+obverse side of that
+
+coin which saved me,
+for I was being held
+prisoner by a
+particularly nasty
+band of ruffians who
+had seized me
+unawares from the
+road to Vesper.
+
+  They had worked
+themselves into a
+frenzy and were
+ready to attack and I
+fear, tear me limb
+from limb, when I
+began to sing
+frantically, tapping
+
+my falled drum with
+my tied up feet. The
+melody developed into
+a soothing one, and
+the brigands slowly
+calmed down to the
+extent of apologizing,
+and they let me go!
+
+  A final example I
+would pray you grant
+your attention: once I
+was lost upon a large
+isle far to the east of
+the mainland, well
+beyond Serpent's
+Hold, where lava
+
+made its sluggish
+way across the
+surface landscape.
+And this accursed
+land was filled with
+vile beasts and
+cunning dragons.
+  I was being pursued
+
+by one of said fell
+dragons when I found
+myself trapped. I
+quickly skirted a
+bubbling pool of molten
+rock and attempted to
+hide.
+  The dragon scented
+
+me and was
+preparing to skirt the
+pool, when I began to
+play a lusty tune
+upon my lute that
+attracted its attention.
+Mesmerized and
+enticed by the
+
+melody, it stepped
+directly toward sme,
+and into the
+lava-where its foot
+was so burned that it
+quickly hopped away,
+undignified and
+annoyed.
+
+  'Tis my fond hope
+that other travelling
+minstrels shall learn
+from my experiences
+and apply themselves
+to practicing these
+skills in order to
+preserve life and
+
+limb."""
+item_template = "readable_book"
+item_id = 0x0FEF
+[translations]
+[translations.cze]
+title = "Život potulné pěvkyně"
+content = """Ačkoli je pravda, že
+hudebnice toužící jen
+vytvářet lahodnou hudbu
+pro sebe i ostatní
+potřebuje sotva více než
+trochu nadání a pilné
+
+cvičení na zvolený
+nástroj, ti z nás, kteří
+vyhledávají otevřené
+cesty, zjistí, že je
+třeba větších
+dovedností. Zde objevíte
+tajemství, která jsem
+poznala
+
+během let jako potulná
+umělkyně...
+Jednou jsem byla v
+Jhelom a náhodou
+rozhněvala rváče jisté
+místní proslulosti,
+jehož čepel se míhala až
+příliš
+
+dychtivě u mého útlého
+krku (tehdy jsem totiž
+byla mladá). Po několika
+výhrůžkách, že mi „zkazí
+hezkou tvář“, mě ten
+rváč velmi nepatřičně
+popadl za paži
+
+a hodil do barbarského
+ohrazení, jemuž se tam
+říká soubojová jáma.
+Stráže nedbaly mých
+žalostných proseb o
+pomoc, neboť
+
+obyvatelé Jhelom jsou
+vskutku dychtivi kdykoli
+poměřovat bojovou
+zdatnost!
+Zachránila mě schopnost
+vymyslet melodii a
+píseň, která
+
+zesměšňovala toto dění a
+dostatečně rozhněvala
+jednoho přihlížejícího,
+aby jej přiměla
+vystoupit na mou obranu.
+Jakmile začala ta
+rvačka, mohla jsem
+
+zdárně uniknout. Proto
+pokládám schopnost
+podněcovat rvačky za
+nezbytnou pro
+obezřetného barda.
+Při jiné příležitosti mě
+zachránila opačná strana
+téže
+
+mince: držela mě v
+zajetí obzvláště odporná
+tlupa násilníků, kteří
+mě nečekaně přepadli na
+cestě do Vesper.
+
+Vybičovali se k
+zuřivosti a chystali se
+zaútočit a obávám se, že
+mě roztrhat na kusy,
+když jsem horečně začala
+zpívat a klepat
+
+svázanýma nohama na svůj
+spadlý buben. Melodie
+přešla v konejšivou a
+lupiči se pomalu
+uklidnili natolik, že se
+omluvili a pustili mě!
+
+Prosím, věnujte
+pozornost poslednímu
+příkladu: jednou jsem se
+ztratila na velikém
+ostrově daleko na východ
+od pevniny, daleko za
+Serpent's Hold, kde si
+láva
+
+líně razila cestu po
+povrchu krajiny. A tato
+prokletá země byla plná
+odporných bestií a
+vychytralých draků.
+Pronásledoval mě
+
+jeden z těchto
+strašlivých draků, když
+jsem se ocitla v pasti.
+Rychle jsem obešla
+bublající tůň roztavené
+horniny a pokusila se
+ukrýt.
+Drak mě ucítil
+
+a chystal se obejít tůň,
+když jsem začala hrát na
+loutnu bujarou melodii,
+která upoutala jeho
+pozornost. Očarován a
+přilákán
+
+melodií vykročil přímo
+ke mně a do lávy –
+popálil si nohu tak, že
+rychle odskákal pryč,
+nedůstojně a rozmrzele.
+
+Vroucně doufám, že se
+ostatní potulní pěvci
+poučí z mých zkušeností
+a budou pilně cvičit
+tyto dovednosti, aby si
+zachovali život i
+
+zdravé údy."""
+[translations.fre]
+title = "La vie d’une ménestrelle itinérante"
+content = """S’il est vrai que la
+musicienne qui cherche
+seulement à produire une
+douce musique pour
+elle-même et pour les
+autres n’a besoin que
+d’un peu de talent et
+d’une rigoureuse
+
+pratique de l’instrument
+choisi, celles d’entre
+nous qui cherchent les
+grands chemins
+découvriront qu’un
+savoir-faire plus grand
+est nécessaire. Vous
+trouverez ici les
+secrets que j’ai appris
+
+au fil des années comme
+artiste itinérante...
+Une fois, à Jhelom,
+j’irritai
+accidentellement un
+fier-à-bras de quelque
+réputation locale, dont
+la lame voltigeait bien
+trop
+
+avidement près de mon
+cou délicat (car j’étais
+jeune alors). Après
+diverses menaces de «
+ruiner ma jolie figure
+», ce fier-à-bras me
+saisit le bras d’une
+manière fort
+inconvenante
+
+et me jeta dans un
+enclos barbare nommé
+localement fosse de
+duel. Les gardes ne
+prêtèrent aucune
+attention à mes appels
+plaintifs à l’aide, car
+les
+
+habitants de Jhelom sont
+vraiment impatients de
+mesurer les prouesses
+guerrières à toute
+occasion ! Ce qui me
+sauva fut la faculté
+d’improviser une mélodie
+et un air qui
+
+tournaient les
+événements en dérision
+et irritèrent
+suffisamment un
+spectateur pour le
+pousser à venir me
+défendre. Une fois le
+combat engagé, je pus
+réussir
+
+mon évasion. Aussi
+considéré-je la faculté
+de provoquer des combats
+comme indispensable au
+barde prudent. En une
+autre occasion, ce fut
+le revers de cette
+
+médaille qui me sauva,
+car j’étais retenue
+prisonnière par une
+bande de voyous
+particulièrement odieux
+qui m’avaient saisie à
+l’improviste sur la
+route de Vesper.
+
+Ils s’étaient mis dans
+une fureur extrême et
+étaient prêts à attaquer
+et, je le crains, à me
+démembrer, lorsque je
+commençai à chanter
+frénétiquement en
+frappant
+
+mon tambour tombé à
+terre avec mes pieds
+entravés. La mélodie
+prit un tour apaisant,
+et les brigands se
+calmèrent lentement
+jusqu’à présenter leurs
+excuses, puis ils me
+laissèrent partir !
+
+Je vous prie de prêter
+attention à un dernier
+exemple : une fois,
+j’étais perdue sur une
+grande île loin à l’est
+du continent, bien
+au-delà de Serpent’s
+Hold, où la lave
+
+rampait paresseusement à
+la surface du paysage.
+Et cette terre maudite
+était peuplée de bêtes
+ignobles et de dragons
+rusés. J’étais
+poursuivie
+
+par l’un de ces dragons
+féroces lorsque je me
+retrouvai piégée. Je
+contournai rapidement
+une mare bouillonnante
+de roche fondue et
+tentai de me cacher. Le
+dragon me flaira
+
+et s’apprêtait à
+contourner la mare
+lorsque je me mis à
+jouer sur mon luth un
+air vigoureux qui attira
+son attention. Envoûté
+et séduit par la
+
+mélodie, il avança droit
+vers moi et entra dans
+la lave, où sa patte fut
+si brûlée qu’il détala
+rapidement en
+sautillant, sans dignité
+et fort contrarié.
+
+Mon espoir le plus cher
+est que les autres
+ménestrels itinérants
+apprennent de mes
+expériences et
+s’appliquent à pratiquer
+ces talents afin de
+préserver leur vie et
+leurs
+
+membres."""
+[translations.ger]
+title = "Das Leben einer reisenden Spielmannsfrau"
+content = """Zwar braucht eine
+Musikerin, die nur für
+sich und andere
+liebliche Musik machen
+will, wenig mehr als
+etwas Begabung und
+strenge
+
+Übung auf dem gewählten
+Instrument, doch jene
+von uns, die die offene
+Straße suchen, werden
+feststellen, dass
+größeres Können
+erforderlich ist. Hier
+findet Ihr jene
+Geheimnisse, die ich
+
+im Lauf meiner Jahre als
+reisende Künstlerin
+gelernt habe ...
+Einmal war ich in Jhelom
+und erzürnte
+versehentlich einen dort
+nicht unbekannten
+Raufbold, dessen Klinge
+allzu
+
+eifrig nahe an meinem
+schlanken Hals
+aufblitzte (denn damals
+war ich jung). Nach
+allerlei Drohungen,
+„mein hübsches Gesicht
+zu verderben“, packte
+dieser Raufbold meinen
+Arm auf höchst
+unziemliche
+
+Weise und warf mich in
+eine barbarische
+Einfriedung, die man
+dort eine Duellgrube
+nennt. Meine kläglichen
+Hilferufe blieben bei
+den Wachen ungehört,
+denn die
+
+Bewohner Jheloms sind
+wahrlich jederzeit
+darauf erpicht, ihre
+Kampfkraft zu messen!
+Was mich rettete, war
+die Fähigkeit, eine
+Melodie und Weise zu
+ersinnen, die
+
+das Geschehen
+verspottete und einen
+Zuschauer so sehr
+erzürnte, dass sie ihn
+dazu bewegte, mich zu
+verteidigen. Sobald
+dieser Kampf im Gange
+war, konnte ich
+
+meine Flucht
+vollbringen. Daher halte
+ich die Fähigkeit,
+Kämpfe anzustiften, für
+den besonnenen Barden
+für unerlässlich.
+Bei einer anderen
+Gelegenheit rettete mich
+die Kehrseite dieser
+
+Münze, denn eine
+besonders üble Schar von
+Raufbolden hielt mich
+gefangen, nachdem sie
+mich auf der Straße nach
+Vesper unversehens
+gepackt hatte.
+
+Sie hatten sich in
+Raserei hineingesteigert
+und waren bereit
+anzugreifen und mich, so
+fürchtete ich, Glied für
+Glied zu zerreißen, als
+ich verzweifelt zu
+singen begann und
+
+mit meinen
+zusammengebundenen Füßen
+auf meine
+heruntergefallene
+Trommel klopfte. Die
+Melodie wurde
+beruhigend, und die
+Räuber wurden langsam so
+friedlich, dass sie sich
+entschuldigten und mich
+gehen ließen!
+
+Einem letzten Beispiel
+bitte ich Eure
+Aufmerksamkeit zu
+schenken: Einmal war ich
+auf einer großen Insel
+weit östlich des
+Festlands verirrt, weit
+jenseits von Serpent's
+Hold, wo Lava
+
+träge über die
+Landschaft kroch. Und
+dieses verfluchte Land
+war voller abscheulicher
+Bestien und listiger
+Drachen.
+Einer jener bösen
+Drachen verfolgte mich,
+
+als ich mich plötzlich
+in der Falle sah. Rasch
+umrundete ich einen
+brodelnden Teich
+geschmolzenen Gesteins
+und versuchte mich zu
+verstecken.
+Der Drache witterte
+
+mich und war gerade
+dabei, den Teich zu
+umgehen, als ich auf
+meiner Laute eine
+kräftige Weise zu
+spielen begann, die
+seine Aufmerksamkeit
+weckte. Gebannt und
+verlockt von der
+
+Melodie trat er direkt
+auf mich zu und in die
+Lava – dort verbrannte
+er sich den Fuß so sehr,
+dass er rasch
+davonsprang, würdelos
+und verärgert.
+
+Es ist meine innige
+Hoffnung, dass andere
+reisende Spielleute aus
+meinen Erfahrungen
+lernen und sich in
+diesen Fertigkeiten
+üben, um Leib und
+
+Leben zu bewahren."""
+[translations.ita]
+title = "La vita di una menestrella itinerante"
+content = """Sebbene sia vero che la
+musicista che cerca solo
+di fare dolce musica per
+sé e per gli altri ha
+bisogno di poco più che
+talento e rigorosa
+
+pratica con lo strumento
+scelto, quelli fra noi
+che cercano la strada
+aperta scopriranno
+davvero che occorre una
+maggiore abilità. Qui
+scoprirete quei segreti
+che ho imparato
+
+negli anni come artista
+itinerante...
+Una volta ero a Jhelom e
+per sbaglio feci
+infuriare uno spadaccino
+di una certa fama
+locale, la cui lama
+guizzava fin troppo
+
+avidamente vicino al mio
+collo sottile (poiché
+allora ero giovane).
+Dopo varie minacce di
+«rovinare il mio bel
+visino», questo
+spadaccino mi afferrò il
+braccio in un modo assai
+
+sconveniente e mi gettò
+in un recinto barbarico
+chiamato localmente
+fossa dei duelli. Le mie
+pietose grida d'aiuto
+furono ignorate dalle
+guardie, poiché gli
+
+abitanti di Jhelom sono
+davvero ansiosi di
+misurare la prodezza in
+combattimento in ogni
+momento!
+Mi salvò la capacità di
+improvvisare una melodia
+e un motivo che
+
+mettessero in satira
+quanto accadeva e
+facessero infuriare
+abbastanza uno
+spettatore da indurlo a
+difendermi. Una volta
+cominciato quel
+combattimento, potei
+riuscire
+
+nella fuga. Dunque
+considero la capacità di
+provocare risse
+indispensabile al bardo
+prudente.
+In un'altra occasione fu
+il rovescio della
+
+medaglia a salvarmi,
+poiché ero tenuta
+prigioniera da una banda
+particolarmente
+spregevole di ruffiani
+che mi avevano presa
+alla sprovvista sulla
+strada per Vesper.
+
+Si erano lasciati
+trascinare in una
+frenesia ed erano pronti
+ad attaccare e, temo, a
+farmi a pezzi, quando
+cominciai a cantare
+freneticamente, battendo
+
+il mio tamburo caduto
+con i piedi legati. La
+melodia divenne
+rasserenante e i
+briganti si calmarono
+lentamente al punto da
+scusarsi, e mi
+lasciarono andare!
+
+Vi prego di prestare
+attenzione a un ultimo
+esempio: una volta mi
+ero persa su una grande
+isola molto a est della
+terraferma, ben oltre
+Serpent's Hold, dove la
+lava
+
+si faceva lentamente
+strada attraverso il
+paesaggio in superficie.
+E questa terra maledetta
+era piena di bestie
+ripugnanti e draghi
+astuti.
+Ero inseguita
+
+da uno di quei draghi
+malvagi quando mi
+ritrovai in trappola.
+Aggirai rapidamente una
+pozza ribollente di
+roccia fusa e tentai di
+nascondermi.
+Il drago fiutò
+
+la mia presenza e si
+preparava ad aggirare la
+pozza, quando cominciai
+a suonare sul liuto un
+motivo vigoroso che ne
+attirò l'attenzione.
+Ipnotizzato e sedotto
+dalla
+
+melodia, avanzò
+direttamente verso di me
+e dentro la lava, dove
+il suo piede si ustionò
+tanto da farlo
+saltellare rapidamente
+via, privo di dignità e
+infastidito.
+
+La mia cara speranza è
+che altri menestrelli
+itineranti imparino
+dalle mie esperienze e
+si dedichino a praticare
+queste abilità per
+salvare la vita e le
+
+membra."""
+[translations.pol]
+title = "Życie wędrownej minstrelki"
+content = """Choć prawdą jest, że
+muzykantka pragnąca
+jedynie tworzyć słodką
+muzykę dla siebie i
+innych potrzebuje
+niewiele więcej niż
+odrobiny talentu i
+wytrwałej
+
+praktyki na wybranym
+instrumencie, ci z nas,
+którzy wybierają
+gościniec, odkryją, że
+potrzeba większych
+umiejętności. Poznajcie
+tu sekrety, których
+nauczyłam się
+
+przez lata jako wędrowna
+artystka...
+Byłam raz w Jhelom i
+przypadkiem rozgniewałam
+zabijakę cieszącego się
+miejscową sławą, którego
+ostrze aż nazbyt
+
+ochoczo błyskało blisko
+mej smukłej szyi (byłam
+bowiem wówczas młoda).
+Po rozmaitych groźbach
+„zniszczenia mej
+ślicznej twarzy” ów
+zabijaka chwycił mnie za
+ramię w nader niegodny
+
+sposób i wrzucił do
+barbarzyńskiego
+ogrodzonego miejsca,
+zwanego tam areną
+pojedynków. Strażnicy
+nie zważali na me
+błagalne wołania o
+pomoc, gdyż
+
+mieszkańcy Jhelom zawsze
+chętnie sprawdzają
+kunszt bojowy!
+Ocaliła mnie zdolność
+zaimprowizowania melodii
+i piosenki, która
+
+wyśmiewała zajście i
+dostatecznie rozgniewała
+jednego z widzów, by
+skłonić go do
+wystąpienia w mej
+obronie. Gdy ta walka
+już trwała, zdołałam
+
+uciec. Dlatego uważam
+umiejętność wzniecania
+bójek za niezbędną dla
+roztropnego barda.
+Innym razem ocaliła mnie
+odwrotna strona tej
+
+monety: trzymała mnie w
+niewoli szczególnie
+paskudna banda łotrów,
+którzy zaskoczyli mnie
+na drodze do Vesper.
+
+Doprowadzili się do
+szału i byli gotowi
+zaatakować oraz, obawiam
+się, rozerwać mnie na
+strzępy, kiedy zaczęłam
+gorączkowo śpiewać,
+wystukując rytm
+
+na upadłym bębnie
+związanymi stopami.
+Melodia stała się
+kojąca, a rozbójnicy
+powoli uspokoili się tak
+bardzo, że przeprosili i
+puścili mnie wolno!
+
+Proszę o uwagę dla
+ostatniego przykładu:
+pewnego razu zgubiłam
+się na dużej wyspie
+daleko na wschód od
+lądu, daleko za
+Serpent's Hold, gdzie
+lawa
+
+sunęła leniwie po
+powierzchni ziemi. A ta
+przeklęta kraina była
+pełna plugawych bestii i
+przebiegłych smoków.
+Ścigał mnie
+
+jeden z tych strasznych
+smoków, kiedy znalazłam
+się w pułapce. Szybko
+obeszłam bulgoczący
+basen stopionej skały i
+spróbowałam się ukryć.
+Smok wywęszył
+
+mnie i szykował się do
+obejścia basenu, gdy
+zaczęłam grać na lutni
+żywą melodię, która
+zwróciła jego uwagę.
+Zauroczony i zwabiony
+
+melodią ruszył prosto ku
+mnie i w lawę — a ta tak
+poparzyła jego stopę, że
+szybko odskoczył,
+pozbawiony godności i
+rozdrażniony.
+
+Żywię szczerą nadzieję,
+że inne wędrowne
+minstrelki nauczą się z
+moich doświadczeń i
+przyłożą do ćwiczenia
+tych umiejętności, aby
+zachować życie i
+
+kończyny."""
+[translations.por]
+title = "A vida de uma menestrel viajante"
+content = """Embora seja verdade que
+a musicista que busca
+apenas fazer doce música
+para si e para os outros
+precisa de pouco mais
+que algum talento e
+rigorosa
+
+prática no instrumento
+escolhido, aqueles de
+nós que procuram a
+estrada aberta
+descobrirão, de fato,
+que uma habilidade maior
+é necessária. Descubra
+aqui os segredos que
+aprendi
+
+ao longo dos anos como
+artista itinerante...
+Certa vez eu estava em
+Jhelom e, sem querer,
+enfureci um valentão de
+certa fama local, cuja
+lâmina lampejava com
+excessiva
+
+ânsia perto do meu
+pescoço delicado (pois
+eu era jovem então).
+Após várias ameaças de
+\"arruinar meu rostinho
+bonito\", esse valentão
+agarrou meu braço de
+maneira extremamente
+indecorosa
+
+e me jogou num recinto
+bárbaro chamado
+localmente de arena de
+duelos. Meus gritos
+lastimosos por ajuda
+foram ignorados pelos
+guardas, pois os
+
+habitantes de Jhelom são
+realmente ávidos por
+medir a destreza em
+combate a qualquer
+momento!
+O que me salvou foi a
+capacidade de improvisar
+uma melodia e uma canção
+que
+
+satirizavam os
+acontecimentos e
+enfureceram um
+espectador o bastante
+para levá-lo a vir em
+minha defesa. Assim que
+aquela luta começou,
+consegui
+
+escapar. Por isso,
+considero a capacidade
+de provocar brigas
+indispensável ao bardo
+prudente.
+Em outra ocasião, foi o
+outro lado dessa
+
+moeda que me salvou,
+pois eu estava sendo
+mantida prisioneira por
+um bando particularmente
+cruel de rufiões que me
+haviam apanhado
+desprevenida na estrada
+para Vesper.
+
+Eles haviam se exaltado
+até o frenesi e estavam
+prontos para atacar e,
+temo, arrancar meus
+membros, quando comecei
+a cantar freneticamente,
+batendo
+
+em meu tambor caído com
+meus pés amarrados. A
+melodia se tornou
+tranquilizadora, e os
+salteadores foram se
+acalmando, a ponto de
+pedir desculpas, e me
+deixaram ir!
+
+Peço que conceda sua
+atenção a um último
+exemplo: certa vez eu
+estava perdida numa
+grande ilha muito a
+leste do continente, bem
+além de Serpent's Hold,
+onde a lava
+
+avançava lentamente pela
+superfície da paisagem.
+E essa terra amaldiçoada
+era cheia de feras vis e
+dragões astutos.
+Eu estava sendo
+perseguida
+
+por um desses terríveis
+dragões quando me vi
+encurralada. Contornei
+rapidamente uma poça
+borbulhante de rocha
+derretida e tentei me
+esconder.
+O dragão farejou
+
+minha presença e se
+preparava para contornar
+a poça quando comecei a
+tocar em meu alaúde uma
+vigorosa melodia que
+atraiu sua atenção.
+Hipnotizado e seduzido
+pela
+
+melodia, ele avançou
+diretamente em minha
+direção e para dentro da
+lava, onde seu pé se
+queimou tanto que ele
+logo saiu aos pulos, sem
+dignidade e aborrecido.
+
+É minha sincera
+esperança que outros
+menestréis viajantes
+aprendam com minhas
+experiências e se
+dediquem à prática
+dessas habilidades para
+preservar a vida e a
+
+integridade do corpo."""
+[translations.spa]
+title = "La vida de una juglaresa itinerante"
+content = """Si bien es cierto que la
+música que solo desea
+hacer dulces melodías
+para sí misma y para
+otros necesita poco más
+que algo de talento y
+una rigurosa
+
+práctica del instrumento
+elegido, quienes
+buscamos el camino
+abierto descubrimos que
+se requiere mayor
+habilidad. Aquí
+encontraréis los
+secretos que he
+aprendido
+
+a lo largo de los años
+como artista
+itinerante... Una vez
+estuve en Jhelom y
+enfadé por accidente a
+un matón de cierta fama
+local, cuya hoja
+centelleaba con excesivo
+
+entusiasmo cerca de mi
+esbelto cuello, pues por
+entonces era joven.
+Después de varias
+amenazas de «arruinar mi
+bonita cara», aquel
+matón me agarró el brazo
+de manera muy
+
+indecorosa y me arrojó a
+un recinto bárbaro que
+allí llaman foso de
+duelos. Los guardias
+desoyeron mis lastimeras
+peticiones de ayuda,
+pues los
+
+habitantes de Jhelom
+están siempre deseosos
+de medir su destreza en
+combate. Me salvó mi
+capacidad de improvisar
+una melodía y una
+canción que
+
+satirizaban lo sucedido
+y enfadaron lo
+suficiente a un
+espectador como para
+impulsarlo a salir en mi
+defensa. Una vez
+iniciada aquella pelea,
+pude
+
+escapar sin problemas.
+Por ello considero
+indispensable para un
+bardo prudente la
+capacidad de provocar
+peleas. En otra ocasión
+fue la otra cara de esa
+
+moneda la que me salvó,
+pues me tenía prisionera
+una banda de rufianes
+particularmente
+desagradables que me
+había apresado por
+sorpresa en el camino a
+Vesper.
+
+Se habían exaltado hasta
+el frenesí y estaban
+dispuestos a atacarme y,
+me temo, a despedazarme,
+cuando empecé a cantar
+desesperadamente,
+golpeando
+
+mi tambor caído con los
+pies atados. La melodía
+se volvió
+tranquilizadora y los
+bandidos fueron
+calmándose hasta llegar
+a disculparse, ¡y me
+dejaron marchar!
+
+Os ruego que prestéis
+atención a un último
+ejemplo: una vez me
+perdí en una gran isla
+muy al este del
+continente, bastante más
+allá de Serpent's Hold,
+donde la lava
+
+se abría paso lentamente
+por el paisaje. Y
+aquella tierra maldita
+estaba llena de bestias
+viles y dragones
+astutos. Me perseguía
+
+uno de aquellos
+terribles dragones
+cuando me encontré
+atrapada. Rodeé deprisa
+una poza burbujeante de
+roca fundida e intenté
+esconderme. El dragón me
+olfateó
+
+y se disponía a bordear
+la poza cuando empecé a
+tocar en mi laúd una
+animada melodía que
+atrajo su atención.
+Hipnotizado y seducido
+por la
+
+melodía, caminó
+directamente hacia mí y
+entró en la lava, donde
+se quemó tanto el pie
+que se alejó rápidamente
+a saltos, indigno y
+molesto.
+
+Espero de corazón que
+otros juglares
+itinerantes aprendan de
+mis experiencias y se
+dediquen a practicar
+estas habilidades para
+conservar la vida y sus
+
+miembros."""

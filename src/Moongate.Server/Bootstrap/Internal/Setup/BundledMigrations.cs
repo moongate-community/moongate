@@ -15,8 +15,8 @@ internal static class BundledMigrations
     public static MigrationCatalog[] Load(string source)
     {
         return new[] { MigrationTarget.Auth, MigrationTarget.World }
-               .Select(target => MigrationCatalog.Load(source, null, target))
-               .ToArray();
+            .Select(target => MigrationCatalog.Load(source, null, target))
+            .ToArray();
     }
 
     /// <summary>
@@ -79,6 +79,7 @@ internal static class BundledMigrations
 
                 // Whole or not at all: a start killed half way must not leave a file the next one takes for a conflict.
                 var temporary = path + ".tmp";
+                // Safe: path is combined with a directory, so it always has a parent.
                 Directory.CreateDirectory(Path.GetDirectoryName(path)!);
                 File.Copy(Path.Combine(source, target, script.FileName), temporary, true);
                 File.Move(temporary, path);

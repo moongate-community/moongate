@@ -49,6 +49,7 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly List<NamedLocation> _places =
     [
         Place(MapType.Felucca, "Towns/Britain", "Bank", 1434, 1699, 2),
@@ -76,7 +77,8 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
 
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
         _scripts.Write("gumps/go.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "go.lua")));
-        var templates = (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
+        var templates =
+            (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
@@ -110,15 +112,22 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<GumpModule>();
         _container.AddScriptModule<LocationsModule>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>((evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
 
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         gumpScripts = new GumpScriptService(_engine, _loop, options);
         await gumpScripts.StartAsync();
@@ -210,7 +219,10 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         Answer(0, 3);
 
         var (player, text) = Assert.Single(_speech.Told);
-        Assert.Equal((new Serial((uint)Staff), "You cannot go to Arena: its map is not loaded or the spot is outside it."), (player.Id, text));
+        Assert.Equal(
+            (new Serial((uint)Staff), "You cannot go to Arena: its map is not loaded or the spot is outside it."),
+            (player.Id, text)
+        );
         Assert.Equal(2, _gumps.Opened.Count);
         Assert.Empty(_errors);
     }
@@ -234,7 +246,7 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         // The heading of the frame is the one text left as it is.
         Assert.Single(System.Text.RegularExpressions.Regex.Matches(built.Layout, @"\{ text "));
         // The path, Back, Towns and Arena.
-        Assert.Equal(4, System.Text.RegularExpressions.Regex.Matches(built.Layout, @"\{ croppedtext ").Count);
+        Assert.Equal(4, System.Text.RegularExpressions.Regex.Count(built.Layout, @"\{ croppedtext "));
     }
 
     [Fact]
@@ -271,14 +283,6 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _container.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     private GumpBuildResult Open(long player, string? path)
     {
         var args = new LuaTable();
@@ -297,10 +301,11 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
     {
         // As the loop does: what the script posts runs after the script, not inside it.
         _loop.DeferTryPost = true;
-        _gumps.Opened[gump].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
-        );
+        _gumps.Opened[gump]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
+            );
         _loop.RunDeferred();
         _loop.DeferTryPost = false;
     }
@@ -328,5 +333,13 @@ public sealed class GoGumpIntegrationTests : IAsyncLifetime
         }
 
         return directory!.FullName;
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _container.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

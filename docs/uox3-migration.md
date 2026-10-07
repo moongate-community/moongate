@@ -3,10 +3,10 @@
 `mgctl convert uox` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
 definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML, and
 UOX3 NPCs, NPC lists, spawn regions and name lists into `MobileTemplate`, NPC list and
-spawn TOML and `names.toml`. Five more commands convert ModernUO's
+spawn TOML and `names.toml`. Six more commands convert ModernUO's
 [signs](#signs-of-modernuo), [teleporters](#teleporters-of-modernuo),
 [named places](#named-places-of-modernuo), [treasure chests](#treasure-chests-of-modernuo) and
-[spawners](#spawns-of-modernuo).
+[spawners](#spawns-of-modernuo) and [book texts](book-content-import.md).
 The shapes it writes are described in [Loading TOML templates](templates.md#the-template-shapes);
 the server loads them at startup from `templates/`.
 
@@ -43,6 +43,16 @@ flour (`0x0a1e_bowl_of_flour`) and the magic fish (`base_magic_fish`). What UOX3
 type 105) takes `script_id = "drink"` (`scripts/items/drink.lua`) the same way, in place of UOX3's own
 `pitchers.js`, but for the jar of honey (`0x09ec_jar_of_honey`).
 A folder missing either file exits `2`.
+
+What combat reads is converted too: `damage=min max`, `spd`, `str`, `def` and `hp=min max` of an item become `damage_min`,
+`damage_max`, `speed`, `strength_required`, `armor_rating` and `max_hits` (a value that is not a number, or is 0, is left
+out), and the kind of weapon (`weapon_type`) follows the graphic of a block with an `id=`, by the table of UOX3's own
+`GetWeaponType` (a graphic UOX3 does not list is fought with fists). The eras of UOX3 (`t2a`, `lbr`, `aos`, `tol`) keep
+their own numbers, and the kind goes on the item that has the graphic, which they inherit. See [Combat](combat.md).
+
+The dyes (item type 208) take `script_id = "dyes"` and the dye tub `script_id = "dye_tub"`
+(`scripts/items/dyes.lua`, `scripts/items/dye_tub.lua`). UOX3 types the tub by its graphic `0x0FAB`
+in `itemtypes.dfn`, not in its block, so the converter does the same: a block named by that graphic.
 
 `--npc-lists-destination` and `--spawns-destination` go together and need `--mobile-source`.
 They convert the `[NPCLIST name]` blocks under `npc/` into `templates/npc_lists` (entries
@@ -81,12 +91,13 @@ Verified against real UOX3 data:
 | `pileable=` | `Stackable` | |
 | `layer=` | `Layer` | The UOX3 layer number as a `LayerType` name |
 | `layer=2` without `type=107` (shield) or `dir=` (light) | `two_handed_weapon = true` | As UOX3 decides at equip time. An unlit torch (`0x0F64`) has neither, so UOX3, and the converter, treat it as two-handed; the shipped templates leave it off |
+| `dyeable=` or `dye=` | `Dyeable` | The same tag in UOX3; `0` writes `dyeable = false`, which takes it away from what a base gave |
 | `value=buy sell` | `BuyPrice`, `SellPrice` | One number sets both |
 | `decay=` | `Decays` | `1` is true, anything else false |
 | `newbie` or `newbie=1` | `LootType = newbied` | |
 | `custominttag=name value`, `customstringtag=name text` | `Tags` | Every line, so a block can set several |
 | `color=` or `colour=` | `Hue` | A fixed value, not a range; unset writes no hue, so the server's loader takes the base template's |
-| `weightmax=` | `MaxWeight` | |
+| `weightmax=` | `MaxWeight` | UOX3 counts it in hundredths of a stone, as `weight=`: `weightmax=40000` is 400 stones, whole and rounded up |
 | `visible=1`, `2` or `3` / `visible=0` | `Visibility = game_master` / `regular` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` is written out so it overrides a hidden parent; absent leaves it unset |
 
 Everything else has no home in `ItemTemplate` yet and is dropped: the combat stat
@@ -199,12 +210,19 @@ Two known mistakes in UOX3's item data are corrected as the blocks are read
 leather tunic as their parents; they get the leather sleeves (`0x13cd`) and leggings
 (`0x13cb`).
 
-A mobile Moongate has a script for gets its `script_id`: a banker (`NPCAI=8`) takes `banker`
-(`scripts/mobiles/banker.lua`), and the undead of the graveyards (`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) take
-`monster` (`scripts/mobiles/monster.lua`);
-the templates based on them take it through `base_id`.
+`FLEEAT` becomes the `flee_at` of the template (from 0 to 100, or `-1` for a creature that never runs; the undead, the
+elementals and the daemons have `-1`); a value outside is left out.
 
-Dropped, no home yet: the rest of AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
+A mobile Moongate has a script for gets its `script_id`: a banker (`NPCAI=8`) takes `banker`
+(`scripts/mobiles/banker.lua`), a town guard (`NPCAI=4`) takes `guard` (`scripts/mobiles/guard.lua`), the creatures
+that go for everyone (`NPCAI=2` evil, `11` evil caster and `88` chaotic, and the undead of the graveyards by name:
+`skeleton`, `zombie`, `ghoul`, `headless`, `wraith`, `spectre`, `lich`) take `monster`
+(`scripts/mobiles/monster.lua`; the casters fight in melee until there is magic; the good fighters and casters, `5`
+and `10`, fight criminals only and have no script yet), an animal (`NPCAI=6`) takes `animal`
+(`scripts/mobiles/animal.lua`) and a scared animal (`NPCAI=12`) takes `scared_animal`
+(`scripts/mobiles/scared_animal.lua`); the templates based on them take the script through `base_id`.
+
+Dropped, no home yet: the rest of AI and wandering (the other `NPCAI` values, `NPCWANDER`, `FX*`, speeds),
 taming and bard skills (`TOTAME`, `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), shops
 (`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`, `CARVE`, `FOOD`, `PRIV`, `SCRIPT` and the other
 tags without a field. The run prints how often each kind of value was dropped.
@@ -246,7 +264,9 @@ dotnet run --project src/Moongate.Ctl -- convert modernuo-signs \
 ```
 
 It writes one `signs.toml` per [decoration folder](templates.md#decorations) (`britannia` for the
-signs of both Trammel and Felucca), replacing that of a previous run: a text of the client becomes
+signs of both Trammel and Felucca), replacing that of a previous run. The signs of Trammel alone
+are those of the old Haven, a ruin on the map of a current client: they are written to
+`trammel/_signs.toml`, which is [not loaded](templates.md#decorations). In each file a text of the client becomes
 a `LocalizedSign` with `label_number`, a written one a `Sign` with `name`, and the signs of Luna and
 Umbra keep the hue of their town. A line that is not a sign stops the run and names itself.
 [`.decorate`](commands/decorate.md) places them.

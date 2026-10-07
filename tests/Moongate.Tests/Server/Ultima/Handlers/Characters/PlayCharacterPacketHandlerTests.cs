@@ -44,35 +44,6 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     private readonly RecordingWorldViewService _view = new();
     private StubCharacterLeaveWorldService _leaves = new();
     private SessionService _sessions = null!;
-    private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
-    private readonly RecordingMotdService _motd = new();
-
-    public void Dispose()
-    {
-        _events.Dispose();
-    }
-
-    [Fact]
-    public async Task HandleAsync_SendsTheLightOfTheCharactersTimeOfDay()
-    {
-        await using var fixture = await SessionFixture.CreateAsync();
-        var (context, _, sender) = await Context(fixture, new Serial(42));
-        var characters = new RecordingCharacterService { ForPlay = Aria() };
-        var light = new LightService(
-            new StubClockService { Time = new GameTime(1, 0) },
-            _sessions,
-            _mobiles,
-            sender,
-            new RecordingTimerService(),
-            fixture.Loop,
-            new WorldConfig(),
-            new StubDataLoaderService()
-        );
-
-        await Handler(characters, sender, light: light).HandleAsync(context, Packet(2), CancellationToken.None);
-
-        Assert.Equal(12, Assert.Single(sender.Sent.OfType<GlobalLightLevelPacket>()).Level);
-    }
 
     [Fact]
     public async Task HandleAsync_SendsTheEnterWorldSequenceInOrder_ThenPublishesTheEvent()
@@ -87,7 +58,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             [
                 typeof(LoginConfirmPacket), typeof(MapChangePacket), typeof(SeasonChangePacket),
                 typeof(GlobalLightLevelPacket), typeof(PersonalLightLevelPacket), typeof(MobileUpdatePacket),
-                typeof(MobileIncomingPacket), typeof(MobileStatusPacket), typeof(WarModePacket),
+                typeof(MobileIncomingPacket), typeof(MobileStatusPacket), typeof(StatLockInfoPacket), typeof(WarModePacket),
                 typeof(LoginCompletePacket), typeof(CurrentTimePacket)
             ],
             sender.Sent.Select(packet => packet.GetType())
@@ -99,7 +70,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         Assert.Same(characters.ForPlay!.Character, live);
         var entered = Assert.Single(_entered);
         Assert.Equal(sender.Sent.Count, entered.SentBefore);
-        Assert.Equal([11], _motd.SentBefore);
+        Assert.Equal([12], _motd.SentBefore);
         Assert.Equal("Aria", entered.Event.Character.Name);
         Assert.True(fixture.Client.IsConnected);
     }
@@ -112,7 +83,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         var sentBefore = -1;
         _view.OnCall = _ => sentBefore = sender.Sent.Count;
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         Assert.Equal([$"Entered 2 {session.SessionId}"], _view.Calls);
         Assert.Equal(sender.Sent.Count, sentBefore);
@@ -131,10 +103,24 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             }
         };
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         Assert.Empty(_view.Calls);
         Assert.Empty(_entered);
+    }
+
+    [Fact]
+    public async Task HandleAsync_TellsTheMurderServiceToForgetTheCountsOfWhoComesBack()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var murders = new RecordingMurderService();
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender, murders: murders)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.Equal(["Restore 2"], murders.Calls);
     }
 
     [Fact]
@@ -143,8 +129,12 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         await using var fixture = await SessionFixture.CreateAsync();
         var (context, _, sender) = await Context(fixture, new Serial(42));
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender, seasons: new StubSeasonService { Here = SeasonType.Fall })
-              .HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(
+                new RecordingCharacterService { ForPlay = Aria() },
+                sender,
+                seasons: new StubSeasonService { Here = SeasonType.Fall }
+            )
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         Assert.Equal(SeasonType.Fall, sender.Sent.OfType<SeasonChangePacket>().Single().Season);
     }
@@ -155,7 +145,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         await using var fixture = await SessionFixture.CreateAsync();
         var (context, _, sender) = await Context(fixture, new Serial(42));
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         var confirm = sender.Sent.OfType<LoginConfirmPacket>().Single();
         Assert.Equal((7168, 4096), (confirm.MapWidth, confirm.MapHeight));
@@ -182,7 +173,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         await using var fixture = await SessionFixture.CreateAsync();
         var (context, _, sender) = await Context(fixture, new Serial(42));
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         Assert.Equal([new Serial(0x40000001), new Serial(0x40000002)], _items.Items.Select(item => item.Id).Order());
         Assert.DoesNotContain(
@@ -201,7 +193,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         taken.PlaceOnGround(MapType.Trammel, new Point3D(100, 100, 0));
         _items.Add([taken]);
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         Assert.True(_items.TryGet(new Serial(0x40000002), out var live));
         Assert.Same(taken, live);
@@ -218,7 +211,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         taken.PlaceOnGround(MapType.Trammel, new Point3D(100, 100, 0));
         _items.Add([taken]);
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         Assert.True(_items.TryGet(new Serial(0x40000001), out var live));
         Assert.Same(taken, live);
@@ -254,7 +248,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         var play = Aria();
         play.Character.Direction = DirectionType.West;
 
-        await Handler(new RecordingCharacterService { ForPlay = play }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = play }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         Assert.Equal(DirectionType.West, sender.Sent.OfType<LoginConfirmPacket>().Single().Direction);
         Assert.Equal(DirectionType.West, sender.Sent.OfType<MobileUpdatePacket>().Single().Direction);
@@ -266,13 +261,20 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         await using var fixture = await SessionFixture.CreateAsync();
         var (context, _, sender) = await Context(fixture, new Serial(42));
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria(beard: 0x203E) }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria(beard: 0x203E) }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         var incoming = sender.Sent.OfType<MobileIncomingPacket>().Single();
         Assert.Equal(new Serial(0x40000001), incoming.Equipment.Single(entry => entry.Layer == LayerType.Backpack).Serial);
         var hair = incoming.Equipment.Single(entry => entry.Layer == LayerType.Hair);
-        Assert.Equal((_mobiles.HairSerial(new Serial(2)), 0x203C, (ushort)0x044E), (hair.Serial, hair.ItemId, hair.Hue.Value));
-        Assert.Equal(_mobiles.BeardSerial(new Serial(2)), incoming.Equipment.Single(entry => entry.Layer == LayerType.FacialHair).Serial);
+        Assert.Equal(
+            (_mobiles.HairSerial(new Serial(2)), 0x203C, (ushort)0x044E),
+            (hair.Serial, hair.ItemId, hair.Hue.Value)
+        );
+        Assert.Equal(
+            _mobiles.BeardSerial(new Serial(2)),
+            incoming.Equipment.Single(entry => entry.Layer == LayerType.FacialHair).Serial
+        );
     }
 
     [Fact]
@@ -281,7 +283,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         await using var fixture = await SessionFixture.CreateAsync();
         var (context, _, sender) = await Context(fixture, new Serial(42));
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria(hair: 0) }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria(hair: 0) }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         var incoming = sender.Sent.OfType<MobileIncomingPacket>().Single();
         Assert.DoesNotContain(incoming.Equipment, entry => entry.Layer is LayerType.Hair or LayerType.FacialHair);
@@ -295,7 +298,10 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
 
         await Handler(new RecordingCharacterService(), sender).HandleAsync(context, Packet(4), CancellationToken.None);
 
-        Assert.Equal(PopupMessageType.CharacterDoesNotExist, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
+        Assert.Equal(
+            PopupMessageType.CharacterDoesNotExist,
+            Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type
+        );
         Assert.Equal(Serial.Zero, session.CharacterId);
         Assert.False(fixture.Client.IsConnected);
         Assert.Empty(_entered);
@@ -309,7 +315,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         var (context, session, sender) = await Context(fixture, new Serial(42));
         await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(7)));
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         // A second entry would replace the session's character and leave the first one in the world for ever.
         Assert.Equal(PopupMessageType.CharacterInWorld, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
@@ -332,7 +339,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             }
         );
 
-        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
 
         Assert.Equal(PopupMessageType.CharacterInWorld, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
         Assert.Equal(Serial.Zero, session.CharacterId);
@@ -354,12 +362,38 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         Assert.False(fixture.Client.IsConnected);
     }
 
+    private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
+    private readonly RecordingMotdService _motd = new();
+
+    [Fact]
+    public async Task HandleAsync_SendsTheLightOfTheCharactersTimeOfDay()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var characters = new RecordingCharacterService { ForPlay = Aria() };
+        var light = new LightService(
+            new StubClockService { Time = new GameTime(1, 0) },
+            _sessions,
+            _mobiles,
+            sender,
+            new RecordingTimerService(),
+            fixture.Loop,
+            new WorldConfig(),
+            new StubDataLoaderService()
+        );
+
+        await Handler(characters, sender, light: light).HandleAsync(context, Packet(2), CancellationToken.None);
+
+        Assert.Equal(12, Assert.Single(sender.Sent.OfType<GlobalLightLevelPacket>()).Level);
+    }
+
     private PlayCharacterPacketHandler Handler(
         RecordingCharacterService characters,
         StubPacketSendService sender,
         IMobileService? mobiles = null,
         ILightService? light = null,
-        ISeasonService? seasons = null
+        ISeasonService? seasons = null,
+        IMurderService? murders = null
     )
     {
         _events.RegisterMoongateEventBus();
@@ -372,14 +406,26 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             }
         );
         var loaders = new StubDataLoaderService().With(
-            new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Season = SeasonType.Winter, Name = "Trammel" }
+            new MapContent
+                { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Season = SeasonType.Winter, Name = "Trammel" }
         );
 
         _motd.Sender = sender;
         return new(
             characters,
             _leaves,
-            new CharacterEnterWorldService(mobiles ?? _mobiles, _items, loaders, bus, _sessions, _view, _motd, light, seasons)
+            new CharacterEnterWorldService(
+                mobiles ?? _mobiles,
+                _items,
+                loaders,
+                bus,
+                _sessions,
+                _view,
+                _motd,
+                light,
+                seasons,
+                murders: murders
+            )
         );
     }
 
@@ -424,6 +470,11 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         }
 
         return (context, session, sender);
+    }
+
+    public void Dispose()
+    {
+        _events.Dispose();
     }
 
     private sealed class RecordingMotdService : IMotdService

@@ -1,5 +1,6 @@
 [[mobile]]
 id = "succubus"
+script_id = "monster"
 name = "a succubus"
 name_list = "pixie"
 body = 149
@@ -117,6 +118,7 @@ death = 759
 
 [[mobile]]
 id = "efreet"
+script_id = "monster"
 name = "an efreet"
 body = 131
 skin_hue = 2125
@@ -146,6 +148,7 @@ death = 886
 
 [[mobile]]
 id = "hellcat"
+script_id = "monster"
 name = "a hellcat"
 body = 201
 skin_hue = "0x0641-0x0676"
@@ -172,6 +175,7 @@ death = 109
 
 [[mobile]]
 id = "largehellcat"
+script_id = "monster"
 name = "a predator hellcat"
 body = 127
 skin_hue = "0x0641-0x0676"
@@ -198,6 +202,8 @@ death = 109
 
 [[mobile]]
 id = "hellhound"
+script_id = "monster"
+flee_at = -1
 name = "a hell hound"
 body = 98
 skin_hue = 1153
@@ -224,6 +230,7 @@ death = 233
 
 [[mobile]]
 id = "stoneharpy"
+script_id = "monster"
 name = "a stone harpy"
 body = 73
 skin_hue = 902
@@ -251,6 +258,7 @@ death = 917
 
 [[mobile]]
 id = "gazer"
+script_id = "monster"
 name = "a gazer"
 body = 22
 strength = "1d30+95"
@@ -278,6 +286,7 @@ death = 381
 
 [[mobile]]
 id = "gazerlarva"
+script_id = "monster"
 name = "a gazer larva"
 body = 778
 strength = "1d25+75"
@@ -302,6 +311,7 @@ death = 381
 
 [[mobile]]
 id = "eldergazer"
+script_id = "monster"
 name = "an elder gazer"
 body = 68
 strength = "1d30+295"
@@ -330,6 +340,7 @@ death = 381
 
 [[mobile]]
 id = "harpy"
+script_id = "monster"
 name = "a harpy"
 body = 30
 strength = "1d25+95"
@@ -355,6 +366,7 @@ death = 917
 
 [[mobile]]
 id = "headless"
+flee_at = -1
 name = "a headless one"
 body = 31
 strength = "1d25+25"
@@ -381,6 +393,7 @@ death = 411
 
 [[mobile]]
 id = "slime"
+script_id = "monster"
 name = "a slime"
 body = 51
 strength = "1d13+21"
@@ -413,6 +426,7 @@ name = "a jwilson"
 
 [[mobile]]
 id = "frostooze"
+script_id = "monster"
 name = "a frost ooze"
 body = 94
 skin_hue = 1153
@@ -521,6 +535,7 @@ items = ["wispglow"]
 
 [[mobile]]
 id = "evilmage"
+script_id = "monster"
 name = "an evil mage"
 body = 124
 strength = "1d25+80"
@@ -545,6 +560,7 @@ death = 1059
 
 [[mobile]]
 id = "evilmagelord"
+script_id = "monster"
 name = "an evil mage lord"
 body = 125
 strength = "1d25+80"
@@ -570,6 +586,7 @@ death = 1059
 
 [[mobile]]
 id = "tentacles_of_the_harrower"
+script_id = "monster"
 name = "tentacles of the harrower"
 body = 129
 strength = "1d101+899"

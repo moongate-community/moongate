@@ -6,7 +6,8 @@ namespace Moongate.Ctl.Internal;
 
 /// <summary>
 ///     Writes the completion scripts of bash, zsh and fish from the commands of <see cref="CompletionCatalog" />: the
-///     first word, the second word of <c>migrate</c> and <c>convert</c>, then the options of the command and what follows
+///     first word, the second word of <c>migrate</c> and <c>convert</c>, then the options of the command and what
+///     follows
 ///     each (a directory, a file or a fixed word).
 /// </summary>
 internal static class CompletionScripts
@@ -30,7 +31,9 @@ internal static class CompletionScripts
         text.AppendLine("    COMPREPLY=()");
         text.AppendLine();
         text.AppendLine("    if [ \"$COMP_CWORD\" -eq 1 ]; then");
-        text.AppendLine($"        COMPREPLY=( $(compgen -W \"{string.Join(' ', FirstWords(commands))} {GlobalOptions}\" -- \"$cur\") )");
+        text.AppendLine(
+            $"        COMPREPLY=( $(compgen -W \"{string.Join(' ', FirstWords(commands))} {GlobalOptions}\" -- \"$cur\") )"
+        );
         text.AppendLine("        return");
         text.AppendLine("    fi");
         text.AppendLine();
@@ -42,7 +45,9 @@ internal static class CompletionScripts
         {
             text.AppendLine($"        {group.Key})");
             text.AppendLine("            if [ \"$COMP_CWORD\" -eq 2 ]; then");
-            text.AppendLine($"                COMPREPLY=( $(compgen -W \"{string.Join(' ', group.Select(SecondWord))}\" -- \"$cur\") )");
+            text.AppendLine(
+                $"                COMPREPLY=( $(compgen -W \"{string.Join(' ', group.Select(SecondWord))}\" -- \"$cur\") )"
+            );
             text.AppendLine("                return");
             text.AppendLine("            fi");
             text.AppendLine();
@@ -113,7 +118,9 @@ internal static class CompletionScripts
         text.AppendLine("    local -a commands");
         text.AppendLine();
         text.AppendLine("    if (( CURRENT == 2 )); then");
-        text.AppendLine($"        commands=({string.Join(' ', FirstWords(commands).Select(word => ZshDescribed(word, FirstWordHelp(commands, word))))})");
+        text.AppendLine(
+            $"        commands=({string.Join(' ', FirstWords(commands).Select(word => ZshDescribed(word, FirstWordHelp(commands, word))))})"
+        );
         text.AppendLine("        _describe 'command' commands");
         text.AppendLine("        return");
         text.AppendLine("    fi");
@@ -124,7 +131,9 @@ internal static class CompletionScripts
         {
             text.AppendLine($"        {group.Key})");
             text.AppendLine("            if (( CURRENT == 3 )); then");
-            text.AppendLine($"                commands=({string.Join(' ', group.Select(command => ZshDescribed(SecondWord(command), command.Help)))})");
+            text.AppendLine(
+                $"                commands=({string.Join(' ', group.Select(command => ZshDescribed(SecondWord(command), command.Help)))})"
+            );
             text.AppendLine("                _describe 'command' commands");
             text.AppendLine("                return");
             text.AppendLine("            fi");
@@ -191,7 +200,9 @@ internal static class CompletionScripts
 
         foreach (var word in FirstWords(commands))
         {
-            text.AppendLine($"complete -c mgctl -n '__mgctl_words 0' -a {word} -d '{Quoted(FirstWordHelp(commands, word))}'");
+            text.AppendLine(
+                $"complete -c mgctl -n '__mgctl_words 0' -a {word} -d '{Quoted(FirstWordHelp(commands, word))}'"
+            );
         }
 
         foreach (var group in Groups(commands))
@@ -210,7 +221,9 @@ internal static class CompletionScripts
 
             foreach (var option in command.Options)
             {
-                text.AppendLine($"complete -c mgctl -n '{condition}' -l {option.Name[2..]}{FishValue(option)} -d '{Quoted(option.Help)}'");
+                text.AppendLine(
+                    $"complete -c mgctl -n '{condition}' -l {option.Name[2..]}{FishValue(option)} -d '{Quoted(option.Help)}'"
+                );
             }
 
             if (command.Argument is { } argument)
@@ -257,10 +270,10 @@ internal static class CompletionScripts
     {
         return option.Value switch
         {
-            CompletionValueType.Choice    => $"COMPREPLY=( $(compgen -W \"{string.Join(' ', option.Choices)}\" -- \"$cur\") )",
+            CompletionValueType.Choice => $"COMPREPLY=( $(compgen -W \"{string.Join(' ', option.Choices)}\" -- \"$cur\") )",
             CompletionValueType.Directory => "_mgctl_paths -d \"$cur\"",
-            CompletionValueType.File      => "_mgctl_paths -f \"$cur\"",
-            _                             => null
+            CompletionValueType.File => "_mgctl_paths -f \"$cur\"",
+            _ => null
         };
     }
 
@@ -297,9 +310,10 @@ internal static class CompletionScripts
     // Colons and brackets end a zsh spec, a quote ends its string.
     private static string ZshText(string help)
     {
-        return Quoted(help).Replace(":", "\\:", StringComparison.Ordinal)
-                           .Replace("[", "\\[", StringComparison.Ordinal)
-                           .Replace("]", "\\]", StringComparison.Ordinal);
+        return Quoted(help)
+            .Replace(":", "\\:", StringComparison.Ordinal)
+            .Replace("[", "\\[", StringComparison.Ordinal)
+            .Replace("]", "\\]", StringComparison.Ordinal);
     }
 
     private static string FishValue(CompletionOption option)

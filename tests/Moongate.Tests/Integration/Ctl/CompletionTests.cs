@@ -38,7 +38,10 @@ public sealed class CompletionTests
     {
         Assert.Equal(["apply", "status"], await CompleteAsync("mgctl", "migrate", ""));
         Assert.Equal(
-            ["modernuo-chests", "modernuo-locations", "modernuo-signs", "modernuo-spawns", "modernuo-teleporters", "uox"],
+            [
+                "modernuo-books", "modernuo-chests", "modernuo-locations", "modernuo-signs", "modernuo-spawns",
+                "modernuo-teleporters", "uox"
+            ],
             await CompleteAsync("mgctl", "convert", "")
         );
         Assert.Equal(["bash", "fish", "zsh"], await CompleteAsync("mgctl", "completion", ""));
@@ -50,22 +53,22 @@ public sealed class CompletionTests
     {
         var help = await CtlProcess.RunAsync("--help");
         var commands = Regex.Matches(help.Output, @"^  ([a-z-]+(?: [a-z-]+)?) {2,}", RegexOptions.Multiline)
-                            .Select(match => match.Groups[1].Value)
-                            .ToList();
+            .Select(match => match.Groups[1].Value)
+            .ToList();
         Assert.Contains("migrate status", commands);
         Assert.Contains("completion", commands);
 
         foreach (var command in commands)
         {
             var words = command.Split(' ');
-            var commandHelp = await CtlProcess.RunAsync([..words, "--help"]);
+            var commandHelp = await CtlProcess.RunAsync([.. words, "--help"]);
             var expected = Regex.Matches(commandHelp.Output, @"^  (--[a-z-]+)", RegexOptions.Multiline)
-                                .Select(match => match.Groups[1].Value)
-                                .Append("--help")
-                                .Order(StringComparer.Ordinal)
-                                .ToList();
+                .Select(match => match.Groups[1].Value)
+                .Append("--help")
+                .Order(StringComparer.Ordinal)
+                .ToList();
 
-            Assert.Equal(expected, await CompleteAsync(["mgctl", ..words, "--"]));
+            Assert.Equal(expected, await CompleteAsync(["mgctl", .. words, "--"]));
         }
     }
 

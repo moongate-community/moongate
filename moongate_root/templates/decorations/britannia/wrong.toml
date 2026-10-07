@@ -1,0 +1,563 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/wrong.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5690, 569, 25] }
+locations = [
+    [5827, 593, 0],
+    [5829, 593, 0],
+    [5871, 531, 15],
+    [5870, 530, 15],
+    [5871, 530, 15],
+    [5870, 531, 15],
+]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5703, 639, 0] }
+locations = [
+    [5867, 528, 15],
+    [5868, 528, 15],
+    [5868, 529, 15],
+    [5867, 529, 15],
+    [5705, 625, 0],
+]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5793, 527, 10] }
+locations = [[5698, 662, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5829, 595, 0] }
+locations = [
+    [5733, 554, 20],
+    [5690, 569, 25],
+]
+
+[[decoration]]
+comment = "sparkle"
+type = "Static"
+item_id = 0x375A
+locations = [
+    [5703, 639, 0],
+    [5706, 625, 0],
+    [5698, 662, 0],
+    [5732, 554, 24],
+    [5792, 525, 10],
+    [5827, 593, 0],
+    [5829, 593, 0],
+    [5690, 569, 25],
+    [5867, 528, 15],
+    [5872, 532, 24],
+]
+
+[[decoration]]
+comment = "crate"
+type = "LargeCrate"
+item_id = 0x0E3C
+locations = [
+    [5683, 521, 0],
+    [5678, 521, 0],
+    [5682, 521, 0],
+]
+
+[[decoration]]
+comment = "spike trap"
+type = "GiantSpikeTrap"
+item_id = 0x0001
+locations = [[5653, 568, 20]]
+
+[[decoration]]
+comment = "floor spikes"
+type = "SpikeTrap"
+item_id = 0x119A
+locations = [
+    [5700, 529, 0],
+    [5793, 568, 10],
+    [5679, 525, 0],
+    [5800, 542, 10],
+    [5657, 556, 20],
+    [5862, 549, 15],
+    [5669, 564, 20],
+    [5673, 521, 0],
+    [5798, 585, 10],
+    [5736, 566, 22],
+    [5826, 534, 0],
+    [5829, 522, 0],
+    [5666, 569, 20],
+    [5875, 553, 15],
+    [5687, 526, 0],
+    [5691, 522, 0],
+    [5790, 561, 10],
+]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor"
+item_id = 0x0693
+props = { facing = "north_cw" }
+locations = [
+    [5857, 562, 15],
+    [5857, 570, 15],
+    [5857, 578, 15],
+    [5857, 586, 15],
+    [5857, 594, 15],
+    [5848, 580, 15],
+]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor"
+item_id = 0x068F
+props = { facing = "north_ccw" }
+locations = [
+    [5863, 554, 15],
+    [5797, 594, 10],
+    [5797, 555, 10],
+    [5797, 587, 10],
+    [5797, 579, 10],
+    [5797, 571, 10],
+    [5797, 563, 10],
+]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor"
+item_id = 0x068D
+props = { facing = "south_cw" }
+locations = [
+    [5863, 555, 15],
+    [5797, 595, 10],
+    [5797, 588, 10],
+    [5797, 580, 10],
+    [5797, 556, 10],
+    [5797, 572, 10],
+    [5797, 564, 10],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+locations = [
+    [5703, 661, 0],
+    [5786, 554, 10],
+    [5786, 555, 10],
+    [5786, 556, 10],
+    [5786, 557, 10],
+    [5703, 664, 0],
+    [5703, 663, 0],
+    [5703, 662, 0],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+locations = [
+    [5709, 659, 0],
+    [5708, 659, 0],
+    [5706, 659, 0],
+    [5648, 549, 22],
+    [5727, 554, 20],
+    [5718, 549, 20],
+    [5707, 659, 0],
+]
+
+[[decoration]]
+comment = "switch"
+type = "Static"
+item_id = 0x108F
+locations = [
+    [5786, 589, 24],
+    [5798, 593, 24],
+    [5786, 572, 24],
+    [5849, 586, 15],
+    [5798, 581, 23],
+]
+
+[[decoration]]
+comment = "floor saw"
+type = "SawTrap"
+item_id = 0x11AC
+locations = [
+    [5864, 546, 15],
+    [5790, 560, 10],
+    [5651, 556, 20],
+    [5821, 526, 0],
+    [5867, 546, 15],
+    [5680, 526, 0],
+    [5731, 555, 20],
+    [5693, 536, 0],
+    [5651, 554, 20],
+    [5732, 573, 20],
+    [5702, 532, 0],
+    [5679, 529, 0],
+    [5727, 557, 20],
+    [5833, 532, 0],
+    [5802, 559, 10],
+    [5796, 546, 10],
+    [5860, 546, 15],
+    [5869, 553, 15],
+    [5695, 538, 0],
+]
+
+[[decoration]]
+comment = "iron maiden"
+type = "Static"
+item_id = 0x124B
+locations = [[5698, 524, 0]]
+
+[[decoration]]
+comment = "floor saw"
+type = "SawTrap"
+item_id = 0x11B1
+locations = [
+    [5792, 554, 10],
+    [5717, 550, 20],
+    [5731, 566, 20],
+    [5714, 569, 20],
+    [5683, 533, 0],
+    [5687, 531, 0],
+    [5664, 557, 20],
+    [5865, 549, 15],
+    [5793, 594, 10],
+    [5724, 563, 20],
+    [5656, 553, 20],
+    [5680, 532, 0],
+    [5681, 526, 0],
+    [5665, 561, 20],
+    [5666, 564, 20],
+    [5651, 564, 20],
+    [5682, 529, 0],
+]
+
+[[decoration]]
+comment = "switch"
+type = "Static"
+item_id = 0x1090
+locations = [
+    [5786, 589, 24],
+    [5798, 581, 10],
+    [5786, 572, 24],
+    [5798, 581, 23],
+]
+
+[[decoration]]
+comment = "glowing rune"
+type = "Static"
+item_id = 0x0E5F
+locations = [[5699, 663, 0]]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor"
+item_id = 0x0687
+props = { facing = "east_ccw" }
+locations = [
+    [5667, 567, 20],
+    [5727, 567, 20],
+    [5653, 567, 20],
+    [5660, 567, 20],
+]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor"
+item_id = 0x0685
+props = { facing = "west_cw" }
+locations = [
+    [5666, 567, 20],
+    [5726, 567, 20],
+    [5652, 567, 20],
+    [5659, 567, 20],
+]
+
+[[decoration]]
+comment = "switch"
+type = "Static"
+item_id = 0x1091
+locations = [
+    [5650, 568, 30],
+    [5657, 568, 30],
+    [5664, 568, 30],
+]
+
+[[decoration]]
+comment = "switch"
+type = "Static"
+item_id = 0x1092
+locations = [
+    [5793, 592, 24],
+    [5657, 568, 30],
+    [5793, 560, 24],
+    [5792, 576, 24],
+    [5650, 568, 30],
+    [5664, 568, 30],
+]
+
+[[decoration]]
+comment = "whip"
+type = "Static"
+item_id = 0x166E
+locations = [[5864, 540, 21]]
+
+[[decoration]]
+comment = "wooden box"
+type = "Static"
+item_id = 0x09AA
+locations = [[5667, 549, 22]]
+
+[[decoration]]
+comment = "gas trap"
+type = "GasTrap"
+item_id = 0x113C
+locations = [
+    [5682, 531, 0],
+    [5828, 531, 0],
+    [5833, 538, 0],
+    [5684, 533, 0],
+    [5693, 521, 0],
+    [5787, 550, 10],
+    [5680, 528, 0],
+    [5834, 535, 0],
+    [5680, 530, 0],
+    [5689, 529, 0],
+    [5687, 541, 0],
+    [5827, 534, 0],
+    [5691, 526, 0],
+    [5729, 561, 20],
+    [5722, 549, 20],
+]
+
+[[decoration]]
+comment = "butcher knife"
+type = "Static"
+item_id = 0x13F7
+locations = [[5703, 527, 7]]
+
+[[decoration]]
+comment = "skinning knife"
+type = "Static"
+item_id = 0x0EC4
+locations = [[5703, 526, 7]]
+
+[[decoration]]
+comment = "floor spikes"
+type = "SpikeTrap"
+item_id = 0x11A0
+locations = [
+    [5832, 527, 0],
+    [5874, 541, 15],
+    [5682, 535, 0],
+    [5694, 533, 0],
+    [5825, 523, 0],
+    [5681, 523, 0],
+    [5782, 572, 10],
+    [5661, 549, 22],
+    [5720, 571, 20],
+    [5735, 563, 20],
+    [5733, 572, 20],
+    [5791, 571, 10],
+    [5792, 544, 10],
+    [5829, 525, 0],
+    [5674, 528, 0],
+    [5674, 527, 0],
+    [5835, 528, 0],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0675
+props = { facing = "west_cw" }
+locations = [[2044, 233, 13]]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0677
+props = { facing = "east_ccw" }
+locations = [[2045, 233, 13]]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor"
+item_id = 0x0691
+props = { facing = "south_ccw" }
+locations = [
+    [5848, 581, 15],
+    [5857, 563, 15],
+    [5857, 571, 15],
+    [5857, 579, 15],
+    [5857, 587, 15],
+    [5857, 595, 15],
+]
+
+[[decoration]]
+comment = "mushroom"
+type = "MushroomTrap"
+item_id = 0x1125
+locations = [
+    [5724, 560, 20],
+    [5834, 534, 0],
+    [5658, 554, 20],
+    [5665, 557, 20],
+]
+
+[[decoration]]
+comment = "crate"
+type = "LargeCrate"
+item_id = 0x0E3D
+locations = [
+    [5718, 554, 23],
+    [5715, 556, 20],
+    [5715, 556, 23],
+    [5718, 554, 20],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x09AB
+locations = [
+    [5678, 529, 0],
+    [5734, 549, 20],
+]
+
+[[decoration]]
+comment = "dungeon wall"
+type = "SecretDungeonDoor"
+item_id = 0x0318
+props = { facing = "west_ccw" }
+locations = [
+    [5679, 520, 0],
+    [5722, 553, 20],
+]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x0519
+locations = [[5677, 521, 0]]
+
+[[decoration]]
+comment = "oven"
+type = "StoneOvenEastAddon"
+item_id = 0x092C
+locations = [
+    [5786, 544, 10],
+    [5672, 526, 0],
+]
+
+[[decoration]]
+comment = "hammer"
+type = "Static"
+item_id = 0x102B
+locations = [
+    [5791, 542, 16],
+    [5863, 541, 21],
+]
+
+[[decoration]]
+comment = "pickaxe"
+type = "Static"
+item_id = 0x0E85
+locations = [[5790, 543, 16]]
+
+[[decoration]]
+comment = "dagger"
+type = "Static"
+item_id = 0x0F51
+locations = [[5790, 542, 16]]
+
+[[decoration]]
+comment = "cleaver"
+type = "Static"
+item_id = 0x0EC2
+locations = [[5702, 526, 7]]
+
+[[decoration]]
+comment = "strong box"
+type = "MetalBox"
+item_id = 0x0E80
+locations = [[5669, 520, 0]]
+
+[[decoration]]
+comment = "sledge hammer"
+type = "Static"
+item_id = 0x0FB4
+locations = [[5863, 542, 21]]
+
+[[decoration]]
+comment = "whip"
+type = "Static"
+item_id = 0x166F
+locations = [[5862, 542, 21]]
+
+[[decoration]]
+comment = "rusty iron key"
+type = "Static"
+item_id = 0x1013
+locations = [[5851, 571, 15]]
+
+[[decoration]]
+comment = "dungeon wall"
+type = "SecretDungeonDoor"
+item_id = 0x031A
+props = { facing = "east_cw" }
+locations = [[5652, 552, 20]]
+
+[[decoration]]
+comment = "alchemical symbol"
+type = "Static"
+item_id = 0x1822
+locations = [[2041, 232, 34]]
+
+[[decoration]]
+comment = "stone"
+type = "Static"
+item_id = 0x07A3
+locations = [[5692, 566, 20]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1773
+locations = [
+    [5694, 564, 3],
+    [5694, 565, 16],
+]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1778
+locations = [[5694, 566, 20]]

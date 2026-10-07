@@ -24,6 +24,23 @@ internal sealed class AccountAdminFixture : IAsyncDisposable
     public AccountAdminAccessService Authority { get; }
     public AccountAdminAccessService PeerAuthority { get; }
 
+    public static async Task<AccountAdminFixture> CreateAsync()
+    {
+        var accounts = await AccountServiceFixture.CreateAsync();
+        var redis = await AdminRedisFixture.CreateAsync();
+        var directory = new TemporaryPersistenceDirectory();
+        var peer = new Container();
+        peer.RegisterInstance(new DirectoriesConfig(directory.Path, []));
+        peer.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        peer.RegisterMoongatePersistence(new([new(PersistenceDatabaseTarget.Accounts, accounts.Database.ConnectionString)]));
+        // An accounts-only peer is a login server: no Realm database, so no world entities.
+        peer.RegisterInstance(ServerMode.Login);
+        new MoongateUltimaPlugin().Register(peer);
+        await peer.Resolve<MoongatePersistenceService>().InitializeAsync();
+
+        return new(accounts, redis, peer, directory);
+    }
+
     private AccountAdminFixture(
         AccountServiceFixture accounts,
         AdminRedisFixture redis,
@@ -43,23 +60,6 @@ internal sealed class AccountAdminFixture : IAsyncDisposable
             redis.Store,
             new(TimeSpan.FromMinutes(30))
         );
-    }
-
-    public static async Task<AccountAdminFixture> CreateAsync()
-    {
-        var accounts = await AccountServiceFixture.CreateAsync();
-        var redis = await AdminRedisFixture.CreateAsync();
-        var directory = new TemporaryPersistenceDirectory();
-        var peer = new Container();
-        peer.RegisterInstance(new DirectoriesConfig(directory.Path, []));
-        peer.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
-        peer.RegisterMoongatePersistence(new([new(PersistenceDatabaseTarget.Accounts, accounts.Database.ConnectionString)]));
-        // An accounts-only peer is a login server: no Realm database, so no world entities.
-        peer.RegisterInstance(ServerMode.Login);
-        new MoongateUltimaPlugin().Register(peer);
-        await peer.Resolve<MoongatePersistenceService>().InitializeAsync();
-
-        return new(accounts, redis, peer, directory);
     }
 
     public async ValueTask DisposeAsync()

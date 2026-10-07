@@ -1,5 +1,6 @@
 [[mobile]]
 id = "base_cursed"
+script_id = "monster"
 skin_hue = 34872
 notoriety = "murderer"
 

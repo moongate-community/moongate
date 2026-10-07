@@ -35,14 +35,6 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
         }
     }
 
-    // A build keeps mgctl and its own PostgreSQL driver in the mgctl folder; a distribution has it beside the server.
-    private static string DefaultRunnerDirectory()
-    {
-        var bundled = Path.Combine(AppContext.BaseDirectory, "mgctl");
-
-        return Directory.Exists(bundled) ? bundled : AppContext.BaseDirectory;
-    }
-
     public async Task ApplyAsync(PersistenceDatabaseTarget target, CancellationToken cancellationToken)
     {
         ValidateAvailable();
@@ -115,5 +107,13 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
 
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Migrations for {Target}: {Result}", target, output.Trim());
+    }
+
+    // A build keeps mgctl and its own PostgreSQL driver in the mgctl folder; a distribution has it beside the server.
+    private static string DefaultRunnerDirectory()
+    {
+        var bundled = Path.Combine(AppContext.BaseDirectory, "mgctl");
+
+        return Directory.Exists(bundled) ? bundled : AppContext.BaseDirectory;
     }
 }

@@ -257,18 +257,18 @@ public sealed partial class SqlBackupService : ISqlBackupService, IDisposable
         try
         {
             var old = Directory.EnumerateFiles(_options.Directory, prefix + "_*.sql")
-                               .Where(path =>
-                                   {
-                                       var name = Path.GetFileName(path);
+                .Where(path =>
+                    {
+                        var name = Path.GetFileName(path);
 
-                                       return name.EndsWith(".sql", StringComparison.Ordinal) &&
-                                              name.StartsWith(prefix + "_", StringComparison.Ordinal) &&
-                                              BackupFileName().IsMatch(name);
-                                   }
-                               )
-                               .OrderByDescending(Path.GetFileName, StringComparer.Ordinal)
-                               .Skip(_options.Keep)
-                               .ToArray();
+                        return name.EndsWith(".sql", StringComparison.Ordinal) &&
+                               name.StartsWith(prefix + "_", StringComparison.Ordinal) &&
+                               BackupFileName().IsMatch(name);
+                    }
+                )
+                .OrderByDescending(Path.GetFileName, StringComparer.Ordinal)
+                .Skip(_options.Keep)
+                .ToArray();
 
             foreach (var path in old)
             {

@@ -1,0 +1,190 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Nineteen - Day
+Twenty-One :
+ 
+The barricade won't
+hold - never, and
+they'll come, they
+come even now.  I
+would tear the last of
+
+it down, let them in to
+devour us all, if only
+to stop the screaming
+- the awful, wailing
+cries that fill the tomb
+with their presence.
+May my ancestors
+forgive me, but it
+
+must be done. I must
+end this."""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Deník: Objevení hrobky"
+content = """Den devatenáctý až
+jednadvacátý:
+ 
+Barikáda nevydrží –
+nikdy, a oni přijdou,
+přicházejí i nyní.
+Strhla bych její
+poslední
+
+zbytky a vpustila je,
+aby nás všechny sežrali,
+jen aby přestalo to
+křičení – ty strašné,
+naříkavé výkřiky, které
+svou přítomností plní
+hrobku. Kéž mi předkové
+odpustí, ale
+
+musí se to stát. Musím
+to ukončit."""
+[translations.fre]
+title = "Journal : découverte du tombeau"
+content = """Du dix-neuvième au vingt
+et unième jour :
+ 
+La barricade ne tiendra
+pas, jamais, et ils
+viendront, ils arrivent
+déjà. J’en abattrai les
+derniers
+
+restes, je les laisserai
+entrer pour nous dévorer
+tous, ne serait-ce que
+pour faire cesser les
+hurlements, les
+horribles cris plaintifs
+qui emplissent le
+tombeau de leur
+présence. Que mes
+ancêtres me pardonnent,
+mais cela
+
+doit être fait. Je dois
+y mettre fin."""
+[translations.ger]
+title = "Tagebuch: Entdeckung des Grabes"
+content = """Neunzehnter bis
+einundzwanzigster Tag:
+ 
+Die Barrikade wird nicht
+halten – niemals, und
+sie werden kommen, sie
+kommen schon jetzt. Ich
+würde den letzten Rest
+
+einreißen, sie
+hereinlassen, damit sie
+uns alle verschlingen,
+und sei es nur, um das
+Schreien zu beenden –
+die schrecklichen,
+klagenden Rufe, die das
+Grab mit ihrer Gegenwart
+füllen. Mögen meine
+Ahnen mir verzeihen,
+doch es
+
+muss geschehen. Ich muss
+dem ein Ende setzen."""
+[translations.ita]
+title = "Diario: scoperta della Tomba"
+content = """Giorno Diciannove -
+Giorno Ventuno :
+ 
+La barricata non
+reggerà: mai, e
+verranno, vengono già
+ora. Ne abbatterei gli
+ultimi
+
+resti, li lascerei
+entrare a divorarci
+tutti, se solo servisse
+a fermare le urla, le
+orribili grida lamentose
+che riempiono la tomba
+della loro presenza. Che
+i miei antenati mi
+perdonino, ma
+
+bisogna farlo. Devo
+porre fine a tutto
+questo."""
+[translations.pol]
+title = "Dziennik: odkrycie Grobowca"
+content = """Dzień dziewiętnasty —
+dzień dwudziesty
+pierwszy:
+ 
+Barykada nie wytrzyma —
+nigdy, a oni przyjdą,
+przychodzą nawet teraz.
+Zburzyłabym jej ostatnie
+
+resztki, wpuściła ich,
+by pożarli nas
+wszystkich, choćby tylko
+dla uciszenia wrzasków —
+okropnych, zawodzących
+krzyków, którymi
+wypełniają grobowiec.
+Niech przodkowie mi
+wybaczą, ale to
+
+musi być zrobione. Muszę
+to zakończyć."""
+[translations.por]
+title = "Diário: descoberta da tumba"
+content = """Décimo nono dia -
+Vigésimo primeiro dia:
+ 
+A barricada não vai
+resistir, jamais, e eles
+virão, vêm mesmo agora.
+Eu derrubaria o que
+resta
+
+dela, os deixaria entrar
+para devorar todos nós,
+nem que fosse apenas
+para parar os gritos: os
+horríveis gritos
+lastimosos que enchem a
+tumba com sua presença.
+Que meus ancestrais me
+perdoem, mas isso
+
+precisa ser feito.
+Preciso pôr fim a isso."""
+[translations.spa]
+title = "Diario: descubrimiento de la tumba"
+content = """Día diecinueve - Día
+veintiuno:
+ 
+La barricada no
+aguantará, nunca, y
+llegarán; ya están
+llegando. Derribaría lo
+que queda de
+
+ella, los dejaría entrar
+para devorarnos a todos,
+aunque solo fuera para
+detener los gritos, esos
+horribles lamentos que
+llenan la tumba con su
+presencia. Que mis
+antepasados me perdonen,
+pero
+
+debe hacerse. Debo poner
+fin a esto."""

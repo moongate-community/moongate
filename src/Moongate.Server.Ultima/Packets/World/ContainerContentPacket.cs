@@ -30,21 +30,28 @@ public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>,
     {
         ArgumentNullException.ThrowIfNull(items);
 
-        Items = items.Select(
-                         item => new ContainerItemEntry(
-                             item.Id,
-                             item.ItemId,
-                             item.Amount,
-                             item.GridX ?? 0,
-                             item.GridY ?? 0,
-                             (byte)(item.GridIndex ?? 0),
-                             item.ContainerId ?? default,
-                             item.Hue
-                         )
-                     )
-                     .ToArray();
+        Items = items.Select(item => new ContainerItemEntry(
+                    item.Id,
+                    item.ItemId,
+                    item.Amount,
+                    item.GridX ?? 0,
+                    item.GridY ?? 0,
+                    (byte)(item.GridIndex ?? 0),
+                    item.ContainerId ?? default,
+                    item.Hue
+                )
+            )
+            .ToArray();
         GridBytes = gridBytes;
         Length = HeaderLength + Items.Count * (gridBytes ? GridItemLength : ItemLength);
+    }
+
+    /// <summary>
+    ///     Gets the packet of entries made by hand, such as the hair of a corpse, which is no item.
+    /// </summary>
+    public static ContainerContentPacket Of(IEnumerable<ContainerItemEntry> entries, bool gridBytes)
+    {
+        return new(entries.ToArray(), gridBytes);
     }
 
     public void Write(ref PacketWriter writer)
@@ -71,5 +78,12 @@ public sealed class ContainerContentPacket : BasePacket<ContainerContentPacket>,
             writer.WriteSerial(item.Container);
             writer.WriteUInt16BigEndian(item.Hue.Value);
         }
+    }
+
+    private ContainerContentPacket(ContainerItemEntry[] entries, bool gridBytes)
+    {
+        Items = entries;
+        GridBytes = gridBytes;
+        Length = HeaderLength + entries.Length * (gridBytes ? GridItemLength : ItemLength);
     }
 }

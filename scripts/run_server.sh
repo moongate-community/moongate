@@ -83,6 +83,7 @@ fi
 # A configuration may name its paths through ${MOONGATE_ROOT}, such as migrations_directory.
 export MOONGATE_ROOT=${MOONGATE_ROOT:-$root_directory}
 
-"$dist_directory/mgctl" init "$root_directory"
+# The server shows the banner itself.
+"$dist_directory/mgctl" init "$root_directory" --no-header
 
 exec "$dist_directory/mgserver" --root-directory "$root_directory" "${server_options[@]}"

@@ -17,8 +17,12 @@ public sealed class ItemFactoryServiceTests
     {
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
-                new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Hue = HueSpec.FromRange(2, 5), Name = "robe", Movable = true },
-                new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED), Amount = RangeValueSpec<int>.FromRange(10, 20) },
+                new ItemTemplate
+                {
+                    Id = "robe", ItemId = new Serial(0x1F03), Hue = HueSpec.FromRange(2, 5), Name = "robe", Movable = true
+                },
+                new ItemTemplate
+                    { Id = "gold", ItemId = new Serial(0x0EED), Amount = RangeValueSpec<int>.FromRange(10, 20) },
                 new ItemTemplate { Id = "bad_pile", ItemId = new Serial(0x1F03), Amount = RangeValueSpec<int>.FromValue(3) },
                 new ItemTemplate
                 {
@@ -29,8 +33,8 @@ public sealed class ItemFactoryServiceTests
             )
         );
         var tiles = new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0)
-                                             .Item(0x1F03, TileFlagType.None, 0)
-                                             .Item(0x0F10, TileFlagType.None, 0);
+            .Item(0x1F03, TileFlagType.None, 0)
+            .Item(0x0F10, TileFlagType.None, 0);
 
         // Create never touches persistence; the integration tests cover saving.
         _factory = new ItemFactoryService(templates, tiles, null!);

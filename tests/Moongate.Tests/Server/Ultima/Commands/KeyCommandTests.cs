@@ -31,14 +31,19 @@ public sealed class KeyCommandTests : IAsyncDisposable
     private readonly StubPacketSendService _sender = new();
     private readonly ItemService _items = TestItems.Create();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
+
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), ScriptId = "door" },
             new ItemTemplate { Id = "0x1010_iron_key", ItemId = new Serial(0x1010), Name = "iron key" }
         )
     );
+
     private readonly FakeItemFactoryService _factory;
-    private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
+    private readonly ItemEntity _backpack = new()
+        { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+
     private readonly ItemEntity _door = new()
     {
         Id = new Serial(0x40000010), TemplateId = "decoration_door", ItemId = 0x0675, Amount = 1,
@@ -53,6 +58,26 @@ public sealed class KeyCommandTests : IAsyncDisposable
         _backpack.Equip(new Serial(2), LayerType.Backpack);
         _door.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
         _items.Add([_backpack, _door]);
+    }
+
+    [Fact]
+    public async Task ReservedBackpack_RefusesBeforeCreatingTheKeyOrChangingTheDoor()
+    {
+        _door.RemoveProp("key.value");
+        _targets.Result = TargetResult.ForObject(_door.Id);
+        var reservations =
+            new Moongate.Server.Ultima.Services.Items.InventoryReservationService(
+                new Moongate.Tests.TestSupport.Scripting.StubGameLoop()
+            );
+        reservations.TryReserve(new(2), Task.CompletedTask);
+        var guard = new Moongate.Server.Ultima.Services.Items.InventoryMutationGuard(
+            new Lazy<Moongate.Server.Ultima.Interfaces.IItemService>(() => _items),
+            reservations
+        );
+        await RunAsync(inventory: guard, reservations: reservations);
+        Assert.Empty(_factory.Saved);
+        Assert.False(_door.TryGetProp<long>("key.value", out _));
+        Assert.Empty(_sender.Sent);
     }
 
     [Fact]
@@ -102,14 +127,29 @@ public sealed class KeyCommandTests : IAsyncDisposable
         Assert.Equal("La chiave è nel tuo zaino.", Assert.Single(context.Output).Text);
     }
 
-    private async Task<CommandContext> RunAsync(ILocalizationService? localization = null)
+    private async Task<CommandContext> RunAsync(
+        ILocalizationService? localization = null,
+        Moongate.Server.Ultima.Interfaces.Items.IInventoryMutationGuard? inventory = null,
+        Moongate.Server.Ultima.Interfaces.Items.IInventoryReservationService? reservations = null
+    )
     {
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         await _fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(2)));
         var context = new CommandContext(".key", "key", [], CommandSourceType.InGame, session);
 
-        await new KeyCommand(_targets, _items, _templates, _factory, _sender, TestTooltips.Create(_items, _mobiles), _fixture.Loop, localization)
+        await new KeyCommand(
+                _targets,
+                _items,
+                _templates,
+                _factory,
+                _sender,
+                TestTooltips.Create(_items, _mobiles),
+                _fixture.Loop,
+                localization,
+                inventory,
+                reservations
+            )
             .ExecuteAsync(context);
 
         return context;

@@ -21,10 +21,12 @@ public sealed class ItemServiceTests
 
     private readonly StubMovementService _dropMovement = new() { DropZ = 3 };
     private readonly StubLineOfSightService _sight = new();
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 10)
     };
+
     private readonly ItemEntity _backpack = Item(0x40000001);
     private readonly ItemEntity _bag = Item(0x40000002);
     private readonly ItemEntity _coin = Item(0x40000003);
@@ -200,16 +202,15 @@ public sealed class ItemServiceTests
     {
         var items = Service();
         var others = Enumerable.Range(0, 100_000)
-                               .Select(
-                                   index =>
-                                   {
-                                       var item = Item(0x41000000u + (uint)index);
-                                       item.PlaceOnGround(MapType.Trammel, new Point3D(100 + index % 1000, 100, 0));
+            .Select(index =>
+                {
+                    var item = Item(0x41000000u + (uint)index);
+                    item.PlaceOnGround(MapType.Trammel, new Point3D(100 + index % 1000, 100, 0));
 
-                                       return item;
-                                   }
-                               )
-                               .ToList();
+                    return item;
+                }
+            )
+            .ToList();
         items.Add(others);
         var watch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -245,7 +246,10 @@ public sealed class ItemServiceTests
     {
         var service = Service();
 
-        Assert.Equal((_backpack, _backpack, null), (service.GetWornRoot(_coin), service.GetWornRoot(_backpack), service.GetWornRoot(_ground)));
+        Assert.Equal(
+            (_backpack, _backpack, null),
+            (service.GetWornRoot(_coin), service.GetWornRoot(_backpack), service.GetWornRoot(_ground))
+        );
     }
 
     [Fact]
@@ -258,7 +262,10 @@ public sealed class ItemServiceTests
         gem.PutInContainer(box.Id, new Point2D(1, 1));
         service.Add([box, gem]);
 
-        Assert.Equal((_ground, _ground, _ground), (service.GetGroundRoot(gem), service.GetGroundRoot(box), service.GetGroundRoot(_ground)));
+        Assert.Equal(
+            (_ground, _ground, _ground),
+            (service.GetGroundRoot(gem), service.GetGroundRoot(box), service.GetGroundRoot(_ground))
+        );
         Assert.Equal((null, null), (service.GetGroundRoot(_coin), service.GetGroundRoot(_backpack)));
     }
 
@@ -295,6 +302,28 @@ public sealed class ItemServiceTests
             [_backpack.Id, _bag.Id, _coin.Id, _dagger.Id, _shirt.Id],
             Service().GetOwnedBy(Aria).Select(item => item.Id).Order()
         );
+    }
+
+    [Fact]
+    public void AContainerThatChangesPlace_AsksTheSaveToWriteItsContentsAgain_UntilTheyAreCommitted()
+    {
+        var items = Service();
+        var chest = Item(0x40000010);
+        chest.PlaceOnGround(MapType.Trammel, new Point3D(1500, 1628, 10));
+        items.Add([chest]);
+        Assert.Empty(items.CaptureRewrites());
+
+        // The bag holds the coin; the dagger holds nothing.
+        items.MoveToContainer(_bag, chest.Id, new Point2D(10, 10));
+        items.MoveToContainer(_dagger, chest.Id, new Point2D(20, 20));
+
+        Assert.Equal([_coin.Id], items.CaptureRewrites());
+
+        items.RewritesCommitted([_coin.Id]);
+        Assert.Empty(items.CaptureRewrites());
+
+        items.PlaceOnGround(_bag, MapType.Trammel, new Point3D(1501, 1628, 10));
+        Assert.Equal([_coin.Id], items.CaptureRewrites());
     }
 
     [Fact]
@@ -424,14 +453,6 @@ public sealed class ItemServiceTests
         items.Add([_coin]);
 
         Assert.Empty(((IPersistenceDeletionSource)items).Capture());
-    }
-
-    private ItemService Service()
-    {
-        var items = TestItems.Create();
-        items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
-
-        return items;
     }
 
     [Fact]
@@ -839,6 +860,14 @@ public sealed class ItemServiceTests
         items.Absorb(_ground);
 
         Assert.Null(_ground.DecayAt);
+    }
+
+    private ItemService Service()
+    {
+        var items = TestItems.Create();
+        items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
+
+        return items;
     }
 
     private (ItemService Items, SettableClock Clock) Decaying()

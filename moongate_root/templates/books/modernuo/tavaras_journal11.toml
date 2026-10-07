@@ -1,0 +1,586 @@
+title = "Journal: Discovery of the Tomb"
+author = "Tavara Sewel"
+content = """Day Eleven - Day
+Thirteen:
+ 
+Two more workers
+have gone missing.
+Even more disturbing
+is the fact that
+Lysander has joined
+
+them. Late last night
+the workers finished
+excavating the next
+main hall, and we
+retired to the main
+antechamber and our
+camp to rest up for
+exploration on the
+
+'morrow.  In the
+middle of the night we
+woke to a strange
+howling sound, and as
+the men prepared
+themselves for
+another onslaught of
+the beasts that had
+
+troubled our outer
+camp, it was noticed
+that Lysander was
+nowhere in our
+number.  I cannot
+fathom where he has
+gone - the newly
+revealed chamber
+
+holds no immediate
+egress, blocked again
+by piles of stone and
+rubble, and I cannot
+believe that Lysander,
+of all people, would
+have fled this site -
+indeed, he had lately
+
+grown almost fanatical
+in his work to
+discover more of the
+secrets barred to us
+by the consistently
+slow progress of
+excavating each new
+hallway.  The men are
+
+at work even now, and
+as the ceaseless
+thumps and cracks of
+their picks
+reverberate
+throughout the
+entirety of the tomb,
+the dust continues to
+
+pour down from the
+ancient stonework
+above us like some
+horrible, eldritch
+curse upon us all."""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Deník: Objevení hrobky"
+content = """Den jedenáctý až
+třináctý:
+ 
+Zmizeli další dva
+dělníci. Ještě
+znepokojivější je
+skutečnost, že se k
+
+nim přidal Lysander.
+Pozdě včera večer
+dělníci dokončili
+odkrytí další hlavní
+síně a my se stáhli do
+hlavní předsíně a
+našeho tábora, abychom
+si odpočinuli před
+průzkumem
+
+za zítřejšího dne.
+Uprostřed noci nás
+probudilo podivné
+vytí, a když se muži
+chystali na další
+nápor bestií, které
+
+obtěžovaly náš
+venkovní tábor, všimli
+jsme si, že mezi námi
+Lysander nikde není.
+Nedovedu pochopit, kam
+odešel – nově odhalená
+komnata
+
+nemá přímý východ,
+opět ji blokují
+hromady kamene a suti,
+a nemohu uvěřit, že by
+právě Lysander z
+tohoto místa uprchl –
+vždyť v poslední době
+
+v práci téměř
+zfanatičtěl touhou
+odhalit další
+tajemství, jež nám
+upírá stále pomalý
+postup odkrývání každé
+nové chodby. Muži
+
+pracují i nyní, a
+zatímco se neustálé
+údery a praskání
+jejich krumpáčů
+rozléhají celou
+hrobkou, prach dál
+
+padá z dávného zdiva
+nad námi jako nějaká
+děsivá, nadpřirozená
+kletba na nás všechny."""
+[translations.fre]
+title = "Journal : découverte du tombeau"
+content = """Du onzième au
+treizième jour :
+ 
+Deux autres ouvriers
+ont disparu. Plus
+troublant encore,
+Lysander les a
+
+rejoints. Tard hier
+soir, les ouvriers ont
+fini de dégager le
+grand couloir suivant,
+et nous nous sommes
+retirés dans
+l’antichambre
+principale, à notre
+camp, pour nous
+reposer avant
+l’exploration du
+
+lendemain. Au milieu
+de la nuit, nous nous
+sommes réveillés au
+son d’un étrange
+hurlement ; alors que
+les hommes se
+préparaient à un
+nouvel assaut des
+bêtes qui avaient
+
+troublé notre camp
+extérieur, on a
+remarqué que Lysander
+était introuvable
+parmi nous. Je ne puis
+concevoir où il est
+allé : la salle
+nouvellement dégagée
+
+n’offre aucune issue
+immédiate, bloquée une
+fois de plus par des
+tas de pierres et de
+gravats, et je ne puis
+croire que Lysander,
+entre tous, aurait fui
+ce site ; en effet, il
+était dernièrement
+
+devenu presque
+fanatique dans son
+travail pour découvrir
+davantage des secrets
+que nous interdisait
+la lenteur constante
+du déblaiement de
+chaque nouveau
+couloir. Les hommes
+
+travaillent en ce
+moment même, et tandis
+que les coups sourds
+et les claquements
+incessants de leurs
+pioches résonnent dans
+tout le tombeau, la
+poussière continue de
+
+pleuvoir des antiques
+ouvrages de pierre
+au-dessus de nous,
+comme quelque horrible
+malédiction
+surnaturelle jetée sur
+nous tous."""
+[translations.ger]
+title = "Tagebuch: Entdeckung des Grabes"
+content = """Elfter bis dreizehnter
+Tag:
+ 
+Zwei weitere Arbeiter
+sind verschwunden.
+Noch beunruhigender
+ist, dass Lysander
+sich
+
+ihnen angeschlossen
+hat. Spät gestern
+Nacht beendeten die
+Arbeiter das Freilegen
+der nächsten
+Haupthalle, und wir
+zogen uns in die
+Hauptvorhalle und
+unser Lager zurück, um
+uns für die Erkundung
+am
+
+morgigen Tag
+auszuruhen. Mitten in
+der Nacht erwachten
+wir bei einem
+seltsamen Heulen, und
+während die Männer
+sich auf einen
+weiteren Ansturm der
+Bestien vorbereiteten,
+die
+
+unser äußeres Lager
+heimgesucht hatten,
+bemerkte man, dass
+Lysander nirgends
+unter uns war. Ich
+kann nicht begreifen,
+wohin er gegangen ist
+– die neu freigelegte
+Kammer
+
+bietet keinen
+unmittelbaren Ausgang,
+wiederum von Stein-
+und Trümmerhaufen
+versperrt, und ich
+kann nicht glauben,
+dass ausgerechnet
+Lysander diesen Ort
+verlassen hätte –
+tatsächlich war er
+zuletzt
+
+in seiner Arbeit
+beinahe fanatisch
+geworden, mehr von den
+Geheimnissen zu
+entdecken, die uns
+durch den beständig
+langsamen Fortschritt
+beim Freilegen jedes
+neuen Ganges
+verschlossen bleiben.
+Die Männer sind
+
+noch jetzt bei der
+Arbeit, und während
+die unaufhörlichen
+Schläge und das
+Knacken ihrer
+Spitzhacken im
+gesamten Grab
+widerhallen, rieselt
+der Staub weiter
+
+von dem uralten
+Mauerwerk über uns
+herab wie ein
+schrecklicher,
+unheimlicher Fluch
+über uns alle."""
+[translations.ita]
+title = "Diario: scoperta della Tomba"
+content = """Giorno Undici - Giorno
+Tredici:
+ 
+Altri due operai sono
+scomparsi. Ancor più
+inquietante è il fatto
+che Lysander si sia
+unito a
+
+loro. Ieri a tarda
+notte gli operai hanno
+finito di liberare la
+successiva sala
+principale, e ci siamo
+ritirati
+nell'anticamera
+principale e nel
+nostro accampamento a
+riposare per
+l'esplorazione del
+
+mattino seguente. Nel
+cuore della notte ci
+siamo svegliati
+sentendo uno strano
+ululato, e mentre gli
+uomini si preparavano
+a un altro assalto
+delle bestie che
+avevano
+
+tormentato il nostro
+accampamento esterno,
+si è notato che
+Lysander non era fra
+noi. Non riesco a
+capire dove sia
+andato: la stanza
+appena rivelata
+
+non offre un'uscita
+immediata, ancora
+bloccata da mucchi di
+pietre e macerie, e
+non posso credere che
+proprio Lysander sia
+fuggito da questo
+luogo; in effetti,
+ultimamente era
+
+divenuto quasi
+fanatico nel suo
+lavoro per scoprire
+altri segreti a noi
+preclusi dai progressi
+costantemente lenti
+nello scavo di ogni
+nuovo corridoio. Gli
+uomini sono
+
+al lavoro anche ora e,
+mentre i colpi e gli
+schianti incessanti
+dei picconi
+riverberano per
+l'intera tomba, la
+polvere continua a
+
+riversarsi dall'antica
+muratura sopra di noi
+come un'orribile,
+arcana maledizione su
+tutti noi."""
+[translations.pol]
+title = "Dziennik: odkrycie Grobowca"
+content = """Dzień jedenasty —
+dzień trzynasty:
+ 
+Zaginęło jeszcze dwóch
+robotników. Bardziej
+niepokojące jest to,
+że Lysander do nich
+
+dołączył. Późno
+wczoraj w nocy
+robotnicy skończyli
+odsłaniać kolejną
+główną salę, a my
+wróciliśmy do głównego
+przedsionka i naszego
+obozu, by odpocząć
+przed jutrzejszym
+
+badaniem. W środku
+nocy obudziło nas
+dziwne wycie; kiedy
+mężczyźni
+przygotowywali się do
+kolejnego natarcia
+bestii, które
+
+nękały zewnętrzny
+obóz, zauważono, że
+nigdzie nie ma wśród
+nas Lysander. Nie mogę
+pojąć, dokąd poszedł —
+nowo odkryta komnata
+
+nie ma bezpośredniego
+wyjścia, znów blokują
+ją sterty kamieni i
+gruzu; nie wierzę, by
+właśnie Lysander
+uciekł z tego miejsca
+— ostatnio przecież
+
+stał się niemal
+fanatyczny w pracy nad
+odkrywaniem kolejnych
+tajemnic, do których
+dostęp uniemożliwia
+stale powolne
+odsłanianie każdego
+nowego korytarza.
+Mężczyźni
+
+pracują nawet teraz, a
+gdy nieustanne
+łupnięcia i trzaski
+kilofów rozbrzmiewają
+w całym grobowcu, pył
+nadal
+
+sypie się z pradawnej
+kamiennej konstrukcji
+nad nami niczym jakaś
+straszliwa,
+niesamowita klątwa
+rzucona na nas
+wszystkich."""
+[translations.por]
+title = "Diário: descoberta da tumba"
+content = """Décimo primeiro dia -
+Décimo terceiro dia:
+ 
+Mais dois
+trabalhadores
+desapareceram. Ainda
+mais perturbador é o
+fato de Lysander ter
+se juntado a
+
+eles. Tarde da noite
+passada, os
+trabalhadores
+terminaram de escavar
+o próximo salão
+principal, e nos
+retiramos para a
+antecâmara principal e
+nosso acampamento para
+descansar para a
+exploração de
+
+amanhã. No meio da
+noite acordamos com um
+estranho uivo e,
+enquanto os homens se
+preparavam para outra
+investida das feras
+que haviam
+
+perturbado nosso
+acampamento externo,
+notou-se que Lysander
+não estava entre nós.
+Não consigo imaginar
+para onde foi: a
+câmara recém-revelada
+
+não tem saída
+imediata, novamente
+bloqueada por pilhas
+de pedra e entulho, e
+não posso acreditar
+que Lysander, entre
+todas as pessoas,
+teria fugido deste
+lugar; de fato,
+ultimamente ele havia
+
+se tornado quase
+fanático em seu
+trabalho de descobrir
+mais dos segredos
+vedados a nós pelo
+progresso sempre lento
+da escavação de cada
+novo corredor. Os
+homens estão
+
+trabalhando mesmo
+agora e, enquanto as
+incessantes pancadas e
+estalos de suas
+picaretas reverberam
+por toda a tumba, a
+poeira continua a
+
+cair da antiga
+alvenaria acima de nós
+como alguma maldição
+horrível e
+sobrenatural sobre
+todos nós."""
+[translations.spa]
+title = "Diario: descubrimiento de la tumba"
+content = """Día once - Día trece:
+ 
+Han desaparecido otros
+dos trabajadores. Más
+inquietante aún es que
+Lysander se haya unido
+a
+
+ellos. Anoche, tarde,
+los trabajadores
+terminaron de excavar
+el siguiente corredor
+principal y nos
+retiramos a la
+antecámara principal y
+al campamento para
+descansar antes de
+explorar al
+
+día siguiente. En
+mitad de la noche nos
+despertó un extraño
+aullido, y mientras
+los hombres se
+preparaban para otra
+embestida de las
+bestias que habían
+
+acosado nuestro
+campamento exterior,
+se advirtió que
+Lysander no estaba
+entre nosotros. No
+puedo comprender
+adónde ha ido: la
+cámara recién
+descubierta
+
+no ofrece una salida
+inmediata, bloqueada
+de nuevo por montones
+de piedra y escombros,
+y no puedo creer que
+Lysander, precisamente
+él, haya huido de este
+lugar; de hecho,
+últimamente había
+
+mostrado un celo casi
+fanático por descubrir
+más secretos, vedados
+por el avance siempre
+lento de la excavación
+de cada nuevo
+corredor. Los hombres
+están
+
+trabajando incluso
+ahora, y mientras los
+golpes y chasquidos
+incesantes de sus
+picos resuenan por
+toda la tumba, el
+polvo sigue
+
+cayendo de la antigua
+mampostería sobre
+nosotros como una
+horrible maldición
+sobrenatural que nos
+alcanza a todos."""

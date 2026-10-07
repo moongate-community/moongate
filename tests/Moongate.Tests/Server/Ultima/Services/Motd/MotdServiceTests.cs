@@ -32,21 +32,30 @@ public sealed class MotdServiceTests
         sessions.GetOrCreate(characterless);
         var gone = sessions.GetOrCreate(disconnected);
         await fixture.ExecuteOnLoopAsync(() =>
-        {
-            entrant.Set(SessionKeys.CharacterId, new Serial(2));
-            other.Set(SessionKeys.CharacterId, new Serial(3));
-            gone.Set(SessionKeys.CharacterId, new Serial(4));
-        });
+            {
+                entrant.Set(SessionKeys.CharacterId, new Serial(2));
+                other.Set(SessionKeys.CharacterId, new Serial(3));
+                gone.Set(SessionKeys.CharacterId, new Serial(4));
+            }
+        );
         disconnected.Complete();
         var sender = new StubPacketSendService();
         var context = new PacketContext(entrant, fixture.Loop, sessions, sender);
         var registry = new MotdVariableRegistry();
         MotdRenderer.RegisterBuiltins(registry);
-        var service = CreateService(sessions, registry, new MotdLine(1, "Hello ${player_name}"), new MotdLine(2, "Online ${users_online}"));
+        var service = CreateService(
+            sessions,
+            registry,
+            new MotdLine(1, "Hello ${player_name}"),
+            new MotdLine(2, "Online ${users_online}")
+        );
 
         await service.SendAsync(context, new MobileEntity { Id = new Serial(2), Name = "Aria" }, CancellationToken.None);
 
-        Assert.Equal(["Hello Aria", "Online 2"], sender.Sent.Cast<UnicodeSpeechMessagePacket>().Select(packet => packet.Text));
+        Assert.Equal(
+            ["Hello Aria", "Online 2"],
+            sender.Sent.Cast<UnicodeSpeechMessagePacket>().Select(packet => packet.Text)
+        );
         Assert.All(sender.SentSessionIds, id => Assert.Equal(entrant.SessionId, id));
     }
 
@@ -62,8 +71,13 @@ public sealed class MotdServiceTests
         var registry = new MotdVariableRegistry();
         registry.Register("broken", (_, _) => throw new InvalidOperationException("private resolver detail"));
         registry.Register("nul", (_, _) => ValueTask.FromResult("bad\0text"));
-        var service = CreateService(sessions, registry, new MotdLine(1, "${broken}"),
-            new MotdLine(2, "${nul}"), new MotdLine(3, "Visible"));
+        var service = CreateService(
+            sessions,
+            registry,
+            new MotdLine(1, "${broken}"),
+            new MotdLine(2, "${nul}"),
+            new MotdLine(3, "Visible")
+        );
 
         await service.SendAsync(context, new MobileEntity { Id = new Serial(2), Name = "Aria" }, CancellationToken.None);
 
@@ -82,14 +96,22 @@ public sealed class MotdServiceTests
         var pending = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var registry = new MotdVariableRegistry();
-        registry.Register("delayed", async (_, _) =>
-        {
-            started.SetResult();
-            return await pending.Task;
-        });
+        registry.Register(
+            "delayed",
+            async (_, _) =>
+            {
+                started.SetResult();
+                return await pending.Task;
+            }
+        );
         var service = CreateService(sessions, registry, new MotdLine(1, "${delayed}"), new MotdLine(2, "Later"));
 
-        var sending = service.SendAsync(context, new MobileEntity { Id = new Serial(2), Name = "Aria" }, CancellationToken.None).AsTask();
+        var sending = service.SendAsync(
+                context,
+                new MobileEntity { Id = new Serial(2), Name = "Aria" },
+                CancellationToken.None
+            )
+            .AsTask();
         await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
         sessions.Remove(entrant.SessionId);
         sessions.GetOrCreate(fixture.Client);
@@ -111,15 +133,19 @@ public sealed class MotdServiceTests
         var pending = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
         var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var registry = new MotdVariableRegistry();
-        registry.Register("delayed", async (_, _) =>
-        {
-            started.SetResult();
-            return await pending.Task;
-        });
+        registry.Register(
+            "delayed",
+            async (_, _) =>
+            {
+                started.SetResult();
+                return await pending.Task;
+            }
+        );
         var service = CreateService(sessions, registry, new MotdLine(1, "${delayed}"));
         using var cancellation = new CancellationTokenSource();
 
-        var sending = service.SendAsync(context, new MobileEntity { Id = new Serial(2), Name = "Aria" }, cancellation.Token).AsTask();
+        var sending = service.SendAsync(context, new MobileEntity { Id = new Serial(2), Name = "Aria" }, cancellation.Token)
+            .AsTask();
         await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
         cancellation.Cancel();
         pending.SetResult("Too late");
@@ -130,9 +156,17 @@ public sealed class MotdServiceTests
 
     private static MotdService CreateService(SessionService sessions, MotdVariableRegistry registry, params MotdLine[] lines)
     {
-        var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());
-        return new MotdService(new StubDataLoaderService().With(lines), new MotdRenderer(registry), sessions,
-            new AdminServerInfoProvider(Moongate.Server.Core.Types.Hosting.ServerMode.Game, realm), realm,
-            new MotdServerIdentity("Shard"));
+        var realm = new RealmInstance(
+            new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular),
+            Guid.NewGuid()
+        );
+        return new MotdService(
+            new StubDataLoaderService().With(lines),
+            new MotdRenderer(registry),
+            sessions,
+            new AdminServerInfoProvider(Moongate.Server.Core.Types.Hosting.ServerMode.Game, realm),
+            realm,
+            new MotdServerIdentity("Shard")
+        );
     }
 }

@@ -23,24 +23,18 @@ public class TileDataService : ITileDataService
     {
     }
 
-    internal TileDataService(Func<LandData[]?> landTable, Func<ItemData[]?> itemTable)
-    {
-        _land = new(() => ToLandTiles(landTable() ?? throw NotLoaded()));
-        _items = new(() => ToItemTiles(itemTable() ?? throw NotLoaded()));
-    }
-
     public LandTile GetLand(int id)
     {
         return TryGetLand(id, out var tile)
-                   ? tile
-                   : throw new ArgumentOutOfRangeException(nameof(id), id, $"Land ids go from 0 to {LandCount - 1}.");
+            ? tile
+            : throw new ArgumentOutOfRangeException(nameof(id), id, $"Land ids go from 0 to {LandCount - 1}.");
     }
 
     public ItemTile GetItem(int id)
     {
         return TryGetItem(id, out var tile)
-                   ? tile
-                   : throw new ArgumentOutOfRangeException(nameof(id), id, $"Item ids go from 0 to {ItemCount - 1}.");
+            ? tile
+            : throw new ArgumentOutOfRangeException(nameof(id), id, $"Item ids go from 0 to {ItemCount - 1}.");
     }
 
     public bool TryGetLand(int id, [NotNullWhen(true)] out LandTile? tile)
@@ -57,6 +51,12 @@ public class TileDataService : ITileDataService
         tile = (uint)id < (uint)items.Length ? items[id] : null;
 
         return tile is not null;
+    }
+
+    internal TileDataService(Func<LandData[]?> landTable, Func<ItemData[]?> itemTable)
+    {
+        _land = new(() => ToLandTiles(landTable() ?? throw NotLoaded()));
+        _items = new(() => ToItemTiles(itemTable() ?? throw NotLoaded()));
     }
 
     private static InvalidOperationException NotLoaded()

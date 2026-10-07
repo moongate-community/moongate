@@ -97,6 +97,7 @@ internal static class DfnParser
             {
                 if (header is not null && fields is not null && entries is not null)
                 {
+                    // Safe: comments and entryComments are set while a block is open.
                     blocks.Add(new(header, fields, entries, comments!, label, entryComments!));
                 }
 
@@ -113,6 +114,7 @@ internal static class DfnParser
             }
 
             entries.Add(line);
+            // Safe: entryComments is set while a block is open.
             entryComments!.Add(comment);
 
             var separator = line.IndexOf('=');
@@ -135,6 +137,7 @@ internal static class DfnParser
 
             if (comment is not null)
             {
+                // Safe: comments is set while a block is open.
                 comments![key] = comment;
             }
         }

@@ -71,6 +71,14 @@ public sealed class LuaModuleDescriberTests
     }
 
     [Fact]
+    public void EnumsOf_KeepsTheOrderTheyAreMet_ParametersThenReturnsThenConstants()
+    {
+        var enums = LuaModuleDescriber.EnumsOf(LuaModuleDescriber.Describe(typeof(DefaultsModule)));
+
+        Assert.Equal([typeof(ProbeColour), typeof(RegistryColour), typeof(DayOfWeek)], enums);
+    }
+
+    [Fact]
     public void EnumsOf_AModuleWithoutEnums_IsEmpty()
     {
         Assert.Empty(LuaModuleDescriber.EnumsOf(LuaModuleDescriber.Describe(typeof(DependentModule))));

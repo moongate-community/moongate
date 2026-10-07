@@ -1,5 +1,7 @@
 [[mobile]]
 id = "killerpumpkin"
+script_id = "monster"
+flee_at = -1
 name = "Grimm"
 body = 1246
 strength = "1d151+199"

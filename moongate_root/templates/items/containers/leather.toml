@@ -5,10 +5,11 @@ item_id = 2480
 name = "pouch"
 rarity = "common"
 weight = 1.0
+dyeable = true
 buy_price = 7
 sell_price = 3
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e79_pouch"
@@ -17,10 +18,11 @@ item_id = 3705
 name = "pouch"
 rarity = "common"
 weight = 1.0
+dyeable = true
 buy_price = 7
 sell_price = 3
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x09b2_backpack"
@@ -29,10 +31,11 @@ item_id = 2482
 name = "backpack"
 rarity = "common"
 weight = 1.0
+dyeable = true
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e75_backpack"
@@ -41,10 +44,11 @@ item_id = 3701
 name = "backpack"
 rarity = "common"
 weight = 1.0
+dyeable = true
 buy_price = 18
 sell_price = 9
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "0x0e76_bag"
@@ -53,10 +57,11 @@ item_id = 3702
 name = "bag"
 rarity = "common"
 weight = 1.0
+dyeable = true
 buy_price = 7
 sell_price = 3
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "bag"
@@ -71,6 +76,7 @@ item_id = 3702
 name = "bag of sending"
 rarity = "common"
 weight = 2.0
+dyeable = false
 decays = true
 
 [[item]]
@@ -80,10 +86,11 @@ item_id = 3706
 name = "picnic basket"
 rarity = "common"
 weight = 1.0
+dyeable = true
 buy_price = 10
 sell_price = 5
 decays = true
-max_weight = 40000
+max_weight = 400
 
 [[item]]
 id = "picnicbasket"

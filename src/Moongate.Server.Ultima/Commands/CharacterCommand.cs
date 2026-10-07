@@ -76,7 +76,7 @@ public sealed class CharacterCommand : ICommandExecutor, ICommandArgumentComplet
 
         foreach (var character in pending)
         {
-            var requested = character.DeletionRequestedAt!.Value;
+            var requested = character.DeletionRequestedAt.Value;
             var removable = requested.AddHours(_config.DeletionDelayHours);
             context.Print(
                 _localization.Text(
@@ -84,7 +84,7 @@ public sealed class CharacterCommand : ICommandExecutor, ICommandArgumentComplet
                     "{0} \"{1}\" account {2}: requested {3} UTC, removable after {4} UTC",
                     character.Id,
                     character.DisplayName(),
-                    character.AccountId!,
+                    character.AccountId,
                     Format(requested),
                     Format(removable)
                 )
@@ -98,13 +98,22 @@ public sealed class CharacterCommand : ICommandExecutor, ICommandArgumentComplet
 
         if (restored is null)
         {
-            context.PrintError(_localization.Text(CommandMessages.NotPendingDeletion, "No character {0} is pending deletion.", characterId));
+            context.PrintError(
+                _localization.Text(CommandMessages.NotPendingDeletion, "No character {0} is pending deletion.", characterId)
+            );
 
             return;
         }
 
         _logger.Information("Character {Character} restored from pending deletion", restored);
-        context.Print(_localization.Text(CommandMessages.CharacterRestored, "Character {0} \"{1}\" restored.", restored.Id, restored.DisplayName()));
+        context.Print(
+            _localization.Text(
+                CommandMessages.CharacterRestored,
+                "Character {0} \"{1}\" restored.",
+                restored.Id,
+                restored.DisplayName()
+            )
+        );
     }
 
     private static string Format(DateTime utc)

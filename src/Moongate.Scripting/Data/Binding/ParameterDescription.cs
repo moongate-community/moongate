@@ -4,7 +4,7 @@ namespace Moongate.Scripting.Data.Binding;
 ///     One parameter of a script function, as Lua sees it.
 /// </summary>
 /// <param name="Name">
-///     The parameter's name, or <c>...</c> for the trailing varargs.
+///     The parameter's name in snake_case, as functions are named, or <c>...</c> for the trailing varargs.
 /// </param>
 /// <param name="LuaType">
 ///     The Lua type name, such as <c>integer</c>, <c>DirectionType|string</c> or a declared alias.

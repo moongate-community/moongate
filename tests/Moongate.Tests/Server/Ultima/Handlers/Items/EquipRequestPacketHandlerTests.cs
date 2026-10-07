@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Items;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
@@ -48,8 +49,12 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
         var sectors = TestSectors.Create();
         _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
-        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) });
-        _mobiles.EnterWorld(new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) });
+        _mobiles.EnterWorld(
+            new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) }
+        );
+        _mobiles.EnterWorld(
+            new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) }
+        );
         _backpack.Equip(Aria, LayerType.Backpack);
         _dagger.PutInContainer(_backpack.Id, new Point2D(60, 80));
         _apple.PutInContainer(_backpack.Id, new Point2D(70, 80));
@@ -83,6 +88,30 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
         Assert.Contains(_dagger, _items.GetWorn(Aria));
         Assert.Equal([$"Worn {Aria.Value} {_dagger.Id.Value}"], _view.Calls);
         Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_AWornItem_ShowsTheOwnPlayerItsStatusAgain_ForTheDamageAndTheArmorItGives()
+    {
+        var state = new Moongate.Tests.TestSupport.Ultima.Mobiles.RecordingMobileStateService();
+        await StartAsync(_dagger);
+
+        await EquipAsync(_dagger, Aria, state: state);
+
+        Assert.Equal(new Serial(2), Assert.Single(state.Statuses).Target.Id);
+    }
+
+    [Fact]
+    public async Task Handle_AnItemThatBounces_ShowsNoStatus()
+    {
+        var state = new Moongate.Tests.TestSupport.Ultima.Mobiles.RecordingMobileStateService();
+        _scripts.Scripted.Add("dagger");
+        _scripts.Refused.Add("can_equip");
+        await StartAsync(_dagger);
+
+        await EquipAsync(_dagger, Aria, state: state);
+
+        Assert.Empty(state.Statuses);
     }
 
     [Fact]
@@ -309,9 +338,20 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
         );
     }
 
-    private Task EquipAsync(ItemEntity item, Serial mobile, LayerType layer = LayerType.OneHanded)
+    private Task EquipAsync(
+        ItemEntity item, Serial mobile, LayerType layer = LayerType.OneHanded, IMobileStateService? state = null
+    )
     {
-        var handler = new EquipRequestPacketHandler(_items, _mobiles, _equipment, _view, _sender, TestTooltips.Create(_items, _mobiles), _scripts);
+        var handler = new EquipRequestPacketHandler(
+            _items,
+            _mobiles,
+            _equipment,
+            _view,
+            _sender,
+            TestTooltips.Create(_items, _mobiles),
+            _scripts,
+            state: state
+        );
 
         return _fixture.ExecuteOnLoopAsync(() =>
             handler.Handle(_session, new EquipRequestPacket { Item = item.Id, Layer = layer, Mobile = mobile })

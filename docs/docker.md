@@ -6,7 +6,7 @@ Moongate publishes Linux images to [GitHub Container Registry](https://github.co
 docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 ```
 
-The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships [`mgctl`](mgctl.md), which prepares the root, applies the migrations and converts UOX3 and ModernUO content, the core SQL, the [shard data files](data-files.md), the [templates](templates.md) and the example [scripts](scripting.md). The `sample-plugin` build target adds the sample plugin bundle.
+The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships [`mgctl`](mgctl.md), which prepares the root, applies the migrations and converts UOX3 and ModernUO content, the core SQL, the [shard data files](data-files.md), the [templates](templates.md) and the example [scripts](scripting/shipped-scripts.md). The `sample-plugin` build target adds the sample plugin bundle.
 
 ## Build cache
 
@@ -98,7 +98,7 @@ The current image declares UO client ports 2593 and 2595, and UDP port 12000 for
 
 After pulling a newer image, run `mgctl` on the volume again, as above: it adds the data files and core SQL the new release introduces and keeps the files already in the root. The Compose example does this in its entrypoint on every start.
 
-`docker compose down` preserves named volumes. Adding `--volumes` deletes server roots and PostgreSQL data; use it only for a disposable environment. World saves are not PostgreSQL backups. Stop services normally so the final world save can complete.
+`docker compose down` preserves named volumes. Adding `--volumes` deletes server roots and PostgreSQL data; use it only for a disposable environment. World saves are not PostgreSQL backups. Stop services normally so the final world save can complete: Docker kills a container 10 seconds after asking it to stop, and the first save after a start takes 8 to 15 seconds for the shipped world, so give the server more time with `stop_grace_period: 2m` in the Compose file or `docker stop -t 120`.
 
 To update an instance, read the target release's changelog, stop it, follow your database backup policy, change the image tag, and restart with the same volumes. If startup reports pending migrations, stop the affected server and apply the reviewed SQL before starting it again.
 

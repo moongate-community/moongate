@@ -43,6 +43,12 @@ public interface IMobileService : IPersistenceDeletionSource
     Serial BeardSerial(Serial mobile);
 
     /// <summary>
+    ///     Forgets the virtual serials of the hair and beard of <paramref name="owner" />, which is gone: a deleted
+    ///     mobile, or a corpse that borrowed a pair to be drawn with the hair of who died.
+    /// </summary>
+    void ForgetHair(Serial owner);
+
+    /// <summary>
     ///     Keeps the mobile as the live one in the world; it replaces an instance with the same serial.
     /// </summary>
     void EnterWorld(MobileEntity mobile);

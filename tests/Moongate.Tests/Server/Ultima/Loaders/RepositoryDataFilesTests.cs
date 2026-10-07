@@ -1,3 +1,6 @@
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Tests.TestSupport.Ultima.Speech;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Geometry;
@@ -7,6 +10,7 @@ using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Data.Locations;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
@@ -55,6 +59,7 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<NamesLoader, NameList>(11);
         container.AddUltimaDataLoader<MoongatesLoader, MoongateFacet>(12);
         container.AddUltimaDataLoader<LocationsLoader, NamedLocation>(13);
+        container.AddUltimaDataLoader<JailLoader, JailFile>(14);
         container.RegisterInstance(new LocalizationConfig { Language = "ita" });
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
@@ -75,7 +80,48 @@ public sealed class RepositoryDataFilesTests
             [MapType.Felucca, MapType.Trammel, MapType.Ilshenar, MapType.Malas, MapType.Tokuno, MapType.TerMur],
             places.Select(place => place.Map).Distinct()
         );
+        // ModernUO's go menu lists cell 7 on the spot of cell 6: the cells are ten different spots.
+        Assert.All(
+            places.Where(place => place.Category == "Internal/Jail Cells").GroupBy(place => place.Map),
+            cells => Assert.Equal(10, cells.Select(cell => cell.Location).Distinct().Count())
+        );
+        var jail = Assert.Single(service.GetEntities<JailFile>());
+        Assert.Equal(MapType.Felucca, jail.Map);
+        Assert.Equal(Enumerable.Range(1, 10), jail.Cell.Select(cell => cell.Number));
+        Assert.Equal(10, jail.Cell.Select(cell => cell.Location).Distinct().Count());
         Assert.Equal(58, service.GetEntities<SkillContent>().Count);
+        // The skills ModernUO lets a player use directly, with its waits; the others give none.
+        Assert.Equal(
+            new Dictionary<SkillType, double>
+            {
+                [SkillType.Anatomy] = 1,
+                [SkillType.AnimalLore] = 1,
+                [SkillType.ItemIdentification] = 1,
+                [SkillType.ArmsLore] = 1,
+                [SkillType.Begging] = 30,
+                [SkillType.Peacemaking] = 1,
+                [SkillType.Cartography] = 1,
+                [SkillType.DetectingHidden] = 30,
+                [SkillType.Discordance] = 1,
+                [SkillType.EvaluatingIntelligence] = 1,
+                [SkillType.ForensicEvaluation] = 1,
+                [SkillType.Hiding] = 10,
+                [SkillType.Provocation] = 1,
+                [SkillType.Inscription] = 1,
+                [SkillType.Poisoning] = 10,
+                [SkillType.SpiritSpeak] = 1,
+                [SkillType.Stealing] = 30,
+                [SkillType.AnimalTaming] = 30,
+                [SkillType.TasteIdentification] = 1,
+                [SkillType.Tracking] = 10,
+                [SkillType.Meditation] = 10,
+                [SkillType.Stealth] = 10,
+                [SkillType.RemoveTrap] = 10
+            },
+            service.GetEntities<SkillContent>()
+                .Where(skill => skill.Delay is not null)
+                .ToDictionary(skill => skill.Id, skill => skill.Delay.GetValueOrDefault())
+        );
         Assert.Equal(7, service.GetEntities<ProfessionContent>().Count);
         Assert.Equal(3, service.GetEntities<RaceContent>().Count);
         Assert.NotEmpty(Assert.Single(service.GetEntities<BannedNamesContent>()).Words);
@@ -90,7 +136,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5594, messages.Count);
+        Assert.Equal(5648, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -108,8 +154,33 @@ public sealed class RepositoryDataFilesTests
         Assert.False(britain.Housing);
         Assert.Equal(MusicType.Britain1, britain.Music);
         Assert.Equal("temperate", britain.Weather);
-        Assert.Contains(regions, region => region.Map == MapType.Felucca && region.Priority == 0 && region.Weather == "snowy" && region.Contains(4000, 300, 0));
-        Assert.All(regions.Where(region => region.Type == RegionType.Dungeon), region => Assert.Equal("none", region.Weather));
+
+        // What a new player reads in the starting town: New Haven is a guarded town on an island without guards.
+        var speech = new RecordingSpeechService();
+        var announcer = new RegionAnnouncer(service, speech);
+        var newcomer = new MobileEntity { Id = new Serial(2), AccountId = new Serial(1), Name = "Newcomer" };
+        announcer.RegionChanged(
+            newcomer,
+            null,
+            Assert.Single(regions, region => region.Map == MapType.Trammel && region.Name == "New Haven")
+        );
+        announcer.LoggedIn(newcomer);
+        Assert.Equal(
+            [
+                "You have entered Haven Island.", "You have entered New Haven.",
+                "You are now under the protection of the guards of New Haven."
+            ],
+            speech.Told.Select(told => told.Text)
+        );
+        Assert.Contains(
+            regions,
+            region => region.Map == MapType.Felucca && region.Priority == 0 && region.Weather == "snowy" &&
+                      region.Contains(4000, 300, 0)
+        );
+        Assert.All(
+            regions.Where(region => region.Type == RegionType.Dungeon),
+            region => Assert.Equal("none", region.Weather)
+        );
         Assert.Equal(new Point3D(1495, 1629, 10), britain.GoLocation);
         Assert.True(britain.Contains(1495, 1629, 10));
         var lookup = new RegionService(service);
@@ -131,11 +202,14 @@ public sealed class RepositoryDataFilesTests
         Assert.False(bedlam.TeleportIn);
         Assert.True(bedlam.TeleportOut);
         Assert.True(britain.TeleportIn);
-        var crystalCave = regions.Where(region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -90));
+        var crystalCave = regions.Where(region =>
+            region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -90)
+        );
         Assert.False(Assert.Single(crystalCave).TeleportOut);
         Assert.DoesNotContain(
             regions,
-            region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -70) && !region.RecallOut &&
+            region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -70) &&
+                      !region.RecallOut &&
                       region.Areas.Any(area => area.Z2 == -80)
         );
     }
@@ -152,7 +226,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5594, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5648, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,
@@ -204,7 +278,10 @@ public sealed class RepositoryDataFilesTests
         var messages = (Tomlyn.Model.TomlTable)own["messages"];
 
         // Every language carries its own text, not the English fallback.
-        Assert.All(Enumerable.Range(30008, 47), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
+        Assert.All(
+            Enumerable.Range(30008, 47).Concat(Enumerable.Range(30181, 4)),
+            id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}")
+        );
     }
 
     [Theory,

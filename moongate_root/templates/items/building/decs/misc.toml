@@ -943,6 +943,7 @@ rarity = "common"
 movable = false
 weight = 5.0
 decays = false
+script_id = "bulletin_board"
 
 [[item]]
 id = "0x1e5f_bulletin_board"
@@ -953,6 +954,7 @@ rarity = "common"
 movable = false
 weight = 5.0
 decays = false
+script_id = "bulletin_board"
 
 [[item]]
 id = "0x1e9a_hook"

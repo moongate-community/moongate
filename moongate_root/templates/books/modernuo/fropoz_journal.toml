@@ -1,0 +1,850 @@
+title = "Journal"
+author = "Fropoz"
+content = """I have done as my
+Master has
+instructed me.
+ 
+The painted humans
+have been driven into
+Britannia and are even
+now wreaking havoc
+
+across the land,
+providing us with the
+distraction my Master
+requested.  We
+have provided them
+with the masks
+necessary to defeat
+the orcs, thus
+
+causing even more
+distress for the people
+of Britannia.  The
+unsuspecting fools
+are too busy dealing
+with the orc hordes to
+continue their
+exploration of our
+
+lands.  We are
+safe...for now.
+     ----
+The attacks
+continue exactly as
+planned.  My Master
+is pleased with my
+work and we are
+
+closer to our goals than
+ever before.  The
+gargoyles have proven
+to be more troublesome
+than we first
+anticipated, but I
+believe we can
+subjugate them fully
+
+given enough time.  It's
+unfortunate that we
+did not discover their
+knowledge sooner.
+Even now they
+prepare our armies
+for battle, but not
+without resistance.
+
+Now that some of
+them know of the
+other lands and of
+humans, they will
+double their efforts to
+seek help.  This
+cannot be allowed.
+    -----
+
+Damn them!!  The
+humans proved
+more resourcefull than
+we thought them
+capable of.  Already
+their homes are free
+of orcs and savages
+and they once again
+
+are treading in our
+lands.  We may have to
+move sooner than we
+thought.  I will
+prepar my brethern
+and our golems.
+Hopefully, we can
+buy our Master some
+
+more time before the
+humans discover us.
+     -----
+It's too late.  The
+gargoyles whom have
+evaded our capture
+have opened the doors
+to our land.
+
+They pray the
+humans will help
+them, despite the
+actions of their
+cousins in Britannia.  I
+fear they are right.
+I must go to warn
+the MastKai Hohiro,
+
+
+
+10.11.2001
+first one to be here
+ 
+Congrats. I didn't really
+care to log on earlier,
+nor did I come straight
+here. 2pm, Magus"""
+item_template = "readable_book"
+item_id = 0x0FF1
+[translations]
+[translations.cze]
+title = "Deník"
+content = """Učinil jsem, jak mi Mistr
+přikázal.
+ 
+Pomalovaní lidé byli
+zahnáni do země Britannia
+a právě teď působí zmatek
+
+po celé zemi, čímž nám
+poskytují odvedení
+pozornosti, které si
+Mistr přál. Dodali jsme
+jim masky nezbytné k
+poražení skřetů, a tak
+
+působíme obyvatelům země
+Britannia ještě více
+trápení. Ti nic netušící
+hlupáci jsou příliš
+zaměstnáni skřetími
+hordami, než aby
+pokračovali v průzkumu
+našich
+
+zemí. Jsme v bezpečí...
+prozatím.
+     ----
+    Útoky pokračují
+přesně podle plánu. Mistr
+je s mou prací spokojen a
+my jsme
+
+svým cílům blíže než kdy
+předtím. Chrliči se
+ukázali být obtížnějšími,
+než jsme zprvu
+předpokládali, ale věřím,
+že si je můžeme úplně
+podrobit,
+
+dostaneme-li dostatek
+času. Je škoda, že jsme
+jejich znalosti
+neobjevili dříve. I nyní
+připravují naše armády na
+bitvu, nikoli však bez
+odporu.
+
+Nyní, když někteří z nich
+vědí o jiných zemích a o
+lidech, zdvojnásobí své
+úsilí najít pomoc. To
+nesmíme dopustit.
+    -----
+
+Zatraceně!! Lidé se
+ukázali vynalézavějšími,
+než jsme si mysleli, že
+dokážou být. Jejich
+domovy jsou již zbaveny
+skřetů a divochů a oni
+opět
+
+kráčejí našimi zeměmi.
+Možná budeme muset jednat
+dříve, než jsme mysleli.
+Připravím své bratry a
+naše golemy. Snad
+dokážeme našemu Mistrovi
+získat
+
+ještě trochu času, než
+nás lidé objeví.
+     -----
+    Je příliš pozdě.
+Chrliči, kteří unikli
+našemu zajetí, otevřeli
+dveře do naší země.
+
+Modlí se, aby jim lidé
+pomohli navzdory činům
+jejich příbuzných v zemi
+Britannia. Obávám se, že
+mají pravdu. Musím jít
+varovat MastKai Hohiro,
+
+
+
+10.11.2001
+první, kdo tu byl
+ 
+Gratuluju. Nijak zvlášť
+mi nezáleželo na tom
+přihlásit se dřív, ani
+jsem nešel rovnou sem.
+14:00, Magus"""
+[translations.fre]
+title = "Journal"
+content = """J’ai fait ce que mon
+Maître m’a ordonné.
+ 
+Les humains peints ont
+été poussés vers
+Britannia et ravagent en
+ce moment même
+
+le pays, nous procurant
+la diversion demandée par
+mon Maître. Nous leur
+avons fourni les masques
+nécessaires pour vaincre
+les orques, ce qui
+
+accroît encore la
+détresse des habitants de
+Britannia. Ces imbéciles
+qui ne se doutent de rien
+sont trop occupés à faire
+face aux hordes orques
+pour poursuivre leur
+exploration de nos
+
+terres. Nous sommes en
+sécurité... pour
+l’instant.
+     ----
+    Les attaques se
+poursuivent exactement
+comme prévu. Mon Maître
+est satisfait de mon
+travail, et nous sommes
+
+plus près de nos
+objectifs que jamais. Les
+gargouilles se sont
+révélées plus gênantes
+que nous ne l’avions
+d’abord prévu, mais je
+crois que nous pouvons
+les soumettre entièrement
+
+si nous disposons d’assez
+de temps. Il est
+regrettable que nous
+n’ayons pas découvert
+leur savoir plus tôt. En
+ce moment même, elles
+préparent nos armées au
+combat, mais non sans
+résistance.
+
+Maintenant que certaines
+d’entre elles connaissent
+les autres terres et les
+humains, elles
+redoubleront d’efforts
+pour chercher de l’aide.
+Nous ne pouvons le
+permettre.
+    -----
+
+Maudits soient-ils !! Les
+humains se sont montrés
+plus ingénieux que nous
+ne les en croyions
+capables. Déjà leurs
+demeures sont
+débarrassées des orques
+et des sauvages, et de
+nouveau ils
+
+foulent nos terres. Il se
+peut que nous devions
+agir plus tôt que prévu.
+Je préparerai mes frères
+et nos golems. Avec un
+peu de chance, nous
+pourrons gagner pour
+notre Maître un
+
+peu plus de temps avant
+que les humains nous
+découvrent.
+     -----
+    Il est trop tard. Les
+gargouilles qui ont
+échappé à notre capture
+ont ouvert les portes de
+notre pays.
+
+Elles prient pour que les
+humains les aident,
+malgré les actes de leurs
+cousines de Britannia. Je
+crains qu’elles aient
+raison. Je dois aller
+avertir le MastKai
+Hohiro,
+
+
+
+10.11.2001
+premier à être ici
+ 
+Félicitations. Je ne me
+suis pas vraiment soucié
+de me connecter plus tôt,
+et je ne suis pas venu
+directement ici non plus.
+14 h, Magus"""
+[translations.ger]
+title = "Tagebuch"
+content = """Ich habe getan, was mein
+Meister mir aufgetragen
+hat.
+ 
+Die bemalten Menschen
+sind nach Britannia
+getrieben worden und
+richten schon jetzt
+Verwüstungen
+
+im ganzen Land an. Damit
+verschaffen sie uns die
+Ablenkung, die mein
+Meister verlangt hat. Wir
+haben sie mit den Masken
+ausgestattet, die sie
+brauchen, um die Orks zu
+besiegen, und
+
+bereiten den Leuten von
+Britannia dadurch noch
+mehr Not. Die
+ahnungslosen Narren sind
+zu sehr mit den Orkhorden
+beschäftigt, um ihre
+Erkundung unserer
+
+Lande fortzusetzen. Wir
+sind sicher ... vorerst.
+    ----
+    Die Angriffe
+verlaufen weiter genau
+nach Plan. Mein Meister
+ist mit meiner Arbeit
+zufrieden, und wir sind
+
+unseren Zielen näher als
+je zuvor. Die Gargoyles
+haben sich als lästiger
+erwiesen, als wir
+zunächst erwartet hatten,
+doch ich glaube, wir
+können sie vollständig
+unterwerfen,
+
+wenn uns genügend Zeit
+bleibt. Es ist
+bedauerlich, dass wir ihr
+Wissen nicht früher
+entdeckt haben. Noch
+jetzt bereiten sie unsere
+Heere auf den Kampf vor,
+doch nicht ohne
+Widerstand.
+
+Da einige von ihnen nun
+von den anderen Landen
+und von Menschen wissen,
+werden sie ihre
+Bemühungen verdoppeln,
+Hilfe zu suchen. Dies
+darf nicht zugelassen
+werden.
+    -----
+
+Verflucht seien sie!! Die
+Menschen haben sich als
+einfallsreicher erwiesen,
+als wir es ihnen
+zugetraut hatten. Schon
+sind ihre Wohnstätten
+frei von Orks und Wilden,
+und sie
+
+betreten wieder unsere
+Lande. Vielleicht müssen
+wir früher vorgehen, als
+wir dachten. Ich werde
+meine Brüder und unsere
+Golems vorbereiten.
+Hoffentlich können wir
+unserem Meister noch
+etwas
+
+Zeit verschaffen, ehe die
+Menschen uns entdecken.
+    -----
+    Es ist zu spät. Die
+Gargoyles, die unserer
+Gefangennahme entgangen
+sind, haben die Türen zu
+unserem Land geöffnet.
+
+Sie beten, dass die
+Menschen ihnen helfen
+werden, trotz der Taten
+ihrer Vettern in
+Britannia. Ich fürchte,
+sie haben recht. Ich muss
+gehen, um den MastKai
+Hohiro,
+
+
+
+10.11.2001
+der Erste hier
+ 
+Glückwunsch. Ich habe mir
+nicht wirklich die Mühe
+gemacht, mich früher
+anzumelden, und bin auch
+nicht direkt
+hierhergekommen. 2 Uhr
+nachmittags, Magus"""
+[translations.ita]
+title = "Diario"
+content = """Ho fatto come il mio
+Padrone mi ha ordinato.
+ 
+Gli umani dipinti sono
+stati spinti dentro
+Britannia e proprio ora
+seminano il caos
+
+in tutto il paese,
+fornendoci la distrazione
+richiesta dal mio
+Padrone. Abbiamo dato
+loro le maschere
+necessarie per
+sconfiggere gli orchi,
+così
+
+causando ancora più
+sofferenza alla gente di
+Britannia. Gli ignari
+sciocchi sono troppo
+occupati a fronteggiare
+le orde degli orchi per
+continuare a esplorare le
+nostre
+
+terre. Siamo al
+sicuro...per ora.
+     ----
+    Gli attacchi
+continuano esattamente
+secondo i piani. Il mio
+Padrone è soddisfatto del
+mio lavoro e siamo
+
+più vicini che mai ai
+nostri obiettivi. I
+gargoyle si sono rivelati
+più problematici di
+quanto avessimo previsto
+all'inizio, ma credo che
+possiamo sottometterli
+completamente
+
+con abbastanza tempo. È
+un peccato non aver
+scoperto prima le loro
+conoscenze. Persino ora
+preparano i nostri
+eserciti alla battaglia,
+ma non senza resistenza.
+
+Ora che alcuni di loro
+sanno delle altre terre e
+degli umani,
+raddoppieranno gli sforzi
+per cercare aiuto. Non si
+può permetterlo.
+    -----
+
+Maledetti!! Gli umani si
+sono dimostrati più
+ingegnosi di quanto li
+credessimo capaci. Già le
+loro case sono libere
+dagli orchi e dai
+selvaggi e ancora una
+volta
+
+camminano nelle nostre
+terre. Potremmo dover
+agire prima di quanto
+pensassimo. Preparerò i
+miei fratelli e i nostri
+golem. Speriamo di poter
+far guadagnare al nostro
+Padrone un po'
+
+di tempo prima che gli
+umani ci scoprano.
+     -----
+    È troppo tardi. I
+gargoyle che sono
+sfuggiti alla nostra
+cattura hanno aperto le
+porte della nostra terra.
+
+Pregano che gli umani li
+aiutino, nonostante le
+azioni dei loro cugini a
+Britannia. Temo che
+abbiano ragione. Devo
+andare ad avvertire
+MastKai Hohiro,
+
+
+
+10.11.2001
+il primo a essere qui
+ 
+Complimenti. Non mi
+importava davvero di
+collegarmi prima, né sono
+venuto direttamente qui.
+14:00, Magus"""
+[translations.pol]
+title = "Dziennik"
+content = """Uczyniłem, jak polecił mi
+Mistrz.
+ 
+Malowani ludzie zostali
+zepchnięci do Britannia i
+już teraz sieją
+spustoszenie
+
+w całej krainie,
+odwracając uwagę, zgodnie
+z żądaniem Mistrza.
+Dostarczyliśmy im masek
+niezbędnych do pokonania
+orków, powodując tym
+samym
+
+jeszcze więcej udręki dla
+mieszkańców Britannia.
+Nieświadomi niczego
+głupcy są zbyt zajęci
+odpieraniem orczych hord,
+by dalej badać nasze
+
+ziemie. Jesteśmy
+bezpieczni... na razie.
+    ---- Ataki trwają
+dokładnie według planu.
+Mistrz jest zadowolony z
+mojej pracy, a my
+jesteśmy
+
+bliżej naszych celów niż
+kiedykolwiek. Gargulce
+okazały się bardziej
+kłopotliwe, niż
+początkowo
+przewidywaliśmy, lecz
+wierzę, że możemy je
+całkowicie ujarzmić,
+
+jeśli dostaniemy dość
+czasu. Szkoda, że nie
+odkryliśmy wcześniej ich
+wiedzy. Nawet teraz
+przygotowują nasze armie
+do walki, choć nie bez
+oporu.
+
+Teraz, gdy niektóre z
+nich wiedzą o innych
+ziemiach i o ludziach,
+podwoją wysiłki w
+poszukiwaniu pomocy. Nie
+możemy na to pozwolić.
+    -----
+
+Niech ich szlag!! Ludzie
+okazali się bardziej
+zaradni, niż sądziliśmy.
+Już ich domy są wolne od
+orków i dzikusów, a oni
+znów
+
+stąpają po naszych
+ziemiach. Być może
+będziemy musieli ruszyć
+wcześniej, niż
+myśleliśmy. Przygotuję
+mych braci i nasze
+golemy. Miejmy nadzieję,
+że kupimy Mistrzowi nieco
+
+więcej czasu, zanim
+ludzie nas odkryją.
+    ----- Jest za późno.
+Gargulce, które uniknęły
+pojmania, otworzyły drzwi
+do naszej krainy.
+
+Modlą się, by ludzie im
+pomogli, mimo postępków
+ich kuzynów w Britannia.
+Obawiam się, że mają
+rację. Muszę iść ostrzec
+MastKai Hohiro,
+
+
+
+10.11.2001 pierwszy,
+który tu dotarł
+ 
+Gratulacje. Nie miałem
+szczególnej ochoty
+wcześniej się logować,
+ani też nie przyszedłem
+prosto tutaj. 14:00,
+Magus"""
+[translations.por]
+title = "Diário"
+content = """Fiz conforme meu Mestre
+me instruiu.
+ 
+Os humanos pintados foram
+impelidos para Britannia
+e, mesmo agora, estão
+causando destruição
+
+por toda a terra,
+dando-nos a distração que
+meu Mestre pediu.
+Fornecemos a eles as
+máscaras necessárias para
+derrotar os orcs, assim
+
+causando ainda mais
+aflição ao povo de
+Britannia. Os tolos
+incautos estão ocupados
+demais lidando com as
+hordas orcs para
+continuar sua exploração
+de nossas
+
+terras. Estamos
+seguros... por enquanto.
+     ----
+    Os ataques continuam
+exatamente como
+planejado. Meu Mestre
+está satisfeito com meu
+trabalho e estamos
+
+mais perto de nossos
+objetivos do que nunca.
+As gárgulas se mostraram
+mais problemáticas do que
+prevíamos de início, mas
+acredito que podemos
+subjugá-las por completo,
+
+dado tempo suficiente. É
+lamentável que não
+tenhamos descoberto seus
+conhecimentos antes.
+Mesmo agora elas preparam
+nossos exércitos para a
+batalha, mas não sem
+resistência.
+
+Agora que algumas delas
+sabem das outras terras e
+dos humanos, redobrarão
+seus esforços para buscar
+ajuda. Isso não pode ser
+permitido.
+    -----
+
+Malditos sejam!! Os
+humanos se mostraram mais
+engenhosos do que
+julgávamos possível. Suas
+casas já estão livres de
+orcs e selvagens, e eles
+mais uma vez
+
+pisam em nossas terras.
+Talvez tenhamos de agir
+antes do que pensávamos.
+Prepararei meus irmãos e
+nossos golens. Espero que
+possamos dar ao nosso
+Mestre um pouco
+
+mais de tempo antes que
+os humanos nos descubram.
+     -----
+    É tarde demais. As
+gárgulas que escaparam de
+nossa captura abriram as
+portas para nossa terra.
+
+Elas rezam para que os
+humanos as ajudem, apesar
+das ações de seus primos
+em Britannia. Temo que
+tenham razão. Preciso ir
+avisar o MastKai Hohiro,
+
+
+
+10.11.2001
+primeiro a estar aqui
+ 
+Parabéns. Eu realmente
+não fiz questão de entrar
+mais cedo, nem vim direto
+para cá. 14h, Magus"""
+[translations.spa]
+title = "Diario"
+content = """He hecho lo que mi
+Maestro me ha ordenado.
+ 
+Los humanos pintados han
+sido enviados a Britannia
+y ya están causando
+estragos
+
+por toda la tierra,
+ofreciéndonos la
+distracción que mi
+Maestro solicitó. Les
+hemos proporcionado las
+máscaras necesarias para
+vencer a los orcos,
+
+causando así aún más
+angustia a las gentes de
+Britannia. Esos necios
+desprevenidos están
+demasiado ocupados
+lidiando con las hordas
+de orcos para continuar
+explorando nuestras
+
+tierras. Estamos a
+salvo... por ahora. ----
+Los ataques continúan
+exactamente según lo
+previsto. Mi Maestro está
+satisfecho con mi trabajo
+y estamos
+
+más cerca que nunca de
+nuestros objetivos. Las
+gárgolas han resultado
+ser más problemáticas de
+lo que anticipamos, pero
+creo que podemos
+someterlas por completo
+
+si disponemos de tiempo
+suficiente. Es una
+lástima que no
+descubriéramos antes sus
+conocimientos. Incluso
+ahora preparan nuestros
+ejércitos para la
+batalla, aunque oponen
+resistencia.
+
+Ahora que algunas conocen
+las otras tierras y a los
+humanos, redoblarán sus
+esfuerzos por buscar
+ayuda. No podemos
+permitirlo. -----
+
+¡¡Malditos sean!! Los
+humanos han demostrado
+tener más recursos de los
+que les creíamos capaces.
+Sus hogares ya están
+libres de orcos y
+salvajes y vuelven
+
+a pisar nuestras tierras.
+Quizá tengamos que actuar
+antes de lo que
+pensábamos. Prepararé a
+mis hermanos y a nuestros
+gólems. Con suerte,
+podremos darle a nuestro
+Maestro
+
+algo más de tiempo antes
+de que los humanos nos
+descubran. ----- Es
+demasiado tarde. Las
+gárgolas que han evitado
+nuestra captura han
+abierto las puertas de
+nuestra tierra.
+
+Ruegan que los humanos
+las ayuden, pese a las
+acciones de sus parientes
+en Britannia. Me temo que
+tienen razón. Debo ir a
+advertir al MastKai
+Hohiro,
+
+
+
+10.11.2001 el primero en
+estar aquí
+ 
+Felicidades. No me
+importaba mucho
+conectarme antes, ni vine
+directamente aquí. 14:00,
+Magus"""

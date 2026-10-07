@@ -29,13 +29,14 @@ internal static class GenderPairMerger
         out MobileTemplate merged
     )
     {
+        // Safe: merged is only read when the method returns true.
         merged = null!;
         var (firstRace, firstGender) = resolve(first);
         var (secondRace, secondGender) = resolve(second);
 
         if (firstRace is null || firstRace != secondRace ||
             (firstGender, secondGender) is not ((MobileGenderType.Male, MobileGenderType.Female) or
-                                             (MobileGenderType.Female, MobileGenderType.Male)))
+            (MobileGenderType.Female, MobileGenderType.Male)))
         {
             return false;
         }
@@ -54,9 +55,9 @@ internal static class GenderPairMerger
 
         merged.NameList = (male.NameList, female.NameList) switch
         {
-            ("male", "female") => "{gender}",
+            ("male", "female")                                     => "{gender}",
             var (maleList, femaleList) when maleList == femaleList => maleList,
-            _ => Differs("name_list", male.NameList, report)
+            _                                                      => Differs("name_list", male.NameList, report)
         };
 
         foreach (var property in typeof(MobileTemplate).GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -69,6 +70,7 @@ internal static class GenderPairMerger
 
         // A male sound on a female mobile is wrong, not just imprecise (humans die with gendered screams): when the
         // two differ, neither is kept.
+        // Safe: Sounds is a known public property of MobileTemplate.
         var soundsProperty = typeof(MobileTemplate).GetProperty(nameof(MobileTemplate.Sounds))!;
 
         if (Describe(soundsProperty, male) != Describe(soundsProperty, female))
@@ -98,8 +100,8 @@ internal static class GenderPairMerger
         var femaleKeys = female.Select(Key).ToList();
         var maleKeys = male.Select(Key).ToList();
         var merged = male.Where(entry => femaleKeys.Contains(Key(entry)))
-                         .Select(entry => new MobileEquipmentEntry { Items = entry.Items, Hue = entry.Hue })
-                         .ToList();
+            .Select(entry => new MobileEquipmentEntry { Items = entry.Items, Hue = entry.Hue })
+            .ToList();
 
         merged.AddRange(
             male.Where(entry => !femaleKeys.Contains(Key(entry)))
@@ -107,7 +109,9 @@ internal static class GenderPairMerger
         );
         merged.AddRange(
             female.Where(entry => !maleKeys.Contains(Key(entry)))
-                  .Select(entry => new MobileEquipmentEntry { Items = entry.Items, Hue = entry.Hue, Gender = GenderType.Female })
+                .Select(entry => new MobileEquipmentEntry
+                    { Items = entry.Items, Hue = entry.Hue, Gender = GenderType.Female }
+                )
         );
 
         return merged.Count == 0 ? null : merged;
@@ -129,6 +133,7 @@ internal static class GenderPairMerger
 
     private static MobileTemplate Copy(MobileTemplate template)
     {
+        // Safe: deserializing a document we just serialized never yields null.
         return TomlUtils.Deserialize<MobileTemplate>(TomlUtils.Serialize(template))!;
     }
 }

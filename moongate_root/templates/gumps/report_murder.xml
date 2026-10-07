@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/report_murder.xml
+
+  What it is for:
+    The question a player gets a few seconds after it dies, as ModernUO's report
+    murderer gump: whether to report one who attacked it as a criminal. Yes counts
+    a murder against that player (server/MurderService), No or closing the gump
+    does not. One gump is opened for each who attacked, one after the other. It has
+    no Lua script: MurderService reads the click.
+
+  Arguments:
+    name   the name of the player who attacked
+-->
+<gump id="report_murder" x="120" y="120"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="320" height="170" />
+  <html x="20" y="18" width="280" height="80">Would you like to report ${name} as a murderer?</html>
+  <button x="20" y="125" up="4005" down="4007" on_click="yes" />
+  <text x="55" y="126">Yes</text>
+  <button x="180" y="125" up="4017" down="4019" on_click="no" />
+  <text x="215" y="126">No</text>
+</gump>

@@ -23,8 +23,9 @@ public sealed class DoorGeneratorServiceTests
     private static readonly Rectangle2D Area = new(0, 0, 64, 64);
 
     private readonly FakeMapService _map = new(64, 64);
+
     private readonly FakeTileDataService _tiles = new FakeTileDataService().Item(Wall, TileFlagType.Impassable, 20)
-                                                                           .Item(Floor, TileFlagType.Surface, 0);
+        .Item(Floor, TileFlagType.Surface, 0);
 
     private readonly SectorService _sectors = TestSectors.Create();
 
@@ -57,13 +58,6 @@ public sealed class DoorGeneratorServiceTests
         Assert.Single(Scan());
     }
 
-    private void Place(int graphic, int x, int y, int z)
-    {
-        var item = new ItemEntity { Id = new((uint)(0x40000000 + _sectors.GetItemsInRange(MapType.Felucca, new(x, y, z), 64).Count + 1)), TemplateId = "decoration", ItemId = graphic, Amount = 1 };
-        item.PlaceOnGround(MapType.Felucca, new(x, y, z));
-        _sectors.AddItem(item);
-    }
-
     [Fact]
     public void Scan_AWestAndAnEastFrameTwoCellsApart_GiveOneDoorBetweenThem()
     {
@@ -78,7 +72,10 @@ public sealed class DoorGeneratorServiceTests
         _map.AddStatic(10, 10, WestFrame, 0).AddStatic(13, 10, EastFrame, 0);
 
         Assert.Equal(
-            [new GeneratedDoor(new(11, 10, 0), DoorFacingType.WestCW), new GeneratedDoor(new(12, 10, 0), DoorFacingType.EastCCW)],
+            [
+                new GeneratedDoor(new(11, 10, 0), DoorFacingType.WestCW),
+                new GeneratedDoor(new(12, 10, 0), DoorFacingType.EastCCW)
+            ],
             Scan()
         );
     }
@@ -97,7 +94,10 @@ public sealed class DoorGeneratorServiceTests
         _map.AddStatic(10, 10, NorthFrame, 0).AddStatic(10, 13, SouthFrame, 0);
 
         Assert.Equal(
-            [new GeneratedDoor(new(10, 11, 0), DoorFacingType.NorthCCW), new GeneratedDoor(new(10, 12, 0), DoorFacingType.SouthCW)],
+            [
+                new GeneratedDoor(new(10, 11, 0), DoorFacingType.NorthCCW),
+                new GeneratedDoor(new(10, 12, 0), DoorFacingType.SouthCW)
+            ],
             Scan()
         );
     }
@@ -161,7 +161,10 @@ public sealed class DoorGeneratorServiceTests
     [Fact]
     public void Scan_OnlyTheFramesInsideTheChunk_AreStartedFrom_ButTheirOppositeMayLieOutside()
     {
-        _map.AddStatic(10, 10, WestFrame, 0).AddStatic(12, 10, EastFrame, 0).AddStatic(30, 30, WestFrame, 0).AddStatic(32, 30, EastFrame, 0);
+        _map.AddStatic(10, 10, WestFrame, 0)
+            .AddStatic(12, 10, EastFrame, 0)
+            .AddStatic(30, 30, WestFrame, 0)
+            .AddStatic(32, 30, EastFrame, 0);
 
         Assert.Equal([new GeneratedDoor(new(11, 10, 0), DoorFacingType.WestCW)], Scan(new(0, 0, 11, 64)));
     }
@@ -199,6 +202,17 @@ public sealed class DoorGeneratorServiceTests
 
         Assert.Empty(generator.ChunksOf(MapType.Trammel));
         Assert.Empty(generator.ChunksOf(MapType.Tokuno));
+    }
+
+    private void Place(int graphic, int x, int y, int z)
+    {
+        var item = new ItemEntity
+        {
+            Id = new((uint)(0x40000000 + _sectors.GetItemsInRange(MapType.Felucca, new(x, y, z), 64).Count + 1)),
+            TemplateId = "decoration", ItemId = graphic, Amount = 1
+        };
+        item.PlaceOnGround(MapType.Felucca, new(x, y, z));
+        _sectors.AddItem(item);
     }
 
     private IReadOnlyList<GeneratedDoor> Scan(Rectangle2D? chunk = null)

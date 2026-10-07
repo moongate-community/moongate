@@ -1,4 +1,5 @@
 using Moongate.Persistence.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -25,7 +26,8 @@ public static class TestItems
         IGameLoopService? loop = null,
         IItemScriptService? scripts = null,
         IItemDecayQueue? decay = null,
-        IItemTimerQueue? timers = null
+        IItemTimerQueue? timers = null,
+        IInventoryMutationGuard? inventory = null
     )
     {
         return new(
@@ -36,7 +38,8 @@ public static class TestItems
             loop ?? new StubGameLoop(),
             scripts,
             decay,
-            timers
+            timers,
+            inventory
         );
     }
 }

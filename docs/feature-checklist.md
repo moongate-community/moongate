@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 72 done, 🟡 42 partly done, ❌ 154 not built yet.
+**268 systems:** ✅ 82 done, 🟡 49 partly done, ❌ 137 not built yet.
 
-**Coverage: 27%** of the systems done, **35%** counting a partly done system as half.
+**Coverage: 31%** of the systems done, **40%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -44,26 +44,26 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Creation: races, professions, starting items, starting cities | ✅ | |
-| Stats | 🟡 | Rolled, stored and set by scripts; no gain, caps or locks |
-| Skills | 🟡 | Stored, shown in the skill window and set by scripts; no use, gain or locks |
+| Creation: races, professions, starting items, starting cities | ✅ | [Personalized starting letters](data-files/starting-items.md#personalized-starting-letters) saved in the same creation transaction |
+| Stats | ✅ | Rolled, stored and set by scripts; a successful skill raises them as ModernUO's classic rule, to 100 each and 225 in all, with the locks of the status window |
+| Skills | 🟡 | Stored, shown in the skill window and set by scripts; [used, checked and gained](skills.md), with the locks of the skill window (up, down, locked). The stat locks of the status window work too |
 | Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
 | Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); nothing gains or loses them yet |
-| Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template |
-| Crimes, criminal timer and murder counts | ❌ | |
+| Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template, grey while the mobile is a criminal, red from five reported kills |
+| Crimes, criminal timer and murder counts | 🟡 | The criminal flag with its timer, saved with the mobile; attacking an innocent or looting the corpse of one makes a criminal. A victim reports its killers in a gump: kills and short-term murders, five make a red murderer, forgotten with time (8 and 40 hours). No theft or other crimes yet |
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
-| Hiding and stealth | ❌ | A script can hide a mobile with `mobile.set_hidden`; no skill |
-| Death, corpses, ghosts and resurrection | ❌ | |
+| Hiding and stealth | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) hides a player until its first step; no Stealth, and speaking or being hit does not show it yet |
+| Death, corpses, ghosts and resurrection | 🟡 | An NPC or a player dies by a fight, `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. A player stays as a ghost (hidden from the living unless in war mode, heard as oOo, no fight, skill or lifting) and is raised at an ankh or by a healer (for a tenth of its fame), by `.resurrect` or `mobile.resurrect`. No bones |
 | Young player protection | ❌ | |
-| Murder reports and bounty boards | ❌ | |
+| Murder reports and bounty boards | 🟡 | The report gump a victim gets after its death works, with the counts it adds; no bounty and no boards |
 | Virtues | ❌ | |
 | Status bar | ✅ | Name, stats, hit points, mana, stamina, gold, weight |
-| Extended status (resistances, luck, caps, stat locks) | ❌ | |
+| Extended status (resistances, luck, caps) | ❌ | The stat locks are built, see Stats |
 | Staff privileges (move anything, see hidden, invulnerable) | 🟡 | Hidden ground items and hidden mobiles are shown only to staff, and `.go` takes a game master anywhere; no move anything or invulnerability |
 | Gargoyle flying | ❌ | |
-| Movement cost and stamina use by weight | ❌ | |
+| Movement cost and stamina use by weight | ✅ | Running costs a point every 16 steps; overloaded, every step costs 5 and more, and with no stamina left the step is refused. No mounts yet |
 | Polymorph and incognito | ❌ | |
 | Experience and levels (optional) | ❌ | |
 | Factions | ❌ | |
@@ -75,17 +75,17 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| War mode, melee and swing timing | 🟡 | War mode is switched and shown; nothing is fought yet |
-| Archery | ❌ | |
-| Weapons and armour: damage, armour, durability, resistances | ❌ | NPC templates carry damage and armour; item templates do not yet |
+| War mode, melee and swing timing | 🟡 | A player [fights](combat.md) with its fists or the weapon it holds: the swing timer, the hit by skill, the damage with tactics, strength, anatomy and the armor of the target, the sounds and animations |
+| Archery | ✅ | NPCs and players that hold a bow or a crossbow shoot from its range, the arrow flying to the target; a player spends an arrow or a bolt at each shot, must stand still a second, and finds 40% of the ammunition on the ground |
+| Weapons and armour: damage, armour, durability, resistances | 🟡 | The weapon a player holds and the armor it wears set the [swing, the hit, the damage and what a blow takes off](combat.md#weapons-and-armor); no durability, parry, shields or resistances |
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
-| NPC combat AI | 🟡 | `monster.lua`: the undead of the graveyards notice a player, walk to it and stand guard when they lose it; no fight yet |
-| Guards in guarded regions | ❌ | |
+| NPC combat AI | 🟡 | `monster.lua` on every creature that is evil or chaotic in UOX3 (about 200 templates): they notice a player or a townsman, walk to it, fight it and stand guard when they lose it, in melee also the casters, and the town guards go for them. Animals stroll and fight back when hit, scared ones run. Hurt, they run (under 20% of their hit points, never the undead or the elementals). Archers shoot from their bow's range. No spells |
+| Guards in guarded regions | 🟡 | A player that says "guards" brings a guard beside each criminal near it: it appears, says its line and leaves. The guards standing in the towns notice a criminal by themselves and go to it (`guard.lua`). A criminal NPC is killed with one blow and leaves its corpse; a criminal player is only stood on: the guards do not punish players yet. The guards called in Ilshenar and Malas are archers: they shoot from the range of their bow |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
 | Aggressor lists and attack timeouts | ❌ | |
-| Damage numbers over heads | ❌ | |
+| Damage numbers over heads | ✅ | The damage of a hit shows over the one hit (`ultima.combat.display_damage_numbers`) |
 
 ## Magic
 
@@ -109,7 +109,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Using a skill and gaining it | ❌ | |
+| Using a skill and gaining it | 🟡 | A [skill](skills.md) is used from the skill window (`scripts/skills/<skill>.lua`), checked by `skill.check` and gained with ModernUO's formula; only Hiding is shipped, and stats do not rise with skills yet |
 | Gathering: mining, lumberjacking, fishing | ❌ | |
 | Crafting engine: menus, recipes, resources, quality | ❌ | |
 | The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | ❌ | |
@@ -125,7 +125,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Carving corpses | ❌ | |
 | Resource regions (ore, wood, fish per area, regrowing) | ❌ | |
 | Resource processing: smelting, looms, spinning wheels, hides | ❌ | |
-| Skill classes and caps (skill total, stat total) | ❌ | |
+| Skill classes and caps (skill total, stat total) | 🟡 | The skill total stops at `ultima.skills.total_cap` (700.0) and the stat total at `ultima.skills.stat_cap` (225), both lowering what is locked down; no classes |
 | Training objects: dummies, pickpocket dips, archery buttes | ❌ | |
 
 ## NPCs
@@ -133,13 +133,13 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | NPC templates, names, equipment and loot | ✅ | Dressed and with their loot at spawn |
-| Scripted behaviour | ✅ | Lua mobile scripts: `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range` |
+| Scripted behaviour | ✅ | Lua mobile scripts: `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death`, `on_drag_drop` |
 | Sleeping away from players | ✅ | NPCs think only near a player |
 | Wandering | 🟡 | `wander.lua` keeps spawned NPCs in their home area |
-| Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*; no vendor keywords yet |
+| Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance*, *withdraw* and *check*, and the word *deposit*, which has no keyword; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
-| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. No fleeing, NPCs do not open doors, and mobiles do not block a path |
+| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. Hurt creatures run from a fight (20% of their hit points, 10% for animals) and scared animals from a blow; NPCs do not open doors, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
 | Mounts | ❌ | |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |
@@ -157,10 +157,10 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Vendors: buy, sell, restock | ❌ | Item prices are in the templates; nothing buys or sells |
-| Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; see [Bank](bank.md) |
+| Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; balance, withdraw and deposit by speech; a limit of items; see [Bank](bank.md) |
 | Stable master, veterinarian | ❌ | |
 | Skill trainers | ❌ | |
-| Healers that resurrect | ❌ | |
+| Healers that resurrect | 🟡 | A ghost that comes near a healer is offered to live again; the evil healers are not placed in the world yet |
 | Player vendors | ❌ | |
 | Hirelings | ❌ | |
 | Escort quests | ❌ | |
@@ -175,7 +175,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Moving, stacking, splitting and merging | ✅ | |
 | Wearing: layers and two-handed weapons | ✅ | No strength requirements yet |
 | The character's own containers | ✅ | |
-| Containers on the ground, weight and item limits | 🟡 | A container on the ground opens within two tiles; items can be taken out and put in, and the players around see them come and go; 125 items at most, no weight limit; piles merge inside |
+| Containers on the ground, weight and item limits | ✅ | A container on the ground opens within two tiles; items can be taken out and put in, and the players around see them come and go; 125 items at most and up to the container's limit of stones (400 without one); piles merge inside |
 | Tooltips and single-click names | ✅ | |
 | Items on the ground and their decay | ✅ | |
 | Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |
@@ -184,11 +184,11 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
 | Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. A sample potion is drunk and used up, with no effect yet |
-| Books | ❌ | |
+| Books | 🟡 | Staff [`.book`](commands/book.md) creation and readable scrolls from [TOML text templates](data-files/books.md), frozen recipient variables and saved title/author/body and [once-only letter attachments](data-files/books.md#letter-attachments); [62 lore books in eight languages](book-content-import.md), which open the client's own [book](data-files/books.md#books-and-parchments) with its cover and pages; [books a player writes in](data-files/books.md#books-a-player-writes-in), one for every new character; copying and signing a book are not built |
 | Maps and treasure maps | ❌ | |
 | Runes, recall and gates | ❌ | |
 | Moongates and teleporters | 🟡 | Walk-on teleporters and those that answer a word, also across maps, placed by `.decorate` with ModernUO's world and dungeon ones; public moongates with a destination gump; plain moongates with one destination (`.moongate`); no Gate Travel |
-| Dyes and dye tubs | ❌ | |
+| Dyes and dye tubs | 🟡 | Dyes give a dye tub the hue picked in the client's hue picker, the tub gives it to what is dyeable, as clothing is; no leather, furniture, black or metallic tubs |
 | Hair stylist, hair dye and disguise kit | ❌ | |
 | Secure trade | ❌ | |
 | Magic items and item properties | ❌ | |
@@ -224,7 +224,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Dungeon and jail light | ✅ | |
 | Weather by region | ✅ | Rain, snow, storms with thunder, dry indoors; no weather damage |
 | Seasons | ✅ | By map and region, optional rotation with the game days; `.season` |
-| Regions | 🟡 | Found for every player; they set the weather, the music, the season and the dungeon light; no guards or housing rules |
+| Regions | 🟡 | Found for every player; they set the weather, the music, the season and the dungeon light, and a player reads the place it enters or leaves and whether guards protect it, and the guards of the towns act on it; no housing rules |
 | Region music | ✅ | The region's track, else the map's; `.music` |
 | Region rules: safe, no PvP, no housing, instant logout | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |
@@ -252,20 +252,20 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Party | ❌ | |
 | Guilds | ❌ | |
 | Chat window | ❌ | |
-| Bulletin boards | ❌ | |
+| Bulletin boards | ✅ | Every board has its own messages, in threads with replies; the poster or a game master removes; threads expire some days after their last reply and a full board lets its oldest thread go, both from settings; scripts post, list and remove with the `board` module; see [Bulletin boards](bulletin-boards.md) |
 | Duels, arenas and tournaments | ❌ | |
 | Character profile | ❌ | |
 | Tips window | ❌ | |
 | Quest arrow and quest button | ❌ | |
 | Quests | ❌ | |
-| Speech modes: say, whisper, yell, emote | 🟡 | Local speech; no whisper or yell ranges |
+| Speech modes: say, whisper, yell, emote | ✅ | A whisper is heard 1 cell away, a yell 18, speech and emotes 15; NPC and item scripts are told how it was said |
 
 ## Economy
 
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Gold | 🟡 | Starting gold and NPC loot; nothing to spend it on |
-| Banking and bank checks | 🟡 | The bank box; no withdraw, balance or checks |
+| Banking and bank checks | ✅ | The bank box with its limit of items; balance, withdraw, deposit and check by speech; bank checks cashed by a double click in the box; gold and checks dropped on the banker are deposited; criminals refused; see [Bank](bank.md) |
 | House costs and limits | ❌ | |
 | Account-wide gold | ❌ | |
 | Vendor search and auctions | ❌ | |
@@ -288,9 +288,9 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Hot reload | 🟡 | Lua scripts; not the data or templates |
 | GM help queue (pages) | ❌ | |
 | Help menu and stuck menu | ❌ | |
-| Jails | ❌ | Jail regions are dim, nothing more |
+| Jails | ✅ | A gump lists the cells and who is in them; sentences in real days, a gold fine and a release note at the end, a chest of bread and water in every cell; a player who is offline is jailed by name and serves from its next login; see [Jail](jail.md) |
 | Who list | ❌ | |
-| Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places; no property gump, add menu or area commands |
+| Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places, and `.gmtools`, a gump with a sidebar of tools: it forces the weather, sets the season of the map and shows the time and sets the light; no property gump, add menu or area commands |
 | Named locations and travel menu for staff | ✅ | `.go <place>` and the go gump, with ModernUO's 558 places from `data/locations.toml` |
 | Web status pages | ❌ | |
 | Bug reports | 🟡 | Exception reports ready for a GitHub issue; no in-game report |
@@ -311,7 +311,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Script events | 🟡 | NPC, item and character events, `player_say` and `player_region_changed`; no combat or skill events |
 | Events that can refuse the default action | 🟡 | Items: `on_use`, `can_pick_up`, `can_drop`, `can_equip`, `can_insert`; none yet for skills and combat |
 | Region enter and leave events | 🟡 | `player_region_changed` for players; not for NPCs |
-| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`, `prompt`; a mobile's stats and skills are read and written |
+| Script API | 🟡 | `npc`, `item`, `world`, `mobile`, `gump`, `bank`, `effect`, `moongates`, `locations`, `dice`, `localization`, `timer`, `events`, `engine`, `log`, `target`, `prompt`, `skill`, `commands`; a mobile's stats and skills are read and written |
 | World queries from scripts (objects near, in sight, by serial) | ✅ | `world.mobiles_in_range`, `world.items_in_range`, `world.players`, `world.line_of_sight`, `world.standing_z`, `world.region`, `world.is_occupied`, `world.carries` |
 | Creating and moving items from scripts | ✅ | Create on the ground or in a backpack, loot into a container, move, equip, find by template, consume, delete |
 | Messages, target cursor and prompts from scripts | ✅ | `npc.say`, `mobile.message`, `item.message`, `item.message_cliloc`, `target.pick`, `prompt.ask`, gumps |
@@ -340,10 +340,10 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Races | 🟡 | Human, elf and gargoyle bodies and looks; no racial gameplay |
 | Gumps | ✅ | XML layouts checked by an XSD, Lua scripts, gumps built in Lua, chained gumps, checked answers |
 | Menus | ❌ | |
-| Context menus | ❌ | |
+| Context menus | 🟡 | The [menu](context-menus.md) of a mobile or an item: Open Paperdoll and Open Backpack, and the entries a Lua script adds (`on_context_menu`, `on_context_menu_select`), such as the banker's Open Bank Box; the choice is checked against the menu sent. The Enhanced Client's own icons choose the entry with their text. No vendor, pet, taming or party entries yet: they come with those systems |
 | Buff bar | ❌ | |
 | Walk sequence and speed checks | ✅ | |
-| Weight and overloading | 🟡 | Items have their weight; nothing overloads |
+| Weight and overloading | ✅ | What a mobile carries and may carry (40 and 3.5 a point of strength) is counted and shown; an overloaded player tires at every step |
 | Timed effects (buffs and debuffs) | ❌ | |
 | Text prompts and input | ✅ | The Unicode prompt (0xC2), from scripts with the `prompt` module |
 | Visual effects: moving, lightning, particles | ✅ | From scripts with the `effect` module; particles for the Enhanced Client |
@@ -363,5 +363,8 @@ Systems most emulators do not have:
   only the changed rows written in the background; see
   [A save does not stop the game](persistence-operations.md#a-save-does-not-stop-the-game).
 - A gRPC administration API with TLS.
+- A [jail](jail.md) run from a gump: the staff picks a cell and the days, and the server does the
+  rest, from the fine and the release note at the end of the sentence to the bread and water in the
+  cell.
 - Plugins that add services, commands, Lua modules, metrics, entities and their own settings.
 - Docker images and a multi-realm example.

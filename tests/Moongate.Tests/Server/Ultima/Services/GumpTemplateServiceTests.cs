@@ -76,7 +76,14 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
     {
         var answers = new List<GumpTemplateAnswer>();
 
-        Assert.True(_templates.Open(_session, "confirm", new Dictionary<string, string> { ["name"] = "Aria" }, (_, answer) => answers.Add(answer)));
+        Assert.True(
+            _templates.Open(
+                _session,
+                "confirm",
+                new Dictionary<string, string> { ["name"] = "Aria" },
+                (_, answer) => answers.Add(answer)
+            )
+        );
 
         var gump = Assert.Single(_gumps.Opened).Gump;
         Assert.Equal("Sure, Aria?", gump.Layout.Build().Strings[0]);
@@ -108,7 +115,9 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
     {
         var closed = _templates.AskAsync(_session, "confirm", new Dictionary<string, string>());
         await WaitForOpenAsync();
-        await _fixture.Network.ExecuteOnLoopAsync(() => _gumps.Opened[0].Gump.OnClosed!(_session, GumpCloseReasonType.Disconnect));
+        await _fixture.Network.ExecuteOnLoopAsync(() =>
+            _gumps.Opened[0].Gump.OnClosed!(_session, GumpCloseReasonType.Disconnect)
+        );
 
         var other = _templates.AskAsync(_session, "confirm", new Dictionary<string, string>());
         await WaitForOpenAsync(2);
@@ -134,14 +143,19 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
         var answers = new List<GumpTemplateAnswer>();
         _templates.Open(_session, "step1", new Dictionary<string, string>(), (_, answer) => answers.Add(answer));
 
-        _gumps.Opened[0].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = 1, Switches = new HashSet<int> { 4 }, Texts = new Dictionary<int, string> { [1] = "Aria" } }
-        );
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse
+                    { ButtonId = 1, Switches = new HashSet<int> { 4 }, Texts = new Dictionary<int, string> { [1] = "Aria" } }
+            );
 
         var answer = Assert.Single(answers);
         Assert.Equal("step2", answer.Open);
-        Assert.Equal(new Dictionary<string, object> { ["name"] = "Aria", ["hardcore"] = false, ["city"] = 4L }, answer.Bound);
+        Assert.Equal(
+            new Dictionary<string, object> { ["name"] = "Aria", ["hardcore"] = false, ["city"] = 4L },
+            answer.Bound
+        );
     }
 
     [Fact]
@@ -150,10 +164,12 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
         var answers = new List<GumpTemplateAnswer>();
         _templates.Open(_session, "step1", new Dictionary<string, string>(), (_, answer) => answers.Add(answer));
 
-        _gumps.Opened[0].Gump.OnResponse(
-            _session,
-            new GumpResponse { ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = "Aria" } }
-        );
+        _gumps.Opened[0]
+            .Gump.OnResponse(
+                _session,
+                new GumpResponse
+                    { ButtonId = 1, Switches = new HashSet<int>(), Texts = new Dictionary<int, string> { [1] = "Aria" } }
+            );
 
         Assert.Equal(false, Assert.Single(answers).Bound["city"]);
     }
@@ -163,10 +179,13 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
     {
         var asking = _templates.AskAsync(_session, "step1", new Dictionary<string, string>());
         await WaitForOpenAsync();
-        await _fixture.Network.ExecuteOnLoopAsync(
-            () => _gumps.Opened[0].Gump.OnResponse(
+        await _fixture.Network.ExecuteOnLoopAsync(() => _gumps.Opened[0]
+            .Gump.OnResponse(
                 _session,
-                new GumpResponse { ButtonId = 1, Switches = new HashSet<int> { 2, 3 }, Texts = new Dictionary<int, string> { [1] = "Aria" } }
+                new GumpResponse
+                {
+                    ButtonId = 1, Switches = new HashSet<int> { 2, 3 }, Texts = new Dictionary<int, string> { [1] = "Aria" }
+                }
             )
         );
         await WaitForOpenAsync(2);
@@ -194,11 +213,6 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
         Assert.Equal([(_session, "confirm")], _gumps.Closed);
     }
 
-    public async Task DisposeAsync()
-    {
-        await _fixture.DisposeAsync();
-    }
-
     private async Task WaitForOpenAsync(int count = 1)
     {
         for (var tries = 0; tries < 200 && _gumps.Opened.Count < count; tries++)
@@ -210,5 +224,10 @@ public sealed class GumpTemplateServiceTests : IAsyncLifetime
     private static GumpResponse Response(int button)
     {
         return new() { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() };
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _fixture.DisposeAsync();
     }
 }

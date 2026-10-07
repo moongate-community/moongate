@@ -77,7 +77,7 @@ public sealed class GameServerService : IGameServerService
         }
     }
 
-    private static async Task CaptureCleanup(Func<Task> cleanup)
+    private static async Task CaptureCleanupAsync(Func<Task> cleanup)
     {
         await cleanup().ConfigureAwait(false);
     }
@@ -95,8 +95,8 @@ public sealed class GameServerService : IGameServerService
     private void OnClosed(object? sender, NetworkConnectionEventArgs args)
     {
         TrackCleanup(() => Task.WhenAll(
-                CaptureCleanup(() => _sender.DisconnectAsync(args.Connection.SessionId)),
-                CaptureCleanup(() => _dispatcher.DisconnectAsync(args.Connection.SessionId))
+                CaptureCleanupAsync(() => _sender.DisconnectAsync(args.Connection.SessionId)),
+                CaptureCleanupAsync(() => _dispatcher.DisconnectAsync(args.Connection.SessionId))
             )
         );
     }

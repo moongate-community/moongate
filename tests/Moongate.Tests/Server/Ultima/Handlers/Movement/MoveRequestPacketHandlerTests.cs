@@ -15,8 +15,10 @@ using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.Support.Timing;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
@@ -27,10 +29,14 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     private readonly ManualTimeProvider _time = new();
     private readonly StubBankService _bank = new();
     private readonly RecordingMoveOverService _moveOver = new();
+    private readonly RecordingFatigueService _fatigue = new();
+    private readonly RecordingMobileStateService _state = new();
+    private readonly RecordingSpeechService _speech = new();
     private readonly StubMovementService _movement = new() { LandingZ = 10 };
     private readonly StubPacketSendService _sender = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly MobileService _mobiles;
+
     private readonly MobileEntity _aria = new()
     {
         Id = new(2), AccountId = new Serial(42), Name = "Aria", Map = MapType.Trammel,
@@ -55,6 +61,43 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(new Point3D(1497, 1628, 10), _aria.Location);
         var ack = Assert.IsType<MovementAckPacket>(Assert.Single(_sender.Sent));
         Assert.Equal(((byte)0, NotorietyType.Innocent), (ack.Sequence, ack.Notoriety));
+    }
+
+    [Fact]
+    public async Task Handle_AStep_CostsItsStamina_ATurnAsksNothing()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0, true);
+        await StepAsync(DirectionType.South, 1);
+
+        // The run was asked about and then paid; the turn neither.
+        Assert.Equal([true], _fatigue.Asked);
+        Assert.Equal([true], _fatigue.Taken);
+    }
+
+    [Fact]
+    public async Task Handle_AStepThePlayerIsTooTiredFor_IsRefused_AndCostsNothing()
+    {
+        await EnterAsync();
+        _fatigue.Allows = false;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.IsType<MovementRejectPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(new Point3D(1496, 1628, 10), _aria.Location);
+        Assert.Empty(_fatigue.Taken);
+    }
+
+    [Fact]
+    public async Task Handle_AStepTheWorldRefuses_CostsNothing()
+    {
+        await EnterAsync();
+        _aria.Frozen = true;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.Empty(_fatigue.Taken);
     }
 
     [Fact]
@@ -128,7 +171,10 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         await StepAsync(DirectionType.East, 3);
 
         var reject = Assert.IsType<MovementRejectPacket>(Assert.Single(_sender.Sent));
-        Assert.Equal(((byte)3, new Point3D(1496, 1628, 10), DirectionType.East), (reject.Sequence, reject.Location, reject.Direction));
+        Assert.Equal(
+            ((byte)3, new Point3D(1496, 1628, 10), DirectionType.East),
+            (reject.Sequence, reject.Location, reject.Direction)
+        );
         Assert.Equal(new Point3D(1496, 1628, 10), _aria.Location);
 
         await StepAsync(DirectionType.East, 0);
@@ -325,6 +371,86 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(new Point3D(1496, 1628, 10), _aria.Location);
     }
 
+    [Fact]
+    public async Task Handle_AStep_NotesWhenTheMobileMoved_ATurnDoesNot()
+    {
+        await EnterAsync();
+        Assert.Null(_aria.LastMovedAt);
+
+        // A turn: the mobile faces another way and stays where it is.
+        await StepAsync(DirectionType.North, 0);
+        Assert.Null(_aria.LastMovedAt);
+
+        await StepAsync(DirectionType.North, 1);
+
+        Assert.InRange((_time.GetUtcNow() - _aria.LastMovedAt!.Value).TotalSeconds, 0, 1);
+    }
+
+    [Fact]
+    public async Task Handle_AStepOfAHiddenPlayer_ShowsIt_AndSaysSo()
+    {
+        await EnterAsync();
+        _aria.Hidden = true;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.False(_aria.Hidden);
+        Assert.Equal([(_aria, MoveRequestPacketHandler.RevealedCliloc, "")], _speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_ATurnOrARefusedStepOfAHiddenPlayer_KeepsItHidden()
+    {
+        await EnterAsync();
+        _aria.Hidden = true;
+
+        await StepAsync(DirectionType.South, 0);
+        _aria.Frozen = true;
+        await StepAsync(DirectionType.South, 1);
+
+        Assert.True(_aria.Hidden);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_AStepOfAPlayerInSight_SaysNothing()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
+    [Fact]
+    public async Task Handle_AStepOfAGhost_KeepsItHidden()
+    {
+        await EnterAsync();
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 0x0192;
+        _aria.Hidden = true;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.True(_aria.Hidden);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
+    [Theory]
+    [InlineData(AccountType.GameMaster)]
+    [InlineData(AccountType.Administrator)]
+    public async Task Handle_AStepOfHiddenStaff_KeepsItHidden(AccountType account)
+    {
+        await EnterAsync();
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, account));
+        _aria.Hidden = true;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.True(_aria.Hidden);
+        Assert.Empty(_speech.ToldClilocs);
+    }
+
     private async Task EnterAsync()
     {
         _fixture = await SessionFixture.CreateAsync();
@@ -335,8 +461,19 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 
     private Task StepAsync(DirectionType direction, byte sequence, bool running = false)
     {
-        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time, _bank, _moveOver);
-        var packet = new MoveRequestPacket { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
+        var handler = new MoveRequestPacketHandler(
+            _mobiles,
+            _view,
+            _sender,
+            _time,
+            _bank,
+            _moveOver,
+            _fatigue,
+            _state,
+            _speech
+        );
+        var packet = new MoveRequestPacket
+            { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));
     }

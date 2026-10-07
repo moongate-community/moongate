@@ -20,6 +20,7 @@ public sealed class NpcScriptServiceTests : IDisposable
     private readonly FakeScriptEngine _engine = new();
     private readonly CapturingLogSink _log = new();
     private readonly StubGameLoop _loop = new();
+
     private readonly MobileEntity _orc = new()
     {
         Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
@@ -165,11 +166,6 @@ public sealed class NpcScriptServiceTests : IDisposable
         Assert.Contains("wander", warning.RenderMessage());
     }
 
-    public void Dispose()
-    {
-        _scripts.Dispose();
-    }
-
     private async Task<NpcScriptService> StartedAsync(params MobileTemplate[] templates)
     {
         var service = Create(templates);
@@ -189,5 +185,10 @@ public sealed class NpcScriptServiceTests : IDisposable
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path },
             logger
         );
+    }
+
+    public void Dispose()
+    {
+        _scripts.Dispose();
     }
 }

@@ -137,7 +137,8 @@ public sealed class RegionServiceTests
     {
         var service = Tracked(Region("Britain", 50, Area(0, 0, 100, 100)));
         var aria = Player(50, 50);
-        var orc = new MobileEntity { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(50, 50, 0) };
+        var orc = new MobileEntity
+            { Id = new Serial(0x100), Name = "orc", Map = MapType.Trammel, Location = new Point3D(50, 50, 0) };
 
         service.Entered(aria);
         service.Entered(orc);
@@ -160,7 +161,8 @@ public sealed class RegionServiceTests
     {
         return new()
         {
-            Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(x, y, 0)
+            Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
+            Location = new Point3D(x, y, 0)
         };
     }
 

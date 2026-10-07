@@ -1,0 +1,138 @@
+# ==============================================================================
+# Moongate - templates/decorations/trammel/minoc_camp.toml
+#
+# What it is for:
+#   World decoration placed on Trammel: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "gruesome standard"
+type = "Static"
+item_id = 0x041F
+locations = [[2635, 701, 0]]
+
+[[decoration]]
+comment = "garbage"
+type = "Static"
+item_id = 0x10EE
+locations = [
+    [2629, 701, 0],
+    [2622, 703, 0],
+    [2626, 700, 0],
+    [2625, 706, 0],
+    [2625, 708, 0],
+    [2629, 703, 0],
+]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x02EB
+props = { hue = 0x0033 }
+locations = [
+    [2620, 702, 0],
+    [2622, 707, 0],
+    [2627, 698, 0],
+    [2627, 708, 0],
+    [2620, 702, 1],
+]
+
+[[decoration]]
+comment = "tent wall"
+type = "Static"
+item_id = 0x02EC
+props = { hue = 0x0033 }
+locations = [
+    [2621, 701, 0],
+    [2623, 706, 0],
+    [2628, 697, 0],
+    [2628, 707, 0],
+    [2621, 701, 1],
+]
+
+[[decoration]]
+comment = "skinned goat"
+type = "Static"
+item_id = 0x1E88
+locations = [[2624, 705, 0]]
+
+[[decoration]]
+comment = "fire pit"
+type = "Static"
+item_id = 0x0FAC
+locations = [[2625, 703, 0]]
+
+[[decoration]]
+comment = "campfire"
+type = "Static"
+item_id = 0x0DE3
+locations = [[2625, 703, 0]]
+
+[[decoration]]
+comment = "cauldron"
+type = "Static"
+item_id = 0x0974
+locations = [[2625, 703, 0]]
+
+[[decoration]]
+comment = "stump"
+type = "Static"
+item_id = 0x0E59
+locations = [[2624, 709, 0]]
+
+[[decoration]]
+comment = "executioner's axe"
+type = "Static"
+item_id = 0x0F46
+locations = [[2625, 708, 0]]
+
+[[decoration]]
+comment = "gruesome standard"
+type = "Static"
+item_id = 0x0428
+locations = [[2626, 711, 0]]
+
+[[decoration]]
+comment = "gruesome standard"
+type = "Static"
+item_id = 0x0420
+locations = [[2627, 694, 0]]
+
+[[decoration]]
+comment = "skinned goat"
+type = "Static"
+item_id = 0x1E89
+locations = [[2631, 696, 0]]
+
+[[decoration]]
+comment = "skinned deer"
+type = "Static"
+item_id = 0x1E90
+locations = [
+    [2627, 701, 0],
+    [2627, 701, 1],
+]
+
+[[decoration]]
+comment = "stump"
+type = "Static"
+item_id = 0x0E58
+locations = [[2627, 703, 0]]
+
+[[decoration]]
+comment = "skinned deer"
+type = "Static"
+item_id = 0x1E91
+locations = [[2627, 705, 0]]

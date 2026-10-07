@@ -55,6 +55,7 @@ public sealed class TeleportService : ITeleportService
         // Before the move: the season, the light and the weather the move brings belong to the new map.
         if (hasSession && map != oldMap)
         {
+            // Safe: hasSession is true, so TryGetByCharacterId set the session.
             _sender.TrySend(session!.SessionId, new MapChangePacket(map));
         }
 
@@ -70,12 +71,14 @@ public sealed class TeleportService : ITeleportService
         {
             // The client starts its step sequence again when it gets 0x20; a step it sent before is refused, and the next
             // one is due at once, as ModernUO.
+            // Safe: hasSession is true, so TryGetByCharacterId set the session.
             if (session!.Get(MovementSessionKeys.State) is { } state)
             {
                 state.ExpectedSequence = 0;
                 state.NextStepAt = 0;
             }
 
+            // Safe: hasSession is true, so TryGetByCharacterId set the session.
             _sender.TrySend(
                 session!.SessionId,
                 new MobileUpdatePacket(

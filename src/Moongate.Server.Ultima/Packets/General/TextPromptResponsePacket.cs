@@ -14,7 +14,8 @@ namespace Moongate.Server.Ultima.Packets.General;
 ///     and the text in little-endian UTF-16, read without its control characters as ModernUO does.
 /// </summary>
 [PacketHandler(0xC2, PacketSizing.Variable, MinimumLength = HeaderLength, Description = "Text prompt response")]
-public sealed class TextPromptResponsePacket : BasePacket<TextPromptResponsePacket>, IIncomingPacket<TextPromptResponsePacket>
+public sealed class TextPromptResponsePacket
+    : BasePacket<TextPromptResponsePacket>, IIncomingPacket<TextPromptResponsePacket>
 {
     private const int HeaderLength = 19;
     private const int LanguageLength = 4;
@@ -59,7 +60,8 @@ public sealed class TextPromptResponsePacket : BasePacket<TextPromptResponsePack
 
         packet = new(data.Length)
         {
-            Serial = serial, PromptId = unchecked((int)promptId), IsCancel = type == 0, Text = Clean(Encoding.Unicode.GetString(text))
+            Serial = serial, PromptId = unchecked((int)promptId), IsCancel = type == 0,
+            Text = Clean(Encoding.Unicode.GetString(text))
         };
 
         return true;

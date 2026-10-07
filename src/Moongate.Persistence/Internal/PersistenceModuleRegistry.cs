@@ -96,6 +96,7 @@ internal sealed partial class PersistenceModuleRegistry
             .Where(entity => entity.Value.HasValue && !explicitlyOwned.Contains(entity.Key))
             .GroupBy(entity =>
                 {
+                    // Safe: the Where above keeps only entities with a value.
                     var target = entity.Value!.Value;
 
                     if (!databases.TryGetValue(target, out var database))

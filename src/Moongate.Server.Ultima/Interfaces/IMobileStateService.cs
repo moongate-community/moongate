@@ -56,6 +56,24 @@ public interface IMobileStateService
     bool SetSkill(MobileEntity mobile, SkillType skill, int value, int? cap = null);
 
     /// <summary>
+    ///     Sets which way a skill may move: up, down or locked, as the player chooses in the skill window. The skill is
+    ///     added when the mobile has none yet. Nothing is sent: the client already shows the lock it asked for.
+    /// </summary>
+    /// <returns>
+    ///     False, with nothing changed, for a skill or a lock that does not exist.
+    /// </returns>
+    bool SetSkillLock(MobileEntity mobile, SkillType skill, SkillLockType skillLock);
+
+    /// <summary>
+    ///     Sets which way a stat may move: up to rise by use, down to be lowered for another stat, or locked, as the
+    ///     player chooses in the status window. When one changed, its own player is sent the three locks, as ModernUO does.
+    /// </summary>
+    /// <returns>
+    ///     False, with nothing changed, for a stat or a lock that does not exist.
+    /// </returns>
+    bool SetStatLock(MobileEntity mobile, StatType stat, StatLockType statLock);
+
+    /// <summary>
     ///     Gives the mobile another name, trimmed; its player's status and the players around are told.
     /// </summary>
     /// <returns>
@@ -88,6 +106,13 @@ public interface IMobileStateService
     ///     for the answer to its own request.
     /// </summary>
     void SetWarMode(MobileEntity mobile, bool warMode);
+
+    /// <summary>
+    ///     Makes the player a ghost or brings it back to its living body. A ghost wears the ghost body of its race and
+    ///     gender and is hidden from the living players unless it is in war mode; its own client is told it died. The
+    ///     living body is the one of the ghost body. Nothing happens for an NPC, or for a body that has no ghost.
+    /// </summary>
+    void SetDead(MobileEntity mobile, bool dead);
 
     /// <summary>
     ///     Sends the status of <paramref name="target" /> to the session: all of it for the session's own character,

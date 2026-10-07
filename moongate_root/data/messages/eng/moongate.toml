@@ -144,7 +144,7 @@
 30121 = "Puts an item from an item template on the ground where you target: add <template>."
 30122 = "Only an item lying on the ground can be removed."
 30126 = "{0}: {1} is now {2}."
-30127 = "Sets the hits, mana, stamina, hunger or thirst of the mobile you target: set <hits|mana|stamina|hunger|thirst> <value>."
+30127 = "Sets the hits, mana, stamina, hunger or thirst of the mobile you target, or makes it a criminal: set <hits|mana|stamina|hunger|thirst|criminal> <value>."
 
 # Moongate: texts of the item scripts.
 30114 = "This moongate does not seem to go anywhere."
@@ -155,3 +155,79 @@
 30130 = "You are simply too full to drink any more!"
 30131 = "It is empty."
 30132 = "You drink, and feel less thirsty."
+30133 = "You are overloaded: you carry {0} stones of {1}."
+30134 = "You have entered {0}."
+30135 = "You have left {0}."
+30136 = "You are now under the protection of the guards of {0}."
+30137 = "You have left the protection of the guards of {0}."
+30138 = "Thou wilt regret thine actions, swine!"
+
+# Moongate: texts of the jail (30139-30143 to the prisoner and on its release note, 30144-30147 and 30150 of the jail command, 30148-30149 the reason of a sentence).
+30139 = "You have been jailed for {0} days."
+30140 = "You have served your sentence. A fine of {0} gold was taken."
+30141 = "You have served your sentence."
+30142 = "You have been released from jail."
+30143 = "{0} served {1} days in cell {2}, from {3} to {4}, and paid a fine of {5} gold. Jailed by {6}."
+30144 = "Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character; jail <name> opens it on the player of that name, online or not."
+30145 = "The jail is not set up: data/jail.toml is missing."
+30146 = "That is not a character."
+30147 = "The jail gump is missing: templates/gumps/jail_sentence.xml."
+30148 = "You have been jailed for {0} days: {1}"
+30149 = "Reason: {0}"
+30150 = "No character is named {0}."
+
+# Moongate: texts of death (30151 the name of a corpse, 30152-30154 of the kill command).
+30151 = "the remains of {0}"
+30152 = "Kills the NPC you target: it dies where it stands and leaves its corpse."
+30153 = "{0} is dead."
+30154 = "{0} cannot die."
+
+# Moongate: texts of the bulletin boards (30155-30157, to who posts or removes).
+30155 = "You must wait {0} seconds before posting again."
+30156 = "That message is not yours."
+30157 = "The board is busy: post again in a moment."
+
+# Moongate: texts of the animate command (30158-30159).
+30158 = "Makes the character or NPC you target play an action of its body: animate <action>."
+30159 = "{0} plays action {1}."
+
+# Moongate: texts of the version and uptime commands (30160-30163).
+30160 = "Shows the version the server runs, whether it is a Debug or a Release build, and when it was built."
+30161 = "Moongate {0} \"{1}\" ({2}), built {3}."
+30162 = "Shows how long the server has been running and since when."
+30163 = "Up for {0}, since {1}."
+
+# Moongate: texts of the resurrect command (30164-30167).
+30164 = "Raises the NPC whose corpse you target: it is born again where the corpse lies."
+30165 = "{0} is back."
+30166 = "That is not a corpse."
+30167 = "That corpse cannot be raised."
+
+# Moongate: what a prisoner reads when it uses a skill (30168).
+30168 = "You may not use skills in jail."
+
+# Moongate: letter attachments (30169-30174).
+30169 = "Claim attachments"
+30170 = "The attachments are in your backpack."
+30171 = "Your backpack has no room for all the attachments."
+30172 = "These attachments cannot be claimed."
+30173 = "Your backpack is busy. Try again shortly."
+30174 = "The attachments could not be delivered. Try again shortly."
+
+# Moongate: texts and descriptions of the create_check and add_gold commands (30175-30180).
+30175 = "A bank check worth {0} gold is in your backpack."
+30176 = "No check was made: you have no backpack, or it is full."
+30177 = "Puts in your backpack a bank check worth the gold you say (1 to 2000000000)."
+30178 = "{1} gold is in the backpack of {0}."
+30179 = "{0} has no backpack, or it is full."
+30180 = "Puts a pile of gold (1 to 60000) in the backpack of the character or NPC you target."
+
+# Moongate: book command (30181-30184).
+30181 = "No document {0} in templates/books."
+30182 = "Document {0} is in your backpack."
+30183 = "Document {0} could not be created. Check its values and backpack availability."
+30184 = "Gives a document from templates/books to your backpack: book <template> [name=value ...]."
+
+# Moongate: texts of the gmtools command (30185-30186).
+30185 = "Opens the gump of the game master's tools: a sidebar of tools and their commands, the weather first."
+30186 = "The gmtools gump is missing: templates/gumps/gmtools.xml."

@@ -3,7 +3,7 @@ using Moongate.Server.Ultima.Data.Templates.Mobiles;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Reads the sounds of each body from UOX3 <c>creatures.dfn</c> (<c>[CREATURE 0x11]</c> blocks).
+///     Reads the sounds of each body from UOX3 <c>creatures.dfn</c> ( <c>[CREATURE 0x11]</c> blocks).
 /// </summary>
 internal static class UoxCreatureSounds
 {

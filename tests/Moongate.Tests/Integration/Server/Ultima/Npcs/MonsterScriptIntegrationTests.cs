@@ -12,14 +12,17 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Combat;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -41,6 +44,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     private const int IdleSound = 452;
     private const int AttackSound = 453;
 
+    private readonly RecordingCombatService _combat = new();
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
     private readonly StubGameLoop _loop = new();
@@ -51,18 +55,21 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     private readonly StubLineOfSightService _sight = new();
     private readonly StubPathfindingService _finder = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate
             {
                 Id = "skeleton", ScriptId = "monster",
                 Sounds = new MobileSounds { StartAttack = StartAttackSound, Idle = IdleSound, Attack = AttackSound }
-            }
+            },
+            new MobileTemplate { Id = "lich", ScriptId = "monster", FleeAt = -1 }
         )
     );
+
     private readonly MobileEntity _skeleton = new()
     {
-        Id = new Serial(0x100), Name = "a skeleton", TemplateId = "skeleton", Map = MapType.Trammel,
+        Id = new Serial(0x100), Name = "a skeleton", TemplateId = "skeleton", Body = 0x32, Map = MapType.Trammel,
         Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
     };
 
@@ -107,16 +114,25 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<DiceModule>();
+        _container.AddScriptModule<CombatModule>();
+        _container.RegisterInstance<ICombatService>(_combat);
         _container.RegisterScriptEnum<MonsterAnimationType>();
+        _container.RegisterScriptEnum<BodyType>();
+        _container.RegisterInstance<IDataLoaderService>(
+            new StubDataLoaderService().With(
+                new BodyContent { Body = new(0x32), Type = BodyType.Monster },
+                new BodyContent { Body = new(0x190), Type = BodyType.Human }
+            )
+        );
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _errors.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
+        _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
         _scripts.Write("mobiles/monster.lua", File.ReadAllText(ShippedScript("mobiles/monster.lua")));
         var options = new ScriptEngineOptions
         {
@@ -126,21 +142,21 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
             HookInterval = 100,
             WriteDefinitions = false
         };
-        _engine = new(options, _container.Resolve<IScriptModuleRegistry>(), _container, _loop, _timers, new EventBusAdapter(_container));
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
         await _engine.StartAsync();
         _npcs = new(_engine, _templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
         await _npcs.StartAsync();
     }
 
-    public async Task DisposeAsync()
-    {
-        _engine.Dispose();
-        _scripts.Dispose();
-        await _fixture.DisposeAsync();
-    }
-
     [Fact]
-    public void APlayerInSight_IsThreatened_WalkedTo_AndSnarledAtFromBesideIt()
+    public void APlayerInSight_IsThreatened_WalkedTo_AndFoughtFromBesideIt()
     {
         _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
 
@@ -160,13 +176,165 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(new Point3D(1604, 1600, 0), _skeleton.Location);
         Assert.DoesNotContain(_view.Calls, call => call.Contains("running", StringComparison.OrdinalIgnoreCase));
 
-        // Beside it, it stays, faces the player and snarls: no combat yet.
+        // Beside it, it stays, faces the player and fights it: told once, whatever the thinks after.
         Think(12);
         Assert.Equal(new Point3D(1604, 1600, 0), _skeleton.Location);
         Assert.Equal(DirectionType.East, _skeleton.Direction);
-        Assert.Contains((_skeleton, AttackSound), _speech.Sounds);
-        Assert.Contains(_view.Calls, call => call is "Animated 256 4 5 1" or "Animated 256 5 5 1" or "Animated 256 6 5 1");
+        Assert.Equal([(_skeleton, _aria)], _combat.Attacks);
         Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void ABlueNpcInSight_IsGoneForToo_WithNoPlayerAround()
+    {
+        _aria.Hidden = true;
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        var townsman = Npc(0x200, 1605, 1600, NotorietyType.Innocent);
+
+        Think(4);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True"], _state.Flags);
+
+        // One step a think until it stands beside the townsman, and then it fights him.
+        Think(4);
+        Assert.Equal(new Point3D(1604, 1600, 0), _skeleton.Location);
+        Think(12);
+        Assert.Equal([(_skeleton, townsman)], _combat.Attacks);
+    }
+
+    [Theory]
+    [InlineData(NotorietyType.Invulnerable)]
+    [InlineData(NotorietyType.Attackable)]
+    [InlineData(NotorietyType.Enemy)]
+    [InlineData(NotorietyType.Murderer)]
+    public void AnNpcThatIsNoBlueTownsman_IsLeftAlone(NotorietyType notoriety)
+    {
+        _aria.Hidden = true;
+        Npc(0x200, 1605, 1600, notoriety);
+
+        Think(40);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_state.Flags);
+        Assert.Empty(_combat.Attacks);
+    }
+
+    [Fact]
+    public void ADeadPlayer_AGhost_IsNotPreyEither_AndTheBodyOfAHumanDoesNotPlayMonsterActions()
+    {
+        _skeleton.Body = 0x0190;
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+
+        Think(4);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True"], _state.Flags);
+        Assert.DoesNotContain(_view.Calls, call => call.StartsWith("Animated", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void AnArcher_ShootsFromWhereItsBowReachesAndItSeesItsPrey_WithoutWalkingUpToIt()
+    {
+        _combat.Range = 8;
+
+        Think(4);
+        Think(2);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal([(_skeleton, _aria)], _combat.Attacks);
+        Assert.Equal(new Point3D(1600, 1600, 0), _skeleton.Location);
+        Assert.Equal(DirectionType.East, _skeleton.Direction);
+    }
+
+    [Fact]
+    public void AnArcherOutOfRange_WalksUntilItsPreyIsInside_ThenShoots()
+    {
+        _combat.Range = 8;
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1612, 1600, 0)));
+        _finder.Finds(Enumerable.Repeat(DirectionType.East, 12).ToArray());
+
+        // Seen at 12 cells, a step each think until the prey is within 7: then it stands and shoots.
+        Think(4 + 12);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.InRange(_skeleton.Location.X, 1604, 1606);
+        Assert.Equal([(_skeleton, _aria)], _combat.Attacks);
+    }
+
+    [Fact]
+    public void AnArcherInRangeWithNoLineOfSight_ComesCloser_InsteadOfStandingBlind()
+    {
+        _combat.Range = 8;
+        _sight.Allow = false;
+        _finder.Finds(Enumerable.Repeat(DirectionType.East, 8).ToArray());
+
+        // It is seen by the scan only with a line of sight: with none it is not seen at all, so it does not start.
+        Think(8);
+
+        Assert.Empty(_combat.Attacks);
+        Assert.Equal(new Point3D(1600, 1600, 0), _skeleton.Location);
+    }
+
+    [Fact]
+    public void AMonsterThatFightsAndIsHurt_NowAndThenRuns_AndDoesNotAnswerTheBlowWhileItDoes()
+    {
+        _skeleton.Hits = 10;
+        _skeleton.HitsMax = 100;
+        _combat.Attack(_skeleton, _aria);
+
+        // One chance in ten at each think: a few hundred thinks always have one.
+        for (var think = 0; think < 400 && !_skeleton.GetProp<bool>("combat.passive"); think++)
+        {
+            Think(1);
+        }
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.True(_skeleton.GetProp<bool>("combat.passive"));
+        Assert.Contains(_skeleton, _combat.Stopped);
+        Assert.Contains("war 256 False", _state.Flags);
+    }
+
+    [Fact]
+    public void AMonsterThatRunsHurt_RunsForItsWholeTime_FarOrNear_AndAStaleRunIsForgotten()
+    {
+        _skeleton.SetProp("combat.passive", true);
+        Think(1);
+        Assert.False(_skeleton.GetProp<bool>("combat.passive"));
+
+        _skeleton.Hits = 10;
+        _skeleton.HitsMax = 100;
+        _combat.Attack(_skeleton, _aria);
+
+        for (var think = 0; think < 400 && !_skeleton.GetProp<bool>("combat.passive"); think++)
+        {
+            Think(1);
+        }
+
+        Assert.True(_skeleton.GetProp<bool>("combat.passive"));
+
+        // The prey stays where it was, 12 cells away or more, and the run goes on: a hurt creature runs its ten to thirty seconds.
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1640, 1600, 0)));
+        Think(10);
+
+        Assert.True(_skeleton.GetProp<bool>("combat.passive"));
+    }
+
+    [Fact]
+    public void AMonsterThatIsUnhurt_OrWhoseTemplateNeverFlees_DoesNotRun()
+    {
+        _combat.Attack(_skeleton, _aria);
+        _skeleton.Hits = 100;
+        _skeleton.HitsMax = 100;
+        Think(200);
+        Assert.False(_skeleton.GetProp<bool>("combat.passive"));
+
+        _skeleton.TemplateId = "lich";
+        _skeleton.Hits = 1;
+        Think(400);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.False(_skeleton.GetProp<bool>("combat.passive"));
     }
 
     [Fact]
@@ -311,8 +479,72 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
 
         Think(40);
 
-        Assert.DoesNotContain((_skeleton, AttackSound), _speech.Sounds);
+        Assert.Empty(_combat.Attacks);
         Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AMonsterThatIsFought_WhileItWanders_TurnsOnWhoFightsIt_AndWalksToIt()
+    {
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        // The combat service made the skeleton fight the player that hit it: no scan of its own has seen it yet.
+        _combat.Attack(_skeleton, _aria);
+
+        Think(1);
+
+        Assert.Equal(["war 256 True"], _state.Flags);
+        Assert.Equal(new Point3D(1601, 1600, 0), _skeleton.Location);
+        Think(3);
+        Assert.Equal(new Point3D(1604, 1600, 0), _skeleton.Location);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AMonsterThatIsFought_WhileItStandsGuard_ChasesAgain_WithoutThreatening()
+    {
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        Think(20);
+        _aria.Hidden = true;
+        Think(1);
+        Assert.Contains(_skeleton, _combat.Stopped);
+        _speech.Sounds.Clear();
+        _state.Flags.Clear();
+
+        // The player strikes from hiding: the monster fights back, and does not threaten twice.
+        _combat.Attack(_skeleton, _aria);
+        Think(1);
+
+        Assert.Equal(["war 256 True"], _state.Flags);
+        Assert.DoesNotContain((_skeleton, StartAttackSound), _speech.Sounds);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void APlayerItLosesOrGivesUp_EndsItsFight()
+    {
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        Think(20);
+        Assert.Single(_combat.Attacks);
+
+        // The player hides: the monster loses it and stands guard, no longer fighting it.
+        _aria.Hidden = true;
+        Think(1);
+
+        Assert.Contains(_skeleton, _combat.Stopped);
+        Assert.Empty(_errors);
+    }
+
+    private MobileEntity Npc(uint serial, int x, int y, NotorietyType notoriety)
+    {
+        var npc = new MobileEntity
+        {
+            Id = new Serial(serial), Name = "a townsman", TemplateId = "townsman", Notoriety = notoriety,
+            Map = MapType.Trammel,
+            Location = new Point3D(x, y, 0), Hits = 20, HitsMax = 20
+        };
+        _fixture.Mobiles.EnterWorld(npc);
+
+        return npc;
     }
 
     private void Think(int times)
@@ -341,5 +573,12 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         }
 
         return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        _scripts.Dispose();
+        await _fixture.DisposeAsync();
     }
 }

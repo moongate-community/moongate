@@ -26,6 +26,7 @@ public sealed class UoGameCipherTests
                     {
                         cipher.Decrypt(data.AsSpan(i, Math.Min(chunk, data.Length - i)));
                     }
+
                     Assert.Equal(hash.Value.GetString(), Convert.ToHexString(SHA256.HashData(data)));
                 }
             }
@@ -47,7 +48,11 @@ public sealed class UoGameCipherTests
                 cipher.Encrypt([]);
                 cipher.Encrypt(send.AsSpan(i, Math.Min(13, send.Length - i)));
             }
-            Assert.Equal(vector.GetProperty("sendHashes").GetProperty("50000").GetString(), Convert.ToHexString(SHA256.HashData(send)));
+
+            Assert.Equal(
+                vector.GetProperty("sendHashes").GetProperty("50000").GetString(),
+                Convert.ToHexString(SHA256.HashData(send))
+            );
         }
     }
 
@@ -63,7 +68,10 @@ public sealed class UoGameCipherTests
             Assert.Equal(0x91, packet[0]);
             Assert.Equal("fixture", System.Text.Encoding.ASCII.GetString(packet, 5, 7));
             Assert.Equal("example", System.Text.Encoding.ASCII.GetString(packet, 35, 7));
-            Assert.Equal(vector.GetProperty("Seed").GetUInt32(), System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(packet.AsSpan(1)));
+            Assert.Equal(
+                vector.GetProperty("Seed").GetUInt32(),
+                System.Buffers.Binary.BinaryPrimitives.ReadUInt32BigEndian(packet.AsSpan(1))
+            );
         }
     }
 

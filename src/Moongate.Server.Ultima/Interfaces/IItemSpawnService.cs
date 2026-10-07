@@ -16,7 +16,9 @@ public interface IItemSpawnService
     ///     and its contents, then puts them in the live world and shows the item to the players in range. Call it off
     ///     the game loop.
     /// </summary>
-    /// <exception cref="KeyNotFoundException">No template has that id.</exception>
+    /// <exception cref="KeyNotFoundException">
+    ///     No template has that id.
+    /// </exception>
     Task<ItemEntity> SpawnAsync(
         string templateId,
         MapType map,

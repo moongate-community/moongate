@@ -43,20 +43,40 @@ public sealed class UltimaConfigContainerExtensionsTests
             [ultima.npcs]
             think_interval_ms = 250
             sense_range = 6
+
+            [ultima.crime]
+            criminal_seconds = 300
+            guards_enabled = false
+            guard_template = "f_guard"
+            guard_seconds = 15
             """
         );
 
         var ultima = container.AddUltimaConfig();
 
+        var crime = container.Resolve<CrimeConfig>();
+        Assert.Equal(
+            (300, false, "f_guard", 15),
+            (crime.CriminalSeconds, crime.GuardsEnabled, crime.GuardTemplate, crime.GuardSeconds)
+        );
         Assert.Equal("/uo", container.Resolve<UltimaConfig>().UltimaPath);
         Assert.Same(ultima.World, container.Resolve<WorldConfig>());
         Assert.Equal("ita", container.Resolve<LocalizationConfig>().Language);
         Assert.Equal(20, container.Resolve<LineOfSightConfig>().MaxDistance);
         Assert.Equal(12, container.Resolve<WorldConfig>().ViewRange);
-        Assert.Equal(("pack", "coin"), (container.Resolve<ItemsConfig>().BackpackTemplate, container.Resolve<ItemsConfig>().GoldTemplate));
+        Assert.Equal(
+            ("pack", "coin"),
+            (container.Resolve<ItemsConfig>().BackpackTemplate, container.Resolve<ItemsConfig>().GoldTemplate)
+        );
         Assert.Equal(2, container.Resolve<StartingItemsConfig>().BestSkills);
-        Assert.Equal((5, 48), (container.Resolve<CharactersConfig>().MaxPerAccount, container.Resolve<CharactersConfig>().DeletionDelayHours));
-        Assert.Equal((250, 6), (container.Resolve<NpcsConfig>().ThinkIntervalMs, container.Resolve<NpcsConfig>().SenseRange));
+        Assert.Equal(
+            (5, 48),
+            (container.Resolve<CharactersConfig>().MaxPerAccount, container.Resolve<CharactersConfig>().DeletionDelayHours)
+        );
+        Assert.Equal(
+            (250, 6),
+            (container.Resolve<NpcsConfig>().ThinkIntervalMs, container.Resolve<NpcsConfig>().SenseRange)
+        );
     }
 
     [Fact]
@@ -67,7 +87,8 @@ public sealed class UltimaConfigContainerExtensionsTests
 
         container.AddUltimaConfig();
 
-        var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(Path.Combine(directory.Path, "moongate.toml")))!;
+        var document =
+            TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(Path.Combine(directory.Path, "moongate.toml")))!;
         var ultima = Assert.IsType<TomlTable>(document["ultima"]);
         Assert.Equal(18L, Assert.IsType<TomlTable>(ultima["world"])["view_range"]);
         Assert.False(Assert.IsType<TomlTable>(ultima["starting_items"]).ContainsKey("gold"));
@@ -86,7 +107,9 @@ public sealed class UltimaConfigContainerExtensionsTests
     {
         var path = directory.CreateFile("moongate.toml", toml);
         var container = new Container();
-        container.RegisterInstance(new ServerConfigDocument(path, TomlSerializer.Deserialize<TomlTable>(toml)!, ["network"]));
+        container.RegisterInstance(
+            new ServerConfigDocument(path, TomlSerializer.Deserialize<TomlTable>(toml)!, ["network"])
+        );
 
         return container;
     }

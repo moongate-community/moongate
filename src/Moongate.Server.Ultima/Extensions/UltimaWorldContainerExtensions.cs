@@ -7,20 +7,25 @@ using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Books;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services.Diagnostics;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Books;
 
 namespace Moongate.Server.Ultima.Extensions;
 
 /// <summary>
-///     Registers the services of the live world: templates, factories, mobiles, NPCs, items, the world view, characters, speech, light, weather, regions, decoration and the Lua modules, with their startup order.
+///     Registers the services of the live world: templates, factories, mobiles, NPCs, items, the world view, characters,
+///     speech, light, weather, regions, decoration and the Lua modules, with their startup order.
 /// </summary>
 public static class UltimaWorldContainerExtensions
 {
     /// <summary>
-    ///     Registers the services of the live world: templates, factories, mobiles, NPCs, items, the world view, characters, speech, light, weather, regions, decoration and the Lua modules, with their startup order.
+    ///     Registers the services of the live world: templates, factories, mobiles, NPCs, items, the world view, characters,
+    ///     speech, light, weather, regions, decoration and the Lua modules, with their startup order.
     /// </summary>
     public static Container AddUltimaWorldServices(this Container container)
     {
@@ -30,6 +35,11 @@ public static class UltimaWorldContainerExtensions
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
+        container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
+        container.Register<IBookTemplateService, BookTemplateService>(Reuse.Singleton);
+        container.Register<IBookAttachmentPreparationService, BookAttachmentPreparationService>(Reuse.Singleton);
+        container.Register<BookContextFactory>(Reuse.Singleton);
+        container.Register<IBookDocumentService, BookDocumentService>(Reuse.Singleton);
         container.Register<IDecorationsLoader, DecorationsLoader>(Reuse.Singleton);
         container.Register<IDoorGeneratorService, DoorGeneratorService>(Reuse.Singleton);
         container.Register<IDecorationService, DecorationService>(Reuse.Singleton);
@@ -38,8 +48,21 @@ public static class UltimaWorldContainerExtensions
         container.Register<ILootService, LootService>(Reuse.Singleton);
         container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
         container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
+        container.Register<IWeightService, WeightService>(Reuse.Singleton);
+        container.Register<IContainerCapacityService, ContainerCapacityService>(Reuse.Singleton);
+        container.Register<IFatigueService, FatigueService>(Reuse.Singleton);
         container.AddMoongateService<IRegenerationService, RegenerationService>(12);
         container.AddMoongateService<IHungerService, HungerService>(12);
+        container.AddMoongateService<ICrimeService, CrimeService>(12);
+        container.AddMoongateService<IMurderService, MurderService>(12);
+        container.Register<ICombatGearService, CombatGearService>(Reuse.Singleton);
+        container.Register<IAmmoService, AmmoService>(Reuse.Singleton);
+        container.AddMoongateService<ICombatService, CombatService>(12);
+        container.AddMoongateService<IGuardService, GuardService>(12);
+        // After the data loaders: the cells come from data/jail.toml; its sentences are read from the world database.
+        container.AddMoongateService<IJailService, JailService>(12);
+        // Its messages are read from the world database.
+        container.AddMoongateService<IBulletinBoardService, BulletinBoardService>(12);
         // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.
         container.AddMoongateService<NpcScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
@@ -50,6 +73,9 @@ public static class UltimaWorldContainerExtensions
         // After the script engine (70), as the mobile scripts.
         container.AddMoongateService<IItemScriptService, ItemScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.AddMoongateService<IGumpScriptService, GumpScriptService>(LuaScriptEngineService.StartupPriority + 5);
+        container.AddMoongateService<ISkillScriptService, SkillScriptService>(LuaScriptEngineService.StartupPriority + 5);
+        container.Register<ISkillService, SkillService>(Reuse.Singleton);
+        container.Register<ISkillUseService, SkillUseService>(Reuse.Singleton);
         container.AddMetricProvider<NpcTickMetricsProvider>();
         container.Register<ISectorService, SectorService>(Reuse.Singleton);
         container.Register<IMobileService, MobileService>(Reuse.Singleton);
@@ -68,7 +94,10 @@ public static class UltimaWorldContainerExtensions
             "character_entered_world",
             CharacterScriptEvents.CharacterEnteredWorld
         );
-        container.AddScriptEvent<PlayerRegionChangedEvent>("player_region_changed", CharacterScriptEvents.PlayerRegionChanged);
+        container.AddScriptEvent<PlayerRegionChangedEvent>(
+            "player_region_changed",
+            CharacterScriptEvents.PlayerRegionChanged
+        );
         container.AddScriptEvent<PlayerSaidEvent>("player_say", CharacterScriptEvents.PlayerSay);
         container.AddScriptEvent<CharacterLeftWorldEvent>(
             "character_left_world",
@@ -82,12 +111,18 @@ public static class UltimaWorldContainerExtensions
         container.Register<ICharacterEnterWorldService, CharacterEnterWorldService>(Reuse.Singleton);
         container.Register<ITargetService, TargetService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, ITargetService>();
+        container.Register<IDeathService, DeathService>(Reuse.Singleton);
+        container.Register<IHuePickerService, HuePickerService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IHuePickerService>();
         container.Register<IPromptService, PromptService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IPromptService>();
         container.Register<IGumpService, GumpService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IGumpService>();
         container.Register<IGumpTemplateService, GumpTemplateService>(Reuse.Singleton);
         container.Register<IBankService, BankService>(Reuse.Singleton);
+        // The use handler is what a double click does: a context menu entry asks it for the same.
+        container.RegisterDelegate<IUseService>(resolver => resolver.Resolve<UseRequestPacketHandler>(), Reuse.Singleton);
+        container.Register<IContextMenuService, ContextMenuService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IBankService>();
         container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
         container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
@@ -105,6 +140,9 @@ public static class UltimaWorldContainerExtensions
         container.AddLiveWorldMobiles();
         container.AddLiveWorldItems();
         container.AddLiveWorldState();
+        container.AddLiveJailSentences();
+        container.AddLiveBulletinMessages();
+        container.AddBookAttachments();
 
         container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
         // After the loaders: the maps come from data/maps.toml.
@@ -138,6 +176,8 @@ public static class UltimaWorldContainerExtensions
         // the weather: the listeners run in this order, so those already follow the new region when it resends them.
         container.AddMoongateService<ISeasonService, SeasonService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ISeasonService>(), Reuse.Singleton);
+        container.AddMoongateService<IRegionAnnouncer, RegionAnnouncer>(11);
+        container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IRegionAnnouncer>(), Reuse.Singleton);
         // Last: the scripts hear of the change once the light, the weather and the season of the place were sent.
         container.Register<IRegionChangeListener, RegionEventPublisher>(Reuse.Singleton);
         container.AddMoongateService<IEquipmentService, EquipmentService>();

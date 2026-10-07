@@ -24,6 +24,12 @@ public interface IWorldViewService
     void Entered(MobileEntity mobile, long sessionId, ClientVersion? version, AccountType account = AccountType.Regular);
 
     /// <summary>
+    ///     Gets whether the player's session is registered: its login sequence is over and it has not left. False for
+    ///     an NPC.
+    /// </summary>
+    bool HasEntered(Serial mobile);
+
+    /// <summary>
     ///     Tells the players in range that the mobile, now at its current location, moved from
     ///     <paramref name="oldLocation" /> or turned on the spot.
     /// </summary>
@@ -54,13 +60,20 @@ public interface IWorldViewService
     ///     Shows an animation of the mobile (0x6E) to its own player and to the players who see it: the action of its
     ///     body, played <paramref name="repeatCount" /> times with <paramref name="frameCount" /> frames.
     /// </summary>
-    void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount);
+    void MobileAnimated(MobileEntity mobile, int action, int frameCount, int repeatCount, bool forward = true);
 
     /// <summary>
     ///     Tells the mobile's own player and the players who see it that its flags changed, such as war mode or
     ///     frozen (0x77): the figure stays where it is.
     /// </summary>
     void MobileFlagsChanged(MobileEntity mobile);
+
+    /// <summary>
+    ///     The mobile died: the players who see it are sent the death (0xAF), which their client plays on the body and
+    ///     ties to <paramref name="corpse" />; a zero serial when it leaves none. Called before the mobile leaves the
+    ///     world.
+    /// </summary>
+    void MobileDied(MobileEntity mobile, Serial corpse);
 
     /// <summary>
     ///     Call it after <see cref="MobileEntity.Hidden" /> changed: a hidden mobile leaves the screens of the players
@@ -110,4 +123,10 @@ public interface IWorldViewService
     ///     already took it off when it was picked up.
     /// </summary>
     void WornItemRemoved(MobileEntity wearer, ItemEntity item);
+
+    /// <summary>
+    ///     Tells the player of <paramref name="owner" />, and only it, that the item is gone from its character: a ghost
+    ///     loses its gear and its pack to its corpse, and its own client must not keep them.
+    /// </summary>
+    void OwnItemRemoved(MobileEntity owner, ItemEntity item);
 }

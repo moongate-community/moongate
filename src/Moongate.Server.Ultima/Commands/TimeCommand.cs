@@ -44,7 +44,9 @@ public sealed class TimeCommand : ICommandExecutor
         }
 
         var time = _clock.GetTime(character.Map, character.Location.X);
-        context.Print(_localization.Text(CommandMessages.TimeHere, "Game time here: {0}.", $"{time.Hours:00}:{time.Minutes:00}"));
+        context.Print(
+            _localization.Text(CommandMessages.TimeHere, "Game time here: {0}.", $"{time.Hours:00}:{time.Minutes:00}")
+        );
         context.Print(
             _localization.Text(
                 CommandMessages.TimeMoons,

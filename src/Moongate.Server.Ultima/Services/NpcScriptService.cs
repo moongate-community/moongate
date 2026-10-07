@@ -11,7 +11,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Runs the mobile scripts: loads every <c>scripts/mobiles/*.lua</c> at startup and calls the functions of the global
+///     Runs the mobile scripts: loads every <c>scripts/mobiles/*.lua</c> at startup and calls the functions of the
+///     global
 ///     table an NPC's template names with <c>script_id</c>, defined by <c>scripts/mobiles/&lt;script_id&gt;.lua</c>. It
 ///     is the NPC thinker: each think calls <c>on_think(serial)</c>, which is instantaneous, as ModernUO's; a script
 ///     that waits in it is warned once. It calls nothing before the scripts are loaded, which is after the NPCs are,
@@ -83,7 +84,7 @@ public sealed class NpcScriptService : INpcScriptService, INpcThinker, IMoongate
             $"{MobilesDirectory}/{script}.lua",
             script,
             function,
-            [(long)npc.Id.Value, ..args]
+            [(long)npc.Id.Value, .. args]
         );
     }
 

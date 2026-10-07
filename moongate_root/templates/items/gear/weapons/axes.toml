@@ -7,6 +7,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -20,6 +21,7 @@ id = "0x13fb"
 base_id = "0x13fa_lbr"
 item_id = 5115
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_two_handed_axe"
@@ -30,6 +32,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -43,6 +46,7 @@ id = "0x1443"
 base_id = "0x1442_lbr"
 item_id = 5187
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_hatchet"
@@ -52,6 +56,7 @@ name = "hatchet"
 rarity = "common"
 movable = true
 layer = "one_handed"
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -65,6 +70,7 @@ id = "0x0f44"
 base_id = "0x0f43_lbr"
 item_id = 3908
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_executioners_axe"
@@ -75,6 +81,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -88,6 +95,7 @@ id = "0x0f46"
 base_id = "0x0f45_lbr"
 item_id = 3910
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_battle_axe"
@@ -98,6 +106,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -111,6 +120,7 @@ id = "0x0f48"
 base_id = "0x0f47_lbr"
 item_id = 3912
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_axe"
@@ -121,6 +131,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -134,6 +145,7 @@ id = "0x0f4a"
 base_id = "0x0f49_lbr"
 item_id = 3914
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_double_axe"
@@ -144,6 +156,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -157,6 +170,7 @@ id = "0x0f4c"
 base_id = "0x0f4b_lbr"
 item_id = 3916
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_ornate_axe"
@@ -167,6 +181,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -180,6 +195,7 @@ id = "0x2d34"
 base_id = "0x2d28_lbr"
 item_id = 11572
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_gargish_battle_axe"
@@ -190,6 +206,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -203,6 +220,7 @@ id = "0x48b1"
 base_id = "0x48b0_lbr"
 item_id = 18609
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "base_dual_short_axes"
@@ -213,6 +231,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "sword"
 decays = true
 
 [[item]]
@@ -226,6 +245,7 @@ id = "0x4068"
 base_id = "0x08fd_lbr"
 item_id = 16488
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "base_gargish_axe"
@@ -236,6 +256,7 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
 decays = true
 
 [[item]]
@@ -249,3 +270,4 @@ id = "0x48b3"
 base_id = "0x48b2_lbr"
 item_id = 18611
 rarity = "common"
+weapon_type = "axe"

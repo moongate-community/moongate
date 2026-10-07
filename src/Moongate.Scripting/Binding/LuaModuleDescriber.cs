@@ -103,6 +103,7 @@ public static class LuaModuleDescriber
             foreach (var parameter in function.Method.GetParameters())
             {
                 var isParams = parameter.GetCustomAttribute<ParamArrayAttribute>() is not null;
+                // Safe: isParams guarantees an array type, which has an element type.
                 Note(isParams ? parameter.ParameterType.GetElementType()! : parameter.ParameterType);
             }
 
@@ -203,6 +204,7 @@ public static class LuaModuleDescriber
         {
             var parameter = parameters[i];
             var isParams = i == parameters.Length - 1 && parameter.GetCustomAttribute<ParamArrayAttribute>() is not null;
+            // Safe: isParams guarantees an array type, which has an element type.
             var type = isParams ? parameter.ParameterType.GetElementType()! : parameter.ParameterType;
             type = Nullable.GetUnderlyingType(type) ?? type;
 

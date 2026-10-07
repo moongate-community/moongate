@@ -1,0 +1,167 @@
+# ==============================================================================
+# Moongate - templates/decorations/felucca/champion_teleporters.toml
+#
+# What it is for:
+#   World decoration placed on Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5814, 3548, 0] }
+locations = [[5443, 2325, 35]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5522, 3921, 37] }
+locations = [[5996, 2367, 45]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5958, 2345, 25] }
+locations = [[6053, 2407, 27]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [6089, 2400, 24] }
+locations = [[6080, 2340, 26]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5972, 2418, 26] }
+locations = [[5503, 3971, 40]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5490, 2348, 20] }
+locations = [[5731, 3420, 14]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5606, 802, 60] }
+locations = [[5265, 683, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5876, 1378, 0] }
+locations = [[5265, 669, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5164, 1009, 0] }
+locations = [[5506, 814, 60]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5201, 1564, 0] }
+locations = [[5506, 817, 60]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5201, 1564, 0] }
+locations = [[5145, 973, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5331, 707, 0] }
+locations = [[5140, 973, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5606, 802, 60] }
+locations = [[5682, 1440, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5164, 1009, 0] }
+locations = [[5682, 1437, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5977, 169, 0] }
+locations = [[5905, 97, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5876, 1378, 0] }
+locations = [[5360, 1540, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5331, 707, 0] }
+locations = [[5356, 1540, 0]]
+
+[[decoration]]
+comment = "sparkle"
+type = "Static"
+item_id = 0x375A
+locations = [
+    [5443, 2325, 34],
+    [5996, 2367, 45],
+    [6053, 2407, 27],
+    [6080, 2340, 26],
+    [5503, 3971, 40],
+    [5731, 3420, 14],
+    [5265, 683, 0],
+    [5265, 669, 0],
+    [5506, 814, 60],
+    [5506, 817, 60],
+    [5145, 973, 0],
+    [5140, 973, 0],
+    [5682, 1440, 0],
+    [5682, 1437, 0],
+    [5905, 97, 0],
+    [5360, 1540, 0],
+    [5356, 1540, 0],
+]
+
+[[decoration]]
+comment = "sparkle"
+type = "Static"
+item_id = 0x374A
+locations = [[5682, 1437, 5]]

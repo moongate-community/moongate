@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
@@ -7,41 +8,30 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Data.Templates.Items;
 
 /// <summary>
-///     An authored item definition, one TOML entry under
-///     <c>
-///         templates/items/
-///     </c>
-///     .
+///     An authored item definition, one TOML entry under <c>templates/items/</c>.
 /// </summary>
 public class ItemTemplate
 {
+    // The numbers of the combat fields are kept within what a client and the formulas can take.
+    private const int MaximumCombatNumber = 65535;
+    private const int MaximumSpeed = 500;
+    private const int MaximumArmorRating = 500;
+
     /// <summary>
-    ///     The stable id a loot table, a spawn or the
-    ///     <c>
-    ///         additem
-    ///     </c>
-    ///     command names this template by.
+    ///     The stable id a loot table, a spawn or the <c>additem</c> command names this template by.
     /// </summary>
     public string Id { get; set; }
 
     /// <summary>
     ///     The <see cref="Id" /> of another <see cref="ItemTemplate" /> this one inherits unset fields
-    ///     from, the way UOX3's
-    ///     <c>
-    ///         get=
-    ///     </c>
-    ///     chains one door variant off another. Resolved by the loader
+    ///     from, the way UOX3's <c>get=</c> chains one door variant off another. Resolved by the loader
     ///     across every loaded file, not by this type itself.
     /// </summary>
     public string? BaseId { get; set; }
 
     /// <summary>
     ///     The base client graphic. Physical properties tiledata already carries, weight, layer,
-    ///     stackability, are read from it through
-    ///     <c>
-    ///         ITileDataService
-    ///     </c>
-    ///     at the point of use, not restated here.
+    ///     stackability, are read from it through <c>ITileDataService</c> at the point of use, not restated here.
     /// </summary>
     public Serial ItemId { get; set; }
 
@@ -62,7 +52,8 @@ public class ItemTemplate
         EnumValueSpec<ItemRarityType>.FromValue(ItemRarityType.Common);
 
     /// <summary>
-    ///     The global Lua table, defined by <c>scripts/items/&lt;script_id&gt;.lua</c>, whose functions handle the item's
+    ///     The global Lua table, defined by <c>scripts/items/&lt;script_id&gt;.lua</c>, whose functions handle the
+    ///     item's
     ///     events, such as <c>on_use</c>. A lower-case Lua identifier; empty: no script.
     /// </summary>
     public string ScriptId { get; set; }
@@ -102,6 +93,48 @@ public class ItemTemplate
     public bool? TwoHandedWeapon { get; set; }
 
     /// <summary>
+    ///     The kind of a weapon, as UOX3 types it by graphic: it decides the skill, the swing animation and the sounds.
+    ///     Unset for what is not a weapon.
+    /// </summary>
+    public WeaponType? WeaponType { get; set; }
+
+    /// <summary>
+    ///     The least damage a hit of the weapon does, before the bonuses of the one who wields it.
+    /// </summary>
+    public int? DamageMin { get; set; }
+
+    /// <summary>
+    ///     The most damage a hit of the weapon does. A worn item with one above 0 is a weapon.
+    /// </summary>
+    public int? DamageMax { get; set; }
+
+    /// <summary>
+    ///     The speed of a weapon, ModernUO's: a swing takes 15000 / ((stamina + 100) * speed) seconds.
+    /// </summary>
+    public int? Speed { get; set; }
+
+    /// <summary>
+    ///     The strength a wearer needs for the item, as UOX3's <c>str</c>; read, not enforced yet.
+    /// </summary>
+    public int? StrengthRequired { get; set; }
+
+    /// <summary>
+    ///     The armor rating of a piece of armor or a shield, as UOX3's <c>def</c>.
+    /// </summary>
+    public int? ArmorRating { get; set; }
+
+    /// <summary>
+    ///     The most hit points the item has, its durability; read, not used yet.
+    /// </summary>
+    public int? MaxHits { get; set; }
+
+    /// <summary>
+    ///     Whether a dye tub can give the item its hue, as UOX3's <c>dyeable</c>: clothing is, a death robe is not.
+    ///     Unset is not dyeable.
+    /// </summary>
+    public bool? Dyeable { get; set; }
+
+    /// <summary>
     ///     The price vendors sell the item for; unset means vendors do not sell it.
     /// </summary>
     public int? BuyPrice { get; set; }
@@ -127,7 +160,8 @@ public class ItemTemplate
     public LootType? LootType { get; set; }
 
     /// <summary>
-    ///     Free values for scripts, such as a quest step. A child template's tags, when set, replace its base's; they are not merged.
+    ///     Free values for scripts, such as a quest step. A child template's tags, when set, replace its base's; they are not
+    ///     merged.
     /// </summary>
     public Dictionary<string, string>? Tags { get; set; }
 
@@ -201,6 +235,36 @@ public class ItemTemplate
         if (DecayMinutes < 1)
         {
             throw Invalid("decay_minutes", "must be at least 1");
+        }
+
+        if (DamageMin is < 0 or > MaximumCombatNumber)
+        {
+            throw Invalid("damage_min", $"must be from 0 to {MaximumCombatNumber}");
+        }
+
+        if (DamageMax is < 0 or > MaximumCombatNumber || DamageMin > DamageMax)
+        {
+            throw Invalid("damage_max", $"must be from damage_min to {MaximumCombatNumber}");
+        }
+
+        if (Speed is < 1 or > MaximumSpeed)
+        {
+            throw Invalid("speed", $"must be from 1 to {MaximumSpeed}");
+        }
+
+        if (ArmorRating is < 0 or > MaximumArmorRating)
+        {
+            throw Invalid("armor_rating", $"must be from 0 to {MaximumArmorRating}");
+        }
+
+        if (StrengthRequired is < 0 or > MaximumCombatNumber)
+        {
+            throw Invalid("strength_required", $"must be from 0 to {MaximumCombatNumber}");
+        }
+
+        if (MaxHits is < 0 or > MaximumCombatNumber)
+        {
+            throw Invalid("max_hits", $"must be from 0 to {MaximumCombatNumber}");
         }
 
         if (Tags is not null && Tags.Keys.Any(string.IsNullOrWhiteSpace))

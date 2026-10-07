@@ -29,6 +29,7 @@ name = "oil cloth"
 rarity = "common"
 weight = 1.0
 stackable = true
+dyeable = false
 buy_price = 20
 sell_price = 10
 decays = true

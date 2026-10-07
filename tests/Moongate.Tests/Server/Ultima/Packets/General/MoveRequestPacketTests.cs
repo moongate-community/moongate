@@ -10,7 +10,10 @@ public sealed class MoveRequestPacketTests
     {
         Assert.True(MoveRequestPacket.TryParse(Convert.FromHexString("02820501020304"), out var packet));
 
-        Assert.Equal((DirectionType.East, true, (byte)5, 0x01020304u), (packet.Direction, packet.Running, packet.Sequence, packet.FastWalkKey));
+        Assert.Equal(
+            (DirectionType.East, true, (byte)5, 0x01020304u),
+            (packet.Direction, packet.Running, packet.Sequence, packet.FastWalkKey)
+        );
     }
 
     [Fact]

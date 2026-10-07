@@ -28,11 +28,6 @@ internal sealed class AdminHostFixture : IAsyncDisposable
     public IAdminApiService LoginHost => _login.Resolve<IAdminApiService>();
     public IAdminApiService GameHost => _game.Resolve<IAdminApiService>();
 
-    private AdminHostFixture(AccountAdminFixture backend)
-    {
-        Backend = backend;
-    }
-
     public static async Task<AdminHostFixture> CreateAsync()
     {
         var fixture = new AdminHostFixture(await AccountAdminFixture.CreateAsync());
@@ -60,6 +55,11 @@ internal sealed class AdminHostFixture : IAsyncDisposable
 
             throw;
         }
+    }
+
+    private AdminHostFixture(AccountAdminFixture backend)
+    {
+        Backend = backend;
     }
 
     private async Task<string> StartAsync(Container container, ServerMode mode)

@@ -12,6 +12,13 @@ namespace Moongate.Server.Services.Packets;
 /// </summary>
 public sealed class PacketSendService : IPacketSendService, ILoginPacketSendService
 {
+    /// <summary>
+    ///     The packets a session's queue holds before the session is closed as one that does not read. Entering a spot
+    ///     sends every item in view with its tooltip in one turn of the loop: the densest view of the shipped world has
+    ///     about 800 items, so about 1600 packets; 4096 leaves room for mobiles and for a world that grows.
+    /// </summary>
+    public const int DefaultCapacity = 4096;
+
     private readonly Lock _gate = new();
     private readonly IConnectionService _connections;
     private readonly int _capacity;
@@ -34,7 +41,7 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
         }
     }
 
-    public PacketSendService(IConnectionService connections, int capacity = 128)
+    public PacketSendService(IConnectionService connections, int capacity = DefaultCapacity)
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(capacity);
         _connections = connections;

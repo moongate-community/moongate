@@ -18,15 +18,12 @@ public sealed class WorldStateEntityPersistenceTests : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _host = await HostPersistenceFixture.CreateAsync(false);
-        _host.Container.AddPersistenceWorld<MobileEntity>().AddPersistenceWorld<ItemEntity>().AddPersistenceWorld<WorldStateEntity>();
+        _host.Container.AddPersistenceWorld<MobileEntity>()
+            .AddPersistenceWorld<ItemEntity>()
+            .AddPersistenceWorld<WorldStateEntity>();
         await CoreMigrationFiles.ApplyAsync(_host.Database, "world");
         await _host.Owner.InitializeAsync();
         _state = _host.Container.Resolve<IDataAccess<WorldStateEntity>>();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _host.DisposeAsync();
     }
 
     [Fact]
@@ -57,7 +54,10 @@ public sealed class WorldStateEntityPersistenceTests : IAsyncLifetime
 
         var again = new WorldPropsService(_state);
         await again.StartAsync();
-        Assert.Equal((13L, null, true, 1.5), (again.Get("event.day"), again.Get("motto"), again.Get("open"), again.Get("rate")));
+        Assert.Equal(
+            (13L, null, true, 1.5),
+            (again.Get("event.day"), again.Get("motto"), again.Get("open"), again.Get("rate"))
+        );
         Assert.Equal(WorldStateEntity.RowId, Assert.Single(await _state.GetAllAsync()).Id);
     }
 
@@ -82,5 +82,10 @@ public sealed class WorldStateEntityPersistenceTests : IAsyncLifetime
         await again.StartAsync();
         Assert.Equal(13L, again.Get("event.day"));
         Assert.Single(await data.GetAllAsync());
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _host.DisposeAsync();
     }
 }

@@ -7,10 +7,6 @@ internal sealed class ConnectionRegistryFixture : IAsyncDisposable
 {
     public ConnectionService Service { get; } = new();
 
-    private ConnectionRegistryFixture()
-    {
-    }
-
     public static async Task<ConnectionRegistryFixture> CreateAsync(params INetworkConnection[] connections)
     {
         var fixture = new ConnectionRegistryFixture();
@@ -27,6 +23,10 @@ internal sealed class ConnectionRegistryFixture : IAsyncDisposable
         }
 
         return fixture;
+    }
+
+    private ConnectionRegistryFixture()
+    {
     }
 
     public async ValueTask DisposeAsync()

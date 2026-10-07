@@ -77,7 +77,10 @@ public sealed class SpawnsCommandTests : IAsyncDisposable
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         await _fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(2)));
-        _mobiles.EnterWorld(new MobileEntity { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1601, 0) });
+        _mobiles.EnterWorld(
+            new MobileEntity
+                { Id = new Serial(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1600, 1601, 0) }
+        );
         var context = new CommandContext(".spawns", "spawns", [], CommandSourceType.InGame, session);
 
         await new SpawnsCommand(_spawns, _mobiles, localization).ExecuteAsync(context);

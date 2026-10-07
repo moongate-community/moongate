@@ -41,14 +41,23 @@ public sealed class ConsoleCommandTests
     [Fact]
     public async Task Texts_AreInTheServerLanguage()
     {
-        var context = await RunAsync(["lock"], TestLocalization.With((30102, "Console bloccata. Premi '{0}' per sbloccarla.")));
+        var context = await RunAsync(
+            ["lock"],
+            TestLocalization.With((30102, "Console bloccata. Premi '{0}' per sbloccarla."))
+        );
 
         Assert.Equal("Console bloccata. Premi '*' per sbloccarla.", Assert.Single(context.Output).Text);
     }
 
     private async Task<CommandContext> RunAsync(string[] arguments, ILocalizationService? localization = null)
     {
-        var context = new CommandContext("console " + string.Join(' ', arguments), "console", arguments, CommandSourceType.Console, null);
+        var context = new CommandContext(
+            "console " + string.Join(' ', arguments),
+            "console",
+            arguments,
+            CommandSourceType.Console,
+            null
+        );
 
         await new ConsoleCommand(_prompt, localization).ExecuteAsync(context);
 

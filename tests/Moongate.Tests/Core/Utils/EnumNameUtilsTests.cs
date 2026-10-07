@@ -42,7 +42,7 @@ public sealed class EnumNameUtilsTests
     public void Format_ZeroFlags_UsesTheZeroNameOrAnEmptyString()
     {
         Assert.Equal("none", EnumNameUtils.Format(TileFlagType.None));
-        Assert.Equal(string.Empty, EnumNameUtils.Format(default(MovementAbilityType)));
+        Assert.Equal(string.Empty, EnumNameUtils.Format(default(FlagsWithoutZero)));
     }
 
     [Fact]
@@ -79,7 +79,8 @@ public sealed class EnumNameUtilsTests
         Assert.Equal(TileFlagType.None, value);
     }
 
-    [Theory, InlineData("1"), InlineData("99"), InlineData("admin"), InlineData("regular|game_master"), InlineData(""), InlineData(null)]
+    [Theory, InlineData("1"), InlineData("99"), InlineData("admin"), InlineData("regular|game_master"), InlineData(""),
+     InlineData(null)]
     public void TryParse_ANumberAnUnknownNameAPipeOnAPlainEnumOrNothing_ReturnsFalse(string? text)
     {
         Assert.False(EnumNameUtils.TryParse<AccountType>(text, out _));
@@ -109,5 +110,12 @@ public sealed class EnumNameUtilsTests
     {
         Assert.True(EnumNameUtils.TryParse<MusicType>(text, out var value));
         Assert.Equal(MusicType.Mountn_a, value);
+    }
+
+    [Flags]
+    private enum FlagsWithoutZero : byte
+    {
+        One = 1,
+        Two = 2
     }
 }

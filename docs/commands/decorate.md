@@ -16,26 +16,26 @@ it prints `Decoration canceled.` and places nothing (without that file it does n
 decoration runs, the command answers `A decoration is already running.` and places nothing. It places the
 [decoration files](../templates.md#decorations) of `templates/decorations/`, file by file, as
 fixed items that never decay; the next world save keeps them. Doors and gates get the
-`decoration_door` template, whose [door script](../scripting.md) opens and closes them, and
+`decoration_door` template, whose [door script](../scripting/shipped-scripts.md#doorlua) opens and closes them, and
 two doors of the same kind side by side, at the same height and hung on opposite sides, open
 together. Lights get the `decoration_light` template,
 lit or unlit as in the data and protected, so only staff light or douse them with the
-[light script](../scripting.md). Teleporters get the `decoration_teleporter` template: a player
-who walks onto one stands on its destination at once ([teleporter script](../scripting.md)), and
+[light script](../scripting/shipped-scripts.md#lightlua). Teleporters get the `decoration_teleporter` template: a player
+who walks onto one stands on its destination at once ([teleporter script](../scripting/shipped-scripts.md#teleporterlua)), and
 only staff sees them. Besides those of the town and dungeon files, each map folder has the
 teleporters of ModernUO's `[TelGen` (`teleporters.toml`, 1,478 in all); a cell keeps one teleporter
 within 12 of height, the first placed, so the 230 that a town or dungeon file already lists are
 reported as already there. Seven of Ter Mur lie outside its map in ModernUO's data and are skipped. A teleporter to another map takes the player there when that map is loaded, and does nothing otherwise. One whose `map_dest` names no map is skipped. A
 `KeywordTeleporter`, such as the mantra of a shrine, gets the `decoration_keyword_teleporter`
 template: a player who says its word within its range stands on its destination
-([keyword teleporter script](../scripting.md)). The public moongates are not in the decoration
+([keyword teleporter script](../scripting/shipped-scripts.md#keyword_teleportlua)). The public moongates are not in the decoration
 files: after them, `.decorate` places a gate with the `decoration_public_moongate` template on
 every destination of [`moongates.toml`](../data-files/moongates.md) whose map is loaded, reported
 as `<map>/moongates`. The crates, boxes, chests, barrels and bookcases of the towns (ModernUO's
 `Fillable...` kinds and `LibraryBookcase`, 2,803 spots in the files, about 5,000 items with those of both Trammel and Felucca) take the `decoration_fillable`
-template and fill up when a player opens them ([fillable script](../scripting.md#item-scripts));
+template and fill up when a player opens them ([fillable script](../scripting/shipped-scripts.md#fillablelua));
 those a run before this placed as plain decoration are turned into it and counted as already there.
-The clocks tell the time on a double click ([clock script](../scripting.md#item-scripts)), turned
+The clocks tell the time on a double click ([clock script](../scripting/shipped-scripts.md#clocklua)), turned
 the same way. The spawners of the decoration files (87, all of quest characters such as Haochi or
 Uzeraan) stay skipped: none of their mobile templates exists yet. Every public moongate glows (prop `light = "circle300"`, as ModernUO). Spawners, mark
 containers, addons and every other kind of teleporter (those that ask for a

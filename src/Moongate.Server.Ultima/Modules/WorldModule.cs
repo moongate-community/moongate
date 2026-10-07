@@ -4,8 +4,10 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules.Internal;
+using Moongate.Server.Ultima.Types.Weather;
 using Moongate.Server.Ultima.Types.World;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -13,13 +15,18 @@ using Serilog;
 namespace Moongate.Server.Ultima.Modules;
 
 /// <summary>
-///     The <c>world</c> Lua module: what a script can ask about the world around its NPC or item, such as whether a door's
+///     The <c>world</c> Lua module: what a script can ask about the world around its NPC or item, such as whether a
+///     door's
 ///     doorway is free.
 /// </summary>
 [ScriptModule("world", "Asks about the world: who stands where, whether a place is guarded, what time it is, the moons.")]
 public sealed class WorldModule
 {
     public const int MaximumRange = 32;
+
+    // The levels of the light, as the client counts them.
+    private const int MinimumLight = 0;
+    private const int MaximumLight = 31;
 
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
@@ -34,6 +41,7 @@ public sealed class WorldModule
     private readonly ISeasonService? _seasons;
     private readonly IBroadcastService? _broadcast;
     private readonly IMobileService? _mobiles;
+    private readonly ILightService? _light;
     private readonly ILogger _logger = Log.ForContext<WorldModule>();
 
     public WorldModule(
@@ -49,9 +57,11 @@ public sealed class WorldModule
         IBroadcastService? broadcast = null,
         IMobileService? mobiles = null,
         TimeProvider? time = null,
-        IWorldPropsService? props = null
+        IWorldPropsService? props = null,
+        ILightService? light = null
     )
     {
+        _light = light;
         _props = props;
         _time = time ?? TimeProvider.System;
         _sight = sight;
@@ -72,7 +82,9 @@ public sealed class WorldModule
     ///     <paramref name="key" /> is <paramref name="value" />, such as the key of a door;
     ///     <c>world.carries(user, "key.value", 1234)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the mobile wears or carries, in its containers at any depth, an item whose prop key is value.")]
+    [ScriptFunction(
+        helpText: "Whether the mobile wears or carries, in its containers at any depth, an item whose prop key is value."
+    )]
     public bool Carries(long mobile, string key, object value)
     {
         if (mobile is <= 0 or > uint.MaxValue || !ScriptPropValue.TryFromLua(value, out var wanted))
@@ -82,17 +94,18 @@ public sealed class WorldModule
 
         // What lies in the bank is not carried.
         return _items.GetOwnedBy(new Serial((uint)mobile))
-                     .Any(
-                         item => item.Props?.GetValueOrDefault(key) is { } prop &&
-                                 Equals(prop, wanted) &&
-                                 _items.GetWornRoot(item)?.Layer != LayerType.Bank
-                     );
+            .Any(item => item.Props?.GetValueOrDefault(key) is { } prop &&
+                         Equals(prop, wanted) &&
+                         _items.GetWornRoot(item)?.Layer != LayerType.Bank
+            );
     }
 
     /// <summary>
     ///     Gets a value the shard as a whole keeps across restarts; <c>world.get_prop("event.day")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "A value the whole shard keeps across restarts: a string, a number or a bool; nil when there is none.")]
+    [ScriptFunction(
+        helpText: "A value the whole shard keeps across restarts: a string, a number or a bool; nil when there is none."
+    )]
     public object? GetProp(string key)
     {
         return _props?.Get(key);
@@ -102,7 +115,10 @@ public sealed class WorldModule
     ///     Keeps a value for the whole shard, saved with the world, or removes it for <c>nil</c>;
     ///     <c>world.set_prop("event.day", 12)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Keeps a string, a number or a bool for the whole shard across restarts, nil removes it; false for a table, a function or a blank key.")]
+    [ScriptFunction(
+        helpText:
+        "Keeps a string, a number or a bool for the whole shard across restarts, saved with the world; nil removes it. False for a table, a function or a blank key."
+    )]
     public bool SetProp(string key, object? value = null)
     {
         if (_props is null || string.IsNullOrWhiteSpace(key))
@@ -131,7 +147,10 @@ public sealed class WorldModule
     ///     Gets the real time as the seconds since 1970 (UTC), to keep in a prop when something happens next, such as a
     ///     container's next refill; <c>world.now()</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The real time as whole seconds since 1970 (UTC): keep world.now() + 3600 in a prop to do something an hour from now, also after a restart.")]
+    [ScriptFunction(
+        helpText:
+        "The real time as whole seconds since 1970 (UTC): keep world.now() + 3600 in a prop to do something an hour from now, also after a restart."
+    )]
     public long Now()
     {
         return _time.GetUtcNow().ToUnixTimeSeconds();
@@ -141,7 +160,9 @@ public sealed class WorldModule
     ///     Gets whether <paramref name="player" /> is a game master or an administrator in the world, such as to let staff
     ///     use a protected light; <c>world.is_staff(user)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the player is a game master or an administrator; false for an NPC or a player not in the world.")]
+    [ScriptFunction(
+        helpText: "Whether the player is a game master or an administrator; false for an NPC or a player not in the world."
+    )]
     public bool IsStaff(long player)
     {
         return player is > 0 and <= uint.MaxValue &&
@@ -151,9 +172,12 @@ public sealed class WorldModule
 
     /// <summary>
     ///     Gets whether a player or an NPC stands on the tile <paramref name="x" />, <paramref name="y" /> of
-    ///     <paramref name="map" />; <c>world.is_occupied(MapType.Trammel, x, y)</c>.
+    ///     <paramref name="map" />;
+    ///     <c>world.is_occupied(MapType.Trammel, x, y)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether a player or an NPC stands on the tile x, y of the map, at any height.")]
+    [ScriptFunction(
+        helpText: "Whether a player or an NPC stands on the tile x, y of the map, at any height, such as a door's doorway."
+    )]
     public bool IsOccupied(MapType map, int x, int y)
     {
         return _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0).Count > 0;
@@ -161,9 +185,13 @@ public sealed class WorldModule
 
     /// <summary>
     ///     Gets whether guards protect the place <paramref name="x" />, <paramref name="y" />, <paramref name="z" /> of
-    ///     <paramref name="map" />, such as a town; <c>world.is_guarded(MapType.Trammel, 1496, 1628, 10)</c>.
+    ///     <paramref name="map" />, such as a town;
+    ///     <c>world.is_guarded(MapType.Trammel, 1496, 1628, 10)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the region of the place x, y, z of the map is guarded; false outside every region or for a z outside -128 to 127.")]
+    [ScriptFunction(
+        helpText:
+        "Whether the region of the place x, y, z of the map is guarded; false outside every region or for a z outside -128 to 127."
+    )]
     public bool IsGuarded(MapType map, int x, int y, int z)
     {
         return z is >= sbyte.MinValue and <= sbyte.MaxValue && _regions.Find(map, new Point3D(x, y, z))?.Guarded == true;
@@ -173,7 +201,10 @@ public sealed class WorldModule
     ///     Gets the name of the region of the place <paramref name="x" />, <paramref name="y" />, <paramref name="z" />
     ///     of <paramref name="map" />; <c>world.region(MapType.Trammel, 1496, 1628, 10) == "Britain"</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The name of the region of the place x, y, z of the map; nil outside every region or for a z outside -128 to 127.")]
+    [ScriptFunction(
+        helpText:
+        "The name of the region of the place x, y, z of the map; nil outside every region or for a z outside -128 to 127."
+    )]
     public string? Region(MapType map, int x, int y, int z)
     {
         return z is >= sbyte.MinValue and <= sbyte.MaxValue ? _regions.Find(map, new Point3D(x, y, z))?.Name : null;
@@ -183,7 +214,10 @@ public sealed class WorldModule
     ///     Gets the mobiles, players and NPCs, within <paramref name="range" /> tiles of a place as a list of serials;
     ///     <c>for _, who in ipairs(world.mobiles_in_range(here.map, here.x, here.y, 5)) do ... end</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the players and NPCs within range tiles (0 to 32) of x, y on the map, at any height, as a list.")]
+    [ScriptFunction(
+        helpText:
+        "The serials of the players and NPCs within range tiles (0 to 32) of x, y on the map, at any height, as a list."
+    )]
     public LuaTable MobilesInRange(MapType map, int x, int y, int range)
     {
         return Serials(
@@ -197,11 +231,16 @@ public sealed class WorldModule
     ///     Gets the items lying on the ground within <paramref name="range" /> tiles of a place as a list of serials;
     ///     <c>world.items_in_range(here.map, here.x, here.y, 2)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The serials of the items on the ground within range tiles (0 to 32) of x, y on the map, at any height, as a list.")]
+    [ScriptFunction(
+        helpText:
+        "The serials of the items on the ground within range tiles (0 to 32) of x, y on the map, at any height, as a list."
+    )]
     public LuaTable ItemsInRange(MapType map, int x, int y, int range)
     {
         return Serials(
-            range is < 0 or > MaximumRange ? [] : _sectors.GetItemsInRange(map, new Point3D(x, y, 0), range).Select(item => item.Id)
+            range is < 0 or > MaximumRange
+                ? []
+                : _sectors.GetItemsInRange(map, new Point3D(x, y, 0), range).Select(item => item.Id)
         );
     }
 
@@ -211,14 +250,19 @@ public sealed class WorldModule
     [ScriptFunction(helpText: "The serials of the players' characters in the world, as a list.")]
     public LuaTable Players()
     {
-        return Serials(_sessions.GetAll().Where(session => session.CharacterId.IsValid).Select(session => session.CharacterId));
+        return Serials(
+            _sessions.GetAll().Where(session => session.CharacterId.IsValid).Select(session => session.CharacterId)
+        );
     }
 
     /// <summary>
     ///     Gets whether nothing stands between two places of a map, as for a spell or an arrow;
     ///     <c>world.line_of_sight(MapType.Trammel, 1496, 1628, 10, 1500, 1630, 10)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Whether the place x2, y2, z2 is in sight of x1, y1, z1 on the map; false beyond the range a line of sight is checked at, on a map that is not loaded or for a z outside -128 to 127.")]
+    [ScriptFunction(
+        helpText:
+        "Whether the place x2, y2, z2 is in sight of x1, y1, z1 on the map, as for a spell or an arrow; false beyond the range a line of sight is checked at, on a map that is not loaded or for a z outside -128 to 127."
+    )]
     public bool LineOfSight(MapType map, int x1, int y1, int z1, int x2, int y2, int z2)
     {
         if (_sight is null || z1 is < sbyte.MinValue or > sbyte.MaxValue || z2 is < sbyte.MinValue or > sbyte.MaxValue)
@@ -241,7 +285,10 @@ public sealed class WorldModule
     ///     Gets the height a mobile can stand at on a cell, looking down from <paramref name="z" />, such as before
     ///     teleporting someone there; <c>world.standing_z(MapType.Trammel, 1496, 1628, 20)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The height a mobile can stand at on the cell x, y of the map, at or below z; nil when nothing there can be stood on.")]
+    [ScriptFunction(
+        helpText:
+        "The height a mobile can stand at on the cell x, y of the map, at or below z, such as before teleporting someone there; nil when nothing there can be stood on."
+    )]
     public int? StandingZ(MapType map, int x, int y, int z)
     {
         return _movement is not null && _sectors.IsInside(map, x, y) && _movement.TryGetSpawnZ(map, x, y, z, out var found)
@@ -250,17 +297,42 @@ public sealed class WorldModule
     }
 
     /// <summary>
+    ///     Gets a free tile one step from a spot, such as where to appear beside someone instead of on it;
+    ///     <c>local spot = world.spot_beside(there.map, there.x, there.y, there.z)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "A tile one step from x, y, z of the map that a walking mobile standing there could step onto, so not one behind a wall, with nobody on it, as { map, x, y, z }: where to appear beside someone instead of on it. The first found going round from a random direction; nil when none is free, the spot is outside the map or the map is not loaded."
+    )]
+    public LuaTable? SpotBeside(MapType map, int x, int y, int z)
+    {
+        if (_movement is null ||
+            !_sectors.IsInside(map, x, y) ||
+            Services.Internal.SpotBeside.Find(_movement, _sectors, map, new Point3D(x, y, z)) is not { } spot)
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["map"] = (int)map;
+        table["x"] = spot.X;
+        table["y"] = spot.Y;
+        table["z"] = spot.Z;
+
+        return table;
+    }
+
+    /// <summary>
     ///     Gets the weather a player stands in as <c>{ kind, density, temperature }</c>;
     ///     <c>world.weather(who).kind == WeatherKindType.Rain</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The weather where the player stands, as a table { kind (a WeatherKindType), density, temperature }; nil for an NPC or a player not in the world.")]
+    [ScriptFunction(
+        helpText:
+        "The weather where the player stands, as a table { kind (a WeatherKindType), density, temperature }; nil for an NPC or a player not in the world."
+    )]
     public LuaTable? Weather(long player)
     {
-        if (_weather is null ||
-            _mobiles is null ||
-            player is <= 0 or > uint.MaxValue ||
-            !_mobiles.TryGet(new Serial((uint)player), out var mobile) ||
-            mobile.IsNpc)
+        if (!TryGetWeatherPlayer(player, out var mobile))
         {
             return null;
         }
@@ -272,6 +344,143 @@ public sealed class WorldModule
         table["temperature"] = state.Temperature;
 
         return table;
+    }
+
+    /// <summary>
+    ///     Gets the name of the weather profile a player stands in, such as <c>temperate</c>;
+    ///     <c>world.weather_profile(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The name of the weather profile where the player stands (its region's, else its map's), as data/weather.toml names it; nil for an NPC or a player not in the world."
+    )]
+    public string? WeatherProfile(long player)
+    {
+        // Safe: TryGetWeatherPlayer returns true only when _weather is set.
+        return TryGetWeatherPlayer(player, out var mobile) ? _weather!.ProfileOf(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Forces a kind of weather on the profile a player stands in until the next game hour, as the weather command
+    ///     does; <c>world.set_weather(who, WeatherKindType.Rain)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Forces a WeatherKindType (None, Rain, Snow or Storm) on the profile where the player stands, which every region using that profile gets, until the next game hour. False for an NPC or a player not in the world; a kind that does not exist is a script error. It does not check who calls it: a script for the staff checks world.is_staff first."
+    )]
+    public bool SetWeather(long player, WeatherKindType kind)
+    {
+        if (!TryGetWeatherPlayer(player, out var mobile))
+        {
+            return false;
+        }
+
+        // Safe: TryGetWeatherPlayer returned true above, which it does only when _weather is set.
+        _weather!.Force(_weather.ProfileOf(mobile), kind);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets the season the client of a player shows, its region's else its map's;
+    ///     <c>world.season_here(who) == SeasonType.Winter</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The season the client of the player shows where it stands (its region's, else its map's), a SeasonType; nil for an NPC, a player not in the world or when the seasons are not running."
+    )]
+    public SeasonType? SeasonHere(long player)
+    {
+        return _seasons is not null && TryGetPlayer(player, out var mobile) ? _seasons.SeasonOf(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Sets the season of the map a player stands on until the restart, as the season command does;
+    ///     <c>world.set_season(who, SeasonType.Winter)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Sets the season of the map where the player stands, a SeasonType, until the restart, and sends it at once to the players of the map except those in a region with a season of its own. False for an NPC or a player not in the world; a season that does not exist is a script error. It does not check who calls it: a script for the staff checks world.is_staff first. Call it on the game loop, as a script does."
+    )]
+    public bool SetSeason(long player, SeasonType season)
+    {
+        return OverrideSeason(player, season);
+    }
+
+    /// <summary>
+    ///     Gives the map a player stands on back the season of <c>maps.toml</c>; <c>world.clear_season(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Gives the map where the player stands back its own season: the one of maps.toml, rotated when season_rotation is on, instead of the one a script or .season set. False for an NPC or a player not in the world. It does not check who calls it: a script for the staff checks world.is_staff first."
+    )]
+    public bool ClearSeason(long player)
+    {
+        return OverrideSeason(player, null);
+    }
+
+    /// <summary>
+    ///     Gets the light level where a player stands, from 0 (brightest) to 31 (darkest);
+    ///     <c>world.light_here(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The light level where the player stands, from 0 (brightest) to 31 (darkest): the global light when one is set, else the dungeon or jail level of its region, else the time of day's. Nil for an NPC, a player not in the world or when the light is not running."
+    )]
+    public int? LightHere(long player)
+    {
+        return _light is not null && TryGetPlayer(player, out var mobile) ? _light.LevelFor(mobile) : null;
+    }
+
+    /// <summary>
+    ///     Gets the light level every player is given by the game master, <c>nil</c> when the light follows the time of
+    ///     day; <c>world.global_light()</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The level every player is given instead of the clock's, set by world.set_global_light or .globallight, from 0 to 31; nil when the light follows the time of day."
+    )]
+    public int? GlobalLight()
+    {
+        return _light?.Override;
+    }
+
+    /// <summary>
+    ///     Gives every player the same light, as the globallight command does; <c>world.set_global_light(26)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Gives every player in the world the same light, from 0 (brightest) to 31 (darkest), at once, until world.clear_global_light or a restart. False for a level out of 0 to 31. It does not check who calls it: a script for the staff checks world.is_staff first. Call it on the game loop, as a script does."
+    )]
+    public bool SetGlobalLight(int level)
+    {
+        if (_light is null || level is < MinimumLight or > MaximumLight)
+        {
+            return false;
+        }
+
+        _light.SetOverride(level);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Makes the light follow the time of day again; <c>world.clear_global_light()</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Makes the light follow the time of day again, whatever world.set_global_light or .globallight set. It does not check who calls it: a script for the staff checks world.is_staff first. Call it on the game loop, as a script does."
+    )]
+    public bool ClearGlobalLight()
+    {
+        if (_light is null)
+        {
+            return false;
+        }
+
+        _light.SetOverride(null);
+
+        return true;
     }
 
     /// <summary>
@@ -287,7 +496,9 @@ public sealed class WorldModule
     ///     Sends <paramref name="text" /> to every player in the world as a system message;
     ///     <c>world.broadcast("The gates of Britain are open.")</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Sends a system message (cut to 128 characters) to every player in the world; false for a blank text.")]
+    [ScriptFunction(
+        helpText: "Sends a system message (cut to 128 characters) to every player in the world; false for a blank text."
+    )]
     public bool Broadcast(string text)
     {
         if (_broadcast is null || string.IsNullOrWhiteSpace(text))
@@ -299,22 +510,26 @@ public sealed class WorldModule
 
         // Sent off the script: a failure is logged, never raised into it.
         _ = _broadcast.BroadcastAsync(message)
-                      .ContinueWith(
-                          task => _logger.Warning(task.Exception, "world.broadcast failed"),
-                          CancellationToken.None,
-                          TaskContinuationOptions.OnlyOnFaulted,
-                          TaskScheduler.Default
-                      );
+            .ContinueWith(
+                task => _logger.Warning(task.Exception, "world.broadcast failed"),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default
+            );
 
         return true;
     }
 
     /// <summary>
-    ///     Gets the phase of a moon, <paramref name="moon" /> being <c>MapType.Trammel</c> or <c>MapType.Felucca</c>, seen
+    ///     Gets the phase of a moon, <paramref name="moon" /> being <c>MapType.Trammel</c> or <c>MapType.Felucca</c>,
+    ///     seen
     ///     from the column <paramref name="x" />, as the spyglass shows it;
     ///     <c>world.moon(MapType.Trammel, x) == MoonPhaseType.FullMoon</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The phase of the moon (MapType.Trammel or MapType.Felucca) seen from the column x, a MoonPhaseType.")]
+    [ScriptFunction(
+        helpText:
+        "The phase of the moon (MapType.Trammel or MapType.Felucca) seen from the column x, a MoonPhaseType; Felucca turns every 10 game minutes, Trammel every 30."
+    )]
     public MoonPhaseType Moon(MapType moon, int x)
     {
         return _clock.GetMoonPhase(moon, x);
@@ -324,7 +539,10 @@ public sealed class WorldModule
     ///     Gets the time of day on <paramref name="map" /> at the column <paramref name="x" />, as a table
     ///     <c>{ hours, minutes }</c>; <c>world.time(MapType.Trammel, x).hours</c>.
     /// </summary>
-    [ScriptFunction(helpText: "The time of day on the map at the column x, as a table { hours, minutes }.")]
+    [ScriptFunction(
+        helpText:
+        "The time of day on the map at the column x, as a table { hours, minutes }; see the setting ultima.world.seconds_per_uo_minute."
+    )]
     public LuaTable Time(MapType map, int x)
     {
         var time = _clock.GetTime(map, x);
@@ -346,5 +564,38 @@ public sealed class WorldModule
         }
 
         return table;
+    }
+
+    // A player in the world, when the weather service is there.
+    private bool TryGetWeatherPlayer(long player, out MobileEntity mobile)
+    {
+        // Safe: out parameter; callers read it only when the method returns true.
+        mobile = null!;
+
+        return _weather is not null && TryGetPlayer(player, out mobile);
+    }
+
+    private bool OverrideSeason(long player, SeasonType? season)
+    {
+        if (_seasons is null || !TryGetPlayer(player, out var mobile))
+        {
+            return false;
+        }
+
+        _seasons.SetOverride(mobile.Map, season);
+
+        return true;
+    }
+
+    private bool TryGetPlayer(long player, out MobileEntity mobile)
+    {
+        // Safe: out parameter; callers read it only when the method returns true.
+        mobile = null!;
+
+        // Safe: the out value is only used when the lookup succeeds.
+        return _mobiles is not null &&
+               player is > 0 and <= uint.MaxValue &&
+               _mobiles.TryGet(new Serial((uint)player), out mobile!) &&
+               !mobile.IsNpc;
     }
 }

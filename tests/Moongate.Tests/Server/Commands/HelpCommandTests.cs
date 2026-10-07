@@ -102,9 +102,19 @@ public sealed class HelpCommandTests
     {
         using var container = new Container();
         container.RegisterInstance(
-            TestLocalization.With((30025, "Comandi disponibili:"), (30047, "Ripete i suoi argomenti."), (30048, "Elenca i comandi."))
+            TestLocalization.With(
+                (30025, "Comandi disponibili:"),
+                (30047, "Ripete i suoi argomenti."),
+                (30048, "Elenca i comandi.")
+            )
         );
-        container.RegisterCommand<HelpCommand>("help", "Lists commands", CommandSourceType.Console, AccountType.Regular, 30048);
+        container.RegisterCommand<HelpCommand>(
+            "help",
+            "Lists commands",
+            CommandSourceType.Console,
+            AccountType.Regular,
+            30048
+        );
         container.RegisterCommand<EchoCommand>(
             "echo",
             "Echoes arguments",

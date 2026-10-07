@@ -24,7 +24,10 @@ public sealed class LootTemplatesLoaderTests
             "templates/loots/gems/gems.toml",
             "[[loot]]\nid = \"gems\"\n[[loot.entries]]\nweight = 80\n\n[[loot.entries]]\nweight = 20\nitem_id = \"ruby\"\namount = 2\n"
         );
-        root.CreateFile("templates/loots/rich.toml", "[[loot]]\nid = \"rich\"\n[[loot.entries]]\nloot_template_id = \"gems\"\n");
+        root.CreateFile(
+            "templates/loots/rich.toml",
+            "[[loot]]\nid = \"rich\"\n[[loot.entries]]\nloot_template_id = \"gems\"\n"
+        );
 
         var tables = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
@@ -45,16 +48,22 @@ public sealed class LootTemplatesLoaderTests
     }
 
     [Theory,
-     InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\n\n[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\n"),
+     InlineData(
+         "[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\n\n[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\n"
+     ),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\nloot_template_id = \"a\"\n"),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"cape\"\n"),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nloot_template_id = \"missing\"\n"),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nweight = 0\nitem_id = \"ruby\"\n"),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\namount = 0\n"),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\namount = 70000\n"),
-     InlineData("[[loot]]\nid = \"b\"\n[[loot.entries]]\nitem_id = \"ruby\"\n\n[[loot]]\nid = \"a\"\n[[loot.entries]]\nloot_template_id = \"b\"\namount = 0\n"),
+     InlineData(
+         "[[loot]]\nid = \"b\"\n[[loot.entries]]\nitem_id = \"ruby\"\n\n[[loot]]\nid = \"a\"\n[[loot.entries]]\nloot_template_id = \"b\"\namount = 0\n"
+     ),
      InlineData("[[loot]]\nid = \" \"\n[[loot.entries]]\nitem_id = \"ruby\"\n"),
-     InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nloot_template_id = \"b\"\n\n[[loot]]\nid = \"b\"\n[[loot.entries]]\nloot_template_id = \"a\"\n")]
+     InlineData(
+         "[[loot]]\nid = \"a\"\n[[loot.entries]]\nloot_template_id = \"b\"\n\n[[loot]]\nid = \"b\"\n[[loot.entries]]\nloot_template_id = \"a\"\n"
+     )]
     public async Task LoadDataAsync_ABadTable_ThrowsInvalidDataException(string toml)
     {
         using var root = new TemporaryDirectory();
@@ -90,7 +99,7 @@ public sealed class LootTemplatesLoaderTests
     {
         return new(
             new DirectoriesConfig(root.Path, ["templates"]),
-            new StubDataLoaderService().With([new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13) }, ..more])
+            new StubDataLoaderService().With([new ItemTemplate { Id = "ruby", ItemId = new Serial(0x0F13) }, .. more])
         );
     }
 }

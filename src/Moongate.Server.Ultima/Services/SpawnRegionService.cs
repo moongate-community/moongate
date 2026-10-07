@@ -21,8 +21,10 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     UOX3's <c>DoRegionSpawn</c>: the <c>npc_spawn</c> timer checks the regions every 10 seconds, and a due region below
-///     its max spawns up to <c>call</c> NPCs, then waits between its min and max minutes. The first spawn of each region
+///     UOX3's <c>DoRegionSpawn</c>: the <c>npc_spawn</c> timer checks the regions every 10 seconds, and a due region
+///     below
+///     its max spawns up to <c>call</c> NPCs, then waits between its min and max minutes. The first spawn of each
+///     region
 ///     comes within its min time (at most 10 minutes), so the world fills gradually. The live NPCs of a region are the
 ///     ones carrying its id in the prop <c>spawn.region</c>, counted at every check: an NPC removed or killed frees its
 ///     slot. After a check that spawned something, the game masters and administrators get one summary message.
@@ -130,6 +132,7 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
                 _movements[mobile.Id] = movement;
             }
         }
+
         var now = _time.GetUtcNow();
         var skipped = 0;
 
@@ -189,23 +192,23 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
     public async Task<IReadOnlyList<SpawnRegionStatus>> RegionsAtAsync(MapType map, int x, int y)
     {
         IReadOnlyList<SpawnRegionStatus> here = [];
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 var now = _time.GetUtcNow();
                 var live = CountLive();
-                here = _regions.Where(region => region.Template.Map == map && region.Template.Areas.Any(area => area.Contains(x, y)))
-                               .Select(
-                                   region => new SpawnRegionStatus(
-                                       region.Template.Id,
-                                       region.Template.Name,
-                                       live.GetValueOrDefault(region.Template.Id),
-                                       region.Template.Max,
-                                       region.NextSpawn > now ? region.NextSpawn - now : TimeSpan.Zero,
-                                       region.Retrying
-                                   )
-                               )
-                               .ToList();
+                here = _regions.Where(region =>
+                        region.Template.Map == map && region.Template.Areas.Any(area => area.Contains(x, y))
+                    )
+                    .Select(region => new SpawnRegionStatus(
+                            region.Template.Id,
+                            region.Template.Name,
+                            live.GetValueOrDefault(region.Template.Id),
+                            region.Template.Max,
+                            region.NextSpawn > now ? region.NextSpawn - now : TimeSpan.Zero,
+                            region.Retrying
+                        )
+                    )
+                    .ToList();
             }
         );
 
@@ -216,8 +219,7 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
     {
         var regions = 0;
         var missing = 0;
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 var now = _time.GetUtcNow();
                 var live = CountLive();
@@ -328,6 +330,7 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
                 region.Filled = true;
                 region.FillNow = false;
             }
+
             // Said once, when it starts: a region that never finds a spot retries every minute.
             if (missed && !region.Retrying)
             {
@@ -449,6 +452,7 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         }
 
         location = default;
+        // Safe: out parameter; callers read it only when the method returns true.
         area = null!;
 
         return false;
@@ -488,7 +492,9 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
 
     private static bool IsTaken(MapType map, int x, int y, List<PlannedSpawn> planned)
     {
-        return planned.Any(other => other.OfItems && other.Region.Map == map && other.Location.X == x && other.Location.Y == y);
+        return planned.Any(other =>
+            other.OfItems && other.Region.Map == map && other.Location.X == x && other.Location.Y == y
+        );
     }
 
     // What a region spawned, of this region or of another: the decoration of the place does not count, as ModernUO
@@ -548,7 +554,13 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
                 }
 
                 // The home goes into the first save, so a spawned NPC is always counted.
-                var npc = await _npcs.SpawnAsync(templateId, template.Map, location, HomeOf(template, area), cancellationToken);
+                var npc = await _npcs.SpawnAsync(
+                    templateId,
+                    template.Map,
+                    location,
+                    HomeOf(template, area),
+                    cancellationToken
+                );
                 var index = spawned.FindIndex(entry => entry.Template == template);
 
                 if (index < 0)
@@ -588,8 +600,7 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         try
         {
             var notice = Notice(spawned);
-            await OnLoopAsync(
-                () =>
+            await OnLoopAsync(() =>
                 {
                     // The live NPCs are counted on the game loop, where the world changes.
                     var full = WithProgress(notice);
@@ -604,7 +615,9 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         }
     }
 
-    private async Task SpawnItemAsync(SpawnTemplate template, string templateId, Point3D location, CancellationToken cancellationToken)
+    private async Task SpawnItemAsync(
+        SpawnTemplate template, string templateId, Point3D location, CancellationToken cancellationToken
+    )
     {
         if (_itemSpawns is null)
         {
@@ -655,8 +668,8 @@ public sealed class SpawnRegionService : ISpawnRegionService, IDisposable
         var named = string.Join(
             ", ",
             spawned.OrderByDescending(entry => entry.Count)
-                   .Take(NamedRegions)
-                   .Select(entry => $"{NameOf(entry.Template)} {entry.Count}")
+                .Take(NamedRegions)
+                .Select(entry => $"{NameOf(entry.Template)} {entry.Count}")
         );
 
         if (spawned.Count > NamedRegions)

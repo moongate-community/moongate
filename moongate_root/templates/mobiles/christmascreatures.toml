@@ -6,6 +6,7 @@ skin_hue = 2498
 
 [[mobile]]
 id = "krampus"
+script_id = "monster"
 name = "Krampus"
 body = 1484
 strength = "1d51+699"
@@ -40,6 +41,7 @@ death = 1587
 
 [[mobile]]
 id = "krampus_minion"
+script_id = "monster"
 name = "Minion"
 body = 1485
 strength = "1d30+475"

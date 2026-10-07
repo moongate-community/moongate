@@ -18,6 +18,9 @@ internal static class InitCommand
     /// <param name="adminCertificateHosts">
     ///     Comma-separated additional DNS names or IP addresses for the certificate.
     /// </param>
+    /// <param name="noHeader">
+    ///     Leave out the banner, for a script that starts the server right after.
+    /// </param>
     /// <param name="cancellationToken">
     ///     Cancellation for the initialization process.
     /// </param>
@@ -25,6 +28,7 @@ internal static class InitCommand
         [Argument] string rootDirectory,
         bool generateAdminCertificate = false,
         string? adminCertificateHosts = null,
+        bool noHeader = false,
         CancellationToken cancellationToken = default
     )
     {
@@ -53,11 +57,13 @@ internal static class InitCommand
                 );
             }
 
-            var assembly = typeof(InitCommand).Assembly;
-            var header = ResourceUtils.GetEmbeddedResourceString(assembly, "Assets/header.txt")
-                .Replace("{Version}", VersionUtils.GetVersion(assembly), StringComparison.Ordinal)
-                .Replace("{Codename}", VersionUtils.GetCodename(assembly), StringComparison.Ordinal);
-            Console.WriteLine(header);
+            if (!noHeader)
+            {
+                var assembly = typeof(InitCommand).Assembly;
+                var header = ResourceUtils.GetEmbeddedResourceString(assembly, "Assets/header.txt");
+                Console.WriteLine(VersionUtils.FormatHeader(header, assembly));
+            }
+
             Console.WriteLine("Root setup");
 
             var start = new ProcessStartInfo(server) { UseShellExecute = false };

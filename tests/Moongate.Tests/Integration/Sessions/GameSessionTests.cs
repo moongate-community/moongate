@@ -56,8 +56,7 @@ public sealed class GameSessionTests
 
         Assert.Equal(AccountType.Regular, session.AccountType);
 
-        Assert.Throws<InvalidOperationException>(
-            () => session.Set(SessionKeys.AccountType, AccountType.Administrator)
+        Assert.Throws<InvalidOperationException>(() => session.Set(SessionKeys.AccountType, AccountType.Administrator)
         );
         Assert.Equal(AccountType.Regular, session.AccountType);
 
@@ -112,8 +111,7 @@ public sealed class GameSessionTests
         var score = new SessionKey<int>("Score");
         var sameNameAsScore = new SessionKey<int>("Score");
 
-        await fixture.ExecuteOnLoopAsync(
-            () =>
+        await fixture.ExecuteOnLoopAsync(() =>
             {
                 session.Set(guild, "Order of the Moon");
                 session.Set(score, 12);

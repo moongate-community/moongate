@@ -6,14 +6,20 @@ namespace Moongate.Tests.Server.Services.Logging;
 
 public sealed class ExceptionReportWriterTests : IDisposable
 {
-    private readonly string _directory = Path.Combine(Path.GetTempPath(), "moongate-reports-" + Guid.NewGuid().ToString("N"));
+    private readonly string _directory = Path.Combine(
+        Path.GetTempPath(),
+        "moongate-reports-" + Guid.NewGuid().ToString("N")
+    );
 
     [Fact]
     public void Write_AnEventWithAnException_WritesAMarkdownReportReadyForAnIssue()
     {
         var exception = Thrown(new InvalidOperationException("outer", Thrown(new ArgumentException("inner cause"))));
 
-        var path = Writer().Write(Event("Command {Name} failed", exception, ("Name", "spawn"), ("SourceContext", "Moongate.Server.Commands")));
+        var path = Writer()
+            .Write(
+                Event("Command {Name} failed", exception, ("Name", "spawn"), ("SourceContext", "Moongate.Server.Commands"))
+            );
 
         Assert.NotNull(path);
         Assert.Equal(_directory, Path.GetDirectoryName(path));
@@ -94,18 +100,6 @@ public sealed class ExceptionReportWriterTests : IDisposable
         Assert.Contains("````text", report, StringComparison.Ordinal);
     }
 
-    public void Dispose()
-    {
-        if (Directory.Exists(_directory))
-        {
-            Directory.Delete(_directory, true);
-        }
-        else if (File.Exists(_directory))
-        {
-            File.Delete(_directory);
-        }
-    }
-
     private ExceptionReportWriter Writer()
     {
         return new(_directory, "0.11.0", "Lilly");
@@ -131,6 +125,18 @@ public sealed class ExceptionReportWriterTests : IDisposable
         catch (T caught)
         {
             return caught;
+        }
+    }
+
+    public void Dispose()
+    {
+        if (Directory.Exists(_directory))
+        {
+            Directory.Delete(_directory, true);
+        }
+        else if (File.Exists(_directory))
+        {
+            File.Delete(_directory);
         }
     }
 }

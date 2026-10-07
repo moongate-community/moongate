@@ -9,6 +9,8 @@ namespace Moongate.Persistence.Internal;
 
 internal sealed class DevelopmentMigrationCoordinator
 {
+    private const int LockRetryDelayMilliseconds = 50;
+
     private readonly DevelopmentMigrationOptions _options;
     private readonly ILogger _logger;
 
@@ -185,7 +187,7 @@ internal sealed class DevelopmentMigrationCoordinator
                     return connection;
                 }
 
-                await Task.Delay(50, cancellationToken).ConfigureAwait(false);
+                await Task.Delay(LockRetryDelayMilliseconds, cancellationToken).ConfigureAwait(false);
             }
         }
         catch

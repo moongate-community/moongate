@@ -28,7 +28,9 @@ public sealed class DisplayPaperdollPacketTests
     [Fact]
     public void Encode_ALongOrNonAsciiTitle_IsCutToSixtyAsciiBytes()
     {
-        var bytes = PacketCodec.Encode(new DisplayPaperdollPacket(new(0x00000123), "Città" + new string('x', 70), false, false));
+        var bytes = PacketCodec.Encode(
+            new DisplayPaperdollPacket(new(0x00000123), "Città" + new string('x', 70), false, false)
+        );
 
         Assert.Equal(66, bytes.Length);
         Assert.Equal("Citt?xxxxx"u8.ToArray(), bytes[5..15]);

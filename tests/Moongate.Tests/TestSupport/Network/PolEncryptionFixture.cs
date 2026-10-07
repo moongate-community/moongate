@@ -8,7 +8,10 @@ internal static class PolEncryptionFixture
 {
     internal static IEnumerable<JsonElement> Read()
     {
-        using var stream = typeof(PolEncryptionFixture).Assembly.GetManifestResourceStream("Moongate.Tests.TestSupport.Network.pol-vectors.json")!;
+        using var stream =
+            typeof(PolEncryptionFixture).Assembly.GetManifestResourceStream(
+                "Moongate.Tests.TestSupport.Network.pol-vectors.json"
+            )!;
         using var doc = JsonDocument.Parse(stream);
         return doc.RootElement.GetProperty("Vectors").EnumerateArray().Select(x => x.Clone()).ToArray();
     }
@@ -23,6 +26,7 @@ internal static class PolEncryptionFixture
         {
             ciphertext[i] ^= (byte)(knownPlaintext[i] ^ plaintext[i]);
         }
+
         return ciphertext;
     }
 
@@ -36,6 +40,7 @@ internal static class PolEncryptionFixture
             BinaryPrimitives.WriteUInt32BigEndian(data.AsSpan(5), 67);
             BinaryPrimitives.WriteUInt32BigEndian(data.AsSpan(13), 117);
         }
+
         return data;
     }
 
@@ -47,6 +52,7 @@ internal static class PolEncryptionFixture
         {
             BinaryPrimitives.WriteUInt32BigEndian(data.AsSpan(1), seed);
         }
+
         Encoding.ASCII.GetBytes("fixture").CopyTo(data, game ? 5 : 1);
         Encoding.ASCII.GetBytes("example").CopyTo(data, game ? 35 : 31);
         return data;

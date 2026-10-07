@@ -57,7 +57,9 @@ public sealed class SpawnCommand : ICommandExecutor
 
         if (!_templates.TryGet(templateId, out var template))
         {
-            context.PrintError(_localization.Text(CommandMessages.UnknownMobileTemplate, "Unknown mobile template: {0}", templateId));
+            context.PrintError(
+                _localization.Text(CommandMessages.UnknownMobileTemplate, "Unknown mobile template: {0}", templateId)
+            );
 
             return;
         }
@@ -89,7 +91,12 @@ public sealed class SpawnCommand : ICommandExecutor
 
         try
         {
-            var npc = await _npcs.SpawnAsync(templateId, target.Map, target.Location, cancellationToken: context.CancellationToken);
+            var npc = await _npcs.SpawnAsync(
+                templateId,
+                target.Map,
+                target.Location,
+                cancellationToken: context.CancellationToken
+            );
             var spot = npc.Location;
             context.Print(
                 _localization.Text(

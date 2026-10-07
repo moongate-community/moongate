@@ -17,6 +17,9 @@ public sealed class TargetCursorPacketTests
     [Fact]
     public void Cancel_WritesFlagThreeAndIdZero()
     {
-        Assert.Equal(Convert.FromHexString("6C000000000003000000000000000000000000"), PacketCodec.Encode(TargetCursorPacket.Cancel()));
+        Assert.Equal(
+            Convert.FromHexString("6C000000000003000000000000000000000000"),
+            PacketCodec.Encode(TargetCursorPacket.Cancel())
+        );
     }
 }

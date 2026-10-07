@@ -14,6 +14,8 @@ public sealed class StubClockService : IClockService
 
     public long Day { get; set; }
 
+    public MoonPhaseType Moon { get; set; } = MoonPhaseType.FullMoon;
+
     public GameTime GetTime(MapType map, int x)
     {
         return Time;
@@ -26,6 +28,6 @@ public sealed class StubClockService : IClockService
 
     public MoonPhaseType GetMoonPhase(MapType moon, int x)
     {
-        return MoonPhaseType.FullMoon;
+        return Moon;
     }
 }

@@ -123,8 +123,7 @@ public sealed class GoCommand : ICommandExecutor
         }
 
         var opened = false;
-        var open = new LoopActionWorkItem(
-            () =>
+        var open = new LoopActionWorkItem(() =>
             {
                 if (_locations.GetNode("") is not { Categories.Count: > 0 })
                 {
@@ -175,12 +174,16 @@ public sealed class GoCommand : ICommandExecutor
 
         foreach (var place in places.Take(ListedPlaces))
         {
-            context.Print(place.Category.Length == 0 ? $"{place.Map}: {place.Name}" : $"{place.Map}: {place.Category}/{place.Name}");
+            context.Print(
+                place.Category.Length == 0 ? $"{place.Map}: {place.Name}" : $"{place.Map}: {place.Category}/{place.Name}"
+            );
         }
 
         if (places.Count > ListedPlaces)
         {
-            context.Print(_localization.Text(CommandMessages.GoMorePlaces, "... and {0} more.", places.Count - ListedPlaces));
+            context.Print(
+                _localization.Text(CommandMessages.GoMorePlaces, "... and {0} more.", places.Count - ListedPlaces)
+            );
         }
     }
 }

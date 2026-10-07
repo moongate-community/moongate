@@ -4,7 +4,8 @@ using static System.FormattableString;
 namespace Moongate.Server.Ultima.Data.Gumps;
 
 /// <summary>
-///     A text field: <c>{ textentry x y width height hue entry string }</c>, or <c>textentrylimited</c> with a <see cref="MaxLength" />; its text comes back in the answer.
+///     A text field: <c>{ textentry x y width height hue entry string }</c>, or <c>textentrylimited</c> with a <see
+///     cref="MaxLength" />; its text comes back in the answer.
 /// </summary>
 public sealed class GumpTextEntry : GumpEntry
 {

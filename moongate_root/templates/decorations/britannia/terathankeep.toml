@@ -1,0 +1,310 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/terathankeep.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "tightrope"
+type = "Static"
+item_id = 0x2710
+locations = [
+    [5158, 1708, 0],
+    [5153, 1708, 0],
+    [5151, 1708, 0],
+    [5156, 1708, 0],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0675
+props = { facing = "west_cw" }
+locations = [
+    [5349, 1560, 0],
+    [5337, 1560, 0],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+locations = [[5363, 1708, -75]]
+
+[[decoration]]
+comment = "iron fence"
+type = "Static"
+item_id = 0x0821
+locations = [
+    [5432, 3152, -55],
+    [5432, 3153, -55],
+    [5432, 3154, -55],
+    [5432, 3155, -55],
+    [5437, 3153, -55],
+    [5437, 3154, -55],
+    [5437, 3152, -55],
+]
+
+[[decoration]]
+comment = "iron fence"
+type = "Static"
+item_id = 0x0823
+locations = [
+    [5433, 3155, -55],
+    [5434, 3155, -55],
+    [5435, 3155, -55],
+    [5436, 3155, -55],
+]
+
+[[decoration]]
+comment = "iron fence"
+type = "Static"
+item_id = 0x0849
+locations = [
+    [5454, 3155, -53],
+    [5454, 3153, -55],
+    [5454, 3152, -55],
+    [5458, 3153, -55],
+    [5458, 3154, -55],
+    [5458, 3152, -55],
+    [5454, 3154, -53],
+    [5477, 3136, -60],
+]
+
+[[decoration]]
+comment = "iron fence"
+type = "Static"
+item_id = 0x084B
+locations = [
+    [5455, 3151, -55],
+    [5456, 3151, -55],
+    [5458, 3151, -55],
+    [5457, 3155, -55],
+    [5456, 3155, -55],
+    [5455, 3155, -55],
+    [5434, 3151, -55],
+    [5433, 3151, -55],
+    [5472, 3141, -60],
+    [5437, 3151, -55],
+    [5436, 3151, -55],
+    [5435, 3151, -55],
+    [5457, 3151, -55],
+]
+
+[[decoration]]
+comment = "iron fence"
+type = "Static"
+item_id = 0x0822
+locations = [[5437, 3155, -55]]
+
+[[decoration]]
+comment = "iron fence"
+type = "Static"
+item_id = 0x084A
+locations = [
+    [5476, 3138, -60],
+    [5475, 3139, -60],
+    [5474, 3140, -60],
+    [5473, 3141, -60],
+    [5458, 3155, -55],
+    [5477, 3137, -60],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "Metalchest"
+item_id = 0x0E7C
+locations = [
+    [5337, 1549, 0],
+    [5349, 1551, 0],
+]
+
+[[decoration]]
+comment = "brambles"
+type = "Static"
+item_id = 0x0D3F
+locations = [
+    [5484, 3146, -45],
+    [5484, 3146, -51],
+    [5478, 3148, -45],
+]
+
+[[decoration]]
+comment = "small palm"
+type = "Static"
+item_id = 0x0C9D
+locations = [[5460, 3162, -45]]
+
+[[decoration]]
+comment = "stalagmites"
+type = "Static"
+item_id = 0x08E1
+locations = [[5367, 1774, -118]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x1093
+locations = [[5143, 1703, 10]]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x067B
+props = { facing = "east_cw" }
+locations = [
+    [5343, 1571, 0],
+    [5343, 1557, 0],
+    [5335, 1543, 0],
+    [5355, 1544, 0],
+    [5344, 1577, 0],
+]
+
+[[decoration]]
+comment = "wooden door"
+type = "StrongWoodDoor"
+item_id = 0x06EB
+props = { facing = "east_cw" }
+locations = [
+    [5303, 1568, 0],
+    [5300, 1556, 0],
+    [5309, 1556, 0],
+    [5294, 1564, 0],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0683
+props = { facing = "north_cw" }
+locations = [
+    [5333, 1556, 0],
+    [5333, 1547, 0],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x067F
+props = { facing = "north_ccw" }
+locations = [
+    [5353, 1715, -85],
+    [5242, 1602, 0],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x067D
+props = { facing = "south_cw" }
+locations = [
+    [5356, 1556, 0],
+    [5356, 1548, 0],
+    [5242, 1603, 0],
+]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x108C
+locations = [[5251, 1603, 7]]
+
+[[decoration]]
+comment = "egg case web"
+type = "Static"
+item_id = 0x10D8
+locations = [
+    [5302, 1552, 0],
+    [5300, 1548, 0],
+]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x1095
+locations = [[5143, 1703, 10]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+locations = [
+    [5360, 1715, -89],
+    [5351, 1551, 0],
+]
+
+[[decoration]]
+comment = "fire"
+type = "Static"
+item_id = 0x19AB
+locations = [[5169, 1586, 15]]
+
+[[decoration]]
+comment = "wooden chest"
+type = "WoodenChest"
+item_id = 0x0E42
+locations = [
+    [5360, 1705, -67],
+    [5362, 1718, -125],
+    [5349, 1739, -125],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0679
+props = { facing = "west_ccw" }
+locations = [[5343, 1577, 0]]
+
+[[decoration]]
+comment = "cave wall"
+type = "Static"
+item_id = 0x0274
+locations = [[5342, 1658, 22]]
+
+[[decoration]]
+comment = "cocoon"
+type = "Static"
+item_id = 0x10DA
+locations = [[5296, 1547, 0]]
+
+[[decoration]]
+comment = "web"
+type = "Static"
+item_id = 0x10DD
+locations = [[5296, 1547, 0]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x108E
+locations = [[5251, 1603, 7]]
+
+[[decoration]]
+comment = "egg case"
+type = "Static"
+item_id = 0x10D9
+locations = [
+    [5300, 1548, 0],
+    [5302, 1552, 0],
+]
+
+[[decoration]]
+comment = "wooden door"
+type = "StrongWoodDoor"
+item_id = 0x06E5
+props = { facing = "west_cw" }
+locations = [[5292, 1560, 0]]

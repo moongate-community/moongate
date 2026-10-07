@@ -1,0 +1,31 @@
+# What it is for:
+#   The release note written once when a jail sentence ends.
+# Fields:
+#   Named values replace the original message 30143 slots; reason_line is empty or includes its leading space.
+
+title = "Release note for $player_name"
+author = "$jailed_by"
+item_template = "jail_release_note"
+variables = ["days", "cell", "jailed_at", "released_at", "fine", "jailed_by", "reason_line"]
+content = "$player_name served $days days in cell $cell, from $jailed_at to $released_at, and paid a fine of $fine gold. Jailed by $jailed_by.$reason_line"
+
+[translations.ita]
+content = "$player_name ha scontato $days giorni nella cella $cell, dal $jailed_at al $released_at, e ha pagato una multa di $fine monete d'oro. Imprigionato da $jailed_by.$reason_line"
+
+[translations.fre]
+content = "$player_name a purgé $days jours dans la cellule $cell, du $jailed_at au $released_at, et a payé une amende de $fine pièces d'or. Emprisonné par $jailed_by.$reason_line"
+
+[translations.ger]
+content = "$player_name hat $days Tage in Zelle $cell verbüßt, vom $jailed_at bis zum $released_at, und eine Geldstrafe von $fine Gold bezahlt. Eingesperrt von $jailed_by.$reason_line"
+
+[translations.spa]
+content = "$player_name cumplió $days días en la celda $cell, del $jailed_at al $released_at, y pagó una multa de $fine monedas de oro. Encarcelado por $jailed_by.$reason_line"
+
+[translations.por]
+content = "$player_name cumpriu $days dias na cela $cell, de $jailed_at a $released_at, e pagou uma multa de $fine moedas de ouro. Preso por $jailed_by.$reason_line"
+
+[translations.pol]
+content = "$player_name odsiedział $days dni w celi $cell, od $jailed_at do $released_at, i zapłacił grzywnę w wysokości $fine sztuk złota. Uwięziony przez: $jailed_by.$reason_line"
+
+[translations.cze]
+content = "$player_name si odpykal $days dní v cele $cell, od $jailed_at do $released_at, a zaplatil pokutu $fine zlatých. Uvěznil: $jailed_by.$reason_line"

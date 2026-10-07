@@ -78,7 +78,10 @@ public sealed class CharacterListBuilderTests
 
         Assert.True(features.HasFlag(FeatureFlags.ExpansionEj));
         Assert.Equal(seventh, features.HasFlag(FeatureFlags.SeventhCharacterSlot));
-        Assert.Equal(sixth || (FeatureFlags.ExpansionEj & FeatureFlags.SixthCharacterSlot) != 0, features.HasFlag(FeatureFlags.SixthCharacterSlot));
+        Assert.Equal(
+            sixth || (FeatureFlags.ExpansionEj & FeatureFlags.SixthCharacterSlot) != 0,
+            features.HasFlag(FeatureFlags.SixthCharacterSlot)
+        );
     }
 
     private static MobileEntity Character(string name, byte? slot)

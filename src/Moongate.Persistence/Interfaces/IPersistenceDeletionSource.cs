@@ -22,4 +22,22 @@ public interface IPersistenceDeletionSource
     ///     Reports that <paramref name="serials" /> were deleted and committed.
     /// </summary>
     void Committed(IReadOnlyCollection<Serial> serials);
+
+    /// <summary>
+    ///     Gets the identities this save must write whatever their fingerprint: entities that did not change but whose
+    ///     row may be gone, such as the contents of a container taken out of something the save deletes, which the
+    ///     database removes with it. Captured and reported as <see cref="Capture" /> and <see cref="Committed" /> are.
+    ///     None by default.
+    /// </summary>
+    IReadOnlyCollection<Serial> CaptureRewrites()
+    {
+        return [];
+    }
+
+    /// <summary>
+    ///     Reports that the entities of <paramref name="serials" /> were written and committed.
+    /// </summary>
+    void RewritesCommitted(IReadOnlyCollection<Serial> serials)
+    {
+    }
 }

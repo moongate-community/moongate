@@ -13,7 +13,9 @@ namespace Moongate.Server.Services.Logging;
 /// </summary>
 internal static class ServerLoggerFactory
 {
-    /// <param name="consoleWriter">Where the console lines go; null writes them to the terminal, with colours.</param>
+    /// <param name="consoleWriter">
+    ///     Where the console lines go; null writes them to the terminal, with colours.
+    /// </param>
     public static Logger Create(
         IConsolePromptService prompt,
         string logsDirectory,
@@ -26,17 +28,17 @@ internal static class ServerLoggerFactory
         // Pass-through: the outer logger owns level policy.
         var console = new LoggerConfiguration().MinimumLevel.Verbose();
         var consoleLogger = (consoleWriter is null
-                                 ? console.WriteTo.Console(ConsoleLogTemplate.Create(ConsoleLogTheme.Moongate))
-                                 : console.WriteTo.Sink(new TextWriterLogSink(ConsoleLogTemplate.Create(null), consoleWriter)))
+                ? console.WriteTo.Console(ConsoleLogTemplate.Create(ConsoleLogTheme.Moongate))
+                : console.WriteTo.Sink(new TextWriterLogSink(ConsoleLogTemplate.Create(null), consoleWriter)))
             .CreateLogger();
 
         // Reports go to disk only when logs do: a shard that turned file logging off writes nothing.
         var reports = logToFile ? new ExceptionReportWriter(Path.Combine(logsDirectory, "errors"), version, codename) : null;
         var configuration = new LoggerConfiguration()
-                            .Enrich
-                            .With(new ExceptionReportEnricher(reports))
-                            .WriteTo
-                            .Sink(new PromptAwareConsoleSink(prompt, consoleLogger));
+            .Enrich
+            .With(new ExceptionReportEnricher(reports))
+            .WriteTo
+            .Sink(new PromptAwareConsoleSink(prompt, consoleLogger));
 
         if (logToFile)
         {

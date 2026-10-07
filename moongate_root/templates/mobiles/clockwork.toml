@@ -26,11 +26,13 @@ repairResource = "0x1f1c"
 
 [[mobile]]
 id = "golem"
+script_id = "monster"
 base_id = "craftedgolem"
 loot = ["arcane_gems", "randomgems", "randomgems", "golem_loot"]
 
 [[mobile]]
 id = "exodusoverseer"
+script_id = "monster"
 name = "exodus overseer"
 body = 756
 strength = "1d100+550"
@@ -57,6 +59,7 @@ death = 529
 
 [[mobile]]
 id = "exodusminionlord"
+script_id = "monster"
 name = "exodus minion lord"
 body = 763
 strength = "1d101+1499"
@@ -83,6 +86,7 @@ death = 529
 
 [[mobile]]
 id = "exodusminion"
+script_id = "monster"
 name = "exodus minion"
 body = 757
 strength = "1d100+850"

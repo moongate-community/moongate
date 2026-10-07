@@ -60,8 +60,8 @@
         "description": "Requested attack target."
       }
     ],
-    "notes": "Recognized and ignored until combat handling is available.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "notes": "The player clicks a mobile to attack it. The server makes the character fight it; a refused request is answered with 0xAA and a zero serial.",
+    "handler": "AttackRequestPacketHandler: ICombatService.Attack on the mobile; a refusal clears the client's target."
   },
   "0x06:incoming": {
     "category": "Items",
@@ -280,9 +280,9 @@
     "handler": "CharacterEnterWorldService: sends the player status in the world-entry sequence. MobileStateService: the answer to a 0x34 status query, whole for the character, compact for another mobile."
   },
   "0x12:incoming": {
-    "category": "Chat",
+    "category": "Skills",
     "tags": [
-      "Chat",
+      "Skills",
       "Ultima plugin"
     ],
     "fields": [
@@ -302,14 +302,21 @@
       },
       {
         "offset": "3",
-        "name": "Command payload",
-        "type": "byte[]",
+        "name": "Kind",
+        "type": "byte",
+        "size": "1",
+        "description": "0x24 uses a skill; 0x56 casts a spell, 0x58 opens a door and 0xC7 plays an action, not handled yet"
+      },
+      {
+        "offset": "4",
+        "name": "Text",
+        "type": "ascii",
         "size": "variable",
-        "description": "Text command bytes."
+        "description": "ASCII, ended by a zero byte. For kind 0x24 it starts with the number of the skill, as \"21 0\" for Hiding"
       }
     ],
-    "notes": "Recognized and ignored for now.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "notes": "A text command of the client. Using a skill from the skill window or a macro sends kind 0x24.",
+    "handler": "TextCommandPacketHandler: kind 0x24 runs on_use of scripts/skills/<skill>.lua after the wait between two skills; the other kinds are ignored for now (Debug log)."
   },
   "0x13:incoming": {
     "category": "Items",
@@ -2136,8 +2143,8 @@
         "description": "Subcommand data."
       }
     ],
-    "notes": "Subcommand 0x10 asks for one tooltip; the others are ignored for now. Outgoing 0xBF/0x08 is a separate map subcommand.",
-    "handler": "ExtendedCommandPacketHandler: subcommand 0x10 answers the tooltip"
+    "notes": "Subcommand 0x10 asks for one tooltip and 0x1A sets the lock of a stat (a byte for the stat, 0 strength, 1 dexterity, 2 intelligence, and a byte for the lock, 0 up, 1 down, 2 locked). Subcommand 0x13 asks for the context menu of a mobile or an item (its serial, four bytes) and 0x15 chooses an entry of it (the serial and the index of the entry, two bytes). The others are ignored for now. Outgoing 0xBF/0x08, 0xBF/0x14 and 0xBF/0x19 are separate subcommands.",
+    "handler": "ExtendedCommandPacketHandler: subcommand 0x10 answers the tooltip; subcommand 0x1A sets the stat lock of the character in the world (a lock past locked reads as up); subcommands 0x13 and 0x15 go to ContextMenuService.Request and Select"
   },
   "0xC8:incoming": {
     "category": "World",
@@ -2326,6 +2333,45 @@
     ],
     "notes": "Records the client version when sent on login listeners.",
     "handler": "LoginSeedPacketHandler; on login listeners it also records the client version, which the handoff ticket carries to the game session"
+  },
+  "0xF0:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Command",
+        "type": "byte",
+        "size": "1",
+        "description": "0 asks where the party members are, 1 where the guild members are."
+      },
+      {
+        "offset": "4",
+        "name": "Command data",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Only in command 1: one byte, 1 to ask for the places of the members too."
+      }
+    ],
+    "notes": "The Krrios protocol extension. ClassicUO sends it every few seconds while the world map is open. Recognized and ignored for now: there are no parties or guilds yet.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
   },
   "0xF8:incoming": {
     "category": "Characters",
@@ -3621,7 +3667,7 @@
         "description": "The layout commands (such as { resizepic 0 0 9200 300 400 }) and their NUL; then a ushort string count and each string as a ushort length in characters and UTF-16 big-endian text."
       }
     ],
-    "notes": "Opens a gump on clients before 5.0.0a. The layout refers to the strings by index.",
+    "notes": "Opens a gump on clients before 5.0.0a. The layout refers to the strings by index. Readable scrolls created with the staff book command use this gump protocol when opened.",
     "handler": "GumpService: opens a gump when the client is older than 5.0.0a."
   },
   "0xDD:outgoing": {
@@ -3695,7 +3741,7 @@
         "description": "The zlib layout; then a uint string count, a uint compressed table length plus 4 (0 with no strings), a uint plain table length and the zlib table (each string as ushort length and UTF-16 big-endian text)."
       }
     ],
-    "notes": "Opens a gump on clients from 5.0.0a, compressed.",
+    "notes": "Opens a gump on clients from 5.0.0a, compressed. Readable scrolls created with the staff book command use this gump protocol when opened.",
     "handler": "GumpService: opens a gump on a client from 5.0.0a."
   },
   "0xB1:incoming": {
@@ -4192,5 +4238,1024 @@
     ],
     "notes": "Plays an animation of a mobile.",
     "handler": "WorldViewService: mobile.animate of a script, to the mobile's own player and those who see it."
+  },
+  "0x95:outgoing": {
+    "category": "Dyeing",
+    "tags": [
+      "Dyeing",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Picker id",
+        "type": "int",
+        "size": "4",
+        "description": "Id the answer must carry; the picker's own, not an item serial"
+      },
+      {
+        "offset": "5",
+        "name": "Unused",
+        "type": "ushort",
+        "size": "2",
+        "description": "Zero."
+      },
+      {
+        "offset": "7",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item graphic shown in the picker"
+      }
+    ],
+    "notes": "Opens the client's hue picker with a graphic in it.",
+    "handler": "HuePickerService: sent when a script opens a picker, as the dyes do on a dye tub."
+  },
+  "0x95:incoming": {
+    "category": "Dyeing",
+    "tags": [
+      "Dyeing",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Picker id",
+        "type": "int",
+        "size": "4",
+        "description": "Id of the picker answered"
+      },
+      {
+        "offset": "5",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Ignored."
+      },
+      {
+        "offset": "7",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Hue picked; masked with 0x3FFF and kept from 2 to 1001"
+      }
+    ],
+    "notes": "The hue the player picked in the hue picker. Nothing is sent when the picker is closed.",
+    "handler": "HuePickerResponsePacketHandler: gives the hue to the player's open picker; ignored when the id is not the one of the open picker."
+  },
+  "0xAF:outgoing": {
+    "category": "Mobiles",
+    "tags": [
+      "Mobiles",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of who died"
+      },
+      {
+        "offset": "5",
+        "name": "Corpse",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of its corpse, 0 when it leaves none"
+      },
+      {
+        "offset": "9",
+        "name": "Unused",
+        "type": "uint",
+        "size": "4",
+        "description": "Zero."
+      }
+    ],
+    "notes": "Makes the client play the death of the mobile and tie it to its corpse; the client picks the animation of the body.",
+    "handler": "DeathService: sent to the players who see an NPC die, after its corpse and before its removal."
+  },
+  "0x89:outgoing": {
+    "category": "Mobiles",
+    "tags": [
+      "Mobiles",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Packet length."
+      },
+      {
+        "offset": "3",
+        "name": "Corpse",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the corpse"
+      },
+      {
+        "offset": "7",
+        "name": "Items",
+        "type": "loop",
+        "size": "variable",
+        "description": "For every item: its layer plus one (1 byte) and its serial (4 bytes); a zero byte ends the list"
+      }
+    ],
+    "notes": "What a corpse is drawn wearing. The items come first, in a container content (0x3C) of the corpse.",
+    "handler": "WorldViewService: sent after the corpse of a human, elf or gargoyle body, with what who died wore that is still inside, its hair and its beard."
+  },
+  "0x71/0x00:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Bulletin boards",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "byte",
+        "size": "1",
+        "description": "Value 0x00: display the board."
+      },
+      {
+        "offset": "4",
+        "name": "Board",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the bulletin board item."
+      },
+      {
+        "offset": "8",
+        "name": "Name",
+        "type": "utf8",
+        "size": "30",
+        "description": "Name of the board: at most 29 bytes of UTF-8 text, zero filled."
+      }
+    ],
+    "notes": "Opens a bulletin board on the client. Always 38 bytes. The messages follow as the content of a container (0x3C): each message is an item 0x0EB0 inside the board, and the client asks for each summary with sub-command 0x04.",
+    "handler": "BulletinBoardService.Open: sent when a player double clicks a bulletin board (bulletin_board.lua, board.open)."
+  },
+  "0x71/0x01:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Bulletin boards",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "byte",
+        "size": "1",
+        "description": "Value 0x01: message summary."
+      },
+      {
+        "offset": "4",
+        "name": "Board",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the bulletin board item."
+      },
+      {
+        "offset": "8",
+        "name": "Message",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the message."
+      },
+      {
+        "offset": "12",
+        "name": "Thread",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the first message of the thread this one replies to; 0 for a first message."
+      },
+      {
+        "offset": "16",
+        "name": "Poster, subject, date",
+        "type": "loop",
+        "size": "variable",
+        "description": "Three strings, each a length byte, UTF-8 text and one zero; the length counts the zero. The date is the day only, in English: Oct 05, 2026."
+      }
+    ],
+    "notes": "The line of a message in the list of a board: who posted it, what about and when.",
+    "handler": "BulletinBoardRequestPacketHandler: the answer to a client's sub-command 0x04."
+  },
+  "0x71/0x02:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Bulletin boards",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "byte",
+        "size": "1",
+        "description": "Value 0x02: message."
+      },
+      {
+        "offset": "4",
+        "name": "Board",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the bulletin board item."
+      },
+      {
+        "offset": "8",
+        "name": "Message",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the message."
+      },
+      {
+        "offset": "12",
+        "name": "Poster, subject, date, look, lines",
+        "type": "loop",
+        "size": "variable",
+        "description": "Poster, subject and date as in the summary; then the poster's body (ushort), hue (ushort), a count byte and that many pieces worn (item id ushort, hue ushort); then a count byte and that many lines, each a length byte, UTF-8 text and two zeros, the length counting both."
+      }
+    ],
+    "notes": "A message in full, with its poster as it looked when it posted. The two zeros after a line work around an old client bug that loses the last letter.",
+    "handler": "BulletinBoardRequestPacketHandler: the answer to a client's sub-command 0x03."
+  },
+  "0x71:incoming": {
+    "category": "Items",
+    "tags": [
+      "Bulletin boards",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "byte",
+        "size": "1",
+        "description": "0x03 asks for the text of a message, 0x04 for its summary, 0x05 posts, 0x06 removes."
+      },
+      {
+        "offset": "4",
+        "name": "Board",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the bulletin board item."
+      },
+      {
+        "offset": "8",
+        "name": "Message",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the message asked for or removed; on a post, the message it replies to, 0 for a new thread."
+      },
+      {
+        "offset": "12",
+        "name": "Subject and lines",
+        "type": "loop",
+        "size": "variable",
+        "description": "On a post only: the subject as a length byte and that many bytes of UTF-8 text, a count byte, then each line the same way. The text of each ends at its first zero."
+      }
+    ],
+    "notes": "What a client asks of a bulletin board. A request is answered only when the item is a board, the character stands within two tiles of it on its map, and the message is one of that board; game masters and above are answered from anywhere. A post whose lengths run past the packet is refused.",
+    "handler": "BulletinBoardRequestPacketHandler: answers with sub-command 0x01 or 0x02, posts (the new message enters the poster's list with 0x25) or removes (0x1D for each message gone)."
+  },
+  "0xCC:outgoing": {
+    "category": "Speech",
+    "tags": [
+      "Speech",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile that speaks."
+      },
+      {
+        "offset": "7",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Its body."
+      },
+      {
+        "offset": "9",
+        "name": "Type",
+        "type": "byte",
+        "size": "1",
+        "description": "Message type; 0, regular speech."
+      },
+      {
+        "offset": "10",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Colour of the text; 0x03B2."
+      },
+      {
+        "offset": "12",
+        "name": "Font",
+        "type": "ushort",
+        "size": "2",
+        "description": "Font; 3."
+      },
+      {
+        "offset": "14",
+        "name": "Cliloc",
+        "type": "uint",
+        "size": "4",
+        "description": "Number of the client text."
+      },
+      {
+        "offset": "18",
+        "name": "Affix type",
+        "type": "byte",
+        "size": "1",
+        "description": "0: the affix is appended to the text."
+      },
+      {
+        "offset": "19",
+        "name": "Name",
+        "type": "ascii",
+        "size": "30",
+        "description": "Name of the speaker, zero filled."
+      },
+      {
+        "offset": "49",
+        "name": "Affix and arguments",
+        "type": "loop",
+        "size": "variable",
+        "description": "The affix in ASCII ended by a zero; then the arguments of the cliloc in big-endian UTF-16, tab separated, ended by a zero of two bytes."
+      }
+    ],
+    "notes": "A client text with a text of the server written after it: \"Into your bank box I have placed a check in the amount of:\" and the amount. The client shows the cliloc in its own language.",
+    "handler": "SpeechService.SayCliloc with an affix: npc.say_cliloc(npc, cliloc, args, affix), used by banker.lua."
+  },
+  "0x3A:incoming": {
+    "category": "Skills",
+    "tags": [
+      "Skills",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Skill",
+        "type": "ushort",
+        "size": "2",
+        "description": "Number of the skill, 0 to 57"
+      },
+      {
+        "offset": "5",
+        "name": "Lock",
+        "type": "enum",
+        "size": "1",
+        "description": "0 up, 1 down, 2 locked"
+      }
+    ],
+    "notes": "The player moves the lock arrow of a skill in the skill window. Nothing is sent back: the client already shows it.",
+    "handler": "SkillLockPacketHandler: IMobileStateService.SetSkillLock on the character in the world; a skill or lock that does not exist is ignored."
+  },
+  "0xBF/0x19:outgoing": {
+    "category": "Skills",
+    "tags": [
+      "Skills",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes, 12."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "ushort",
+        "size": "2",
+        "description": "Value 0x19"
+      },
+      {
+        "offset": "5",
+        "name": "Type",
+        "type": "byte",
+        "size": "1",
+        "description": "2: the locks of the stats"
+      },
+      {
+        "offset": "6",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The player's own character"
+      },
+      {
+        "offset": "10",
+        "name": "Unused",
+        "type": "byte",
+        "size": "1",
+        "description": "Zero."
+      },
+      {
+        "offset": "11",
+        "name": "Locks",
+        "type": "bitfield",
+        "size": "1",
+        "description": "Two bits each, strength << 4, dexterity << 2, intelligence: 0 up, 1 down, 2 locked"
+      }
+    ],
+    "notes": "The arrows beside strength, dexterity and intelligence in the status window. Sent after the status when a player enters the world, and again with the three locks when one changes, as ModernUO.",
+    "handler": "CharacterEnterWorldService: sends the stat locks of the character during world entry. MobileStateService.SetStatLock: sends them again to the player when one changes."
+  },
+  "0xD4:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "7",
+        "name": "Flag",
+        "type": "byte",
+        "size": "1",
+        "description": "1."
+      },
+      {
+        "offset": "8",
+        "name": "Writable",
+        "type": "byte",
+        "size": "1",
+        "description": "1 when the player who opens the book carries it and the book is one a player writes in; else 0."
+      },
+      {
+        "offset": "9",
+        "name": "Pages",
+        "type": "ushort",
+        "size": "2",
+        "description": "How many pages the book has."
+      },
+      {
+        "offset": "11",
+        "name": "Title and author",
+        "type": "loop",
+        "size": "variable",
+        "description": "The title, then the author: for each the length of its bytes with the zero that ends it (ushort), then the text in UTF-8 and its zero. The title is cut to 60 bytes and the author to 30."
+      }
+    ],
+    "notes": "Opens the client's book on its cover. The pages follow in 0x66.",
+    "handler": "BookDocumentService.Open: sent for a document whose item template has script_id readable_book."
+  },
+  "0x66:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "7",
+        "name": "Pages",
+        "type": "ushort",
+        "size": "2",
+        "description": "How many pages follow: all of them."
+      },
+      {
+        "offset": "9",
+        "name": "Page",
+        "type": "loop",
+        "size": "variable",
+        "description": "For each page: its number from 1 (ushort), how many lines it has (ushort, 8 at most), then each line in UTF-8 ended by a zero."
+      }
+    ],
+    "notes": "The pages of a book, sent right after its header (0xD4). The saved text is split at its empty lines, and a page of more than 8 lines goes on in the next.",
+    "handler": "BookDocumentService.Open, with the pages of BookPagination."
+  },
+  "0x66:incoming": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "7",
+        "name": "Pages",
+        "type": "ushort",
+        "size": "2",
+        "description": "How many pages follow."
+      },
+      {
+        "offset": "9",
+        "name": "Page",
+        "type": "loop",
+        "size": "variable",
+        "description": "For each page: its number from 1 (ushort), its line count (ushort; 0xFFFF asks for the page and no line follows), then each line in UTF-8 ended by a zero."
+      }
+    ],
+    "notes": "The lines a player wrote on pages of a book, or a request for a page. An edit is saved when the sender carries the book and the book is writable, within 8 lines a page and 79 characters a line; a request is not answered, since every page is sent at the opening. A packet that is not well formed changes nothing.",
+    "handler": "BookEditPacketHandler: BookDocumentService.SetPages."
+  },
+  "0xD4:incoming": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "7",
+        "name": "Skipped",
+        "type": "uint",
+        "size": "4",
+        "description": "Flags and page count, not read."
+      },
+      {
+        "offset": "11",
+        "name": "Title and author",
+        "type": "loop",
+        "size": "variable",
+        "description": "The title, then the author: for each the length of its bytes (ushort), then the text in UTF-8, read up to its first zero."
+      }
+    ],
+    "notes": "The title and author a player wrote. Saved when the sender carries the book and the book is writable, a title of 60 bytes and an author of 30 at most; the item takes the title as its name.",
+    "handler": "BookEditPacketHandler: BookDocumentService.SetHeader."
+  },
+  "0x93:incoming": {
+    "category": "Items",
+    "tags": [
+      "Books",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the book."
+      },
+      {
+        "offset": "5",
+        "name": "Skipped",
+        "type": "uint",
+        "size": "4",
+        "description": "Flags and page count, not read."
+      },
+      {
+        "offset": "9",
+        "name": "Title",
+        "type": "ascii",
+        "size": "60",
+        "description": "The title, Latin-1, zero filled."
+      },
+      {
+        "offset": "69",
+        "name": "Author",
+        "type": "ascii",
+        "size": "30",
+        "description": "The author, Latin-1, zero filled."
+      }
+    ],
+    "notes": "The title and author a player wrote, as the older clients send them. Saved as those of 0xD4.",
+    "handler": "BookEditPacketHandler: BookDocumentService.SetHeader."
+  },
+  "0xAA:outgoing": {
+    "category": "Combat",
+    "tags": [
+      "Combat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Target",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile the character fights; zero when it fights no one"
+      }
+    ],
+    "notes": "Highlights the target of the fight in the client. Sent when a player starts or changes a fight and when it ends or is refused.",
+    "handler": "CombatService: sent to the player who fights. AttackRequestPacketHandler: a clear target for a refused request."
+  },
+  "0x2F:outgoing": {
+    "category": "Combat",
+    "tags": [
+      "Combat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Flag",
+        "type": "byte",
+        "size": "1",
+        "description": "Zero."
+      },
+      {
+        "offset": "2",
+        "name": "Attacker",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the one who swings"
+      },
+      {
+        "offset": "6",
+        "name": "Defender",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the target"
+      }
+    ],
+    "notes": "A swing, told to the player who swings.",
+    "handler": "CombatService: sent to the attacker's player for each swing."
+  },
+  "0x0B:outgoing": {
+    "category": "Combat",
+    "tags": [
+      "Combat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Target",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile hit"
+      },
+      {
+        "offset": "5",
+        "name": "Damage",
+        "type": "ushort",
+        "size": "2",
+        "description": "The damage, kept from 0 to 65535"
+      }
+    ],
+    "notes": "The damage of a hit, which the client shows over the head of the one hit.",
+    "handler": "CombatService: sent to the players in the fight when display_damage_numbers is on."
+  },
+  "0x2C:outgoing": {
+    "category": "Mobiles",
+    "tags": [
+      "Mobiles",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Status",
+        "type": "byte",
+        "size": "1",
+        "description": "2: the character is dead. The client shows its death and the ghost view; it is sent to the player of the character that dies."
+      }
+    ],
+    "notes": "Sent when a player dies, as ModernUO's DeathStatus. Coming back to life sends no packet of its own: the living body (0x20) and the flags tell the client.",
+    "handler": "MobileStateService.SetDead: sent to the player's own client when its character dies."
+  },
+  "0x38:outgoing": {
+    "category": "Movement",
+    "tags": [
+      "Movement",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "X of the spot to walk to."
+      },
+      {
+        "offset": "3",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Y of the spot."
+      },
+      {
+        "offset": "5",
+        "name": "Z",
+        "type": "ushort",
+        "size": "2",
+        "description": "Height of the spot, signed."
+      }
+    ],
+    "notes": "Tells the client to walk its character to a spot by itself, as after a double right click on the ground: the client finds the way, writes \"Pathfinding!\" and sends its steps one by one. The client decides whether it goes: the server is not told.",
+    "handler": "MobileModule.PathfindTo: mobile.pathfind_to(player, x, y, z)."
+  },
+  "0xBF/0x14:outgoing": {
+    "category": "World",
+    "tags": [
+      "Context menus",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "ushort",
+        "size": "2",
+        "description": "0x14."
+      },
+      {
+        "offset": "5",
+        "name": "Format",
+        "type": "ushort",
+        "size": "2",
+        "description": "2: the format every client from 6.0.0.0 takes, with the cliloc whole."
+      },
+      {
+        "offset": "7",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile or item the menu is of."
+      },
+      {
+        "offset": "11",
+        "name": "Count",
+        "type": "byte",
+        "size": "1",
+        "description": "How many entries follow, 20 at most."
+      },
+      {
+        "offset": "12",
+        "name": "Entry",
+        "type": "loop",
+        "size": "variable",
+        "description": "For each entry: its cliloc, the text the client shows (uint); its index in the menu, from 0 (ushort); its flags (ushort): 1 greyed out, 0 otherwise."
+      }
+    ],
+    "notes": "The context menu of a mobile or an item: the server's own entries (Open Paperdoll, Open Backpack), then the ones its Lua script adds. An entry the player is out of range of, or that is not enabled, is greyed out. The client answers with 0xBF subcommand 0x15 and the index chosen. A target with no entry gets no packet.",
+    "handler": "ContextMenuService.Request, asked by the client with 0xBF subcommand 0x13."
   }
 }

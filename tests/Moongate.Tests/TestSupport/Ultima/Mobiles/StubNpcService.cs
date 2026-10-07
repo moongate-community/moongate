@@ -23,6 +23,12 @@ public sealed class StubNpcService : INpcService
     public List<Serial> Removals { get; } = [];
 
     /// <summary>
+    ///     Gets or sets how to tell the game loop thread: on it, a spawn or a removal throws as the real service does,
+    ///     which posts to the loop and waits.
+    /// </summary>
+    public Func<bool>? OnLoopThread { get; set; }
+
+    /// <summary>
     ///     Gets or sets what each spawn waits for before it completes; null means it completes at once.
     /// </summary>
     public TaskCompletionSource? Gate { get; set; }
@@ -50,6 +56,7 @@ public sealed class StubNpcService : INpcService
         CancellationToken cancellationToken = default
     )
     {
+        RefuseTheLoopThread();
         Spawns.Add((templateId, map, location));
         FirstSpawn.TrySetResult();
         Spawned.Map = map;
@@ -70,8 +77,24 @@ public sealed class StubNpcService : INpcService
 
     public Task<bool> RemoveAsync(Serial serial, CancellationToken cancellationToken = default)
     {
+        RefuseTheLoopThread();
         Removals.Add(serial);
 
         return Task.FromResult(Removes);
+    }
+
+    public bool Remove(Serial serial)
+    {
+        Removals.Add(serial);
+
+        return Removes;
+    }
+
+    private void RefuseTheLoopThread()
+    {
+        if (OnLoopThread?.Invoke() == true)
+        {
+            throw new InvalidOperationException("The game loop thread cannot wait for work posted to itself.");
+        }
     }
 }

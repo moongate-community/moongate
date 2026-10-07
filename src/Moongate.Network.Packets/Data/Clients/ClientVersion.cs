@@ -70,7 +70,7 @@ public sealed class ClientVersion : IEquatable<ClientVersion>, IComparable<Clien
 
     /// <summary>
     ///     Parses two to four dot-separated numbers; missing parts are 0. Old clients put the patch as a letter after
-    ///     the revision (<c>4.0.7a</c>), which reads as patch 1 for <c>a</c>, 2 for <c>b</c> and so on.
+    ///     the revision ( <c>4.0.7a</c>), which reads as patch 1 for <c>a</c>, 2 for <c>b</c> and so on.
     /// </summary>
     public static bool TryParse(string? text, [NotNullWhen(true)] out ClientVersion? version)
     {

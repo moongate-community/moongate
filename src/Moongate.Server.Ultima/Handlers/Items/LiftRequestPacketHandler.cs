@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
@@ -18,7 +19,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 /// <summary>
 ///     Lets the player pick up (0x07) an item inside a container their character carries, an item inside a container
 ///     lying on the ground within reach, such as a treasure chest, or an item on the ground within 2 tiles in line of
-///     sight, whoever dropped it; what cannot be picked up stays, for all but the staff: the item is recorded as held in the session and stays where it is
+///     sight, whoever dropped it; what cannot be picked up stays, for all but the staff: the item is recorded as held in the
+///     session and stays where it is
 ///     until the drop; a ground item leaves every screen and the sector grid meanwhile. Part of a stackable item splits
 ///     it: the held part keeps the serial, and the rest, with a serial from <see cref="IItemSerialPool" />, stays in place
 ///     and is shown with 0x25, or to everyone in range on the ground. Anything else is refused with 0x27, and the
@@ -39,8 +41,12 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly ITooltipService _tooltips;
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
+    private readonly IMurderService? _murders;
     private readonly IItemTemplateService? _templates;
     private readonly ISessionService? _sessions;
+    private readonly IFatigueService? _fatigue;
+
+    private readonly IInventoryMutationGuard? _inventory;
 
     public LiftRequestPacketHandler(
         IItemService items,
@@ -53,9 +59,15 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         IItemScriptService? scripts = null,
         IBankService? bank = null,
         IItemTemplateService? templates = null,
-        ISessionService? sessions = null
+        ISessionService? sessions = null,
+        IFatigueService? fatigue = null,
+        IInventoryMutationGuard? inventory = null,
+        IMurderService? murders = null
     )
     {
+        _murders = murders;
+        _inventory = inventory;
+        _fatigue = fatigue;
         _sessions = sessions;
         _templates = templates;
         _bank = bank;
@@ -71,7 +83,23 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
 
     public void Handle(GameSession session, LiftRequestPacket packet)
     {
+        if (_inventory is not null && (!_inventory.AllowsOwner(session.CharacterId) ||
+                                       (_items.TryGet(packet.Item, out var guarded) && !_inventory.Allows(guarded)) ||
+                                       (session.Get(ItemSessionKeys.Held) is { } hand &&
+                                        _items.TryGet(hand.Item, out var heldItem) && !_inventory.Allows(heldItem))))
+        {
+            return;
+        }
+
         _items.TryGet(packet.Item, out var item);
+
+        // A ghost lifts nothing.
+        if (_mobiles.TryGet(session.CharacterId, out var ghost) && ghost.IsDead)
+        {
+            Refuse(session, LiftRejectReasonType.CannotLift, item);
+
+            return;
+        }
 
         if (session.Get(ItemSessionKeys.Held) is not null)
         {
@@ -89,7 +117,8 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         // paperdoll), or on the ground.
         if (!session.CharacterId.IsValid ||
             item is null ||
-            (!onGround && !worn && chest is null && (item.ContainerId is null || _items.GetOwner(item) != session.CharacterId)) ||
+            (!onGround && !worn && chest is null &&
+             (item.ContainerId is null || _items.GetOwner(item) != session.CharacterId)) ||
             packet.Amount <= 0 ||
             packet.Amount > item.Amount ||
             // A worn stack is taken whole: the rest of a split would be a second item on the same layer.
@@ -101,7 +130,8 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         }
 
         // What lies in a bank box is reached only while the bank is open.
-        if (_bank is not null && _mobiles.TryGet(session.CharacterId, out var character) && !_bank.CanAccess(session, character, item))
+        if (_bank is not null && _mobiles.TryGet(session.CharacterId, out var character) &&
+            !_bank.CanAccess(session, character, item))
         {
             Refuse(session, LiftRejectReasonType.CannotLift, item);
 
@@ -118,7 +148,8 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         // A chest someone holds is in nobody's reach; an item of a chest stays in it while it is held, so a second
         // hand could take it too.
         if (chest is not null &&
-            !(_items.IsLyingOnGround(chest) && CanReachFromTheGround(session, chest, out _) && !IsHeldByAnother(session, item)))
+            !(_items.IsLyingOnGround(chest) && CanReachFromTheGround(session, chest, out _) &&
+              !IsHeldByAnother(session, item)))
         {
             Refuse(session, LiftRejectReasonType.CannotLift, item);
 
@@ -144,6 +175,12 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             Refuse(session, LiftRejectReasonType.Inspecific, item);
 
             return;
+        }
+
+        // Taking from the corpse of an innocent is a crime.
+        if (chest is not null && _mobiles.TryGet(session.CharacterId, out var looter))
+        {
+            _murders?.Looted(looter, chest);
         }
 
         if (packet.Amount < item.Amount)
@@ -193,12 +230,19 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             // It stays on until it is dropped; the others see it taken off now.
             _view.WornItemRemoved(wearer, item);
         }
+
+        // What it lifted from the ground or from a chest is in its hand, and weighs there.
+        if (_fatigue is not null && _mobiles.TryGet(session.CharacterId, out var lifter))
+        {
+            _fatigue.LoadChanged(session, lifter, false);
+        }
     }
 
     // The character's own worn item, except the backpack and the bank box, which never leave it.
     private static bool IsOwnWornItem(GameSession session, ItemEntity item)
     {
-        return item.MobileId == session.CharacterId && item.Layer is { } layer and not (LayerType.Backpack or LayerType.Bank);
+        return item.MobileId == session.CharacterId &&
+               item.Layer is { } layer and not (LayerType.Backpack or LayerType.Bank);
     }
 
     private bool CanReachFromTheGround(GameSession session, ItemEntity item, out LiftRejectReasonType reason)
@@ -215,7 +259,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             return true;
         }
 
-        var spot = item.GroundLocation!.Value;
+        var spot = item.GroundLocation.Value;
         var near = item.Map == mobile.Map &&
                    Math.Abs(spot.X - mobile.Location.X) <= ItemService.GroundReach &&
                    Math.Abs(spot.Y - mobile.Location.Y) <= ItemService.GroundReach;
@@ -227,7 +271,8 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private bool IsHeldByAnother(GameSession session, ItemEntity item)
     {
         return _sessions is not null &&
-               _sessions.GetAll().Any(other => other.SessionId != session.SessionId && other.Get(ItemSessionKeys.Held)?.Item == item.Id);
+               _sessions.GetAll()
+                   .Any(other => other.SessionId != session.SessionId && other.Get(ItemSessionKeys.Held)?.Item == item.Id);
     }
 
     // The item's own setting, else its template's, else the weight the client's tiledata gives to what cannot be lifted.
@@ -243,7 +288,8 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             return template.EffectiveMovable(_tiles);
         }
 
-        return !(_tiles.TryGetItem(item.ItemId, out var tile) && tile.Weight == ItemTemplateExtensions.TiledataWeightCannotLift);
+        return !(_tiles.TryGetItem(item.ItemId, out var tile) &&
+                 tile.Weight == ItemTemplateExtensions.TiledataWeightCannotLift);
     }
 
     private bool IsStackable(ItemEntity item)

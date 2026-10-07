@@ -3,6 +3,7 @@ using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Ultima.Types;
@@ -16,37 +17,42 @@ public sealed class MobileFactoryServiceTests
     public MobileFactoryServiceTests()
     {
         var loaders = new StubDataLoaderService()
-                      .With(
-                          new MobileTemplate
-                          {
-                              Id = "guard", Race = RaceType.Human, Gender = MobileGenderType.Random, NameList = "{gender}",
-                              Strength = DiceSpec.Parse("1d10+90"), Dexterity = DiceSpec.FromValue(80),
-                              Intelligence = DiceSpec.FromValue(70), Mana = DiceSpec.FromValue(5),
-                              Resistances = new MobileResistances { Fire = DiceSpec.FromValue(30) },
-                              Skills = new() { ["tactics"] = DiceSpec.FromValue(95) },
-                              Fame = DiceSpec.FromValue(500), Karma = DiceSpec.FromValue(-100), Armor = DiceSpec.FromValue(20)
-                          },
-                          new MobileTemplate
-                          {
-                              Id = "bald_monk", Race = RaceType.Human, Gender = MobileGenderType.Male, Name = "a monk", Hair = []
-                          },
-                          new MobileTemplate { Id = "orc", Body = 17, NameList = "orc" },
-                          new MobileTemplate { Id = "lord", Race = RaceType.Human, Name = "Lord British" }
-                      )
-                      .With(
-                          new RaceContent
-                          {
-                              Race = RaceType.Human, Name = "Human",
-                              SkinHues = [HueSpec.FromRange(0x3EA, 0x422)], HairHues = [HueSpec.FromRange(0x44E, 0x47D)],
-                              Male = new RaceGenderContent { Body = 400, Hair = [0x203B], Beard = [0x203E] },
-                              Female = new RaceGenderContent { Body = 401, Hair = [0x203C], Beard = [] }
-                          }
-                      )
-                      .With(
-                          new NameList { Id = "male", Names = ["Aaron"] },
-                          new NameList { Id = "female", Names = ["Alice"] },
-                          new NameList { Id = "orc", Names = ["Grok"] }
-                      );
+            .With(
+                new MobileTemplate
+                {
+                    Id = "guard", Race = RaceType.Human, Gender = MobileGenderType.Random, NameList = "{gender}",
+                    Strength = DiceSpec.Parse("1d10+90"), Dexterity = DiceSpec.FromValue(80),
+                    Intelligence = DiceSpec.FromValue(70), Mana = DiceSpec.FromValue(5),
+                    Resistances = new MobileResistances { Fire = DiceSpec.FromValue(30) },
+                    Skills = new() { ["tactics"] = DiceSpec.FromValue(95) },
+                    Fame = DiceSpec.FromValue(500), Karma = DiceSpec.FromValue(-100), Armor = DiceSpec.FromValue(20)
+                },
+                new MobileTemplate
+                {
+                    Id = "bald_monk", Race = RaceType.Human, Gender = MobileGenderType.Male, Name = "a monk", Hair = []
+                },
+                new MobileTemplate { Id = "orc", Body = 17, NameList = "orc" },
+                new MobileTemplate { Id = "red_orc", Body = 17, NameList = "orc", Notoriety = NotorietyType.Murderer },
+                new MobileTemplate
+                {
+                    Id = "banker", Race = RaceType.Human, Name = "a banker", Notoriety = NotorietyType.Invulnerable
+                },
+                new MobileTemplate { Id = "lord", Race = RaceType.Human, Name = "Lord British" }
+            )
+            .With(
+                new RaceContent
+                {
+                    Race = RaceType.Human, Name = "Human",
+                    SkinHues = [HueSpec.FromRange(0x3EA, 0x422)], HairHues = [HueSpec.FromRange(0x44E, 0x47D)],
+                    Male = new RaceGenderContent { Body = 400, Hair = [0x203B], Beard = [0x203E] },
+                    Female = new RaceGenderContent { Body = 401, Hair = [0x203C], Beard = [] }
+                }
+            )
+            .With(
+                new NameList { Id = "male", Names = ["Aaron"] },
+                new NameList { Id = "female", Names = ["Alice"] },
+                new NameList { Id = "orc", Names = ["Grok"] }
+            );
 
         // Create touches no persistence, map, items or events; the integration tests cover SpawnAsync.
         _factory = new MobileFactoryService(
@@ -101,7 +107,33 @@ public sealed class MobileFactoryServiceTests
         var tactics = Assert.Single(guard.Skills);
         Assert.Equal((SkillType.Tactics, 950), (tactics.Skill, tactics.Base));
         Assert.Null(guard.Title);
+        // A human that the template gives no notoriety is innocent, which is what no notoriety reads as.
         Assert.Null(guard.Notoriety);
+    }
+
+    [Fact]
+    public void Create_GivesTheNpcTheNotorietyOfItsTemplate()
+    {
+        Assert.Equal(NotorietyType.Murderer, _factory.Create("red_orc").Notoriety);
+        Assert.Equal(NotorietyType.Invulnerable, _factory.Create("banker").Notoriety);
+    }
+
+    [Fact]
+    public void Create_ANonHumanWithoutANotoriety_IsAttackable_AsAnimalsAndMonstersAreInModernUO()
+    {
+        Assert.Equal(NotorietyType.Attackable, _factory.Create("orc").Notoriety);
+    }
+
+    [Fact]
+    public void NpcNotoriety_OfAHumanWithoutOne_IsNone_AndOfNoTemplate_IsNone()
+    {
+        Assert.Null(NpcNotoriety.Of(new MobileTemplate { Id = "lord" }, 0x190));
+        Assert.Null(NpcNotoriety.Of(null, 17));
+        Assert.Equal(NotorietyType.Attackable, NpcNotoriety.Of(new MobileTemplate { Id = "cat" }, 201));
+        Assert.Equal(
+            NotorietyType.Enemy,
+            NpcNotoriety.Of(new MobileTemplate { Id = "cat", Notoriety = NotorietyType.Enemy }, 201)
+        );
     }
 
     [Fact]
@@ -120,7 +152,10 @@ public sealed class MobileFactoryServiceTests
     {
         Assert.All(Enumerable.Range(0, 50), _ => Assert.Equal(GenderType.Male, _factory.Create("lord").Gender));
         var lord = _factory.Create("lord");
-        Assert.Equal((10, 10, 10, 10, 10, 10), (lord.Strength, lord.Dexterity, lord.Intelligence, lord.HitsMax, lord.StaminaMax, lord.ManaMax));
+        Assert.Equal(
+            (10, 10, 10, 10, 10, 10),
+            (lord.Strength, lord.Dexterity, lord.Intelligence, lord.HitsMax, lord.StaminaMax, lord.ManaMax)
+        );
     }
 
     [Fact]

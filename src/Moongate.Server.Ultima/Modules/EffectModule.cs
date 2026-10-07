@@ -11,15 +11,20 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Modules;
 
 /// <summary>
-///     The <c>effect</c> Lua module: graphic effects for the players around, such as the smoke of a teleport, a fireball
-///     or a lightning bolt; <c>effect.at(map, x, y, z, EffectGraphicType.Smoke)</c>. An effect takes an optional table of
+///     The <c>effect</c> Lua module: graphic effects for the players around, such as the smoke of a teleport, a
+///     fireball
+///     or a lightning bolt; <c>effect.at(map, x, y, z, EffectGraphicType.Smoke)</c>. An effect takes an optional table
+///     of
 ///     options: <c>speed</c>, <c>duration</c>, <c>hue</c>, <c>render</c> (an <c>EffectRenderModeType</c>),
 ///     <c>fixed_direction</c>, <c>explodes</c>, and for the Enhanced Client <c>particle</c>, <c>explode_particle</c>,
 ///     <c>explode_sound</c> and <c>layer</c> (an <c>EffectLayerType</c>). A value out of range, an option of the wrong
 ///     type or an unknown option gives <c>false</c> and plays nothing; an argument of the wrong type raises an error,
 ///     as for every module.
 /// </summary>
-[ScriptModule("effect", "Plays graphic effects for the players around: at a point, on a mobile or an item, flying between two, or a lightning bolt.")]
+[ScriptModule(
+    "effect",
+    "Plays graphic effects for the players around: at a point, on a mobile or an item, flying between two, or a lightning bolt."
+)]
 public sealed class EffectModule
 {
     private static readonly HashSet<string> OptionNames =
@@ -42,7 +47,10 @@ public sealed class EffectModule
     /// <summary>
     ///     Plays an animation that stays at a point of a map; <c>effect.at(map, x, y, z, EffectGraphicType.Smoke)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays an effect graphic that stays at x, y, z of a map (a MapType number); false for a value out of range.")]
+    [ScriptFunction(
+        helpText:
+        "Plays an effect graphic that stays at x, y, z of a map (a MapType number); false for a value out of range."
+    )]
     public bool At(int map, int x, int y, int z, int graphic, LuaTable? options = null)
     {
         if (!Enum.IsDefined((MapType)map) ||
@@ -63,7 +71,10 @@ public sealed class EffectModule
     ///     Plays an animation on a mobile or on an item lying on the ground;
     ///     <c>effect.on(who, EffectGraphicType.SparkleHeal)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays an effect graphic on a mobile or a ground item; false for something not in the world or a value out of range.")]
+    [ScriptFunction(
+        helpText:
+        "Plays an effect graphic on a mobile, which it follows, or on a ground item; false for something not in the world or a value out of range."
+    )]
     public bool On(long serial, int graphic, LuaTable? options = null)
     {
         if (!TryLocate(serial, out var target, out var map, out var location) ||
@@ -81,7 +92,10 @@ public sealed class EffectModule
     ///     Plays an animation flying from one mobile or ground item to another on the same map;
     ///     <c>effect.moving(caster, target, EffectGraphicType.LargeFireball, { explodes = true })</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Plays an effect graphic flying from one mobile or ground item to another on the same map; false when one is not in the world, they are on two maps or a value is out of range.")]
+    [ScriptFunction(
+        helpText:
+        "Plays an effect graphic flying from one mobile or ground item to another on the same map; false when one is not in the world, they are on two maps or a value is out of range."
+    )]
     public bool Moving(long from, long to, int graphic, LuaTable? options = null)
     {
         if (!TryLocate(from, out var source, out var map, out var start) ||
@@ -100,7 +114,10 @@ public sealed class EffectModule
     /// <summary>
     ///     Strikes a mobile or a ground item with a lightning bolt; <c>effect.lightning(who)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Strikes a mobile or a ground item with a lightning bolt, optionally of a hue; false for something not in the world or a hue out of range.")]
+    [ScriptFunction(
+        helpText:
+        "Strikes a mobile or a ground item with a lightning bolt, optionally of a hue; false for something not in the world or a hue out of range."
+    )]
     public bool Lightning(long serial, int hue = 0)
     {
         if (hue is < 0 or > ushort.MaxValue || !TryLocate(serial, out var target, out var map, out var location))

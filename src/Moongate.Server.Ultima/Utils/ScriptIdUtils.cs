@@ -3,7 +3,8 @@ using System.Text.RegularExpressions;
 namespace Moongate.Server.Ultima.Utils;
 
 /// <summary>
-///     The rule a template's <c>script_id</c> follows: it names a global Lua table and the file that defines it, so it is
+///     The rule a template's <c>script_id</c> follows: it names a global Lua table and the file that defines it, so it
+///     is
 ///     a lower-case Lua identifier.
 /// </summary>
 public static partial class ScriptIdUtils

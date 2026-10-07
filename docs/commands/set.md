@@ -1,15 +1,16 @@
 # set
 
-Sets the hits, mana, stamina, hunger or thirst of the mobile you target.
+Sets the hits, mana, stamina, hunger or thirst of the mobile you target, or makes it a criminal.
 
 | Syntax | Console | In game | Minimum level | Role |
 | --- | --- | --- | --- | --- |
-| `set <hits\|mana\|stamina\|hunger\|thirst> <value>`, then target a mobile | No | Yes | GameMaster | Game |
+| `set <hits\|mana\|stamina\|hunger\|thirst\|criminal> <value>`, then target a mobile | No | Yes | GameMaster | Game |
 
 ```text
 .set hits 10
 .set hunger 0
 .set thirst 0
+.set criminal 1
 ```
 
 In game only. A target cursor opens: pick a character or an NPC, yourself included. Hit points, mana
@@ -20,6 +21,9 @@ now: `Aria: hits is now 10.` Targeting an item prints `That is not a character o
 It is the way to watch the [regeneration](../server-configuration.md) at work: lower a bar and it comes
 back a point at a time; set hunger to 0 and the hit points stay where they are until the mobile eats;
 set thirst to 0 and the stamina stays where it is until the mobile drinks.
+
+`set criminal 1` makes the mobile a [criminal](../server-configuration.md) for the configured time, its
+name in grey; `set criminal 0` pardons it at once.
 
 ## See also
 

@@ -1,0 +1,105 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/blood.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x0521
+props = { hue = 0x0001 }
+locations = [
+    [1745, 1236, -30],
+    [1746, 1236, -30],
+    [1747, 1236, -30],
+    [1748, 1236, -30],
+]
+
+[[decoration]]
+comment = "studded gloves"
+type = "Static"
+item_id = 0x13D5
+locations = [[2057, 937, -28]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+locations = [
+    [2051, 932, -23],
+    [2051, 933, -23],
+    [2153, 907, -23],
+    [2153, 917, -23],
+    [2177, 932, -23],
+    [2051, 931, -23],
+    [2075, 906, -23],
+    [2075, 907, -23],
+    [2075, 908, -23],
+    [2075, 917, -23],
+    [2075, 918, -23],
+    [2075, 919, -23],
+    [2153, 906, -23],
+    [2153, 908, -23],
+    [2153, 918, -23],
+    [2153, 919, -23],
+    [2177, 931, -23],
+    [2177, 933, -23],
+]
+
+[[decoration]]
+comment = "bones"
+type = "Static"
+item_id = 0x0ED2
+locations = [[2110, 903, -28]]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor2"
+item_id = 0x1FF7
+props = { facing = "north_ccw" }
+locations = [
+    [2046, 835, -28],
+    [2046, 841, -28],
+]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor2"
+item_id = 0x1FEF
+props = { facing = "east_ccw" }
+locations = [
+    [2048, 832, -28],
+    [2052, 832, -28],
+    [2056, 832, -28],
+    [2172, 832, -28],
+    [2176, 832, -28],
+    [2180, 832, -28],
+    [2184, 832, -28],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x0789
+props = { hue = 0x096C }
+locations = [
+    [2112, 829, -13],
+    [2113, 829, -13],
+    [2114, 829, -13],
+    [2115, 829, -13],
+    [2116, 829, -13],
+]
