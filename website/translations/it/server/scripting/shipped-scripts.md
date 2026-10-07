@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"50616bb6623ff0dffc99415aa6402644b4f694e5c08bde5e9df18198886c585b","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"6485eff3eef54a04813b48d87a7bf3d7651111217cb5da715964970d0f9de997","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -210,6 +210,28 @@ scelto viene curato, o resuscitato.
 
 Non ci sono ancora veleno e sanguinamento, quindi nessuna cura per essi; e il terreno dove un fantasma viene
 resuscitato non viene controllato, come non lo è a un ankh.
+
+## lockpick.lua e treasure_chest.lua
+
+`scripts/items/lockpick.lua` è lo script dei grimaldelli (`0x14fb`, `0x14fc`, `0x14fd` e `0x14fe`,
+`script_id = "lockpick"`), come il `Lockpick` di ModernUO. Si fa doppio clic, si sceglie un oggetto chiuso a chiave entro
+una casella, e dopo tre secondi viene provata l'abilità; il giocatore deve restare entro una casella.
+
+Si può scassinare un oggetto con queste prop: `locked` (true finché è chiuso), `lock.level` e `lock.max`, i punti di
+Lockpicking da cui la prova può appena riuscire e da cui non fallisce mai, e `lock.required`, il minimo per provare. Una
+serratura senza `lock.level` "non si può scassinare con mezzi normali"; chi ha meno di `lock.required` "non vede come si
+possa manovrare quella serratura". Un successo apre l'oggetto per sempre (`locked` è false, `lock.picker` è il giocatore);
+un fallimento rompe il grimaldello una volta su quattro, che esce dalla sua pila. Lockpicking è un'abilità che sale con
+l'uso, come le altre.
+
+`scripts/items/treasure_chest.lua` è lo script dei quattro forzieri del tesoro dei dungeon
+(`templates/items/treasure_chests.toml`, `script_id = "treasure_chest"`), come i `TreasureChestLevel1` a `4` di ModernUO.
+Un forziere nasce chiuso: chiede 57, 72, 84 e 92 punti di Lockpicking per livello, e la prova va da quel valore meno un
+tiro da 1 a 10 a quel valore più un tiro da 1 a 10. Un forziere chiuso non si apre ("It appears to be locked."); un game
+master lo apre ("That is locked, but you open it with your godly powers."); uno scassinato si apre come ogni contenitore.
+Le trappole dei forzieri di ModernUO non ci sono ancora, e nulla impedisce di mettere o togliere oggetti in un forziere
+chiuso già aperto su un client. I forzieri creati prima di questa versione non hanno serratura e restano come erano finché non
+decadono.
 
 ## training_dummy.lua
 

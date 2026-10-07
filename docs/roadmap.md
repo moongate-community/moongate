@@ -51,7 +51,7 @@ its own: it comes with the priority that gives it its rule.
 | Content | Waits for | Priority |
 | --- | --- | --- |
 | Dart boards (the training dummies and archery buttes work now) | Throwing skill (5.4) | 8 |
-| Locks and lockpicking of the treasure chests and of the town containers | Skill check (1.2) | 2 |
+| Locks on the town containers (the dungeon treasure chests are locked and picked now) | Lock levels in the data | 2 |
 | Traps of the chests, and the 490 traps placed in the dungeons | Damage (2.1) | 4 |
 | Wands in the treasure chests | Spells (4.3) | 7 |
 | Forges and anvils that craft | Crafting (5.2) | 8 |
@@ -176,7 +176,7 @@ After phase 7. Each of these needs most of what comes before.
 
 - **Quests**: an engine for quests and escorts; about 35,000 lines in ModernUO.
 - **Champion spawns, treasure maps, camps.** The dungeon chests respawn and the town containers
-  fill up already; their locks and traps come with priorities 2 and 4.
+  fill up already; the dungeon chests are locked already, and their traps and the locks of the town containers come with priorities 4 and 2.
 - **Virtues and factions.**
 - **The modern ruleset**: item properties and resistances, random magic loot, special moves,
   Necromancy, Chivalry, Bushido, Ninjitsu, Spellweaving, Mysticism, bulk orders, custom house

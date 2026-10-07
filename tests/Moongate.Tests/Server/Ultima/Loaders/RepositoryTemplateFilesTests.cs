@@ -501,6 +501,26 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedLockpicksAndTreasureChests_UseTheirScripts_AndTheScriptsAreThere()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.All(
+            new[] { "0x14fb_lockpick", "0x14fc_lockpick", "0x14fd_lockpicks", "0x14fe_lockpicks" },
+            id => Assert.Equal("lockpick", items[id].ScriptId)
+        );
+        Assert.All(
+            new[] { "treasure_chest_level_1", "treasure_chest_level_2", "treasure_chest_level_3", "treasure_chest_level_4" },
+            id => Assert.Equal("treasure_chest", items[id].ScriptId)
+        );
+
+        foreach (var script in new[] { "lockpick.lua", "treasure_chest.lua" })
+        {
+            Assert.True(File.Exists(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", script)));
+        }
+    }
+
+    [Fact]
     public async Task ShippedBandage_UsesTheBandageScript_AndTheScriptIsThere()
     {
         var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();

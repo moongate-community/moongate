@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 83 done, 🟡 53 partly done, ❌ 133 not built yet.
+**269 systems:** ✅ 83 done, 🟡 54 partly done, ❌ 132 not built yet.
 
 **Coverage: 31%** of the systems done, **41%** counting a partly done system as half.
 
@@ -117,7 +117,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Repairing and enhancing items | ❌ | |
 | Taming and animal lore | ❌ | |
 | Healing and veterinary | 🟡 | The clean [bandage](scripting/shipped-scripts.md#bandagelua) heals a player or a creature (Healing and Anatomy, Veterinary and Animal Lore) and raises a ghost; no poison, no bleeding, no pets |
-| Lockpicking, remove trap | ❌ | Doors lock and open with their key |
+| Lockpicking, remove trap | 🟡 | The [lockpick](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) picks a locked item (the dungeon treasure chests are made locked); no trap, so no remove trap. Doors lock and open with their key |
 | Snooping and stealing | ❌ | |
 | Tracking, detect hidden, forensics, spirit speak | 🟡 | [Detect hidden and forensic evaluation](scripting/shipped-scripts.md#the-lore-skills) work (no traps, no thieves' guild); no tracking, no spirit speak |
 | Bard skills: musicianship, peacemaking, provocation, discordance | ❌ | |

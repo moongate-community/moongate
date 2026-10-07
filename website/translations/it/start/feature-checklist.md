@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"fecbdd81b4269a3be92921e93f5d4305319e35c7d1ff9c63849a476e92bcdf83","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"4cb3d94cb6313a926ffa4e64b1c7040844600f0287d601b4fab587064f873f86","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 83 completati, 🟡 53 parzialmente completati, ❌ 133 non ancora realizzati.
+**269 sistemi:** ✅ 83 completati, 🟡 54 parzialmente completati, ❌ 132 non ancora realizzati.
 
 **Copertura: 31%** dei sistemi completati, **41%** contando un sistema parzialmente completato come metà.
 
@@ -119,7 +119,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Riparare e migliorare gli oggetti | ❌ | |
 | Addomesticamento e conoscenza degli animali | ❌ | |
 | Guarigione e veterinaria | 🟡 | La [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura (Healing e Anatomy, Veterinary e Animal Lore) e resuscita un fantasma; niente veleno, niente sanguinamento, niente animali |
-| Scassinamento, rimozione delle trappole | ❌ | Le porte si chiudono e si aprono con la loro chiave |
+| Scassinamento, rimozione delle trappole | 🟡 | Il [grimaldello](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) scassina un oggetto chiuso (i forzieri del tesoro dei dungeon nascono chiusi); niente trappole, quindi niente rimozione. Le porte si chiudono e si aprono con la loro chiave |
 | Frugare e rubare | ❌ | |
 | Inseguimento, individuazione dei nascosti, medicina legale, parlare con gli spiriti | 🟡 | [Individuazione dei nascosti e medicina legale](scripting/shipped-scripts.md#the-lore-skills) funzionano (niente trappole, niente gilda dei ladri); niente inseguimento, niente parlare con gli spiriti |
 | Abilità del bardo: musicalità, pacificazione, provocazione, discordanza | ❌ | |
