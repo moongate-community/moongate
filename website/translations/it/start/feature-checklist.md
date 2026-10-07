@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"549ebdaf60143862a8338c637b11bc5cdc2600800ae9b7eb65a3909ade5bfd4f","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"dbc6893e26807869bbc7bdc766207289b64740fc3f9968d13d1a85e31f12aec2","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -83,7 +83,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Parata | ❌ | |
 | Mosse speciali delle armi | ❌ | |
 | IA di combattimento degli NPC | 🟡 | `monster.lua` su ogni creatura malvagia o caotica in UOX3 (circa 200 template): notano un giocatore o un cittadino, gli si avvicinano, lo combattono e fanno la guardia quando lo perdono, anche gli incantatori in corpo a corpo, e le guardie cittadine li attaccano. Gli animali passeggiano e rispondono se colpiti, quelli paurosi fuggono. Se feriti scappano (sotto il 20% dei punti vita, mai i non morti o gli elementali). Gli arcieri sparano dalla portata del loro arco. Niente incantesimi |
-| Guardie nelle regioni sorvegliate | 🟡 | Un giocatore che dice "guards" fa arrivare una guardia accanto a ciascun criminale nelle vicinanze: appare, pronuncia la sua battuta e se ne va. Le guardie presenti nelle città notano autonomamente un criminale e lo raggiungono (`guard.lua`). Un NPC criminale viene ucciso con un colpo e lascia il cadavere; un giocatore criminale viene solo raggiunto, perché i giocatori non muoiono ancora. Le guardie chiamate a Ilshenar e Malas sono arcieri: sparano dalla portata del loro arco |
+| Guardie nelle regioni sorvegliate | 🟡 | Un giocatore che dice "guards" fa arrivare una guardia accanto a ciascun criminale nelle vicinanze: appare, pronuncia la sua battuta e se ne va. Le guardie presenti nelle città notano autonomamente un criminale e lo raggiungono (`guard.lua`). Un NPC criminale viene ucciso con un colpo e lascia il cadavere; un giocatore criminale viene solo raggiunto: le guardie non puniscono ancora i giocatori. Le guardie chiamate a Ilshenar e Malas sono arcieri: sparano dalla portata del loro arco |
 | Abilità speciali dei mostri | ❌ | |
 | Danno elementale e resistenze | ❌ | |
 | Elenchi degli aggressori e timeout degli attacchi | ❌ | |
@@ -226,7 +226,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Illuminazione di dungeon e prigioni | ✅ | |
 | Meteo per regione | ✅ | Pioggia, neve, temporali con tuoni, asciutto al chiuso; nessun danno meteorologico |
 | Stagioni | ✅ | Per mappa e regione, rotazione facoltativa con i giorni di gioco; `.season` |
-| Regioni | 🟡 | Individuate per ogni giocatore; impostano meteo, musica, stagione e illuminazione dei dungeon, e il giocatore legge il luogo in cui entra o che lascia e se è protetto dalle guardie; nessuna regola per guardie o case |
+| Regioni | 🟡 | Individuate per ogni giocatore; impostano meteo, musica, stagione e illuminazione dei dungeon, e il giocatore legge il luogo in cui entra o che lascia e se è protetto dalle guardie, e le guardie delle città agiscono di conseguenza; nessuna regola per le case |
 | Musica delle regioni | ✅ | Il brano della regione, altrimenti quello della mappa; `.music` |
 | Regole delle regioni: sicura, no PvP, no case, logout istantaneo | ❌ | |
 | Politica cittadina (sindaci, tasse) | ❌ | |

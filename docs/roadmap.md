@@ -16,8 +16,9 @@ This is an order, not a schedule: there are no dates. A phase is done when its s
 The foundations are in place: network, login, persistence, world data, sectors, regions, spawns,
 decoration, gumps, Lua scripting. A player can log in, walk a populated world, open doors, use the
 bank, take a teleporter or a moongate, open a treasure chest in a dungeon and a crate in a shop.
-NPCs walk around what stands in their way. What is missing is the gameplay: nothing can be fought,
-learned, bought or built yet.
+NPCs walk around what stands in their way. Players and NPCs fight with fists, swords or bows, die and come back as ghosts, train their skills and
+are defended by the guards of the towns. What is missing is the rest of the gameplay: nothing can be
+bought, cast, crafted or built yet.
 
 Each step below carries its state: ✅ done, 🟡 partly done, ❌ not started.
 
@@ -100,8 +101,8 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 
 | Step | State | What | Why it comes here |
 | --- | --- | --- | --- |
-| 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists or a weapon, the swing timer, the hit by skill, the damage and the armor of an NPC or of what a player wears. Left: parry, archery, durability | The core loop of the game |
-| 2.2 | ❌ | **Aggressor lists** | Notoriety, guards and loot rights rest on them |
+| 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists or a weapon, the swing timer, the hit by skill, the damage and the armor of an NPC or of what a player wears, and archery with a bow or a crossbow, for a player and for an NPC. Left: parry, durability | The core loop of the game |
+| 2.2 | ❌ | **Aggressor lists**. Today only the [murder report](death.md#murder-counts) keeps who attacked an innocent, for `aggressor_seconds`; no attack timeouts and no loot rights | Notoriety, guards and loot rights rest on them |
 | 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC or a player dies by a fight, `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried; a player stays as a [ghost](death.md#death-of-a-player) and comes back at an ankh or at a healer, by `.resurrect` or `mobile.resurrect`. Left: bones, bounties and the places of the evil healers | Gives combat a result |
 | 2.4 | ❌ | **Bandages and healing** | Needed as soon as damage exists |
 | 2.5 | ❌ | **Combat events for Lua**: attack, hit, miss, damage, death, resurrect | Lets content change the rules |
@@ -114,8 +115,8 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 | 3.1 | 🟡 | **Pathfinding** and movement that checks items and mobiles. Done: the A* path search, `npc.walk_to`, and items that block; mobiles do not block yet | AI cannot chase without it | |
 | 3.2 | 🟡 | **NPC AI**: melee, archer, mage, animal, fleeing; NPC memory of who attacked. Done: archers (an NPC with a bow shoots, and so does a player), creatures that run when hurt. Left: mages. Today a Lua script on a tick, wandering, `monster.lua`, the melee AI, on the 200 or so evil and chaotic templates, which go for the players and the townsfolk and which the guards kill, and the animals (`animal.lua`, `scared_animal.lua`) on the shared `common/creature.lua` | The 29,000 spawned NPCs become content | UOX3 NPC tags dropped today (`NPCAI` values, `SPATTACK`), ModernUO `npc-speeds.json` |
 | 3.3 | 🟡 | **Loot on corpses**, carving, fame and karma gain. Loot is rolled into the backpack at spawn and lies in the corpse of a dead NPC; no carving, fame or karma | Reward for the fight | UOX3 `carve.dfn` (102 tables) |
-| 3.4 | 🟡 | **Notoriety**: criminal and murderer flags, name colours, murder counts. Today the name colour of the mobile template, which every NPC is given when it is made | Makes PvP rule-bound | |
-| 3.5 | ❌ | **Region rules and guards**: guarded towns, no recall, no gate, no housing | Makes towns safe | ModernUO `regions.json` (typed regions), UOX3 `regions.dfn` (179 rule sets) |
+| 3.4 | 🟡 | **Notoriety**: criminal and murderer flags, name colours, murder counts. Done: the criminal flag with its timer, [murder counts](death.md#murder-counts) with the report gump of the victim, a red name from five murders, as ModernUO's. Left: other crimes, bounties; the name colour of an NPC is the one of its mobile template | Makes PvP rule-bound | |
+| 3.5 | 🟡 | **Region rules and guards**: guarded towns, no recall, no gate, no housing. Done: guarded regions, the guards that arrest a criminal or a monster, called by saying "guards" or standing in the town, and archer guards in Ilshenar and Malas. Left: the guards do not punish a player, and no rules for recall, gate or housing | Makes towns safe | ModernUO `regions.json` (typed regions), UOX3 `regions.dfn` (179 rule sets) |
 
 ## Phase 4: economy and magic
 

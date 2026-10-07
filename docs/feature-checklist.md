@@ -81,7 +81,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Parrying | ❌ | |
 | Weapon special moves | ❌ | |
 | NPC combat AI | 🟡 | `monster.lua` on every creature that is evil or chaotic in UOX3 (about 200 templates): they notice a player or a townsman, walk to it, fight it and stand guard when they lose it, in melee also the casters, and the town guards go for them. Animals stroll and fight back when hit, scared ones run. Hurt, they run (under 20% of their hit points, never the undead or the elementals). Archers shoot from their bow's range. No spells |
-| Guards in guarded regions | 🟡 | A player that says "guards" brings a guard beside each criminal near it: it appears, says its line and leaves. The guards standing in the towns notice a criminal by themselves and go to it (`guard.lua`). A criminal NPC is killed with one blow and leaves its corpse; a criminal player is only stood on, since players do not die yet. The guards called in Ilshenar and Malas are archers: they shoot from the range of their bow |
+| Guards in guarded regions | 🟡 | A player that says "guards" brings a guard beside each criminal near it: it appears, says its line and leaves. The guards standing in the towns notice a criminal by themselves and go to it (`guard.lua`). A criminal NPC is killed with one blow and leaves its corpse; a criminal player is only stood on: the guards do not punish players yet. The guards called in Ilshenar and Malas are archers: they shoot from the range of their bow |
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
 | Aggressor lists and attack timeouts | ❌ | |
@@ -224,7 +224,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Dungeon and jail light | ✅ | |
 | Weather by region | ✅ | Rain, snow, storms with thunder, dry indoors; no weather damage |
 | Seasons | ✅ | By map and region, optional rotation with the game days; `.season` |
-| Regions | 🟡 | Found for every player; they set the weather, the music, the season and the dungeon light, and a player reads the place it enters or leaves and whether guards protect it; no guards or housing rules |
+| Regions | 🟡 | Found for every player; they set the weather, the music, the season and the dungeon light, and a player reads the place it enters or leaves and whether guards protect it, and the guards of the towns act on it; no housing rules |
 | Region music | ✅ | The region's track, else the map's; `.music` |
 | Region rules: safe, no PvP, no housing, instant logout | ❌ | |
 | Town politics (mayors, taxes) | ❌ | |

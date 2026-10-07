@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"7dc63e0273a364cdae0a4c374b099065d1e98af7e7b1e66c7c2838ccdeca0644","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"6c7739e7e09dd9cda41d6dc089752f0200fbc7d70c2b90373f9f4605e4a9ed1b","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -18,8 +18,9 @@ Questo è un ordine, non un calendario: non ci sono date. Una fase è completata
 Le fondamenta sono pronte: rete, login, persistenza, dati del mondo, settori, regioni, spawn,
 decorazione, gump, scripting Lua. Un giocatore può effettuare il login, camminare in un mondo popolato, aprire porte, usare la
 banca, prendere un teletrasporto o un moongate, aprire un forziere del tesoro in un dungeon e una cassa in un negozio.
-Gli NPC aggirano gli ostacoli. Ciò che manca è il gioco: nulla può ancora essere combattuto,
-appreso, acquistato o costruito.
+Gli NPC aggirano gli ostacoli. Giocatori e NPC combattono a pugni, con spade o archi, muoiono e tornano come fantasmi, allenano le abilità e
+sono difesi dalle guardie delle città. Ciò che manca è il resto del gioco: nulla può ancora essere
+acquistato, lanciato come incantesimo, fabbricato o costruito.
 
 Ogni passaggio sotto ha il proprio stato: ✅ completato, 🟡 parzialmente completato, ❌ non iniziato.
 
@@ -102,8 +103,8 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 
 | Passaggio | Stato | Cosa | Perché viene qui |
 | --- | --- | --- | --- |
-| 2.1 | 🟡 | **Modalità guerra, timer dei colpi, corpo a corpo e tiro con l'arco**: probabilità di colpire, danno, armatura, parata, durabilità. Completato: un [combattimento](combat.md) a pugni o con un'arma, timer dei colpi, colpo tramite abilità, danno e armatura di un NPC o di ciò che un giocatore indossa. Restano: parata, tiro con l'arco, durabilità | Il ciclo fondamentale del gioco |
-| 2.2 | ❌ | **Elenchi degli aggressori** | Notorietà, guardie e diritti sul bottino si basano su di essi |
+| 2.1 | 🟡 | **Modalità guerra, timer dei colpi, corpo a corpo e tiro con l'arco**: probabilità di colpire, danno, armatura, parata, durabilità. Completato: un [combattimento](combat.md) a pugni o con un'arma, timer dei colpi, colpo tramite abilità, danno e armatura di un NPC o di ciò che un giocatore indossa. e il tiro con l'arco con un arco o una balestra, per un giocatore e per un NPC. Restano: parata, durabilità | Il ciclo fondamentale del gioco |
+| 2.2 | ❌ | **Elenchi degli aggressori**. Oggi solo il [rapporto di omicidio](death.md#murder-counts) ricorda chi ha attaccato un innocente, per `aggressor_seconds`; nessun timeout degli attacchi e nessun diritto sul bottino | Notorietà, guardie e diritti sul bottino si basano su di essi |
 | 2.3 | 🟡 | **Morte, cadavere, fantasma, resurrezione**; NPC guaritori e santuari. Completato: un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill` e lascia il proprio [cadavere](death.md) con ciò che trasportava; un giocatore resta come [fantasma](death.md#death-of-a-player) e torna in vita a un ankh o da un guaritore, con `.resurrect` o `mobile.resurrect`. Restano: ossa, taglie e le postazioni dei guaritori malvagi | Dà un risultato al combattimento |
 | 2.4 | ❌ | **Bende e guarigione** | Necessarie appena esiste il danno |
 | 2.5 | ❌ | **Eventi di combattimento per Lua**: attacco, colpo riuscito, colpo mancato, danno, morte, resurrezione | Permette ai contenuti di modificare le regole |
@@ -116,8 +117,8 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | 3.1 | 🟡 | **Ricerca del percorso** e movimento che controlla oggetti e mobile. Completato: ricerca A*, `npc.walk_to` e oggetti che bloccano; i mobile non bloccano ancora | L'IA non può inseguire senza questo | |
 | 3.2 | 🟡 | **IA degli NPC**: corpo a corpo, arciere, mago, animale, fuga; memoria degli NPC di chi ha attaccato. Fatto: gli arcieri (un NPC con un arco spara, e così un giocatore), le creature che scappano quando sono ferite. Restano: i maghi. Oggi uno script Lua a ogni tick, movimento casuale, `monster.lua`, l'IA corpo a corpo, sui 200 circa template malvagi e caotici, che attaccano giocatori e cittadini e che le guardie uccidono, e gli animali (`animal.lua`, `scared_animal.lua`) sul modulo condiviso `common/creature.lua` | I 29.000 NPC generati diventano contenuti | Tag NPC UOX3 oggi scartati (valori di `NPCAI`, `SPATTACK`), ModernUO `npc-speeds.json` |
 | 3.3 | 🟡 | **Bottino sui cadaveri**, smembramento, incremento di fama e karma. Il bottino viene generato nello zaino allo spawn e si trova nel cadavere di un NPC morto; nessuno smembramento, fama o karma | Ricompensa del combattimento | UOX3 `carve.dfn` (102 tabelle) |
-| 3.4 | 🟡 | **Notorietà**: flag criminale e assassino, colori dei nomi, conteggi degli omicidi. Oggi il colore del nome dal template mobile, assegnato a ogni NPC alla creazione | Dà regole al PvP | |
-| 3.5 | ❌ | **Regole delle regioni e guardie**: città sorvegliate, no recall, no gate, no case | Rende sicure le città | ModernUO `regions.json` (regioni tipizzate), UOX3 `regions.dfn` (179 insiemi di regole) |
+| 3.4 | 🟡 | **Notorietà**: flag criminale e assassino, colori dei nomi, conteggi degli omicidi. Completato: il flag criminale con il suo timer, i [conteggi degli omicidi](death.md#murder-counts) con il gump di rapporto della vittima, il nome rosso da cinque omicidi, come in ModernUO. Restano: gli altri crimini, le taglie; il colore del nome di un NPC è quello del suo template mobile | Dà regole al PvP | |
+| 3.5 | 🟡 | **Regole delle regioni e guardie**: città sorvegliate, no recall, no gate, no case. Completato: regioni sorvegliate, le guardie che arrestano un criminale o un mostro, chiamate dicendo "guards" o presenti in città, e guardie arciere a Ilshenar e Malas. Restano: le guardie non puniscono un giocatore e mancano le regole per recall, gate e case | Rende sicure le città | ModernUO `regions.json` (regioni tipizzate), UOX3 `regions.dfn` (179 insiemi di regole) |
 
 ## Fase 4: economia e magia
 
