@@ -31,6 +31,8 @@ public sealed class BloodService : IBloodService
     private readonly IMobileTemplateService _templates;
     private readonly IItemHandlingService _handling;
     private readonly IItemService _items;
+    private readonly IItemSerialPool _serials;
+    private readonly IMapService? _maps;
     private readonly IWorldViewService _view;
     private readonly TimeProvider _time;
     private readonly Random _random;
@@ -40,15 +42,19 @@ public sealed class BloodService : IBloodService
         IMobileTemplateService templates,
         IItemHandlingService handling,
         IItemService items,
+        IItemSerialPool serials,
         IWorldViewService view,
         TimeProvider time,
-        Random? random = null
+        Random? random = null,
+        IMapService? maps = null
     )
     {
         _config = config;
         _templates = templates;
         _handling = handling;
         _items = items;
+        _serials = serials;
+        _maps = maps;
         _view = view;
         _time = time;
         _random = random ?? Random.Shared;
@@ -56,7 +62,8 @@ public sealed class BloodService : IBloodService
 
     public void Splash(MobileEntity target)
     {
-        if (!_config.BloodEnabled || HueOf(target) is not { } hue)
+        // Blood is for show: it gives way when the serial pool runs short, which loot and stack splits need.
+        if (!_config.BloodEnabled || _serials.Available <= ItemSerialPool.RefillBelow || HueOf(target) is not { } hue)
         {
             return;
         }
@@ -72,8 +79,17 @@ public sealed class BloodService : IBloodService
 
         for (var i = 0; i < around; i++)
         {
-            var spot = new Point3D(target.Location.X + _random.Next(3) - 1, target.Location.Y + _random.Next(3) - 1, target.Location.Z);
-            Piece(target, spot, hue);
+            var spot = new Point3D(
+                target.Location.X + _random.Next(3) - 1,
+                target.Location.Y + _random.Next(3) - 1,
+                target.Location.Z
+            );
+
+            // A piece off the map would lie in no sector and never go away.
+            if (_maps is null || _maps.Contains(target.Map, spot.X, spot.Y))
+            {
+                Piece(target, spot, hue);
+            }
         }
     }
 

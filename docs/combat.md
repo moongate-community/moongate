@@ -66,7 +66,8 @@ so 2.5 seconds at 100 stamina. A swing:
   of the creature. They are ground items of the `blood_splash_*` templates and go after `blood_seconds` (5), as
   ModernUO's and Source-X's; the ground items are checked every 5 seconds, so a piece can last that much longer. A
   creature whose template says `blood_hue = -1` does not bleed: the undead and the golems. A player bleeds red. Fists,
-  swords and arrows bleed alike; there is no blood from a spell, yet.
+  swords and arrows bleed alike; there is no blood from a spell, yet. Blood is for show: it gives way when the pool of
+  reserved item serials runs short, so the loot and the split stacks keep theirs, and a piece never lies off the map.
 
 The status window of a player shows the damage of its fists, `1` to `8` with the same bonuses of tactics, strength and
 anatomy (the least is never under 1); the status of an NPC shows none.

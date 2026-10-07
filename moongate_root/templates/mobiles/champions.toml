@@ -57,6 +57,7 @@ death = 1109
 
 [[mobile]]
 id = "bonedaemon"
+blood_hue = -1
 script_id = "monster"
 name = "a bone daemon"
 body = 308
@@ -160,6 +161,7 @@ death = 361
 
 [[mobile]]
 id = "darknightcreeper"
+blood_hue = -1
 script_id = "monster"
 name = "a darknight creeper"
 name_list = "darknight_creeper"
@@ -497,6 +499,7 @@ death = 1258
 
 [[mobile]]
 id = "shadowknight"
+blood_hue = -1
 script_id = "monster"
 name = "a shadowknight"
 name_list = "shadow_knight"

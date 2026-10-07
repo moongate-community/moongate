@@ -453,6 +453,7 @@ death = 172
 
 [[mobile]]
 id = "skeletalmount"
+blood_hue = -1
 script_id = "monster"
 base_id = "horse"
 name = "a skeletal steed"

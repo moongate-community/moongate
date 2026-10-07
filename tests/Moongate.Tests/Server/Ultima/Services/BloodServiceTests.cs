@@ -9,6 +9,7 @@ using Moongate.Tests.Support.Timing;
 using Moongate.Tests.TestSupport.Randomness;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Maps;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
@@ -27,6 +28,7 @@ public sealed class BloodServiceTests : IAsyncLifetime
     private readonly ManualTimeProvider _time = new();
     private readonly CombatConfig _config = new();
     private readonly FakeTileDataService _tiles = new();
+    private readonly FakeMapService _maps = new(64, 64);
     private ItemTemplateService _itemTemplates = null!;
     private MobileTemplateService _mobileTemplates = null!;
     private BroadcastFixture _fixture = null!;
@@ -52,10 +54,10 @@ public sealed class BloodServiceTests : IAsyncLifetime
         );
         _orc = new MobileEntity
         {
-            Id = new Serial(900), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(7, 8, 5)
+            Id = new Serial(900), Name = "an orc", TemplateId = "orc", Map = MapType.Felucca, Location = new Point3D(7, 8, 5)
         };
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 30; i++)
         {
             _serials.Serials.Enqueue(new Serial(0x40000100 + (uint)i));
         }
@@ -73,9 +75,11 @@ public sealed class BloodServiceTests : IAsyncLifetime
                 _serials
             ),
             _items,
+            _serials,
             _view,
             _time,
-            _random
+            _random,
+            _maps
         );
     }
 
@@ -88,7 +92,7 @@ public sealed class BloodServiceTests : IAsyncLifetime
         _blood.Splash(_orc);
 
         var piece = Assert.Single(Pieces());
-        Assert.Equal(("blood_splash_0x1645", (MapType?)MapType.Trammel, (Point3D?)new Point3D(7, 8, 5)), (piece.TemplateId, piece.Map, piece.GroundLocation));
+        Assert.Equal(("blood_splash_0x1645", (MapType?)MapType.Felucca, (Point3D?)new Point3D(7, 8, 5)), (piece.TemplateId, piece.Map, piece.GroundLocation));
         Assert.Contains($"Appeared {piece.Id.Value}", _view.Calls);
     }
 
@@ -127,7 +131,7 @@ public sealed class BloodServiceTests : IAsyncLifetime
     [Fact]
     public void Splash_AMobileWithoutBlood_AMobileWhenItIsOff_LeavesNothing()
     {
-        var skeleton = new MobileEntity { Id = new Serial(902), TemplateId = "skeleton", Map = MapType.Trammel, Location = new Point3D(3, 3, 0) };
+        var skeleton = new MobileEntity { Id = new Serial(902), TemplateId = "skeleton", Map = MapType.Felucca, Location = new Point3D(3, 3, 0) };
 
         _blood.Splash(skeleton);
         _config.BloodEnabled = false;
@@ -140,11 +144,37 @@ public sealed class BloodServiceTests : IAsyncLifetime
     public void Splash_APlayerOrAnUnknownTemplate_BleedsRed()
     {
         _config.BloodPieces = 0;
-        var player = new MobileEntity { Id = new Serial(903), Map = MapType.Trammel, Location = new Point3D(3, 3, 0) };
+        var player = new MobileEntity { Id = new Serial(903), Map = MapType.Felucca, Location = new Point3D(3, 3, 0) };
 
         _blood.Splash(player);
 
         Assert.Equal(0, Assert.Single(Pieces()).Hue.Value);
+    }
+
+    [Fact]
+    public void Splash_WhenTheSerialPoolRunsShort_LeavesTheSerialsToTheLoot()
+    {
+        while (_serials.Serials.Count > ItemSerialPool.RefillBelow)
+        {
+            _serials.Serials.Dequeue();
+        }
+
+        _blood.Splash(_orc);
+
+        Assert.Empty(Pieces());
+    }
+
+    [Fact]
+    public void Splash_APieceOffTheMap_IsNotLeft()
+    {
+        _config.BloodPieces = 1;
+        var edge = new MobileEntity { Id = new Serial(904), Map = MapType.Felucca, Location = new Point3D(0, 0, 0) };
+
+        // The first piece, how many around (1 + 0), then the offsets -1 and -1 of the one that would lie off the map.
+        _random.Integers(0, 0, 0, 0, 0);
+        _blood.Splash(edge);
+
+        Assert.Single(Pieces());
     }
 
     public async Task DisposeAsync()
@@ -161,7 +191,7 @@ public sealed class BloodServiceTests : IAsyncLifetime
     {
         var pieces = new List<ItemEntity>();
 
-        for (var i = 0; i < 10; i++)
+        for (var i = 0; i < 30; i++)
         {
             if (_items.TryGet(new Serial(0x40000100 + (uint)i), out var item))
             {

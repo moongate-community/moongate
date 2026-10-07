@@ -235,6 +235,7 @@ death = 366
 
 [[mobile]]
 id = "skeletaldragon"
+blood_hue = -1
 script_id = "monster"
 flee_at = -1
 name = "a skeletal dragon"
