@@ -330,6 +330,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
 
         Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
         Assert.Equal(2L, corpse.GetProp<long>("corpse.killer"));
+        Assert.Equal(_aria.Name, corpse.GetProp<string>("corpse.killer_name"));
     }
 
     [Fact]

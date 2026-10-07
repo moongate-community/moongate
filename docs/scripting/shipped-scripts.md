@@ -177,11 +177,13 @@ client's own texts as system messages (ModernUO shows them over the one examined
 - **`evaluating_intelligence.lua`:** the same for the mind: from 0 to 120, "He", "She" or "It" (`mobile.is_female`)
   and, from 76 points, the mana left; off by up to 20 less one for every 5 points.
 - **`forensic_evaluation.lua`:** a corpse within 10 tiles, from 0 to 100: a human corpse tells whom it was killed by
-  (`corpse.killer`, "no one" when it was not by someone). A mobile, from 40 to 100, "You notice nothing unusual.", since
+  (`corpse.killer` and `corpse.killer_name`, "no one" when it was not by someone); that of an animal or a monster reads
+  "You notice nothing unusual.". A mobile, from 40 to 100, "You notice nothing unusual.", since
   there is no thieves' guild. Who disturbed the corpse and who studied it before are not kept yet.
 - **`detecting_hidden.lua`:** a place within 12 tiles, or oneself: every hidden player or NPC within a tenth of the
-  skill in tiles of it (half when the check fails) is shown if the detector's skill plus a roll of -10 to 10 is not
-  under its Hiding plus its own; it reads "You have been revealed!". Staff are never found. Traps, houses and factions
+  skill in tiles of it (half when the check fails, and none under 10 points) is shown if the detector's skill plus a roll
+  of -10 to 10 is not under its Hiding plus its own; it reads "You have been revealed!". Staff are found by staff only; the
+  skill waits 10 seconds. Traps, houses and factions
   are not there yet.
 
 ## bandage.lua

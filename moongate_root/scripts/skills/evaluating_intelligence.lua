@@ -22,6 +22,7 @@ evaluating_intelligence = {}
 local WHAT = 500906          -- What do you wish to evaluate?
 local YOURSELF = 500910      -- Hmm, that person looks really silly.
 local VENDOR = 500909        -- That person could probably calculate the cost of what you buy from them.
+local NOT_LIVING = 500908    -- It looks smarter than a rock, but dumber than a piece of wood.
 
 -- 1038169 + intelligence + body is "He/She/It looks [...]", intelligence from 0 to 10 and body 0 for a man, 11 for a
 -- woman and 22 for the rest; 1038166 + body / 11 is "You cannot judge his/her/its mental abilities"; 1038202 + mana
@@ -71,6 +72,8 @@ function evaluating_intelligence.on_use(user)
         local stats = mobile.stats(who)
 
         if stats == nil then
+            mobile.message_cliloc(user, NOT_LIVING)
+
             return
         end
 

@@ -312,6 +312,52 @@ public sealed class LoreSkillsScriptIntegrationTests : IAsyncLifetime
         Assert.Equal([Where, NothingHidden], Told(_aria));
     }
 
+    [Fact]
+    public void DetectingHidden_WithTooLittleSkillToReachATile_LooksAtNone_NotEvenThePickedOne()
+    {
+        // 9 points: no tile; a hider on the very place picked stays hidden.
+        Skills((SkillType.DetectingHidden, 90));
+        _bruno.Hidden = true;
+        _targets.Result = TargetResult.ForLocation(_aria.Map, _bruno.Location);
+
+        Use(SkillType.DetectingHidden);
+
+        Assert.True(_bruno.Hidden);
+        Assert.Equal([Where, NothingHidden], Told(_aria));
+    }
+
+    [Fact]
+    public void Forensics_OnTheCorpseOfAKillerThatIsGone_StillNamesIt_AndOnANonHumanCorpse_FindsNothingUnusual()
+    {
+        Skills((SkillType.ForensicEvaluation, 1000));
+        var corpse = Corpse(0x40000200, killer: 0x40000777);
+        corpse.SetProp("corpse.killer_name", "Lord Blackthorn");
+        _targets.Result = TargetResult.ForObject(corpse.Id);
+        Use(SkillType.ForensicEvaluation);
+
+        _time.Advance(TimeSpan.FromSeconds(5));
+        var beast = Corpse(0x40000201, killer: null);
+        beast.SetProp("corpse.owner", null);
+        beast.SetProp("corpse.body", 0x11);
+        _targets.Result = TargetResult.ForObject(beast.Id);
+        Use(SkillType.ForensicEvaluation);
+
+        Assert.Empty(_errors);
+        Assert.Equal([ShowMe, KilledBy, ShowMe, 501003], Told(_aria));
+        Assert.Equal("Lord Blackthorn", _speech.ToldClilocs.Single(told => told.Cliloc == KilledBy).Arguments);
+    }
+
+    [Fact]
+    public void EvaluatingIntelligence_OnAnItem_SaysItIsSmarterThanARock()
+    {
+        _targets.Result = TargetResult.ForObject(new Serial(0x40000999));
+
+        Use(SkillType.EvaluatingIntelligence);
+
+        Assert.Empty(_errors);
+        Assert.Equal([What, 500908], Told(_aria));
+    }
+
     public async Task DisposeAsync()
     {
         _engine.Dispose();

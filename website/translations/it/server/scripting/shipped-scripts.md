@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"21039ebc0290ce33e44afd534690057e3c3305368abaf0c8120821f4fbfd40f6","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"50616bb6623ff0dffc99415aa6402644b4f694e5c08bde5e9df18198886c585b","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -178,11 +178,13 @@ di `data/skills.toml`.
 - **`evaluating_intelligence.lua`:** lo stesso per la mente: da 0 a 120, "He", "She" o "It" (`mobile.is_female`) e, da
   76 punti, il mana rimasto; sbagliato fino a 20 meno uno ogni 5 punti.
 - **`forensic_evaluation.lua`:** un cadavere entro 10 caselle, da 0 a 100: un cadavere umano dice da chi è stato ucciso
-  (`corpse.killer`, "no one" se non da qualcuno). Un mobile, da 40 a 100, "You notice nothing unusual.", perché non c'è
+  (`corpse.killer` e `corpse.killer_name`, "no one" se non da qualcuno); quello di un animale o di un mostro legge
+  "You notice nothing unusual.". Un mobile, da 40 a 100, "You notice nothing unusual.", perché non c'è
   una gilda dei ladri. Chi ha disturbato il cadavere e chi lo ha studiato prima non viene ancora registrato.
 - **`detecting_hidden.lua`:** un luogo entro 12 caselle, o se stessi: ogni giocatore o PNG nascosto entro un decimo
-  dell'abilità in caselle (la metà se il controllo fallisce) viene mostrato se l'abilità del cercatore più un tiro da -10
-  a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff non viene mai trovato.
+  dell'abilità in caselle (la metà se il controllo fallisce, e nessuna sotto 10 punti) viene mostrato se l'abilità del
+  cercatore più un tiro da -10 a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff
+  viene trovato solo da altro staff; l'abilità aspetta 10 secondi.
   Trappole, case e fazioni non ci sono ancora.
 
 ## bandage.lua

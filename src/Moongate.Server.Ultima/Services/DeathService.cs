@@ -575,6 +575,7 @@ public sealed class DeathService : IDeathService
         if (killer is not null)
         {
             corpse.SetProp(CorpseProps.Killer, (long)killer.Id.Value);
+            corpse.SetProp(CorpseProps.KillerName, killer.Name);
         }
 
         corpse.PlaceOnGround(mobile.Map, mobile.Location);

@@ -8,8 +8,9 @@
 --   fails). Each hidden player or NPC there is found when the detector's skill
 --   plus a roll of -10 to 10 is not under the hider's Hiding plus its own roll;
 --   a found one is shown and told "You have been revealed!". Nothing found reads
---   "You can see nothing hidden there." Staff are never found by lesser ones. It
---   waits the 30 seconds of data/skills.toml.
+--   "You can see nothing hidden there." Staff are found by staff only. A skill
+--   under 10 points, or under 20 with a failed check, searches no tile. It waits
+--   the 10 seconds of data/skills.toml.
 --
 --   Not there yet: traps, houses and the factions.
 --
@@ -63,11 +64,13 @@ function detecting_hidden.on_use(user)
         end
 
         local found = false
+        local staff = world.is_staff(user)
 
-        for _, who in ipairs(world.mobiles_in_range(here.map, place.x, place.y, range)) do
+        -- A skill too low to reach a tile looks at none, not even the one it picked.
+        for _, who in ipairs(range > 0 and world.mobiles_in_range(here.map, place.x, place.y, range) or {}) do
             local flags = mobile.flags(who)
 
-            if who ~= user and flags ~= nil and flags.hidden and not world.is_staff(who) then
+            if who ~= user and flags ~= nil and flags.hidden and (staff or not world.is_staff(who)) then
                 local hider = (mobile.skills(who).hiding or 0) + math.random(-ROLL, ROLL)
                 local detector = points + math.random(-ROLL, ROLL)
 

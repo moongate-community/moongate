@@ -5,7 +5,8 @@
 --   The skill script of Forensic Evaluation, as ModernUO's, as far as the game goes:
 --   the player is revealed if hidden, picks a corpse or a mobile within 10 tiles.
 --   On a corpse, the skill check from 0 to 100 that passes tells whom a human
---   corpse was killed by ("no one" when it was not by someone). On a mobile, the
+--   corpse was killed by ("no one" when it was not by someone), an animal's or a
+--   monster's "You notice nothing unusual.". On a mobile, the
 --   check from 40 to 100 that passes says there is nothing unusual: there is no
 --   thieves' guild, so no thief to be found. A failed check reads "You cannot
 --   determine anything useful.". It waits the delay of data/skills.toml.
@@ -30,7 +31,7 @@ local CORPSE_GRAPHIC = 0x2006
 
 -- The bodies of the human races, so that a human corpse tells who killed it.
 local HUMAN_BODIES = {
-    [400] = true, [401] = true, [605] = true, [606] = true, [666] = true, [667] = true, [694] = true, [695] = true
+    [400] = true, [401] = true, [605] = true, [606] = true, [666] = true, [667] = true
 }
 
 local function within_sight(user, serial)
@@ -41,6 +42,7 @@ local function within_sight(user, serial)
         and math.max(math.abs(at.x - here.x), math.abs(at.y - here.y)) <= SIGHT
 end
 
+-- The name the corpse kept of its killer, which is still there when the killer is gone.
 local function killer_of(corpse)
     local killer = item.get_prop(corpse, "corpse.killer")
 
@@ -48,7 +50,7 @@ local function killer_of(corpse)
         return "no one"
     end
 
-    return mobile.name(killer) or "someone"
+    return item.get_prop(corpse, "corpse.killer_name") or mobile.name(killer) or "someone"
 end
 
 function forensic_evaluation.on_use(user)
@@ -88,6 +90,8 @@ function forensic_evaluation.on_use(user)
 
         if HUMAN_BODIES[body] or item.get_prop(what, "corpse.owner") ~= nil then
             mobile.message_cliloc(user, KILLED_BY, killer_of(what))
+        else
+            mobile.message_cliloc(user, NOTHING_UNUSUAL)
         end
     end)
 end
