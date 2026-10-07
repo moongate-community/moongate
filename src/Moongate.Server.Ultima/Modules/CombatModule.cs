@@ -1,7 +1,12 @@
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Entities.World;
+using Lua;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Extensions;
+using Moongate.Core.Utils;
+using Moongate.Server.Ultima.Types.Items;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Modules;
 
@@ -68,6 +73,66 @@ public sealed class CombatModule
     public int? Range(long mobile)
     {
         return TryGet(mobile, out var who) ? _combat.RangeOf(who) : null;
+    }
+
+    /// <summary>
+    ///     Gets what a mobile fights with; <c>combat.weapon(user).skill</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "What the mobile fights with, as a table { skill, ranged, range, projectile, ammo }: skill is the name of the skill the weapon trains (wrestling for fists), ranged is true for a bow or crossbow, range how far its blows reach, and for a ranged weapon projectile is the graphic that flies and ammo is arrow or bolt. nil for a mobile not in the world."
+    )]
+    public LuaTable? Weapon(long mobile)
+    {
+        if (!TryGet(mobile, out var who))
+        {
+            return null;
+        }
+
+        var weapon = _combat.HeldWeaponOf(who);
+        var table = new LuaTable();
+        table["skill"] = EnumNameUtils.Format(weapon?.Skill ?? SkillType.Wrestling);
+        table["ranged"] = weapon?.Type is { IsRanged: true };
+        table["range"] = _combat.RangeOf(who);
+
+        if (weapon?.Type is { IsRanged: true } type)
+        {
+            table["projectile"] = type.Projectile;
+            table["ammo"] = type == WeaponType.Crossbow ? "bolt" : "arrow";
+        }
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Plays the swing of what a mobile holds towards a place; <c>combat.swing(user, x, y)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Turns the mobile towards x, y and plays the swing of what it holds, seen by the players in range, with no fight, hit or cost: what practising on a dummy does. False for a mobile not in the world."
+    )]
+    public bool Swing(long mobile, int x, int y)
+    {
+        if (!TryGet(mobile, out var who))
+        {
+            return false;
+        }
+
+        _combat.PlaySwing(who, x, y);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Takes one arrow or bolt out of a shooter's backpack; <c>combat.spend_ammo(user)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Takes one arrow or bolt out of the backpack of a mobile that holds a bow or crossbow, as a shot does, and shows the stack smaller. False, and nothing taken, when it holds none or has no ammunition."
+    )]
+    public bool SpendAmmo(long mobile)
+    {
+        return TryGet(mobile, out var who) && _combat.SpendAmmo(who);
     }
 
     private bool TryGet(long serial, out MobileEntity mobile)

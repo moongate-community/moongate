@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Combat;
@@ -550,6 +551,46 @@ public sealed class CombatServiceTests : IAsyncLifetime
         _gear.Ranged = Bow;
 
         Assert.Equal((10, 10), (_combat.RangeOf(_orc), _combat.RangeOf(_aria)));
+    }
+
+    [Fact]
+    public void HeldWeaponOf_IsTheBowFirst_ThenTheMeleeWeaponOfAPlayer_AndNothingForFists()
+    {
+        Assert.Null(_combat.HeldWeaponOf(_aria));
+
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35);
+        Assert.Equal(SkillType.Swordsmanship, _combat.HeldWeaponOf(_aria)!.Skill);
+
+        _gear.Ranged = Bow;
+        Assert.Equal(WeaponType.Bow, _combat.HeldWeaponOf(_aria)!.Type);
+    }
+
+    [Fact]
+    public void PlaySwing_TurnsTheMobileTowardsThePlace_AndAnimatesTheSwingOfItsWeapon()
+    {
+        _aria.Location = new Point3D(10, 10, 0);
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35);
+
+        // West of where it stands: a bare-handed or armed swing is the action of its weapon.
+        _combat.PlaySwing(_aria, 8, 10);
+
+        Assert.Equal(DirectionType.West, _aria.Direction);
+        Assert.Contains("FlagsChanged 2", _view.Calls);
+        Assert.Contains(_view.Calls, call => call.StartsWith("Animated 2 "));
+    }
+
+    [Fact]
+    public void SpendAmmo_TakesOneForAMobileWithABow_AndNothingForOneWithout()
+    {
+        Assert.False(_combat.SpendAmmo(_aria));
+        Assert.Empty(_ammo.Spent);
+
+        _gear.Ranged = Bow;
+        Assert.True(_combat.SpendAmmo(_aria));
+        Assert.Equal([_aria], _ammo.Spent);
+
+        _ammo.Has = false;
+        Assert.False(_combat.SpendAmmo(_aria));
     }
 
     [Fact]

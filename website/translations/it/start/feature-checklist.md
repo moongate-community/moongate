@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"91996d34666ff50cda4043c036f1cf42299182dcdc4411834860c05926a7ca7d","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"cf57f373a67fb8afeb2d04a65a4ea6c22225c78ad2a0ba13f15af7d8a5d93d58","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 83 completati, 🟡 50 parzialmente completati, ❌ 136 non ancora realizzati.
+**269 sistemi:** ✅ 83 completati, 🟡 51 parzialmente completati, ❌ 135 non ancora realizzati.
 
 **Copertura: 31%** dei sistemi completati, **40%** contando un sistema parzialmente completato come metà.
 
@@ -129,7 +129,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Regioni delle risorse (minerali, legna, pesci per area, rigenerazione) | ❌ | |
 | Lavorazione delle risorse: fusione, telai, filatoi, pelli | ❌ | |
 | Classi e limiti delle abilità (totale abilità, totale statistiche) | 🟡 | Il totale delle abilità si ferma a `ultima.skills.total_cap` (700.0) e il totale delle statistiche a `ultima.skills.stat_cap` (225), entrambi riducendo ciò che è impostato in diminuzione; nessuna classe |
-| Oggetti di allenamento: manichini, bersagli per borseggio, bersagli per tiro con l'arco | ❌ | |
+| Oggetti di allenamento: manichini, bersagli per borseggio, bersagli per tiro con l'arco | 🟡 | I [manichini](scripting/shipped-scripts.md#training_dummylua) rispondono al colpo e fanno salire l'abilità dell'arma fino a 25, e i [bersagli per il tiro con l'arco](scripting/shipped-scripts.md#archery_buttelua) prendono le frecce e danno il punteggio; niente bersagli per borseggio, niente freccette |
 
 ## NPC
 

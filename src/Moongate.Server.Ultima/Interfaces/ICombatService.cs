@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Entities.World;
 
@@ -36,4 +37,22 @@ public interface ICombatService : IMoongateStartupService
     ///     melee range of the configuration.
     /// </summary>
     int RangeOf(MobileEntity mobile);
+
+    /// <summary>
+    ///     Gets the weapon the mobile holds: the bow or crossbow of a player or an NPC, else the melee weapon of a player;
+    ///     null for fists and for an NPC with no bow.
+    /// </summary>
+    WeaponInfo? HeldWeaponOf(MobileEntity mobile);
+
+    /// <summary>
+    ///     Turns the mobile towards <paramref name="x" />, <paramref name="y" /> and plays the swing of what it holds,
+    ///     seen by the players in range, as a swing of a fight does, without a fight, a hit or a cost.
+    /// </summary>
+    void PlaySwing(MobileEntity mobile, int x, int y);
+
+    /// <summary>
+    ///     Takes one arrow or bolt out of the backpack of a mobile that holds a bow or a crossbow, as a shot does. False,
+    ///     and nothing taken, when it holds none or has no ammunition.
+    /// </summary>
+    bool SpendAmmo(MobileEntity shooter);
 }

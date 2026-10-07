@@ -105,6 +105,12 @@ public interface IItemService : IPersistenceDeletionSource
     bool CanReach(MobileEntity mobile, ItemEntity item);
 
     /// <summary>
+    ///     Gets whether the mobile can reach the ground item from <paramref name="range" /> tiles away, as
+    ///     <see cref="CanReach(MobileEntity, ItemEntity)" /> does from 2: same map, in line of sight.
+    /// </summary>
+    bool CanReach(MobileEntity mobile, ItemEntity item, int range);
+
+    /// <summary>
     ///     Lays the item on the ground at <paramref name="x" />, <paramref name="y" /> within 2 tiles of the mobile, on the
     ///     highest surface up to 16 above its feet and in line of sight; false leaves the item where it was. The caller
     ///     shows it to the players in range.

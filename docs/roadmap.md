@@ -50,7 +50,7 @@ its own: it comes with the priority that gives it its rule.
 
 | Content | Waits for | Priority |
 | --- | --- | --- |
-| Training dummies, archery buttes and dart boards (107 placed) | Skill gain (1.2) | 2 |
+| Dart boards (the training dummies and archery buttes work now) | Throwing skill (5.4) | 8 |
 | Locks and lockpicking of the treasure chests and of the town containers | Skill check (1.2) | 2 |
 | Traps of the chests, and the 490 traps placed in the dungeons | Damage (2.1) | 4 |
 | Wands in the treasure chests | Spells (4.3) | 7 |

@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 
@@ -44,6 +45,37 @@ public sealed class RecordingCombatService : ICombatService
     public int RangeOf(MobileEntity mobile)
     {
         return Range;
+    }
+
+    /// <summary>
+    ///     What <see cref="HeldWeaponOf" /> answers: null, fists, unless a test sets it.
+    /// </summary>
+    public WeaponInfo? Weapon { get; set; }
+
+    public List<(MobileEntity Mobile, int X, int Y)> Swings { get; } = [];
+
+    /// <summary>
+    ///     What <see cref="SpendAmmo" /> answers.
+    /// </summary>
+    public bool HasAmmo { get; set; } = true;
+
+    public List<MobileEntity> Spent { get; } = [];
+
+    public WeaponInfo? HeldWeaponOf(MobileEntity mobile)
+    {
+        return Weapon;
+    }
+
+    public void PlaySwing(MobileEntity mobile, int x, int y)
+    {
+        Swings.Add((mobile, x, y));
+    }
+
+    public bool SpendAmmo(MobileEntity shooter)
+    {
+        Spent.Add(shooter);
+
+        return HasAmmo;
     }
 
     public MobileEntity? TargetOf(MobileEntity mobile)

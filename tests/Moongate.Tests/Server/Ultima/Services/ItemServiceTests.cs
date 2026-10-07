@@ -635,6 +635,22 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void CanReach_WithARange_ReachesFartherThanTwoTiles_ButNotFartherThanTheRange()
+    {
+        var items = TestItems.Create(sight: _sight);
+        var butte = Item(0x40000051);
+        items.Add([butte]);
+        items.PlaceOnGround(butte, MapType.Trammel, new Point3D(1501, 1628, 10));
+
+        Assert.False(items.CanReach(_aria, butte));
+        Assert.True(items.CanReach(_aria, butte, 6));
+
+        items.PlaceOnGround(butte, MapType.Trammel, new Point3D(1503, 1628, 10));
+
+        Assert.False(items.CanReach(_aria, butte, 6));
+    }
+
+    [Fact]
     public void CanReach_AGroundItemSomeoneHolds_IsFalse()
     {
         var items = TestItems.Create(sight: _sight);

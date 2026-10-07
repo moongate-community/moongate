@@ -96,6 +96,7 @@ public sealed class ItemTemplateTests
                             sell_price = 30
                             decays = false
                             decay_minutes = 90
+                            use_range = 6
                             loot_type = "blessed"
 
                             [tags]
@@ -115,6 +116,7 @@ public sealed class ItemTemplateTests
             Assert.Equal((60, 30), (loaded.BuyPrice, loaded.SellPrice));
             Assert.False(loaded.Decays);
             Assert.Equal(90, loaded.DecayMinutes);
+            Assert.Equal(6, loaded.UseRange);
             Assert.Equal(LootType.Blessed, loaded.LootType);
             Assert.Equal("3", loaded.Tags!["quest_step"]);
         }
@@ -133,7 +135,7 @@ public sealed class ItemTemplateTests
 
         foreach (var key in new[]
                  {
-                     "weight", "amount", "stackable", "layer", "buy_price", "sell_price", "decays", "decay_minutes",
+                     "weight", "amount", "stackable", "layer", "buy_price", "sell_price", "decays", "decay_minutes", "use_range",
                      "loot_type", "tags", "movable"
                  })
         {
@@ -148,6 +150,8 @@ public sealed class ItemTemplateTests
      InlineData("buy_price", "-1"),
      InlineData("sell_price", "-5"),
      InlineData("decay_minutes", "0"),
+     InlineData("use_range", "0"),
+     InlineData("use_range", "25"),
      InlineData("script_id", "\"items.potion\""),
      InlineData("script_id", "\"Potion\""),
      InlineData("script_id", "\"potion\\n\"")]

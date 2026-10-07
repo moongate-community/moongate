@@ -321,11 +321,16 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public bool CanReach(MobileEntity mobile, ItemEntity item)
     {
+        return CanReach(mobile, item, GroundReach);
+    }
+
+    public bool CanReach(MobileEntity mobile, ItemEntity item, int range)
+    {
         // Lying in the grid: a ground item someone holds keeps its location but is out of reach.
         return item.Map is { } map &&
                map == mobile.Map &&
                item.GroundLocation is { } spot &&
-               IsNear(mobile.Location, spot.X, spot.Y) &&
+               IsNear(mobile.Location, spot.X, spot.Y, range) &&
                _sectors.ContainsItem(item) &&
                Sees(mobile, spot);
     }
@@ -520,9 +525,9 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         }
     }
 
-    private static bool IsNear(Point3D from, int x, int y)
+    private static bool IsNear(Point3D from, int x, int y, int range = GroundReach)
     {
-        return Math.Abs(from.X - x) <= GroundReach && Math.Abs(from.Y - y) <= GroundReach;
+        return Math.Abs(from.X - x) <= range && Math.Abs(from.Y - y) <= range;
     }
 
     private void AbsorbFor(ItemEntity item, Serial? owner)

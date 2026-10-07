@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
@@ -204,6 +205,32 @@ public sealed class CombatService : ICombatService
     public int RangeOf(MobileEntity mobile)
     {
         return RangedOf(mobile)?.Range ?? _config.MaxRange;
+    }
+
+    public WeaponInfo? HeldWeaponOf(MobileEntity mobile)
+    {
+        return RangedOf(mobile) ?? WeaponOf(mobile);
+    }
+
+    public void PlaySwing(MobileEntity mobile, int x, int y)
+    {
+        var direction = mobile.Location.GetDirectionTo(new Point3D(x, y, mobile.Location.Z)) & (DirectionType)0x07;
+
+        if (!mobile.Frozen && (mobile.Location.X != x || mobile.Location.Y != y) && direction != mobile.Direction)
+        {
+            mobile.Direction = direction;
+
+            // Its own client too: the movement packet carries the facing, and the one that walks next steps from it.
+            _view.MobileFlagsChanged(mobile);
+        }
+
+        var (action, frames) = SwingAnimation(mobile, HeldWeaponOf(mobile));
+        _view.MobileAnimated(mobile, action, frames, 1);
+    }
+
+    public bool SpendAmmo(MobileEntity shooter)
+    {
+        return RangedOf(shooter) is { } weapon && _ammo is not null && _ammo.Spend(shooter, weapon);
     }
 
     public MobileEntity? TargetOf(MobileEntity mobile)
