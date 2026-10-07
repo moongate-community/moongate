@@ -125,6 +125,17 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Gets whether the mobile is female; <c>mobile.is_female(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText: "Whether the mobile, a player or an NPC, is female; false for a male one and for an unknown serial."
+    )]
+    public bool IsFemale(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) && mobile.Gender == GenderType.Female;
+    }
+
+    /// <summary>
     ///     Gets whether the serial is a player's character in the world; <c>mobile.is_player(who)</c>.
     /// </summary>
     [ScriptFunction(

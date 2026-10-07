@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"590115c09728c9498c030b9867b83922a5e4a069adad8320790f6bc11c334b72","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"50616bb6623ff0dffc99415aa6402644b4f694e5c08bde5e9df18198886c585b","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -164,6 +164,28 @@ brocca o una bottiglia 5, una caraffa 10, un bicchiere o una tazza 1; i sorsi ri
 Una volta vuota, una brocca, un bicchiere o una tazza passa alla grafica vuota, viene rinominata e resta; una bottiglia o caraffa
 scompare. Un giocatore dissetato legge "Sei semplicemente troppo pieno per bere ancora!" e non beve nulla.
 Riempimento, versamento e ubriachezza non sono ancora presenti.
+
+## Le abilità di osservazione
+
+Quattro abilità della finestra delle abilità, in `scripts/skills/`, come in ModernUO. Il giocatore sceglie un bersaglio e
+legge i testi del client come messaggi di sistema (ModernUO li mostra sopra chi è esaminato). Ognuna aspetta il `delay`
+di `data/skills.toml`.
+
+- **`anatomy.lua`:** un mobile entro 8 caselle; il controllo da 0 a 100 che riesce dice quanto sembra forte e agile e,
+  da 65 punti, quanta resistenza gli resta. Ciò che legge è sbagliato fino a 25 meno uno ogni 4 punti dell'abilità. Un
+  controllo fallito legge che non riesce a farsi un'idea delle sue caratteristiche fisiche; se stessi, un PNG invulnerabile
+  e un oggetto hanno testi propri.
+- **`evaluating_intelligence.lua`:** lo stesso per la mente: da 0 a 120, "He", "She" o "It" (`mobile.is_female`) e, da
+  76 punti, il mana rimasto; sbagliato fino a 20 meno uno ogni 5 punti.
+- **`forensic_evaluation.lua`:** un cadavere entro 10 caselle, da 0 a 100: un cadavere umano dice da chi è stato ucciso
+  (`corpse.killer` e `corpse.killer_name`, "no one" se non da qualcuno); quello di un animale o di un mostro legge
+  "You notice nothing unusual.". Un mobile, da 40 a 100, "You notice nothing unusual.", perché non c'è
+  una gilda dei ladri. Chi ha disturbato il cadavere e chi lo ha studiato prima non viene ancora registrato.
+- **`detecting_hidden.lua`:** un luogo entro 12 caselle, o se stessi: ogni giocatore o PNG nascosto entro un decimo
+  dell'abilità in caselle (la metà se il controllo fallisce, e nessuna sotto 10 punti) viene mostrato se l'abilità del
+  cercatore più un tiro da -10 a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff
+  viene trovato solo da altro staff; l'abilità aspetta 10 secondi.
+  Trappole, case e fazioni non ci sono ancora.
 
 ## bandage.lua
 

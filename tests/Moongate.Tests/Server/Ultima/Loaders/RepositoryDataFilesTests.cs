@@ -101,7 +101,7 @@ public sealed class RepositoryDataFilesTests
                 [SkillType.Begging] = 30,
                 [SkillType.Peacemaking] = 1,
                 [SkillType.Cartography] = 1,
-                [SkillType.DetectingHidden] = 30,
+                [SkillType.DetectingHidden] = 10,
                 [SkillType.Discordance] = 1,
                 [SkillType.EvaluatingIntelligence] = 1,
                 [SkillType.ForensicEvaluation] = 1,

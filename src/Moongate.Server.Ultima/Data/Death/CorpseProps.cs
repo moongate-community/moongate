@@ -54,6 +54,11 @@ public static class CorpseProps
     public const string Killer = "corpse.killer";
 
     /// <summary>
+    ///     The name of who killed it, kept as it was, so that Forensic Evaluation still names a killer that is gone.
+    /// </summary>
+    public const string KillerName = "corpse.killer_name";
+
+    /// <summary>
     ///     The serial of the player the corpse is of; an NPC's corpse has none.
     /// </summary>
     public const string Owner = "corpse.owner";

@@ -129,5 +129,6 @@ adds the three columns.
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)
 - [`bandage.lua`](scripting/shipped-scripts.md#bandagelua): Healing, with the bandages
+- [The lore skills](scripting/shipped-scripts.md#the-lore-skills): Anatomy, Evaluating Intelligence, Forensic Evaluation and Detecting Hidden
 - [Server configuration](server-configuration.md): `[ultima.skills]`
 - [Roadmap](roadmap.md): 1.2

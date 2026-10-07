@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"54f0320f96984e90353f834931d0db15645a71cfbc912ef0e61022c6421abc13","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"6e08ae657f02538bd1849bdfd04742b7347195f4321ec9a2560d68416d2d6387","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -139,7 +139,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 | 5.1 | ❌ | **Raccolta**: estrazione mineraria, taglio della legna, pesca, con regioni di risorse che si esauriscono e rigenerano | Alimenta la creazione | |
 | 5.2 | ❌ | **Motore di creazione**, poi ogni mestiere come dati; riparazione | Lo stile di gioco pacifico e l'economia dei giocatori | UOX3 `create/` (618 ricette) |
 | 5.3 | ❌ | **Addomesticamento, comandi degli animali, stalle, cavalcature** | Richiede IA (3.2), notorietà (3.4) e venditori (4.1) | Tag UOX3 `TOTAME`, `CONTROLSLOTS`, `FOOD` |
-| 5.4 | ❌ | **Le abilità attive rimanenti**: nascondersi, furtività, furto, frugare, abilità di conoscenza, abilità del bardo, inseguimento | Ciascuna è piccola quando esiste 1.2 | |
+| 5.4 | 🟡 | **Le abilità attive rimanenti**: nascondersi, furtività, furto, frugare, abilità di conoscenza, abilità del bardo, inseguimento. Completato: nascondersi, individuazione dei nascosti, anatomia, valutazione dell'intelligenza e medicina legale ([le abilità di osservazione](scripting/shipped-scripts.md#the-lore-skills)). Restano: furtività, furto, frugare, inseguimento, conoscenza delle armi, identificazione degli oggetti e dei sapori, le abilità del bardo | Ciascuna è piccola quando esiste 1.2 | |
 
 ## Fase 6: giocare insieme
 
