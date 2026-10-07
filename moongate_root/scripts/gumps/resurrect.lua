@@ -11,7 +11,9 @@
 --
 -- Functions:
 --   accept(player, response, args)  the Continue button; args.ankh is the ankh,
---                                    args.healer the healer that offered
+--                                    args.healer the healer that offered,
+--                                    args.bandager the player whose bandages raised it:
+--                                    no reach to keep, as ModernUO's
 --   cancel(player, response, args)   the Cancel button: nothing happens
 -- ==============================================================================
 
@@ -41,6 +43,11 @@ local sound = 0x214
 
 -- Whether the ankh or the healer that asked is still within reach of the ghost.
 local function in_reach(player, args)
+    -- A player's bandages ask the ghost once, where the healer stood: no reach to keep.
+    if args.bandager then
+        return true
+    end
+
     if args.healer then
         local at = mobile.location(player)
         local healer_at = npc.location(args.healer)

@@ -481,6 +481,17 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedBandage_UsesTheBandageScript_AndTheScriptIsThere()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+
+        var bandage = Assert.Single(items, item => item.Id == "0x0e21_clean_bandage");
+
+        Assert.Equal("bandage", bandage.ScriptId);
+        Assert.True(File.Exists(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "bandage.lua")));
+    }
+
+    [Fact]
     public async Task ShippedHealers_UseTheHealerScript()
     {
         var directories = Directories();

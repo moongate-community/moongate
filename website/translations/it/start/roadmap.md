@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6c7739e7e09dd9cda41d6dc089752f0200fbc7d70c2b90373f9f4605e4a9ed1b","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"10072022044e274bea3e40284e3372bb8cc394437d0483007fd0dafa95488d9f","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -106,7 +106,7 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | 2.1 | 🟡 | **Modalità guerra, timer dei colpi, corpo a corpo e tiro con l'arco**: probabilità di colpire, danno, armatura, parata, durabilità. Completato: un [combattimento](combat.md) a pugni o con un'arma, timer dei colpi, colpo tramite abilità, danno e armatura di un NPC o di ciò che un giocatore indossa. e il tiro con l'arco con un arco o una balestra, per un giocatore e per un NPC. Restano: parata, durabilità | Il ciclo fondamentale del gioco |
 | 2.2 | ❌ | **Elenchi degli aggressori**. Oggi solo il [rapporto di omicidio](death.md#murder-counts) ricorda chi ha attaccato un innocente, per `aggressor_seconds`; nessun timeout degli attacchi e nessun diritto sul bottino | Notorietà, guardie e diritti sul bottino si basano su di essi |
 | 2.3 | 🟡 | **Morte, cadavere, fantasma, resurrezione**; NPC guaritori e santuari. Completato: un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill` e lascia il proprio [cadavere](death.md) con ciò che trasportava; un giocatore resta come [fantasma](death.md#death-of-a-player) e torna in vita a un ankh o da un guaritore, con `.resurrect` o `mobile.resurrect`. Restano: ossa, taglie e le postazioni dei guaritori malvagi | Dà un risultato al combattimento |
-| 2.4 | ❌ | **Bende e guarigione** | Necessarie appena esiste il danno |
+| 2.4 | 🟡 | **Bende e guarigione**. Completato: la [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura e resuscita un fantasma, con le formule della Healing classica di ModernUO. Restano: veleno e sanguinamento da curare, e gli animali da resuscitare | Necessarie appena esiste il danno |
 | 2.5 | ❌ | **Eventi di combattimento per Lua**: attacco, colpo riuscito, colpo mancato, danno, morte, resurrezione | Permette ai contenuti di modificare le regole |
 | 2.6 | ❌ | **Impostazioni del combattimento**: velocità dei colpi, regole del danno, decadimento dei cadaveri | Un proprietario di shard si aspetta di regolarle |
 

@@ -11,6 +11,7 @@ decays = true
 [[item]]
 id = "0x0e21_clean_bandage"
 base_id = "base_item"
+script_id = "bandage"
 item_id = 3617
 name = "clean bandage"
 rarity = "common"

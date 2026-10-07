@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b58797b4025896beca8a1ab6bfe4a25644ad09df8e2a91492229eb964a55e51c","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"91996d34666ff50cda4043c036f1cf42299182dcdc4411834860c05926a7ca7d","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 83 completati, 🟡 49 parzialmente completati, ❌ 137 non ancora realizzati.
+**269 sistemi:** ✅ 83 completati, 🟡 50 parzialmente completati, ❌ 136 non ancora realizzati.
 
 **Copertura: 31%** dei sistemi completati, **40%** contando un sistema parzialmente completato come metà.
 
@@ -118,7 +118,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | ❌ | |
 | Riparare e migliorare gli oggetti | ❌ | |
 | Addomesticamento e conoscenza degli animali | ❌ | |
-| Guarigione e veterinaria | ❌ | |
+| Guarigione e veterinaria | 🟡 | La [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura (Healing e Anatomy, Veterinary e Animal Lore) e resuscita un fantasma; niente veleno, niente sanguinamento, niente animali |
 | Scassinamento, rimozione delle trappole | ❌ | Le porte si chiudono e si aprono con la loro chiave |
 | Frugare e rubare | ❌ | |
 | Inseguimento, individuazione dei nascosti, medicina legale, parlare con gli spiriti | ❌ | |
