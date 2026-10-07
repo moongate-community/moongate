@@ -451,6 +451,36 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedBlood_IsSevenDecayingGroundItems_AndTheUndeadAndTheGolemsDoNotBleed()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            ).LoadDataAsync())
+            .Entities.ToDictionary(t => t.Id);
+
+        // Each piece the blood service puts down is a template that is not movable and decays, and has a graphic.
+        Assert.All(
+            BloodService.Templates,
+            id =>
+            {
+                var piece = Assert.Single(items, item => item.Id == id);
+                Assert.Equal((false, true, true), (piece.Movable ?? true, piece.Decays ?? false, piece.ItemId.Value != 0));
+            }
+        );
+
+        Assert.Equal(-1, mobiles["skeleton"].BloodHue);
+        Assert.Equal(-1, mobiles["zombie"].BloodHue);
+        Assert.Equal(-1, mobiles["golem"].BloodHue);
+        Assert.Null(mobiles["orc"].BloodHue);
+    }
+
+    [Fact]
     public async Task ShippedHealers_UseTheHealerScript()
     {
         var directories = Directories();

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"dbc6893e26807869bbc7bdc766207289b64740fc3f9968d13d1a85e31f12aec2","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"b58797b4025896beca8a1ab6bfe4a25644ad09df8e2a91492229eb964a55e51c","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**268 sistemi:** ✅ 82 completati, 🟡 49 parzialmente completati, ❌ 137 non ancora realizzati.
+**269 sistemi:** ✅ 83 completati, 🟡 49 parzialmente completati, ❌ 137 non ancora realizzati.
 
 **Copertura: 31%** dei sistemi completati, **40%** contando un sistema parzialmente completato come metà.
 
@@ -87,6 +87,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Abilità speciali dei mostri | ❌ | |
 | Danno elementale e resistenze | ❌ | |
 | Elenchi degli aggressori e timeout degli attacchi | ❌ | |
+| Sangue sul colpo | ✅ | Un colpo che fa danno lascia sangue a terra che sparisce dopo qualche secondo; il `blood_hue` di una creatura lo colora o, a `-1`, lo impedisce (`ultima.combat.blood_*`) |
 | Numeri del danno sopra le teste | ✅ | Il danno di un colpo appare sopra chi lo subisce (`ultima.combat.display_damage_numbers`) |
 
 ## Magia

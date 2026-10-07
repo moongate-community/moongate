@@ -1,5 +1,6 @@
 [[mobile]]
 id = "ladyofthesnow_se"
+blood_hue = -1
 base_id = "base_lady_of_the_snow"
 strength = "1d31+274"
 dexterity = "1d21+104"
@@ -25,6 +26,7 @@ anatomy = 0
 
 [[mobile]]
 id = "revenant_lion_se"
+blood_hue = -1
 base_id = "base_revenant_lion"
 strength = "1d46+274"
 dexterity = "1d21+154"

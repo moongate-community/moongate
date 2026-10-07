@@ -112,7 +112,7 @@ public sealed class MobileTemplateTests
         foreach (var key in new[]
                  {
                      "base_id", "name", "body", "gender", "race", "strength", "hits", "skills", "resistances", "sounds",
-                     "notoriety", "karma", "loot", "gold", "visibility", "tags", "hue", "script_id", "flee_at"
+                     "notoriety", "karma", "loot", "gold", "visibility", "tags", "hue", "script_id", "flee_at", "blood_hue"
                  })
         {
             Assert.DoesNotContain($"{key} =", toml);
@@ -125,6 +125,8 @@ public sealed class MobileTemplateTests
      InlineData("hits = -1\n", "hits"),
      InlineData("flee_at = -2\n", "flee_at"),
      InlineData("flee_at = 101\n", "flee_at"),
+     InlineData("blood_hue = -2\n", "blood_hue"),
+     InlineData("blood_hue = 65536\n", "blood_hue"),
      InlineData("gold = -5\n", "gold"),
      InlineData("[skills]\nnot_a_skill = 50\n", "skills"),
      InlineData("[skills]\ntactics = \"1d30+100\"\n", "skills"),

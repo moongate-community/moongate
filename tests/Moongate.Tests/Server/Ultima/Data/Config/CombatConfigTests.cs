@@ -10,9 +10,10 @@ public sealed class CombatConfigTests
         var config = new CombatConfig();
 
         Assert.Equal(
-            (1.0, 0, 1.0, 1, 60, true, 1.0),
+            (1.0, 0, 1.0, 1, 60, true, 1.0, true, 2, 5),
             (config.GlobalAttackSpeed, config.AttackStamina, config.NpcDamageRate, config.MaxRange, config.CombatantSeconds,
-                config.DisplayDamageNumbers, config.ArcheryStandStillSeconds)
+                config.DisplayDamageNumbers, config.ArcheryStandStillSeconds, config.BloodEnabled, config.BloodPieces,
+                config.BloodSeconds)
         );
         config.Validate();
     }
@@ -28,6 +29,26 @@ public sealed class CombatConfigTests
         var error = Assert.Throws<InvalidOperationException>(config.Validate);
 
         Assert.Contains("ultima.combat.archery_stand_still_seconds", error.Message);
+    }
+
+    [Theory]
+    [InlineData(-1, 5, "ultima.combat.blood_pieces")]
+    [InlineData(9, 5, "ultima.combat.blood_pieces")]
+    [InlineData(2, 0, "ultima.combat.blood_seconds")]
+    [InlineData(2, 61, "ultima.combat.blood_seconds")]
+    public void Validate_ABadBloodSetting_Throws(int pieces, int seconds, string key)
+    {
+        var config = new CombatConfig { BloodPieces = pieces, BloodSeconds = seconds };
+
+        var error = Assert.Throws<InvalidOperationException>(config.Validate);
+
+        Assert.Contains(key, error.Message);
+    }
+
+    [Fact]
+    public void Validate_NoBloodAround_IsAccepted()
+    {
+        new CombatConfig { BloodPieces = 0 }.Validate();
     }
 
     [Fact]

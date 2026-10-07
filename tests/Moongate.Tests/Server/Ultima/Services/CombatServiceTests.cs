@@ -46,6 +46,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private readonly RecordingMurderService _murders = new();
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingAmmoService _ammo = new();
+    private readonly RecordingBloodService _blood = new();
     private readonly StubCombatGearService _gear = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubSkillService _skills = new();
@@ -112,7 +113,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _random,
             _murders,
             _effects,
-            _ammo
+            _ammo,
+            _blood
         );
     }
 
@@ -247,6 +249,27 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Tick();
 
         Assert.Contains($"Struck {_aria.Id.Value} {_orc.Id.Value}", _murders.Calls);
+    }
+
+    [Fact]
+    public void AHit_ThatDoesDamage_LeavesBloodWhereTheTargetStands()
+    {
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Equal([_orc], _blood.Splashed);
+    }
+
+    [Fact]
+    public void AHit_OnAnInvulnerable_LeavesNoBlood()
+    {
+        _orc.Notoriety = NotorietyType.Invulnerable;
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Empty(_blood.Splashed);
     }
 
     [Theory]

@@ -17,6 +17,7 @@ public class MobileTemplate
     private const int MaximumSkillValue = 120; // A skill goes up to 120 with bonuses.
     private const int MaximumResistance = 100;
     private const int MaximumPercent = 100;
+    private const int MaximumHue = ushort.MaxValue;
 
     /// <summary>
     ///     The stable id a spawn, a loot table or the <c>addnpc</c> command names this template by.
@@ -192,6 +193,13 @@ public class MobileTemplate
     public int? FleeAt { get; set; }
 
     /// <summary>
+    ///     The hue of the blood the creature leaves when it is hit, 0 for the red of blood; -1 for one that does not
+    ///     bleed, such as the undead and the golems, as ServUO's <c>BloodHue</c> and Source-X's <c>BLOODCOLOR</c>. Unset:
+    ///     red.
+    /// </summary>
+    public int? BloodHue { get; set; }
+
+    /// <summary>
     ///     The lowest account type that sees the mobile. Unset: everyone.
     /// </summary>
     public AccountType? Visibility { get; set; }
@@ -265,6 +273,11 @@ public class MobileTemplate
         if (Tags is not null && Tags.Keys.Any(string.IsNullOrWhiteSpace))
         {
             throw Invalid("tags", "must not have an empty key");
+        }
+
+        if (BloodHue is < -1 or > MaximumHue)
+        {
+            throw Invalid("blood_hue", "must be from -1 to 65535");
         }
 
         if (FleeAt is < -1 or > MaximumPercent)

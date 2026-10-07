@@ -1,10 +1,12 @@
 [[mobile]]
 id = "base_undead"
+blood_hue = -1
 script_id = "monster"
 notoriety = "attackable"
 
 [[mobile]]
 id = "zombie"
+blood_hue = -1
 flee_at = -1
 name = "a zombie"
 body = 3
@@ -34,6 +36,7 @@ death = 475
 
 [[mobile]]
 id = "ancientlich"
+blood_hue = -1
 script_id = "monster"
 flee_at = -1
 name_list = "ancient_lich"
@@ -67,6 +70,7 @@ death = 416
 
 [[mobile]]
 id = "lichlord"
+blood_hue = -1
 script_id = "monster"
 flee_at = -1
 name = "a lich lord"
@@ -99,6 +103,7 @@ death = 416
 
 [[mobile]]
 id = "lich"
+blood_hue = -1
 flee_at = -1
 name = "a lich"
 body = 24
@@ -130,6 +135,7 @@ death = 416
 
 [[mobile]]
 id = "spectre"
+blood_hue = -1
 name = "a spectre"
 body = 26
 skin_hue = 26231
@@ -161,6 +167,7 @@ death = 386
 
 [[mobile]]
 id = "wraith"
+blood_hue = -1
 name = "a wraith"
 body = 26
 skin_hue = 26231
@@ -189,6 +196,7 @@ death = 386
 
 [[mobile]]
 id = "shade"
+blood_hue = -1
 base_id = "spectre"
 name = "a shade"
 body = 26
@@ -201,6 +209,7 @@ death = 386
 
 [[mobile]]
 id = "skeleton"
+blood_hue = -1
 flee_at = -1
 name = "a skeleton"
 body = 50
@@ -230,6 +239,7 @@ death = 455
 
 [[mobile]]
 id = "boneaxeman"
+blood_hue = -1
 base_id = "skeleton"
 name = "a bone axeman"
 body = 56
@@ -242,6 +252,7 @@ death = 455
 
 [[mobile]]
 id = "boneknight"
+blood_hue = -1
 script_id = "monster"
 flee_at = -1
 name = "a bone knight"
@@ -276,6 +287,7 @@ items = ["0x1440"]
 
 [[mobile]]
 id = "skeletalknight"
+blood_hue = -1
 base_id = "boneknight"
 name = "a skeletal knight"
 damage = "1d15+5"
@@ -288,6 +300,7 @@ wrestling = "1d11+84"
 
 [[mobile]]
 id = "bonemage"
+blood_hue = -1
 script_id = "monster"
 flee_at = -1
 name = "a bone magi"
@@ -318,6 +331,7 @@ death = 455
 
 [[mobile]]
 id = "skeletalmage"
+blood_hue = -1
 base_id = "bonemage"
 name = "a skeletal mage"
 skin_hue = 0
@@ -332,6 +346,7 @@ wrestling = "1d11+44"
 
 [[mobile]]
 id = "mummy"
+blood_hue = -1
 script_id = "monster"
 flee_at = -1
 name = "a mummy"
@@ -361,6 +376,7 @@ death = 475
 
 [[mobile]]
 id = "rottingcorpse"
+blood_hue = -1
 script_id = "monster"
 flee_at = -1
 name = "a rotting corpse"
@@ -390,6 +406,7 @@ death = 475
 
 [[mobile]]
 id = "ghoul"
+blood_hue = -1
 base_id = "wraith"
 name = "a ghoul"
 body = 153
@@ -404,6 +421,7 @@ death = 1158
 
 [[mobile]]
 id = "spectralarmor"
+blood_hue = -1
 flee_at = -1
 base_id = "base_undead"
 name = "a spectral armor"
@@ -442,6 +460,7 @@ hue = 2101
 
 [[mobile]]
 id = "base_lady_of_the_snow"
+blood_hue = -1
 base_id = "base_undead"
 name = "lady of the snow"
 body = 252
@@ -454,10 +473,12 @@ death = 880
 
 [[mobile]]
 id = "ladyofthesnow"
+blood_hue = -1
 base_id = "ladyofthesnow_se"
 
 [[mobile]]
 id = "base_revenant_lion"
+blood_hue = -1
 base_id = "base_undead"
 name = "revenant lion"
 body = 251
@@ -470,4 +491,5 @@ death = 1301
 
 [[mobile]]
 id = "revenantlion"
+blood_hue = -1
 base_id = "revenant_lion_se"
