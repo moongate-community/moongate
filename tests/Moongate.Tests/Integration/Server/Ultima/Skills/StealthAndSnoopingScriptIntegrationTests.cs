@@ -268,17 +268,52 @@ public sealed class StealthAndSnoopingScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Snooping_WithEnoughSkill_ShowsTheBackpackToThePlayer_AndCostsFourKarma()
+    public void Snooping_WithEnoughSkill_ShowsTheBackpackToThePlayer_AndCostsKarma()
     {
         Skills((SkillType.Snooping, 1000));
         _aria.Karma = 100;
 
         Snoop();
 
+        // Four, and one more for each hundred of good name, as ModernUO takes it; it is told as a little.
         Assert.Empty(_errors);
-        Assert.Equal(96, _aria.Karma);
+        Assert.Equal(95, _aria.Karma);
+        Assert.Equal([1019063], Told(_aria));
         Assert.Contains(_fixture.Sender.Sent, packet => packet is DisplayContainerPacket);
         Assert.Contains(_fixture.Sender.Sent, packet => packet is ContainerContentPacket);
+    }
+
+    [Theory]
+    [InlineData(10000, 9896, 1019066)]
+    [InlineData(0, -4, 1019063)]
+    [InlineData(-500, -500, 1019063)]
+    [InlineData(-15000, -15000, null)]
+    public void Snooping_TheKarmaLost_GrowsWithAGoodName_NothingFromAVeryBadOne_AndNeverGoesUnderTheFloor(
+        int karma, int after, int? told
+    )
+    {
+        Skills((SkillType.Snooping, 1000));
+        _aria.Karma = karma;
+
+        Snoop();
+
+        Assert.Equal(after, _aria.Karma);
+        Assert.Equal(told is { } cliloc ? [cliloc] : [], Told(_aria));
+    }
+
+    [Fact]
+    public void Snooping_ADeadSnooper_DoesNothing()
+    {
+        Skills((SkillType.Snooping, 1000));
+        _aria.Karma = 100;
+        _aria.Body = 0x0192;
+
+        Snoop();
+
+        Assert.Empty(_errors);
+        Assert.Equal(100, _aria.Karma);
+        Assert.Empty(Told(_aria));
+        Assert.DoesNotContain(_fixture.Sender.Sent, packet => packet is DisplayContainerPacket);
     }
 
     [Fact]
@@ -290,7 +325,7 @@ public sealed class StealthAndSnoopingScriptIntegrationTests : IAsyncLifetime
         Snoop();
 
         Assert.Empty(_errors);
-        Assert.Equal([FailedToPeek], Told(_aria));
+        Assert.Equal([1019063, FailedToPeek], Told(_aria));
         Assert.DoesNotContain(_fixture.Sender.Sent, packet => packet is DisplayContainerPacket);
     }
 

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2197bd5e7151ba9f7ad6f44a09e0707f86dea87861e646ff8860cd5023ea1858","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"bb204457857c681eb153f462c3c018bfabb6686b6056a8d13c9dfe70755b79ed","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -230,13 +230,15 @@ Nascondersi o essere mostrati di nuovo azzera i passi.
 
 `scripts/skills/snooping.lua` è lo script di Snooping, come quello di ModernUO. Non si usa dalla finestra delle abilità:
 un doppio clic sullo zaino di un altro mobile non lo apre, il server chiama `on_snoop(user, owner, container)` di questo
-script (`ISkillScriptService.Call`).
+script (`ISkillScriptService.Call`). Lo fa per lo zaino e per un sacco al suo interno, e non per un giocatore morto.
 
 - **Regole:** entro una casella dal proprietario (lo staff no); niente se il proprietario è morto; un game master o un
   amministratore non si può frugare, e nemmeno un giocatore invulnerabile ("You cannot perform negative acts on your
-  target."). Un PNG in una regione sorvegliata di una mappa diversa da Felucca si fruga solo se non è umano, oppure
-  attaccabile, oppure assassino.
-- **Un giocatore che non è staff** perde 4 di karma ed è notato dai giocatori entro 8 caselle ("You notice <nome>
+  target."; Moongate non ha ancora regole sugli atti dannosi per mappa, che questo sostituisce). Un PNG in una regione
+  sorvegliata di una mappa diversa da Felucca si fruga solo se non è umano, oppure attaccabile, oppure assassino: lo dice il
+  commento di ModernUO, anche se il suo codice lascia frugare chiunque un PNG in una città attiva.
+- **Un giocatore che non è staff** perde 4 di karma, come `AwardKarma` di ModernUO prende una perdita (di più da un buon
+  nome, niente sotto -400, mai sotto -15000, e la perdita viene comunicata), ed è notato dai giocatori entro 8 caselle ("You notice <nome>
   attempting to peek into <proprietario>'s belongings."): sempre sotto 100 punti di Snooping, con una probabilità pari ai
   punti su cento di passare inosservato.
 - **Il controllo** va da 0 a 100 punti: un successo apre lo zaino sul client del giocatore (`item.show_contents`); un

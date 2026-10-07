@@ -139,11 +139,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
             return;
         }
 
-        // The backpack of another mobile is not opened but snooped, by the script of the skill.
+        // The backpack of another mobile, and a bag in it, is not opened but snooped, by the script of the skill.
         if (_items.GetOwner(item) is { } owner &&
             owner != session.CharacterId &&
-            item.Layer == LayerType.Backpack &&
-            _mobiles.IsInWorld(owner))
+            _mobiles.IsInWorld(owner) &&
+            _items.GetWornRoot(item) is { Layer: LayerType.Backpack })
         {
             _skillScripts?.Call(
                 SkillType.Snooping,

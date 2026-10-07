@@ -230,12 +230,15 @@ Hiding or being shown again clears the steps.
 
 `scripts/skills/snooping.lua` is the script of Snooping, as ModernUO's. It is not used from the skill window: a double
 click on the backpack of another mobile does not open it, the server calls `on_snoop(user, owner, container)` of this
-script (`ISkillScriptService.Call`).
+script (`ISkillScriptService.Call`). It does so for the backpack and for a bag inside it, and not for a dead player.
 
 - **Rules:** within a tile of the owner (staff need not be); nothing for a dead owner; a game master or administrator
-  cannot be snooped, nor an invulnerable player ("You cannot perform negative acts on your target."). An NPC in a guarded
-  region of another map than Felucca is snooped only when it is not human, or attackable, or a murderer.
-- **A player who is not staff** loses 4 karma and is noticed by the players within 8 tiles ("You notice <name>
+  cannot be snooped, nor an invulnerable player ("You cannot perform negative acts on your target."; Moongate has no
+  rules of harmful acts by map yet, which this stands in for). An NPC in a guarded region of another map than Felucca is
+  snooped only when it is not human, or attackable, or a murderer: ModernUO's comment says so, though its code lets
+  anyone snoop an NPC in an active town.
+- **A player who is not staff** loses 4 karma, as ModernUO's `AwardKarma` takes a loss (more from a good name, nothing
+  under -400, never under -15000, and the loss is told), and is noticed by the players within 8 tiles ("You notice <name>
   attempting to peek into <owner>'s belongings."): always under 100 points of Snooping, with a chance of the points in a
   hundred of passing unnoticed.
 - **The check** runs from 0 to 100 points: a success opens the backpack on the client of the player (`item.show_contents`);
