@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"76c1ab582ef75a9f00c6e441c3bc71a1838abab5d0c841a23555e63cc27edf7d","title":"Skill"} -->
+<!-- translation: {"sourceHash":"2bf0fb52d816cc1cee1022cd5e4bce4d740cec0bf289f0df2c8ebd578f3b4a7b","title":"Skill"} -->
 
 # Skill
 
@@ -131,5 +131,6 @@ aggiunge le tre colonne.
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)
 - [`bandage.lua`](scripting/shipped-scripts.md#bandagelua): Healing, con le bende
+- [Le abilità di osservazione](scripting/shipped-scripts.md#the-lore-skills): Anatomy, Evaluating Intelligence, Forensic Evaluation e Detecting Hidden
 - [Configurazione del server](server-configuration.md): `[ultima.skills]`
 - [Roadmap](roadmap.md): 1.2

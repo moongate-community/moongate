@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 83 done, 🟡 51 partly done, ❌ 135 not built yet.
+**269 systems:** ✅ 83 done, 🟡 53 partly done, ❌ 133 not built yet.
 
-**Coverage: 31%** of the systems done, **40%** counting a partly done system as half.
+**Coverage: 31%** of the systems done, **41%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -119,9 +119,9 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Healing and veterinary | 🟡 | The clean [bandage](scripting/shipped-scripts.md#bandagelua) heals a player or a creature (Healing and Anatomy, Veterinary and Animal Lore) and raises a ghost; no poison, no bleeding, no pets |
 | Lockpicking, remove trap | ❌ | Doors lock and open with their key |
 | Snooping and stealing | ❌ | |
-| Tracking, detect hidden, forensics, spirit speak | ❌ | |
+| Tracking, detect hidden, forensics, spirit speak | 🟡 | [Detect hidden and forensic evaluation](scripting/shipped-scripts.md#the-lore-skills) work (no traps, no thieves' guild); no tracking, no spirit speak |
 | Bard skills: musicianship, peacemaking, provocation, discordance | ❌ | |
-| Lore skills: anatomy, arms lore, item ID, evaluate intelligence, taste ID | ❌ | |
+| Lore skills: anatomy, arms lore, item ID, evaluate intelligence, taste ID | 🟡 | [Anatomy and evaluating intelligence](scripting/shipped-scripts.md#the-lore-skills) read a target's stats; no arms lore (no durability), no item ID, no taste ID |
 | Meditation, begging, herding, camping, poisoning | ❌ | |
 | Carving corpses | ❌ | |
 | Resource regions (ore, wood, fish per area, regrowing) | ❌ | |

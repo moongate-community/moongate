@@ -164,6 +164,26 @@ Once empty, a pitcher, a glass or a mug turns into its empty graphic, is renamed
 is gone. A quenched player reads "You are simply too full to drink any more!" and drinks nothing.
 Refilling, pouring and drunkenness are not there yet.
 
+## The lore skills
+
+Four skills of the skill window, in `scripts/skills/`, as ModernUO's. The player picks a target and reads the
+client's own texts as system messages (ModernUO shows them over the one examined). Each waits the `delay` of
+`data/skills.toml`.
+
+- **`anatomy.lua`:** a mobile within 8 tiles; the check from 0 to 100 that passes reads how strong and how
+  dexterous it looks, and from 65 points how much endurance it has left. What it reads is off by up to 25 less one for
+  every 4 points of the skill. A failed check reads that it cannot get a sense of its physical characteristics; oneself,
+  an invulnerable NPC and an item have their own texts.
+- **`evaluating_intelligence.lua`:** the same for the mind: from 0 to 120, "He", "She" or "It" (`mobile.is_female`)
+  and, from 76 points, the mana left; off by up to 20 less one for every 5 points.
+- **`forensic_evaluation.lua`:** a corpse within 10 tiles, from 0 to 100: a human corpse tells whom it was killed by
+  (`corpse.killer`, "no one" when it was not by someone). A mobile, from 40 to 100, "You notice nothing unusual.", since
+  there is no thieves' guild. Who disturbed the corpse and who studied it before are not kept yet.
+- **`detecting_hidden.lua`:** a place within 12 tiles, or oneself: every hidden player or NPC within a tenth of the
+  skill in tiles of it (half when the check fails) is shown if the detector's skill plus a roll of -10 to 10 is not
+  under its Hiding plus its own; it reads "You have been revealed!". Staff are never found. Traps, houses and factions
+  are not there yet.
+
 ## bandage.lua
 
 `scripts/items/bandage.lua` is the script of the clean bandage (`0x0e21_clean_bandage`, `script_id = "bandage"`),

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"cf57f373a67fb8afeb2d04a65a4ea6c22225c78ad2a0ba13f15af7d8a5d93d58","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"fecbdd81b4269a3be92921e93f5d4305319e35c7d1ff9c63849a476e92bcdf83","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 83 completati, 🟡 51 parzialmente completati, ❌ 135 non ancora realizzati.
+**269 sistemi:** ✅ 83 completati, 🟡 53 parzialmente completati, ❌ 133 non ancora realizzati.
 
-**Copertura: 31%** dei sistemi completati, **40%** contando un sistema parzialmente completato come metà.
+**Copertura: 31%** dei sistemi completati, **41%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -121,9 +121,9 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Guarigione e veterinaria | 🟡 | La [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura (Healing e Anatomy, Veterinary e Animal Lore) e resuscita un fantasma; niente veleno, niente sanguinamento, niente animali |
 | Scassinamento, rimozione delle trappole | ❌ | Le porte si chiudono e si aprono con la loro chiave |
 | Frugare e rubare | ❌ | |
-| Inseguimento, individuazione dei nascosti, medicina legale, parlare con gli spiriti | ❌ | |
+| Inseguimento, individuazione dei nascosti, medicina legale, parlare con gli spiriti | 🟡 | [Individuazione dei nascosti e medicina legale](scripting/shipped-scripts.md#the-lore-skills) funzionano (niente trappole, niente gilda dei ladri); niente inseguimento, niente parlare con gli spiriti |
 | Abilità del bardo: musicalità, pacificazione, provocazione, discordanza | ❌ | |
-| Abilità di conoscenza: anatomia, conoscenza delle armi, identificazione degli oggetti, valutazione dell'intelligenza, identificazione dei sapori | ❌ | |
+| Abilità di conoscenza: anatomia, conoscenza delle armi, identificazione degli oggetti, valutazione dell'intelligenza, identificazione dei sapori | 🟡 | [Anatomia e valutazione dell'intelligenza](scripting/shipped-scripts.md#the-lore-skills) leggono le caratteristiche di un bersaglio; niente conoscenza delle armi (manca la durabilità), niente identificazione degli oggetti, niente identificazione dei sapori |
 | Meditazione, mendicità, pastorizia, campeggio, avvelenamento | ❌ | |
 | Smembrare i cadaveri | ❌ | |
 | Regioni delle risorse (minerali, legna, pesci per area, rigenerazione) | ❌ | |

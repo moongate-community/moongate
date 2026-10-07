@@ -71,6 +71,18 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void IsFemale_IsTrueOnlyForAFemaleMobile_PlayerOrNpc()
+    {
+        _aria.Gender = GenderType.Female;
+
+        var result = Run("return mobile.is_female(2), mobile.is_female(256), mobile.is_female(999)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.False(result[1].Read<bool>());
+        Assert.False(result[2].Read<bool>());
+    }
+
+    [Fact]
     public void NameIsPlayerAndDirection_DescribeTheMobile()
     {
         var result = Run(
