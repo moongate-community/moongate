@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6485eff3eef54a04813b48d87a7bf3d7651111217cb5da715964970d0f9de997","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"f6a344c00d4c0b2d9016e85b77b2852cd6906671dafc159af17cd808039d483a","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -229,9 +229,9 @@ l'uso, come le altre.
 Un forziere nasce chiuso: chiede 57, 72, 84 e 92 punti di Lockpicking per livello, e la prova va da quel valore meno un
 tiro da 1 a 10 a quel valore più un tiro da 1 a 10. Un forziere chiuso non si apre ("It appears to be locked."); un game
 master lo apre ("That is locked, but you open it with your godly powers."); uno scassinato si apre come ogni contenitore.
-Le trappole dei forzieri di ModernUO non ci sono ancora, e nulla impedisce di mettere o togliere oggetti in un forziere
-chiuso già aperto su un client. I forzieri creati prima di questa versione non hanno serratura e restano come erano finché non
-decadono.
+Nessuno tranne un game master lascia cadere un oggetto in un forziere chiuso (`can_insert`). Le trappole dei forzieri di
+ModernUO non ci sono ancora, e ciò che è già dentro un forziere aperto su un client si può ancora sollevare. I forzieri
+creati prima di questa versione non hanno serratura e restano come erano finché non decadono.
 
 ## training_dummy.lua
 

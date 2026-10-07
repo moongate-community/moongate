@@ -48,8 +48,13 @@ local function told(lock, user, cliloc)
     item.message_cliloc(lock, user, cliloc)
 end
 
+-- Whether the lock is at hand: within a tile of the player, or carried by it.
+local function at_hand(lock, user)
+    return item.in_range(lock, user, RANGE) or item.owner(lock) == user
+end
+
 local function pick(serial, user, lock)
-    if not item.in_range(lock, user, RANGE) then
+    if not at_hand(lock, user) then
         return
     end
 
@@ -98,13 +103,7 @@ function lockpick.on_use(serial, user)
 
         local lock = picked.serial
 
-        if item.location(lock) == nil and item.owner(lock) == nil then
-            mobile.message_cliloc(user, CANNOT_UNLOCK)
-
-            return
-        end
-
-        if not item.in_range(lock, user, RANGE) and item.owner(lock) ~= user then
+        if item.template(lock) == nil or not at_hand(lock, user) then
             mobile.message_cliloc(user, CANNOT_UNLOCK)
 
             return

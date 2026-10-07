@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Ultima.Packets.General;
@@ -227,6 +228,28 @@ public sealed class LockpickScriptsIntegrationTests : IAsyncLifetime
         Assert.Equal(ScriptResultKind.Completed, staff.Kind);
         Assert.Empty(staff.Values);
         Assert.Equal([Locked, Godly], Labels());
+    }
+
+    [Fact]
+    public async Task ALockedChest_RefusesWhatAPlayerDropsIn_ButNotWhatAGameMasterDrops()
+    {
+        Create();
+
+        var player = _itemScripts.Allows(_chest, "can_insert", Aria, (long)_pick.Id.Value);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+        var staff = _itemScripts.Allows(_chest, "can_insert", Aria, (long)_pick.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.False(player);
+        Assert.True(staff);
+        Assert.Equal([Locked], Labels());
+    }
+
+    [Fact]
+    public void AChestThatIsNotLocked_TakesWhatIsDroppedIn()
+    {
+        Assert.True(_itemScripts.Allows(_chest, "can_insert", Aria, (long)_pick.Id.Value));
+        Assert.Empty(_errors);
     }
 
     [Fact]

@@ -12,7 +12,8 @@
 --   roll of 1 to 10 (lock.level) to that plus a roll of 1 to 10 (lock.max). A
 --   locked chest does not open: "It appears to be locked.". A game master opens it
 --   with the message "That is locked, but you open it with your godly powers.",
---   and a picked chest opens as any container.
+--   and a picked chest opens as any container. Nobody but a game master drops an
+--   item into a locked chest, as ModernUO.
 --
 --   The traps of ModernUO's chests are not there yet.
 --
@@ -23,6 +24,8 @@
 --   on_create(serial)      a chest is made: it takes its lock
 --   on_use(serial, user)   a player double clicks the chest; it returns true
 --                          when the chest stays shut, nothing when it opens
+--   can_insert(serial, dropper, dropped)   a player drops an item into the
+--                          chest: false while it is locked, but for a game master
 -- ==============================================================================
 
 treasure_chest = {}
@@ -55,6 +58,15 @@ function treasure_chest.on_create(serial)
     item.set_prop(serial, "lock.required", required)
     item.set_prop(serial, "lock.level", required - math.random(LEAST_ROLL, MOST_ROLL))
     item.set_prop(serial, "lock.max", required + math.random(LEAST_ROLL, MOST_ROLL))
+end
+
+-- Called when a player is about to drop an item into the chest.
+function treasure_chest.can_insert(serial, dropper, dropped)
+    if item.get_prop(serial, "locked") and not world.is_staff(dropper) then
+        item.message_cliloc(serial, dropper, LOCKED)
+
+        return false
+    end
 end
 
 -- Called when a player double clicks the chest.
