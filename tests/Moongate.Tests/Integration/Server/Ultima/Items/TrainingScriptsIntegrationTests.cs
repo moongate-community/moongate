@@ -232,6 +232,20 @@ public sealed class TrainingScriptsIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void ADummy_DeletedWhileItSwings_LeavesNoError_WhenItsTimersFire()
+    {
+        Use(_dummy);
+
+        _items.Remove([_dummy.Id]);
+        foreach (var timer in _timers.Timers.ToList())
+        {
+            _timers.Fire(timer.Id);
+        }
+
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
     public void ADummy_StillSwinging_CannotBePracticedOnUntilItStops()
     {
         Use(_dummy);

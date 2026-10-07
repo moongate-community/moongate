@@ -48,11 +48,6 @@ local function rest_graphic(serial)
     return graphic - graphic % 2
 end
 
-local function stop(serial)
-    swinging[serial] = nil
-    item.set_item_id(serial, rest_graphic(serial))
-end
-
 local function begin_swing(serial)
     local rest = rest_graphic(serial)
 
@@ -64,8 +59,10 @@ local function begin_swing(serial)
         item.play_sound(serial, SOUNDS[math.random(#SOUNDS)])
     end)
 
+    -- The dummy may be gone by then: the graphic is the one it had, and a missing item takes nothing.
     timer.after(STOPS_AFTER, function()
-        stop(serial)
+        swinging[serial] = nil
+        item.set_item_id(serial, rest)
     end)
 end
 

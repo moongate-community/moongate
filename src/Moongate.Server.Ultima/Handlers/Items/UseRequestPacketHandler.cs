@@ -189,7 +189,9 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     // the archery butte's six tiles, else the 2 tiles of any ground item.
     private bool CanReachToUse(MobileEntity character, ItemEntity item, ItemEntity root)
     {
-        return _templates is not null && _templates.TryGet(item.TemplateId, out var template) && template.UseRange is { } range
+        // The longer reach is of the item that lies on the ground itself, not of one inside a container there.
+        return item == root && _templates is not null && _templates.TryGet(item.TemplateId, out var template) &&
+               template.UseRange is { } range
             ? _items.CanReach(character, root, range)
             : _items.CanReach(character, root);
     }

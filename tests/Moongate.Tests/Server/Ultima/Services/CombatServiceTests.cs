@@ -575,7 +575,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
         _combat.PlaySwing(_aria, 8, 10);
 
         Assert.Equal(DirectionType.West, _aria.Direction);
-        Assert.Contains("Moved 2 10,10,0", _view.Calls);
+        Assert.Contains("FlagsChanged 2", _view.Calls);
         Assert.Contains(_view.Calls, call => call.StartsWith("Animated 2 "));
     }
 

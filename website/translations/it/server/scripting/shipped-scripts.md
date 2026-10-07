@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"784dd3c3cf7b013a2e7f57b9be43e9271bcd9228f1bd26d201910bc18165c85e","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"590115c09728c9498c030b9867b83922a5e4a069adad8320790f6bc11c334b72","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -192,7 +192,8 @@ resuscitato non viene controllato, come non lo è a un ankh.
 ## training_dummy.lua
 
 `scripts/items/training_dummy.lua` è lo script dei manichini da allenamento (`0x1070` e `0x1071` rivolti a sud, `0x1074`
-e `0x1075` rivolti a est), come il `TrainingDummy` di ModernUO: i template hanno `script_id = "training_dummy"`. Si fa
+e `0x1075` rivolti a est), come il `TrainingDummy` di ModernUO: i template hanno `script_id = "training_dummy"`, e così anche
+`decoration_training_dummy`, che `.decorate` dà ai manichini dei file. Si fa
 doppio clic su un manichino con un'arma da mischia in mano, o a mani nude: il giocatore si gira e colpisce
 (`combat.swing`), il manichino mostra la grafica oscillante da un quarto di secondo, con il suono di un colpo, e dopo
 tre secondi torna a riposo, e l'abilità dell'arma (Wrestling per i pugni) viene provata da -25 a 25 punti, quindi può
@@ -206,8 +207,9 @@ giocatore in sella: le cavalcature non esistono ancora.
 ## archery_butte.lua
 
 `scripts/items/archery_butte.lua` è lo script dei bersagli per il tiro con l'arco (`0x100A` rivolto a est, `0x100B`
-rivolto a sud), come l'`ArcheryButte` di ModernUO: i template hanno `script_id = "archery_butte"` e `use_range = 6`, così
-il giocatore può fare doppio clic da dove tira.
+rivolto a sud), come l'`ArcheryButte` di ModernUO: i template hanno `script_id = "archery_butte"` e `use_range = 6`, come
+`decoration_archery_butte`, che `.decorate` dà ai bersagli dei file, così il giocatore può fare doppio clic da dove tira.
+Un mondo decorato prima di questa versione li ha come semplice decorazione: un nuovo `.decorate` li trasforma in questi.
 
 - **Tiro:** con un arco o una balestra, ci si mette davanti al bersaglio, in linea con esso, a cinque o sei caselle, e
   si fa doppio clic. Una freccia o un dardo viene speso (`combat.spend_ammo`), il giocatore tira (`combat.swing` e la

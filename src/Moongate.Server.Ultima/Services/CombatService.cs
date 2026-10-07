@@ -219,7 +219,9 @@ public sealed class CombatService : ICombatService
         if (!mobile.Frozen && (mobile.Location.X != x || mobile.Location.Y != y) && direction != mobile.Direction)
         {
             mobile.Direction = direction;
-            _view.Moved(mobile, mobile.Location, false);
+
+            // Its own client too: the movement packet carries the facing, and the one that walks next steps from it.
+            _view.MobileFlagsChanged(mobile);
         }
 
         var (action, frames) = SwingAnimation(mobile, HeldWeaponOf(mobile));

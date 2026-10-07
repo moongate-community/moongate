@@ -11,7 +11,10 @@
 #   item_id    fallback graphic (a candle, a metal door)
 #   movable    false: players cannot pick decoration up
 #   decays     false: decoration stays on the ground
-#   script_id  the item script of the doors (scripts/items/door.lua), of the
+#   use_range  6 for the archery butte: it is shot from five or six tiles
+#   script_id  the item script of the training dummies
+#              (scripts/items/training_dummy.lua), of the archery buttes
+#              (scripts/items/archery_butte.lua), of the doors (scripts/items/door.lua), of the
 #              lights (scripts/items/light.lua), of the teleporters
 #              (scripts/items/teleporter.lua), of those that answer a word
 #              (scripts/items/keyword_teleport.lua), of the public
@@ -46,6 +49,27 @@ rarity = "common"
 movable = false
 decays = false
 script_id = "light"
+
+[[item]]
+id = "decoration_training_dummy"
+base_id = "base_item"
+item_id = 0x1070
+name = "training dummy"
+rarity = "common"
+movable = false
+decays = false
+script_id = "training_dummy"
+
+[[item]]
+id = "decoration_archery_butte"
+base_id = "base_item"
+item_id = 0x100A
+name = "archery butte"
+rarity = "common"
+movable = false
+decays = false
+script_id = "archery_butte"
+use_range = 6
 
 [[item]]
 id = "decoration_clock"

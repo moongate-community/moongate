@@ -218,6 +218,11 @@ end
 
 -- Called when a player double clicks the butte.
 function archery_butte.on_use(serial, user)
+    -- A butte that does not lie on the ground has no place to be shot at.
+    if item.location(serial) == nil then
+        return true
+    end
+
     local stuck = (item.get_prop(serial, "butte.arrows") or 0) + (item.get_prop(serial, "butte.bolts") or 0)
 
     if stuck > 0 and item.in_range(serial, user, PICK_UP_RANGE) then

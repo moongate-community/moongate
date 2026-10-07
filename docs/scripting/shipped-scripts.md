@@ -192,7 +192,8 @@ not checked, as it is not at an ankh.
 ## training_dummy.lua
 
 `scripts/items/training_dummy.lua` is the script of the training dummies (`0x1070` and `0x1071` facing south, `0x1074`
-and `0x1075` facing east), as ModernUO's `TrainingDummy`: the templates carry `script_id = "training_dummy"`. Double
+and `0x1075` facing east), as ModernUO's `TrainingDummy`: the templates carry `script_id = "training_dummy"`, and so does
+`decoration_training_dummy`, which `.decorate` gives the dummies of the files. Double
 click a dummy with a melee weapon in hand, or none: the player turns and swings at it (`combat.swing`), the dummy
 shows its swinging graphic from a quarter of a second, with the sound of a hit, and rests again after three seconds,
 and the skill of the weapon (Wrestling for fists) is tried from -25 to 25 points, so it may rise up to 25.
@@ -204,8 +205,9 @@ improve any further by simply practicing with a dummy.". There is no check for a
 ## archery_butte.lua
 
 `scripts/items/archery_butte.lua` is the script of the archery buttes (`0x100A` facing east, `0x100B` facing south), as
-ModernUO's `ArcheryButte`: the templates carry `script_id = "archery_butte"` and `use_range = 6`, so the player may
-double click it from where it shoots.
+ModernUO's `ArcheryButte`: the templates carry `script_id = "archery_butte"` and `use_range = 6`, as does
+`decoration_archery_butte`, which `.decorate` gives the buttes of the files, so the player may double click it from where it
+shoots. A world decorated before this release has them as plain decoration: `.decorate` again turns them into these.
 
 - **Shooting:** with a bow or a crossbow, stand in front of the butte, in line with it, five or six tiles away, and
   double click it. An arrow or a bolt is spent (`combat.spend_ammo`), the player shoots (`combat.swing` and the arrow
