@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6b881bca7259f1df96eea3dc259f512e9f907b417db0c78aefac7639201c5c39","title":"Caricamento dei template TOML"} -->
+<!-- translation: {"sourceHash":"6d8a870a1f38f88643ed65ec93cc3f92c93aaf85a9cd1e9d2b8ae145137ac67f","title":"Caricamento dei template TOML"} -->
 
 # Caricamento dei template TOML
 
@@ -348,6 +348,7 @@ a 120; una costante è un intero senza virgolette.
 | `Equipment` | Voci `[[mobile.equipment]]`: `items` (id di template di oggetto, uno scelto), `hue` e `gender` per equipaggiare un solo genere |
 | `Loot`, `Gold` | Id di template del bottino e dadi dell'oro tirati nello zaino allo spawn; nessun sistema di cadaveri ancora |
 | `Sounds` | `[mobile.sounds]` con `start_attack`, `idle`, `attack`, `hurt`, `death`; uno script di mobile li riproduce per tipo con `npc.play_sound(serial, "idle")` |
+| `BloodHue` | Il colore del sangue che la creatura lascia quando è colpita: 0 per il rosso, `-1` per una che non sanguina, come il `BloodHue` di ServUO e il `BLOODCOLOR` di Source-X; quello di un template base è ereditato. Non impostato: rosso. I non morti e i golem hanno `-1`. Vedi [Combattimento](combat.md#the-damage) |
 | `FleeAt` | La percentuale dei suoi punti vita (da 0 a 100) sotto cui una creatura che combatte scappa dallo scontro, `-1` per una che non scappa mai, come `FLEEAT` di UOX3; quella di un template base viene ereditata. Non impostato: quella dello script, 20 per un mostro e 10 per un animale. Vedi [Script delle creature](scripting/shipped-scripts.md#commoncreaturelua) |
 | `ScriptId` | La tabella Lua globale, definita da `scripts/mobiles/<script_id>.lua`, i cui `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death` e `on_drag_drop` gestiscono l'NPC; un identificatore Lua minuscolo. Vedi [Script dei mobile](scripting/mobile-scripts.md) |
 | `Visibility` | Come in `ItemTemplate` |

@@ -117,6 +117,9 @@ npc_damage_rate = 1.0                 # Divides the damage an NPC does to a play
 max_range = 1                         # Tiles a melee swing reaches.
 combatant_seconds = 60                # Seconds a fighter keeps its target without swinging.
 display_damage_numbers = true         # The damage shows over the one hit.
+blood_enabled = true                  # A hit that does damage leaves blood on the ground.
+blood_pieces = 2                      # Most pieces around the one under the victim, from 0 to 8.
+blood_seconds = 5                     # Seconds a piece lies on the ground, from 1 to 60.
 archery_stand_still_seconds = 1.0     # Seconds a player must have stood still before it shoots; 0 for none.
 
 [ultima.crime]
@@ -277,6 +280,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.combat.max_range`, `combatant_seconds` | 1 (from 1 to 24) and 60 (from 1 to 3600). How many tiles a melee swing reaches, and how long a fighter keeps its target without swinging, as ModernUO's minute. |
 | `ultima.combat.archery_stand_still_seconds` | `1.0` (from 0 to 60). The seconds a player holding a bow or a crossbow must have stood still, since its last step, before it can shoot; a turn does not count. 0 asks for nothing. See [Archers](combat.md#archers) |
 | `ultima.combat.display_damage_numbers` | `true`. The damage of a hit shows over the one hit (packet `0x0B`), to the players in the fight. |
+| `ultima.combat.blood_enabled`, `blood_pieces`, `blood_seconds` | `true`, 2 (from 0 to 8) and 5 (from 1 to 60). A hit that does damage leaves a piece of [blood](combat.md#the-damage) under the one hit and from one to `blood_pieces` around it; each piece goes after `blood_seconds`, which the check of the ground items every 5 seconds can stretch. |
 | `ultima.crime.criminal_seconds` | Default 120 (from 1 to 86400), ModernUO's and UOX3's two minutes. A mobile that did a criminal act is a criminal for this long, its name in grey for those who see it; another act starts the time again, and a murderer stays red. The time is saved with a character, so leaving the world does not clear it; an NPC comes back innocent after a restart. A player reads the client's "You've committed a criminal act!!" when it becomes one. Nothing makes a criminal by itself yet: scripts do with `mobile.set_criminal`, the staff with `set criminal`. |
 | `ultima.murder.*` | The murder counts, as ModernUO's. `short_term_hours` (default 8) and `long_term_hours` (default 40), from 1 to 8760: a short-term murder and a reported kill are each forgotten after that time, one by one, in real time, offline hours included (ModernUO counts online time), while the player is in the world or when it comes back. `report_delay_seconds` (default 4), `recently_reported_minutes` (default 10) and `aggressor_seconds` (default 120), from 1 to 86400: how long after its death a player is asked to report who attacked it, how long before it can report the same killer again, and how long an attack on an innocent keeps its attacker reportable. See [Murder counts](death.md#murder-counts). |
 | `ultima.crime.archer_guard_template` | Default `archerguard`. The mobile template of a guard that is called in **Ilshenar** and **Malas**, as ModernUO's `DefaultGuardType`: a guard with a bow, which shoots what it goes for from the bow's range instead of striking from beside it (see [guard.lua](scripting/shipped-scripts.md#guardlua)). Everywhere else the guard of `guard_template` comes. |

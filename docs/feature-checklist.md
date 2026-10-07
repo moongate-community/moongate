@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 82 done, 🟡 49 partly done, ❌ 137 not built yet.
+**269 systems:** ✅ 83 done, 🟡 49 partly done, ❌ 137 not built yet.
 
 **Coverage: 31%** of the systems done, **40%** counting a partly done system as half.
 
@@ -85,6 +85,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
 | Aggressor lists and attack timeouts | ❌ | |
+| Blood on a hit | ✅ | A hit that does damage leaves blood on the ground that goes after a few seconds; a creature's `blood_hue` colours it or, at `-1`, stops it (`ultima.combat.blood_*`) |
 | Damage numbers over heads | ✅ | The damage of a hit shows over the one hit (`ultima.combat.display_damage_numbers`) |
 
 ## Magic

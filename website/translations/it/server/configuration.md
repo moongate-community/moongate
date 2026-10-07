@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ca08c39f67453fc9840bb527747ec92458bf3119c2ed40bb9a8b514b4f1373a3","title":"Configurazione"} -->
+<!-- translation: {"sourceHash":"c7405f45c1cf3bef56cca46d9e88243bd2e5381c4649f9d643778c0653535d36","title":"Configurazione"} -->
 
 # Configurazione del server
 
@@ -119,6 +119,9 @@ npc_damage_rate = 1.0                 # Divides the damage an NPC does to a play
 max_range = 1                         # Tiles a melee swing reaches.
 combatant_seconds = 60                # Seconds a fighter keeps its target without swinging.
 display_damage_numbers = true         # The damage shows over the one hit.
+blood_enabled = true                  # A hit that does damage leaves blood on the ground.
+blood_pieces = 2                      # Most pieces around the one under the victim, from 0 to 8.
+blood_seconds = 5                     # Seconds a piece lies on the ground, from 1 to 60.
 archery_stand_still_seconds = 1.0     # Seconds a player must have stood still before it shoots; 0 for none.
 
 [ultima.crime]
@@ -281,6 +284,7 @@ Vedi [Persistenza PostgreSQL](persistence.md).
 | `ultima.combat.max_range`, `combatant_seconds` | 1 (da 1 a 24) e 60 (da 1 a 3600). Tile raggiunti da un colpo in mischia, e durata del mantenimento del bersaglio senza colpire, come il minuto di ModernUO. |
 | `ultima.combat.archery_stand_still_seconds` | `1.0` (da 0 a 60). I secondi in cui un giocatore che impugna un arco o una balestra deve essere rimasto fermo, dal suo ultimo passo, prima di poter sparare; un cambio di direzione non conta. 0 non chiede nulla. Vedi [Arcieri](combat.md#archers) |
 | `ultima.combat.display_damage_numbers` | `true`. Il danno del colpo viene mostrato sopra chi lo riceve (pacchetto `0x0B`), ai giocatori nel combattimento. |
+| `ultima.combat.blood_enabled`, `blood_pieces`, `blood_seconds` | `true`, 2 (da 0 a 8) e 5 (da 1 a 60). Un colpo che fa danno lascia un pezzo di [sangue](combat.md#the-damage) sotto chi è colpito e da uno a `blood_pieces` intorno; ogni pezzo sparisce dopo `blood_seconds`, che il controllo degli oggetti a terra ogni 5 secondi può allungare. |
 | `ultima.crime.criminal_seconds` | Valore predefinito 120 (da 1 a 86400), i due minuti di ModernUO e UOX3. Un mobile che compie un atto criminale resta criminale per questa durata, con il nome grigio per chi lo vede; un altro atto riavvia il tempo, e un assassino resta rosso. Il tempo viene salvato con il personaggio, quindi uscire dal mondo non lo azzera; un NPC torna innocente dopo un riavvio. Un giocatore legge il messaggio client "Hai commesso un atto criminale!!" quando diventa criminale. Nulla rende ancora criminali automaticamente: lo fanno gli script con `mobile.set_criminal`, lo staff con `set criminal`. |
 | `ultima.murder.*` | I conteggi degli omicidi, come in ModernUO. `short_term_hours` (predefinito 8) e `long_term_hours` (predefinito 40), da 1 a 8760: un omicidio a breve termine e un'uccisione segnalata vengono dimenticati dopo questo tempo, uno alla volta, in tempo reale, comprese le ore passate fuori dal mondo (ModernUO conta il tempo online), mentre il giocatore è nel mondo o quando ci ritorna. `report_delay_seconds` (predefinito 4), `recently_reported_minutes` (predefinito 10) e `aggressor_seconds` (predefinito 120), da 1 a 86400: quanto tempo dopo la morte a un giocatore viene chiesto di segnalare chi lo ha attaccato, quanto prima che possa segnalare di nuovo lo stesso assassino, e per quanto tempo un attacco a un innocente mantiene segnalabile chi l'ha compiuto. Vedi [Conteggi degli omicidi](death.md#murder-counts). |
 | `ultima.crime.archer_guard_template` | Predefinito `archerguard`. Il template di mobile di una guardia chiamata a **Ilshenar** e **Malas**, come il `DefaultGuardType` di ModernUO: una guardia con un arco, che spara a ciò che attacca dalla portata dell'arco invece di colpirlo da accanto (vedi [guard.lua](scripting/shipped-scripts.md#guardlua)). Altrove arriva la guardia di `guard_template`. |

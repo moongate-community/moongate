@@ -1,0 +1,88 @@
+# ==============================================================================
+# Moongate - templates/items/blood_splash.toml
+#
+# What it is for:
+#   The blood a hit leaves on the ground (BloodService): the seven graphics of
+#   ModernUO's blood, as ground items that decay. Unlike the blood of
+#   decorations/blood.toml, which stays where .decorate puts it, these go by
+#   themselves: the service sets the time they last (ultima.combat.blood_seconds)
+#   and the hue of the creature that bled (blood_hue of its mobile template).
+#
+# Fields:
+#   base_id        inherits base_item
+#   item_id        0x1645 and 0x122A to 0x122F, the graphics of blood
+#   movable        false: nobody picks it up
+#   decays         true, so the item decay service takes it away
+#   decay_minutes  1, the shortest the template accepts; the service sets the real
+#                  time when it puts the piece down
+# ==============================================================================
+
+[[item]]
+id = "blood_splash_0x1645"
+base_id = "base_item"
+item_id = 0x1645
+name = "blood"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 1
+
+[[item]]
+id = "blood_splash_0x122a"
+base_id = "base_item"
+item_id = 0x122A
+name = "blood"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 1
+
+[[item]]
+id = "blood_splash_0x122b"
+base_id = "base_item"
+item_id = 0x122B
+name = "blood"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 1
+
+[[item]]
+id = "blood_splash_0x122c"
+base_id = "base_item"
+item_id = 0x122C
+name = "blood"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 1
+
+[[item]]
+id = "blood_splash_0x122d"
+base_id = "base_item"
+item_id = 0x122D
+name = "blood"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 1
+
+[[item]]
+id = "blood_splash_0x122e"
+base_id = "base_item"
+item_id = 0x122E
+name = "blood"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 1
+
+[[item]]
+id = "blood_splash_0x122f"
+base_id = "base_item"
+item_id = 0x122F
+name = "blood"
+rarity = "common"
+movable = false
+decays = true
+decay_minutes = 1

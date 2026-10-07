@@ -85,6 +85,7 @@ public sealed class CombatService : ICombatService
     private readonly IMurderService? _murders;
     private readonly IEffectService? _effects;
     private readonly IAmmoService? _ammo;
+    private readonly IBloodService? _blood;
     private string? _timerId;
 
     public CombatService(
@@ -108,10 +109,12 @@ public sealed class CombatService : ICombatService
         Random? random = null,
         IMurderService? murders = null,
         IEffectService? effects = null,
-        IAmmoService? ammo = null
+        IAmmoService? ammo = null,
+        IBloodService? blood = null
     )
     {
         _ammo = ammo;
+        _blood = blood;
         _effects = effects;
         _murders = murders;
         _mobiles = mobiles;
@@ -486,6 +489,11 @@ public sealed class CombatService : ICombatService
         var (action, frames) = HurtAnimation(target);
         _view.MobileAnimated(target, action, frames, 1);
         ShowDamage(attacker, target, damage);
+
+        if (damage > 0)
+        {
+            _blood?.Splash(target);
+        }
 
         _murders?.Struck(attacker, target);
         var hits = target.Hits - damage;
