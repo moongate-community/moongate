@@ -206,11 +206,9 @@ public sealed class DataAccess<T> : IDataAccess<T> where T : class, IMoongateEnt
                 var normalized = (Expression<Func<T, bool>>)new SerialConstantExpressionVisitor().Visit(predicate)!;
                 var query = orm.Select<T>().WithTransaction(transaction).Where(normalized);
 
-                if (skip.HasValue)
+                if (skip is { } pageSkip && take is { } pageTake)
                 {
-                    // Safe: both QueryAsync overloads pass skip and take together (both set or both null),
-                    // so take is set here; a non-null take was checked as positive above.
-                    query = query.OrderBy(entity => entity.Id).Skip(skip.Value).Limit(take!.Value);
+                    query = query.OrderBy(entity => entity.Id).Skip(pageSkip).Limit(pageTake);
                 }
 
                 var sql = query.ToSql();
