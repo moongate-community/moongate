@@ -50,8 +50,9 @@ would be interested in*.
 The player chooses items and how many pieces of each, and confirms. A sale is everything or nothing, like a purchase:
 
 - The reply has fewer than 100 lines. Each item must be one that was offered and is still in the backpack, and a line
-  chosen twice adds up. An amount over what the item holds is cut to it. No more than 500 pieces are sold at a time, and
-  the total is refused over `int.MaxValue`.
+  chosen twice adds up. An amount over what the item holds is cut to it. The
+  total is refused over `int.MaxValue`. Items that are not regular loot, such as the starting items of a new character,
+  are not bought.
 - The vendor must be in reach and the player alive, and a murderer in a guarded place is refused, as for a purchase.
 - The gold is paid in piles of 60000 in the backpack, or in the bank box when the backpack has no room for them. When
   neither has the room, nothing is sold and the player is told the backpack is full.

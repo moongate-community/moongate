@@ -38,6 +38,7 @@ internal static class ModernUoVendorConverter
         #   [[shop.sell]] one line the vendor buys from a player
         #     item        the id of an item template
         #     price       gold the vendor pays for one piece, at least 1
+        #     (amount, hue and name are written too and ignored on sell lines)
 
         """;
 
@@ -166,7 +167,7 @@ internal static class ModernUoVendorConverter
     private static ShopDefinition? Build(
         ImportedVendor vendor,
         Dictionary<string, ImportedSbInfo> sbInfos,
-        ItemIndex index,
+        ShopItemIndex index,
         HashSet<string> mobileIds,
         Dictionary<string, string> claimed,
         ConversionReport report
@@ -253,7 +254,7 @@ internal static class ModernUoVendorConverter
     private static List<ShopLine> SellLines(
         ImportedVendor vendor,
         Dictionary<string, ImportedSbInfo> sbInfos,
-        ItemIndex index,
+        ShopItemIndex index,
         ConversionReport report
     )
     {
@@ -328,12 +329,6 @@ internal static class ModernUoVendorConverter
 
         return byName;
     }
-
-    private sealed record ItemIndex(
-        Dictionary<int, List<string>> ByGraphic,
-        Dictionary<string, HashSet<int>> GraphicsOfType,
-        Dictionary<string, List<string>> ByName
-    );
 
     // The template of a graphic: the one named like the type, else the only one, else the first (and the report says so).
     private static string? ItemOf(

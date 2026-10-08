@@ -5,6 +5,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -14,6 +15,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.Vendors;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Items;
@@ -539,7 +541,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
     {
         Carried(Backpack(), "gold", 0x0EED, 50);
 
-        Assert.False(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+        Assert.True(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
 
         Assert.Equal("You have nothing I would be interested in.", Assert.Single(_speech.Said).Text);
         Assert.Empty(_fixture.Sender.Sent);
@@ -552,11 +554,39 @@ public sealed class VendorServiceTests : IAsyncLifetime
         var bag = Carried(backpack, "bread", 0x103B, 1);
         Carried(bag, "gold", 0x0EED, 1);
 
-        Assert.False(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+        Assert.True(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+        Assert.Empty(_fixture.Sender.Sent.OfType<VendorSellListPacket>());
 
         var stranger = new MobileEntity { Id = new Serial(101), TemplateId = "orc", Map = MapType.Trammel };
         await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(stranger));
         Assert.False(await OnLoopAsync(() => _vendors.OpenSell(_session, stranger)));
+    }
+
+    [Fact]
+    public async Task OpenSell_AnItemOfANewCharacter_IsNotBought()
+    {
+        var backpack = Backpack();
+        var starting = Carried(backpack, "bread", 0x103B, 5);
+        starting.SetProp(ItemPropKeys.LootType, LootType.Newbied);
+        var bought = Carried(backpack, "sword", 0x0F5E, 1);
+
+        Assert.True(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+
+        Assert.Equal(
+            [bought.Id],
+            Assert.Single(_fixture.Sender.Sent.OfType<VendorSellListPacket>()).Entries.Select(entry => entry.Item)
+        );
+    }
+
+    [Fact]
+    public async Task OpenSell_AMurdererInAGuardedPlace_IsRefusedByTheVendorsVoice()
+    {
+        Carried(Backpack(), "bread", 0x103B, 5);
+        _player.Kills = MobileEntity.MurderKills;
+
+        Assert.False(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+
+        Assert.Equal(501522, Assert.Single(_speech.SaidClilocs).Cliloc);
     }
 
     [Fact]

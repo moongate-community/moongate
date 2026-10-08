@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ab6509a2755340f50a7bcfa4e75cc7a548afe3f3bf2fe82d95a31d748e183eda","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"30093cab3aacf5a1af06c3dce4361c7a4e5e22f832d2f74f142211b17723ffcf","title":"Venditori"} -->
 
 # Venditori
 
@@ -52,8 +52,9 @@ would be interested in*.
 Il giocatore sceglie gli oggetti e quanti pezzi di ciascuno, e conferma. Una vendita è tutto o niente, come un acquisto:
 
 - La risposta ha meno di 100 righe. Ogni oggetto deve essere uno di quelli offerti e ancora nello zaino, e una riga
-  scelta due volte si somma. Una quantità oltre quella dell'oggetto viene ridotta a essa. Non si vendono più di 500 pezzi per volta, e
-  il totale è rifiutato oltre `int.MaxValue`.
+  scelta due volte si somma. Una quantità oltre quella dell'oggetto viene ridotta a essa. Il
+  totale è rifiutato oltre `int.MaxValue`. Gli oggetti che non sono bottino normale, come gli oggetti iniziali di un nuovo personaggio,
+  non vengono comprati.
 - Il venditore deve essere raggiungibile e il giocatore vivo, e un assassino in un luogo sorvegliato viene rifiutato, come per un acquisto.
 - L'oro è pagato in pile da 60000 nello zaino, o nella cassetta di banca quando lo zaino non ha posto per esse. Quando
   nessuno dei due ha posto, non si vende nulla e al giocatore viene detto che lo zaino è pieno.

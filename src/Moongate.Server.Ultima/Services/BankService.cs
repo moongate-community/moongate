@@ -440,6 +440,11 @@ public sealed class BankService : IBankService
 
     public BankResultType GiveGold(MobileEntity player, int amount)
     {
+        if (_inventory?.AllowsOwner(player.Id) == false)
+        {
+            return BankResultType.Busy;
+        }
+
         if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
         {
             return BankResultType.NoPlayer;

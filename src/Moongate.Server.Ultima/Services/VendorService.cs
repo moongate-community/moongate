@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.Vendors;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Bank;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -39,7 +40,6 @@ public sealed class VendorService : IVendorService
     private const int StockPruneAbove = 1024;
     private const int MaxSellList = 250;
     private const int MaxSellReplyLines = 100;
-    private const int MaxSellPieces = 500;
     private const int ClilocBackpackFull = 1048147;
     private const string NothingToSell = "You have nothing I would be interested in.";
     private const long VirtualHalf = Serial.MinVirtual + (Serial.MaxVirtual - Serial.MinVirtual) / 2;
@@ -311,7 +311,7 @@ public sealed class VendorService : IVendorService
         {
             _speech.Say(vendor, NothingToSell);
 
-            return false;
+            return true;
         }
 
         _sender.TrySend(
@@ -370,7 +370,7 @@ public sealed class VendorService : IVendorService
 
         var total = chosen.Sum(pair => (long)window.Prices[pair.Key.Id] * pair.Value);
 
-        if (total is < 1 or > int.MaxValue || chosen.Values.Sum() > MaxSellPieces)
+        if (total is < 1 or > int.MaxValue)
         {
             EndSell(session, window);
 
@@ -708,7 +708,11 @@ public sealed class VendorService : IVendorService
 
         var movable = item.Movable ?? (_templates.TryGet(id, out var template) ? template.Movable : null) ?? true;
 
-        return movable && item.Amount >= 1 && !_handling.IsHeld(item);
+        // As ModernUO before AOS: only regular loot is bought, so the starting items are not a purse.
+        var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own :
+            _templates.TryGet(id, out var lootTemplate) ? lootTemplate.EffectiveLootType() : LootType.Regular;
+
+        return movable && lootType == LootType.Regular && item.Amount >= 1 && !_handling.IsHeld(item);
     }
 
     private string NameOf(ItemEntity item)

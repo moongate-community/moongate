@@ -15,6 +15,7 @@
 #   [[shop.sell]] one line the vendor buys from a player
 #     item        the id of an item template
 #     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
 [[shop]]
 id = "herbalist"
 vendors = ["herbalist", "m_herbalist", "f_herbalist"]
