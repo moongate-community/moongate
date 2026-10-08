@@ -1,0 +1,223 @@
+using DryIoc;
+using Lua;
+using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
+using Moongate.Scripting.Data.Config;
+using Moongate.Scripting.Data.Events;
+using Moongate.Scripting.Data.Scripts;
+using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Scripting.Interfaces;
+using Moongate.Scripting.Services;
+using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Events;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules;
+using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Tests.TestSupport.Ultima.Vendors;
+using Moongate.Tests.TestSupport.Ultima.World;
+using Moongate.Ultima.Types;
+
+namespace Moongate.Tests.Integration.Server.Ultima.Vendors;
+
+/// <summary>
+///     The shipped <c>shopkeeper.lua</c> with the real npc, mobile and vendor modules: the context menu entry, the
+///     words "vendor buy", and the window that opens.
+/// </summary>
+public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
+{
+    private static readonly Serial VendorId = new(0x100);
+
+    private readonly TemporaryScriptsDirectory _scripts = new();
+    private readonly Container _container = new();
+    private readonly RecordingVendorService _vendors = new();
+    private readonly RecordingSpeechService _speech = new();
+    private readonly RecordingTimerService _timers = new();
+    private readonly SettableClock _clock = new();
+    private readonly List<ScriptErrorEvent> _errors = [];
+
+    private BroadcastFixture _fixture = null!;
+    private GameSession _session = null!;
+    private MobileEntity _aria = null!;
+    private MobileEntity _baker = null!;
+    private LuaScriptEngineService _engine = null!;
+    private NpcScriptService _npcScripts = null!;
+
+    public async Task InitializeAsync()
+    {
+        _fixture = await BroadcastFixture.CreateAsync();
+        _session = await _fixture.AddAsync(2);
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        _aria = aria;
+        _aria.AccountId = new Serial(1002);
+        _aria.Location = new Point3D(1602, 1600, 0);
+        _baker = new MobileEntity
+        {
+            Id = VendorId, Name = "a baker", TemplateId = "baker", Map = MapType.Trammel,
+            Location = new Point3D(1600, 1600, 0)
+        };
+        _fixture.Mobiles.EnterWorld(_baker);
+
+        _container.RegisterMoongateEventBus();
+        _container.RegisterInstance<IGameLoopService>(_fixture.Network.Loop);
+        _container.RegisterInstance<ITimerService>(_timers);
+        _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
+        _container.RegisterInstance<ISessionService>(_fixture.Sessions);
+        _container.RegisterInstance<ISpeechService>(_speech);
+        _container.RegisterInstance<IWorldViewService>(new RecordingWorldViewService());
+        _container.RegisterInstance<IVendorService>(_vendors);
+        _container.RegisterInstance<TimeProvider>(_clock);
+        _container.RegisterInstance<ITeleportService>(new RecordingTeleportService());
+        _container.RegisterInstance<ICrimeService>(new RecordingCrimeService());
+        var templates = new MobileTemplateService(
+            new StubDataLoaderService().With(new MobileTemplate { Id = "baker", ScriptId = "shopkeeper" })
+        );
+        _container.RegisterInstance<IMobileTemplateService>(templates);
+        _container.AddScriptModule<NpcModule>();
+        _container.AddScriptModule<MobileModule>();
+        _container.AddScriptModule<VendorModule>();
+        _container.RegisterScriptEnum<SpeechKeywordType>();
+        _container.Resolve<IMoongateEventBus>()
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _errors.Add(evt);
+
+                    return Task.CompletedTask;
+                }
+            );
+        _scripts.Write("mobiles/shopkeeper.lua", File.ReadAllText(ShippedScript("mobiles/shopkeeper.lua")));
+        var options = new ScriptEngineOptions
+        {
+            ScriptsDirectory = _scripts.Path,
+            MaxInstructionsPerResume = 20_000,
+            MaxInstructionsPerChunk = 100_000,
+            HookInterval = 100,
+            WriteDefinitions = false
+        };
+        _engine = new(
+            options,
+            _container.Resolve<IScriptModuleRegistry>(),
+            _container,
+            _fixture.Network.Loop,
+            _timers,
+            new EventBusAdapter(_container)
+        );
+        await _engine.StartAsync();
+        _npcScripts = new NpcScriptService(_engine, templates, _fixture.Network.Loop, options);
+        await _npcScripts.StartAsync();
+    }
+
+    [Fact]
+    public async Task TheContextMenu_OffersBuy_FromEightTiles()
+    {
+        var result = await RunAsync("on_context_menu", (long)_aria.Id.Value);
+
+        Assert.Empty(_errors);
+        var entries = Assert.IsType<LuaTable>(Assert.Single(result.Values));
+        Assert.Equal(1, entries.ArrayLength);
+        var entry = entries[1].Read<LuaTable>();
+        Assert.Equal(
+            ("buy", 6103, 8),
+            (entry["id"].Read<string>(), entry["cliloc"].Read<int>(), entry["range"].Read<int>())
+        );
+    }
+
+    [Fact]
+    public async Task TheContextMenu_OffersNothingToAGhost()
+    {
+        _aria.Body = 0x192;
+
+        var result = await RunAsync("on_context_menu", (long)_aria.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.Equal(0, Assert.IsType<LuaTable>(Assert.Single(result.Values)).ArrayLength);
+    }
+
+    [Fact]
+    public async Task PickingBuy_OpensTheWindow_AnythingElseDoesNot()
+    {
+        await RunAsync("on_context_menu_select", (long)_aria.Id.Value, "sell");
+        await RunAsync("on_context_menu_select", (long)_aria.Id.Value, "buy");
+
+        Assert.Empty(_errors);
+        Assert.Equal((_session, _baker), Assert.Single(_vendors.Opened));
+    }
+
+    [Fact]
+    public async Task TheWordsVendorBuy_OpenTheWindow_WithinFourTiles()
+    {
+        await HearAsync("vendor buy", SpeechKeywordType.VendorBuy);
+
+        Assert.Empty(_errors);
+        Assert.Equal((_session, _baker), Assert.Single(_vendors.Opened));
+    }
+
+    [Fact]
+    public async Task TheWordsVendorBuy_FromFiveTiles_OrWithoutTheKeyword_DoNothing()
+    {
+        await HearAsync("hello", SpeechKeywordType.Bank);
+        _aria.Location = new Point3D(1605, 1600, 0);
+        await HearAsync("vendor buy", SpeechKeywordType.VendorBuy);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_vendors.Opened);
+    }
+
+    [Fact]
+    public async Task TwoVendorsHearingTheSameWords_OneOpensTheWindow()
+    {
+        _fixture.Mobiles.EnterWorld(
+            new MobileEntity
+            {
+                Id = new Serial(0x101), Name = "another baker", TemplateId = "baker", Map = MapType.Trammel,
+                Location = new Point3D(1601, 1601, 0)
+            }
+        );
+        await HearAsync("vendor buy", SpeechKeywordType.VendorBuy);
+
+        Assert.Empty(_errors);
+        Assert.Single(_vendors.Opened);
+    }
+
+    public async Task DisposeAsync()
+    {
+        _engine.Dispose();
+        await _fixture.DisposeAsync();
+    }
+
+    private async Task<ScriptResult> RunAsync(string function, params object?[] args)
+    {
+        var result = ScriptResult.Missing;
+        await _fixture.Network.ExecuteOnLoopAsync(() => result = _npcScripts.Run(_baker, function, args));
+
+        return result;
+    }
+
+    private async Task HearAsync(string text, SpeechKeywordType keyword)
+    {
+        var hearing = new NpcHearingService(_npcScripts, _fixture.Sectors);
+        await _fixture.Network.ExecuteOnLoopAsync(() => hearing.Heard(_aria, text, [(int)keyword]));
+    }
+
+    private static string ShippedScript(string relativePath)
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Moongate.slnx")))
+        {
+            directory = directory.Parent;
+        }
+
+        return Path.Combine(directory!.FullName, "moongate_root", "scripts", relativePath);
+    }
+}
