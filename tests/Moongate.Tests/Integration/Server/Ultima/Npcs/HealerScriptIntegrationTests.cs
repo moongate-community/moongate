@@ -142,6 +142,10 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
             await File.ReadAllTextAsync(Path.Combine(root, "scripts", "mobiles", "healer.lua"))
         );
         _scripts.Write(
+            "common/training.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "training.lua"))
+        );
+        _scripts.Write(
             "gumps/resurrect.lua",
             await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "resurrect.lua"))
         );

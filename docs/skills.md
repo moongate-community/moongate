@@ -125,6 +125,29 @@ The wait of a stat is kept by character in memory, so logging out and in does no
 does. Existing characters are all up after the upgrade; the migration `0024_mobile_stat_locks.sql`
 adds the three columns.
 
+## Trainers
+
+A vendor or a healer teaches the skills it has at 60.0 or more, as ModernUO's trainers do. The skills are those of its
+mobile template, so a vendor teaches whichever skills rolled that high. Bankers do not teach: gold dropped on them is
+deposited.
+
+- **Ask.** The context menu of the NPC has a *Train* entry for each skill it teaches and the player knows less of, from
+  8 tiles. Saying *train* within 4 tiles, alive, has the NPC list the skills it teaches, or say it has nothing to teach.
+- **Price.** The NPC teaches up to a third of its own value, 42.0 at most and never above the player's cap for the skill.
+  Picking an entry makes it say the price: 1 gold for each tenth of a point, so 10 gold for a whole point (420 gold for
+  42.0), and that for less it teaches less. The quote lasts until it is paid, another one is given, or the session ends.
+- **Pay.** The player drops gold on the NPC, from 2 tiles. The skill rises at once by one tenth of a point for each gold
+  piece, up to what was quoted; only the gold needed is taken, and the rest of the pile stays with the player. A drop
+  without a quote from that NPC, or of anything but gold, goes back.
+- **Refused.** The player already knows as much as the NPC would teach (*thou knowest all I can teach*) or more; the
+  skill is not locked up, or the total cap (`ultima.skills.total_cap`) leaves no room even after lowering the skills
+  locked down, which give way in the order of the skills; the player is dead. A gold drop that can no longer teach
+  gets the same answer, and the quote is dropped.
+
+A script gives an NPC these lessons with the `trainer` module and `common/training.lua`; `shopkeeper.lua` and
+`healer.lua` already do. `trainer.skills(npc, player)` lists the skills, `trainer.quote(npc, player, skill)` quotes a
+price and `trainer.pay(npc, giver, item)` takes the gold, which is what an `on_drag_drop` answers.
+
 ## See also
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)

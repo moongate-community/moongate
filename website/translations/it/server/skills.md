@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2bf0fb52d816cc1cee1022cd5e4bce4d740cec0bf289f0df2c8ebd578f3b4a7b","title":"Skill"} -->
+<!-- translation: {"sourceHash":"c7c0efd260ab2e333f6a9c106184e30fdd4b06de9a03034286a4028139ea3a62","title":"Skill"} -->
 
 # Skill
 
@@ -126,6 +126,29 @@ il client al login e ogni volta che un lucchetto cambia).
 L'attesa di una statistica è tenuta in memoria per personaggio, quindi uscire e rientrare non la salta; un riavvio
 sì. I personaggi esistenti hanno tutti i lucchetti su dopo l'aggiornamento; la migrazione `0024_mobile_stat_locks.sql`
 aggiunge le tre colonne.
+
+## Istruttori
+
+Un venditore o un guaritore insegna le abilità che ha a 60,0 o più, come gli istruttori di ModernUO. Le abilità sono quelle del suo
+template mobile, quindi un venditore insegna quelle uscite così alte. I banchieri non insegnano: l'oro trascinato su di loro viene
+depositato.
+
+- **Chiedere.** Il menu contestuale del PNG ha una voce *Train* per ogni abilità che insegna e di cui il giocatore sa meno, da
+  8 caselle. Dire *train* entro 4 caselle, da vivo, fa elencare al PNG le abilità che insegna, o dire che non ha nulla da insegnare.
+- **Prezzo.** Il PNG insegna fino a un terzo del suo valore, al massimo 42,0 e mai oltre il tetto dell'abilità del giocatore.
+  Scegliere una voce gli fa dire il prezzo: 1 oro per ogni decimo di punto, quindi 10 oro per un punto intero (420 oro per
+  42,0), e che per meno insegna meno. Il preventivo dura finché non viene pagato, viene dato un altro prezzo o la sessione finisce.
+- **Pagare.** Il giocatore trascina oro sul PNG, da 2 caselle. L'abilità sale subito di un decimo di punto per ogni moneta,
+  fino a quanto preventivato; si prende solo l'oro necessario e il resto della pila resta al giocatore. Un trascinamento
+  senza preventivo di quel PNG, o di qualunque cosa che non sia oro, torna indietro.
+- **Rifiuti.** Il giocatore sa già quanto il PNG insegnerebbe (*thou knowest all I can teach*) o di più; l'abilità non è
+  bloccata verso l'alto, oppure il tetto totale (`ultima.skills.total_cap`) non lascia posto nemmeno abbassando le abilità
+  bloccate verso il basso, che cedono nell'ordine delle abilità; il giocatore è morto. Un oro trascinato che non può più
+  insegnare riceve la stessa risposta, e il preventivo viene scartato.
+
+Uno script dà a un PNG queste lezioni con il modulo `trainer` e `common/training.lua`; `shopkeeper.lua` e
+`healer.lua` lo fanno già. `trainer.skills(npc, player)` elenca le abilità, `trainer.quote(npc, player, skill)` dà un
+prezzo e `trainer.pay(npc, giver, item)` prende l'oro, che è ciò che risponde un `on_drag_drop`.
 
 ## Vedi anche
 

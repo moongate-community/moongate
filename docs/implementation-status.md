@@ -47,6 +47,8 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
   click, or drop gold and checks on the banker to deposit them. The box holds a limited number of items: [Bank](bank.md).
 - Buy from the vendors and sell to them: pick *Buy* or *Sell* in their context menu or say *vendor buy* or *vendor sell*,
   choose in the window and pay with the gold of the backpack, or of the bank from 2000: [Vendors](vendors.md).
+- Learn skills from the vendors and healers: pick *Train* in their menu or say *train*, then drop the gold they quote on
+  them: [Trainers](skills.md#trainers).
 - Get hit points, mana and stamina back with time, get hungry and thirsty, eat and drink; tire by running or by carrying too much.
 - Open the treasure chests of the dungeons and the shop crates that fill up; read a clock; switch war mode.
 - Dye clothes: dyes give a dye tub the hue picked in the client's hue picker, and the tub gives it to the clothing.

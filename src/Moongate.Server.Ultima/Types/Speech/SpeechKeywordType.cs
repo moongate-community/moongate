@@ -17,6 +17,11 @@ public enum SpeechKeywordType
     Guards = 0x0007,
 
     /// <summary>
+    ///     "train", as ModernUO's trainers read it.
+    /// </summary>
+    Train = 0x006C,
+
+    /// <summary>
     ///     "vendor buy", as ModernUO's vendors read it.
     /// </summary>
     VendorBuy = 0x003C,

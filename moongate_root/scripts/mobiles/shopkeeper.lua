@@ -13,6 +13,9 @@
 --   opens the window), not of this script. The script is called shopkeeper
 --   because the vendor module already owns that name.
 --
+-- Vendors also teach skills, as ModernUO's do (common/training.lua): Train entries in
+--   the menu, the word "train", and gold dropped on the vendor to pay.
+--
 -- Functions:
 --   on_speech(serial, speaker, text, keywords)  a player speaks within 15
 --                                               cells: the vendor answers
@@ -21,8 +24,13 @@
 --   on_context_menu(serial, player)             the entries the vendor adds to
 --                                               its context menu: Buy and Sell
 --   on_context_menu_select(serial, player, id)  the player chose it: the window
---                                               opens
+--                                               opens, or the price of a lesson
+--                                               is quoted
+--   on_drag_drop(serial, giver, item)           gold dropped on the vendor pays
+--                                               for the lesson it quoted
 -- ==============================================================================
+
+local training = require("common.training")
 
 shopkeeper = {}
 
@@ -55,6 +63,8 @@ local function near(serial, speaker, range)
 end
 
 function shopkeeper.on_speech(serial, speaker, text, keywords)
+    training.listen(serial, speaker, keywords)
+
     local buying = has_keyword(keywords, SpeechKeywordType.VendorBuy)
     local selling = has_keyword(keywords, SpeechKeywordType.VendorSell)
 
@@ -84,10 +94,16 @@ function shopkeeper.on_context_menu(serial, player)
         return {}
     end
 
-    return {
+    local entries = {
         { id = "buy", cliloc = buy_entry, range = menu_range },
         { id = "sell", cliloc = sell_entry, range = menu_range },
     }
+
+    for _, entry in ipairs(training.entries(serial, player, menu_range)) do
+        entries[#entries + 1] = entry
+    end
+
+    return entries
 end
 
 function shopkeeper.on_context_menu_select(serial, player, id)
@@ -97,5 +113,12 @@ function shopkeeper.on_context_menu_select(serial, player, id)
     elseif id == "sell" then
         npc.look_at(serial, player)
         vendor.open_sell(serial, player)
+    else
+        training.select(serial, player, id)
     end
+end
+
+-- Gold dropped on a vendor pays for a lesson it quoted; anything else goes back.
+function shopkeeper.on_drag_drop(serial, giver, item)
+    return training.drop(serial, giver, item)
 end
