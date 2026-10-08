@@ -632,7 +632,10 @@ public sealed class RepositoryTemplateFilesTests
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
             .Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
             .LoadDataAsync()).Entities;
 
         var masters = mobiles.Where(template => template.Id.EndsWith("_guildmaster", StringComparison.Ordinal)).ToList();
@@ -649,7 +652,10 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(NpcGuildType.Blacksmiths, smith.NpcGuild);
         Assert.Equal("the blacksmith guildmaster", smith.Title);
         Assert.True(smith.Skills!.ContainsKey("blacksmithy"));
-        Assert.Equal("shopkeeper", mobiles.Single(template => template.Id == "m_blacksmith_guildmaster").ScriptId ?? "shopkeeper");
+        Assert.Equal(
+            "shopkeeper",
+            mobiles.Single(template => template.Id == "m_blacksmith_guildmaster").ScriptId ?? "shopkeeper"
+        );
     }
 
     [Fact]

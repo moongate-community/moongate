@@ -12,9 +12,10 @@ using Moongate.Ultima.Types;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts the guildmasters of ModernUO (<c>Mobiles/Vendors/NPC/Guildmasters/*Guildmaster.cs</c>) into mobile
-///     templates: for each class a man, <c>m_&lt;trade&gt;_guildmaster</c>, and a woman, <c>f_&lt;trade&gt;_guildmaster</c>
-///     (UOX3's names), with the title, the skills (the C# ranges as dice), the guild and the clothes of a vendor, and the
+///     Converts the guildmasters of ModernUO ( <c>Mobiles/Vendors/NPC/Guildmasters/*Guildmaster.cs</c>) into mobile
+///     templates: for each class a man, <c>m_&lt;trade&gt;_guildmaster</c>, and a woman,
+///     <c>f_&lt;trade&gt;_guildmaster</c> (UOX3's names), with the title, the skills (the C# ranges as dice), the guild
+///     and the clothes of a vendor, and the
 ///     npc list <c>&lt;trade&gt;guildmaster</c> that picks one of the two. Nothing is run: the C# is read as syntax.
 /// </summary>
 internal static class ModernUoGuildmasterConverter
@@ -124,9 +125,19 @@ internal static class ModernUoGuildmasterConverter
                 return 2;
             }
 
-            ConverterOutput.WriteToml(Path.Combine(mobiles, MobilesFile), MobileHeader, new MobileTemplateFile { Mobile = masters });
-            ConverterOutput.WriteToml(Path.Combine(npcLists, ListsFile), ListHeader, new NpcListTemplateFile { NpcList = lists });
-            output.WriteLine($"mobiles/{MobilesFile} ({masters.Count} templates), npc_lists/{ListsFile} ({lists.Count} lists)");
+            ConverterOutput.WriteToml(
+                Path.Combine(mobiles, MobilesFile),
+                MobileHeader,
+                new MobileTemplateFile { Mobile = masters }
+            );
+            ConverterOutput.WriteToml(
+                Path.Combine(npcLists, ListsFile),
+                ListHeader,
+                new NpcListTemplateFile { NpcList = lists }
+            );
+            output.WriteLine(
+                $"mobiles/{MobilesFile} ({masters.Count} templates), npc_lists/{ListsFile} ({lists.Count} lists)"
+            );
             ConverterOutput.WriteReport(output, report);
 
             return 0;
@@ -164,8 +175,11 @@ internal static class ModernUoGuildmasterConverter
         }
 
         var guild = owner.Members.OfType<PropertyDeclarationSyntax>()
-            .FirstOrDefault(property => property.Identifier.ValueText == "NpcGuild")
-            ?.ExpressionBody?.Expression is MemberAccessExpressionSyntax { Name.Identifier.ValueText: var guildName } &&
+                        .FirstOrDefault(property => property.Identifier.ValueText == "NpcGuild")
+                        ?.ExpressionBody?.Expression is MemberAccessExpressionSyntax
+                    {
+                        Name.Identifier.ValueText: var guildName
+                    } &&
                     Guilds.TryGetValue(guildName, out var known)
             ? known
             : (NpcGuildType?)null;

@@ -50,7 +50,10 @@ public sealed class ModernUoGuildmasterConverterTests : IDisposable
         var masters = TomlUtils.DeserializeFromFile<MobileTemplateFile>(Path.Combine(Mobiles, "guildmasters.toml"))!.Mobile;
         Assert.Equal(["m_blacksmith_guildmaster", "f_blacksmith_guildmaster"], masters.Select(master => master.Id));
         var man = masters[0];
-        Assert.Equal(("basevendor", "the blacksmith guildmaster", NpcGuildType.Blacksmiths), (man.BaseId, man.Title, man.NpcGuild));
+        Assert.Equal(
+            ("basevendor", "the blacksmith guildmaster", NpcGuildType.Blacksmiths),
+            (man.BaseId, man.Title, man.NpcGuild)
+        );
         Assert.Equal("the blacksmith guildmistress", masters[1].Title);
         Assert.Equal(
             ["arms_lore", "blacksmithy", "mace_fighting", "parrying"],
@@ -59,7 +62,9 @@ public sealed class ModernUoGuildmasterConverterTests : IDisposable
         Assert.Equal(11, man.Skills["blacksmithy"].Max - man.Skills["blacksmithy"].Min + 1);
         Assert.Equal(90, man.Skills["blacksmithy"].Min);
 
-        var list = Assert.Single(TomlUtils.DeserializeFromFile<NpcListTemplateFile>(Path.Combine(Lists, "npclists_guildmasters.toml"))!.NpcList);
+        var list = Assert.Single(
+            TomlUtils.DeserializeFromFile<NpcListTemplateFile>(Path.Combine(Lists, "npclists_guildmasters.toml"))!.NpcList
+        );
         Assert.Equal("blacksmithguildmaster", list.Id);
         Assert.Equal(["m_blacksmith_guildmaster", "f_blacksmith_guildmaster"], list.Entries.Select(entry => entry.MobileId));
     }

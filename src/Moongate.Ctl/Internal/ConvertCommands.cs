@@ -94,7 +94,8 @@ internal static class ConvertCommands
     /// </param>
     /// <param name="only">
     ///     Converts only the spawner entries of the classes whose name ends with this, such as Guildmaster, into
-    ///     modernuo_&lt;name&gt;s.toml (modernuo_guildmasters.toml), leaving the other modernuo_ files of the maps alone. Empty: all.
+    ///     modernuo_&lt;name&gt;s.toml (modernuo_guildmasters.toml), leaving the other modernuo_ files of the maps alone. Empty:
+    ///     all.
     /// </param>
     public static int ModernUoSpawns(string source, string maps, string mobiles, string destination, string only = "")
     {

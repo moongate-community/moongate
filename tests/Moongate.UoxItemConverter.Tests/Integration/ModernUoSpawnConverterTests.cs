@@ -253,7 +253,10 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
             Path.Combine(_root, "npc_lists", "lists.toml"),
             "[[npc_list]]\nid = \"mageguildmaster\"\n[[npc_list]]\nid = \"banker\"\n"
         );
-        WriteSpawners("shared/malas/Vendors.json", Spawner(10, 10, 0, 2, 1, "00:05:00", "00:10:00", "MageGuildmaster", "Minter"));
+        WriteSpawners(
+            "shared/malas/Vendors.json",
+            Spawner(10, 10, 0, 2, 1, "00:05:00", "00:10:00", "MageGuildmaster", "Minter")
+        );
 
         Assert.True(Run(MapType.Malas) == 0, CombinedOutput);
 

@@ -24,8 +24,8 @@ public sealed class NpcGuildModule
     }
 
     /// <summary>
-    ///     Gets the guild an NPC takes members for, such as <c>"blacksmiths"</c>; nil for an NPC that is no guildmaster;
-    ///     <c>if npcguild.of(serial) then ... end</c>.
+    ///     Gets the guild an NPC takes members for, such as <c>"blacksmiths"</c>; nil for an NPC that is no
+    ///     guildmaster; <c>if npcguild.of(serial) then ... end</c>.
     /// </summary>
     [ScriptFunction(
         helpText:
@@ -63,7 +63,8 @@ public sealed class NpcGuildModule
     }
 
     /// <summary>
-    ///     Takes gold dropped on the guildmaster as the price of joining; <c>return npcguild.join(npc, giver, item)</c>.
+    ///     Takes gold dropped on the guildmaster as the price of joining;
+    ///     <c>return npcguild.join(npc, giver, item)</c>.
     /// </summary>
     [ScriptFunction(
         helpText:

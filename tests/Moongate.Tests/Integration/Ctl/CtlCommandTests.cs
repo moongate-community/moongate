@@ -22,7 +22,7 @@ public sealed class CtlCommandTests
                      "init", "migrate status", "migrate apply", "convert uox", "convert modernuo-spawns",
                      "convert modernuo-signs", "convert modernuo-teleporters", "convert modernuo-locations",
                      "convert modernuo-chests",
-                     "convert modernuo-books", "convert modernuo-vendors"
+                     "convert modernuo-books", "convert modernuo-vendors", "convert modernuo-guildmasters"
                  })
         {
             Assert.Contains(command, result.Output);

@@ -54,7 +54,9 @@ internal static class ModernUoSpawnConverter
         }
 
         // The npc lists beside the mobiles name a class too, such as a guildmaster of either sex: a region lists them as lists.
-        var lists = ReadNpcListIds(Path.Combine(Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(mobileDestination)) ?? "", "npc_lists"));
+        var lists = ReadNpcListIds(
+            Path.Combine(Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(mobileDestination)) ?? "", "npc_lists")
+        );
         // A name that is both a mobile and a list (healer) stays a mobile.
         lists.ExceptWith(ids);
         ids.UnionWith(lists);
