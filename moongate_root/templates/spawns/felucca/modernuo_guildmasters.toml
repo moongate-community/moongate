@@ -519,26 +519,6 @@ x2 = 1425
 y2 = 3981
 
 [[spawn]]
-id = "felucca_modernuo_shared_vendors_89"
-map = "felucca"
-name = "Felucca thiefguildmaster"
-mobile_ids = []
-npc_list_ids = ["thiefguildmaster"]
-item_ids = []
-max = 1
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 20
-only_outside = false
-[[spawn.areas]]
-x1 = 2659
-y1 = 2194
-x2 = 2659
-y2 = 2194
-
-[[spawn]]
 id = "felucca_modernuo_shared_vendors_93_healerguildmaster"
 map = "felucca"
 name = "Felucca healerguildmaster"

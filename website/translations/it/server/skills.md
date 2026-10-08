@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5c6ad51e3a103dc9b872f3b0394d74c518878f7592ab155675742f8a7852a49e","title":"Skill"} -->
+<!-- translation: {"sourceHash":"7fb9bdb843b7eafe52380f44628c33ec0233e385ea49659f1cf9694830502678","title":"Skill"} -->
 
 # Skill
 
@@ -155,14 +155,14 @@ prezzo e `trainer.pay(npc, giver, item)` prende l'oro, che è ciò che risponde 
 I dodici maestri di gilda di ModernUO (bardo, fabbro, pescatore, guaritore, mago, mercante, minatore, ranger, sarto, ladro, calderaio e
 guerriero) sono template mobile, un uomo (`m_<trade>_guildmaster`) e una donna (`f_<trade>_guildmaster`) per ciascuno, e una
 lista di PNG del mestiere (`<trade>guildmaster`) che ne sceglie uno. Li crea `mgctl convert modernuo-guildmasters` dalle
-classi di ModernUO: il titolo (*the blacksmith guildmaster* o *guildmistress*), le abilità del mestiere a 90,0 o più,
-e la gilda. Sono venditori come gli altri, quindi insegnano ciò che sanno ([Istruttori](#trainers)); vende solo
+classi di ModernUO: il titolo (*the blacksmith guildmaster* o *guildmistress*), le abilità del mestiere, le principali
+fra 80 e 100, e la gilda. Sono venditori come gli altri, quindi insegnano ciò che sanno ([Istruttori](#trainers)); vende solo
 quello del fabbro, come in ModernUO. Gli spawn di ModernUO li collocano nelle città.
 
 Un maestro di gilda accetta membri per la gilda del suo mestiere. Il giocatore dice il nome del maestro e *join* o *member*
 entro 2 caselle per sentire il prezzo, 500 oro, e trascina esattamente quell'oro su di lui per iscriversi. Un giocatore appartiene al massimo a una
 gilda (la gilda è una prop salvata del personaggio) e gli viene detto se è già membro o di un'altra gilda. La gilda dei
-ladri chiede nessuna uccisione e Stealing 60,0. Dire il nome e *resign* o *quit* lascia la gilda, non prima di
+ladri chiede di non avere uccisioni e Stealing 60,0 (anche il maestro dei ladri delle città di UOX3 è ora un maestro di gilda). Dire il nome e *resign* o *quit* lascia la gilda, non prima di
 una settimana dall'iscrizione. Il maestro dei minatori in ModernUO non nomina nessuna gilda, quindi insegna soltanto. L'iscrizione non ha
 ancora effetto: nulla la legge. L'età e il tempo di gioco che ModernUO chiede a un nuovo membro non sono conservati.
 

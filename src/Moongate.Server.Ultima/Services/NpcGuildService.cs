@@ -1,4 +1,3 @@
-using System.Globalization;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -18,6 +17,7 @@ public sealed class NpcGuildService : INpcGuildService
     private const int JoinCost = 500;
     private const int ThievesStealing = 600;
     private const int ClilocWelcome = 1008054;
+    private const int ClilocWelcomeThieves = 1008053;
     private const int ClilocPrice = 1008052;
     private const int ClilocAlreadyMember = 501047;
     private const int ClilocOtherGuild = 501046;
@@ -81,6 +81,13 @@ public sealed class NpcGuildService : INpcGuildService
         return true;
     }
 
+    public bool IsJoinPayment(MobileEntity guildmaster, ItemEntity gold)
+    {
+        ArgumentNullException.ThrowIfNull(gold);
+
+        return Of(guildmaster) is not null && gold.TemplateId == _items.GoldTemplate && gold.Amount == JoinCost;
+    }
+
     public bool Join(MobileEntity guildmaster, MobileEntity player, ItemEntity gold)
     {
         ArgumentNullException.ThrowIfNull(player);
@@ -98,8 +105,8 @@ public sealed class NpcGuildService : INpcGuildService
         }
 
         player.SetProp(GuildProp, guild.ToString());
-        player.SetProp(JoinedProp, _time.GetUtcNow().UtcDateTime.ToString("O", CultureInfo.InvariantCulture));
-        _speech.SayCliloc(guildmaster, ClilocWelcome);
+        player.SetProp(JoinedProp, _time.GetUtcNow().UtcTicks);
+        _speech.SayCliloc(guildmaster, guild == NpcGuildType.Thieves ? ClilocWelcomeThieves : ClilocWelcome);
 
         return true;
     }
@@ -120,7 +127,7 @@ public sealed class NpcGuildService : INpcGuildService
             return false;
         }
 
-        if (JoinedAt(player) + QuitAfter > _time.GetUtcNow().UtcDateTime)
+        if (JoinedAt(player) + QuitAfter > _time.GetUtcNow())
         {
             _speech.SayCliloc(guildmaster, ClilocJustJoined);
 
@@ -134,12 +141,11 @@ public sealed class NpcGuildService : INpcGuildService
         return true;
     }
 
-    private static DateTime JoinedAt(MobileEntity player)
+    private static DateTimeOffset JoinedAt(MobileEntity player)
     {
-        return player.TryGetProp<string>(JoinedProp, out var text) &&
-               DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var joined)
-            ? joined
-            : DateTime.MinValue;
+        return player.TryGetProp<long>(JoinedProp, out var ticks) && ticks > 0 && ticks <= DateTimeOffset.MaxValue.UtcTicks
+            ? new DateTimeOffset(ticks, TimeSpan.Zero)
+            : DateTimeOffset.MinValue;
     }
 
     // Whether the player may join the guild now; the guildmaster tells why not.

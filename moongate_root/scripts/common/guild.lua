@@ -12,8 +12,8 @@
 --
 -- Functions:
 --   guild.listen(serial, speaker, text, keywords)  the words join and resign
---   guild.drop(serial, giver, item)                the answer of an on_drag_drop:
---                                                  true when the gold joined the guild
+--   guild.drop(serial, giver, item)                handled, joined: whether the drop was the price of
+--                                                  the guild, and whether the gold joined it
 -- ==============================================================================
 
 local guild = {}
@@ -67,8 +67,14 @@ function guild.listen(serial, speaker, text, keywords)
     end
 end
 
+-- Returns two values: whether the drop was about the guild, and whether the gold joined it. A refused join is
+-- still about the guild: the gold goes back and pays for no lesson.
 function guild.drop(serial, giver, item)
-    return npcguild.of(serial) ~= nil and npcguild.join(serial, giver, item)
+    if not npcguild.is_join_payment(serial, item) then
+        return false, false
+    end
+
+    return true, npcguild.join(serial, giver, item)
 end
 
 return guild

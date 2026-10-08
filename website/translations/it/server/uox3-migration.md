@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"19a5776e50cff1f7acfbe94cd26f0e863e69faa5347eb5790129048155509a19","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"00062329a7e787b59ca691d9c78a18ae6f9b76fa50aa136cebb9af6167e096f3","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
@@ -367,7 +367,7 @@ restano intatti, e una mappa senza nulla da scrivere mantiene i propri file.
 L'id di una regione nomina era, file e indice dello spawner al suo interno
 (`malas_modernuo_post_uoml_south_12`), così rimane uguale quando un'esecuzione
 successiva, con più template, risolve più mobile. Con `--only Guildmaster` converte solo le voci delle classi il cui nome finisce così, in
-`modernuo_guildmasters.toml`, e lascia stare gli altri file `modernuo_`: così i maestri di gilda di Trammel, Felucca e
+`modernuo_guildmasters.toml`, e lascia stare gli altri file `modernuo_` (le liste di PNG sono lette dalla cartella `npc_lists` accanto a quella di `--mobiles`, e il maestro dei ladri, che gli spawn delle città di UOX3 collocano già, viene saltato): così i maestri di gilda di Trammel, Felucca e
 Ilshenar vengono collocati senza sovrapporre gli altri spawn di ModernUO a quelli di UOX3. Usalo per mappe non coperte da
 UOX3: su Felucca o Trammel aggiungerebbe gli spawn ModernUO sopra quelli UOX3.
 Una regione prende la mappa nominata dallo spawner, non sempre quella della cartella,

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"61ccc420c9d1e4cf96c06235e6e22b626ff87c6c993ef820a1d105053ead2fd1","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"6363fb13dc2a4efade13a4a1cd74fa86d55c1f9eb8e68d5025948e0aa11a9ba0","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -11,7 +11,7 @@ realizzati i sistemi mancanti.
 
 **269 sistemi:** ✅ 85 completati, 🟡 56 parzialmente completati, ❌ 128 non ancora realizzati.
 
-**Copertura: 31%** dei sistemi completati, **41%** contando un sistema parzialmente completato come metà.
+**Copertura: 32%** dei sistemi completati, **42%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 

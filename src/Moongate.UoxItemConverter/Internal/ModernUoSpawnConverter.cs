@@ -26,6 +26,9 @@ internal static class ModernUoSpawnConverter
 
     internal static readonly string[] Eras = ["shared", "post-uoml"];
 
+    // Classes that the town spawns of UOX3 place already, which a run with "only" would place a second time.
+    private static readonly HashSet<string> PlacedByUox3 = new(StringComparer.Ordinal) { "ThiefGuildmaster" };
+
     public static int Run(
         string source,
         IReadOnlyList<MapType> maps,
@@ -246,7 +249,7 @@ internal static class ModernUoSpawnConverter
             var name = entry.GetProperty("name").GetString() ?? string.Empty;
 
             // With "only", the entries of the other classes are left to a run without it.
-            if (only is not null && !name.EndsWith(only, StringComparison.Ordinal))
+            if (only is not null && (!name.EndsWith(only, StringComparison.Ordinal) || PlacedByUox3.Contains(name)))
             {
                 continue;
             }

@@ -399,26 +399,6 @@ x2 = 1467
 y2 = 1686
 
 [[spawn]]
-id = "trammel_modernuo_shared_vendors_44"
-map = "trammel"
-name = "Trammel thiefguildmaster"
-mobile_ids = []
-npc_list_ids = ["thiefguildmaster"]
-item_ids = []
-max = 1
-min_minutes = 5
-max_minutes = 10
-call = 1
-exclude = []
-z = 20
-only_outside = false
-[[spawn.areas]]
-x1 = 2654
-y1 = 2189
-x2 = 2664
-y2 = 2199
-
-[[spawn]]
 id = "trammel_modernuo_shared_vendors_47_tailorguildmaster"
 map = "trammel"
 name = "Trammel tailorguildmaster"

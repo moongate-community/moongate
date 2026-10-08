@@ -63,6 +63,21 @@ public sealed class NpcGuildModule
     }
 
     /// <summary>
+    ///     Gets whether a drop on the guildmaster is the price of joining; <c>npcguild.is_join_payment(npc, item)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the item dropped on the NPC is the price of joining its guild: the NPC is a guildmaster and the item a pile of exactly 500 gold. Such a drop is about the guild alone, so a script answers it with npcguild.join and no lesson is paid with it."
+    )]
+    public bool IsJoinPayment(long npc, long item)
+    {
+        return TryMobile(npc, true, out var guildmaster) &&
+               item is > 0 and <= uint.MaxValue &&
+               _items.TryGet(new Serial((uint)item), out var gold) &&
+               _guilds.IsJoinPayment(guildmaster, gold);
+    }
+
+    /// <summary>
     ///     Takes gold dropped on the guildmaster as the price of joining;
     ///     <c>return npcguild.join(npc, giver, item)</c>.
     /// </summary>

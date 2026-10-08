@@ -331,6 +331,36 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_training.Paid);
     }
 
+    [Fact]
+    public async Task GoldOfTheGuildsPriceDroppedOnAGuildmaster_NeverPaysForALesson_EvenWhenTheJoinIsRefused()
+    {
+        _guilds.Guild = NpcGuildType.Blacksmiths;
+        _guilds.Answer = false;
+        var gold = new ItemEntity { Id = new Serial(0x40000003), TemplateId = "gold", ItemId = 0x0EED, Amount = 500 };
+        _container.Resolve<IItemService>().Add([gold]);
+
+        var taken = await RunAsync("on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.False(Assert.IsType<bool>(Assert.Single(taken.Values)));
+        Assert.Equal([gold], _guilds.Joined);
+        Assert.Empty(_training.Paid);
+    }
+
+    [Fact]
+    public async Task OtherGoldDroppedOnAGuildmaster_PaysForALesson()
+    {
+        _guilds.Guild = NpcGuildType.Blacksmiths;
+        var gold = new ItemEntity { Id = new Serial(0x40000004), TemplateId = "gold", ItemId = 0x0EED, Amount = 120 };
+        _container.Resolve<IItemService>().Add([gold]);
+
+        await RunAsync("on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_guilds.Joined);
+        Assert.Equal([gold], _training.Paid.Select(paid => paid.Gold));
+    }
+
     public async Task DisposeAsync()
     {
         _engine.Dispose();

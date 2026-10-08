@@ -1,5 +1,5 @@
 # What it is for:
-#   The guildmasters of the trades: a vendor-like NPC with the skills of its trade at 90 or more, who teaches them
+#   The guildmasters of the trades: a vendor-like NPC with the skills of its trade, the main ones from 80 to 100, who teaches them
 #   and takes members for the guild of the trade (npc_guild). One man and one woman for each trade; the npc list
 #   of the same name, without the sex, picks one of them.
 #

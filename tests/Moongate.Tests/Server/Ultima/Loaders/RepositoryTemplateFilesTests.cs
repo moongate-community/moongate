@@ -700,7 +700,7 @@ public sealed class RepositoryTemplateFilesTests
             .Entities.ToDictionary(spawn => spawn.Id);
 
         Assert.Equal(457, lists.Length);
-        Assert.Equal(4679, spawns.Count);
+        Assert.Equal(4677, spawns.Count);
         // The treasure chests of ModernUO's spawners: regions of items.
         var chests = spawns.Values.Where(spawn =>
                 spawn.ItemIds.Count > 0 && !spawn.Id.StartsWith("felucca_jail_chest_", StringComparison.Ordinal)

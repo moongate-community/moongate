@@ -135,7 +135,7 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
         _player.Skills = [new MobileSkill { Skill = SkillType.Stealing, Base = 600 }];
         Assert.True(await OnLoopAsync(() => _guilds.Join(_thief, _player, Gold(500))));
 
-        Assert.Equal([501050, 501051, 1008054], _speech.SaidClilocs.Select(said => said.Cliloc));
+        Assert.Equal([501050, 501051, 1008053], _speech.SaidClilocs.Select(said => said.Cliloc));
         Assert.Equal(NpcGuildType.Thieves, _guilds.MemberOf(_player));
     }
 
@@ -169,6 +169,33 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
         Assert.False(await OnLoopAsync(() => _guilds.Join(_smith, _player, Gold(500))));
         Assert.False(_guilds.Quote(_smith, _player));
         Assert.False(_guilds.Quote(_smith, _thief));
+    }
+
+    [Fact]
+    public void IsJoinPayment_IsAPileOfExactlyFiveHundredGold_OnAGuildmasterOnly()
+    {
+        Assert.True(_guilds.IsJoinPayment(_smith, Gold(500)));
+        Assert.False(_guilds.IsJoinPayment(_smith, Gold(499)));
+        Assert.False(_guilds.IsJoinPayment(_smith, new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "sword", Amount = 500 }));
+        Assert.False(_guilds.IsJoinPayment(new MobileEntity { Id = new Serial(102), TemplateId = "orc" }, Gold(500)));
+    }
+
+    [Fact]
+    public async Task Join_KeepsTheTimeAsANumber_SoAResignAWeekLaterReadsItBack()
+    {
+        await OnLoopAsync(() => _guilds.Join(_smith, _player, Gold(500)));
+
+        Assert.IsType<long>(_player.Props!["npc_guild_joined"]);
+    }
+
+    [Fact]
+    public async Task Join_TheThieves_AreWelcomedAsThieves()
+    {
+        _player.Skills = [new MobileSkill { Skill = SkillType.Stealing, Base = 600 }];
+
+        await OnLoopAsync(() => _guilds.Join(_thief, _player, Gold(500)));
+
+        Assert.Equal(1008053, Assert.Single(_speech.SaidClilocs).Cliloc);
     }
 
     public async Task DisposeAsync()

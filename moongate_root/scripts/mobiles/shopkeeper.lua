@@ -123,5 +123,11 @@ end
 -- Gold dropped on a vendor pays for a lesson it quoted, or on a guildmaster joins its guild (common/guild.lua);
 -- anything else goes back.
 function shopkeeper.on_drag_drop(serial, giver, item)
-    return guild.drop(serial, giver, item) or training.drop(serial, giver, item)
+    local handled, joined = guild.drop(serial, giver, item)
+
+    if handled then
+        return joined
+    end
+
+    return training.drop(serial, giver, item)
 end

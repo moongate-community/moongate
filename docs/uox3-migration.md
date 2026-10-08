@@ -340,7 +340,7 @@ the `modernuo_` files a previous run wrote in the folders of the maps it convert
 of the folder are left alone, and a map with nothing to write keeps its files. A region's id names the era, the file and
 the spawner's index in it (`malas_modernuo_post_uoml_south_12`), so it stays the same when a later
 run, with more templates, resolves more mobiles. With `--only Guildmaster` it converts only the entries of the classes whose name ends with that, into
-`modernuo_guildmasters.toml`, and leaves the other `modernuo_` files alone: that is how the guildmasters of Trammel, Felucca and
+`modernuo_guildmasters.toml`, and leaves the other `modernuo_` files alone (the npc lists are read from the `npc_lists` folder beside the `--mobiles` one, and the thieves' guildmaster, which the town spawns of UOX3 place already, is skipped): that is how the guildmasters of Trammel, Felucca and
 Ilshenar are placed without ModernUO's other spawns on top of UOX3's. Use it for maps UOX3 does not cover: on Felucca or
 Trammel it would add ModernUO's spawns on top of UOX3's. A region takes the map its spawner
 names, which is not always its folder's, and goes into the folder of that map, since the server

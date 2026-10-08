@@ -36,6 +36,11 @@ public sealed class RecordingNpcGuildService : INpcGuildService
         return Answer;
     }
 
+    public bool IsJoinPayment(MobileEntity guildmaster, ItemEntity gold)
+    {
+        return Guild is not null && gold.Amount == 500;
+    }
+
     public bool Join(MobileEntity guildmaster, MobileEntity player, ItemEntity gold)
     {
         Joined.Add(gold);

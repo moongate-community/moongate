@@ -30,6 +30,12 @@ public interface INpcGuildService
     bool Quote(MobileEntity guildmaster, MobileEntity player);
 
     /// <summary>
+    ///     Gets whether a drop on <paramref name="guildmaster" /> is the price of joining: a guildmaster, and a pile of exactly
+    ///     500 gold. Such a drop is about the guild and nothing else, whether or not the player may join.
+    /// </summary>
+    bool IsJoinPayment(MobileEntity guildmaster, ItemEntity gold);
+
+    /// <summary>
     ///     Takes gold dropped on the guildmaster as the price of joining: only a pile of exactly the price, from a player
     ///     who may join, is taken. The guildmaster tells the player welcome, or why not.
     /// </summary>
