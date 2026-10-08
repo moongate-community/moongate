@@ -25,7 +25,6 @@ namespace Moongate.Tests.Server.Ultima.Loaders;
 /// </summary>
 public sealed class RepositoryTemplateFilesTests
 {
-
     [Theory]
     [InlineData("eng")]
     [InlineData("ita")]
@@ -582,6 +581,33 @@ public sealed class RepositoryTemplateFilesTests
         );
         // The townfolk and the monsters are not.
         Assert.NotEqual(NotorietyType.Invulnerable, mobiles["skeleton"].Notoriety);
+    }
+
+    [Fact]
+    public async Task ShippedShops_LoadAgainstTheShippedItemsAndMobiles_AndTheirVendorsHaveTheShopkeeperScript()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
+            .LoadDataAsync()).Entities.ToArray();
+
+        var shops = (await new ShopsLoader(directories, new StubDataLoaderService().With(items).With(mobiles))
+            .LoadDataAsync()).Entities;
+
+        Assert.Contains(shops, shop => shop.Id == "baker" && shop.Buy.Count > 0);
+        var scripts = mobiles.ToDictionary(template => template.Id, template => template.ScriptId);
+        // A vendor that is a banker or a healer keeps its own script; the others use the shopkeeper's.
+        Assert.All(
+            shops.SelectMany(shop => shop.Vendors),
+            vendor => Assert.Contains(scripts[vendor], new[] { "shopkeeper", "healer", "banker" })
+        );
+        Assert.Equal("shopkeeper", scripts["m_baker"]);
     }
 
     [Fact]

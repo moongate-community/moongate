@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"34aaa672e77d1746e93a01305474763a32329013ab5f42ba5f4a71e2b3df759d","title":"Scrivere script Lua"} -->
+<!-- translation: {"sourceHash":"1b6e48f48ca95364e4b8329d1b6b73bab4462552052953432fd34106e109314e","title":"Scrivere script Lua"} -->
 
 # Scrivere script Lua
 
@@ -53,7 +53,7 @@ La [guida di riferimento API Lua](https://moongate.sh/lua/) ha una pagina per og
 parametri e tipo restituito di ogni funzione; viene generata dal codice del server.
 
 L'host predefinito registra `log`; il motore fornisce `engine`, `timer`, `events` e `wait`.
-Il plugin Ultima registra `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail`, `board` e `commands` nelle modalità game e standalone.
+Il plugin Ultima registra `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `vendor`, `effect`, `moongates`, `locations`, `jail`, `board` e `commands` nelle modalità game e standalone.
 I livelli di log seguono comunque la politica di logging dell'host, quindi una chiamata `log.debug` può non
 apparire nell'output predefinito della console. Usa template invece di concatenare
 valori variabili nei messaggi.
@@ -73,6 +73,7 @@ Alcuni moduli hanno una pagina di approfondimento:
 | `effect` | [Effetti](scripting/effects.md) |
 | `gump` | [Gump](gumps.md), con [gump costruiti in Lua](gumps.md#gumps-built-in-lua), e [Il tuo primo gump](gump-tutorial.md) |
 | `bank` | [Banca](bank.md) |
+| `vendor` | [Venditori](vendors.md) |
 | `dice` | Le forme di [DiceSpec](toml-types.md#dicespec) |
 | `localization` | [Leggere un messaggio da Lua](localization.md#read-a-message-from-lua) |
 | `locations` | [Luoghi](data-files/locations.md) e il [comando `go`](commands/go.md) |

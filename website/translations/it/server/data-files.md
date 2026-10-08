@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"038e531a982eb4f1535ce49574b8e4d97fbe22b690f4d9cd3ad719a0d7b46c44","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"caa16c48ee17832e0945eef7eb7d539b439973c12e0ddba9101def25291c9572","title":"Panoramica"} -->
 
 # File dei dati dello shard
 
@@ -54,6 +54,7 @@ viene eseguito dopo di esso.
 | [`motd.toml`](motd.md) | `MotdLine` | dopo template mobile e registrazione delle variabili dei plugin | Sì, a ogni ingresso del personaggio; file facoltativo |
 | [`titles.toml`](data-files/titles.md) | `FameKarmaTitle` | dopo MOTD | Mostrato nel titolo del paperdoll |
 | [`templates/books/<name>.toml`](data-files/books.md) | `BookTemplate` | dopo i template oggetto | Pergamene personalizzate e libri nativi; gump delle pergamene, copertine/pagine dei libri e libri scrivibili |
+| [`templates/shops/<name>.toml`](data-files/shops.md) | `ShopDefinition` | dopo i template oggetto e mobile | Sì, tramite `IShopService`: cosa vende ogni venditore nella sua [finestra del negozio](vendors.md) |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | dopo template oggetto e template dei libri (ogni id referenziato deve esistere) | Sì, tramite `IStartingItemsService` |
 
 "No" significa che il file viene caricato e validato, ma nessun sistema di gioco lo

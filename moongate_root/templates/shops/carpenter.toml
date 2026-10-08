@@ -1,0 +1,164 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+[[shop]]
+id = "carpenter"
+vendors = ["carpenter", "m_carpenter", "f_carpenter"]
+sell = []
+[[shop.buy]]
+item = "0x13f8_aos"
+price = 16
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e89_aos"
+price = 19
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e81_aos"
+price = 20
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x102e_nails"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x105b_axle"
+price = 2
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1bd7_board"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x10e4_draw_knife"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x10e5_froe"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x10e7_scorp"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x10e6_inshave"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1028_dovetail_saw"
+price = 12
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1034_saw"
+price = 15
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x102a_hammer"
+price = 17
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x102c_moulding_plane"
+price = 11
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1032_smoothing_plane"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1030_jointing_plane"
+price = 11
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e9c_drum"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e9d_tambourine"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0eb2_lap_harp"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0eb3_lute"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1b7a_a"
+price = 30
+amount = 20
+hue = 0
+name = ""

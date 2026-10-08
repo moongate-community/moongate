@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0df269eac693221bc04a843b94fe3cf32fe63555742a971da765d1177ebcadd2","title":"Pacchetti e handler"} -->
+<!-- translation: {"sourceHash":"fbbdb73e03791a647d2883f04799c2f215d1e5ca115238cd703c06119823bd2e","title":"Pacchetti e handler"} -->
 
 # Pacchetti e handler
 
@@ -74,6 +74,9 @@ modalità, perché l'Enhanced Client lo invia anche al server di accesso:
 | `0xAF` | `DeathAnimationPacket` | In uscita | Fissa 13 | — |
 | `0x2C` | `DeathStatusPacket` | In uscita | Fissa 2 | — |
 | `0x89` | `CorpseEquipmentPacket` | In uscita | Variabile | — |
+| `0x74` | `VendorBuyListPacket` | In uscita | Variabile | I prezzi e i nomi della finestra del negozio di un venditore |
+| `0x3B` | `VendorEndPacket` | In uscita | Fissa 8 | Chiude la finestra del negozio |
+| `0x3B` | `VendorBuyReplyPacket` | In entrata | Variabile, minimo 8 | `VendorBuyReplyPacketHandler`: l'acquisto della finestra del negozio |
 | `0x6C` | `TargetCursorPacket` | In uscita | Fissa 19 | — |
 | `0x6C` | `TargetResponsePacket` | In ingresso | Fissa 19 | `TargetResponsePacketHandler`: completa il bersaglio in attesa del giocatore |
 | `0x95` | `HuePickerPacket` | In uscita | Fissa 9 | — |

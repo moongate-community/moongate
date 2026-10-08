@@ -1,0 +1,24 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+[[shop]]
+id = "bowyer"
+vendors = ["bowyer", "m_bowyer", "f_bowyer"]
+sell = []
+[[shop.buy]]
+item = "0x1022_fletcher's_tools"
+price = 2
+amount = 20
+hue = 0
+name = ""

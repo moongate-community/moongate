@@ -6,6 +6,7 @@ intelligence = "1d26+49"
 damage = "1d13+2"
 armor = 10
 notoriety = "invulnerable"
+script_id = "shopkeeper"
 
 [[mobile]]
 id = "m_bard"

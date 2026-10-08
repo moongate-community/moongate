@@ -76,6 +76,18 @@ public interface IBankService : ISessionClosedListener
     BankResultType DepositItem(MobileEntity player, ItemEntity item);
 
     /// <summary>
+    ///     Gets the coins the player carries: the gold piles of its backpack and of the bags inside it, not the ones on
+    ///     a cursor.
+    /// </summary>
+    long CarriedGold(MobileEntity player);
+
+    /// <summary>
+    ///     Takes coins from what the player carries, the smallest piles first. All or nothing: false, and nothing moves,
+    ///     when <paramref name="amount" /> is under 1 or more than <see cref="CarriedGold" />.
+    /// </summary>
+    bool TakeCarriedGold(MobileEntity player, int amount);
+
+    /// <summary>
     ///     Gets what a bank check is worth; null for an item that is not one.
     /// </summary>
     long? WorthOf(ItemEntity item);

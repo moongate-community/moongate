@@ -1,0 +1,255 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+[[shop]]
+id = "tailor"
+vendors = ["tailor", "m_tailor", "f_tailor"]
+sell = []
+[[shop.buy]]
+item = "0x0f9d_sewing_kit"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f9f_scissors"
+price = 11
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0fab_dying_tub"
+price = 8
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0fa9_dyes"
+price = 8
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1517_shirt"
+price = 12
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x152e_short_pants"
+price = 7
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1efd_fancy_shirt"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1539_long_pants"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1eff_fancy_dress"
+price = 26
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1f01_plain_dress"
+price = 13
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1537_kilt"
+price = 11
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x153b_half_apron"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1f03_robe"
+price = 18
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1515_cloak"
+price = 8
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1f7b_doublet"
+price = 13
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1fa1_tunic"
+price = 18
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1f9f_jester_suit"
+price = 26
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x171c_jester_hat"
+price = 12
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1713_floppy_hat"
+price = 7
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1714_wide_brim_hat"
+price = 8
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1715_cap"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1716_tall_straw_hat"
+price = 8
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1717_straw_hat"
+price = 7
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1718_wizard's_hat"
+price = 11
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1db9_aos"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x171a_feathered_hat"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x171b_tricorne_hat"
+price = 8
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f95_bolt_of_cloth"
+price = 100
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1766_cut_cloth"
+price = 2
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1767_cloth"
+price = 2
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0df9_bale_of_cotton"
+price = 102
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0df8_pile_of_wool"
+price = 62
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1a9c_flax_bundle"
+price = 102
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0fa0_spool_of_thread"
+price = 18
+amount = 20
+hue = 0
+name = ""

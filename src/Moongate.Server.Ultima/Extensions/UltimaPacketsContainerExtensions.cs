@@ -16,11 +16,13 @@ using Moongate.Server.Ultima.Handlers.Prompts;
 using Moongate.Server.Ultima.Handlers.Skills;
 using Moongate.Server.Ultima.Handlers.Targeting;
 using Moongate.Server.Ultima.Handlers.Tooltips;
+using Moongate.Server.Ultima.Handlers.Vendors;
 using Moongate.Server.Ultima.Packets.Books;
 using Moongate.Server.Ultima.Packets.BulletinBoards;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.Gumps;
+using Moongate.Server.Ultima.Packets.Vendors;
 
 namespace Moongate.Server.Ultima.Extensions;
 
@@ -83,6 +85,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterPacketHandler<QueryPropertiesPacket, QueryPropertiesPacketHandler>();
         container.RegisterIncomingPacket<AttackRequestPacket>();
         container.RegisterPacketHandler<AttackRequestPacket, AttackRequestPacketHandler>();
+        container.RegisterIncomingPacket<VendorBuyReplyPacket>();
+        container.RegisterPacketHandler<VendorBuyReplyPacket, VendorBuyReplyPacketHandler>();
         container.RegisterIncomingPacket<SkillLockPacket>();
         container.RegisterPacketHandler<SkillLockPacket, SkillLockPacketHandler>();
         container.RegisterIncomingPacket<TextCommandPacket>();

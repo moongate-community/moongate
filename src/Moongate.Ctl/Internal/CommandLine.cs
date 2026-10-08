@@ -13,7 +13,7 @@ internal static class CommandLine
         ["convert"] =
         [
             "uox", "modernuo-spawns", "modernuo-signs", "modernuo-teleporters", "modernuo-locations", "modernuo-chests",
-            "modernuo-books"
+            "modernuo-books", "modernuo-vendors"
         ],
         ["completion"] = []
     };

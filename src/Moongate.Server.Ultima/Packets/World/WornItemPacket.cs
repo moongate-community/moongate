@@ -26,6 +26,18 @@ public sealed class WornItemPacket : BaseFixedPacket<WornItemPacket>, IOutgoingP
 
     public ushort Hue { get; }
 
+    /// <summary>
+    ///     Shows an item that is no entity, such as the virtual containers of a vendor's shop.
+    /// </summary>
+    public WornItemPacket(Serial item, int itemId, LayerType layer, Serial wearer, ushort hue)
+    {
+        Item = item;
+        ItemId = itemId;
+        Layer = layer;
+        Wearer = wearer;
+        Hue = hue;
+    }
+
     public WornItemPacket(ItemEntity item)
     {
         ArgumentNullException.ThrowIfNull(item);

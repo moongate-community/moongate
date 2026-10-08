@@ -476,6 +476,53 @@ public sealed class BankServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void CarriedGold_AddsTheBackpackAndItsBags_ButNotTheBox()
+    {
+        var backpack = Backpack();
+        Gold(backpack, 300);
+        Gold(In(backpack, "bag"), 500);
+
+        Assert.Equal(800, _bank.CarriedGold(_aria));
+    }
+
+    [Fact]
+    public void TakeCarriedGold_TakesTheSmallestPilesFirst_AndLeavesTheRest()
+    {
+        var backpack = Backpack();
+        var loose = Gold(backpack, 300);
+        var inBag = Gold(In(backpack, "bag"), 500);
+
+        Assert.True(_bank.TakeCarriedGold(_aria, 600));
+
+        Assert.False(_items.TryGet(loose.Id, out _));
+        Assert.Equal(200, inBag.Amount);
+        Assert.Equal(200, _bank.CarriedGold(_aria));
+    }
+
+    [Theory,
+     InlineData(0),
+     InlineData(-5),
+     InlineData(801)]
+    public void TakeCarriedGold_NothingOrMoreThanIsCarried_IsRefused_AndNothingMoves(int amount)
+    {
+        var backpack = Backpack();
+        var loose = Gold(backpack, 300);
+        Gold(In(backpack, "bag"), 500);
+
+        Assert.False(_bank.TakeCarriedGold(_aria, amount));
+
+        Assert.Equal(300, loose.Amount);
+        Assert.Equal(800, _bank.CarriedGold(_aria));
+    }
+
+    [Fact]
+    public void CarriedGold_WithNoBackpack_IsNone()
+    {
+        Assert.Equal(0, _bank.CarriedGold(_aria));
+        Assert.False(_bank.TakeCarriedGold(_aria, 1));
+    }
+
+    [Fact]
     public async Task Deposit_MovesTheCoinsFromTheBackpackAndItsBags_IntoTheBox()
     {
         var box = await BoxAsync();
