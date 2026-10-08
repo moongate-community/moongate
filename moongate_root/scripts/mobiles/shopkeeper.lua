@@ -31,6 +31,7 @@
 -- ==============================================================================
 
 local training = require("common.training")
+local guild = require("common.guild")
 
 shopkeeper = {}
 
@@ -64,6 +65,7 @@ end
 
 function shopkeeper.on_speech(serial, speaker, text, keywords)
     training.listen(serial, speaker, keywords)
+    guild.listen(serial, speaker, text, keywords)
 
     local buying = has_keyword(keywords, SpeechKeywordType.VendorBuy)
     local selling = has_keyword(keywords, SpeechKeywordType.VendorSell)
@@ -118,7 +120,8 @@ function shopkeeper.on_context_menu_select(serial, player, id)
     end
 end
 
--- Gold dropped on a vendor pays for a lesson it quoted; anything else goes back.
+-- Gold dropped on a vendor pays for a lesson it quoted, or on a guildmaster joins its guild (common/guild.lua);
+-- anything else goes back.
 function shopkeeper.on_drag_drop(serial, giver, item)
-    return training.drop(serial, giver, item)
+    return guild.drop(serial, giver, item) or training.drop(serial, giver, item)
 end

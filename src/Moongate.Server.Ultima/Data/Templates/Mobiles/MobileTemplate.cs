@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Guilds;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
@@ -185,6 +186,12 @@ public class MobileTemplate
     ///     Unset: no script.
     /// </summary>
     public string? ScriptId { get; set; }
+
+    /// <summary>
+    ///     The guild this guildmaster takes members for, such as <c>blacksmiths</c>: a player says <c>join</c> to it and
+    ///     pays 500 gold. Unset: it is no guildmaster.
+    /// </summary>
+    public NpcGuildType? NpcGuild { get; set; }
 
     /// <summary>
     ///     The percent of its hit points under which the creature runs from a fight, from 0 to 100; -1 for one that never
