@@ -91,6 +91,41 @@ public sealed class SpeechServiceTests
     }
 
     [Fact]
+    public async Task SayClilocTo_ReachesThatPlayerOnly_WithTheSpeakerAsTheSource_AndAnAffixInItsOwnPacket()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var aria = await fixture.AddAsync(2);
+        await fixture.AddAsync(3);
+        Place(fixture, 2, 101, 100);
+        Place(fixture, 3, 102, 100);
+        Assert.True(fixture.Mobiles.TryGet(new Serial(2), out var player));
+        var smith = new MobileEntity
+        {
+            Id = new Serial(0x100), Name = "Bob", Body = 0x0190, Map = MapType.Trammel, Location = new Point3D(100, 100, 0)
+        };
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+        var sent = false;
+
+        await fixture.Network.ExecuteOnLoopAsync(() => sent = speech.SayClilocTo(smith, player, 1008052, "", " 500"));
+
+        Assert.True(sent);
+        Assert.Equal([aria.SessionId], fixture.Sender.SentSessionIds);
+        var message = Assert.IsType<LocalizedMessageAffixPacket>(Assert.Single(fixture.Sender.Sent));
+        Assert.Equal((smith.Id, 1008052, "Bob", " 500"), (message.Serial, message.Cliloc, message.Name, message.Affix));
+    }
+
+    [Fact]
+    public async Task SayClilocTo_APlayerWhoseClientIsGone_ReachesNobody()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var gone = new MobileEntity { Id = new Serial(9), Name = "Gone", Map = MapType.Trammel };
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+
+        Assert.False(speech.SayClilocTo(new MobileEntity { Id = new Serial(0x100), Name = "Bob" }, gone, 1008052));
+        Assert.Empty(fixture.Sender.Sent);
+    }
+
+    [Fact]
     public async Task Tell_SendsASystemMessageToThatPlayerOnly()
     {
         await using var fixture = await BroadcastFixture.CreateAsync();

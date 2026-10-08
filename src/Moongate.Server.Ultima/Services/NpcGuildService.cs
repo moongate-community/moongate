@@ -76,7 +76,7 @@ public sealed class NpcGuildService : INpcGuildService
             return false;
         }
 
-        _speech.SayCliloc(guildmaster, ClilocPrice, "", $" {JoinCost}");
+        _speech.SayClilocTo(guildmaster, player, ClilocPrice, "", $" {JoinCost}");
 
         return true;
     }
@@ -106,7 +106,7 @@ public sealed class NpcGuildService : INpcGuildService
 
         player.SetProp(GuildProp, guild.ToString());
         player.SetProp(JoinedProp, _time.GetUtcNow().UtcTicks);
-        _speech.SayCliloc(guildmaster, guild == NpcGuildType.Thieves ? ClilocWelcomeThieves : ClilocWelcome);
+        _speech.SayClilocTo(guildmaster, player, guild == NpcGuildType.Thieves ? ClilocWelcomeThieves : ClilocWelcome);
 
         return true;
     }
@@ -122,21 +122,21 @@ public sealed class NpcGuildService : INpcGuildService
 
         if (MemberOf(player) != guild)
         {
-            _speech.SayCliloc(guildmaster, ClilocNotMember);
+            _speech.SayClilocTo(guildmaster, player, ClilocNotMember);
 
             return false;
         }
 
         if (JoinedAt(player) + QuitAfter > _time.GetUtcNow())
         {
-            _speech.SayCliloc(guildmaster, ClilocJustJoined);
+            _speech.SayClilocTo(guildmaster, player, ClilocJustJoined);
 
             return false;
         }
 
         player.RemoveProp(GuildProp);
         player.RemoveProp(JoinedProp);
-        _speech.SayCliloc(guildmaster, ClilocResigned);
+        _speech.SayClilocTo(guildmaster, player, ClilocResigned);
 
         return true;
     }
@@ -153,7 +153,7 @@ public sealed class NpcGuildService : INpcGuildService
     {
         if (MemberOf(player) is { } current)
         {
-            _speech.SayCliloc(guildmaster, current == guild ? ClilocAlreadyMember : ClilocOtherGuild);
+            _speech.SayClilocTo(guildmaster, player, current == guild ? ClilocAlreadyMember : ClilocOtherGuild);
 
             return false;
         }
@@ -165,14 +165,14 @@ public sealed class NpcGuildService : INpcGuildService
 
         if (player.Kills > 0)
         {
-            _speech.SayCliloc(guildmaster, ClilocNoThievesWithKills);
+            _speech.SayClilocTo(guildmaster, player, ClilocNoThievesWithKills);
 
             return false;
         }
 
         if ((player.Skills.FirstOrDefault(known => known.Skill == SkillType.Stealing)?.Base ?? 0) < ThievesStealing)
         {
-            _speech.SayCliloc(guildmaster, ClilocThievesNeedStealing);
+            _speech.SayClilocTo(guildmaster, player, ClilocThievesNeedStealing);
 
             return false;
         }

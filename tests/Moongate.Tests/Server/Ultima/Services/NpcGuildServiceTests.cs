@@ -82,7 +82,9 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
     {
         Assert.True(_guilds.Quote(_smith, _player));
 
-        Assert.Equal((1008052, " 500"), (Assert.Single(_speech.SaidClilocs).Cliloc, Assert.Single(_speech.SaidAffixes)));
+        var said = Assert.Single(_speech.SaidTo);
+        Assert.Equal((1008052, " 500", _smith, _player), (said.Cliloc, said.Affix, said.Speaker, said.Player));
+        Assert.Empty(_speech.SaidClilocs);
     }
 
     [Fact]
@@ -94,7 +96,7 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
 
         Assert.Equal(NpcGuildType.Blacksmiths, _guilds.MemberOf(_player));
         Assert.False(_items.TryGet(gold.Id, out _));
-        Assert.Equal(1008054, Assert.Single(_speech.SaidClilocs).Cliloc);
+        Assert.Equal(1008054, Assert.Single(_speech.SaidTo).Cliloc);
     }
 
     [Theory,
@@ -114,13 +116,13 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
     public async Task Join_AMemberOfThatGuild_OrOfAnother_IsToldSo()
     {
         Assert.True(await OnLoopAsync(() => _guilds.Join(_smith, _player, Gold(500))));
-        _speech.SaidClilocs.Clear();
+        _speech.SaidTo.Clear();
 
         Assert.False(await OnLoopAsync(() => _guilds.Join(_smith, _player, Gold(500))));
         Assert.False(_guilds.Quote(_smith, _player));
         Assert.False(_guilds.Quote(_thief, _player));
 
-        Assert.Equal([501047, 501047, 501046], _speech.SaidClilocs.Select(said => said.Cliloc));
+        Assert.Equal([501047, 501047, 501046], _speech.SaidTo.Select(said => said.Cliloc));
     }
 
     [Fact]
@@ -135,7 +137,7 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
         _player.Skills = [new MobileSkill { Skill = SkillType.Stealing, Base = 600 }];
         Assert.True(await OnLoopAsync(() => _guilds.Join(_thief, _player, Gold(500))));
 
-        Assert.Equal([501050, 501051, 1008053], _speech.SaidClilocs.Select(said => said.Cliloc));
+        Assert.Equal([501050, 501051, 1008053], _speech.SaidTo.Select(said => said.Cliloc));
         Assert.Equal(NpcGuildType.Thieves, _guilds.MemberOf(_player));
     }
 
@@ -143,13 +145,13 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
     public async Task Resign_NeedsAWeek_ThenLeavesTheGuild()
     {
         await OnLoopAsync(() => _guilds.Join(_smith, _player, Gold(500)));
-        _speech.SaidClilocs.Clear();
+        _speech.SaidTo.Clear();
 
         Assert.False(_guilds.Resign(_smith, _player));
         _clock.Advance(TimeSpan.FromDays(7).Add(TimeSpan.FromMinutes(1)));
         Assert.True(_guilds.Resign(_smith, _player));
 
-        Assert.Equal([501053, 501054], _speech.SaidClilocs.Select(said => said.Cliloc));
+        Assert.Equal([501053, 501054], _speech.SaidTo.Select(said => said.Cliloc));
         Assert.Null(_guilds.MemberOf(_player));
     }
 
@@ -158,7 +160,7 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
     {
         Assert.False(_guilds.Resign(_smith, _player));
 
-        Assert.Equal(501052, Assert.Single(_speech.SaidClilocs).Cliloc);
+        Assert.Equal(501052, Assert.Single(_speech.SaidTo).Cliloc);
     }
 
     [Fact]
@@ -200,7 +202,7 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
 
         await OnLoopAsync(() => _guilds.Join(_thief, _player, Gold(500)));
 
-        Assert.Equal(1008053, Assert.Single(_speech.SaidClilocs).Cliloc);
+        Assert.Equal(1008053, Assert.Single(_speech.SaidTo).Cliloc);
     }
 
     public async Task DisposeAsync()

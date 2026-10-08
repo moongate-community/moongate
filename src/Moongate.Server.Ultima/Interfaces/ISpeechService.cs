@@ -27,6 +27,16 @@ public interface ISpeechService
     int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "", string affix = "");
 
     /// <summary>
+    ///     Makes the mobile say a text of the client, by its cliloc number, to <paramref name="player" /> only, over its
+    ///     head, as ModernUO's <c>SayTo</c>: nobody else near hears it. The arguments and the affix are those of
+    ///     <see cref="SayCliloc" />.
+    /// </summary>
+    /// <returns>
+    ///     Whether it was sent: false for an NPC player or one whose client is gone.
+    /// </returns>
+    bool SayClilocTo(MobileEntity speaker, MobileEntity player, int cliloc, string arguments = "", string affix = "");
+
+    /// <summary>
     ///     Plays <paramref name="sound" /> once where <paramref name="source" /> stands (0x54), for the players within 15
     ///     cells on its map.
     /// </summary>
