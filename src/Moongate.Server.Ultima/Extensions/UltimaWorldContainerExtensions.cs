@@ -34,6 +34,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
         container.Register<IShopService, ShopService>(Reuse.Singleton);
+        container.Register<IVendorService, VendorService>(Reuse.Singleton);
         container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
         container.Register<IContainerViewService, ContainerViewService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
@@ -117,6 +118,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IDeathService, DeathService>(Reuse.Singleton);
         container.Register<IHuePickerService, HuePickerService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IHuePickerService>();
+        container.RegisterMapping<ISessionClosedListener, IVendorService>();
         container.Register<IPromptService, PromptService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IPromptService>();
         container.Register<IGumpService, GumpService>(Reuse.Singleton);
