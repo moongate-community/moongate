@@ -116,6 +116,7 @@ public sealed class ModernUoVendorConverterTests : IDisposable
         Assert.Contains("conditional line", report);
         Assert.Contains("conditional SBInfo SBSEFood", report);
         Assert.Contains("hue that is no literal", report);
+        Assert.Contains("beverage content dropped", report);
         Assert.DoesNotContain(Read("baker").Shop[0].Buy, line => line.Item.Contains("pie"));
     }
 

@@ -386,6 +386,31 @@ public sealed class VendorServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Buy_WhenTheBackpackCannotHoldTheWeight_PutsTheGoodsAtTheFeet()
+    {
+        Backpack();
+        _weight.HoldsResult = false;
+        _bank.Carried[_player.Id] = 100;
+        var lines = await OpenAsync();
+
+        await BuyAsync(Reply(_vendor.Id, (lines[0], 1)));
+
+        Assert.Empty(_items.GetContents(BackpackId()));
+        Assert.Single(_view.Calls, call => call.StartsWith("Appeared"));
+    }
+
+    [Fact]
+    public async Task Buy_ForAnotherVendorThanTheOpenWindow_TellsTheClientThatWindowIsOver()
+    {
+        var lines = await OpenAsync();
+
+        await BuyAsync(Reply(new Serial(999), (lines[0], 1)));
+
+        Assert.Equal(new Serial(999), Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>()).Vendor);
+        Assert.NotNull(_session.Get(VendorSessionKeys.Window));
+    }
+
+    [Fact]
     public async Task Buy_MoreThanTheStock_OrALineThatIsNotInTheWindow_EndsTheWindowAndChangesNothing()
     {
         Backpack();
@@ -405,7 +430,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Buy_ForAnotherVendor_OrWithoutAWindow_OrWithMoreThanAHundredLines_IsDropped()
+    public async Task Buy_WithoutAWindow_OrWithMoreThanAHundredLines_IsDropped()
     {
         Backpack();
         _bank.Carried[_player.Id] = 100000;
@@ -414,7 +439,6 @@ public sealed class VendorServiceTests : IAsyncLifetime
         Assert.Empty(_fixture.Sender.Sent.OfType<VendorEndPacket>());
 
         var lines = await OpenAsync();
-        await BuyAsync(Reply(new Serial(999), (lines[0], 1)));
         await BuyAsync(Reply(_vendor.Id, Enumerable.Repeat((lines[0], 1), 101).ToArray()));
 
         Assert.Empty(_fixture.Sender.Sent.OfType<VendorEndPacket>());

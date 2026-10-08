@@ -33,6 +33,11 @@ public sealed class VendorService : IVendorService
     private const int BankFrom = 2000;
     private const int GraphicMask = 0x3FFF;
     private const int GraphicCliloc = 1020000;
+    private const int HighGraphicCliloc = 1078872;
+    private const int HighGraphic = 0x4000;
+    private const int ShopContainerGraphic = 0x0E75;
+    private const int StockPruneAbove = 1024;
+    private const long VirtualHalf = Serial.MinVirtual + (Serial.MaxVirtual - Serial.MinVirtual) / 2;
     private const int ClilocMurdererRefused = 501522;
     private const int ClilocCannotAfford = 500192;
     private const int ClilocBankLacksFunds = 500191;
@@ -120,6 +125,8 @@ public sealed class VendorService : IVendorService
             return false;
         }
 
+        PruneStock();
+
         var shown = new List<VendorWindowLine>();
 
         foreach (var line in shop.Buy)
@@ -167,8 +174,8 @@ public sealed class VendorService : IVendorService
         entries.Reverse();
 
         var id = session.SessionId;
-        _sender.TrySend(id, new WornItemPacket(shopContainer, 0, LayerType.ShopBuy, vendor.Id, 0));
-        _sender.TrySend(id, new WornItemPacket(resaleContainer, 0, LayerType.ShopResale, vendor.Id, 0));
+        _sender.TrySend(id, new WornItemPacket(shopContainer, ShopContainerGraphic, LayerType.ShopBuy, vendor.Id, 0));
+        _sender.TrySend(id, new WornItemPacket(resaleContainer, ShopContainerGraphic, LayerType.ShopResale, vendor.Id, 0));
         _sender.TrySend(id, ContainerContentPacket.Of(entries, session.UsesContainerGrid()));
         _sender.TrySend(id, new VendorBuyListPacket(shopContainer, names));
         _sender.TrySend(id, new DisplayContainerPacket(vendor.Id, VendorGump, session.UsesHighSeasContainers()));
@@ -184,8 +191,16 @@ public sealed class VendorService : IVendorService
 
         var window = session.Get(VendorSessionKeys.Window);
 
-        if (window is null || window.Vendor != packet.Vendor || packet.Lines.Count > MaxReplyLines)
+        if (window is null || packet.Lines.Count > MaxReplyLines)
         {
+            return;
+        }
+
+        if (window.Vendor != packet.Vendor)
+        {
+            // The window of another vendor is open; the client waiting on this one is told it is over.
+            _sender.TrySend(session.SessionId, new VendorEndPacket(packet.Vendor));
+
             return;
         }
 
@@ -295,9 +310,28 @@ public sealed class VendorService : IVendorService
 
     private static string NameOf(VendorWindowLine line)
     {
-        return line.Line.Name.Length > 0
-            ? line.Line.Name
-            : (GraphicCliloc + ((int)line.Template.ItemId.Value & GraphicMask)).ToString();
+        if (line.Line.Name.Length > 0)
+        {
+            return line.Line.Name;
+        }
+
+        var graphic = (int)line.Template.ItemId.Value;
+
+        return (graphic >= HighGraphic ? HighGraphicCliloc + graphic : GraphicCliloc + (graphic & GraphicMask)).ToString();
+    }
+
+    // The stock of vendors that are gone, such as the ones that respawned with another serial.
+    private void PruneStock()
+    {
+        if (_stock.Count <= StockPruneAbove)
+        {
+            return;
+        }
+
+        foreach (var key in _stock.Keys.Where(key => !_mobiles.IsInWorld(key.Vendor)).ToArray())
+        {
+            _stock.Remove(key);
+        }
     }
 
     private int StockOf(MobileEntity vendor, ShopLine line)
@@ -315,7 +349,8 @@ public sealed class VendorService : IVendorService
     private Serial NextVirtual()
     {
         var serial = new Serial((uint)_nextVirtual);
-        _nextVirtual = _nextVirtual == Serial.MinVirtual ? Serial.MaxVirtual : _nextVirtual - 1;
+        // The lower half is the mobile service's, which counts up from the bottom for hair and beards.
+        _nextVirtual = _nextVirtual <= VirtualHalf ? Serial.MaxVirtual : _nextVirtual - 1;
 
         return serial;
     }

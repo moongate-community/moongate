@@ -11,11 +11,17 @@ namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
 ///     Loads every <c>*.toml</c> under <c>templates/shops/</c>, recursively. A shop with no id, a duplicate shop id, a
-///     line whose item is not an item template, a price or an amount below 1, a vendor that is not a mobile template
-///     and a vendor in two shops stop the server at startup, naming the file and the shop.
+///     line whose item is not an item template, a price below 1, an amount outside 1 to 60000, a hue outside 0 to 65535,
+///     a name that is not ASCII or is longer than 253 characters, two buy lines with the same item, price and hue, a
+///     vendor that is not a mobile template and a vendor in two shops stop the server at startup, naming the file and
+///     the shop.
 /// </summary>
 public class ShopsLoader : IDataLoader<ShopDefinition>
 {
+    private const int AmountMaximum = 60_000;
+    private const int HueMaximum = ushort.MaxValue;
+    private const int NameMaximum = 253;
+
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly IDataLoaderService _dataLoaderService;
 
@@ -102,6 +108,14 @@ public class ShopsLoader : IDataLoader<ShopDefinition>
             }
         }
 
+        if (shop.Buy.GroupBy(line => (line.Item, line.Price, line.Hue)).FirstOrDefault(group => group.Count() > 1) is
+            { } twice)
+        {
+            throw new InvalidDataException(
+                $"{where} has two buy lines for '{twice.Key.Item}' with the same price and hue: they would share one stock."
+            );
+        }
+
         foreach (var (kind, lines) in new[] { ("buy", shop.Buy), ("sell", shop.Sell) })
         {
             foreach (var line in lines)
@@ -118,9 +132,25 @@ public class ShopsLoader : IDataLoader<ShopDefinition>
                     throw new InvalidDataException($"{where} has a {kind} line for '{line.Item}' with a price below 1.");
                 }
 
-                if (line.Amount < 1)
+                if (line.Amount is < 1 or > AmountMaximum)
                 {
-                    throw new InvalidDataException($"{where} has a {kind} line for '{line.Item}' with an amount below 1.");
+                    throw new InvalidDataException(
+                        $"{where} has a {kind} line for '{line.Item}' with an amount outside 1 to {AmountMaximum}."
+                    );
+                }
+
+                if (line.Hue is < 0 or > HueMaximum)
+                {
+                    throw new InvalidDataException(
+                        $"{where} has a {kind} line for '{line.Item}' with a hue outside 0 to {HueMaximum}."
+                    );
+                }
+
+                if (line.Name.Length > NameMaximum || line.Name.Any(character => character > 0x7F))
+                {
+                    throw new InvalidDataException(
+                        $"{where} has a {kind} line for '{line.Item}' with a name that is not ASCII or is over {NameMaximum} characters."
+                    );
                 }
             }
         }

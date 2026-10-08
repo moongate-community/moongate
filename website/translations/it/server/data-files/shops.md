@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"59a81220cc49127f178ec75c04afd44e983591b30f976ea6ffca676a23ba3e01","title":"Negozi"} -->
+<!-- translation: {"sourceHash":"abb77dabfeb940b777a1248829187f8c4229bf89b6635f751d589929be3a1826","title":"Negozi"} -->
 
 # Negozi
 
@@ -33,7 +33,7 @@ Un negozio può avere anche righe `[[shop.sell]]`, con gli stessi campi, per ci�
 nulla le legge.
 
 Il server rifiuta di avviarsi, indicando il file e il negozio, quando un negozio non ha id, un id è usato due volte, una riga nomina
-un template oggetto che non esiste, un prezzo o una quantità è sotto 1, un venditore non è un template mobile, oppure un
+un template oggetto che non esiste, un prezzo è sotto 1, una quantità è fuori da 1–60000, un colore è fuori da 0–65535, un nome non è ASCII o supera 253 caratteri, due righe di acquisto hanno lo stesso oggetto, prezzo e colore, un venditore non è un template mobile, oppure un
 venditore è in due negozi. Un template di venditore ha bisogno solo dello script `shopkeeper`, che `basevendor` già dà, per
 aprire la sua finestra: vedi [Venditori](../vendors.md).
 

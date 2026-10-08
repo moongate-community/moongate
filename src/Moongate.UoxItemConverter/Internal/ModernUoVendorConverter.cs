@@ -89,12 +89,19 @@ internal static class ModernUoVendorConverter
         try
         {
             var report = new ConversionReport();
-            var sbInfos = ReadAll(
-                    Path.Combine(root, "SBInfo"),
-                    (text, path) => ModernUoVendorSourceReader.ReadSbInfos(text, path, report)
-                )
-                .GroupBy(info => info.Name, StringComparer.Ordinal)
-                .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+            var sbInfos = new Dictionary<string, ImportedSbInfo>(StringComparer.Ordinal);
+
+            foreach (var info in ReadAll(
+                         Path.Combine(root, "SBInfo"),
+                         (text, path) => ModernUoVendorSourceReader.ReadSbInfos(text, path, report)
+                     ))
+            {
+                if (!sbInfos.TryAdd(info.Name, info))
+                {
+                    report.Count($"SBInfo {info.Name} is defined twice (the first is used)");
+                }
+            }
+
             var vendors = ReadAll(
                 Path.Combine(root, "NPC"),
                 (text, path) => ModernUoVendorSourceReader.ReadVendors(text, path, report)

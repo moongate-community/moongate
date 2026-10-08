@@ -170,6 +170,16 @@ internal static class ModernUoVendorSourceReader
             return;
         }
 
+        if (kind == BeverageLine)
+        {
+            report.Count("beverage content dropped (the item template decides what it holds)");
+        }
+
+        if (arguments.Count > numbersAt + 4)
+        {
+            report.Count("constructor arguments dropped");
+        }
+
         if (numbers[3] is null)
         {
             report.Count("hue that is no literal (taken as 0)");

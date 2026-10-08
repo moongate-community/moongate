@@ -44,6 +44,13 @@ public sealed class ShopsLoaderTests
          "[[shop]]\nid = \"a\"\nvendors = [\"baker\"]\n[[shop]]\nid = \"b\"\nvendors = [\"baker\"]\n"
      ),
      InlineData("duplicate shop", "[[shop]]\nid = \"a\"\n[[shop]]\nid = \"a\"\n"),
+     InlineData("amount too big", "[[shop]]\nid = \"a\"\n[[shop.buy]]\nitem = \"bread\"\nprice = 1\namount = 60001\n"),
+     InlineData("hue", "[[shop]]\nid = \"a\"\n[[shop.buy]]\nitem = \"bread\"\nprice = 1\nhue = 70000\n"),
+     InlineData("name", "[[shop]]\nid = \"a\"\n[[shop.buy]]\nitem = \"bread\"\nprice = 1\nname = \"pozione è\"\n"),
+     InlineData(
+         "same line twice",
+         "[[shop]]\nid = \"a\"\n[[shop.buy]]\nitem = \"bread\"\nprice = 1\n[[shop.buy]]\nitem = \"bread\"\nprice = 1\n"
+     ),
      InlineData("no id", "[[shop]]\nvendors = []\n")]
     public async Task LoadDataAsync_ABadShop_ThrowsInvalidDataException_NamingTheFault(string fault, string toml)
     {

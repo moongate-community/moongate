@@ -31,8 +31,9 @@ A shop may also have `[[shop.sell]]` lines, with the same fields, for what a ven
 reads them yet.
 
 The server refuses to start, naming the file and the shop, when a shop has no id, an id is used twice, a line names
-an item template that does not exist, a price or an amount is under 1, a vendor is not a mobile template, or a
-vendor is in two shops. A vendor template only needs the `shopkeeper` script, which `basevendor` already gives, to
+an item template that does not exist, a price is under 1, an amount is outside 1 to 60000, a hue is outside 0 to
+65535, a name is not ASCII or is over 253 characters, two buy lines have the same item, price and hue, a vendor is not a
+mobile template, or a vendor is in two shops. A vendor template only needs the `shopkeeper` script, which `basevendor` already gives, to
 open its window: see [Vendors](../vendors.md).
 
 ## Add or change a shop
