@@ -232,7 +232,9 @@ Hiding or being shown again clears the steps.
 click on the backpack of another mobile does not open it, the server calls `on_snoop(user, owner, container)` of this
 script (`ISkillScriptService.Call`). It does so for the backpack and for a bag inside it, and not for a dead player.
 
-- **Rules:** within a tile of the owner (staff need not be); nothing for a dead owner; a game master or administrator
+- **Staff snoops anyone, always:** a game master or an administrator needs no distance, no skill, no rule, loses no
+  karma and is not noticed, and may snoop a dead owner and another staff member. The `hide` command hides it first.
+- **Rules** for the others: within a tile of the owner; nothing for a dead owner; a game master or administrator
   cannot be snooped, nor an invulnerable player ("You cannot perform negative acts on your target."; Moongate has no
   rules of harmful acts by map yet, which this stands in for). An NPC in a guarded region of another map than Felucca is
   snooped only when it is not human, or attackable, or a murderer: ModernUO's comment says so, though its code lets

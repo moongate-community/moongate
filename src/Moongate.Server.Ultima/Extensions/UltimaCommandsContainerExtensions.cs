@@ -73,6 +73,20 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.RemoveDescription
         );
+        container.RegisterCommand<HideCommand>(
+            "hide",
+            "Hides you in a puff of smoke: the players do not see you and your steps do not show you.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.HideDescription
+        );
+        container.RegisterCommand<UnhideCommand>(
+            "unhide",
+            "Shows you again in a puff of smoke.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.UnhideDescription
+        );
         container.RegisterCommand<ResurrectCommand>(
             "resurrect",
             "Raises the NPC whose corpse you target: it is born again where the corpse lies.",

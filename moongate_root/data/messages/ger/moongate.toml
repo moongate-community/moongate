@@ -231,3 +231,10 @@
 # Moongate: texts of the gmtools command (30185-30186).
 30185 = "Öffnet das Gump der Game-Master-Werkzeuge: eine Seitenleiste mit Werkzeugen und ihren Befehlen, zuerst das Wetter."
 30186 = "Das gmtools-Gump fehlt: templates/gumps/gmtools.xml."
+
+# Moongate: texts of the hide and unhide commands (30187-30191).
+30187 = "Versteckt dich in einer Rauchwolke: die Spieler sehen dich nicht und deine Schritte verraten dich nicht."
+30188 = "Du bist versteckt: die Spieler sehen dich nicht."
+30189 = "Zeigt dich wieder in einer Rauchwolke."
+30190 = "Du bist wieder sichtbar."
+30191 = "Das bist du schon."

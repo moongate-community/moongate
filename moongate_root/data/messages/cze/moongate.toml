@@ -231,3 +231,10 @@
 # Moongate: texts of the gmtools command (30185-30186).
 30185 = "Otevře gump nástrojů game mastera: boční panel s nástroji a jejich příkazy, zatím počasí."
 30186 = "Chybí gump gmtools: templates/gumps/gmtools.xml."
+
+# Moongate: texts of the hide and unhide commands (30187-30191).
+30187 = "Skryje tě v oblaku kouře: hráči tě nevidí a tvé kroky tě neprozradí."
+30188 = "Jsi skrytý: hráči tě nevidí."
+30189 = "Znovu tě ukáže v oblaku kouře."
+30190 = "Jsi znovu vidět."
+30191 = "Už to tak je."

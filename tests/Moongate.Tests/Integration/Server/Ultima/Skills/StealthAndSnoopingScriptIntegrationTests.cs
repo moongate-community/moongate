@@ -341,7 +341,7 @@ public sealed class StealthAndSnoopingScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task Snooping_AGameMasterOwner_CannotBeSnooped_AndTheStaffSeesWithoutTheSkill()
+    public async Task Snooping_AGameMasterOwner_CannotBeSnoopedByAPlayer_AndTheStaffSeesAnyoneWithoutTheSkill()
     {
         Skills((SkillType.Snooping, 0));
         await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Sessions.GetAll().Single(session => session.CharacterId == _bruno.Id).Set(SessionKeys.AccountType, AccountType.GameMaster));
@@ -351,9 +351,19 @@ public sealed class StealthAndSnoopingScriptIntegrationTests : IAsyncLifetime
         await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Sessions.GetAll().Single(session => session.CharacterId == _bruno.Id).Set(SessionKeys.AccountType, AccountType.Regular));
         await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
         Snoop();
+        Assert.Contains(_fixture.Sender.Sent, packet => packet is DisplayContainerPacket);
+        _fixture.Sender.Sent.Clear();
+
+        // Staff sees staff too, a dead owner, and from afar, with no karma lost.
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Sessions.GetAll().Single(session => session.CharacterId == _bruno.Id).Set(SessionKeys.AccountType, AccountType.Administrator));
+        _bruno.Body = 0x0192;
+        _bruno.Location = new Point3D(_aria.Location.X + 20, _aria.Location.Y, _aria.Location.Z);
+        _aria.Karma = 100;
+        Snoop();
 
         Assert.Empty(_errors);
         Assert.Contains(_fixture.Sender.Sent, packet => packet is DisplayContainerPacket);
+        Assert.Equal(100, _aria.Karma);
     }
 
     [Fact]

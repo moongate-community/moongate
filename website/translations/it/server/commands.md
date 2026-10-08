@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3ca6d01ab695b3d2999eab6d2aa77f3b358dd456f6184061351f6eae3237612e","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"ceb0fe3d977b4532419be5d47efef63b43d22a9458625561d81c46b80aee3e38","title":"Panoramica"} -->
 
 # Comandi del server
 
@@ -54,6 +54,8 @@ ruolo è la modalità del server che registra il comando: `Login`, `Game` o entr
 | [`where`](commands/where.md) | `where`, poi seleziona qualsiasi cosa | No | Sì | GameMaster | Game |
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Sì | GameMaster | Game |
 | [`gmtools`](commands/gmtools.md) | `gmtools` | No | Sì | GameMaster | Game |
+| [`hide`](commands/hide.md) | `hide` | No | Sì | GameMaster | Game |
+| [`unhide`](commands/unhide.md) | `unhide` | No | Sì | GameMaster | Game |
 | [`moongate`](commands/moongate.md) | `moongate <x>,<y>,<z> [map]` | No | Sì | GameMaster | Game |
 | [`jail`](commands/jail.md) | `jail [name]` | No | Sì | GameMaster | Game |
 | [`fame`](commands/fame.md) | `fame <0..32000>`, poi seleziona un mobile | No | Sì | GameMaster | Game |
@@ -95,7 +97,7 @@ commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
 ### In base a chi li usa
 
 - **Tutti:** `help`, `echo`, `time`.
-- **Game master:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `moongate`, `fame`, `karma`, `globallight`,
+- **Game master:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
 - **Amministratori:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, più tutto ciò che

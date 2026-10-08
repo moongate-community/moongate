@@ -51,6 +51,8 @@ export const contentEntries = [
   { source: 'docs/commands/gmtools.md', slug: 'server/commands/gmtools', title: 'gmtools', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/kill.md', slug: 'server/commands/kill', title: 'kill', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/resurrect.md', slug: 'server/commands/resurrect', title: 'resurrect', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/hide.md', slug: 'server/commands/hide', title: 'hide', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/unhide.md', slug: 'server/commands/unhide', title: 'unhide', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/animate.md', slug: 'server/commands/animate', title: 'animate', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/spawns.md', slug: 'server/commands/spawns', title: 'spawns', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/gump.md', slug: 'server/commands/gump', title: 'gump', group: 'Run a shard', subgroup: 'Commands' },

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"bb204457857c681eb153f462c3c018bfabb6686b6056a8d13c9dfe70755b79ed","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"12c68a60621e85f0576876dacf0c944bc0e98415506a657a313e0ac440f12e44","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -232,7 +232,10 @@ Nascondersi o essere mostrati di nuovo azzera i passi.
 un doppio clic sullo zaino di un altro mobile non lo apre, il server chiama `on_snoop(user, owner, container)` di questo
 script (`ISkillScriptService.Call`). Lo fa per lo zaino e per un sacco al suo interno, e non per un giocatore morto.
 
-- **Regole:** entro una casella dal proprietario (lo staff no); niente se il proprietario è morto; un game master o un
+- **Lo staff fruga chiunque, sempre:** un game master o un amministratore non ha bisogno di distanza, abilità o regole, non
+  perde karma e non viene notato, e può frugare un proprietario morto e un altro membro dello staff. Il comando `hide`
+  lo nasconde prima.
+- **Regole** per gli altri: entro una casella dal proprietario; niente se il proprietario è morto; un game master o un
   amministratore non si può frugare, e nemmeno un giocatore invulnerabile ("You cannot perform negative acts on your
   target."; Moongate non ha ancora regole sugli atti dannosi per mappa, che questo sostituisce). Un PNG in una regione
   sorvegliata di una mappa diversa da Felucca si fruga solo se non è umano, oppure attaccabile, oppure assassino: lo dice il

@@ -6,11 +6,13 @@
 --   window: it runs when a player double clicks the backpack of another mobile,
 --   the server calls on_snoop(user, owner, container) here instead of opening it.
 --
---   The player must stand within a tile of the owner (staff need not). Nothing
---   happens for a dead owner. A game master or administrator cannot be snooped,
---   and neither can who the rules protect: "You cannot perform negative acts on
---   your target." Anyone can be snooped on Felucca; elsewhere an NPC in a
---   guarded region only when it is not human, or attackable or a murderer.
+--   A game master or an administrator snoops anyone, always: from afar, a dead
+--   owner and another staff member too, with no rule, no notice, no karma and no
+--   skill check. Any other player must stand within a tile of the owner. Nothing
+--   happens for a dead owner. A game master or administrator cannot be snooped
+--   by them, and neither can who the rules protect: "You cannot perform negative
+--   acts on your target." Anyone can be snooped on Felucca; elsewhere an NPC in
+--   a guarded region only when it is not human, or attackable or a murderer.
 --
 --   A player who is not staff loses 4 karma, as ModernUO's AwardKarma takes it (more
 --   from a good name, none under -400, never under -15000, and it is told), and may be noticed by the players
@@ -140,11 +142,11 @@ function snooping.on_snoop(user, owner, container)
         return
     end
 
-    if mobile.is_dead(owner) then
+    if not staff and mobile.is_dead(owner) then
         return
     end
 
-    if world.is_staff(owner) or not allowed(owner, place) then
+    if not staff and (world.is_staff(owner) or not allowed(owner, place)) then
         mobile.message_cliloc(user, NEGATIVE_ACTS)
 
         return
