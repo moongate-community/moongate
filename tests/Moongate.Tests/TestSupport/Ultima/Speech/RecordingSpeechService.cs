@@ -66,7 +66,8 @@ public sealed class RecordingSpeechService : ISpeechService
     /// </summary>
     public List<string> SaidAffixes { get; } = [];
 
-    public List<(MobileEntity Speaker, MobileEntity Player, int Cliloc, string Arguments, string Affix)> SaidTo { get; } = [];
+    public List<(MobileEntity Speaker, MobileEntity Player, int Cliloc, string Arguments, string Affix)> SaidTo { get; } =
+        [];
 
     public bool SayClilocTo(MobileEntity speaker, MobileEntity player, int cliloc, string arguments = "", string affix = "")
     {

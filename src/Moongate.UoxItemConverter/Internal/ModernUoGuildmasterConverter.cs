@@ -261,7 +261,15 @@ internal static class ModernUoGuildmasterConverter
     {
         var trade = StringUtils.ToSnakeCase(master.Title);
         var man = Template(master, trade, "m", MobileGenderType.Male, "guildmaster", 348, Clothes(false, master.Outfit));
-        var woman = Template(master, trade, "f", MobileGenderType.Female, "guildmistress", 337, Clothes(true, master.Outfit));
+        var woman = Template(
+            master,
+            trade,
+            "f",
+            MobileGenderType.Female,
+            "guildmistress",
+            337,
+            Clothes(true, master.Outfit)
+        );
         var list = new NpcListTemplate
         {
             Id = trade + "guildmaster",
@@ -341,19 +349,27 @@ internal static class ModernUoGuildmasterConverter
     )
     {
         var entries = new List<MobileEquipmentEntry>();
-        var method = owner.Members.OfType<MethodDeclarationSyntax>().FirstOrDefault(member => member.Identifier.ValueText == "InitOutfit");
+        var method = owner.Members.OfType<MethodDeclarationSyntax>()
+            .FirstOrDefault(member => member.Identifier.ValueText == "InitOutfit");
 
         foreach (var statement in method?.Body?.Statements ?? [])
         {
             var alternatives = statement switch
             {
-                ExpressionStatementSyntax { Expression: InvocationExpressionSyntax { Expression: IdentifierNameSyntax { Identifier.ValueText: "AddItem" } } call }
+                ExpressionStatementSyntax
+                    {
+                        Expression: InvocationExpressionSyntax
+                        {
+                            Expression: IdentifierNameSyntax { Identifier.ValueText: "AddItem" }
+                        } call
+                    }
                     => [call.ArgumentList.Arguments.FirstOrDefault()?.Expression],
                 LocalDeclarationStatementSyntax
                 {
                     Declaration.Variables: [{ Initializer.Value: ConditionalExpressionSyntax choice }]
                 } => [choice.WhenTrue, choice.WhenFalse],
-                IfStatementSyntax { Else: { } other } branch when Added(branch.Statement) is { } first && Added(other.Statement) is { } second
+                IfStatementSyntax { Else: { } other } branch when Added(branch.Statement) is { } first &&
+                                                                  Added(other.Statement) is { } second
                     => [first, second],
                 _ => new List<ExpressionSyntax?>()
             };
@@ -373,7 +389,8 @@ internal static class ModernUoGuildmasterConverter
 
                 if (!Graphics.TryGetValue(type, out var graphic) ||
                     !itemsByGraphic.TryGetValue(graphic, out var candidates) ||
-                    (ModernUoVendorConverter.EraBase(candidates) ?? (candidates.Count == 1 ? candidates[0] : null)) is not { } item)
+                    (ModernUoVendorConverter.EraBase(candidates) ?? (candidates.Count == 1 ? candidates[0] : null)) is not
+                    { } item)
                 {
                     report.Count($"no item template for the outfit item {type}");
 
@@ -399,7 +416,10 @@ internal static class ModernUoGuildmasterConverter
 
         return only is ExpressionStatementSyntax
         {
-            Expression: InvocationExpressionSyntax { Expression: IdentifierNameSyntax { Identifier.ValueText: "AddItem" } } call
+            Expression: InvocationExpressionSyntax
+            {
+                Expression: IdentifierNameSyntax { Identifier.ValueText: "AddItem" }
+            } call
         }
             ? call.ArgumentList.Arguments.FirstOrDefault()?.Expression
             : null;
