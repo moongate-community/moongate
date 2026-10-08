@@ -176,7 +176,12 @@ public sealed class NpcGuildServiceTests : IAsyncLifetime
     {
         Assert.True(_guilds.IsJoinPayment(_smith, Gold(500)));
         Assert.False(_guilds.IsJoinPayment(_smith, Gold(499)));
-        Assert.False(_guilds.IsJoinPayment(_smith, new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "sword", Amount = 500 }));
+        Assert.False(
+            _guilds.IsJoinPayment(
+                _smith,
+                new ItemEntity { Id = new Serial(_nextItem++), TemplateId = "sword", Amount = 500 }
+            )
+        );
         Assert.False(_guilds.IsJoinPayment(new MobileEntity { Id = new Serial(102), TemplateId = "orc" }, Gold(500)));
     }
 
