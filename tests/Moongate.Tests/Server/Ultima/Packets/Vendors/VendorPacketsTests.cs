@@ -91,4 +91,60 @@ public sealed class VendorPacketsTests
     {
         Assert.False(VendorBuyReplyPacket.TryParse(Convert.FromHexString(hex), out _));
     }
+
+    [Fact]
+    public void Encode_TheSellList_WritesEachItemWithItsPriceAndName()
+    {
+        var bytes = PacketCodec.Encode(
+            new VendorSellListPacket(
+                new Serial(0x100),
+                [new VendorSellListEntry(new Serial(0x40000001), 0x103B, 0x0044, 3, 4, "bread")]
+            )
+        );
+
+        Assert.Equal(
+            Convert.FromHexString(
+                "9E" + "001C" + "00000100" + "0001" + "40000001" + "103B" + "0044" + "0003" + "0004" + "0005" + "627265" + "6164"
+            ),
+            bytes
+        );
+    }
+
+    [Fact]
+    public void Encode_ThePriceAndTheAmountAboveAShort_AreCappedAndAnAccentIsAQuestionMark()
+    {
+        var bytes = PacketCodec.Encode(
+            new VendorSellListPacket(
+                new Serial(0x100),
+                [new VendorSellListEntry(new Serial(0x40000001), 1, 0, 70000, 100000, "è")]
+            )
+        );
+
+        Assert.Equal(Convert.FromHexString("FFFF" + "FFFF" + "0001" + "3F"), bytes[17..]);
+    }
+
+    [Fact]
+    public void TryParse_TheSellReply_GivesTheItemsAndTheAmounts()
+    {
+        Assert.True(
+            VendorSellReplyPacket.TryParse(
+                Convert.FromHexString("9F0015" + "00000100" + "0002" + "400000010003" + "400000020001"),
+                out var packet
+            )
+        );
+
+        Assert.Equal(new Serial(0x100), packet.Vendor);
+        Assert.Equal(
+            [new VendorSellReplyLine(new Serial(0x40000001), 3), new VendorSellReplyLine(new Serial(0x40000002), 1)],
+            packet.Lines
+        );
+    }
+
+    [Theory,
+     InlineData("9F000F" + "00000100" + "0002" + "400000010003"),
+     InlineData("9F0015" + "00000100" + "0001" + "400000010003" + "400000020001")]
+    public void TryParse_ACountThatDoesNotMatchTheSize_IsRefused(string hex)
+    {
+        Assert.False(VendorSellReplyPacket.TryParse(Convert.FromHexString(hex), out _));
+    }
 }
