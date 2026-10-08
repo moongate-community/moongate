@@ -37,6 +37,11 @@ public sealed class VendorService : IVendorService
     private const int HighGraphic = 0x4000;
     private const int ShopContainerGraphic = 0x0E75;
     private const int StockPruneAbove = 1024;
+    private const int MaxSellList = 250;
+    private const int MaxSellReplyLines = 100;
+    private const int MaxSellPieces = 500;
+    private const int ClilocBackpackFull = 1048147;
+    private const string NothingToSell = "You have nothing I would be interested in.";
     private const long VirtualHalf = Serial.MinVirtual + (Serial.MaxVirtual - Serial.MinVirtual) / 2;
     private const int ClilocMurdererRefused = 501522;
     private const int ClilocCannotAfford = 500192;
@@ -118,10 +123,8 @@ public sealed class VendorService : IVendorService
             return false;
         }
 
-        if (player.IsMurderer && !IsStaff(session) && _regions.Find(vendor.Map, vendor.Location)?.Guarded == true)
+        if (RefusesMurderer(session, player, vendor))
         {
-            _speech.SayCliloc(vendor, ClilocMurdererRefused);
-
             return false;
         }
 
@@ -220,9 +223,8 @@ public sealed class VendorService : IVendorService
             return;
         }
 
-        if (player.IsMurderer && !IsStaff(session) && _regions.Find(vendor.Map, vendor.Location)?.Guarded == true)
+        if (RefusesMurderer(session, player, vendor))
         {
-            _speech.SayCliloc(vendor, ClilocMurdererRefused);
             End(session, window);
 
             return;
@@ -288,6 +290,115 @@ public sealed class VendorService : IVendorService
         _fatigue?.LoadChanged(session, player, true);
     }
 
+    public bool OpenSell(GameSession session, MobileEntity vendor)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(vendor);
+
+        if (!_mobiles.TryGet(session.CharacterId, out var player) ||
+            !vendor.IsNpc ||
+            !_shops.TryGetFor(vendor, out var shop) ||
+            shop.Sell.Count == 0 ||
+            !CanReach(player, vendor) ||
+            RefusesMurderer(session, player, vendor))
+        {
+            return false;
+        }
+
+        var offered = Offered(player, PricesOf(shop));
+
+        if (offered.Count == 0)
+        {
+            _speech.Say(vendor, NothingToSell);
+
+            return false;
+        }
+
+        _sender.TrySend(
+            session.SessionId,
+            new VendorSellListPacket(
+                vendor.Id,
+                offered.Select(pair => new VendorSellListEntry(
+                        pair.Item.Id,
+                        pair.Item.ItemId,
+                        pair.Item.Hue.Value,
+                        pair.Item.Amount,
+                        pair.Price,
+                        NameOf(pair.Item)
+                    )
+                )
+            )
+        );
+        session.Set(
+            VendorSessionKeys.SellWindow,
+            new VendorSellWindow(vendor.Id, offered.ToDictionary(pair => pair.Item.Id, pair => pair.Price))
+        );
+
+        return true;
+    }
+
+    public void Sell(GameSession session, VendorSellReplyPacket packet)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(packet);
+
+        var window = session.Get(VendorSessionKeys.SellWindow);
+
+        if (window is null || packet.Lines.Count >= MaxSellReplyLines)
+        {
+            return;
+        }
+
+        if (window.Vendor != packet.Vendor)
+        {
+            _sender.TrySend(session.SessionId, new VendorEndPacket(packet.Vendor));
+
+            return;
+        }
+
+        if (packet.Lines.Count == 0 ||
+            !_mobiles.TryGet(session.CharacterId, out var player) ||
+            !_mobiles.TryGet(window.Vendor, out var vendor) ||
+            !CanReach(player, vendor) ||
+            RefusesMurderer(session, player, vendor) ||
+            !TryChosen(player, window, packet, out var chosen))
+        {
+            EndSell(session, window);
+
+            return;
+        }
+
+        var total = chosen.Sum(pair => (long)window.Prices[pair.Key.Id] * pair.Value);
+
+        if (total is < 1 or > int.MaxValue || chosen.Values.Sum() > MaxSellPieces)
+        {
+            EndSell(session, window);
+
+            return;
+        }
+
+        var paid = _bank.GiveGold(player, (int)total);
+
+        if (paid != BankResultType.Ok)
+        {
+            _speech.TellCliloc(player, paid == BankResultType.Busy ? ClilocOrderCannotBeFulfilled : ClilocBackpackFull);
+            EndSell(session, window);
+
+            return;
+        }
+
+        foreach (var (item, amount) in chosen)
+        {
+            if (!_handling.Consume(item, amount))
+            {
+                _logger.Error("Vendor: {Amount} of {Item} could not be taken after the gold was paid", amount, item.Id);
+            }
+        }
+
+        EndSell(session, window);
+        _fatigue?.LoadChanged(session, player, true);
+    }
+
     public void Close(GameSession session)
     {
         ArgumentNullException.ThrowIfNull(session);
@@ -295,6 +406,11 @@ public sealed class VendorService : IVendorService
         if (session.Get(VendorSessionKeys.Window) is not null)
         {
             session.Set(VendorSessionKeys.Window, null);
+        }
+
+        if (session.Get(VendorSessionKeys.SellWindow) is not null)
+        {
+            session.Set(VendorSessionKeys.SellWindow, null);
         }
     }
 
@@ -521,6 +637,158 @@ public sealed class VendorService : IVendorService
             _items.Add([item]);
             _view.ItemAppeared(item);
         }
+    }
+
+    private bool RefusesMurderer(GameSession session, MobileEntity player, MobileEntity vendor)
+    {
+        if (!player.IsMurderer || IsStaff(session) || _regions.Find(vendor.Map, vendor.Location)?.Guarded != true)
+        {
+            return false;
+        }
+
+        _speech.SayCliloc(vendor, ClilocMurdererRefused);
+
+        return true;
+    }
+
+    // What the shop pays for each item template; the first line of a template counts.
+    private static Dictionary<string, int> PricesOf(ShopDefinition shop)
+    {
+        var prices = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        foreach (var line in shop.Sell)
+        {
+            prices.TryAdd(line.Item, line.Price);
+        }
+
+        return prices;
+    }
+
+    // The items of the backpack and the bags in it that the shop buys, 250 at most.
+    private List<(ItemEntity Item, int Price)> Offered(MobileEntity player, Dictionary<string, int> prices)
+    {
+        var offered = new List<(ItemEntity, int)>();
+        var backpack = _items.GetWorn(player.Id).FirstOrDefault(item => item.Layer == LayerType.Backpack);
+
+        if (backpack is null)
+        {
+            return offered;
+        }
+
+        var pending = new Queue<ItemEntity>([backpack]);
+
+        while (pending.Count > 0 && offered.Count < MaxSellList)
+        {
+            foreach (var item in _items.GetContents(pending.Dequeue().Id))
+            {
+                var contents = _items.GetContents(item.Id);
+
+                if (contents.Count > 0)
+                {
+                    pending.Enqueue(item);
+                }
+                else if (offered.Count < MaxSellList && IsSellable(item, prices, out var price))
+                {
+                    offered.Add((item, price));
+                }
+            }
+        }
+
+        return offered;
+    }
+
+    private bool IsSellable(ItemEntity item, Dictionary<string, int> prices, out int price)
+    {
+        price = 0;
+
+        if (item.TemplateId is not { } id || !prices.TryGetValue(id, out price))
+        {
+            return false;
+        }
+
+        var movable = item.Movable ?? (_templates.TryGet(id, out var template) ? template.Movable : null) ?? true;
+
+        return movable && item.Amount >= 1 && !_handling.IsHeld(item);
+    }
+
+    private string NameOf(ItemEntity item)
+    {
+        if (item.Name is { Length: > 0 } name)
+        {
+            return name;
+        }
+
+        if (item.TemplateId is { } id)
+        {
+            if (_templates.TryGet(id, out var template) && template.Name is { Length: > 0 } templateName)
+            {
+                return templateName;
+            }
+
+            // 0x103b_bread_loaf: the words after the graphic.
+            var words = id.Contains('_') && id.StartsWith("0x", StringComparison.Ordinal) ? id[(id.IndexOf('_') + 1)..] : id;
+
+            return words.Replace('_', ' ');
+        }
+
+        return "";
+    }
+
+    // The items of the reply: each one offered, still carried by the player, with its amount cut at what it holds.
+    private bool TryChosen(
+        MobileEntity player,
+        VendorSellWindow window,
+        VendorSellReplyPacket packet,
+        out Dictionary<ItemEntity, int> chosen
+    )
+    {
+        chosen = new();
+
+        foreach (var line in packet.Lines)
+        {
+            if (line.Amount < 1 ||
+                !window.Prices.ContainsKey(line.Item) ||
+                !_items.TryGet(line.Item, out var item) ||
+                !IsCarriedBy(item, player) ||
+                _handling.IsHeld(item) ||
+                _items.GetContents(item.Id).Count > 0)
+            {
+                return false;
+            }
+
+            chosen[item] = Math.Min(item.Amount, chosen.GetValueOrDefault(item) + line.Amount);
+        }
+
+        return true;
+    }
+
+    // Inside the backpack of the player, at any depth, and not worn.
+    private bool IsCarriedBy(ItemEntity item, MobileEntity player)
+    {
+        var visited = new HashSet<Serial>();
+
+        for (var current = item; current.ContainerId is { } containerId && visited.Add(current.Id);)
+        {
+            if (!_items.TryGet(containerId, out var container))
+            {
+                return false;
+            }
+
+            if (container.MobileId == player.Id && container.Layer == LayerType.Backpack)
+            {
+                return true;
+            }
+
+            current = container;
+        }
+
+        return false;
+    }
+
+    private void EndSell(GameSession session, VendorSellWindow window)
+    {
+        Close(session);
+        _sender.TrySend(session.SessionId, new VendorEndPacket(window.Vendor));
     }
 
     private void Refuse(GameSession session, VendorWindow window, MobileEntity player, int cliloc)

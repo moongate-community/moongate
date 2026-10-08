@@ -26,6 +26,8 @@ public sealed class VendorSellListPacket : BasePacket<VendorSellListPacket>, IOu
 
     public Serial Vendor { get; }
 
+    public IReadOnlyList<VendorSellListEntry> Entries => _entries;
+
     public VendorSellListPacket(Serial vendor, IEnumerable<VendorSellListEntry> entries)
     {
         ArgumentNullException.ThrowIfNull(entries);

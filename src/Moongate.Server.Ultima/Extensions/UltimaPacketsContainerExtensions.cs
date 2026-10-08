@@ -87,6 +87,8 @@ public static class UltimaPacketsContainerExtensions
         container.RegisterPacketHandler<AttackRequestPacket, AttackRequestPacketHandler>();
         container.RegisterIncomingPacket<VendorBuyReplyPacket>();
         container.RegisterPacketHandler<VendorBuyReplyPacket, VendorBuyReplyPacketHandler>();
+        container.RegisterIncomingPacket<VendorSellReplyPacket>();
+        container.RegisterPacketHandler<VendorSellReplyPacket, VendorSellReplyPacketHandler>();
         container.RegisterIncomingPacket<SkillLockPacket>();
         container.RegisterPacketHandler<SkillLockPacket, SkillLockPacketHandler>();
         container.RegisterIncomingPacket<TextCommandPacket>();
