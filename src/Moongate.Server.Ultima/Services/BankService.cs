@@ -438,6 +438,24 @@ public sealed class BankService : IBankService
         return BankResultType.Ok;
     }
 
+    public long CarriedGold(MobileEntity player)
+    {
+        return BackpackOf(player.Id) is { } backpack ? GoldIn(backpack).Sum(pile => (long)pile.Amount) : 0;
+    }
+
+    public bool TakeCarriedGold(MobileEntity player, int amount)
+    {
+        if (amount < 1 || CarriedGold(player) < amount || BackpackOf(player.Id) is not { } backpack)
+        {
+            return false;
+        }
+
+        var left = Take(GoldIn(backpack), amount);
+        LoadChanged(player);
+
+        return left == 0;
+    }
+
     public long? WorthOf(ItemEntity item)
     {
         return CheckWorth(item);

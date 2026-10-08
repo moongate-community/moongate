@@ -59,6 +59,31 @@ public sealed class StubBankService : IBankService
 
     public List<(MobileEntity Player, int Amount)> Deposited { get; } = [];
 
+    /// <summary>
+    ///     The coins each player carries; a withdrawal that moves the gold adds to them, taking carried gold removes from them.
+    /// </summary>
+    public Dictionary<Serial, long> Carried { get; } = [];
+
+    public List<(MobileEntity Player, int Amount)> Taken { get; } = [];
+
+    public long CarriedGold(MobileEntity player)
+    {
+        return Carried.GetValueOrDefault(player.Id);
+    }
+
+    public bool TakeCarriedGold(MobileEntity player, int amount)
+    {
+        if (amount < 1 || Carried.GetValueOrDefault(player.Id) < amount)
+        {
+            return false;
+        }
+
+        Carried[player.Id] -= amount;
+        Taken.Add((player, amount));
+
+        return true;
+    }
+
     public int? Balance(MobileEntity player)
     {
         return player.IsNpc ? null : Gold.GetValueOrDefault(player.Id);
@@ -74,6 +99,7 @@ public sealed class StubBankService : IBankService
         }
 
         Gold[player.Id] = Gold.GetValueOrDefault(player.Id) - amount;
+        Carried[player.Id] = Carried.GetValueOrDefault(player.Id) + amount;
 
         return BankResultType.Ok;
     }
