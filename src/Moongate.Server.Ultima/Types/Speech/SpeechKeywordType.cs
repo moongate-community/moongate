@@ -17,6 +17,16 @@ public enum SpeechKeywordType
     Guards = 0x0007,
 
     /// <summary>
+    ///     "join" or "member", said to a guildmaster.
+    /// </summary>
+    Join = 0x0004,
+
+    /// <summary>
+    ///     "resign" or "quit", said to a guildmaster.
+    /// </summary>
+    Resign = 0x0005,
+
+    /// <summary>
     ///     "train", as ModernUO's trainers read it.
     /// </summary>
     Train = 0x006C,

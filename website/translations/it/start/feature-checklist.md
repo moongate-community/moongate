@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"177c7f591e22cc0d20f96886afa80ea09a0c311eb31ccaeb184774c539b8ee3f","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"6363fb13dc2a4efade13a4a1cd74fa86d55c1f9eb8e68d5025948e0aa11a9ba0","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 84 completati, 🟡 56 parzialmente completati, ❌ 129 non ancora realizzati.
+**269 sistemi:** ✅ 85 completati, 🟡 56 parzialmente completati, ❌ 128 non ancora realizzati.
 
-**Copertura: 31%** dei sistemi completati, **41%** contando un sistema parzialmente completato come metà.
+**Copertura: 32%** dei sistemi completati, **42%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -162,12 +162,12 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Venditori: acquisto, vendita, rifornimento | ✅ | La finestra del negozio, la merce e le tabelle di vendita dei negozi di ModernUO, oro dello zaino poi della banca, tutto o niente, il rifornimento orario e la rivendita di ciò che i giocatori hanno venduto; vedi [Venditori](vendors.md) |
 | Banchiere e cassetta di banca | ✅ | La parola chiave *bank* in qualsiasi lingua del client; aperta mentre il giocatore resta fermo; saldo, prelievo e deposito tramite parlato; limite di oggetti; vedi [Banca](bank.md) |
 | Stalliere, veterinario | ❌ | |
-| Istruttori delle abilità | 🟡 | Venditori e guaritori insegnano le abilità che hanno a 60,0 o più, in cambio di oro trascinato su di loro; i maestri di gilda non hanno ancora template; vedi [Abilità](skills.md#trainers) |
+| Istruttori delle abilità | 🟡 | Venditori e guaritori insegnano le abilità che hanno a 60,0 o più, in cambio di oro trascinato su di loro; vedi [Abilità](skills.md#trainers) |
 | Guaritori che resuscitano | 🟡 | Un fantasma che si avvicina a un guaritore riceve l'offerta di tornare in vita; i guaritori malvagi non sono ancora posizionati nel mondo |
 | Venditori dei giocatori | ❌ | |
 | Mercenari | ❌ | |
 | Missioni di scorta | ❌ | |
-| Maestri di gilda | ❌ | |
+| Maestri di gilda | ✅ | I dodici maestri di gilda di ModernUO insegnano il loro mestiere, accettano membri per la loro gilda con parole e oro, e sono collocati dagli spawn di ModernUO; vedi [Abilità](skills.md#guildmasters) |
 | Ordini di produzione in massa | ❌ | |
 
 ## Oggetti

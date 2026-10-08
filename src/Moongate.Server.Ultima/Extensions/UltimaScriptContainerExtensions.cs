@@ -44,6 +44,7 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<BankModule>();
         container.AddScriptModule<VendorModule>();
         container.AddScriptModule<TrainerModule>();
+        container.AddScriptModule<NpcGuildModule>();
         container.AddScriptModule<EffectModule>();
         container.AddScriptModule<MoongatesModule>();
         container.AddScriptModule<LocationsModule>();

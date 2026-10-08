@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Guilds;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
@@ -187,6 +188,13 @@ public class MobileTemplate
     public string? ScriptId { get; set; }
 
     /// <summary>
+    ///     The guild this guildmaster takes members for, such as <c>blacksmiths</c>: a player says <c>join</c> to it
+    ///     and
+    ///     pays 500 gold. Unset: it is no guildmaster.
+    /// </summary>
+    public NpcGuildType? NpcGuild { get; set; }
+
+    /// <summary>
     ///     The percent of its hit points under which the creature runs from a fight, from 0 to 100; -1 for one that never
     ///     does, as UOX3's <c>FLEEAT</c>. Unset: the script's own, 20 for a monster and 10 for an animal.
     /// </summary>
@@ -194,7 +202,8 @@ public class MobileTemplate
 
     /// <summary>
     ///     The hue of the blood the creature leaves when it is hit, 0 for the red of blood; -1 for one that does not
-    ///     bleed, such as the undead and the golems, as ServUO's <c>BloodHue</c> and Source-X's <c>BLOODCOLOR</c>. Unset:
+    ///     bleed, such as the undead and the golems, as ServUO's <c>BloodHue</c> and Source-X's <c>BLOODCOLOR</c>.
+    ///     Unset:
     ///     red.
     /// </summary>
     public int? BloodHue { get; set; }

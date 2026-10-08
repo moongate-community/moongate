@@ -16,7 +16,6 @@ internal static class ModernUoMobileNames
     {
         ["Armorer"] = "armourer",
         ["Barkeeper"] = "tavernkeeper",
-        ["BlacksmithGuildmaster"] = "blacksmith",
         ["BoneDemon"] = "bonedaemon",
         ["BoneMagi"] = "bonemage",
         ["CustomHairstylist"] = "hairstylist",
@@ -24,15 +23,11 @@ internal static class ModernUoMobileNames
         ["GreatHart"] = "hart",
         ["GrizzlyBear"] = "grizbear",
         ["HeadlessOne"] = "headless",
-        ["HealerGuildmaster"] = "healer",
         ["HireBeggar"] = "beggar",
-        ["MageGuildmaster"] = "mage",
         ["Minter"] = "banker",
         ["OrcishLord"] = "orclord",
         ["OrcishMage"] = "orcmage",
         ["RidableLlama"] = "llama",
-        ["TailorGuildmaster"] = "tailor",
-        ["TinkerGuildmaster"] = "tinker",
         ["WanderingHealer"] = "healer"
     };
 

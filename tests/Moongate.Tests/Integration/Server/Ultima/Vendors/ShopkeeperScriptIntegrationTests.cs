@@ -17,6 +17,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Guilds;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
@@ -43,6 +44,7 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
     private readonly Container _container = new();
     private readonly RecordingVendorService _vendors = new();
     private readonly RecordingTrainingService _training = new();
+    private readonly RecordingNpcGuildService _guilds = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTimerService _timers = new();
     private readonly SettableClock _clock = new();
@@ -79,6 +81,7 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IWorldViewService>(new RecordingWorldViewService());
         _container.RegisterInstance<IVendorService>(_vendors);
         _container.RegisterInstance<ITrainingService>(_training);
+        _container.RegisterInstance<INpcGuildService>(_guilds);
         _container.RegisterInstance<IItemService>(TestItems.Create(_fixture.Sectors));
         _container.RegisterInstance<TimeProvider>(_clock);
         _container.RegisterInstance<ITeleportService>(new RecordingTeleportService());
@@ -91,6 +94,7 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<VendorModule>();
         _container.AddScriptModule<TrainerModule>();
+        _container.AddScriptModule<NpcGuildModule>();
         _container.RegisterScriptEnum<SkillType>();
         _container.RegisterScriptEnum<SpeechKeywordType>();
         _container.Resolve<IMoongateEventBus>()
@@ -103,6 +107,7 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
             );
         _scripts.Write("mobiles/shopkeeper.lua", File.ReadAllText(ShippedScript("mobiles/shopkeeper.lua")));
         _scripts.Write("common/training.lua", File.ReadAllText(ShippedScript("common/training.lua")));
+        _scripts.Write("common/guild.lua", File.ReadAllText(ShippedScript("common/guild.lua")));
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path,
@@ -281,6 +286,79 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
             new[] { Assert.IsType<bool>(Assert.Single(taken.Values)), Assert.IsType<bool>(Assert.Single(refused.Values)) }
         );
         Assert.Equal(2, _training.Paid.Count);
+    }
+
+    [Fact]
+    public async Task ANamedJoin_WithinTwoTiles_AsksTheGuildmasterToQuote_AndAWrongNameDoesNot()
+    {
+        _guilds.Guild = NpcGuildType.Blacksmiths;
+        _aria.Location = new Point3D(1601, 1600, 0);
+
+        await HearAsync("a baker join", SpeechKeywordType.Join);
+        await HearAsync("someone join", SpeechKeywordType.Join);
+        _aria.Location = new Point3D(1603, 1600, 0);
+        _clock.Advance(TimeSpan.FromSeconds(2));
+        await HearAsync("a baker join", SpeechKeywordType.Join);
+
+        Assert.Empty(_errors);
+        Assert.Equal([_aria], _guilds.Quoted);
+    }
+
+    [Fact]
+    public async Task ANamedResign_AsksTheGuildmasterToLetTheMemberLeave()
+    {
+        _guilds.Guild = NpcGuildType.Blacksmiths;
+        _aria.Location = new Point3D(1601, 1600, 0);
+
+        await HearAsync("A Baker, I resign", SpeechKeywordType.Resign);
+
+        Assert.Empty(_errors);
+        Assert.Equal([_aria], _guilds.Resigned);
+    }
+
+    [Fact]
+    public async Task GoldDroppedOnAGuildmaster_JoinsTheGuild_BeforeItPaysForALesson()
+    {
+        _guilds.Guild = NpcGuildType.Blacksmiths;
+        var gold = new ItemEntity { Id = new Serial(0x40000002), TemplateId = "gold", ItemId = 0x0EED, Amount = 500 };
+        _container.Resolve<IItemService>().Add([gold]);
+
+        var taken = await RunAsync("on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.True(Assert.IsType<bool>(Assert.Single(taken.Values)));
+        Assert.Equal([gold], _guilds.Joined);
+        Assert.Empty(_training.Paid);
+    }
+
+    [Fact]
+    public async Task GoldOfTheGuildsPriceDroppedOnAGuildmaster_NeverPaysForALesson_EvenWhenTheJoinIsRefused()
+    {
+        _guilds.Guild = NpcGuildType.Blacksmiths;
+        _guilds.Answer = false;
+        var gold = new ItemEntity { Id = new Serial(0x40000003), TemplateId = "gold", ItemId = 0x0EED, Amount = 500 };
+        _container.Resolve<IItemService>().Add([gold]);
+
+        var taken = await RunAsync("on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.False(Assert.IsType<bool>(Assert.Single(taken.Values)));
+        Assert.Equal([gold], _guilds.Joined);
+        Assert.Empty(_training.Paid);
+    }
+
+    [Fact]
+    public async Task OtherGoldDroppedOnAGuildmaster_PaysForALesson()
+    {
+        _guilds.Guild = NpcGuildType.Blacksmiths;
+        var gold = new ItemEntity { Id = new Serial(0x40000004), TemplateId = "gold", ItemId = 0x0EED, Amount = 120 };
+        _container.Resolve<IItemService>().Add([gold]);
+
+        await RunAsync("on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_guilds.Joined);
+        Assert.Equal([gold], _training.Paid.Select(paid => paid.Gold));
     }
 
     public async Task DisposeAsync()

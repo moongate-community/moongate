@@ -1,0 +1,339 @@
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_3_blacksmithguildmaster"
+map = "ilshenar"
+name = "Ilshenar blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -2
+only_outside = false
+[[spawn.areas]]
+x1 = 1261
+y1 = 582
+x2 = 1261
+y2 = 582
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_8"
+map = "ilshenar"
+name = "Ilshenar tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -24
+only_outside = false
+[[spawn.areas]]
+x1 = 896
+y1 = 610
+x2 = 896
+y2 = 610
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_12_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -24
+only_outside = false
+[[spawn.areas]]
+x1 = 872
+y1 = 586
+x2 = 872
+y2 = 586
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_13_tinkerguildmaster"
+map = "ilshenar"
+name = "Ilshenar tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -3
+only_outside = false
+[[spawn.areas]]
+x1 = 1253
+y1 = 588
+x2 = 1253
+y2 = 588
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_16_tailorguildmaster"
+map = "ilshenar"
+name = "Ilshenar tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 0
+only_outside = false
+[[spawn.areas]]
+x1 = 1600
+y1 = 552
+x2 = 1600
+y2 = 552
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_17_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -53
+only_outside = false
+[[spawn.areas]]
+x1 = 575
+y1 = 537
+x2 = 575
+y2 = 537
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_18_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -3
+only_outside = false
+[[spawn.areas]]
+x1 = 1518
+y1 = 619
+x2 = 1518
+y2 = 619
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_19_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 5
+only_outside = false
+[[spawn.areas]]
+x1 = 1628
+y1 = 548
+x2 = 1628
+y2 = 548
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_22_blacksmithguildmaster"
+map = "ilshenar"
+name = "Ilshenar blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 792
+y1 = 665
+x2 = 792
+y2 = 665
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_31_mageguildmaster"
+map = "ilshenar"
+name = "Ilshenar mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -3
+only_outside = false
+[[spawn.areas]]
+x1 = 1505
+y1 = 611
+x2 = 1505
+y2 = 611
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_34_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -22
+only_outside = false
+[[spawn.areas]]
+x1 = 1093
+y1 = 955
+x2 = 1093
+y2 = 955
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_38_mageguildmaster"
+map = "ilshenar"
+name = "Ilshenar mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 840
+y1 = 571
+x2 = 840
+y2 = 571
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_39_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -8
+only_outside = false
+[[spawn.areas]]
+x1 = 284
+y1 = 536
+x2 = 284
+y2 = 536
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_42_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 3
+only_outside = false
+[[spawn.areas]]
+x1 = 1364
+y1 = 1051
+x2 = 1364
+y2 = 1051
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_43_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -25
+only_outside = false
+[[spawn.areas]]
+x1 = 682
+y1 = 297
+x2 = 682
+y2 = 297
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_44_healerguildmaster"
+map = "ilshenar"
+name = "Ilshenar healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 369
+y1 = 1432
+x2 = 369
+y2 = 1432
+
+[[spawn]]
+id = "ilshenar_modernuo_shared_vendors_46_tinkerguildmaster"
+map = "ilshenar"
+name = "Ilshenar tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 766
+y1 = 641
+x2 = 766
+y2 = 641

@@ -14,6 +14,7 @@ executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there
 | `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters\|modernuo-locations\|modernuo-chests ...` | Converts ModernUO's spawners, signs, teleporters, named places and treasure chests; see [Migrate from UOX3](uox3-migration.md#signs-of-modernuo) |
 | `mgctl convert modernuo-books --source <folder> --destination <folder>` | Imports static book texts; see [Import book texts](book-content-import.md) |
 | `mgctl convert modernuo-vendors --source <folder> --items <folder> --mobiles <folder> --destination <folder>` | Converts the shops of ModernUO's vendors; see [Shops](data-files/shops.md#convert-modernuos-shops) |
+| `mgctl convert modernuo-guildmasters --source <folder> --mobiles <folder> --npc-lists <folder>` | Converts the guildmasters of ModernUO into mobile templates and npc lists; see [Guildmasters](skills.md#guildmasters) |
 | `mgctl completion bash\|zsh\|fish` | Prints the script that completes mgctl with TAB; see [TAB completion](#tab-completion) |
 
 `mgctl --help` lists the commands and `mgctl <command> --help` the options of one.

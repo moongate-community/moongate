@@ -39,7 +39,8 @@ public sealed class CompletionTests
         Assert.Equal(["apply", "status"], await CompleteAsync("mgctl", "migrate", ""));
         Assert.Equal(
             [
-                "modernuo-books", "modernuo-chests", "modernuo-locations", "modernuo-signs", "modernuo-spawns",
+                "modernuo-books", "modernuo-chests", "modernuo-guildmasters", "modernuo-locations", "modernuo-signs",
+                "modernuo-spawns",
                 "modernuo-teleporters", "modernuo-vendors", "uox"
             ],
             await CompleteAsync("mgctl", "convert", "")

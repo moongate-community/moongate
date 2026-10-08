@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"c7c0efd260ab2e333f6a9c106184e30fdd4b06de9a03034286a4028139ea3a62","title":"Skill"} -->
+<!-- translation: {"sourceHash":"7fb9bdb843b7eafe52380f44628c33ec0233e385ea49659f1cf9694830502678","title":"Skill"} -->
 
 # Skill
 
@@ -149,6 +149,25 @@ depositato.
 Uno script dà a un PNG queste lezioni con il modulo `trainer` e `common/training.lua`; `shopkeeper.lua` e
 `healer.lua` lo fanno già. `trainer.skills(npc, player)` elenca le abilità, `trainer.quote(npc, player, skill)` dà un
 prezzo e `trainer.pay(npc, giver, item)` prende l'oro, che è ciò che risponde un `on_drag_drop`.
+
+## Maestri di gilda
+
+I dodici maestri di gilda di ModernUO (bardo, fabbro, pescatore, guaritore, mago, mercante, minatore, ranger, sarto, ladro, calderaio e
+guerriero) sono template mobile, un uomo (`m_<trade>_guildmaster`) e una donna (`f_<trade>_guildmaster`) per ciascuno, e una
+lista di PNG del mestiere (`<trade>guildmaster`) che ne sceglie uno. Li crea `mgctl convert modernuo-guildmasters` dalle
+classi di ModernUO: il titolo (*the blacksmith guildmaster* o *guildmistress*), le abilità del mestiere, le principali
+fra 80 e 100, e la gilda. Sono venditori come gli altri, quindi insegnano ciò che sanno ([Istruttori](#trainers)); vende solo
+quello del fabbro, come in ModernUO. Gli spawn di ModernUO li collocano nelle città.
+
+Un maestro di gilda accetta membri per la gilda del suo mestiere. Il giocatore dice il nome del maestro e *join* o *member*
+entro 2 caselle per sentire il prezzo, 500 oro, e trascina esattamente quell'oro su di lui per iscriversi. Un giocatore appartiene al massimo a una
+gilda (la gilda è una prop salvata del personaggio) e gli viene detto se è già membro o di un'altra gilda. La gilda dei
+ladri chiede di non avere uccisioni e Stealing 60,0 (anche il maestro dei ladri delle città di UOX3 è ora un maestro di gilda). Dire il nome e *resign* o *quit* lascia la gilda, non prima di
+una settimana dall'iscrizione. Il maestro dei minatori in ModernUO non nomina nessuna gilda, quindi insegna soltanto. L'iscrizione non ha
+ancora effetto: nulla la legge. L'età e il tempo di gioco che ModernUO chiede a un nuovo membro non sono conservati.
+
+Il campo di template `npc_guild` (`blacksmiths`, `thieves`...) rende un PNG un maestro di gilda, e il modulo Lua `npcguild`
+(`of`, `member`, `quote`, `join`, `resign`) con `common/guild.lua` dà al suo script le parole e l'oro.
 
 ## Vedi anche
 
