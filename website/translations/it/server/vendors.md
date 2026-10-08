@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e20d312ff1b96a6092cbfabb16ec3e6a68c81e77387f4763e26ad11459169f28","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"c7f1ffb1de55db00abddefd0ca45cbcd5445e47d8e932c4c910792c92cc75a24","title":"Venditori"} -->
 
 # Venditori
 
@@ -15,7 +15,8 @@ Il giocatore apre la finestra in due modi, da dove il venditore è raggiungibile
 - Dire *vendor buy* entro 4 caselle. Il client trasforma le parole in una parola chiave del parlato in qualsiasi lingua del client,
   quindi *vendor buy* funziona anche con un client italiano. Quando più venditori sentono le parole, risponde uno solo.
 
-Un venditore apre la finestra solo quando ha un [negozio](data-files/shops.md) con merce disponibile, è nel mondo, dista
+Un template che eredita `basevendor` esegue lo script, ma vendono solo quelli con un negozio: gli altri non fanno nulla quando
+viene scelto *Buy*. Un venditore apre la finestra solo quando ha un [negozio](data-files/shops.md) con merce disponibile, è nel mondo, dista
 al massimo 10 caselle, è in vista e il giocatore è vivo. Un assassino in un luogo sorvegliato viene rifiutato dalla voce
 del venditore (cliloc 501522).
 
@@ -30,7 +31,8 @@ acquisto è tutto o niente: quando un controllo fallisce, non viene preso nulla 
   master non paga nulla.
 - L'oro viene dallo zaino e dalle borse al suo interno. Quando lo zaino non basta e il totale è 2000 o più,
   la banca copre la differenza; sotto 2000 il venditore dice *thou canst not afford* (cliloc 500192) e la banca
-  non viene toccata. Una banca senza abbastanza oro riceve la risposta cliloc 500191.
+  non viene toccata. Una banca che non può coprire la differenza riceve la risposta cliloc 500191. Il controllo viene prima della creazione di
+  qualsiasi oggetto, quindi un acquisto rifiutato non costa nulla.
 - Una riga impilabile dà una pila, ogni altra riga dà un oggetto per ogni pezzo. I serial per tutti sono
   riservati prima di prendere qualsiasi cosa; un ordine che ne richiede più di quelli pronti sul server viene rifiutato con il cliloc
   500187.

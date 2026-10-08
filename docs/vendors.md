@@ -13,7 +13,8 @@ A player opens the window in one of two ways, from as far as the vendor can be r
 - Say *vendor buy* within 4 tiles. The client turns the words into a speech keyword in any language of the client,
   so *vendor buy* works in an Italian client as well. When several vendors hear the words, one answers.
 
-A vendor opens the window only when it has a [shop](data-files/shops.md) with goods in stock, is in the world, is no
+A template that inherits `basevendor` runs the script, but only those with a shop sell: the others do nothing when
+*Buy* is picked. A vendor opens the window only when it has a [shop](data-files/shops.md) with goods in stock, is in the world, is no
 more than 10 tiles away, is in sight, and the player is alive. A murderer in a guarded place is refused by the vendor's
 voice (cliloc 501522).
 
@@ -28,7 +29,8 @@ purchase is everything or nothing: when a check fails, nothing is taken and noth
   master pays nothing.
 - The gold comes from the backpack and the bags inside it. When the backpack lacks it and the total is 2000 or more,
   the bank makes up the difference; under 2000 the vendor says *thou canst not afford* (cliloc 500192) and the bank
-  is left alone. A bank without enough gold is answered by cliloc 500191.
+  is left alone. A bank that cannot make up the difference is answered by cliloc 500191. The check comes before any
+  item is made, so a refused purchase costs nothing.
 - A stackable line gives one stack, any other line gives one item for each piece. The serials for all of them are
   reserved before anything is taken; an order that needs more than the server has ready is refused with cliloc
   500187.

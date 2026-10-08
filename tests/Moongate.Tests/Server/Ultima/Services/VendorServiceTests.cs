@@ -238,7 +238,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
 
-        Assert.Equal(15, _fixture.Sender.Sent.OfType<ContainerContentPacket>().Single().Items.Last().Amount);
+        Assert.Equal(15, _fixture.Sender.Sent.OfType<ContainerContentPacket>().Single().Items[^1].Amount);
     }
 
     [Fact]
@@ -361,6 +361,19 @@ public sealed class VendorServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Buy_ARefusedPurchase_UsesNoSerial()
+    {
+        Backpack();
+        var lines = await OpenAsync();
+        var before = _serials.Serials.Count;
+
+        await BuyAsync(Reply(_vendor.Id, (lines[1], 3)));
+
+        Assert.Equal(500191, _speech.ToldClilocs.Single().Cliloc);
+        Assert.Equal(before, _serials.Serials.Count);
+    }
+
+    [Fact]
     public async Task Buy_WithNoBackpack_PutsTheGoodsAtTheFeet()
     {
         _bank.Carried[_player.Id] = 100;
@@ -480,7 +493,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
     private async Task<Serial[]> OpenAsync()
     {
         Assert.True(await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor)));
-        var lines = _fixture.Sender.Sent.OfType<ContainerContentPacket>().Last().Items;
+        var lines = _fixture.Sender.Sent.OfType<ContainerContentPacket>().Single().Items;
         _fixture.Sender.Sent.Clear();
 
         return lines.OrderBy(line => line.GridX).Select(line => line.Serial).ToArray();

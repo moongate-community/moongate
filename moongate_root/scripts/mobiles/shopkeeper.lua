@@ -56,13 +56,14 @@ function shopkeeper.on_speech(serial, speaker, text, keywords)
         return
     end
 
-    -- Every vendor in range hears the words: the first one serves.
-    if not near(serial, speaker, speech_range) or not vendor.attend(speaker) then
+    -- Every vendor in range hears the words: the first one that can serve does.
+    if not near(serial, speaker, speech_range) then
         return
     end
 
-    npc.look_at(serial, speaker)
-    vendor.open_buy(serial, speaker)
+    if vendor.open_buy_once(serial, speaker) then
+        npc.look_at(serial, speaker)
+    end
 end
 
 function shopkeeper.on_context_menu(serial, player)

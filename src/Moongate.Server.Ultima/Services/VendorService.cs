@@ -113,7 +113,7 @@ public sealed class VendorService : IVendorService
             return false;
         }
 
-        if (player.IsMurderer && _regions.Find(vendor.Map, vendor.Location)?.Guarded == true)
+        if (player.IsMurderer && !IsStaff(session) && _regions.Find(vendor.Map, vendor.Location)?.Guarded == true)
         {
             _speech.SayCliloc(vendor, ClilocMurdererRefused);
 
@@ -205,7 +205,7 @@ public sealed class VendorService : IVendorService
             return;
         }
 
-        if (player.IsMurderer && _regions.Find(vendor.Map, vendor.Location)?.Guarded == true)
+        if (player.IsMurderer && !IsStaff(session) && _regions.Find(vendor.Map, vendor.Location)?.Guarded == true)
         {
             _speech.SayCliloc(vendor, ClilocMurdererRefused);
             End(session, window);
@@ -229,6 +229,16 @@ public sealed class VendorService : IVendorService
             return;
         }
 
+        var pays = IsStaff(session) ? 0 : (int)total;
+
+        // Before any item is made: a serial taken for goods that are then refused is not given back.
+        if (!CanAfford(player, pays, out var shortage))
+        {
+            Refuse(session, window, player, shortage);
+
+            return;
+        }
+
         var made = new List<ItemEntity>();
         var pieces = wanted.Sum(pair => IsStack(pair.Key.Template) ? 1 : pair.Value);
 
@@ -238,8 +248,6 @@ public sealed class VendorService : IVendorService
 
             return;
         }
-
-        var pays = session.Get(SessionKeys.AccountType) >= AccountType.GameMaster ? 0 : (int)total;
 
         if (!TryPay(player, pays, out var fromBank, out var refusal))
         {
@@ -386,6 +394,32 @@ public sealed class VendorService : IVendorService
         }
 
         return true;
+    }
+
+    private static bool IsStaff(GameSession session)
+    {
+        return session.Get(SessionKeys.AccountType) >= AccountType.GameMaster;
+    }
+
+    // Whether the backpack, and from 2000 the bank, hold the price; else the cliloc that says what is lacking.
+    private bool CanAfford(MobileEntity player, int pays, out int shortage)
+    {
+        shortage = ClilocCannotAfford;
+        var carried = _bank.CarriedGold(player);
+
+        if (carried >= pays)
+        {
+            return true;
+        }
+
+        if (pays < BankFrom)
+        {
+            return false;
+        }
+
+        shortage = ClilocBankLacksFunds;
+
+        return _bank.Balance(player) is { } balance && balance >= pays - carried;
     }
 
     // The backpack first. The bank is drawn on only from 2000 gold, for what the backpack lacks.
