@@ -27,8 +27,9 @@ name = ""
 | `hue` | The hue of the goods. 0 keeps the one of the item template. |
 | `name` | The name shown in the shop window. Empty: the client's name for the graphic. |
 
-A shop may also have `[[shop.sell]]` lines, with the same fields, for what a vendor will buy from a player. Nothing
-reads them yet.
+A shop may also have `[[shop.sell]]` lines for what a vendor buys from a player. They have an `item` and a `price`, the
+gold paid for one piece; `amount`, `hue` and `name` are ignored. The same item may be both sold and bought, at
+different prices.
 
 The server refuses to start, naming the file and the shop, when a shop has no id, an id is used twice, a line names
 an item template that does not exist, a price is under 1, an amount is outside 1 to 60000, a hue is outside 0 to

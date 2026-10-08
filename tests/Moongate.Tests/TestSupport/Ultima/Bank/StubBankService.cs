@@ -66,6 +66,21 @@ public sealed class StubBankService : IBankService
 
     public List<(MobileEntity Player, int Amount)> Taken { get; } = [];
 
+    public List<(MobileEntity Player, int Amount)> Given { get; } = [];
+
+    public BankResultType GiveGold(MobileEntity player, int amount)
+    {
+        if (Result is { } result)
+        {
+            return result;
+        }
+
+        Given.Add((player, amount));
+        Carried[player.Id] = Carried.GetValueOrDefault(player.Id) + amount;
+
+        return BankResultType.Ok;
+    }
+
     public long CarriedGold(MobileEntity player)
     {
         return Carried.GetValueOrDefault(player.Id);

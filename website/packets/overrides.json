@@ -5388,5 +5388,97 @@
     ],
     "notes": "The prices and names of the shop window, in the order of the items that 0x3C sent (0x3C writes them from the last to the first).",
     "handler": "VendorService.OpenBuy: sent with 0x2E (the two virtual shop containers), 0x3C and 0x24 (gump 0x30)."
+  },
+  "0x9E:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Vendors",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Vendor",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the vendor."
+      },
+      {
+        "offset": "7",
+        "name": "Item count",
+        "type": "ushort",
+        "size": "2",
+        "description": "Number of items offered."
+      },
+      {
+        "offset": "9",
+        "name": "Items",
+        "type": "loop",
+        "size": "variable",
+        "description": "Per item: serial (uint), graphic (ushort), hue (ushort), amount (ushort), price of a piece (ushort), name length (ushort), name as ASCII text."
+      }
+    ],
+    "notes": "What the vendor offers to buy from the player: items the player carries that the vendor's shop buys, 250 at most. Amount and price above 65535 are sent as 65535.",
+    "handler": "VendorService.OpenSell: sent when a player picks Sell in the vendor's context menu or says vendor sell."
+  },
+  "0x9F:incoming": {
+    "category": "Items",
+    "tags": [
+      "Vendors",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Vendor",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the vendor."
+      },
+      {
+        "offset": "7",
+        "name": "Item count",
+        "type": "ushort",
+        "size": "2",
+        "description": "Number of items chosen; the size must be 9 plus 6 times this."
+      },
+      {
+        "offset": "9",
+        "name": "Items",
+        "type": "loop",
+        "size": "variable",
+        "description": "Six bytes each: serial of the item (uint), amount (ushort)."
+      }
+    ],
+    "notes": "What the player chose to sell. A count that does not match the size is refused.",
+    "handler": "VendorSellReplyPacketHandler: VendorService.Sell checks the window, the distance and the items, and either pays everything or nothing."
   }
 }

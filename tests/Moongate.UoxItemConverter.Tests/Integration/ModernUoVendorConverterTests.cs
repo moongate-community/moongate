@@ -41,6 +41,9 @@ public sealed class ModernUoVendorConverterTests : IDisposable
                     public InternalSellInfo()
                     {
                         Add(typeof(BreadLoaf), 3);
+                        Add(typeof(Cake), 5);
+                        Add(typeof(Pie), 4);
+                        Add(typeof(Mystery), 9);
                     }
                 }
             }
@@ -101,6 +104,21 @@ public sealed class ModernUoVendorConverterTests : IDisposable
             ],
             shop.Buy.Select(line => (line.Item, line.Price, line.Amount, line.Hue, line.Name))
         );
+    }
+
+    [Fact]
+    public void Run_TheSellTable_BecomesSellLines_ByTheGraphicsTheTypeIsSoldUnder_ElseByName()
+    {
+        Prepare();
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        // BreadLoaf is sold under two graphics; Pie is no type of any buy line but a template is named like it.
+        Assert.Equal(
+            [("0x103b_bread_loaf", 3), ("0x103c_bread_loaf", 3), ("0x09e9_cake", 5), ("0x1041_pie", 4)],
+            Read("baker").Shop[0].Sell.Select(line => (line.Item, line.Price))
+        );
+        Assert.Contains("no item template for the sold type Mystery", _output.ToString());
     }
 
     [Fact]
@@ -194,7 +212,7 @@ public sealed class ModernUoVendorConverterTests : IDisposable
         Write(
             "items/food.toml",
             "[[item]]\nid = \"0x103b_bread_loaf\"\n[[item]]\nid = \"0x103c_bread_loaf\"\n[[item]]\nid = \"0x09e9_cake\"\n" +
-            "[[item]]\nid = \"0x09ea_muffin\"\n[[item]]\nid = \"0x09c8_jug\"\n[[item]]\nid = \"0x1041_baked_pie\"\n"
+            "[[item]]\nid = \"0x1041_pie\"\n[[item]]\nid = \"0x09ea_muffin\"\n[[item]]\nid = \"0x09c8_jug\"\n[[item]]\nid = \"0x1041_baked_pie\"\n"
         );
         Write(
             "mobiles/vendors.toml",

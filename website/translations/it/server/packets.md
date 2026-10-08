@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"fbbdb73e03791a647d2883f04799c2f215d1e5ca115238cd703c06119823bd2e","title":"Pacchetti e handler"} -->
+<!-- translation: {"sourceHash":"865d07f543a685dfd6203d90ff95dbc98c10d8b8c3d777a29a0b96cdd586febd","title":"Pacchetti e handler"} -->
 
 # Pacchetti e handler
 
@@ -77,6 +77,8 @@ modalità, perché l'Enhanced Client lo invia anche al server di accesso:
 | `0x74` | `VendorBuyListPacket` | In uscita | Variabile | I prezzi e i nomi della finestra del negozio di un venditore |
 | `0x3B` | `VendorEndPacket` | In uscita | Fissa 8 | Chiude la finestra del negozio |
 | `0x3B` | `VendorBuyReplyPacket` | In entrata | Variabile, minimo 8 | `VendorBuyReplyPacketHandler`: l'acquisto della finestra del negozio |
+| `0x9E` | `VendorSellListPacket` | In uscita | Variabile | Cosa offre di comprare un venditore dal giocatore |
+| `0x9F` | `VendorSellReplyPacket` | In entrata | Variabile, minimo 9 | `VendorSellReplyPacketHandler`: la vendita dell'elenco |
 | `0x6C` | `TargetCursorPacket` | In uscita | Fissa 19 | — |
 | `0x6C` | `TargetResponsePacket` | In ingresso | Fissa 19 | `TargetResponsePacketHandler`: completa il bersaglio in attesa del giocatore |
 | `0x95` | `HuePickerPacket` | In uscita | Fissa 9 | — |

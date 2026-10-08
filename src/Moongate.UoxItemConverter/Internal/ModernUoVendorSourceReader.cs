@@ -13,6 +13,7 @@ internal static class ModernUoVendorSourceReader
 {
     private const string SbInfoBase = "SBInfo";
     private const string BuyInfoClass = "InternalBuyInfo";
+    private const string SellInfoClass = "InternalSellInfo";
     private const string InitMethod = "InitSBInfo";
     private const string AnimalLine = "AnimalBuyInfo";
     private const string BeverageLine = "BeverageBuyInfo";
@@ -45,7 +46,19 @@ internal static class ModernUoVendorSourceReader
                 }
             }
 
-            infos.Add(new() { Name = owner.Identifier.ValueText, Lines = lines });
+            var sells = new List<ImportedSellLine>();
+            var sellInfo = owner.Members.OfType<ClassDeclarationSyntax>()
+                .FirstOrDefault(member => member.Identifier.ValueText == SellInfoClass);
+
+            foreach (var constructor in sellInfo?.Members.OfType<ConstructorDeclarationSyntax>() ?? [])
+            {
+                foreach (var call in constructor.DescendantNodes().OfType<InvocationExpressionSyntax>())
+                {
+                    ReadSell(call, constructor, sells, report);
+                }
+            }
+
+            infos.Add(new() { Name = owner.Identifier.ValueText, Lines = lines, Sells = sells });
         }
 
         return infos;
@@ -192,6 +205,39 @@ internal static class ModernUoVendorSourceReader
                 Price = price, Amount = amount, Graphic = graphic, Hue = numbers[3] ?? 0, Name = name
             }
         );
+    }
+
+    // Add(typeof(BreadLoaf), 3);
+    private static void ReadSell(
+        InvocationExpressionSyntax call,
+        SyntaxNode constructor,
+        List<ImportedSellLine> sells,
+        ConversionReport report
+    )
+    {
+        var arguments = call.ArgumentList.Arguments.Select(argument => argument.Expression).ToList();
+
+        if (call.Expression is not IdentifierNameSyntax { Identifier.ValueText: "Add" } ||
+            arguments is not [TypeOfExpressionSyntax typeOf, var price])
+        {
+            return;
+        }
+
+        if (IsConditional(call, constructor))
+        {
+            report.Count("conditional sell line");
+
+            return;
+        }
+
+        if (Number(price) is not { } gold)
+        {
+            report.Count("sell line with a price that is no literal");
+
+            return;
+        }
+
+        sells.Add(new() { TypeName = typeOf.Type.ToString(), Price = gold });
     }
 
     private static int? Number(ExpressionSyntax expression)

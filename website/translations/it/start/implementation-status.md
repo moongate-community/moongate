@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"8fdb61c73ff42114268f9fc7d000ad6574d3f7e33fc266737c8198f82d0766ba","title":"Stato dell'implementazione"} -->
+<!-- translation: {"sourceHash":"c2d496d61a9e11259aa325c20119c050ba79f3097f48660a134e77be88bcff90","title":"Stato dell'implementazione"} -->
 
 # Stato dell'implementazione
 
@@ -47,8 +47,8 @@ La [roadmap](roadmap.md) indica l'ordine in cui vengono realizzati i sistemi man
 - Aprire la cassetta di banca da un banchiere dicendo *bank*, in qualsiasi lingua del client; chiedere il *balance*,
   *withdraw* e *deposit* dell'oro tramite parlato, farsi emettere un *check* bancario e incassarlo con un doppio
   clic, oppure consegnare oro e assegni al banchiere per depositarli. La cassetta contiene un numero limitato di oggetti: [Banca](bank.md).
-- Comprare dai venditori: scegliere *Buy* nel loro menu contestuale o dire *vendor buy*, scegliere nella finestra del negozio e pagare con l'oro
-  dello zaino, o della banca da 2000: [Venditori](vendors.md).
+- Comprare dai venditori e vendere a loro: scegliere *Buy* o *Sell* nel loro menu contestuale o dire *vendor buy* o *vendor sell*,
+  scegliere nella finestra e pagare con l'oro dello zaino, o della banca da 2000: [Venditori](vendors.md).
 - Recuperare punti vita, mana e stamina nel tempo, avere fame e sete, mangiare e bere; stancarsi correndo o trasportando troppo peso.
 - Aprire i forzieri del tesoro dei dungeon e le casse dei negozi che si riempiono; leggere un orologio; cambiare modalità guerra.
 - Tingere i vestiti: le tinture danno alla vasca il colore scelto nel selettore del client, e la vasca lo trasferisce agli abiti.

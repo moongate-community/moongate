@@ -29,7 +29,24 @@ public interface IVendorService : ISessionClosedListener
     void Buy(GameSession session, VendorBuyReplyPacket packet);
 
     /// <summary>
-    ///     Forgets the open window of the session, if any.
+    ///     Offers the player's items that the shop of <paramref name="vendor" /> buys, in a sell list of 250 items at most.
+    ///     Refused, with nothing sent, on the grounds of <see cref="OpenBuy" />; a player with nothing to sell is told so by
+    ///     the vendor. The items are those in the backpack and its bags, not worn or held, movable, and empty when they are
+    ///     containers.
+    /// </summary>
+    /// <returns>
+    ///     True when the list was sent.
+    /// </returns>
+    bool OpenSell(GameSession session, MobileEntity vendor);
+
+    /// <summary>
+    ///     Carries out what the player chose in the sell list: everything or nothing. Whatever the outcome, the list ends.
+    ///     A reply that is not for the open list of that vendor, or has 100 lines or more, is dropped.
+    /// </summary>
+    void Sell(GameSession session, VendorSellReplyPacket packet);
+
+    /// <summary>
+    ///     Forgets the open window and sell list of the session, if any.
     /// </summary>
     void Close(GameSession session);
 }

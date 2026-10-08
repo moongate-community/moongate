@@ -12,10 +12,13 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
 [[shop]]
 id = "baker"
 vendors = ["baker", "m_baker", "f_baker"]
-sell = []
 [[shop.buy]]
 item = "0x103b_bread_loaf"
 price = 6
@@ -90,5 +93,137 @@ name = ""
 item = "0x0a1e_bowl_of_flour"
 price = 7
 amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x103b_bread_loaf"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x103c_bread_loaf"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x098c_french_bread"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09e9_cake"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x160b_pan_of_cookies"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09ea_muffin"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1040_pizza"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1041_baked_pie"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x103d_dough"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09ec_jar_honey"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09f0_pitcher_of_milk"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f95_pitcher_of_ale"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f97_pitcher_of_ale"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f99_pitcher_of_liquor"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f9b_pitcher_of_wine"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f9d_pitcher_of_water"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09ad_pitcher_of_milk"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1039_sack_of_flour"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09b5_eggs"
+price = 1
+amount = 1
 hue = 0
 name = ""

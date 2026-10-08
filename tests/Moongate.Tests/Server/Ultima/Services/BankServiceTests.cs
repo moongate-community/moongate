@@ -476,6 +476,37 @@ public sealed class BankServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void GiveGold_GoesToTheBackpack_InPilesOfSixtyThousand()
+    {
+        var backpack = Backpack();
+
+        Assert.Equal(BankResultType.Ok, _bank.GiveGold(_aria, 130_000));
+
+        Assert.Equal([10_000, 60_000, 60_000], _items.GetContents(backpack.Id).Select(pile => pile.Amount).Order());
+        Assert.Equal(130_000, _bank.CarriedGold(_aria));
+    }
+
+    [Fact]
+    public async Task GiveGold_WithNoBackpack_GoesToTheBankBox()
+    {
+        var box = await BoxAsync();
+
+        Assert.Equal(BankResultType.Ok, _bank.GiveGold(_aria, 500));
+
+        Assert.Equal(500, Assert.Single(_items.GetContents(box.Id)).Amount);
+    }
+
+    [Fact]
+    public void GiveGold_WithNowhereToPutIt_OrNothingToGive_IsRefused_AndMakesNothing()
+    {
+        var before = _serials.Serials.Count;
+
+        Assert.Equal(BankResultType.BackpackFull, _bank.GiveGold(_aria, 500));
+        Assert.Equal(BankResultType.BadAmount, _bank.GiveGold(_aria, 0));
+        Assert.Equal(before, _serials.Serials.Count);
+    }
+
+    [Fact]
     public void CarriedGold_AddsTheBackpackAndItsBags_ButNotTheBox()
     {
         var backpack = Backpack();

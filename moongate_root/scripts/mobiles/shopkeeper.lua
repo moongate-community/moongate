@@ -2,9 +2,10 @@
 -- Moongate - scripts/mobiles/shopkeeper.lua
 --
 -- What it is for:
---   The NPC vendors, as ModernUO's: a player within 8 tiles picks Buy in the
---   vendor's context menu, or says "vendor buy" within 4 tiles, and the shop
---   window opens with what the vendor sells. What each vendor sells is its shop
+--   The NPC vendors, as ModernUO's: a player within 8 tiles picks Buy or Sell in the
+--   vendor's context menu, or says "vendor buy" or "vendor sell" within 4 tiles, and
+--   the shop window opens with what the vendor sells, or the list of what the player
+--   carries that the vendor buys. What each vendor sells is its shop
 --   in templates/shops. The client turns "vendor buy" into a speech keyword in
 --   any language. When several vendors hear the same words, one answers. The
 --   vendor templates that inherit from basevendor use it. The window, the
@@ -15,9 +16,10 @@
 -- Functions:
 --   on_speech(serial, speaker, text, keywords)  a player speaks within 15
 --                                               cells: the vendor answers
---                                               "vendor buy" said within 4
---   on_context_menu(serial, player)             the entry the vendor adds to
---                                               its context menu: Buy
+--                                               "vendor buy" and "vendor sell"
+--                                               said within 4
+--   on_context_menu(serial, player)             the entries the vendor adds to
+--                                               its context menu: Buy and Sell
 --   on_context_menu_select(serial, player, id)  the player chose it: the window
 --                                               opens
 -- ==============================================================================
@@ -31,7 +33,8 @@ local menu_range = 8
 local speech_range = 4
 
 -- The client's texts.
-local buy_entry = 6103  -- Buy
+local buy_entry = 6103   -- Buy
+local sell_entry = 6104  -- Sell
 
 local function has_keyword(keywords, wanted)
     for _, keyword in ipairs(keywords or {}) do
@@ -52,7 +55,10 @@ local function near(serial, speaker, range)
 end
 
 function shopkeeper.on_speech(serial, speaker, text, keywords)
-    if not has_keyword(keywords, SpeechKeywordType.VendorBuy) then
+    local buying = has_keyword(keywords, SpeechKeywordType.VendorBuy)
+    local selling = has_keyword(keywords, SpeechKeywordType.VendorSell)
+
+    if not buying and not selling then
         return
     end
 
@@ -61,7 +67,14 @@ function shopkeeper.on_speech(serial, speaker, text, keywords)
         return
     end
 
-    if vendor.open_buy_once(serial, speaker) then
+    local opened
+    if buying then
+        opened = vendor.open_buy_once(serial, speaker)
+    else
+        opened = vendor.open_sell_once(serial, speaker)
+    end
+
+    if opened then
         npc.look_at(serial, speaker)
     end
 end
@@ -73,14 +86,16 @@ function shopkeeper.on_context_menu(serial, player)
 
     return {
         { id = "buy", cliloc = buy_entry, range = menu_range },
+        { id = "sell", cliloc = sell_entry, range = menu_range },
     }
 end
 
 function shopkeeper.on_context_menu_select(serial, player, id)
-    if id ~= "buy" then
-        return
+    if id == "buy" then
+        npc.look_at(serial, player)
+        vendor.open_buy(serial, player)
+    elseif id == "sell" then
+        npc.look_at(serial, player)
+        vendor.open_sell(serial, player)
     end
-
-    npc.look_at(serial, player)
-    vendor.open_buy(serial, player)
 end

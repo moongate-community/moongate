@@ -12,13 +12,22 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
 [[shop]]
 id = "veterinarian"
 vendors = ["veterinarian", "m_veterinarian", "f_veterinarian"]
-sell = []
 [[shop.buy]]
 item = "0x0e21_clean_bandage"
 price = 6
 amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0e21_clean_bandage"
+price = 1
+amount = 1
 hue = 0
 name = ""

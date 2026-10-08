@@ -157,7 +157,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Vendors: buy, sell, restock | 🟡 | Buying works: the shop window, the goods of ModernUO's shops, gold from the backpack then the bank, everything or nothing; see [Vendors](vendors.md). Selling and restock are not built |
+| Vendors: buy, sell, restock | 🟡 | Buying and selling work: the shop window, the goods and the sell tables of ModernUO's shops, gold from the backpack then the bank, everything or nothing; see [Vendors](vendors.md). Restock is not built |
 | Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; balance, withdraw and deposit by speech; a limit of items; see [Bank](bank.md) |
 | Stable master, veterinarian | ❌ | |
 | Skill trainers | ❌ | |

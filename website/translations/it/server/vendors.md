@@ -1,18 +1,18 @@
-<!-- translation: {"sourceHash":"c7f1ffb1de55db00abddefd0ca45cbcd5445e47d8e932c4c910792c92cc75a24","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"30093cab3aacf5a1af06c3dce4361c7a4e5e22f832d2f74f142211b17723ffcf","title":"Venditori"} -->
 
 # Venditori
 
 Un venditore PNG vende merce in cambio di oro, come in ModernUO. Il giocatore apre la finestra del negozio di un venditore,
 vede cosa vende con il prezzo di un pezzo, sceglie cosa comprare e riceve la merce nello zaino. Ciò che ogni venditore vende è un
-[negozio](data-files/shops.md), convertito dalle classi `SBInfo` di ModernUO. La vendita al venditore e il rifornimento
-degli scaffali non sono ancora realizzati.
+[negozio](data-files/shops.md), convertito dalle classi `SBInfo` di ModernUO. Il giocatore può anche vendere al venditore. Il rifornimento
+degli scaffali non è ancora realizzato.
 
 ## Aprire la finestra
 
 Il giocatore apre la finestra in due modi, da dove il venditore è raggiungibile:
 
-- Cliccare il venditore e scegliere *Buy* nel [menu contestuale](context-menus.md), entro 8 caselle.
-- Dire *vendor buy* entro 4 caselle. Il client trasforma le parole in una parola chiave del parlato in qualsiasi lingua del client,
+- Cliccare il venditore e scegliere *Buy* o *Sell* nel [menu contestuale](context-menus.md), entro 8 caselle.
+- Dire *vendor buy* o *vendor sell* entro 4 caselle. Il client trasforma le parole in una parola chiave del parlato in qualsiasi lingua del client,
   quindi *vendor buy* funziona anche con un client italiano. Quando più venditori sentono le parole, risponde uno solo.
 
 Un template che eredita `basevendor` esegue lo script, ma vendono solo quelli con un negozio: gli altri non fanno nulla quando
@@ -42,6 +42,25 @@ acquisto è tutto o niente: quando un controllo fallisce, non viene preso nulla 
 La finestra si chiude dopo ogni risposta, acquisto o rifiuto. Una risposta che non è per la finestra aperta di quel
 venditore, o che ha più di 100 righe, viene scartata.
 
+## Vendere
+
+*Sell* apre un elenco di ciò che il giocatore porta e che il negozio del venditore compra, con l'oro pagato per un pezzo. L'elenco contiene
+gli oggetti dello zaino e delle borse al suo interno, al massimo 250. Un oggetto indossato, tenuto sul cursore, non spostabile o un
+contenitore con qualcosa dentro non viene offerto. Un venditore che non compra nulla di ciò che il giocatore porta dice *you have nothing I
+would be interested in*.
+
+Il giocatore sceglie gli oggetti e quanti pezzi di ciascuno, e conferma. Una vendita è tutto o niente, come un acquisto:
+
+- La risposta ha meno di 100 righe. Ogni oggetto deve essere uno di quelli offerti e ancora nello zaino, e una riga
+  scelta due volte si somma. Una quantità oltre quella dell'oggetto viene ridotta a essa. Il
+  totale è rifiutato oltre `int.MaxValue`. Gli oggetti che non sono bottino normale, come gli oggetti iniziali di un nuovo personaggio,
+  non vengono comprati.
+- Il venditore deve essere raggiungibile e il giocatore vivo, e un assassino in un luogo sorvegliato viene rifiutato, come per un acquisto.
+- L'oro è pagato in pile da 60000 nello zaino, o nella cassetta di banca quando lo zaino non ha posto per esse. Quando
+  nessuno dei due ha posto, non si vende nulla e al giocatore viene detto che lo zaino è pieno.
+- I pezzi vengono tolti dagli oggetti, e un oggetto venduto per intero viene eliminato. Il venditore non li tiene ancora sui
+  suoi scaffali.
+
 ## Scorta
 
 Ogni venditore parte con la quantità di ogni riga del suo negozio. Un acquisto la riduce e la finestra successiva mostra ciò che
@@ -54,7 +73,8 @@ La finestra è quella del client, guidata da questi pacchetti: `0x2E` mette due 
 *ShopBuy* e *ShopResale*, di cui il client ha bisogno o va in crash), `0x3C` riempie il primo con un oggetto virtuale per
 ogni riga, `0x74` dà il prezzo e il nome di ogni riga, e `0x24` apre la finestra con il gump `0x30`. L'acquisto
 torna in `0x3B`, e il server risponde con un `0x3B` che chiude la finestra. I serial degli oggetti
-virtuali scendono da `Serial.MaxVirtual` e non significano nulla fuori dalla finestra aperta. Vedi [Pacchetti](packets.md).
+virtuali scendono da `Serial.MaxVirtual` e non significano nulla fuori dalla finestra aperta. L'elenco di vendita esce in `0x9E` e la scelta del giocatore torna in `0x9F`;
+i suoi oggetti sono del giocatore, con i loro serial reali. Vedi [Pacchetti](packets.md).
 
 ## Per chi scrive script
 
@@ -71,7 +91,7 @@ Lo script di un venditore che ne ha uno proprio, come `banker.lua` o `healer.lua
 
 ## Limiti
 
-- La vendita al venditore, il riacquisto e il rifornimento degli scaffali sono le prossime parti.
+- Il riacquisto e il rifornimento degli scaffali sono la prossima parte.
 - Istruttori di abilità, animali, ordini di lavorazione, il moltiplicatore dei prezzi delle città, venditori dei giocatori e l'oro
   che un venditore possiede non sono realizzati.
 - I negozi forniti con il server contengono le righe di ModernUO che hanno un template oggetto. Il convertitore segnala le

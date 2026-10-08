@@ -12,10 +12,13 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
 [[shop]]
 id = "cook"
 vendors = ["cook", "m_cook", "f_cook"]
-sell = []
 [[shop.buy]]
 item = "0x103b_bread_loaf"
 price = 5
@@ -197,3 +200,184 @@ price = 3
 amount = 20
 hue = 0
 name = "1044567"
+[[shop.sell]]
+item = "0x097e_wheel_of_cheese"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09b7_cooked_bird"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09bb_roast_pig"
+price = 53
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09e9_cake"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09ec_jar_honey"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1039_sack_of_flour"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x103b_bread_loaf"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x103c_bread_loaf"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1608_chicken_leg"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x160a_leg_of_lamb"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x097f_skillet"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x103e_sifter"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1043_rolling_pin"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09ea_muffin"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1041_baked_pie"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x15f9_bowl_of_carrots"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x15fa_bowl_of_corn"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x15fb_bowl_of_lettuce"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x15fc_bowl_of_peas"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x15fd_a_pewter_bowl"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x15fe_bowl_of_carrots"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x15ff_bowl_of_corn"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1600_bowl_of_lettuce"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1601_bowl_of_peas"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1604_bowl_of_stew"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1606_tomato_soup"
+price = 1
+amount = 1
+hue = 0
+name = ""

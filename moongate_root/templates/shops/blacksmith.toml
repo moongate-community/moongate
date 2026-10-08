@@ -12,10 +12,13 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
 [[shop]]
 id = "blacksmith"
 vendors = ["blacksmith", "m_blacksmith", "f_blacksmith"]
-sell = []
 [[shop.buy]]
 item = "0x1bf2_iron_ingot"
 price = 5
@@ -342,5 +345,389 @@ name = ""
 item = "0x0f62_aos"
 price = 31
 amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0fbb_tongs"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bf2_iron_ingot"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_a"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_a"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_a"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_a"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_a"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_a"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_a"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_a"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_a"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_a"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_a"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_a"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c06_aos"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c02_aos"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c00_aos"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c08_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0a_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0c_aos"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_a"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_a"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_a"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_a"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_a"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_a"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_a"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f47_aos"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4b_aos"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e85_pickaxe"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f49_aos"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_aos"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143e_aos"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_aos"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f62_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_aos"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5e_aos"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b9_aos"
+price = 27
+amount = 1
 hue = 0
 name = ""

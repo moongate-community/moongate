@@ -5,6 +5,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -14,6 +15,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.Vendors;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Items;
@@ -82,7 +84,8 @@ public sealed class VendorServiceTests : IAsyncLifetime
                     [
                         new() { Item = "bread", Price = 8, Amount = 20 },
                         new() { Item = "sword", Price = 1000, Amount = 5, Name = "Fine sword" }
-                    ]
+                    ],
+                    Sell = [new() { Item = "bread", Price = 3 }, new() { Item = "sword", Price = 40 }]
                 }
             )
         );
@@ -508,6 +511,184 @@ public sealed class VendorServiceTests : IAsyncLifetime
         Assert.Empty(_bank.Taken);
     }
 
+    [Fact]
+    public async Task OpenSell_OffersTheItemsTheShopBuys_FromTheBackpackAndItsBags_WithTheirPrices()
+    {
+        var backpack = Backpack();
+        var bread = Carried(backpack, "bread", 0x103B, 5);
+        var bag = Carried(backpack, "backpack", 0x0E75, 1);
+        var sword = Carried(bag, "sword", 0x0F5E, 1);
+        Carried(backpack, "gold", 0x0EED, 50);
+
+        Assert.True(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+
+        var expected = new[]
+        {
+            new VendorSellListEntry(bread.Id, 0x103B, 0, 5, 3, "bread"),
+            new VendorSellListEntry(sword.Id, 0x0F5E, 0, 1, 40, "sword")
+        };
+        var sent = Assert.Single(_fixture.Sender.Sent.OfType<VendorSellListPacket>());
+        Assert.Equal(_vendor.Id, sent.Vendor);
+        Assert.Equal(
+            expected.OrderBy(entry => entry.Item.Value),
+            sent.Entries.OrderBy(entry => entry.Item.Value)
+        );
+        Assert.NotNull(_session.Get(VendorSessionKeys.SellWindow));
+    }
+
+    [Fact]
+    public async Task OpenSell_WithNothingTheShopBuys_TheVendorSaysSo()
+    {
+        Carried(Backpack(), "gold", 0x0EED, 50);
+
+        Assert.True(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+
+        Assert.Equal("You have nothing I would be interested in.", Assert.Single(_speech.Said).Text);
+        Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public async Task OpenSell_AFullBagIsNotOffered_AndANoShopVendorOpensNothing()
+    {
+        var backpack = Backpack();
+        var bag = Carried(backpack, "bread", 0x103B, 1);
+        Carried(bag, "gold", 0x0EED, 1);
+
+        Assert.True(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+        Assert.Empty(_fixture.Sender.Sent.OfType<VendorSellListPacket>());
+
+        var stranger = new MobileEntity { Id = new Serial(101), TemplateId = "orc", Map = MapType.Trammel };
+        await _fixture.Network.ExecuteOnLoopAsync(() => _fixture.Mobiles.EnterWorld(stranger));
+        Assert.False(await OnLoopAsync(() => _vendors.OpenSell(_session, stranger)));
+    }
+
+    [Fact]
+    public async Task OpenSell_AnItemOfANewCharacter_IsNotBought()
+    {
+        var backpack = Backpack();
+        var starting = Carried(backpack, "bread", 0x103B, 5);
+        starting.SetProp(ItemPropKeys.LootType, LootType.Newbied);
+        var bought = Carried(backpack, "sword", 0x0F5E, 1);
+
+        Assert.True(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+
+        Assert.Equal(
+            [bought.Id],
+            Assert.Single(_fixture.Sender.Sent.OfType<VendorSellListPacket>()).Entries.Select(entry => entry.Item)
+        );
+    }
+
+    [Fact]
+    public async Task OpenSell_AMurdererInAGuardedPlace_IsRefusedByTheVendorsVoice()
+    {
+        Carried(Backpack(), "bread", 0x103B, 5);
+        _player.Kills = MobileEntity.MurderKills;
+
+        Assert.False(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+
+        Assert.Equal(501522, Assert.Single(_speech.SaidClilocs).Cliloc);
+    }
+
+    [Fact]
+    public async Task Sell_PaysForWhatWasChosen_TakesThePieces_AndEndsTheList()
+    {
+        var backpack = Backpack();
+        var bread = Carried(backpack, "bread", 0x103B, 5);
+        var sword = Carried(backpack, "sword", 0x0F5E, 1);
+        await OpenSellAsync();
+
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 2), (sword.Id, 1)));
+
+        Assert.Equal(46, Assert.Single(_bank.Given).Amount);
+        Assert.Equal(3, bread.Amount);
+        Assert.False(_items.TryGet(sword.Id, out _));
+        Assert.Equal(_vendor.Id, Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>()).Vendor);
+        Assert.Null(_session.Get(VendorSessionKeys.SellWindow));
+    }
+
+    [Fact]
+    public async Task Sell_MoreThanThePlayerHas_IsCutAtWhatItHas_AndALineSentTwiceAddsUp()
+    {
+        var backpack = Backpack();
+        var bread = Carried(backpack, "bread", 0x103B, 5);
+        await OpenSellAsync();
+
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 3), (bread.Id, 9)));
+
+        Assert.Equal(15, Assert.Single(_bank.Given).Amount);
+        Assert.False(_items.TryGet(bread.Id, out _));
+    }
+
+    [Fact]
+    public async Task Sell_AnItemThatWasNotOffered_OrIsNoLongerCarried_RefusesAll_AndChangesNothing()
+    {
+        var backpack = Backpack();
+        var bread = Carried(backpack, "bread", 0x103B, 5);
+        var other = Carried(backpack, "gold", 0x0EED, 5);
+        await OpenSellAsync();
+
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 1), (other.Id, 1)));
+
+        Assert.Empty(_bank.Given);
+        Assert.Equal(5, bread.Amount);
+        Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>());
+
+        await OpenSellAsync();
+        bread.PutInContainer(new Serial(0x40009999), new Point2D(1, 1));
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 1)));
+
+        Assert.Empty(_bank.Given);
+    }
+
+    [Fact]
+    public async Task Sell_WhenTheBankCannotPay_RefusesAndTakesNothing()
+    {
+        var backpack = Backpack();
+        var bread = Carried(backpack, "bread", 0x103B, 5);
+        await OpenSellAsync();
+        _bank.Result = BankResultType.BackpackFull;
+
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 2)));
+
+        Assert.Equal(5, bread.Amount);
+        Assert.Equal(1048147, _speech.ToldClilocs.Single().Cliloc);
+    }
+
+    [Fact]
+    public async Task Sell_ForAnotherVendor_OrWithoutAList_OrWithAHundredLines_IsDropped()
+    {
+        var backpack = Backpack();
+        var bread = Carried(backpack, "bread", 0x103B, 5);
+
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 1)));
+        Assert.Empty(_fixture.Sender.Sent.OfType<VendorEndPacket>());
+
+        await OpenSellAsync();
+        await SellAsync(SellReply(new Serial(999), (bread.Id, 1)));
+        Assert.Equal(new Serial(999), Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>()).Vendor);
+
+        _fixture.Sender.Sent.Clear();
+        await SellAsync(SellReply(_vendor.Id, Enumerable.Repeat((bread.Id, 1), 100).ToArray()));
+
+        Assert.Empty(_fixture.Sender.Sent.OfType<VendorEndPacket>());
+        Assert.Empty(_bank.Given);
+        Assert.NotNull(_session.Get(VendorSessionKeys.SellWindow));
+    }
+
+    [Fact]
+    public async Task Sell_AfterTheVendorIsFarAway_EndsTheListAndChangesNothing()
+    {
+        var bread = Carried(Backpack(), "bread", 0x103B, 5);
+        await OpenSellAsync();
+        _player.Location = new Point3D(40, 10, 0);
+
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 1)));
+
+        Assert.Empty(_bank.Given);
+        Assert.Equal(5, bread.Amount);
+        Assert.Null(_session.Get(VendorSessionKeys.SellWindow));
+    }
+
     public async Task DisposeAsync()
     {
         await _fixture.DisposeAsync();
@@ -555,6 +736,53 @@ public sealed class VendorServiceTests : IAsyncLifetime
         bytes[1] = (byte)(bytes.Count >> 8);
         bytes[2] = (byte)bytes.Count;
         Assert.True(VendorBuyReplyPacket.TryParse(bytes.ToArray(), out var packet));
+
+        return packet;
+    }
+
+    private ItemEntity Carried(ItemEntity container, string template, int graphic, int amount)
+    {
+        var item = new ItemEntity { Id = new Serial(_nextItem++), TemplateId = template, ItemId = graphic, Amount = amount };
+        item.PutInContainer(container.Id, new Point2D(50, 50));
+        _items.Add([item]);
+
+        return item;
+    }
+
+    private async Task OpenSellAsync()
+    {
+        Assert.True(await OnLoopAsync(() => _vendors.OpenSell(_session, _vendor)));
+        _fixture.Sender.Sent.Clear();
+    }
+
+    private async Task SellAsync(VendorSellReplyPacket packet)
+    {
+        await OnLoopAsync(() =>
+            {
+                _vendors.Sell(_session, packet);
+
+                return true;
+            }
+        );
+    }
+
+    private static VendorSellReplyPacket SellReply(Serial vendor, params (Serial Item, int Amount)[] lines)
+    {
+        var bytes = new List<byte> { 0x9F, 0, 0 };
+        bytes.AddRange(BitConverter.GetBytes(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(vendor.Value)));
+        bytes.AddRange(
+            BitConverter.GetBytes(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness((ushort)lines.Length))
+        );
+
+        foreach (var (item, amount) in lines)
+        {
+            bytes.AddRange(BitConverter.GetBytes(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(item.Value)));
+            bytes.AddRange(BitConverter.GetBytes(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness((ushort)amount)));
+        }
+
+        bytes[1] = (byte)(bytes.Count >> 8);
+        bytes[2] = (byte)bytes.Count;
+        Assert.True(VendorSellReplyPacket.TryParse(bytes.ToArray(), out var packet));
 
         return packet;
     }

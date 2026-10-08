@@ -601,6 +601,7 @@ public sealed class RepositoryTemplateFilesTests
             .LoadDataAsync()).Entities;
 
         Assert.Contains(shops, shop => shop.Id == "baker" && shop.Buy.Count > 0);
+        Assert.Contains(shops, shop => shop.Id == "baker" && shop.Sell.Any(line => line.Item == "0x103b_bread_loaf"));
         var scripts = mobiles.ToDictionary(template => template.Id, template => template.ScriptId);
         // A vendor that is a banker or a healer keeps its own script; the others use the shopkeeper's.
         Assert.All(

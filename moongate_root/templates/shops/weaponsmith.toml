@@ -12,10 +12,13 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
 [[shop]]
 id = "weaponsmith"
 vendors = ["weaponsmith", "m_weaponsmith", "f_weaponsmith"]
-sell = []
 [[shop.buy]]
 item = "0x13f8_aos"
 price = 16
@@ -139,5 +142,137 @@ name = ""
 item = "0x0ec4_aos"
 price = 14
 amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0f47_aos"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4b_aos"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e85_pickaxe"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f49_aos"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_aos"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143e_aos"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_aos"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f62_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_aos"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5e_aos"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b9_aos"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f43_aos"
+price = 13
+amount = 1
 hue = 0
 name = ""

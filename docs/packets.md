@@ -75,6 +75,8 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x74` | `VendorBuyListPacket` | Outgoing | Variable | The prices and names of a vendor's shop window |
 | `0x3B` | `VendorEndPacket` | Outgoing | Fixed 8 | Closes the shop window |
 | `0x3B` | `VendorBuyReplyPacket` | Incoming | Variable, minimum 8 | `VendorBuyReplyPacketHandler`: the purchase of the shop window |
+| `0x9E` | `VendorSellListPacket` | Outgoing | Variable | What a vendor offers to buy from the player |
+| `0x9F` | `VendorSellReplyPacket` | Incoming | Variable, minimum 9 | `VendorSellReplyPacketHandler`: the sale of the sell list |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |

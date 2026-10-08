@@ -438,6 +438,55 @@ public sealed class BankService : IBankService
         return BankResultType.Ok;
     }
 
+    public BankResultType GiveGold(MobileEntity player, int amount)
+    {
+        if (_inventory?.AllowsOwner(player.Id) == false)
+        {
+            return BankResultType.Busy;
+        }
+
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (amount < 1)
+        {
+            return BankResultType.BadAmount;
+        }
+
+        var piles = (amount + PileMaximum - 1) / PileMaximum;
+        var target = new[] { BackpackOf(player.Id), BoxOf(player.Id) }.FirstOrDefault(container =>
+            container is not null && _capacity.HasRoomFor(container, piles)
+        );
+
+        if (target is null)
+        {
+            return BankResultType.BackpackFull;
+        }
+
+        var made = new List<ItemEntity>(piles);
+
+        for (var remaining = amount; remaining > 0; remaining -= PileMaximum)
+        {
+            if (_handling.Make(_itemsConfig.GoldTemplate, Math.Min(remaining, PileMaximum)) is not { } pile)
+            {
+                return BankResultType.Busy;
+            }
+
+            made.Add(pile);
+        }
+
+        foreach (var pile in made)
+        {
+            Put(pile, target);
+        }
+
+        LoadChanged(player);
+
+        return BankResultType.Ok;
+    }
+
     public long CarriedGold(MobileEntity player)
     {
         return BackpackOf(player.Id) is { } backpack ? GoldIn(backpack).Sum(pile => (long)pile.Amount) : 0;
