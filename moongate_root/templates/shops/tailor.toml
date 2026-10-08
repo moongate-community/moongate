@@ -12,10 +12,12 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
 [[shop]]
 id = "tailor"
 vendors = ["tailor", "m_tailor", "f_tailor"]
-sell = []
 [[shop.buy]]
 item = "0x0f9d_sewing_kit"
 price = 3
@@ -251,5 +253,277 @@ name = ""
 item = "0x0fa0_spool_of_thread"
 price = 18
 amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0f9f_scissors"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f9d_sewing_kit"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0fa9_dyes"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0fab_dying_tub"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f95_bolt_of_cloth"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f9b_bolt_of_cloth"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f9c_bolt_of_cloth"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f96_bolt_of_cloth"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f97_bolt_of_cloth"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1efd_fancy_shirt"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1517_shirt"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x152e_short_pants"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1539_long_pants"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1515_cloak"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1eff_fancy_dress"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f03_robe"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f01_plain_dress"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1531_skirt"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1537_kilt"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f7b_doublet"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1fa1_tunic"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1f9f_jester_suit"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x153d_full_apron"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x153b_half_apron"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x171c_jester_hat"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1713_floppy_hat"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1714_wide_brim_hat"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1715_cap"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x153f_bandana"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1716_tall_straw_hat"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1717_straw_hat"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1718_wizard's_hat"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1719_bonnet"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x171a_feathered_hat"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x171b_tricorne_hat"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0fa0_spool_of_thread"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1a9c_flax_bundle"
+price = 51
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df9_bale_of_cotton"
+price = 51
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df8_pile_of_wool"
+price = 31
+amount = 1
 hue = 0
 name = ""

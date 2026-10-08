@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b4e80e27f43d66284ddad656f394737dd0a64b79af4af7d604e4c6558dc83678","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"5afb02713e9717d5a2d76566785958161fcc52dcf5f97779bca2219102296233","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -159,7 +159,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 
 | Sistema | Moongate | Note |
 | --- | --- | --- |
-| Venditori: acquisto, vendita, rifornimento | 🟡 | L'acquisto funziona: la finestra del negozio, la merce dei negozi di ModernUO, oro dello zaino poi della banca, tutto o niente; vedi [Venditori](vendors.md). Vendita e rifornimento non sono realizzati |
+| Venditori: acquisto, vendita, rifornimento | 🟡 | Acquisto e vendita funzionano: la finestra del negozio, la merce e le tabelle di vendita dei negozi di ModernUO, oro dello zaino poi della banca, tutto o niente; vedi [Venditori](vendors.md). Il rifornimento non è realizzato |
 | Banchiere e cassetta di banca | ✅ | La parola chiave *bank* in qualsiasi lingua del client; aperta mentre il giocatore resta fermo; saldo, prelievo e deposito tramite parlato; limite di oggetti; vedi [Banca](bank.md) |
 | Stalliere, veterinario | ❌ | |
 | Istruttori delle abilità | ❌ | |

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"fbbdb73e03791a647d2883f04799c2f215d1e5ca115238cd703c06119823bd2e","title":"Pacchetti e handler"} -->
+<!-- translation: {"sourceHash":"865d07f543a685dfd6203d90ff95dbc98c10d8b8c3d777a29a0b96cdd586febd","title":"Pacchetti e handler"} -->
 
 # Pacchetti e handler
 

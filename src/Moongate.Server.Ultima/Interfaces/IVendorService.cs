@@ -34,7 +34,9 @@ public interface IVendorService : ISessionClosedListener
     ///     the vendor. The items are those in the backpack and its bags, not worn or held, movable, and empty when they are
     ///     containers.
     /// </summary>
-    /// <returns>True when the list was sent.</returns>
+    /// <returns>
+    ///     True when the list was sent.
+    /// </returns>
     bool OpenSell(GameSession session, MobileEntity vendor);
 
     /// <summary>

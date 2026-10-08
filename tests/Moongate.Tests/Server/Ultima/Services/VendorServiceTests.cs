@@ -727,8 +727,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
     private async Task SellAsync(VendorSellReplyPacket packet)
     {
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 _vendors.Sell(_session, packet);
 
@@ -741,7 +740,9 @@ public sealed class VendorServiceTests : IAsyncLifetime
     {
         var bytes = new List<byte> { 0x9F, 0, 0 };
         bytes.AddRange(BitConverter.GetBytes(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness(vendor.Value)));
-        bytes.AddRange(BitConverter.GetBytes(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness((ushort)lines.Length)));
+        bytes.AddRange(
+            BitConverter.GetBytes(System.Buffers.Binary.BinaryPrimitives.ReverseEndianness((ushort)lines.Length))
+        );
 
         foreach (var (item, amount) in lines)
         {

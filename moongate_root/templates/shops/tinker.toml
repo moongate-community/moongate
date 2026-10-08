@@ -12,10 +12,12 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
 [[shop]]
 id = "tinker"
 vendors = ["tinker", "m_tinker", "f_tinker"]
-sell = []
 [[shop.buy]]
 item = "0x104b_clock"
 price = 22
@@ -272,5 +274,284 @@ name = ""
 item = "0x0eb3_lute"
 price = 21
 amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0e9c_drum"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e9e_tambourine"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e9d_tambourine"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0eb2_lap_harp"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0eb3_lute"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f39_a_shovel"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f9d_sewing_kit"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f9f_scissors"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0fbb_tongs"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x100e_copper_key"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x100f_gold_key"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1010_iron_key"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1013_rusty_iron_key"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1028_dovetail_saw"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x102c_moulding_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x102e_nails"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1030_jointing_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1032_smoothing_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1034_saw"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x104b_clock"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x104f_clock_parts"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1051_axle_with_gears"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1053_gears"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1055_hinge"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1057_sextant"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1059_sextant_parts"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x105b_axle"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x105d_springs"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e4_draw_knife"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e5_froe"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e6_inshave"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e7_scorp"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x14fc_lockpick"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bd7_board"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bdd_log"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1be0_log"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e85_pickaxe"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x102a_hammer"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_aos"
+price = 6
+amount = 1
 hue = 0
 name = ""

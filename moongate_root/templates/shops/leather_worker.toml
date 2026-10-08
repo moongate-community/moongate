@@ -12,10 +12,12 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
 [[shop]]
 id = "leather_worker"
 vendors = ["leatherworker", "m_leatherworker", "f_leatherworker"]
-sell = []
 [[shop.buy]]
 item = "0x13cc_aos"
 price = 101
@@ -139,5 +141,137 @@ name = ""
 item = "0x1711_thigh_boots"
 price = 56
 amount = 10
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x13cc_aos"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c6_aos"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c7_aos"
+price = 37
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13cb_aos"
+price = 40
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1db9_aos"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c06_aos"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c02_aos"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c00_aos"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c08_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0a_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0c_aos"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13dc_ranger"
+price = 43
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13db_aos"
+price = 64
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13d5_aos"
+price = 39
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13d6_aos"
+price = 36
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13da_aos"
+price = 51
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1079_pile_of_hides"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1078_pile_of_hides"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1711_thigh_boots"
+price = 7
+amount = 1
 hue = 0
 name = ""

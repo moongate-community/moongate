@@ -77,7 +77,8 @@ public interface IBankService : ISessionClosedListener
 
     /// <summary>
     ///     Pays <paramref name="amount" /> gold to the player, as a vendor does: piles of 60000 at most, put in the
-    ///     backpack, or in the bank box when the backpack has no room for them. All or nothing: <c>BackpackFull</c> when
+    ///     backpack, or in the bank box when the backpack has no room for them. All or nothing: <c>BackpackFull</c>
+    ///     when
     ///     neither has the room, <c>Busy</c> when no serial is ready, <c>BadAmount</c> under 1.
     /// </summary>
     BankResultType GiveGold(MobileEntity player, int amount);

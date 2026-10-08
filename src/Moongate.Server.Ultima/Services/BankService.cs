@@ -451,8 +451,8 @@ public sealed class BankService : IBankService
         }
 
         var piles = (amount + PileMaximum - 1) / PileMaximum;
-        var target = new[] { BackpackOf(player.Id), BoxOf(player.Id) }.FirstOrDefault(
-            container => container is not null && _capacity.HasRoomFor(container, piles)
+        var target = new[] { BackpackOf(player.Id), BoxOf(player.Id) }.FirstOrDefault(container =>
+            container is not null && _capacity.HasRoomFor(container, piles)
         );
 
         if (target is null)

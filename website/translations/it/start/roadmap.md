@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a0ad23388a6ef4f98cd27faeceab921c12d8991eef002018580442719aa6b8e2","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"0f464a941bdc833fc716731127423b551f9b3f227224f4542611846ece741aca","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -126,7 +126,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
-| 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere, [acquisto dai venditori](vendors.md) con i negozi di ModernUO; vendita e rifornimento vengono dopo | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
+| 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere, [acquisto e vendita ai venditori](vendors.md) con i negozi di ModernUO; il rifornimento viene dopo | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
 | 4.2 | ❌ | **Scambio sicuro** tra giocatori | Economia dei giocatori | |
 | 4.3 | ❌ | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebook** | Il modo in cui i giocatori viaggiano; richiede le regole delle regioni di 3.5 | |

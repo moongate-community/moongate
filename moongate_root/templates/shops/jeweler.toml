@@ -12,10 +12,12 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
 [[shop]]
 id = "jeweler"
 vendors = ["jeweler", "m_jeweler", "f_jeweler"]
-sell = []
 [[shop.buy]]
 item = "0x108a_ring"
 price = 27
@@ -153,5 +155,116 @@ name = ""
 item = "0x0f26_diamond"
 price = 200
 amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0f25_#"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f16_amethyst"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f15_citrine"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f26_diamond"
+price = 100
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f10_emerald"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f13_#"
+price = 37
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f19_sapphire"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f21_star_sapphire"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f2d_tourmaline"
+price = 47
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x108a_ring"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1085_necklace"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1088_necklace"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1089_necklace"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x108b_beads"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1086_bracelet"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1087_earrings"
+price = 13
+amount = 1
 hue = 0
 name = ""

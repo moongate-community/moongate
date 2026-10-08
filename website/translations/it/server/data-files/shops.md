@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"abb77dabfeb940b777a1248829187f8c4229bf89b6635f751d589929be3a1826","title":"Negozi"} -->
+<!-- translation: {"sourceHash":"023433a9bad5725c753ea940dc7b9550ef36bd9bf10e928a1e65c35dbb5467fb","title":"Negozi"} -->
 
 # Negozi
 
@@ -29,8 +29,9 @@ name = ""
 | `hue` | Il colore della merce. 0 mantiene quello del template oggetto. |
 | `name` | Il nome mostrato nella finestra del negozio. Vuoto: il nome del client per il grafico. |
 
-Un negozio può avere anche righe `[[shop.sell]]`, con gli stessi campi, per ciò che un venditore compra da un giocatore. Per ora
-nulla le legge.
+Un negozio può avere anche righe `[[shop.sell]]` per ciò che un venditore compra da un giocatore. Hanno un `item` e un `price`, l'oro
+pagato per un pezzo; `amount`, `hue` e `name` sono ignorati. Lo stesso oggetto può essere sia venduto che comprato, a
+prezzi diversi.
 
 Il server rifiuta di avviarsi, indicando il file e il negozio, quando un negozio non ha id, un id è usato due volte, una riga nomina
 un template oggetto che non esiste, un prezzo è sotto 1, una quantità è fuori da 1–60000, un colore è fuori da 0–65535, un nome non è ASCII o supera 253 caratteri, due righe di acquisto hanno lo stesso oggetto, prezzo e colore, un venditore non è un template mobile, oppure un

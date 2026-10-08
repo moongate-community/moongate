@@ -35,6 +35,9 @@ internal static class ModernUoVendorConverter
         #     amount      how many pieces the vendor starts with, at least 1
         #     hue         the hue of the goods; 0 keeps the one of the item template
         #     name        the name shown in the shop window; empty: the client's name of the graphic
+        #   [[shop.sell]] one line the vendor buys from a player
+        #     item        the id of an item template
+        #     price       gold the vendor pays for one piece, at least 1
 
         """;
 
@@ -107,13 +110,21 @@ internal static class ModernUoVendorConverter
                 (text, path) => ModernUoVendorSourceReader.ReadVendors(text, path, report)
             );
             var itemsByGraphic = ItemsByGraphic(items);
+            var graphicsOfType = GraphicsOfType(sbInfos.Values);
             var mobileIds = Ids(mobiles);
             var claimed = new Dictionary<string, string>(StringComparer.Ordinal);
             var files = new List<(string Path, ShopFile Shop)>();
 
             foreach (var vendor in vendors.OrderBy(vendor => vendor.Name, StringComparer.Ordinal))
             {
-                if (Build(vendor, sbInfos, itemsByGraphic, mobileIds, claimed, report) is { } shop)
+                if (Build(
+                        vendor,
+                        sbInfos,
+                        new(itemsByGraphic, graphicsOfType, ItemsByName(itemsByGraphic)),
+                        mobileIds,
+                        claimed,
+                        report
+                    ) is { } shop)
                 {
                     files.Add((Path.Combine(destination, shop.Id + ".toml"), new() { Shop = [shop] }));
                 }
@@ -155,7 +166,7 @@ internal static class ModernUoVendorConverter
     private static ShopDefinition? Build(
         ImportedVendor vendor,
         Dictionary<string, ImportedSbInfo> sbInfos,
-        Dictionary<int, List<string>> itemsByGraphic,
+        ItemIndex index,
         HashSet<string> mobileIds,
         Dictionary<string, string> claimed,
         ConversionReport report
@@ -192,7 +203,7 @@ internal static class ModernUoVendorConverter
 
             foreach (var line in info.Lines)
             {
-                if (ItemOf(line, itemsByGraphic, report) is not { } item)
+                if (ItemOf(line, index.ByGraphic, report) is not { } item)
                 {
                     continue;
                 }
@@ -233,8 +244,96 @@ internal static class ModernUoVendorConverter
             }
         }
 
-        return vendors.Count == 0 ? null : new() { Id = id, Vendors = vendors, Buy = lines };
+        return vendors.Count == 0
+            ? null
+            : new() { Id = id, Vendors = vendors, Buy = lines, Sell = SellLines(vendor, sbInfos, index, report) };
     }
+
+    // What the vendor buys: the templates of the graphics its shops sell a type under, else the templates named like it.
+    private static List<ShopLine> SellLines(
+        ImportedVendor vendor,
+        Dictionary<string, ImportedSbInfo> sbInfos,
+        ItemIndex index,
+        ConversionReport report
+    )
+    {
+        var lines = new List<ShopLine>();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var sell in vendor.SbInfos.Where(sbInfos.ContainsKey).SelectMany(name => sbInfos[name].Sells))
+        {
+            var items = index.GraphicsOfType.GetValueOrDefault(sell.TypeName, [])
+                .Select(graphic => ItemOf(
+                        new() { TypeName = sell.TypeName, Price = 0, Amount = 0, Graphic = graphic, Hue = 0 },
+                        index.ByGraphic,
+                        report
+                    )
+                )
+                .OfType<string>()
+                .ToList();
+
+            if (items.Count == 0)
+            {
+                items = index.ByName.GetValueOrDefault(StringUtils.ToSnakeCase(sell.TypeName), []);
+            }
+
+            if (items.Count == 0)
+            {
+                report.Count($"no item template for the sold type {sell.TypeName}");
+            }
+
+            foreach (var item in items.Where(seen.Add))
+            {
+                lines.Add(new() { Item = item, Price = Math.Max(1, sell.Price) });
+            }
+        }
+
+        return lines;
+    }
+
+    // The graphics each C# type is sold under in any shop.
+    private static Dictionary<string, HashSet<int>> GraphicsOfType(IEnumerable<ImportedSbInfo> infos)
+    {
+        var graphics = new Dictionary<string, HashSet<int>>(StringComparer.Ordinal);
+
+        foreach (var line in infos.SelectMany(info => info.Lines))
+        {
+            if (!graphics.TryGetValue(line.TypeName, out var set))
+            {
+                graphics[line.TypeName] = set = [];
+            }
+
+            set.Add(line.Graphic);
+        }
+
+        return graphics;
+    }
+
+    // Item template ids by the words after their graphic: 0x103b_bread_loaf is bread_loaf.
+    private static Dictionary<string, List<string>> ItemsByName(Dictionary<int, List<string>> itemsByGraphic)
+    {
+        var byName = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+
+        foreach (var id in itemsByGraphic.Values.SelectMany(ids => ids))
+        {
+            var name = Graphic.Match(id).Groups[2].Value;
+
+            if (!byName.TryGetValue(name, out var ids))
+            {
+                byName[name] = ids = [];
+            }
+
+            ids.Add(id);
+        }
+
+        return byName;
+    }
+
+    private sealed record ItemIndex(
+        Dictionary<int, List<string>> ByGraphic,
+        Dictionary<string, HashSet<int>> GraphicsOfType,
+        Dictionary<string, List<string>> ByName
+    );
 
     // The template of a graphic: the one named like the type, else the only one, else the first (and the report says so).
     private static string? ItemOf(

@@ -12,10 +12,12 @@
 #     amount      how many pieces the vendor starts with, at least 1
 #     hue         the hue of the goods; 0 keeps the one of the item template
 #     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
 [[shop]]
 id = "carpenter"
 vendors = ["carpenter", "m_carpenter", "f_carpenter"]
-sell = []
 [[shop.buy]]
 item = "0x13f8_aos"
 price = 16
@@ -160,5 +162,291 @@ name = ""
 item = "0x1b7a_a"
 price = 30
 amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x13f8_aos"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e7d_wooden_box"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09aa_wooden_box"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09a9_small_crate"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e7e_small_crate"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e42_wooden_chest"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e43_wooden_chest"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b32_throne"
+price = 24
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b33_throne"
+price = 24
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1526_throne"
+price = 24
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1527_throne"
+price = 24
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1e7f_stool"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b5e_foot_stool"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b2e_wooden_chair"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b2f_wooden_chair"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b30_wooden_chair"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b31_wooden_chair"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b2c_wooden_bench"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0b2d_wooden_bench"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1034_saw"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e7_scorp"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1032_smoothing_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e4_draw_knife"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e5_froe"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x102a_hammer"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e6_inshave"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1030_jointing_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x102c_moulding_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1028_dovetail_saw"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bd7_board"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x105b_axle"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0eb3_lute"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0eb2_lap_harp"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e9e_tambourine"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e9d_tambourine"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e9c_drum"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bdd_log"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1be0_log"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_a"
+price = 15
+amount = 1
 hue = 0
 name = ""

@@ -8,4 +8,6 @@ internal sealed class ImportedSbInfo
     public required string Name { get; init; }
 
     public required List<ImportedBuyLine> Lines { get; init; }
+
+    public List<ImportedSellLine> Sells { get; init; } = [];
 }
