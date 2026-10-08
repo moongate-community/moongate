@@ -20,132 +20,153 @@
 id = "weaponsmith"
 vendors = ["weaponsmith", "m_weaponsmith", "f_weaponsmith"]
 [[shop.buy]]
-item = "0x13f8_aos"
+item = "0x13f8_lbr"
 price = 16
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f5c_aos"
+item = "0x0f5c_lbr"
 price = 28
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0e89_aos"
+item = "0x0e89_lbr"
 price = 19
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0e81_aos"
+item = "0x0e81_lbr"
 price = 20
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x13e3_aos"
+item = "0x13e3_lbr"
 price = 21
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f62_aos"
+item = "0x0f62_lbr"
 price = 31
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f43_aos"
+item = "0x0f43_lbr"
 price = 27
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f45_aos"
+item = "0x0f45_lbr"
 price = 30
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f4d_aos"
+item = "0x0f4d_lbr"
 price = 60
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f47_aos"
+item = "0x0f47_lbr"
 price = 26
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x13f6_aos"
+item = "0x13f6_lbr"
 price = 14
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x143e_aos"
+item = "0x143e_lbr"
 price = 42
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f5e_aos"
+item = "0x0f5e_lbr"
 price = 35
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x13b9_aos"
+item = "0x13b9_lbr"
 price = 55
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f49_aos"
+item = "0x0f49_lbr"
 price = 40
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0f4b_aos"
+item = "0x0f4b_lbr"
 price = 52
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0e87_aos"
+item = "0x0e87_lbr"
 price = 19
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0ec4_aos"
+item = "0x0ec4_lbr"
 price = 14
 amount = 20
 hue = 0
 name = ""
 [[shop.sell]]
 item = "0x0f47_aos"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f47_lbr"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f47_t2a"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f47_tol"
 price = 13
 amount = 1
 hue = 0
@@ -159,7 +180,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x0f4b_lbr"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4b_t2a"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4b_tol"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x0f45_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_lbr"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_t2a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_tol"
 price = 15
 amount = 1
 hue = 0
@@ -180,7 +243,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x0f49_lbr"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f49_t2a"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f49_tol"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x0f4d_aos"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_lbr"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_t2a"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_tol"
 price = 30
 amount = 1
 hue = 0
@@ -194,7 +299,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x143e_lbr"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143e_t2a"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143e_tol"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x13f6_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_lbr"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_t2a"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_tol"
 price = 7
 amount = 1
 hue = 0
@@ -208,7 +355,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x0ec4_lbr"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_t2a"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_tol"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x0f5c_aos"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_lbr"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_t2a"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_tol"
 price = 14
 amount = 1
 hue = 0
@@ -222,7 +411,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x0f62_lbr"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f62_t2a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f62_tol"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x0e87_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_tol"
 price = 9
 amount = 1
 hue = 0
@@ -236,7 +467,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x13f8_lbr"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_t2a"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_tol"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x0e89_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_tol"
 price = 9
 amount = 1
 hue = 0
@@ -250,7 +523,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x0e81_lbr"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_t2a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_tol"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x13e3_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_lbr"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_t2a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_tol"
 price = 10
 amount = 1
 hue = 0
@@ -264,6 +579,27 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x0f5e_lbr"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5e_t2a"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5e_tol"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x13b9_aos"
 price = 27
 amount = 1
@@ -271,7 +607,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x13b9_lbr"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b9_t2a"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b9_tol"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x0f43_aos"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f43_lbr"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f43_t2a"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f43_tol"
 price = 13
 amount = 1
 hue = 0

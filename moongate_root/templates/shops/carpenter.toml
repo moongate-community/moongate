@@ -20,21 +20,21 @@
 id = "carpenter"
 vendors = ["carpenter", "m_carpenter", "f_carpenter"]
 [[shop.buy]]
-item = "0x13f8_aos"
+item = "0x13f8_lbr"
 price = 16
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0e89_aos"
+item = "0x0e89_lbr"
 price = 19
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0e81_aos"
+item = "0x0e81_lbr"
 price = 20
 amount = 20
 hue = 0
@@ -160,13 +160,34 @@ hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x1b7a_a"
+item = "0x1b7a_lbr"
 price = 30
 amount = 20
 hue = 0
 name = ""
 [[shop.sell]]
 item = "0x13f8_aos"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_lbr"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_t2a"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_tol"
 price = 8
 amount = 1
 hue = 0
@@ -180,7 +201,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x0e89_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_tol"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x0e81_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_lbr"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_t2a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_tol"
 price = 10
 amount = 1
 hue = 0
@@ -447,6 +510,83 @@ name = ""
 
 [[shop.sell]]
 item = "0x1b7a_a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_b"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_c"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_d"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_g"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_lbr"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_s"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_t2a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_tol"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_va"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_ve"
 price = 15
 amount = 1
 hue = 0

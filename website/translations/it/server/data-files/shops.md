@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"023433a9bad5725c753ea940dc7b9550ef36bd9bf10e928a1e65c35dbb5467fb","title":"Negozi"} -->
+<!-- translation: {"sourceHash":"1f599ad47d77a22c393f4998003857170852c751706d74bb4c078647ac35fa5e","title":"Negozi"} -->
 
 # Negozi
 
@@ -54,7 +54,10 @@ mgctl convert modernuo-vendors --source ~/projects/others/ModernUO/Projects/UOCo
 
 Il convertitore legge il C# come sintassi e non esegue nulla. Prende le righe delle classi `SBInfo` che ogni classe di
 venditore aggiunge e scrive un file per ogni classe di venditore, con il suo nome. Una riga diventa il template oggetto con il
-grafico che ModernUO le dà; quando più template condividono un grafico, vince quello chiamato come il tipo C#, altrimenti viene preso il primo
-e il rapporto lo segnala. Il rapporto conta ciò che ha lasciato fuori: tipi senza template oggetto, animali, righe
+grafico che ModernUO le dà; quando più template condividono un grafico, vince quello chiamato come il tipo C#, altrimenti il pezzo
+semplice della prima epoca che il grafico ha (`lbr`, poi `aos`, `t2a`, `tol`), altrimenti il primo, e il rapporto lo segnala. Un
+grafico che ha solo varianti di materiale (agapite, bronzo e così via) e nessun pezzo semplice viene escluso dalle righe di acquisto. Un
+venditore compra un pezzo di qualunque materiale, quindi le righe di vendita di un grafico di armature o armi elencano ogni template
+di epoca e di materiale. Il rapporto conta ciò che ha lasciato fuori: tipi senza template oggetto, animali, righe
 e classi `SBInfo` che dipendono dall'epoca o dal venditore, e classi di venditore senza template mobile. Uno `switch`
 che sceglie un insieme casuale di `SBInfo` per ogni venditore viene letto come l'unione dei suoi insiemi.

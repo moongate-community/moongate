@@ -125,7 +125,7 @@ hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x1db9_aos"
+item = "0x1db9_lbr"
 price = 10
 amount = 20
 hue = 0
@@ -447,6 +447,27 @@ name = ""
 
 [[shop.sell]]
 item = "0x1db9_aos"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1db9_lbr"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1db9_t2a"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1db9_tol"
 price = 5
 amount = 1
 hue = 0

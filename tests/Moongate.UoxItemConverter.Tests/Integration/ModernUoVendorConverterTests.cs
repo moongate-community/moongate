@@ -122,6 +122,92 @@ public sealed class ModernUoVendorConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_AnArmorGraphic_IsBoughtAsThePlainPieceOfItsFirstEra_AndSoldInEveryMaterial()
+    {
+        Write(
+            "Vendors/SBInfo/SBBaker.cs",
+            """
+            public class SBBaker : SBInfo
+            {
+                public class InternalBuyInfo : List<GenericBuyInfo>
+                {
+                    public InternalBuyInfo()
+                    {
+                        Add(new GenericBuyInfo(typeof(ChainChest), 140, 5, 0x13BF, 0));
+                    }
+                }
+
+                public class InternalSellInfo : GenericSellInfo
+                {
+                    public InternalSellInfo()
+                    {
+                        Add(typeof(ChainChest), 70);
+                    }
+                }
+            }
+            """
+        );
+        Write("Vendors/NPC/Baker.cs", BakerVendor);
+        Write(
+            "items/armor.toml",
+            "[[item]]\nid = \"0x13bf_aos\"\n[[item]]\nid = \"0x13bf_a\"\n[[item]]\nid = \"0x13bf_lbr\"\n[[item]]\nid = \"0x13bf_tol\"\n"
+        );
+        Write("mobiles/vendors.toml", "[[mobile]]\nid = \"baker\"\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var shop = Read("baker").Shop[0];
+        Assert.Equal("0x13bf_lbr", Assert.Single(shop.Buy).Item);
+        Assert.Equal(
+            ["0x13bf_a", "0x13bf_aos", "0x13bf_lbr", "0x13bf_tol"],
+            shop.Sell.Select(line => line.Item).Order(StringComparer.Ordinal)
+        );
+        Assert.All(shop.Sell, line => Assert.Equal(70, line.Price));
+    }
+
+    [Fact]
+    public void Run_AGraphicOfMaterialsOnly_IsNotBought_ButSoldInEveryMaterial()
+    {
+        Write(
+            "Vendors/SBInfo/SBBaker.cs",
+            """
+            public class SBBaker : SBInfo
+            {
+                public class InternalBuyInfo : List<GenericBuyInfo>
+                {
+                    public InternalBuyInfo()
+                    {
+                        Add(new GenericBuyInfo(typeof(Bracers), 80, 5, 0x1409, 0));
+                        Add(new GenericBuyInfo(typeof(BreadLoaf), 6, 20, 0x103B, 0));
+                    }
+                }
+
+                public class InternalSellInfo : GenericSellInfo
+                {
+                    public InternalSellInfo()
+                    {
+                        Add(typeof(Bracers), 40);
+                    }
+                }
+            }
+            """
+        );
+        Write("Vendors/NPC/Baker.cs", BakerVendor);
+        Write(
+            "items/armor.toml",
+            "[[item]]\nid = \"0x1409_a\"\n[[item]]\nid = \"0x1409_g\"\n[[item]]\nid = \"0x103b_bread_loaf\"\n"
+        );
+        Write("mobiles/vendors.toml", "[[mobile]]\nid = \"baker\"\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var shop = Read("baker").Shop[0];
+        Assert.Equal("0x103b_bread_loaf", Assert.Single(shop.Buy).Item);
+        Assert.Equal(["0x1409_a", "0x1409_g"], shop.Sell.Select(line => line.Item).Order(StringComparer.Ordinal));
+        Assert.Contains("only material templates", _output.ToString());
+    }
+
+    [Fact]
     public void Run_WhatItCannotMap_IsDropped_AndTheReportSaysWhy()
     {
         Prepare();

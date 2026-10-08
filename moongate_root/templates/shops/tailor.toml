@@ -188,7 +188,7 @@ hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x1db9_aos"
+item = "0x1db9_lbr"
 price = 10
 amount = 20
 hue = 0

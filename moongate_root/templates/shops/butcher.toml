@@ -69,14 +69,14 @@ hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x13f6_aos"
+item = "0x13f6_lbr"
 price = 13
 amount = 20
 hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0ec4_aos"
+item = "0x0ec4_lbr"
 price = 13
 amount = 20
 hue = 0
@@ -138,7 +138,49 @@ hue = 0
 name = ""
 
 [[shop.sell]]
+item = "0x13f6_lbr"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_t2a"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_tol"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
 item = "0x0ec4_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_lbr"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_t2a"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_tol"
 price = 7
 amount = 1
 hue = 0

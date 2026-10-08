@@ -19,6 +19,14 @@ internal static class ModernUoVendorConverter
     private const string MobilesFolder = "Mobiles";
     private const int RegexTimeoutSeconds = 1;
 
+    // The templates of an armor or weapon graphic: one for each era, which are all the plain piece, then one for each
+    // material. The era the data sets use first is the one chosen when a single template is needed.
+    private static readonly string[] Eras = ["lbr", "aos", "t2a", "tol"];
+
+    // The codes of the materials in the ids of the data sets: agapite, bronze, copper, dull copper, gold, shadow,
+    // valorite, verite.
+    private static readonly string[] Materials = ["a", "b", "c", "d", "g", "s", "va", "ve"];
+
     private const string Header =
         """
         # What it is for:
@@ -263,14 +271,18 @@ internal static class ModernUoVendorConverter
 
         foreach (var sell in vendor.SbInfos.Where(sbInfos.ContainsKey).SelectMany(name => sbInfos[name].Sells))
         {
+            // A vendor buys a piece whatever it is made of, so an armor or weapon graphic sells every template of it.
             var items = index.GraphicsOfType.GetValueOrDefault(sell.TypeName, [])
-                .Select(graphic => ItemOf(
-                        new() { TypeName = sell.TypeName, Price = 0, Amount = 0, Graphic = graphic, Hue = 0 },
-                        index.ByGraphic,
-                        report
-                    )
+                .SelectMany(graphic =>
+                    index.ByGraphic.TryGetValue(graphic, out var family) &&
+                    (EraBase(family) is not null || IsMaterialFamily(family)) ? family :
+                    ItemOf(
+                            new() { TypeName = sell.TypeName, Price = 0, Amount = 0, Graphic = graphic, Hue = 0 },
+                            index.ByGraphic,
+                            report
+                        )
+                        is { } one ? [one] : []
                 )
-                .OfType<string>()
                 .ToList();
 
             if (items.Count == 0)
@@ -330,6 +342,20 @@ internal static class ModernUoVendorConverter
         return byName;
     }
 
+    // The plain piece of the first era the graphic has; null for a graphic that is not an armor or weapon family.
+    private static string? EraBase(List<string> candidates)
+    {
+        return Eras.Select(era => candidates.FirstOrDefault(candidate => Graphic.Match(candidate).Groups[2].Value == era))
+            .FirstOrDefault(candidate => candidate is not null);
+    }
+
+    // Templates that are all one piece in the materials of the data sets, with no plain piece among them.
+    private static bool IsMaterialFamily(List<string> candidates)
+    {
+        return candidates.Count > 1 &&
+               candidates.All(candidate => Materials.Contains(Graphic.Match(candidate).Groups[2].Value));
+    }
+
     // The template of a graphic: the one named like the type, else the only one, else the first (and the report says so).
     private static string? ItemOf(
         ImportedBuyLine line,
@@ -350,6 +376,20 @@ internal static class ModernUoVendorConverter
         if (named is not null)
         {
             return named;
+        }
+
+        if (EraBase(candidates) is { } plain)
+        {
+            return plain;
+        }
+
+        if (IsMaterialFamily(candidates))
+        {
+            report.Count(
+                $"graphic 0x{line.Graphic:x4} ({line.TypeName}) has only material templates, no plain piece: left out"
+            );
+
+            return null;
         }
 
         if (candidates.Count > 1)
