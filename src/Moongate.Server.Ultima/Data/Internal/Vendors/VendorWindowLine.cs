@@ -13,6 +13,6 @@ namespace Moongate.Server.Ultima.Data.Internal.Vendors;
 ///     The item template of its goods.
 /// </param>
 /// <param name="Stock">
-///     The key its stock is kept under, for the vendor.
+///     The shelf the pieces come off.
 /// </param>
-public sealed record VendorWindowLine(ShopLine Line, ItemTemplate Template, string Stock);
+public sealed record VendorWindowLine(ShopLine Line, ItemTemplate Template, StockLine Stock);

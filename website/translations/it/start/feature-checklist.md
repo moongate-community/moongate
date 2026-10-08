@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5afb02713e9717d5a2d76566785958161fcc52dcf5f97779bca2219102296233","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"4dc066f3a4238089c0080999e6108af9c56b1cc65345fd83afb85b8359be3bb6","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 83 completati, 🟡 56 parzialmente completati, ❌ 130 non ancora realizzati.
+**269 sistemi:** ✅ 84 completati, 🟡 55 parzialmente completati, ❌ 130 non ancora realizzati.
 
 **Copertura: 31%** dei sistemi completati, **41%** contando un sistema parzialmente completato come metà.
 
@@ -159,7 +159,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 
 | Sistema | Moongate | Note |
 | --- | --- | --- |
-| Venditori: acquisto, vendita, rifornimento | 🟡 | Acquisto e vendita funzionano: la finestra del negozio, la merce e le tabelle di vendita dei negozi di ModernUO, oro dello zaino poi della banca, tutto o niente; vedi [Venditori](vendors.md). Il rifornimento non è realizzato |
+| Venditori: acquisto, vendita, rifornimento | ✅ | La finestra del negozio, la merce e le tabelle di vendita dei negozi di ModernUO, oro dello zaino poi della banca, tutto o niente, il rifornimento orario e la rivendita di ciò che i giocatori hanno venduto; vedi [Venditori](vendors.md) |
 | Banchiere e cassetta di banca | ✅ | La parola chiave *bank* in qualsiasi lingua del client; aperta mentre il giocatore resta fermo; saldo, prelievo e deposito tramite parlato; limite di oggetti; vedi [Banca](bank.md) |
 | Stalliere, veterinario | ❌ | |
 | Istruttori delle abilità | ❌ | |
