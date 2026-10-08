@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"c2d496d61a9e11259aa325c20119c050ba79f3097f48660a134e77be88bcff90","title":"Stato dell'implementazione"} -->
+<!-- translation: {"sourceHash":"d13f003169e16f4c5a55d27c53c3295e6a87abbca993de00c078b9532fe4002f","title":"Stato dell'implementazione"} -->
 
 # Stato dell'implementazione
 
@@ -49,6 +49,8 @@ La [roadmap](roadmap.md) indica l'ordine in cui vengono realizzati i sistemi man
   clic, oppure consegnare oro e assegni al banchiere per depositarli. La cassetta contiene un numero limitato di oggetti: [Banca](bank.md).
 - Comprare dai venditori e vendere a loro: scegliere *Buy* o *Sell* nel loro menu contestuale o dire *vendor buy* o *vendor sell*,
   scegliere nella finestra e pagare con l'oro dello zaino, o della banca da 2000: [Venditori](vendors.md).
+- Imparare abilità da venditori e guaritori: scegliere *Train* nel loro menu o dire *train*, poi trascinare su di loro l'oro che
+  preventivano: [Istruttori](skills.md#trainers).
 - Recuperare punti vita, mana e stamina nel tempo, avere fame e sete, mangiare e bere; stancarsi correndo o trasportando troppo peso.
 - Aprire i forzieri del tesoro dei dungeon e le casse dei negozi che si riempiono; leggere un orologio; cambiare modalità guerra.
 - Tingere i vestiti: le tinture danno alla vasca il colore scelto nel selettore del client, e la vasca lo trasferisce agli abiti.

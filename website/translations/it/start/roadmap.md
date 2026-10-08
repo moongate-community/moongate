@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"95188ca548267f429ad70e2851514d18111518e9407dd9354b4609ba1d2039d9","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"3d039d12844859ad7a04cf326de88caa37f5c067642bbdbe0820e0f56a6fb67f","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -126,7 +126,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
-| 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere, [acquisto e vendita ai venditori](vendors.md) con i negozi di ModernUO, rifornimento e rivendita; gli istruttori di abilità vengono dopo | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
+| 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere, [acquisto e vendita ai venditori](vendors.md) con i negozi di ModernUO, rifornimento e rivendita; [istruttori di abilità](skills.md#trainers) per venditori e guaritori; i maestri di gilda vengono dopo | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
 | 4.2 | ❌ | **Scambio sicuro** tra giocatori | Economia dei giocatori | |
 | 4.3 | ❌ | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebook** | Il modo in cui i giocatori viaggiano; richiede le regole delle regioni di 3.5 | |

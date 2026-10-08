@@ -103,6 +103,10 @@ vendor.open_buy(npc, player)
 A script of a vendor that has its own, such as `banker.lua` or `healer.lua`, can call it too. See
 [Lua modules](lua-modules.md).
 
+## Teaching
+
+Vendors also teach the skills they have: see [Trainers](skills.md#trainers).
+
 ## Limits
 
 - Skill trainers, pets, bulk order deeds, the price scalar of towns, player vendors and the gold a vendor holds are

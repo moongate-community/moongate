@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e1778b0da1197e97c2e4d50a707c93036838c99f9617e5597877e7912ddbf66d","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"fab17988ed6b690093ff3fdf3a7d0d007a641b36e947a7fe96c5d5d280e95e13","title":"Venditori"} -->
 
 # Venditori
 
@@ -104,6 +104,10 @@ vendor.open_buy(npc, player)
 
 Lo script di un venditore che ne ha uno proprio, come `banker.lua` o `healer.lua`, può chiamarla a sua volta. Vedi
 [Moduli Lua](lua-modules.md).
+
+## Insegnare
+
+I venditori insegnano anche le abilità che hanno: vedi [Istruttori](skills.md#trainers).
 
 ## Limiti
 

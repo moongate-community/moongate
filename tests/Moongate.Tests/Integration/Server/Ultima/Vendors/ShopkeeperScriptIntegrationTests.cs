@@ -20,6 +20,7 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
@@ -41,6 +42,7 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
     private readonly RecordingVendorService _vendors = new();
+    private readonly RecordingTrainingService _training = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTimerService _timers = new();
     private readonly SettableClock _clock = new();
@@ -76,6 +78,8 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ISpeechService>(_speech);
         _container.RegisterInstance<IWorldViewService>(new RecordingWorldViewService());
         _container.RegisterInstance<IVendorService>(_vendors);
+        _container.RegisterInstance<ITrainingService>(_training);
+        _container.RegisterInstance<IItemService>(TestItems.Create(_fixture.Sectors));
         _container.RegisterInstance<TimeProvider>(_clock);
         _container.RegisterInstance<ITeleportService>(new RecordingTeleportService());
         _container.RegisterInstance<ICrimeService>(new RecordingCrimeService());
@@ -86,6 +90,8 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<NpcModule>();
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<VendorModule>();
+        _container.AddScriptModule<TrainerModule>();
+        _container.RegisterScriptEnum<SkillType>();
         _container.RegisterScriptEnum<SpeechKeywordType>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -96,6 +102,7 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
                 }
             );
         _scripts.Write("mobiles/shopkeeper.lua", File.ReadAllText(ShippedScript("mobiles/shopkeeper.lua")));
+        _scripts.Write("common/training.lua", File.ReadAllText(ShippedScript("common/training.lua")));
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path,
@@ -207,6 +214,64 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Single(_vendors.Opened);
+    }
+
+    [Fact]
+    public async Task TheContextMenu_AddsATrainEntryForEachSkillTheVendorTeaches()
+    {
+        _training.Skills.AddRange([SkillType.Alchemy, SkillType.Tailoring]);
+
+        var result = await RunAsync("on_context_menu", (long)_aria.Id.Value);
+
+        Assert.Empty(_errors);
+        var entries = Assert.IsType<LuaTable>(Assert.Single(result.Values));
+        Assert.Equal(4, entries.ArrayLength);
+        var train = entries[3].Read<LuaTable>();
+        Assert.Equal(("train:0", 6000, 8), (train["id"].Read<string>(), train["cliloc"].Read<int>(), train["range"].Read<int>()));
+        Assert.Equal(("train:" + (int)SkillType.Tailoring, 6000 + (int)SkillType.Tailoring), (entries[4].Read<LuaTable>()["id"].Read<string>(), entries[4].Read<LuaTable>()["cliloc"].Read<int>()));
+    }
+
+    [Fact]
+    public async Task PickingATrainEntry_AsksTheQuoteOfThatSkill()
+    {
+        await RunAsync("on_context_menu_select", (long)_aria.Id.Value, "train:" + (int)SkillType.Tailoring);
+
+        Assert.Empty(_errors);
+        Assert.Equal((_baker, SkillType.Tailoring), Assert.Single(_training.Quoted));
+        Assert.Empty(_vendors.Opened);
+    }
+
+    [Fact]
+    public async Task TheWordTrain_ListsTheSkills_OrSaysThereIsNothing()
+    {
+        _training.Skills.Add(SkillType.Alchemy);
+        await HearAsync("train", SpeechKeywordType.Train);
+
+        Assert.Empty(_errors);
+        Assert.Equal([1043058, 1043059], _speech.SaidClilocs.Select(said => said.Cliloc));
+
+        _speech.SaidClilocs.Clear();
+        _training.Skills.Clear();
+        _clock.Advance(TimeSpan.FromSeconds(2));
+        await HearAsync("train", SpeechKeywordType.Train);
+
+        Assert.Equal(501505, Assert.Single(_speech.SaidClilocs).Cliloc);
+    }
+
+    [Fact]
+    public async Task GoldDroppedOnTheVendor_IsGivenToTheTrainingService_AndItsAnswerIsTheAnswerOfTheDrop()
+    {
+        var items = _container.Resolve<IItemService>();
+        var gold = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "gold", ItemId = 0x0EED, Amount = 100 };
+        items.Add([gold]);
+
+        var taken = await RunAsync("on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+        _training.Answer = false;
+        var refused = await RunAsync("on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
+
+        Assert.Empty(_errors);
+        Assert.Equal([true, false], new[] { Assert.IsType<bool>(Assert.Single(taken.Values)), Assert.IsType<bool>(Assert.Single(refused.Values)) });
+        Assert.Equal(2, _training.Paid.Count);
     }
 
     public async Task DisposeAsync()

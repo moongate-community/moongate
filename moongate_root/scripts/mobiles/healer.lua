@@ -20,10 +20,15 @@
 --   on_think(serial)   every think of an NPC near a player
 --                      (ultima.npcs.think_interval_ms, 500 ms); must not call
 --                      wait()
+--   on_speech, on_context_menu, on_context_menu_select, on_drag_drop
+--                      the lessons of common/training.lua: a healer teaches the
+--                      skills it has at 60.0 or more for gold
 --
 -- What it keeps:
 --   Who is near and when it last offered, in memory by serial, not saved.
 -- ==============================================================================
+
+local training = require("common.training")
 
 healer = {}
 
@@ -116,4 +121,23 @@ function healer.on_think(serial)
     if count % stroll_every == 0 and wanders(serial) then
         npc.wander(serial)
     end
+end
+
+-- A healer teaches the skills it has, as ModernUO's do (common/training.lua).
+local menu_range = 8
+
+function healer.on_speech(serial, speaker, text, keywords)
+    training.listen(serial, speaker, keywords)
+end
+
+function healer.on_context_menu(serial, player)
+    return training.entries(serial, player, menu_range)
+end
+
+function healer.on_context_menu_select(serial, player, id)
+    training.select(serial, player, id)
+end
+
+function healer.on_drag_drop(serial, giver, item)
+    return training.drop(serial, giver, item)
 end
