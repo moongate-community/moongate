@@ -731,7 +731,10 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
 
-        Assert.Equal(0, _fixture.Sender.Sent.OfType<ContainerContentPacket>().Last().Items.Count(item => item.ItemId == 0x103B));
+        Assert.Equal(
+            0,
+            _fixture.Sender.Sent.OfType<ContainerContentPacket>().Last().Items.Count(item => item.ItemId == 0x103B)
+        );
     }
 
     [Fact]
@@ -747,7 +750,10 @@ public sealed class VendorServiceTests : IAsyncLifetime
         var resale = _fixture.Sender.Sent.OfType<ContainerContentPacket>().Single().Items.Single(item => item.Amount == 4);
         Assert.Equal(0x103B, resale.ItemId);
         // 3 gold a piece is sold again at 5 (3 * 1.9 = 5.7, cut to 5), after the two goods of the shop.
-        Assert.Equal(new VendorBuyListEntry(5, "bread"), _fixture.Sender.Sent.OfType<VendorBuyListPacket>().Single().Lines[^1]);
+        Assert.Equal(
+            new VendorBuyListEntry(5, "1024155"),
+            _fixture.Sender.Sent.OfType<VendorBuyListPacket>().Single().Lines[^1]
+        );
 
         _fixture.Sender.Sent.Clear();
         _clock.Advance(TimeSpan.FromMinutes(61));
@@ -757,6 +763,49 @@ public sealed class VendorServiceTests : IAsyncLifetime
             _fixture.Sender.Sent.OfType<ContainerContentPacket>().Single().Items,
             item => item.Amount == 4
         );
+    }
+
+    [Fact]
+    public async Task Buy_FromTheResaleShelf_GivesTheItemsWithTheirHue_AndTheShelfEmpties()
+    {
+        var backpack = Backpack();
+        var bread = Carried(backpack, "bread", 0x103B, 3);
+        bread.Hue = new Hue(0x44);
+        await OpenSellAsync();
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 3)));
+        _bank.Carried[_player.Id] = 100;
+        var lines = await OpenAsync();
+
+        await BuyAsync(Reply(_vendor.Id, (lines[^1], 3)));
+
+        var bought = Assert.Single(_items.GetContents(BackpackId()));
+        Assert.Equal(("bread", 3, (ushort)0x44), (bought.TemplateId, bought.Amount, bought.Hue.Value));
+        Assert.Equal(15, Assert.Single(_bank.Taken).Amount);
+
+        _fixture.Sender.Sent.Clear();
+        await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
+
+        Assert.Equal(2, _fixture.Sender.Sent.OfType<ContainerContentPacket>().Single().Items.Count);
+    }
+
+    [Fact]
+    public async Task Buy_FromAResaleLineThatExpiredAfterTheWindowOpened_IsRefused()
+    {
+        var bread = Carried(Backpack(), "bread", 0x103B, 3);
+        await OpenSellAsync();
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 3)));
+        _bank.Carried[_player.Id] = 100;
+        var lines = await OpenAsync();
+        _clock.Advance(TimeSpan.FromMinutes(61));
+        _player.Location = new Point3D(12, 10, 0);
+
+        // Another player opens the window, which forgets the goods.
+        var other = await _fixture.AddAsync(3);
+        await OnLoopAsync(() => _vendors.OpenBuy(other, _vendor));
+        await BuyAsync(Reply(_vendor.Id, (lines[^1], 1)));
+
+        Assert.Empty(_bank.Taken);
+        Assert.Empty(_items.GetContents(BackpackId()));
     }
 
     public async Task DisposeAsync()
@@ -813,7 +862,10 @@ public sealed class VendorServiceTests : IAsyncLifetime
     // The pieces of the first shelf of a graphic, as the last window showed them.
     private int Shelf(int graphic)
     {
-        return _fixture.Sender.Sent.OfType<ContainerContentPacket>().Last().Items.Single(item => item.ItemId == graphic).Amount;
+        return _fixture.Sender.Sent.OfType<ContainerContentPacket>()
+            .Last()
+            .Items.Single(item => item.ItemId == graphic)
+            .Amount;
     }
 
     private ItemEntity Carried(ItemEntity container, string template, int graphic, int amount)

@@ -410,7 +410,7 @@ public sealed class VendorService : IVendorService
             var resale = new ShopLine
             {
                 Item = item.TemplateId ?? "", Price = Math.Max(1, (int)(window.Prices[item.Id] * ResaleMarkup)),
-                Amount = amount, Hue = item.Hue.Value, Name = NameOf(item)
+                Amount = amount, Hue = item.Hue.Value
             };
 
             if (!_handling.Consume(item, amount))

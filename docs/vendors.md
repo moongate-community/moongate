@@ -70,15 +70,16 @@ A vendor restocks when a player opens its window and more than an hour has passe
 for the first time only starts the clock. Each line is then filled to its maximum, which changes with how the line sold:
 
 - A line that sold out has twice the maximum, up to 999.
-- A line that sold less than half of its maximum is cut to half of it, as long as it stays above 20; 999 is cut to 640.
-- A line that sold half or more keeps its maximum.
+- A line that sold no more than half of its maximum has it cut to half, and 999 is cut to 640. A maximum of 20 or less
+  is never cut.
+- A line that sold more than half of its maximum keeps it.
 
 ## Resale
 
 What a player sold to a vendor is offered again in its window, after the goods of the shop, at 1.9 times the price the
 vendor paid for a piece (cut to whole gold). The vendor keeps it for an hour from the last time the same goods were sold
-to it, or until it sells out. The goods come back as new items of the same template and hue: what the item had on it, such
-as a name or charges, is not kept. Like the stock, the resale shelf is kept in memory only.
+to it, or until it sells out. The goods come back as new items of the same template and hue, shown with the client's name for the graphic: what the
+item had on it, such as a name or charges, is not kept. A vendor remembers 250 kinds of goods at most. Like the stock, the resale shelf is kept in memory only.
 
 ## What the client receives
 

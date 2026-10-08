@@ -11,14 +11,15 @@ namespace Moongate.Server.Ultima.Services.Internal;
 /// </summary>
 internal sealed class VendorShelves
 {
-    public static readonly TimeSpan RestockEvery = TimeSpan.FromHours(1);
-
-    public static readonly TimeSpan ResaleFor = TimeSpan.FromHours(1);
-
     private const int MaxCeiling = 999;
     private const int HalvedCeiling = 640;
     private const int HalvingFloor = 20;
     private const int PruneAbove = 1024;
+    private const int ResaleLinesMaximum = 250;
+
+    public static readonly TimeSpan RestockEvery = TimeSpan.FromHours(1);
+
+    public static readonly TimeSpan ResaleFor = TimeSpan.FromHours(1);
 
     private readonly Dictionary<(Serial Vendor, string Line), StockLine> _stock = new();
     private readonly Dictionary<Serial, DateTime> _restocked = new();
@@ -75,14 +76,22 @@ internal sealed class VendorShelves
             _resale[vendor] = lines = [];
         }
 
+        Forget(lines, now);
+
         var same = lines.FirstOrDefault(other => other.Line.Item == line.Item &&
                                                  other.Line.Price == line.Price &&
-                                                 other.Line.Hue == line.Hue &&
-                                                 other.Line.Name == line.Name
+                                                 other.Line.Hue == line.Hue
         );
 
         if (same is null)
         {
+            // A vendor remembers 250 kinds of goods at most: the oldest are forgotten for the new.
+            while (lines.Count >= ResaleLinesMaximum)
+            {
+                lines[0].Stock.Current = 0;
+                lines.RemoveAt(0);
+            }
+
             lines.Add(new() { Line = line, Stock = new() { Current = amount, Max = amount }, ExpiresAt = now + ResaleFor });
 
             return;
@@ -103,7 +112,7 @@ internal sealed class VendorShelves
             return [];
         }
 
-        lines.RemoveAll(line => line.ExpiresAt <= now || line.Stock.Current <= 0);
+        Forget(lines, now);
 
         return lines;
     }
@@ -130,8 +139,20 @@ internal sealed class VendorShelves
         }
     }
 
-    // A shelf that sold out stocks twice as much; one that sold under half of its maximum stocks half as much, down to
-    // 20; one that sold half or more keeps its maximum. The shelf is then full.
+    // Goods past their hour are gone, and their shelf is emptied so that a window still showing them cannot buy them.
+    private static void Forget(List<ResaleLine> lines, DateTime now)
+    {
+        foreach (var line in lines.Where(line => line.ExpiresAt <= now))
+        {
+            line.Stock.Current = 0;
+        }
+
+        lines.RemoveAll(line => line.Stock.Current <= 0);
+    }
+
+    // A shelf that sold out stocks twice as much, up to 999. A shelf of more than 20 that still has half of its maximum
+    // or more (it sold half or less) stocks half as much, and 999 stocks 640; one that sold more than half, or one of 20
+    // or less, keeps its maximum. The shelf is then full.
     private static void Restock(StockLine stock)
     {
         if (stock.Current <= 0)

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5052518230174e22df0e33be96d4dbe818766855496c4716ce3e16e0e5ba275a","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"e1778b0da1197e97c2e4d50a707c93036838c99f9617e5597877e7912ddbf66d","title":"Venditori"} -->
 
 # Venditori
 
@@ -72,15 +72,16 @@ Un venditore si rifornisce quando un giocatore apre la sua finestra ed è passat
 per la prima volta fa solo partire l'orologio. Ogni riga viene poi riempita fino al suo massimo, che cambia in base a come la riga si è venduta:
 
 - Una riga esaurita ha il doppio del massimo, fino a 999.
-- Una riga che ha venduto meno della metà del suo massimo viene ridotta alla metà, finché resta sopra 20; 999 viene ridotto a 640.
-- Una riga che ha venduto la metà o più mantiene il suo massimo.
+- Una riga che ha venduto al massimo la metà del suo massimo lo vede ridotto alla metà, e 999 viene ridotto a 640. Un massimo di 20 o
+  meno non viene mai ridotto.
+- Una riga che ha venduto più della metà del suo massimo lo mantiene.
 
 ## Rivendita
 
 Ciò che un giocatore ha venduto a un venditore viene offerto di nuovo nella sua finestra, dopo la merce del negozio, a 1,9 volte il prezzo che il
 venditore ha pagato per un pezzo (arrotondato a oro intero). Il venditore lo tiene per un'ora dall'ultima volta che la stessa merce gli è stata venduta,
-oppure finché si esaurisce. La merce torna come nuovi oggetti dello stesso template e colore: ciò che l'oggetto aveva addosso, come un nome o
-delle cariche, non viene conservato. Come la scorta, lo scaffale della rivendita è tenuto solo in memoria.
+oppure finché si esaurisce. La merce torna come nuovi oggetti dello stesso template e colore, mostrati con il nome del client per il grafico: ciò che
+l'oggetto aveva addosso, come un nome o delle cariche, non viene conservato. Un venditore ricorda al massimo 250 tipi di merce. Come la scorta, lo scaffale della rivendita è tenuto solo in memoria.
 
 ## Cosa riceve il client
 

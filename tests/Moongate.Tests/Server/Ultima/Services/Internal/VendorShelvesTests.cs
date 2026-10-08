@@ -15,7 +15,7 @@ public sealed class VendorShelvesTests
      // Sold out: twice the maximum, up to 999.
      InlineData(100, 0, 200),
      InlineData(600, 0, 999),
-     // Less than half sold: the maximum is halved; half or more sold: it is kept.
+     // Half or less sold (half or more left): the maximum is halved; more than half sold: it is kept.
      InlineData(100, 90, 50),
      InlineData(100, 50, 50),
      InlineData(100, 49, 100),
