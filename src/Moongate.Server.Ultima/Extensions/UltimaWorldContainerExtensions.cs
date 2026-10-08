@@ -33,6 +33,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<INameService, NameService>(Reuse.Singleton);
         container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
         container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
+        container.Register<IShopService, ShopService>(Reuse.Singleton);
         container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
         container.Register<IContainerViewService, ContainerViewService>(Reuse.Singleton);
         container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);

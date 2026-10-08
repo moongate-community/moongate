@@ -18,6 +18,7 @@ using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
+using Moongate.Server.Ultima.Data.Templates.Shops;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Data.Titles;
 using Moongate.Server.Ultima.Data.Weather;
@@ -62,6 +63,8 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<BooksLoader, BookTemplate>(24);
         // Starting items may reference already validated book templates.
         container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(25);
+        // Shops name item and mobile templates, which load before.
+        container.AddUltimaDataLoader<ShopsLoader, ShopDefinition>(26);
 
         return container;
     }
