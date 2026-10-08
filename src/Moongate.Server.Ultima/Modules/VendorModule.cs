@@ -54,6 +54,21 @@ public sealed class VendorModule
     }
 
     /// <summary>
+    ///     Offers the player's items that <paramref name="vendor" /> buys; <c>vendor.open_sell(npc, player)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Offers the player the list of what the player carries that the vendor buys. False when the vendor has no shop that buys, is more than 10 tiles away or out of sight, the player has nothing to sell (the vendor says so), is dead or not in the world, or a murderer in a guarded place."
+    )]
+    public bool OpenSell(long vendor, long player)
+    {
+        return TryGetPlayer(player, out var seller) &&
+               TryGetVendor(vendor, out var buyer) &&
+               _sessions.TryGetByCharacterId(seller.Id, out var session) &&
+               _vendors.OpenSell(session, buyer);
+    }
+
+    /// <summary>
     ///     Opens the buy window for words the player said, unless another vendor opened one for them a moment ago;
     ///     <c>vendor.open_buy_once(npc, speaker)</c>.
     /// </summary>
@@ -63,19 +78,37 @@ public sealed class VendorModule
     )]
     public bool OpenBuyOnce(long vendor, long player)
     {
-        if (!TryGetPlayer(player, out var buyer))
+        return Once(vendor, player, OpenBuy);
+    }
+
+    /// <summary>
+    ///     Offers the sell list for words the player said, unless another vendor opened a window for them a moment ago;
+    ///     <c>vendor.open_sell_once(npc, speaker)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Offers the player the sell list for words the player said, unless a vendor opened a window for the player within half a second. False when nothing was opened."
+    )]
+    public bool OpenSellOnce(long vendor, long player)
+    {
+        return Once(vendor, player, OpenSell);
+    }
+
+    private bool Once(long vendor, long player, Func<long, long, bool> open)
+    {
+        if (!TryGetPlayer(player, out var mobile))
         {
             return false;
         }
 
         var now = _time.GetUtcNow();
 
-        if (_attended.TryGetValue(buyer.Id, out var last) && now - last < AttendedFor && now >= last)
+        if (_attended.TryGetValue(mobile.Id, out var last) && now - last < AttendedFor && now >= last)
         {
             return false;
         }
 
-        if (!OpenBuy(vendor, player))
+        if (!open(vendor, player))
         {
             return false;
         }
@@ -91,7 +124,7 @@ public sealed class VendorModule
             }
         }
 
-        _attended[buyer.Id] = now;
+        _attended[mobile.Id] = now;
 
         return true;
     }

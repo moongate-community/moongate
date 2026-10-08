@@ -118,17 +118,18 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task TheContextMenu_OffersBuy_FromEightTiles()
+    public async Task TheContextMenu_OffersBuyAndSell_FromEightTiles()
     {
         var result = await RunAsync("on_context_menu", (long)_aria.Id.Value);
 
         Assert.Empty(_errors);
         var entries = Assert.IsType<LuaTable>(Assert.Single(result.Values));
-        Assert.Equal(1, entries.ArrayLength);
-        var entry = entries[1].Read<LuaTable>();
+        Assert.Equal(2, entries.ArrayLength);
         Assert.Equal(
-            ("buy", 6103, 8),
-            (entry["id"].Read<string>(), entry["cliloc"].Read<int>(), entry["range"].Read<int>())
+            [("buy", 6103, 8), ("sell", 6104, 8)],
+            Enumerable.Range(1, 2)
+                .Select(index => entries[index].Read<LuaTable>())
+                .Select(entry => (entry["id"].Read<string>(), entry["cliloc"].Read<int>(), entry["range"].Read<int>()))
         );
     }
 
@@ -151,6 +152,25 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal((_session, _baker), Assert.Single(_vendors.Opened));
+    }
+
+    [Fact]
+    public async Task PickingSell_OffersTheSellList()
+    {
+        await RunAsync("on_context_menu_select", (long)_aria.Id.Value, "sell");
+
+        Assert.Empty(_errors);
+        Assert.Equal((_session, _baker), Assert.Single(_vendors.OpenedSell));
+        Assert.Empty(_vendors.Opened);
+    }
+
+    [Fact]
+    public async Task TheWordsVendorSell_OfferTheSellList_WithinFourTiles()
+    {
+        await HearAsync("vendor sell", SpeechKeywordType.VendorSell);
+
+        Assert.Empty(_errors);
+        Assert.Equal((_session, _baker), Assert.Single(_vendors.OpenedSell));
     }
 
     [Fact]
