@@ -64,7 +64,8 @@ internal static class CompletionCatalog
                 new("--source", "The Distribution/Data/Spawns folder of ModernUO", CompletionValueType.Directory),
                 new("--maps", "The maps to convert, comma separated", CompletionValueType.Text),
                 new("--mobiles", "The mobile templates folder", CompletionValueType.Directory),
-                new("--destination", "The spawns folder", CompletionValueType.Directory)
+                new("--destination", "The spawns folder", CompletionValueType.Directory),
+                new("--only", "Convert only the entries of the classes whose name ends with this", CompletionValueType.Text)
             ]
         ),
         new(
@@ -115,6 +116,15 @@ internal static class CompletionCatalog
                 new("--items", "The item templates folder", CompletionValueType.Directory),
                 new("--mobiles", "The mobile templates folder", CompletionValueType.Directory),
                 new("--destination", "The shops folder", CompletionValueType.Directory)
+            ]
+        ),
+        new(
+            "convert modernuo-guildmasters",
+            "Convert the guildmasters of ModernUO into mobile templates and npc lists",
+            [
+                new("--source", "The Projects/UOContent folder of ModernUO", CompletionValueType.Directory),
+                new("--mobiles", "The mobile templates folder", CompletionValueType.Directory),
+                new("--npc-lists", "The npc lists folder", CompletionValueType.Directory)
             ]
         ),
         new(

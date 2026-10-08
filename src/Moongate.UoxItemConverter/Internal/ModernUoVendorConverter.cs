@@ -428,7 +428,11 @@ internal static class ModernUoVendorConverter
     private static IEnumerable<string> TemplatesOf(string className, HashSet<string> mobileIds)
     {
         var lower = className.ToLowerInvariant();
-        string[] names = Aliases.TryGetValue(lower, out var aliases) ? aliases : [lower, "m_" + lower, "f_" + lower];
+        // BlacksmithGuildmaster is blacksmithguildmaster in the data of UOX3 and blacksmith_guildmaster in this server's.
+        var snake = StringUtils.ToSnakeCase(className);
+        string[] names = Aliases.TryGetValue(lower, out var aliases)
+            ? aliases
+            : [lower, "m_" + lower, "f_" + lower, snake, "m_" + snake, "f_" + snake];
 
         return names.Where(mobileIds.Contains);
     }

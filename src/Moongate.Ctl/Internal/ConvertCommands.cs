@@ -92,7 +92,11 @@ internal static class ConvertCommands
     /// <param name="destination">
     ///     The spawns folder (templates/spawns); each map gets modernuo_*.toml files, replacing those of a previous run.
     /// </param>
-    public static int ModernUoSpawns(string source, string maps, string mobiles, string destination)
+    /// <param name="only">
+    ///     Converts only the spawner entries of the classes whose name ends with this, such as Guildmaster, into
+    ///     modernuo_&lt;name&gt;s.toml (modernuo_guildmasters.toml), leaving the other modernuo_ files of the maps alone. Empty: all.
+    /// </param>
+    public static int ModernUoSpawns(string source, string maps, string mobiles, string destination, string only = "")
     {
         var chosen = new List<MapType>();
 
@@ -116,7 +120,8 @@ internal static class ConvertCommands
             Path.GetFullPath(mobiles),
             Path.GetFullPath(destination),
             Console.Out,
-            Console.Error
+            Console.Error,
+            only.Length > 0 ? only : null
         );
     }
 
@@ -247,6 +252,32 @@ internal static class ConvertCommands
             Path.GetFullPath(items),
             Path.GetFullPath(mobiles),
             Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
+    }
+
+    /// <summary>
+    ///     Converts the guildmasters of ModernUO into mobile templates (a man and a woman for each trade) and npc lists,
+    ///     without executing scripts.
+    /// </summary>
+    /// <param name="source">
+    ///     The Projects/UOContent folder of ModernUO, or its Mobiles/Vendors/NPC/Guildmasters folder.
+    /// </param>
+    /// <param name="mobiles">
+    ///     The mobile templates folder (templates/mobiles); guildmasters.toml is written there, replacing that of a previous run.
+    /// </param>
+    /// <param name="npcLists">
+    ///     The npc lists folder (templates/npc_lists); npclists_guildmasters.toml is written there.
+    /// </param>
+    public static int ModernUoGuildmasters(string source, string mobiles, string npcLists)
+    {
+        UoxItemConverterCommand.RegisterTomlConverters();
+
+        return ModernUoGuildmasterConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(mobiles),
+            Path.GetFullPath(npcLists),
             Console.Out,
             Console.Error
         );

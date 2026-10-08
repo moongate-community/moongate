@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Books;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Types.Guilds;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Items;
@@ -364,7 +365,7 @@ public sealed class RepositoryTemplateFilesTests
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
-        Assert.Equal(677, mobiles.Count);
+        Assert.Equal(699, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
         // Moongate's own cats inherit the UOX3 cat and add their name and script.
         Assert.Equal(
@@ -624,6 +625,34 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedGuildmasters_AreVendorsOfTheirTrade_WithAManAWomanAndAList()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
+            .LoadDataAsync()).Entities;
+
+        var masters = mobiles.Where(template => template.Id.EndsWith("_guildmaster", StringComparison.Ordinal)).ToList();
+
+        // Twelve trades, a man and a woman each.
+        Assert.Equal(24, masters.Count);
+        Assert.All(masters, master => Assert.Equal("basevendor", master.BaseId));
+        // The miner's guildmaster names no guild in ModernUO: it teaches only.
+        Assert.Equal(
+            ["m_miner_guildmaster", "f_miner_guildmaster"],
+            masters.Where(master => master.NpcGuild is null).Select(master => master.Id)
+        );
+        var smith = masters.Single(master => master.Id == "m_blacksmith_guildmaster");
+        Assert.Equal(NpcGuildType.Blacksmiths, smith.NpcGuild);
+        Assert.Equal("the blacksmith guildmaster", smith.Title);
+        Assert.True(smith.Skills!.ContainsKey("blacksmithy"));
+        Assert.Equal("shopkeeper", mobiles.Single(template => template.Id == "m_blacksmith_guildmaster").ScriptId ?? "shopkeeper");
+    }
+
+    [Fact]
     public async Task ShippedBankers_AllHaveTheBankerScript()
     {
         var directories = Directories();
@@ -664,8 +693,8 @@ public sealed class RepositoryTemplateFilesTests
                 .LoadDataAsync())
             .Entities.ToDictionary(spawn => spawn.Id);
 
-        Assert.Equal(446, lists.Length);
-        Assert.Equal(4450, spawns.Count);
+        Assert.Equal(457, lists.Length);
+        Assert.Equal(4679, spawns.Count);
         // The treasure chests of ModernUO's spawners: regions of items.
         var chests = spawns.Values.Where(spawn =>
                 spawn.ItemIds.Count > 0 && !spawn.Id.StartsWith("felucca_jail_chest_", StringComparison.Ordinal)

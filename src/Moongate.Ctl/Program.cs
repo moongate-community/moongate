@@ -23,6 +23,7 @@ app.Add("convert modernuo-locations", ConvertCommands.ModernUoLocations);
 app.Add("convert modernuo-chests", ConvertCommands.ModernUoChests);
 app.Add("convert modernuo-books", ConvertCommands.ModernUoBooks);
 app.Add("convert modernuo-vendors", ConvertCommands.ModernUoVendors);
+app.Add("convert modernuo-guildmasters", ConvertCommands.ModernUoGuildmasters);
 app.Add("completion", CompletionCommands.Completion);
 await app.RunAsync(arguments);
 

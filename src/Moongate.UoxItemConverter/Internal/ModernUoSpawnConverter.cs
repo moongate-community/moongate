@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
 using Moongate.Core.Utils;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Spawns;
 using Moongate.Ultima.Types;
 
@@ -31,7 +32,8 @@ internal static class ModernUoSpawnConverter
         string mobileDestination,
         string spawnsDestination,
         TextWriter output,
-        TextWriter error
+        TextWriter error,
+        string? only = null
     )
     {
         if (!Directory.Exists(source))
@@ -51,6 +53,12 @@ internal static class ModernUoSpawnConverter
             return 2;
         }
 
+        // The npc lists beside the mobiles name a class too, such as a guildmaster of either sex: a region lists them as lists.
+        var lists = ReadNpcListIds(Path.Combine(Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(mobileDestination)) ?? "", "npc_lists"));
+        // A name that is both a mobile and a list (healer) stays a mobile.
+        lists.ExceptWith(ids);
+        ids.UnionWith(lists);
+
         var flatIds = new Dictionary<string, string>(StringComparer.Ordinal);
 
         foreach (var id in ids.Order(StringComparer.Ordinal))
@@ -67,7 +75,7 @@ internal static class ModernUoSpawnConverter
 
         foreach (var map in maps)
         {
-            var byFile = ConvertMap(source, map, ids, flatIds, report);
+            var byFile = ConvertMap(source, map, ids, lists, flatIds, report, only);
 
             // Nothing to write keeps what a previous run wrote.
             if (byFile.Values.All(spawns => spawns.Count == 0))
@@ -104,7 +112,10 @@ internal static class ModernUoSpawnConverter
 
             if (Directory.Exists(mapDestination))
             {
-                foreach (var old in Directory.EnumerateFiles(mapDestination, FilePrefix + "*.toml"))
+                foreach (var old in Directory.EnumerateFiles(
+                             mapDestination,
+                             only is null ? FilePrefix + "*.toml" : FilePrefix + StringUtils.ToSnakeCase(only) + "s.toml"
+                         ))
                 {
                     File.Delete(old);
                 }
@@ -133,6 +144,27 @@ internal static class ModernUoSpawnConverter
         return 0;
     }
 
+    // The ids of the npc lists of a folder; none when it does not exist.
+    private static HashSet<string> ReadNpcListIds(string folder)
+    {
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+
+        if (!Directory.Exists(folder))
+        {
+            return ids;
+        }
+
+        foreach (var file in Directory.EnumerateFiles(folder, "*.toml", SearchOption.AllDirectories))
+        {
+            foreach (var list in TomlUtils.DeserializeFromFile<NpcListTemplateFile>(file)?.NpcList ?? [])
+            {
+                ids.Add(list.Id);
+            }
+        }
+
+        return ids;
+    }
+
     // The folder name of both ModernUO and Moongate: termur, not ter_mur.
     private static string FolderOf(MapType map)
     {
@@ -144,8 +176,10 @@ internal static class ModernUoSpawnConverter
         string source,
         MapType map,
         HashSet<string> ids,
+        HashSet<string> lists,
         Dictionary<string, string> flatIds,
-        ConversionReport report
+        ConversionReport report,
+        string? only
     )
     {
         var mapName = FolderOf(map);
@@ -163,10 +197,11 @@ internal static class ModernUoSpawnConverter
             foreach (var file in Directory.EnumerateFiles(folder, "*.json").Order(StringComparer.Ordinal))
             {
                 var stem = StringUtils.ToSnakeCase(Path.GetFileNameWithoutExtension(file));
+                var key = only is null ? stem : StringUtils.ToSnakeCase(only) + "s";
 
-                if (!byFile.TryGetValue(stem, out var spawns))
+                if (!byFile.TryGetValue(key, out var spawns))
                 {
-                    byFile[stem] = spawns = [];
+                    byFile[key] = spawns = [];
                 }
 
                 using var document = JsonDocument.Parse(File.ReadAllText(file));
@@ -175,7 +210,7 @@ internal static class ModernUoSpawnConverter
                 foreach (var spawner in document.RootElement.EnumerateArray())
                 {
                     var id = $"{mapName}_modernuo_{StringUtils.ToSnakeCase(era)}_{stem}_{index++}";
-                    spawns.AddRange(Build(spawner, id, map, ids, flatIds, report));
+                    spawns.AddRange(Build(spawner, id, map, ids, lists, flatIds, report, only));
                 }
             }
         }
@@ -191,8 +226,10 @@ internal static class ModernUoSpawnConverter
         string id,
         MapType map,
         HashSet<string> ids,
+        HashSet<string> lists,
         Dictionary<string, string> flatIds,
-        ConversionReport report
+        ConversionReport report,
+        string? only = null
     )
     {
         var count = Math.Max(1, spawner.TryGetProperty("count", out var countValue) ? countValue.GetInt32() : 1);
@@ -205,6 +242,13 @@ internal static class ModernUoSpawnConverter
         foreach (var entry in spawner.GetProperty("entries").EnumerateArray())
         {
             var name = entry.GetProperty("name").GetString() ?? string.Empty;
+
+            // With "only", the entries of the other classes are left to a run without it.
+            if (only is not null && !name.EndsWith(only, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
             var cap = Math.Min(count, entry.TryGetProperty("maxCount", out var maxCount) ? maxCount.GetInt32() : count);
             var mobile = ModernUoMobileNames.Resolve(name, flatIds, ids);
 
@@ -257,16 +301,23 @@ internal static class ModernUoSpawnConverter
                 (int)Math.Round(rest * shared.Count / (double)(shared.Count + unknownShared), MidpointRounding.AwayFromZero)
             );
 
-            yield return Region(spawner, id, map, shared, max);
+            yield return Region(spawner, id, map, shared, max, lists);
         }
 
         foreach (var (mobile, cap) in capped)
         {
-            yield return Region(spawner, $"{id}_{mobile}", map, [mobile], cap);
+            yield return Region(spawner, $"{id}_{mobile}", map, [mobile], cap, lists);
         }
     }
 
-    private static SpawnTemplate Region(JsonElement spawner, string id, MapType folder, List<string> mobiles, int max)
+    private static SpawnTemplate Region(
+        JsonElement spawner,
+        string id,
+        MapType folder,
+        List<string> mobiles,
+        int max,
+        HashSet<string> lists
+    )
     {
         var map = MapOf(spawner, folder);
         var min = Minutes(spawner, "minDelay");
@@ -275,7 +326,8 @@ internal static class ModernUoSpawnConverter
             Id = id,
             Map = map,
             Name = $"{map} {string.Join(", ", mobiles)}",
-            MobileIds = [.. mobiles],
+            MobileIds = [.. mobiles.Where(mobile => !lists.Contains(mobile))],
+            NpcListIds = [.. mobiles.Where(lists.Contains)],
             Max = max,
             MinMinutes = min,
             MaxMinutes = Math.Max(min, Minutes(spawner, "maxDelay"))

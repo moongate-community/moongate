@@ -499,6 +499,26 @@ x2 = 661
 y2 = 1209
 
 [[spawn]]
+id = "tokuno_modernuo_shared_vendors_23"
+map = "tokuno"
+name = "Tokuno bardguildmaster"
+mobile_ids = []
+npc_list_ids = ["bardguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 668
+y1 = 1254
+x2 = 668
+y2 = 1254
+
+[[spawn]]
 id = "tokuno_modernuo_shared_vendors_24_armourer"
 map = "tokuno"
 name = "Tokuno armourer"

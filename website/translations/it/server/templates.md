@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"f9387c2988294ddfd636515f744ca271af78cf96c5424a0b9cf7ce6f008d8c12","title":"Caricamento dei template TOML"} -->
+<!-- translation: {"sourceHash":"b53eceff8591c00864633718777c79083b1901aa95772e96ded7fcf8ab8ee761","title":"Caricamento dei template TOML"} -->
 
 # Caricamento dei template TOML
 
@@ -351,6 +351,7 @@ a 120; una costante è un intero senza virgolette.
 | `Sounds` | `[mobile.sounds]` con `start_attack`, `idle`, `attack`, `hurt`, `death`; uno script di mobile li riproduce per tipo con `npc.play_sound(serial, "idle")` |
 | `BloodHue` | Il colore del sangue che la creatura lascia quando è colpita: 0 per il rosso, `-1` per una che non sanguina, come il `BloodHue` di ServUO e il `BLOODCOLOR` di Source-X; quello di un template base è ereditato. Non impostato: rosso. I non morti e i golem hanno `-1`. Vedi [Combattimento](combat.md#the-damage) |
 | `FleeAt` | La percentuale dei suoi punti vita (da 0 a 100) sotto cui una creatura che combatte scappa dallo scontro, `-1` per una che non scappa mai, come `FLEEAT` di UOX3; quella di un template base viene ereditata. Non impostato: quella dello script, 20 per un mostro e 10 per un animale. Vedi [Script delle creature](scripting/shipped-scripts.md#commoncreaturelua) |
+| `NpcGuild` | La gilda per cui questo maestro di gilda accetta membri: `mages`, `warriors`, `thieves`, `rangers`, `healers`, `miners`, `merchants`, `tinkers`, `tailors`, `fishermen`, `bards` o `blacksmiths`. Non impostato: il PNG non è un maestro di gilda. Vedi [Maestri di gilda](skills.md#guildmasters) |
 | `ScriptId` | La tabella Lua globale, definita da `scripts/mobiles/<script_id>.lua`, i cui `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death` e `on_drag_drop` gestiscono l'NPC; un identificatore Lua minuscolo. Vedi [Script dei mobile](scripting/mobile-scripts.md) |
 | `Visibility` | Come in `ItemTemplate` |
 | `Movement` | `land`, `water` (un delfino: viene generato e nuota solo in acqua) o `both` (un tricheco: cammina e nuota, e viene generato a terra altrimenti in acqua); se non impostato è `land` |

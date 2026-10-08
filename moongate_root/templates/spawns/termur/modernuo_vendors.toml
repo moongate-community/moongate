@@ -25,7 +25,27 @@ name = "TerMur blacksmith"
 mobile_ids = ["blacksmith"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1010
+y1 = 3883
+x2 = 1010
+y2 = 3883
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_1_blacksmithguildmaster"
+map = "ter_mur"
+name = "TerMur blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -45,7 +65,27 @@ name = "TerMur healer"
 mobile_ids = ["healer"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1013
+y1 = 3913
+x2 = 1013
+y2 = 3913
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_2_healerguildmaster"
+map = "ter_mur"
+name = "TerMur healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -65,7 +105,27 @@ name = "TerMur tinker"
 mobile_ids = ["tinker"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 977
+y1 = 3909
+x2 = 977
+y2 = 3909
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_3_tinkerguildmaster"
+map = "ter_mur"
+name = "TerMur tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -105,7 +165,27 @@ name = "TerMur blacksmith"
 mobile_ids = ["blacksmith"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -26
+only_outside = false
+[[spawn.areas]]
+x1 = 1020
+y1 = 3884
+x2 = 1020
+y2 = 3884
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_5_blacksmithguildmaster"
+map = "ter_mur"
+name = "TerMur blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -225,7 +305,7 @@ name = "TerMur mage"
 mobile_ids = ["mage"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -259,13 +339,53 @@ x2 = 772
 y2 = 3490
 
 [[spawn]]
+id = "termur_modernuo_post_uoml_vendors_9_mageguildmaster"
+map = "ter_mur"
+name = "TerMur mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -4
+only_outside = false
+[[spawn.areas]]
+x1 = 772
+y1 = 3490
+x2 = 772
+y2 = 3490
+
+[[spawn]]
 id = "termur_modernuo_post_uoml_vendors_10_healer"
 map = "ter_mur"
 name = "TerMur healer"
 mobile_ids = ["healer"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -4
+only_outside = false
+[[spawn.areas]]
+x1 = 783
+y1 = 3491
+x2 = 783
+y2 = 3491
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_10_healerguildmaster"
+map = "ter_mur"
+name = "TerMur healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -405,7 +525,27 @@ name = "TerMur tinker"
 mobile_ids = ["tinker"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 817
+y1 = 3426
+x2 = 817
+y2 = 3426
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_15_tinkerguildmaster"
+map = "ter_mur"
+name = "TerMur tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -425,7 +565,27 @@ name = "TerMur blacksmith"
 mobile_ids = ["blacksmith"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 816
+y1 = 3419
+x2 = 816
+y2 = 3419
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_16_blacksmithguildmaster"
+map = "ter_mur"
+name = "TerMur blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -445,7 +605,7 @@ name = "TerMur tailor"
 mobile_ids = ["tailor"]
 npc_list_ids = []
 item_ids = []
-max = 2
+max = 1
 min_minutes = 5
 max_minutes = 10
 call = 1
@@ -464,6 +624,26 @@ map = "ter_mur"
 name = "TerMur weaver"
 mobile_ids = ["weaver"]
 npc_list_ids = []
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 805
+y1 = 3397
+x2 = 805
+y2 = 3397
+
+[[spawn]]
+id = "termur_modernuo_post_uoml_vendors_17_tailorguildmaster"
+map = "ter_mur"
+name = "TerMur tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
 item_ids = []
 max = 1
 min_minutes = 5

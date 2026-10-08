@@ -148,6 +148,25 @@ A script gives an NPC these lessons with the `trainer` module and `common/traini
 `healer.lua` already do. `trainer.skills(npc, player)` lists the skills, `trainer.quote(npc, player, skill)` quotes a
 price and `trainer.pay(npc, giver, item)` takes the gold, which is what an `on_drag_drop` answers.
 
+## Guildmasters
+
+The twelve guildmasters of ModernUO (bard, blacksmith, fisher, healer, mage, merchant, miner, ranger, tailor, thief, tinker and
+warrior) are mobile templates, a man (`m_<trade>_guildmaster`) and a woman (`f_<trade>_guildmaster`) for each, and an npc
+list of the trade (`<trade>guildmaster`) that picks one. They are made by `mgctl convert modernuo-guildmasters` from
+ModernUO's classes: the title (*the blacksmith guildmaster* or *guildmistress*), the skills of the trade at 90.0 or more,
+and the guild. They are vendors like the others, so they teach what they know ([Trainers](#trainers)); only the
+blacksmith's sells, as in ModernUO. The ModernUO spawns place them in the towns.
+
+A guildmaster takes members for the guild of its trade. A player says the guildmaster's name and *join* or *member*
+within 2 tiles to hear the price, 500 gold, and drops exactly that gold on it to join. A player belongs to one guild at
+most (the guild is a saved prop of the character) and is told when it is a member already or of another guild. The
+thieves' guild asks for no kills and Stealing 60.0. Saying the name and *resign* or *quit* leaves the guild, no sooner than
+a week after joining. The miner's guildmaster names no guild in ModernUO, so it only teaches. A membership has no
+effect yet: nothing reads it. The age and the playing time ModernUO asks of a new member are not kept.
+
+The template field `npc_guild` (`blacksmiths`, `thieves`...) makes an NPC a guildmaster, and the `npcguild` Lua module
+(`of`, `member`, `quote`, `join`, `resign`) with `common/guild.lua` gives its script the words and the gold.
+
 ## See also
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)

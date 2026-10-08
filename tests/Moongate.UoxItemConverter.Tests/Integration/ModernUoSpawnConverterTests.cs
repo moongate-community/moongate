@@ -245,6 +245,51 @@ public sealed class ModernUoSpawnConverterTests : IDisposable
         Assert.Contains("does not exist", _error.ToString(), StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Run_AClassThatIsAnNpcList_BecomesAListOfTheRegion_AndAMobileOfTheSameNameStaysAMobile()
+    {
+        Directory.CreateDirectory(Path.Combine(_root, "npc_lists"));
+        File.WriteAllText(
+            Path.Combine(_root, "npc_lists", "lists.toml"),
+            "[[npc_list]]\nid = \"mageguildmaster\"\n[[npc_list]]\nid = \"banker\"\n"
+        );
+        WriteSpawners("shared/malas/Vendors.json", Spawner(10, 10, 0, 2, 1, "00:05:00", "00:10:00", "MageGuildmaster", "Minter"));
+
+        Assert.True(Run(MapType.Malas) == 0, CombinedOutput);
+
+        var spawn = Assert.Single(Read("malas", "modernuo_vendors"));
+        Assert.Equal(["mageguildmaster"], spawn.NpcListIds);
+        Assert.Equal(["banker"], spawn.MobileIds);
+    }
+
+    [Fact]
+    public void Run_WithOnly_ConvertsTheEntriesOfThoseClasses_IntoOneFile_AndKeepsTheOtherFiles()
+    {
+        File.WriteAllText(Path.Combine(Mobiles, "guild.toml"), "[[mobile]]\nid = \"m_mage_guildmaster\"\n");
+        Directory.CreateDirectory(Path.Combine(_root, "npc_lists"));
+        File.WriteAllText(
+            Path.Combine(_root, "npc_lists", "lists.toml"),
+            "[[npc_list]]\nid = \"mageguildmaster\"\n"
+        );
+        WriteSpawners(
+            "shared/malas/Vendors.json",
+            Spawner(10, 10, 0, 2, 1, "00:05:00", "00:10:00", "MageGuildmaster", "Minter")
+        );
+        Directory.CreateDirectory(Path.Combine(Destination, "malas"));
+        File.WriteAllText(Path.Combine(Destination, "malas", "modernuo_other.toml"), "[[spawn]]\nid = \"keep\"\n");
+
+        Assert.True(
+            ModernUoSpawnConverter.Run(Source, [MapType.Malas], Mobiles, Destination, _output, _error, "Guildmaster") == 0,
+            CombinedOutput
+        );
+
+        var spawn = Assert.Single(Read("malas", "modernuo_guildmasters"));
+        Assert.Equal(["mageguildmaster"], spawn.NpcListIds);
+        Assert.Empty(spawn.MobileIds);
+        Assert.True(File.Exists(Path.Combine(Destination, "malas", "modernuo_other.toml")));
+        Assert.False(File.Exists(Path.Combine(Destination, "malas", "modernuo_vendors.toml")));
+    }
+
     private int Run(params MapType[] maps)
     {
         return ModernUoSpawnConverter.Run(Source, maps, Mobiles, Destination, _output, _error);

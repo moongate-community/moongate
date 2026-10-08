@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 84 done, 🟡 56 partly done, ❌ 129 not built yet.
+**269 systems:** ✅ 85 done, 🟡 56 partly done, ❌ 128 not built yet.
 
 **Coverage: 31%** of the systems done, **41%** counting a partly done system as half.
 
@@ -160,12 +160,12 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Vendors: buy, sell, restock | ✅ | The shop window, the goods and the sell tables of ModernUO's shops, gold from the backpack then the bank, everything or nothing, the hourly restock and the resale of what players sold; see [Vendors](vendors.md) |
 | Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; balance, withdraw and deposit by speech; a limit of items; see [Bank](bank.md) |
 | Stable master, veterinarian | ❌ | |
-| Skill trainers | 🟡 | Vendors and healers teach the skills they have at 60.0 or more, for gold dropped on them; the guildmasters have no templates yet; see [Skills](skills.md#trainers) |
+| Skill trainers | 🟡 | Vendors and healers teach the skills they have at 60.0 or more, for gold dropped on them; see [Skills](skills.md#trainers) |
 | Healers that resurrect | 🟡 | A ghost that comes near a healer is offered to live again; the evil healers are not placed in the world yet |
 | Player vendors | ❌ | |
 | Hirelings | ❌ | |
 | Escort quests | ❌ | |
-| Guildmasters | ❌ | |
+| Guildmasters | ✅ | The twelve guildmasters of ModernUO teach their trade, take members for their guild by speech and gold, and are placed by the ModernUO spawns; see [Skills](skills.md#guildmasters) |
 | Bulk order deeds | ❌ | |
 
 ## Items
