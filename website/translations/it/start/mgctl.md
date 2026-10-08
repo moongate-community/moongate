@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3fa5febac9a26c1a74773ba7490cfc952a10ced1182dc51f26e6b1389d3b4cda","title":"mgctl, lo strumento Moongate"} -->
+<!-- translation: {"sourceHash":"5215286c9869353f672a8186af9f4a6404aa0801d0719b84353f526da309814d","title":"mgctl, lo strumento Moongate"} -->
 
 # mgctl, lo strumento Moongate
 
@@ -16,7 +16,7 @@ eseguibili, `migration-runner/Moongate.MigrationRunner` e `mg-uoxconv`; in quel 
 | `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters\|modernuo-locations\|modernuo-chests ...` | Converte spawner, insegne, teletrasporti, luoghi con nome e casse del tesoro di ModernUO; vedi [Migrare da UOX3](uox3-migration.md#signs-of-modernuo) |
 | `mgctl convert modernuo-books --source <folder> --destination <folder>` | Importa testi statici dei libri; vedi [Importare i testi dei libri](book-content-import.md) |
 | `mgctl convert modernuo-vendors --source <folder> --items <folder> --mobiles <folder> --destination <folder>` | Converte i negozi dei venditori di ModernUO; vedi [Negozi](data-files/shops.md#convert-modernuos-shops) |
-| `mgctl convert modernuo-guildmasters --source <folder> --mobiles <folder> --npc-lists <folder>` | Converte i maestri di gilda di ModernUO in template mobile e liste di PNG; vedi [Maestri di gilda](skills.md#guildmasters) |
+| `mgctl convert modernuo-guildmasters --source <folder> --items <folder> --mobiles <folder> --npc-lists <folder>` | Converte i maestri di gilda di ModernUO in template mobile e liste di PNG; vedi [Maestri di gilda](skills.md#guildmasters) |
 | `mgctl completion bash\|zsh\|fish` | Stampa lo script che completa mgctl con TAB; vedi [Completamento con TAB](#tab-completion) |
 
 `mgctl --help` elenca i comandi e `mgctl <command> --help` le opzioni di uno di essi.

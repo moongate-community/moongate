@@ -123,6 +123,7 @@ internal static class CompletionCatalog
             "Convert the guildmasters of ModernUO into mobile templates and npc lists",
             [
                 new("--source", "The Projects/UOContent folder of ModernUO", CompletionValueType.Directory),
+                new("--items", "The item templates folder", CompletionValueType.Directory),
                 new("--mobiles", "The mobile templates folder", CompletionValueType.Directory),
                 new("--npc-lists", "The npc lists folder", CompletionValueType.Directory)
             ]

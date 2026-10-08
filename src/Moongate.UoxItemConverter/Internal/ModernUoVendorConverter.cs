@@ -366,7 +366,7 @@ internal static class ModernUoVendorConverter
     }
 
     // The plain piece of the first era the graphic has; null for a graphic that is not an armor or weapon family.
-    private static string? EraBase(List<string> candidates)
+    internal static string? EraBase(List<string> candidates)
     {
         return Eras.Select(era => candidates.FirstOrDefault(candidate => Graphic.Match(candidate).Groups[2].Value == era))
             .FirstOrDefault(candidate => candidate is not null);
@@ -437,7 +437,7 @@ internal static class ModernUoVendorConverter
         return names.Where(mobileIds.Contains);
     }
 
-    private static Dictionary<int, List<string>> ItemsByGraphic(string folder)
+    internal static Dictionary<int, List<string>> ItemsByGraphic(string folder)
     {
         var byGraphic = new Dictionary<int, List<string>>();
 

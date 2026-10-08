@@ -265,18 +265,22 @@ internal static class ConvertCommands
     /// <param name="source">
     ///     The Projects/UOContent folder of ModernUO, or its Mobiles/Vendors/NPC/Guildmasters folder.
     /// </param>
+    /// <param name="items">
+    ///     The item templates folder (templates/items): the items a guildmaster wears and carries are found there.
+    /// </param>
     /// <param name="mobiles">
     ///     The mobile templates folder (templates/mobiles); guildmasters.toml is written there, replacing that of a previous run.
     /// </param>
     /// <param name="npcLists">
     ///     The npc lists folder (templates/npc_lists); npclists_guildmasters.toml is written there.
     /// </param>
-    public static int ModernUoGuildmasters(string source, string mobiles, string npcLists)
+    public static int ModernUoGuildmasters(string source, string items, string mobiles, string npcLists)
     {
         UoxItemConverterCommand.RegisterTomlConverters();
 
         return ModernUoGuildmasterConverter.Run(
             Path.GetFullPath(source),
+            Path.GetFullPath(items),
             Path.GetFullPath(mobiles),
             Path.GetFullPath(npcLists),
             Console.Out,

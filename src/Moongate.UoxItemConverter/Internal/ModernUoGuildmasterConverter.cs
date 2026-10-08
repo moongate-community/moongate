@@ -63,6 +63,24 @@ internal static class ModernUoGuildmasterConverter
         ["Swords"] = SkillType.Swordsmanship
     };
 
+    // The graphic ModernUO's classes give the items a guildmaster wears or carries, and which of them cover the torso.
+    private static readonly Dictionary<string, int> Graphics = new(StringComparer.Ordinal)
+    {
+        ["FullApron"] = 0x153D,
+        ["RingmailChest"] = 0x13EC,
+        ["Bascinet"] = 0x140C,
+        ["SmithHammer"] = 0x13E3,
+        ["Robe"] = 0x1F03,
+        ["GnarledStaff"] = 0x13F8,
+        ["Kryss"] = 0x1401,
+        ["Dagger"] = 0x0F52
+    };
+
+    private static readonly HashSet<string> Overgarments = new(StringComparer.Ordinal)
+    {
+        "0x153d_full_apron", "0x1f03_robe", "0x13ec_lbr", "0x13ec_aos", "0x13ec_t2a", "0x13ec_tol"
+    };
+
     // The guild of ModernUO's NpcGuild enum, under the name of this server.
     private static readonly Dictionary<string, NpcGuildType> Guilds = new(StringComparer.Ordinal)
     {
@@ -80,7 +98,14 @@ internal static class ModernUoGuildmasterConverter
         ["BlacksmithsGuild"] = NpcGuildType.Blacksmiths
     };
 
-    public static int Run(string source, string mobiles, string npcLists, TextWriter output, TextWriter error)
+    public static int Run(
+        string source,
+        string items,
+        string mobiles,
+        string npcLists,
+        TextWriter output,
+        TextWriter error
+    )
     {
         var root = Directory.Exists(Path.Combine(source, Mobiles, "Vendors", "NPC", "Guildmasters"))
             ? Path.Combine(source, Mobiles, "Vendors", "NPC", "Guildmasters")
@@ -93,9 +118,17 @@ internal static class ModernUoGuildmasterConverter
             return 2;
         }
 
+        if (!Directory.Exists(items))
+        {
+            error.WriteLine($"The item templates folder does not exist: {items}");
+
+            return 2;
+        }
+
         try
         {
             var report = new ConversionReport();
+            var itemsByGraphic = ModernUoVendorConverter.ItemsByGraphic(items);
             var masters = new List<MobileTemplate>();
             var lists = new List<NpcListTemplate>();
 
@@ -106,7 +139,7 @@ internal static class ModernUoGuildmasterConverter
                     continue;
                 }
 
-                var master = Read(File.ReadAllText(path, new UTF8Encoding(false, true)), path, report);
+                var master = Read(File.ReadAllText(path, new UTF8Encoding(false, true)), path, itemsByGraphic, report);
 
                 if (master is null)
                 {
@@ -151,7 +184,12 @@ internal static class ModernUoGuildmasterConverter
         }
     }
 
-    private static Guildmaster? Read(string text, string path, ConversionReport report)
+    private static Guildmaster? Read(
+        string text,
+        string path,
+        Dictionary<int, List<string>> itemsByGraphic,
+        ConversionReport report
+    )
     {
         var tree = CSharpSyntaxTree.ParseText(text, new CSharpParseOptions(LanguageVersion.Preview), path);
 
@@ -216,14 +254,14 @@ internal static class ModernUoGuildmasterConverter
             }
         }
 
-        return new(owner.Identifier.ValueText, title, guild, skills);
+        return new(owner.Identifier.ValueText, title, guild, skills, Outfit(owner, itemsByGraphic, report));
     }
 
     private static (MobileTemplate Man, MobileTemplate Woman, NpcListTemplate List) Build(Guildmaster master)
     {
         var trade = StringUtils.ToSnakeCase(master.Title);
-        var man = Template(master, trade, "m", MobileGenderType.Male, "guildmaster", 348, Clothes(false));
-        var woman = Template(master, trade, "f", MobileGenderType.Female, "guildmistress", 337, Clothes(true));
+        var man = Template(master, trade, "m", MobileGenderType.Male, "guildmaster", 348, Clothes(false, master.Outfit));
+        var woman = Template(master, trade, "f", MobileGenderType.Female, "guildmistress", 337, Clothes(true, master.Outfit));
         var list = new NpcListTemplate
         {
             Id = trade + "guildmaster",
@@ -258,13 +296,13 @@ internal static class ModernUoGuildmasterConverter
         };
     }
 
-    // The clothes of the vendors of this server: a shirt, trousers or a skirt, shoes and an apron or a dress.
-    private static List<MobileEquipmentEntry> Clothes(bool woman)
+    // The clothes of the vendors of this server: a shirt, trousers or a skirt, shoes and an apron or a dress; then what the
+    // guildmaster wears and carries for its trade. A robe, an apron or a chest piece takes the place of the apron or dress.
+    private static List<MobileEquipmentEntry> Clothes(bool woman, List<MobileEquipmentEntry> trade)
     {
         var hue = HueSpec.Parse("0x0835-0x0852");
-
-        return
-        [
+        var entries = new List<MobileEquipmentEntry>
+        {
             new() { Items = ["0x1517_shirt"], Hue = hue },
             new()
             {
@@ -273,16 +311,116 @@ internal static class ModernUoGuildmasterConverter
                     : ["0x152e_short_pants", "0x1539_long_pants"],
                 Hue = hue
             },
-            new() { Items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"] },
-            new()
-            {
-                Items = woman
-                    ? ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
-                    : ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"],
-                Hue = hue
-            }
-        ];
+            new() { Items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"] }
+        };
+
+        if (!trade.Any(entry => entry.Items.Any(Overgarments.Contains)))
+        {
+            entries.Add(
+                new()
+                {
+                    Items = woman
+                        ? ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+                        : ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"],
+                    Hue = hue
+                }
+            );
+        }
+
+        entries.AddRange(trade);
+
+        return entries;
     }
 
-    private sealed record Guildmaster(string Class, string Title, NpcGuildType? Guild, Dictionary<string, DiceSpec> Skills);
+    // What InitOutfit adds: each AddItem, and the item picked between two by a coin toss. Items are found by the graphic
+    // ModernUO gives their class.
+    private static List<MobileEquipmentEntry> Outfit(
+        ClassDeclarationSyntax owner,
+        Dictionary<int, List<string>> itemsByGraphic,
+        ConversionReport report
+    )
+    {
+        var entries = new List<MobileEquipmentEntry>();
+        var method = owner.Members.OfType<MethodDeclarationSyntax>().FirstOrDefault(member => member.Identifier.ValueText == "InitOutfit");
+
+        foreach (var statement in method?.Body?.Statements ?? [])
+        {
+            var alternatives = statement switch
+            {
+                ExpressionStatementSyntax { Expression: InvocationExpressionSyntax { Expression: IdentifierNameSyntax { Identifier.ValueText: "AddItem" } } call }
+                    => [call.ArgumentList.Arguments.FirstOrDefault()?.Expression],
+                LocalDeclarationStatementSyntax
+                {
+                    Declaration.Variables: [{ Initializer.Value: ConditionalExpressionSyntax choice }]
+                } => [choice.WhenTrue, choice.WhenFalse],
+                IfStatementSyntax { Else: { } other } branch when Added(branch.Statement) is { } first && Added(other.Statement) is { } second
+                    => [first, second],
+                _ => new List<ExpressionSyntax?>()
+            };
+
+            var created = alternatives.OfType<ObjectCreationExpressionSyntax>().ToList();
+
+            if (created.Count == 0)
+            {
+                continue;
+            }
+
+            var items = new List<string>();
+
+            foreach (var creation in created)
+            {
+                var type = creation.Type.ToString();
+
+                if (!Graphics.TryGetValue(type, out var graphic) ||
+                    !itemsByGraphic.TryGetValue(graphic, out var candidates) ||
+                    (ModernUoVendorConverter.EraBase(candidates) ?? (candidates.Count == 1 ? candidates[0] : null)) is not { } item)
+                {
+                    report.Count($"no item template for the outfit item {type}");
+
+                    continue;
+                }
+
+                items.Add(item);
+            }
+
+            if (items.Count > 0)
+            {
+                entries.Add(new() { Items = items, Hue = HueOf(created[0]) });
+            }
+        }
+
+        return entries;
+    }
+
+    // The item an if branch adds: the creation of an AddItem call, alone in the branch.
+    private static ExpressionSyntax? Added(StatementSyntax branch)
+    {
+        var only = branch is BlockSyntax { Statements: [var single] } ? single : branch;
+
+        return only is ExpressionStatementSyntax
+        {
+            Expression: InvocationExpressionSyntax { Expression: IdentifierNameSyntax { Identifier.ValueText: "AddItem" } } call
+        }
+            ? call.ArgumentList.Arguments.FirstOrDefault()?.Expression
+            : null;
+    }
+
+    // A robe in a random blue or yellow hue; nothing else of the outfit has a hue.
+    private static HueSpec? HueOf(ObjectCreationExpressionSyntax creation)
+    {
+        return creation.ArgumentList?.Arguments.FirstOrDefault()?.Expression.ToString() switch
+        {
+            "Utility.RandomBlueHue()"   => HueSpec.Parse("0x0515-0x054A"),
+            "Utility.RandomYellowHue()" => HueSpec.Parse("0x06A5-0x06DA"),
+            _                           => null
+        };
+    }
+
+    private sealed record Guildmaster(
+        string Class,
+        string Title,
+        NpcGuildType? Guild,
+        Dictionary<string, DiceSpec> Skills,
+        List<MobileEquipmentEntry> Outfit
+    );
 }

@@ -96,8 +96,13 @@ hue = "0x0835-0x0852"
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
-hue = "0x0835-0x0852"
+items = ["0x153d_full_apron", "0x13ec_lbr"]
+
+[[mobile.equipment]]
+items = ["0x140c_lbr"]
+
+[[mobile.equipment]]
+items = ["0x13e3_lbr"]
 
 [[mobile]]
 id = "f_blacksmith_guildmaster"
@@ -126,8 +131,13 @@ hue = "0x0835-0x0852"
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
-hue = "0x0835-0x0852"
+items = ["0x153d_full_apron", "0x13ec_lbr"]
+
+[[mobile.equipment]]
+items = ["0x140c_lbr"]
+
+[[mobile.equipment]]
+items = ["0x13e3_lbr"]
 
 [[mobile]]
 id = "m_fisher_guildmaster"
@@ -211,8 +221,8 @@ hue = "0x0835-0x0852"
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
-hue = "0x0835-0x0852"
+items = ["0x1f03_robe"]
+hue = "0x06A5-0x06DA"
 
 [[mobile]]
 id = "f_healer_guildmaster"
@@ -242,8 +252,8 @@ hue = "0x0835-0x0852"
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
-hue = "0x0835-0x0852"
+items = ["0x1f03_robe"]
+hue = "0x06A5-0x06DA"
 
 [[mobile]]
 id = "m_mage_guildmaster"
@@ -275,8 +285,11 @@ hue = "0x0835-0x0852"
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
-hue = "0x0835-0x0852"
+items = ["0x1f03_robe"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x13f8_lbr"]
 
 [[mobile]]
 id = "f_mage_guildmaster"
@@ -308,8 +321,11 @@ hue = "0x0835-0x0852"
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
-hue = "0x0835-0x0852"
+items = ["0x1f03_robe"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x13f8_lbr"]
 
 [[mobile]]
 id = "m_merchant_guildmaster"

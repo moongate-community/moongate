@@ -154,11 +154,13 @@ The twelve guildmasters of ModernUO (bard, blacksmith, fisher, healer, mage, mer
 warrior) are mobile templates, a man (`m_<trade>_guildmaster`) and a woman (`f_<trade>_guildmaster`) for each, and an npc
 list of the trade (`<trade>guildmaster`) that picks one. They are made by `mgctl convert modernuo-guildmasters` from
 ModernUO's classes: the title (*the blacksmith guildmaster* or *guildmistress*), the skills of the trade, the main ones
-between 80 and 100, and the guild. They are vendors like the others, so they teach what they know ([Trainers](#trainers)); only the
+between 80 and 100, and the guild, and what they wear and carry for the trade: the blacksmith an apron or a ringmail chest, a bascinet and a
+hammer, the mage and the healer a robe (in a blue or yellow hue) and the mage a staff. The kryss or dagger of the thief has no item
+template yet. They are vendors like the others, so they teach what they know ([Trainers](#trainers)); only the
 blacksmith's sells, as in ModernUO. The ModernUO spawns place them in the towns.
 
 A guildmaster takes members for the guild of its trade. A player says the guildmaster's name and *join* or *member*
-within 2 tiles to hear the price, 500 gold, and drops exactly that gold on it to join. A player belongs to one guild at
+within 2 tiles to hear the price, 500 gold (the guildmaster speaks to that player only, over its head), and drops exactly that gold on it to join. A player belongs to one guild at
 most (the guild is a saved prop of the character) and is told when it is a member already or of another guild. The
 thieves' guild asks for no kills and Stealing 60.0 (the thieves' guildmaster of the towns of UOX3 is a guildmaster too, now). Saying the name and *resign* or *quit* leaves the guild, no sooner than
 a week after joining. The miner's guildmaster names no guild in ModernUO, so it only teaches. A membership has no
