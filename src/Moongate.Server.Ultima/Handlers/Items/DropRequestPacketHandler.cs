@@ -317,9 +317,10 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             TakenOff(wearer, item);
         }
 
-        // Gone, or with someone else: the giver's client forgets it. Else it is shown where the script left it.
+        // Gone, or with someone else: the giver's client forgets it. Else it is shown where the script left it, which is
+        // also where the rest of a stack lies when the script took only part of it from a chest on the ground.
         if (!_items.TryGet(item.Id, out _) ||
-            (item.ContainerId is not null && _items.GetOwner(item) != session.CharacterId))
+            (item.ContainerId is not null && _items.GetOwner(item) is { } owner && owner != session.CharacterId))
         {
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
         }

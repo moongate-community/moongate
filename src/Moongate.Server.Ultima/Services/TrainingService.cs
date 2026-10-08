@@ -21,7 +21,7 @@ public sealed class TrainingService : ITrainingService
     private const int TeachingDivisor = 3;
     private const int TeachingCeiling = 420;
     private const int ClilocPrice = 1019077;
-    private const int ClilocForLessLess = 1043108;
+    private const int ClilocForLess = 1043108;
     private const int ClilocKnowsMore = 501508;
     private const int ClilocKnowsAll = 501509;
     private const int ClilocNotRaisable = 501510;
@@ -81,29 +81,18 @@ public sealed class TrainingService : ITrainingService
 
         var offer = Offer(trainer, player, skill);
 
-        switch (offer.Result)
+        if (offer.Result != TrainingResultType.Ok)
         {
-            case TrainingResultType.Ok:
-                _speech.SayCliloc(trainer, ClilocPrice, "", $" {offer.Points}");
-                _speech.SayCliloc(trainer, ClilocForLessLess);
-                session.Set(TrainingSessionKeys.Quote, new TrainingQuote(trainer.Id, skill));
+            Refuse(trainer, player, offer.Result);
 
-                return true;
-            case TrainingResultType.KnowsMore:
-                _speech.SayCliloc(trainer, ClilocKnowsMore);
-
-                break;
-            case TrainingResultType.KnowsAll:
-                _speech.SayCliloc(trainer, ClilocKnowsAll);
-
-                break;
-            case TrainingResultType.NotRaisable:
-                _speech.TellCliloc(player, ClilocNotRaisable, "", WarningHue);
-
-                break;
+            return false;
         }
 
-        return false;
+        _speech.SayCliloc(trainer, ClilocPrice, "", $" {offer.Points}");
+        _speech.SayCliloc(trainer, ClilocForLess);
+        session.Set(TrainingSessionKeys.Quote, new TrainingQuote(trainer.Id, skill));
+
+        return true;
     }
 
     public bool Pay(GameSession session, MobileEntity trainer, ItemEntity gold)
@@ -126,6 +115,7 @@ public sealed class TrainingService : ITrainingService
         if (offer.Result != TrainingResultType.Ok)
         {
             session.Set(TrainingSessionKeys.Quote, null);
+            Refuse(trainer, player, offer.Result);
 
             return false;
         }
@@ -151,6 +141,26 @@ public sealed class TrainingService : ITrainingService
         if (session.Get(TrainingSessionKeys.Quote) is not null)
         {
             session.Set(TrainingSessionKeys.Quote, null);
+        }
+    }
+
+    // The words of the trainer, or the client's warning, for a skill it cannot teach.
+    private void Refuse(MobileEntity trainer, MobileEntity player, TrainingResultType result)
+    {
+        switch (result)
+        {
+            case TrainingResultType.KnowsMore:
+                _speech.SayCliloc(trainer, ClilocKnowsMore);
+
+                break;
+            case TrainingResultType.KnowsAll:
+                _speech.SayCliloc(trainer, ClilocKnowsAll);
+
+                break;
+            case TrainingResultType.NotRaisable:
+                _speech.TellCliloc(player, ClilocNotRaisable, "", WarningHue);
+
+                break;
         }
     }
 
@@ -226,7 +236,8 @@ public sealed class TrainingService : ITrainingService
     {
         var needed = points - Free(player);
 
-        foreach (var other in player.Skills.Where(known => known.Skill != skill && known.Lock == SkillLockType.Down).ToList())
+        foreach (var other in player.Skills.Where(known => known.Skill != skill && known.Lock == SkillLockType.Down)
+                     .ToList())
         {
             if (needed <= 0)
             {

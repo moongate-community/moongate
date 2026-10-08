@@ -21,7 +21,9 @@ public interface ITrainingService : ISessionClosedListener
     ///     Tells the price of learning <paramref name="skill" /> from <paramref name="trainer" /> and keeps the quote for
     ///     the player, or has the trainer say why it cannot teach.
     /// </summary>
-    /// <returns>True when a price was quoted.</returns>
+    /// <returns>
+    ///     True when a price was quoted.
+    /// </returns>
     bool Quote(GameSession session, MobileEntity trainer, SkillType skill);
 
     /// <summary>
@@ -29,6 +31,8 @@ public interface ITrainingService : ISessionClosedListener
     ///     tenths, at most what was quoted, the skill rises at once, skills locked down give way to the total cap, and the
     ///     gold above the price is left with the player.
     /// </summary>
-    /// <returns>True when gold was taken.</returns>
+    /// <returns>
+    ///     True when gold was taken.
+    /// </returns>
     bool Pay(GameSession session, MobileEntity trainer, ItemEntity gold);
 }

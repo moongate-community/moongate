@@ -74,6 +74,11 @@ function training.listen(serial, speaker, keywords)
         return
     end
 
+    -- A ghost is taught nothing, and gets no answer.
+    if mobile.is_dead(speaker) then
+        return
+    end
+
     local here = npc.location(serial)
     local there = mobile.location(speaker)
 

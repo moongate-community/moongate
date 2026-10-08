@@ -42,7 +42,8 @@ public sealed class TrainingServiceTests : IAsyncLifetime
         _player = player;
         _player.AccountId = new Serial(1002);
         _trainer = new MobileEntity { Id = new Serial(100), Name = "an alchemist", Map = MapType.Trammel };
-        _trainer.Skills = [new() { Skill = SkillType.Alchemy, Base = 900 }, new() { Skill = SkillType.Tailoring, Base = 590 }];
+        _trainer.Skills =
+            [new() { Skill = SkillType.Alchemy, Base = 900 }, new() { Skill = SkillType.Tailoring, Base = 590 }];
         _player.Skills = [new() { Skill = SkillType.Alchemy, Base = 0 }, new() { Skill = SkillType.Tailoring, Base = 0 }];
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) })
@@ -96,13 +97,48 @@ public sealed class TrainingServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Quote_ATrainerOfOneHundred_TeachesNoMoreThanFortyTwo()
+    public void Quote_ATrainerAboveOneHundredAndTwentySix_TeachesNoMoreThanFortyTwo()
     {
-        _trainer.Skills[0].Base = 1000;
+        _trainer.Skills[0].Base = 1300;
 
         Quote(SkillType.Alchemy);
 
-        Assert.Equal(" 333", _speech.SaidAffixes[_speech.SaidClilocs.FindIndex(spoken => spoken.Cliloc == 1019077)]);
+        Assert.Equal(" 420", _speech.SaidAffixes[_speech.SaidClilocs.FindIndex(spoken => spoken.Cliloc == 1019077)]);
+    }
+
+    [Fact]
+    public void Quote_NeverTeachesAboveTheCapOfThePlayersSkill()
+    {
+        _player.Skills[0].Cap = 250;
+
+        Quote(SkillType.Alchemy);
+
+        Assert.Equal(" 250", _speech.SaidAffixes[_speech.SaidClilocs.FindIndex(spoken => spoken.Cliloc == 1019077)]);
+    }
+
+    [Fact]
+    public async Task Pay_ByAGhost_TakesNothing()
+    {
+        Quote(SkillType.Alchemy);
+        _player.Body = 0x192;
+        var gold = Gold(300);
+
+        Assert.False(await OnLoopAsync(() => _training.Pay(_session, _trainer, gold)));
+
+        Assert.Empty(_state.SkillsSet);
+        Assert.Equal(300, gold.Amount);
+    }
+
+    [Fact]
+    public async Task Pay_WhenThePlayerLearnedTheSkillMeanwhile_TheTrainerSaysSo()
+    {
+        Quote(SkillType.Alchemy);
+        _player.Skills[0].Base = 300;
+        _speech.SaidClilocs.Clear();
+
+        await OnLoopAsync(() => _training.Pay(_session, _trainer, Gold(100)));
+
+        Assert.Equal(501509, Assert.Single(_speech.SaidClilocs).Cliloc);
     }
 
     [Fact]
@@ -132,7 +168,9 @@ public sealed class TrainingServiceTests : IAsyncLifetime
         Assert.False(Quote(SkillType.Alchemy));
 
         _player.Skills[0].Lock = SkillLockType.Up;
-        _player.Skills.Add(new MobileSkill { Skill = SkillType.Magery, Base = _config.TotalCap * 10, Lock = SkillLockType.Locked });
+        _player.Skills.Add(
+            new MobileSkill { Skill = SkillType.Magery, Base = _config.TotalCap * 10, Lock = SkillLockType.Locked }
+        );
         Assert.False(Quote(SkillType.Alchemy));
 
         Assert.Equal([501510, 501510], _speech.ToldClilocs.Select(told => told.Cliloc));
@@ -142,7 +180,9 @@ public sealed class TrainingServiceTests : IAsyncLifetime
     [Fact]
     public void Quote_WithRoomOnlyInSkillsLockedDown_QuotesWhatTheyCouldGiveUp()
     {
-        _player.Skills.Add(new MobileSkill { Skill = SkillType.Magery, Base = _config.TotalCap * 10 - 100, Lock = SkillLockType.Down });
+        _player.Skills.Add(
+            new MobileSkill { Skill = SkillType.Magery, Base = _config.TotalCap * 10 - 100, Lock = SkillLockType.Down }
+        );
 
         Assert.True(Quote(SkillType.Alchemy));
 
@@ -192,7 +232,9 @@ public sealed class TrainingServiceTests : IAsyncLifetime
     [Fact]
     public async Task Pay_WithTheTotalCapFull_LowersTheSkillsLockedDown_InOrder()
     {
-        _player.Skills.Add(new MobileSkill { Skill = SkillType.Magery, Base = _config.TotalCap * 10 - 100, Lock = SkillLockType.Down });
+        _player.Skills.Add(
+            new MobileSkill { Skill = SkillType.Magery, Base = _config.TotalCap * 10 - 100, Lock = SkillLockType.Down }
+        );
         _player.Skills.Add(new MobileSkill { Skill = SkillType.Hiding, Base = 100, Lock = SkillLockType.Up });
         Quote(SkillType.Alchemy);
         var gold = Gold(100);
@@ -263,7 +305,9 @@ public sealed class TrainingServiceTests : IAsyncLifetime
     private bool Quote(SkillType skill)
     {
         var result = false;
-        _fixture.Network.ExecuteOnLoopAsync(() => result = _training.Quote(_session, _trainer, skill)).GetAwaiter().GetResult();
+        _fixture.Network.ExecuteOnLoopAsync(() => result = _training.Quote(_session, _trainer, skill))
+            .GetAwaiter()
+            .GetResult();
 
         return result;
     }

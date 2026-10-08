@@ -227,8 +227,14 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         var entries = Assert.IsType<LuaTable>(Assert.Single(result.Values));
         Assert.Equal(4, entries.ArrayLength);
         var train = entries[3].Read<LuaTable>();
-        Assert.Equal(("train:0", 6000, 8), (train["id"].Read<string>(), train["cliloc"].Read<int>(), train["range"].Read<int>()));
-        Assert.Equal(("train:" + (int)SkillType.Tailoring, 6000 + (int)SkillType.Tailoring), (entries[4].Read<LuaTable>()["id"].Read<string>(), entries[4].Read<LuaTable>()["cliloc"].Read<int>()));
+        Assert.Equal(
+            ("train:0", 6000, 8),
+            (train["id"].Read<string>(), train["cliloc"].Read<int>(), train["range"].Read<int>())
+        );
+        Assert.Equal(
+            ("train:" + (int)SkillType.Tailoring, 6000 + (int)SkillType.Tailoring),
+            (entries[4].Read<LuaTable>()["id"].Read<string>(), entries[4].Read<LuaTable>()["cliloc"].Read<int>())
+        );
     }
 
     [Fact]
@@ -270,7 +276,10 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         var refused = await RunAsync("on_drag_drop", (long)_aria.Id.Value, (long)gold.Id.Value);
 
         Assert.Empty(_errors);
-        Assert.Equal([true, false], new[] { Assert.IsType<bool>(Assert.Single(taken.Values)), Assert.IsType<bool>(Assert.Single(refused.Values)) });
+        Assert.Equal(
+            [true, false],
+            new[] { Assert.IsType<bool>(Assert.Single(taken.Values)), Assert.IsType<bool>(Assert.Single(refused.Values)) }
+        );
         Assert.Equal(2, _training.Paid.Count);
     }
 

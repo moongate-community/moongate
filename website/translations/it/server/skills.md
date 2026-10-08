@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"8a8ecb922bced5cb216f2b733c1d7410c6c86f69cd5b9a6b93c09a11814d467d","title":"Skill"} -->
+<!-- translation: {"sourceHash":"c7c0efd260ab2e333f6a9c106184e30fdd4b06de9a03034286a4028139ea3a62","title":"Skill"} -->
 
 # Skill
 
@@ -134,16 +134,17 @@ template mobile, quindi un venditore insegna quelle uscite così alte. I banchie
 depositato.
 
 - **Chiedere.** Il menu contestuale del PNG ha una voce *Train* per ogni abilità che insegna e di cui il giocatore sa meno, da
-  8 caselle. Dire *train* entro 4 caselle fa elencare al PNG le abilità che insegna, o dire che non ha nulla da insegnare.
+  8 caselle. Dire *train* entro 4 caselle, da vivo, fa elencare al PNG le abilità che insegna, o dire che non ha nulla da insegnare.
 - **Prezzo.** Il PNG insegna fino a un terzo del suo valore, al massimo 42,0 e mai oltre il tetto dell'abilità del giocatore.
   Scegliere una voce gli fa dire il prezzo: 1 oro per ogni decimo di punto, quindi 10 oro per un punto intero (420 oro per
-  42,0), e che per meno insegna meno. Il preventivo dura finché non viene pagato, ne viene chiesto un altro o la sessione finisce.
+  42,0), e che per meno insegna meno. Il preventivo dura finché non viene pagato, viene dato un altro prezzo o la sessione finisce.
 - **Pagare.** Il giocatore trascina oro sul PNG, da 2 caselle. L'abilità sale subito di un decimo di punto per ogni moneta,
   fino a quanto preventivato; si prende solo l'oro necessario e il resto della pila resta al giocatore. Un trascinamento
   senza preventivo di quel PNG, o di qualunque cosa che non sia oro, torna indietro.
 - **Rifiuti.** Il giocatore sa già quanto il PNG insegnerebbe (*thou knowest all I can teach*) o di più; l'abilità non è
-  bloccata su su, oppure il tetto totale (`ultima.skills.total_cap`) non lascia posto nemmeno abbassando le abilità
-  bloccate verso il basso, che cedono in ordine come per un avanzamento; il giocatore è morto.
+  bloccata verso l'alto, oppure il tetto totale (`ultima.skills.total_cap`) non lascia posto nemmeno abbassando le abilità
+  bloccate verso il basso, che cedono nell'ordine delle abilità; il giocatore è morto. Un oro trascinato che non può più
+  insegnare riceve la stessa risposta, e il preventivo viene scartato.
 
 Uno script dà a un PNG queste lezioni con il modulo `trainer` e `common/training.lua`; `shopkeeper.lua` e
 `healer.lua` lo fanno già. `trainer.skills(npc, player)` elenca le abilità, `trainer.quote(npc, player, skill)` dà un
