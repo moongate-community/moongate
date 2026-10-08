@@ -124,7 +124,7 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
-| 4.1 | 🟡 | **Vendors**: buy, sell, restock; skill trainers. Done: the bank box, balance, deposit and withdraw by speech, bank checks, gold handed to the banker, [buying from and selling to vendors](vendors.md) with ModernUO's shops; restock is next | Gives gold a use | UOX3 `shoplist.dfn` (38 lists used by 86 NPCs); prices are converted already |
+| 4.1 | 🟡 | **Vendors**: buy, sell, restock; skill trainers. Done: the bank box, balance, deposit and withdraw by speech, bank checks, gold handed to the banker, [buying from and selling to vendors](vendors.md) with ModernUO's shops, restock and resale; skill trainers are next | Gives gold a use | UOX3 `shoplist.dfn` (38 lists used by 86 NPCs); prices are converted already |
 | 4.2 | ❌ | **Secure trade** between players | Player economy | |
 | 4.3 | ❌ | **Spell casting and Magery**: spellbooks, reagents, scrolls, words of power, the 64 spells | Half of all characters cast | UOX3 `spells.dfn` (mana, reagents, delay, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebooks** | The way players travel; needs the region rules of 3.5 | |

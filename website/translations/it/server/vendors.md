@@ -1,11 +1,11 @@
-<!-- translation: {"sourceHash":"30093cab3aacf5a1af06c3dce4361c7a4e5e22f832d2f74f142211b17723ffcf","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"5052518230174e22df0e33be96d4dbe818766855496c4716ce3e16e0e5ba275a","title":"Venditori"} -->
 
 # Venditori
 
 Un venditore PNG vende merce in cambio di oro, come in ModernUO. Il giocatore apre la finestra del negozio di un venditore,
 vede cosa vende con il prezzo di un pezzo, sceglie cosa comprare e riceve la merce nello zaino. Ciò che ogni venditore vende è un
-[negozio](data-files/shops.md), convertito dalle classi `SBInfo` di ModernUO. Il giocatore può anche vendere al venditore. Il rifornimento
-degli scaffali non è ancora realizzato.
+[negozio](data-files/shops.md), convertito dalle classi `SBInfo` di ModernUO. Il giocatore può anche vendere al venditore, e gli
+scaffali si riempiono di nuovo con il tempo.
 
 ## Aprire la finestra
 
@@ -58,14 +58,29 @@ Il giocatore sceglie gli oggetti e quanti pezzi di ciascuno, e conferma. Una ven
 - Il venditore deve essere raggiungibile e il giocatore vivo, e un assassino in un luogo sorvegliato viene rifiutato, come per un acquisto.
 - L'oro è pagato in pile da 60000 nello zaino, o nella cassetta di banca quando lo zaino non ha posto per esse. Quando
   nessuno dei due ha posto, non si vende nulla e al giocatore viene detto che lo zaino è pieno.
-- I pezzi vengono tolti dagli oggetti, e un oggetto venduto per intero viene eliminato. Il venditore non li tiene ancora sui
-  suoi scaffali.
+- I pezzi vengono tolti dagli oggetti, e un oggetto venduto per intero viene eliminato. Il venditore li offre di nuovo, vedi
+  [Rivendita](#resale).
 
 ## Scorta
 
 Ogni venditore parte con la quantità di ogni riga del suo negozio. Un acquisto la riduce e la finestra successiva mostra ciò che
-resta. La scorta è tenuta solo in memoria: un riavvio restituisce a ogni venditore gli scaffali pieni, come in ModernUO. Il
-rifornimento nel tempo non è ancora realizzato.
+resta. La scorta è tenuta solo in memoria: un riavvio restituisce a ogni venditore gli scaffali pieni, come in ModernUO.
+
+## Rifornimento
+
+Un venditore si rifornisce quando un giocatore apre la sua finestra ed è passata più di un'ora dall'ultimo rifornimento; un venditore visto
+per la prima volta fa solo partire l'orologio. Ogni riga viene poi riempita fino al suo massimo, che cambia in base a come la riga si è venduta:
+
+- Una riga esaurita ha il doppio del massimo, fino a 999.
+- Una riga che ha venduto meno della metà del suo massimo viene ridotta alla metà, finché resta sopra 20; 999 viene ridotto a 640.
+- Una riga che ha venduto la metà o più mantiene il suo massimo.
+
+## Rivendita
+
+Ciò che un giocatore ha venduto a un venditore viene offerto di nuovo nella sua finestra, dopo la merce del negozio, a 1,9 volte il prezzo che il
+venditore ha pagato per un pezzo (arrotondato a oro intero). Il venditore lo tiene per un'ora dall'ultima volta che la stessa merce gli è stata venduta,
+oppure finché si esaurisce. La merce torna come nuovi oggetti dello stesso template e colore: ciò che l'oggetto aveva addosso, come un nome o
+delle cariche, non viene conservato. Come la scorta, lo scaffale della rivendita è tenuto solo in memoria.
 
 ## Cosa riceve il client
 
@@ -91,7 +106,6 @@ Lo script di un venditore che ne ha uno proprio, come `banker.lua` o `healer.lua
 
 ## Limiti
 
-- Il riacquisto e il rifornimento degli scaffali sono la prossima parte.
 - Istruttori di abilità, animali, ordini di lavorazione, il moltiplicatore dei prezzi delle città, venditori dei giocatori e l'oro
   che un venditore possiede non sono realizzati.
 - I negozi forniti con il server contengono le righe di ModernUO che hanno un template oggetto. Il convertitore segnala le

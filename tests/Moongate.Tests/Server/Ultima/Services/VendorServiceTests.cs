@@ -17,6 +17,7 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Types.Bank;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -38,6 +39,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
     private readonly StubLineOfSightService _sight = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly StubWeightService _weight = new();
+    private readonly SettableClock _clock = new();
 
     private readonly RegionContent _town = new()
     {
@@ -125,7 +127,8 @@ public sealed class VendorServiceTests : IAsyncLifetime
                 )
             ),
             _weight,
-            _view
+            _view,
+            time: _clock
         );
     }
 
@@ -689,6 +692,73 @@ public sealed class VendorServiceTests : IAsyncLifetime
         Assert.Null(_session.Get(VendorSessionKeys.SellWindow));
     }
 
+    [Fact]
+    public async Task OpenBuy_AShelfThatSoldOut_IsFilledAfterAnHourWithTwiceTheMaximum()
+    {
+        Backpack();
+        _bank.Carried[_player.Id] = 100_000;
+        var lines = await OpenAsync();
+        await BuyAsync(Reply(_vendor.Id, (lines[0], 20)));
+        _clock.Advance(TimeSpan.FromMinutes(61));
+
+        await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
+
+        Assert.Equal(40, Shelf(0x103B));
+    }
+
+    [Fact]
+    public async Task OpenBuy_AShelfOfTwentyOrLess_NeverStocksLessThanItsMaximum()
+    {
+        Backpack();
+        _bank.Carried[_player.Id] = 100_000;
+        var lines = await OpenAsync();
+        await BuyAsync(Reply(_vendor.Id, (lines[0], 2)));
+        _clock.Advance(TimeSpan.FromMinutes(61));
+        await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
+
+        // The maximum is halved only above 20 pieces: a shelf of 20 that sold little is filled to 20 again.
+        Assert.Equal(20, Shelf(0x103B));
+    }
+
+    [Fact]
+    public async Task OpenBuy_BeforeAnHour_DoesNotRestock()
+    {
+        Backpack();
+        _bank.Carried[_player.Id] = 100_000;
+        var lines = await OpenAsync();
+        await BuyAsync(Reply(_vendor.Id, (lines[0], 20)));
+        _clock.Advance(TimeSpan.FromMinutes(59));
+
+        await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
+
+        Assert.Equal(0, _fixture.Sender.Sent.OfType<ContainerContentPacket>().Last().Items.Count(item => item.ItemId == 0x103B));
+    }
+
+    [Fact]
+    public async Task Sell_WhatThePlayerSold_IsOfferedAgainAtOnePointNineTimesThePrice_ForAnHour()
+    {
+        var bread = Carried(Backpack(), "bread", 0x103B, 5);
+        await OpenSellAsync();
+        await SellAsync(SellReply(_vendor.Id, (bread.Id, 4)));
+        _fixture.Sender.Sent.Clear();
+
+        await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
+
+        var resale = _fixture.Sender.Sent.OfType<ContainerContentPacket>().Single().Items.Single(item => item.Amount == 4);
+        Assert.Equal(0x103B, resale.ItemId);
+        // 3 gold a piece is sold again at 5 (3 * 1.9 = 5.7, cut to 5), after the two goods of the shop.
+        Assert.Equal(new VendorBuyListEntry(5, "bread"), _fixture.Sender.Sent.OfType<VendorBuyListPacket>().Single().Lines[^1]);
+
+        _fixture.Sender.Sent.Clear();
+        _clock.Advance(TimeSpan.FromMinutes(61));
+        await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
+
+        Assert.DoesNotContain(
+            _fixture.Sender.Sent.OfType<ContainerContentPacket>().Single().Items,
+            item => item.Amount == 4
+        );
+    }
+
     public async Task DisposeAsync()
     {
         await _fixture.DisposeAsync();
@@ -738,6 +808,12 @@ public sealed class VendorServiceTests : IAsyncLifetime
         Assert.True(VendorBuyReplyPacket.TryParse(bytes.ToArray(), out var packet));
 
         return packet;
+    }
+
+    // The pieces of the first shelf of a graphic, as the last window showed them.
+    private int Shelf(int graphic)
+    {
+        return _fixture.Sender.Sent.OfType<ContainerContentPacket>().Last().Items.Single(item => item.ItemId == graphic).Amount;
     }
 
     private ItemEntity Carried(ItemEntity container, string template, int graphic, int amount)

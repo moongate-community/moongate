@@ -2,8 +2,8 @@
 
 An NPC vendor sells goods for gold, as in ModernUO. A player opens the shop window of a vendor, sees what it sells
 with the price of a piece, picks what to buy and gets the goods in the backpack. What each vendor sells is a
-[shop](data-files/shops.md), converted from ModernUO's `SBInfo` classes. A player can also sell to a vendor. The
-restock of the shelves is not built yet.
+[shop](data-files/shops.md), converted from ModernUO's `SBInfo` classes. A player can also sell to a vendor, and the
+shelves fill again with time.
 
 ## Open the window
 
@@ -56,14 +56,29 @@ The player chooses items and how many pieces of each, and confirms. A sale is ev
 - The vendor must be in reach and the player alive, and a murderer in a guarded place is refused, as for a purchase.
 - The gold is paid in piles of 60000 in the backpack, or in the bank box when the backpack has no room for them. When
   neither has the room, nothing is sold and the player is told the backpack is full.
-- The pieces are taken from the items, and an item sold whole is deleted. The vendor does not keep them on its shelves
-  yet.
+- The pieces are taken from the items, and an item sold whole is deleted. The vendor offers them again, see
+  [Resale](#resale).
 
 ## Stock
 
 Each vendor starts with the amount of each line of its shop. A purchase lowers it, and the next window shows what is
-left. The stock is kept in memory only: a restart gives every vendor its full shelves again, as in ModernUO. Restock
-over time is not built yet.
+left. The stock is kept in memory only: a restart gives every vendor its full shelves again, as in ModernUO.
+
+## Restock
+
+A vendor restocks when a player opens its window and more than an hour has passed since the last restock; a vendor seen
+for the first time only starts the clock. Each line is then filled to its maximum, which changes with how the line sold:
+
+- A line that sold out has twice the maximum, up to 999.
+- A line that sold less than half of its maximum is cut to half of it, as long as it stays above 20; 999 is cut to 640.
+- A line that sold half or more keeps its maximum.
+
+## Resale
+
+What a player sold to a vendor is offered again in its window, after the goods of the shop, at 1.9 times the price the
+vendor paid for a piece (cut to whole gold). The vendor keeps it for an hour from the last time the same goods were sold
+to it, or until it sells out. The goods come back as new items of the same template and hue: what the item had on it, such
+as a name or charges, is not kept. Like the stock, the resale shelf is kept in memory only.
 
 ## What the client receives
 
@@ -89,7 +104,6 @@ A script of a vendor that has its own, such as `banker.lua` or `healer.lua`, can
 
 ## Limits
 
-- Buy-back and the restock of the shelves are the next slice.
 - Skill trainers, pets, bulk order deeds, the price scalar of towns, player vendors and the gold a vendor holds are
   not built.
 - The shops shipped with the server hold the lines of ModernUO that have an item template. The converter reports the

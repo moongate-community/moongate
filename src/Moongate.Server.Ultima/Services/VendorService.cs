@@ -11,6 +11,7 @@ using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.Vendors;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Utils;
@@ -37,8 +38,8 @@ public sealed class VendorService : IVendorService
     private const int HighGraphicCliloc = 1078872;
     private const int HighGraphic = 0x4000;
     private const int ShopContainerGraphic = 0x0E75;
-    private const int StockPruneAbove = 1024;
     private const int MaxSellList = 250;
+    private const double ResaleMarkup = 1.9;
     private const int MaxSellReplyLines = 100;
     private const int ClilocBackpackFull = 1048147;
     private const string NothingToSell = "You have nothing I would be interested in.";
@@ -51,7 +52,7 @@ public sealed class VendorService : IVendorService
     private const int ClilocPaidFromBank = 1151638;
 
     private readonly ILogger _logger = Log.ForContext<VendorService>();
-    private readonly Dictionary<(Serial Vendor, string Line), int> _stock = new();
+    private readonly VendorShelves _shelves = new();
     private readonly IShopService _shops;
     private readonly IItemTemplateService _templates;
     private readonly ITileDataService _tiles;
@@ -69,6 +70,7 @@ public sealed class VendorService : IVendorService
     private readonly IWeightService _weight;
     private readonly IWorldViewService _view;
     private readonly IFatigueService? _fatigue;
+    private readonly TimeProvider _time;
     private long _nextVirtual = Serial.MaxVirtual;
 
     public VendorService(
@@ -88,7 +90,8 @@ public sealed class VendorService : IVendorService
         IContainerLayoutService layouts,
         IWeightService weight,
         IWorldViewService view,
-        IFatigueService? fatigue = null
+        IFatigueService? fatigue = null,
+        TimeProvider? time = null
     )
     {
         _shops = shops;
@@ -108,6 +111,7 @@ public sealed class VendorService : IVendorService
         _weight = weight;
         _view = view;
         _fatigue = fatigue;
+        _time = time ?? TimeProvider.System;
     }
 
     public bool OpenBuy(GameSession session, MobileEntity vendor)
@@ -128,17 +132,28 @@ public sealed class VendorService : IVendorService
             return false;
         }
 
-        PruneStock();
+        var now = _time.GetUtcNow().UtcDateTime;
+        _shelves.Prune(_mobiles.IsInWorld);
+        _shelves.Restock(vendor.Id, now, shop.Buy);
 
         var shown = new List<VendorWindowLine>();
 
         foreach (var line in shop.Buy)
         {
-            if (shown.Count < MaxWindowLines &&
-                _templates.TryGet(line.Item, out var template) &&
-                StockOf(vendor, line) > 0)
+            var stock = _shelves.Of(vendor.Id, line);
+
+            if (shown.Count < MaxWindowLines && _templates.TryGet(line.Item, out var template) && stock.Current > 0)
             {
-                shown.Add(new(line, template, StockKey(line)));
+                shown.Add(new(line, template, stock));
+            }
+        }
+
+        // What players sold is offered after the shop's own goods.
+        foreach (var resale in _shelves.ResaleOf(vendor.Id, now))
+        {
+            if (shown.Count < MaxWindowLines && _templates.TryGet(resale.Line.Item, out var template))
+            {
+                shown.Add(new(resale.Line, template, resale.Stock));
             }
         }
 
@@ -162,7 +177,7 @@ public sealed class VendorService : IVendorService
                 new(
                     serial,
                     (int)line.Template.ItemId.Value,
-                    StockOf(vendor, line.Line),
+                    line.Stock.Current,
                     index + 1,
                     1,
                     0,
@@ -230,7 +245,7 @@ public sealed class VendorService : IVendorService
             return;
         }
 
-        if (!TryWanted(vendor, window, packet, out var wanted))
+        if (!TryWanted(window, packet, out var wanted))
         {
             End(session, window);
 
@@ -277,7 +292,7 @@ public sealed class VendorService : IVendorService
 
         foreach (var (line, amount) in wanted)
         {
-            _stock[(vendor.Id, line.Stock)] = StockOf(vendor, line.Line) - amount;
+            line.Stock.Current -= amount;
         }
 
         End(session, window);
@@ -387,12 +402,25 @@ public sealed class VendorService : IVendorService
             return;
         }
 
+        var now = _time.GetUtcNow().UtcDateTime;
+
         foreach (var (item, amount) in chosen)
         {
+            // What the vendor now offers again, noted before the item may be gone.
+            var resale = new ShopLine
+            {
+                Item = item.TemplateId ?? "", Price = Math.Max(1, (int)(window.Prices[item.Id] * ResaleMarkup)),
+                Amount = amount, Hue = item.Hue.Value, Name = NameOf(item)
+            };
+
             if (!_handling.Consume(item, amount))
             {
                 _logger.Error("Vendor: {Amount} of {Item} could not be taken after the gold was paid", amount, item.Id);
+
+                continue;
             }
+
+            _shelves.AddResale(vendor.Id, resale, amount, now);
         }
 
         EndSell(session, window);
@@ -419,11 +447,6 @@ public sealed class VendorService : IVendorService
         Close(session);
     }
 
-    private static string StockKey(ShopLine line)
-    {
-        return $"{line.Item}|{line.Price}|{line.Hue}";
-    }
-
     private static string NameOf(VendorWindowLine line)
     {
         if (line.Line.Name.Length > 0)
@@ -434,27 +457,6 @@ public sealed class VendorService : IVendorService
         var graphic = (int)line.Template.ItemId.Value;
 
         return (graphic >= HighGraphic ? HighGraphicCliloc + graphic : GraphicCliloc + (graphic & GraphicMask)).ToString();
-    }
-
-    // The stock of vendors that are gone, such as the ones that respawned with another serial.
-    private void PruneStock()
-    {
-        if (_stock.Count <= StockPruneAbove)
-        {
-            return;
-        }
-
-        foreach (var key in _stock.Keys.Where(key => !_mobiles.IsInWorld(key.Vendor)).ToArray())
-        {
-            _stock.Remove(key);
-        }
-    }
-
-    private int StockOf(MobileEntity vendor, ShopLine line)
-    {
-        return _stock.TryGetValue((vendor.Id, StockKey(line)), out var left)
-            ? left
-            : _stock[(vendor.Id, StockKey(line))] = line.Amount;
     }
 
     private bool IsStack(Data.Templates.Items.ItemTemplate template)
@@ -499,7 +501,6 @@ public sealed class VendorService : IVendorService
 
     // The lines of the reply as the lines of the window, a line sent twice added up, none above its stock.
     private bool TryWanted(
-        MobileEntity vendor,
         VendorWindow window,
         VendorBuyReplyPacket packet,
         out Dictionary<VendorWindowLine, int> wanted
@@ -517,7 +518,7 @@ public sealed class VendorService : IVendorService
             wanted[line] = wanted.GetValueOrDefault(line) + chosen.Amount;
         }
 
-        return wanted.All(pair => pair.Value <= StockOf(vendor, pair.Key.Line));
+        return wanted.All(pair => pair.Value <= pair.Key.Stock.Current);
     }
 
     private bool TryMake(Dictionary<VendorWindowLine, int> wanted, List<ItemEntity> made)

@@ -24,6 +24,8 @@ public sealed class VendorBuyListPacket : BasePacket<VendorBuyListPacket>, IOutg
 
     public Serial ShopContainer { get; }
 
+    public IReadOnlyList<VendorBuyListEntry> Lines => _lines;
+
     public VendorBuyListPacket(Serial shopContainer, IEnumerable<VendorBuyListEntry> lines)
     {
         ArgumentNullException.ThrowIfNull(lines);
