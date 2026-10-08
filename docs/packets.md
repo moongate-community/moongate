@@ -72,6 +72,9 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xAF` | `DeathAnimationPacket` | Outgoing | Fixed 13 | — |
 | `0x2C` | `DeathStatusPacket` | Outgoing | Fixed 2 | — |
 | `0x89` | `CorpseEquipmentPacket` | Outgoing | Variable | — |
+| `0x74` | `VendorBuyListPacket` | Outgoing | Variable | The prices and names of a vendor's shop window |
+| `0x3B` | `VendorEndPacket` | Outgoing | Fixed 8 | Closes the shop window |
+| `0x3B` | `VendorBuyReplyPacket` | Incoming | Variable, minimum 8 | `VendorBuyReplyPacketHandler`: the purchase of the shop window |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
