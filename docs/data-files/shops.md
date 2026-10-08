@@ -59,4 +59,5 @@ graphic that has only material variants (agapite, bronze and so on) and no plain
 vendor buys a piece whatever it is made of, so the sell lines of an armor or weapon graphic list every era and material
 template. The report counts what it left out: types with no item template, pets, lines
 and `SBInfo` classes that depend on the era or the vendor, and vendor classes with no mobile template. A `switch`
-that picks a random set of `SBInfo` for each vendor is read as the union of its sets.
+that picks a random set of `SBInfo` for each vendor is read as the union of its sets. A sell price above the lowest price any vendor asks for the same item is lowered to
+it, so that buying from one vendor and selling to another is never a profit.

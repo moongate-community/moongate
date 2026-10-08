@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"1f599ad47d77a22c393f4998003857170852c751706d74bb4c078647ac35fa5e","title":"Negozi"} -->
+<!-- translation: {"sourceHash":"3d44cc199a92d8a05ac1aa82d4c4a912b8f4cffa4dfddad36a3a6514372b3105","title":"Negozi"} -->
 
 # Negozi
 
@@ -60,4 +60,5 @@ grafico che ha solo varianti di materiale (agapite, bronzo e così via) e nessun
 venditore compra un pezzo di qualunque materiale, quindi le righe di vendita di un grafico di armature o armi elencano ogni template
 di epoca e di materiale. Il rapporto conta ciò che ha lasciato fuori: tipi senza template oggetto, animali, righe
 e classi `SBInfo` che dipendono dall'epoca o dal venditore, e classi di venditore senza template mobile. Uno `switch`
-che sceglie un insieme casuale di `SBInfo` per ogni venditore viene letto come l'unione dei suoi insiemi.
+che sceglie un insieme casuale di `SBInfo` per ogni venditore viene letto come l'unione dei suoi insiemi. Un prezzo di vendita superiore al prezzo più basso a cui un venditore chiede lo stesso oggetto viene abbassato a
+quel prezzo, così comprare da un venditore e vendere a un altro non è mai un guadagno.

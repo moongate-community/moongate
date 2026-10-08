@@ -139,6 +139,8 @@ internal static class ModernUoVendorConverter
                 }
             }
 
+            CapSellPrices(files.Select(file => file.Shop.Shop[0]).ToList(), report);
+
             if (files.Count == 0)
             {
                 ConverterOutput.WriteReport(output, report);
@@ -256,6 +258,27 @@ internal static class ModernUoVendorConverter
         return vendors.Count == 0
             ? null
             : new() { Id = id, Vendors = vendors, Buy = lines, Sell = SellLines(vendor, sbInfos, index, report) };
+    }
+
+    // No vendor pays more for a piece than the lowest price any vendor asks for it: buying from one vendor and selling to
+    // another is never a profit. ModernUO's own tables have a few such pairs.
+    private static void CapSellPrices(List<ShopDefinition> shops, ConversionReport report)
+    {
+        var lowestBuy = new Dictionary<string, int>(StringComparer.Ordinal);
+
+        foreach (var line in shops.SelectMany(shop => shop.Buy))
+        {
+            lowestBuy[line.Item] = Math.Min(line.Price, lowestBuy.GetValueOrDefault(line.Item, int.MaxValue));
+        }
+
+        foreach (var line in shops.SelectMany(shop => shop.Sell))
+        {
+            if (lowestBuy.TryGetValue(line.Item, out var asked) && line.Price > asked)
+            {
+                report.Count($"sell price of {line.Item} lowered to {asked}, the lowest price it is sold at");
+                line.Price = asked;
+            }
+        }
     }
 
     // What the vendor buys: the templates of the graphics its shops sell a type under, else the templates named like it.

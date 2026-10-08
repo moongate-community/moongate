@@ -3177,7 +3177,7 @@ name = ""
 
 [[shop.sell]]
 item = "0x1c02_lbr"
-price = 71
+price = 62
 amount = 1
 hue = 0
 name = ""

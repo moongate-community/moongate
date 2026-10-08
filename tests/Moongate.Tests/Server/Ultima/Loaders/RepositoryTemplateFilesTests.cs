@@ -609,6 +609,18 @@ public sealed class RepositoryTemplateFilesTests
             vendor => Assert.Contains(scripts[vendor], new[] { "shopkeeper", "healer", "banker" })
         );
         Assert.Equal("shopkeeper", scripts["m_baker"]);
+
+        // Buying from one vendor and selling to another is never a profit.
+        var lowestBuy = shops.SelectMany(shop => shop.Buy)
+            .GroupBy(line => line.Item)
+            .ToDictionary(group => group.Key, group => group.Min(line => line.Price));
+        Assert.All(
+            shops.SelectMany(shop => shop.Sell).Where(line => lowestBuy.ContainsKey(line.Item)),
+            line => Assert.True(
+                line.Price <= lowestBuy[line.Item],
+                $"{line.Item} is bought at {line.Price} but sold from {lowestBuy[line.Item]}"
+            )
+        );
     }
 
     [Fact]

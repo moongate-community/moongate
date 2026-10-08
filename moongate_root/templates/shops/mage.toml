@@ -160,7 +160,7 @@ hue = 0
 name = ""
 [[shop.sell]]
 item = "0x1718_wizard's_hat"
-price = 15
+price = 11
 amount = 1
 hue = 0
 name = ""

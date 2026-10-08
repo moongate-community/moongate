@@ -208,6 +208,22 @@ public sealed class ModernUoVendorConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_APriceASellLinePaysAboveTheLowestPriceItIsSoldAt_IsLowered_SoNoOneProfits()
+    {
+        Prepare();
+        // The baker pays 9 for bread; the same loaf is sold at 6 by this baker.
+        var shop = BakerShop.Replace("Add(typeof(BreadLoaf), 3);", "Add(typeof(BreadLoaf), 9);");
+        Write("Vendors/SBInfo/SBBaker.cs", shop);
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var baker = Read("baker").Shop[0];
+        Assert.Equal(6, baker.Sell.First(line => line.Item == "0x103b_bread_loaf").Price);
+        Assert.Equal(5, baker.Sell.First(line => line.Item == "0x103c_bread_loaf").Price);
+        Assert.Contains("lowered to", _output.ToString());
+    }
+
+    [Fact]
     public void Run_WhatItCannotMap_IsDropped_AndTheReportSaysWhy()
     {
         Prepare();
