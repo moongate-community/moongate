@@ -1,0 +1,143 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+[[shop]]
+id = "leather_worker"
+vendors = ["leatherworker", "m_leatherworker", "f_leatherworker"]
+sell = []
+[[shop.buy]]
+item = "0x13cc_aos"
+price = 101
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13c6_aos"
+price = 60
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13c7_aos"
+price = 74
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13cb_aos"
+price = 80
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1db9_aos"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1c06_aos"
+price = 116
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1c0a_aos"
+price = 97
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1c00_aos"
+price = 86
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1c08_aos"
+price = 87
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13dc_ranger"
+price = 87
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13db_aos"
+price = 128
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13d5_aos"
+price = 79
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13d6_aos"
+price = 73
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13da_aos"
+price = 103
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1c02_aos"
+price = 142
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1c0c_aos"
+price = 120
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1078_pile_of_hides"
+price = 4
+amount = 999
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1711_thigh_boots"
+price = 56
+amount = 10
+hue = 0
+name = ""

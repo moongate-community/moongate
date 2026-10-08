@@ -1,0 +1,143 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+[[shop]]
+id = "weaponsmith"
+vendors = ["weaponsmith", "m_weaponsmith", "f_weaponsmith"]
+sell = []
+[[shop.buy]]
+item = "0x13f8_aos"
+price = 16
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f5c_aos"
+price = 28
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e89_aos"
+price = 19
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e81_aos"
+price = 20
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13e3_aos"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f62_aos"
+price = 31
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f43_aos"
+price = 27
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f45_aos"
+price = 30
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f4d_aos"
+price = 60
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f47_aos"
+price = 26
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13f6_aos"
+price = 14
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x143e_aos"
+price = 42
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f5e_aos"
+price = 35
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13b9_aos"
+price = 55
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f49_aos"
+price = 40
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f4b_aos"
+price = 52
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e87_aos"
+price = 19
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0ec4_aos"
+price = 14
+amount = 20
+hue = 0
+name = ""

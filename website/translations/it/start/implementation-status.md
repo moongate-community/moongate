@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5c574d3f418100d87b076f62152c60201995c7f3a60f703c9d2bf9872b184239","title":"Stato dell'implementazione"} -->
+<!-- translation: {"sourceHash":"8fdb61c73ff42114268f9fc7d000ad6574d3f7e33fc266737c8198f82d0766ba","title":"Stato dell'implementazione"} -->
 
 # Stato dell'implementazione
 
@@ -47,6 +47,8 @@ La [roadmap](roadmap.md) indica l'ordine in cui vengono realizzati i sistemi man
 - Aprire la cassetta di banca da un banchiere dicendo *bank*, in qualsiasi lingua del client; chiedere il *balance*,
   *withdraw* e *deposit* dell'oro tramite parlato, farsi emettere un *check* bancario e incassarlo con un doppio
   clic, oppure consegnare oro e assegni al banchiere per depositarli. La cassetta contiene un numero limitato di oggetti: [Banca](bank.md).
+- Comprare dai venditori: scegliere *Buy* nel loro menu contestuale o dire *vendor buy*, scegliere nella finestra del negozio e pagare con l'oro
+  dello zaino, o della banca da 2000: [Venditori](vendors.md).
 - Recuperare punti vita, mana e stamina nel tempo, avere fame e sete, mangiare e bere; stancarsi correndo o trasportando troppo peso.
 - Aprire i forzieri del tesoro dei dungeon e le casse dei negozi che si riempiono; leggere un orologio; cambiare modalità guerra.
 - Tingere i vestiti: le tinture danno alla vasca il colore scelto nel selettore del client, e la vasca lo trasferisce agli abiti.
@@ -140,7 +142,7 @@ Vedi tutti i comandi in [Comandi](commands.md).
   [Il tuo primo gump](gump-tutorial.md).
 - Gli script di mobile e oggetti sono associati dai template tramite `script_id`. Script forniti:
   `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `readable_book.lua`, `readable_scroll.lua`, `bulletin_board.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
-  `banker.lua`, e i gatti Orione e Vega; i gump del tutorial hanno `gumps/tutorial_greeting.lua`
+  `banker.lua`, `shopkeeper.lua`, e i gatti Orione e Vega; i gump del tutorial hanno `gumps/tutorial_greeting.lua`
   e `gumps/tutorial_list.lua`.
 - Non ancora: timer sui mobile, eventi di combattimento e abilità.
 

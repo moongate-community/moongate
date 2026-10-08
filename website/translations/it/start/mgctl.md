@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"4b250e6aa167487b4189a14e361b2d2051c1db618195d87931ed221fbcc84a16","title":"mgctl, lo strumento Moongate"} -->
+<!-- translation: {"sourceHash":"7287a4c205305ca5b39d7a2fbf73b5158e54cac9810b3411e776df1f89ef9874","title":"mgctl, lo strumento Moongate"} -->
 
 # mgctl, lo strumento Moongate
 
@@ -15,6 +15,7 @@ eseguibili, `migration-runner/Moongate.MigrationRunner` e `mg-uoxconv`; in quel 
 | `mgctl convert uox ...` | Converte i contenuti `.dfn` di UOX3 in TOML; vedi [Migrare da UOX3](uox3-migration.md) |
 | `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters\|modernuo-locations\|modernuo-chests ...` | Converte spawner, insegne, teletrasporti, luoghi con nome e casse del tesoro di ModernUO; vedi [Migrare da UOX3](uox3-migration.md#signs-of-modernuo) |
 | `mgctl convert modernuo-books --source <folder> --destination <folder>` | Importa testi statici dei libri; vedi [Importare i testi dei libri](book-content-import.md) |
+| `mgctl convert modernuo-vendors --source <folder> --items <folder> --mobiles <folder> --destination <folder>` | Converte i negozi dei venditori di ModernUO; vedi [Negozi](data-files/shops.md#convert-modernuos-shops) |
 | `mgctl completion bash\|zsh\|fish` | Stampa lo script che completa mgctl con TAB; vedi [Completamento con TAB](#tab-completion) |
 
 `mgctl --help` elenca i comandi e `mgctl <command> --help` le opzioni di uno di essi.

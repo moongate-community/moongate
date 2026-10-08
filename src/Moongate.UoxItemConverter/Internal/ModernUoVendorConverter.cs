@@ -8,7 +8,7 @@ using Moongate.UoxItemConverter.Data.Internal.Vendors;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Converts the shops of ModernUO (<c>Mobiles/Vendors/SBInfo/*.cs</c> and the vendor classes in
+///     Converts the shops of ModernUO ( <c>Mobiles/Vendors/SBInfo/*.cs</c> and the vendor classes in
 ///     <c>Mobiles/Vendors/NPC</c>) into <c>templates/shops/&lt;vendor&gt;.toml</c>, one file a vendor class. Nothing is
 ///     compiled or run: the C# is read as syntax. A type becomes the item template with the graphic ModernUO gives the
 ///     line; a type with no template is dropped and counted in the report.
@@ -89,10 +89,16 @@ internal static class ModernUoVendorConverter
         try
         {
             var report = new ConversionReport();
-            var sbInfos = ReadAll(Path.Combine(root, "SBInfo"), (text, path) => ModernUoVendorSourceReader.ReadSbInfos(text, path, report))
+            var sbInfos = ReadAll(
+                    Path.Combine(root, "SBInfo"),
+                    (text, path) => ModernUoVendorSourceReader.ReadSbInfos(text, path, report)
+                )
                 .GroupBy(info => info.Name, StringComparer.Ordinal)
                 .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
-            var vendors = ReadAll(Path.Combine(root, "NPC"), (text, path) => ModernUoVendorSourceReader.ReadVendors(text, path, report));
+            var vendors = ReadAll(
+                Path.Combine(root, "NPC"),
+                (text, path) => ModernUoVendorSourceReader.ReadVendors(text, path, report)
+            );
             var itemsByGraphic = ItemsByGraphic(items);
             var mobileIds = Ids(mobiles);
             var claimed = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -117,11 +123,15 @@ internal static class ModernUoVendorConverter
             foreach (var (path, shop) in files)
             {
                 ConverterOutput.WriteToml(path, Header, shop);
-                output.WriteLine($"shops/{Path.GetFileName(path)} ({shop.Shop[0].Buy.Count} lines, {shop.Shop[0].Vendors.Count} vendors)");
+                output.WriteLine(
+                    $"shops/{Path.GetFileName(path)} ({shop.Shop[0].Buy.Count} lines, {shop.Shop[0].Vendors.Count} vendors)"
+                );
             }
 
             ConverterOutput.WriteReport(output, report);
-            output.WriteLine($"Wrote {files.Count} shop(s), {files.Sum(file => file.Shop.Shop[0].Buy.Count)} lines from ModernUO's vendors.");
+            output.WriteLine(
+                $"Wrote {files.Count} shop(s), {files.Sum(file => file.Shop.Shop[0].Buy.Count)} lines from ModernUO's vendors."
+            );
 
             return 0;
         }
@@ -243,7 +253,9 @@ internal static class ModernUoVendorConverter
 
         if (candidates.Count > 1)
         {
-            report.Count($"graphic 0x{line.Graphic:x4} ({line.TypeName}) has {candidates.Count} item templates, took {candidates[0]}");
+            report.Count(
+                $"graphic 0x{line.Graphic:x4} ({line.TypeName}) has {candidates.Count} item templates, took {candidates[0]}"
+            );
         }
 
         return candidates[0];

@@ -36,6 +36,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
     private readonly StubLineOfSightService _sight = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly StubWeightService _weight = new();
+
     private readonly RegionContent _town = new()
     {
         Name = "Town", Map = MapType.Trammel, Guarded = true, Areas = [new() { X1 = 0, Y1 = 0, X2 = 500, Y2 = 500 }]
@@ -441,8 +442,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         _bank.Carried[_player.Id] = 100;
         var lines = await OpenAsync();
 
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 _vendors.OnSessionClosed(_session);
 
@@ -488,8 +488,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
     private async Task BuyAsync(VendorBuyReplyPacket packet)
     {
-        await OnLoopAsync(
-            () =>
+        await OnLoopAsync(() =>
             {
                 _vendors.Buy(_session, packet);
 

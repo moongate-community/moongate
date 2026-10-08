@@ -195,7 +195,10 @@ public sealed class ModernUoVendorConverterTests : IDisposable
             "[[item]]\nid = \"0x103b_bread_loaf\"\n[[item]]\nid = \"0x103c_bread_loaf\"\n[[item]]\nid = \"0x09e9_cake\"\n" +
             "[[item]]\nid = \"0x09ea_muffin\"\n[[item]]\nid = \"0x09c8_jug\"\n[[item]]\nid = \"0x1041_baked_pie\"\n"
         );
-        Write("mobiles/vendors.toml", mobiles ?? "[[mobile]]\nid = \"baker\"\n[[mobile]]\nid = \"m_baker\"\n[[mobile]]\nid = \"f_baker\"\n");
+        Write(
+            "mobiles/vendors.toml",
+            mobiles ?? "[[mobile]]\nid = \"baker\"\n[[mobile]]\nid = \"m_baker\"\n[[mobile]]\nid = \"f_baker\"\n"
+        );
     }
 
     private void Write(string relative, string text)

@@ -17,7 +17,9 @@ public interface IVendorService : ISessionClosedListener
     ///     more than 10 tiles away or out of sight, or when the player is dead; a murderer in a guarded region is
     ///     refused by the vendor's voice.
     /// </summary>
-    /// <returns>True when the window opened.</returns>
+    /// <returns>
+    ///     True when the window opened.
+    /// </returns>
     bool OpenBuy(GameSession session, MobileEntity vendor);
 
     /// <summary>

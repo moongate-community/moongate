@@ -108,7 +108,9 @@ public class ShopsLoader : IDataLoader<ShopDefinition>
             {
                 if (!itemIds.Contains(line.Item ?? ""))
                 {
-                    throw new InvalidDataException($"{where} has a {kind} line for '{line.Item}', which is not an item template.");
+                    throw new InvalidDataException(
+                        $"{where} has a {kind} line for '{line.Item}', which is not an item template."
+                    );
                 }
 
                 if (line.Price < 1)

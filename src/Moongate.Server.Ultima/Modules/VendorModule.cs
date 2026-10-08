@@ -76,7 +76,8 @@ public sealed class VendorModule
     }
 
     /// <summary>
-    ///     Opens the buy window of <paramref name="vendor" /> for <paramref name="player" />; <c>vendor.open_buy(npc, speaker)</c>.
+    ///     Opens the buy window of <paramref name="vendor" /> for <paramref name="player" />;
+    ///     <c>vendor.open_buy(npc, speaker)</c>.
     /// </summary>
     [ScriptFunction(
         helpText:

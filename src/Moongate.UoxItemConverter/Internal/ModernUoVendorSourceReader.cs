@@ -112,9 +112,11 @@ internal static class ModernUoVendorSourceReader
     // picks a set at random for each vendor, so the shop takes all the sets.
     private static bool IsConditional(SyntaxNode node, SyntaxNode root)
     {
-        return node.Ancestors().TakeWhile(ancestor => ancestor != root).Any(ancestor => ancestor is IfStatementSyntax
-            or ElseClauseSyntax or ForStatementSyntax or ForEachStatementSyntax or WhileStatementSyntax
-        );
+        return node.Ancestors()
+            .TakeWhile(ancestor => ancestor != root)
+            .Any(ancestor => ancestor is IfStatementSyntax
+                or ElseClauseSyntax or ForStatementSyntax or ForEachStatementSyntax or WhileStatementSyntax
+            );
     }
 
     private static void ReadLine(
@@ -160,7 +162,8 @@ internal static class ModernUoVendorSourceReader
         var numbersAt = typeAt + 1 + (kind == BeverageLine ? 1 : 0);
         var numbers = arguments.Skip(numbersAt).Take(4).Select(Number).ToList();
 
-        if (numbers.Count < 4 || numbers[0] is not { } price || numbers[1] is not { } amount || numbers[2] is not { } graphic)
+        if (numbers.Count < 4 || numbers[0] is not { } price || numbers[1] is not { } amount ||
+            numbers[2] is not { } graphic)
         {
             report.Count("line with a number that is no literal");
 
