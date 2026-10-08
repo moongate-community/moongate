@@ -108,6 +108,16 @@ internal static class CompletionCatalog
             ]
         ),
         new(
+            "convert modernuo-vendors",
+            "Convert the shops of ModernUO's vendors into shop templates",
+            [
+                new("--source", "The Projects/UOContent folder of ModernUO", CompletionValueType.Directory),
+                new("--items", "The item templates folder", CompletionValueType.Directory),
+                new("--mobiles", "The mobile templates folder", CompletionValueType.Directory),
+                new("--destination", "The shops folder", CompletionValueType.Directory)
+            ]
+        ),
+        new(
             "completion",
             "Print the completion script of a shell",
             [],

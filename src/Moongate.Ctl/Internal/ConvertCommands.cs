@@ -221,4 +221,34 @@ internal static class ConvertCommands
             Console.Error
         );
     }
+
+    /// <summary>
+    ///     Converts the shops of ModernUO's vendors (the SBInfo classes) into shop TOML, one file a vendor class, without
+    ///     executing scripts.
+    /// </summary>
+    /// <param name="source">
+    ///     The Projects/UOContent folder of ModernUO, or its Mobiles/Vendors folder.
+    /// </param>
+    /// <param name="items">
+    ///     The item templates folder (templates/items): a line becomes the template with the graphic ModernUO gives it.
+    /// </param>
+    /// <param name="mobiles">
+    ///     The mobile templates folder (templates/mobiles): a vendor class with no template there is skipped.
+    /// </param>
+    /// <param name="destination">
+    ///     The shops folder (templates/shops); each vendor gets a file named after it, replacing that of a previous run.
+    /// </param>
+    public static int ModernUoVendors(string source, string items, string mobiles, string destination)
+    {
+        UoxItemConverterCommand.RegisterTomlConverters();
+
+        return ModernUoVendorConverter.Run(
+            Path.GetFullPath(source),
+            Path.GetFullPath(items),
+            Path.GetFullPath(mobiles),
+            Path.GetFullPath(destination),
+            Console.Out,
+            Console.Error
+        );
+    }
 }
