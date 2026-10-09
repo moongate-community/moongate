@@ -2,8 +2,8 @@
 
 `data/schedule.toml` is the calendar of the server. It holds two things: **tasks** that run at a
 time of the day or week, such as a shutdown with warnings, and **seasonal events** that are on
-between two dates, such as Halloween. Nothing runs until the operator writes an entry: the shipped
-file only has examples in comments.
+between two dates, such as Halloween. No task runs until the operator writes one: the shipped
+file has the tasks as examples in comments, and the event `halloween` on (see [Holidays](holidays.md)).
 
 ```toml
 [[task]]

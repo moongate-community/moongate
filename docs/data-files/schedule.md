@@ -23,8 +23,9 @@ to = "11-02"
 | `[[task]]` | One per timed task: `id`, `when` (`every`, `at`, `days`), `action` and what the action needs. |
 | `[[event]]` | One per seasonal event: `id`, `name`, `from` and `to` as `MM-dd`, both inclusive. |
 
-The shipped file only has examples in comments, so nothing runs until the operator enables one. The
-file may be missing: the calendar is then empty.
+The shipped file has the tasks as examples in comments, so none runs until the operator enables
+one, and the event `halloween` on ([Holidays](../holidays.md)). The file may be missing: the
+calendar is then empty.
 
 ## Validation at startup
 

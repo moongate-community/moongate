@@ -79,6 +79,7 @@ export const contentEntries = [
   { source: 'docs/vendors.md', slug: 'server/vendors', title: 'Vendors', group: 'Scripting and content' },
   { source: 'docs/jail.md', slug: 'server/jail', title: 'Jail', group: 'Scripting and content' },
   { source: 'docs/schedule.md', slug: 'server/schedule', title: 'Schedule', group: 'Scripting and content' },
+  { source: 'docs/holidays.md', slug: 'server/holidays', title: 'Holidays', group: 'Scripting and content' },
   { source: 'docs/help.md', slug: 'server/help', title: 'Help', group: 'Scripting and content' },
   { source: 'docs/animal-taming.md', slug: 'server/animal-taming', title: 'Animal taming', group: 'Scripting and content' },
   { source: 'docs/mounts.md', slug: 'server/mounts', title: 'Mounts', group: 'Scripting and content' },

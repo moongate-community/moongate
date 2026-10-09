@@ -44,4 +44,14 @@ public static class ItemPropKeys
     ///     The serial value of the mobile that crafted the item.
     /// </summary>
     public const string CrafterId = "crafter_id";
+
+    /// <summary>
+    ///     The name of the mobile that crafted the item, as its maker's mark shows it.
+    /// </summary>
+    public const string CrafterName = "crafter_name";
+
+    /// <summary>
+    ///     How many more times a tool can be used before it wears out.
+    /// </summary>
+    public const string UsesRemaining = "uses_remaining";
 }

@@ -28,6 +28,8 @@ function carpentry_tool.on_use(serial, user)
         return true
     end
 
+    -- A new tool draws how long it lasts, so its tooltip tells it.
+    crafting.uses(serial)
     crafting.open(user, serial, CRAFT)
 
     return true

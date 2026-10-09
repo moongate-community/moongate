@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"756ff2e13c1e6a33548b648294087bb48f24c1dbd511c3bdaa1477201be70a55","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"73c83aa1ab5e9abd12e2c425da6d66abf29e2705fd95b3f2c2d0ac939c02f782","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -137,7 +137,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
 | 5.1 | 🟡 | **Raccolta**: estrazione mineraria, taglio della legna, pesca, con regioni di risorse che si esauriscono e rigenerano. Fatto: la pesca con la canna, il taglio della legna con l'ascia, le sue assi, i tipi di legno e i ritrovamenti rari, l'estrazione del minerale di ferro e la sua fusione, e le zone che si esauriscono e ritornano. Resta: gli altri metalli, le prese speciali della pesca | Alimenta la creazione | |
-| 5.2 | 🟡 | **Motore di creazione**, poi ogni mestiere come dati; riparazione. Fatto: il motore, il suo gump e la [falegnameria](carpentry.md). Resta: oggetti eccezionali, marchio del creatore, usura degli attrezzi, ricrea l'ultimo, gli altri mestieri, la riparazione | Lo stile di gioco pacifico e l'economia dei giocatori | UOX3 `create/` (618 ricette) |
+| 5.2 | 🟡 | **Motore di creazione**, poi ogni mestiere come dati; riparazione. Fatto: il motore, il suo gump e la [falegnameria](carpentry.md), con oggetti eccezionali, marchio del creatore, usura degli attrezzi e ricrea l'ultimo. Resta: gli altri mestieri, la riparazione | Lo stile di gioco pacifico e l'economia dei giocatori | UOX3 `create/` (618 ricette) |
 | 5.3 | ❌ | **Addomesticamento, comandi degli animali, stalle, cavalcature** | Richiede IA (3.2), notorietà (3.4) e venditori (4.1) | Tag UOX3 `TOTAME`, `CONTROLSLOTS`, `FOOD` |
 | 5.4 | 🟡 | **Le abilità attive rimanenti**: nascondersi, furtività, furto, frugare, abilità di conoscenza, abilità del bardo, inseguimento. Completato: nascondersi, [furtività](scripting/shipped-scripts.md#stealthlua), [frugare](scripting/shipped-scripts.md#snoopinglua), individuazione dei nascosti, anatomia, valutazione dell'intelligenza e medicina legale ([le abilità di osservazione](scripting/shipped-scripts.md#the-lore-skills)). Restano: furto, inseguimento, conoscenza delle armi, identificazione degli oggetti e dei sapori, le abilità del bardo | Ciascuna è piccola quando esiste 1.2 | |
 
@@ -171,7 +171,7 @@ Queste voci non dipendono dalle fasi di gioco e vengono completate quando un ope
   [`.go`](commands/go.md) e il loro gump sono completati.
 - La [prigione](jail.md), il [menu di aiuto e per personaggi bloccati](help.md) e la coda di richieste ai GM sono completati.
 - Comandi scritti in Lua.
-- Il [calendario](schedule.md) è fatto: task a orario, spegnimento con avvisi ed eventi stagionali per data. Prossimo: eventi di esempio (Halloween e Natale) sopra di esso.
+- Il [calendario](schedule.md) è fatto: task a orario, spegnimento con avvisi ed eventi stagionali per data. Il dolcetto o scherzetto di Halloween è fatto ([Feste](holidays.md)); prossimi il Natale (palle di neve e regali) e le decorazioni di entrambi.
 
 ## In seguito
 
