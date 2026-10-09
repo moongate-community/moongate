@@ -77,7 +77,7 @@ public sealed class ItemHandlingService : IItemHandlingService
         return item;
     }
 
-    public ItemEntity? Give(MobileEntity owner, string template, int? amount = null)
+    public ItemEntity? Give(MobileEntity owner, string template, int? amount = null, bool ignoreCapacity = false)
     {
         if (_inventory?.AllowsOwner(owner.Id) == false ||
             _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
@@ -96,7 +96,9 @@ public sealed class ItemHandlingService : IItemHandlingService
         }
 
         // The serial is taken last: an item that finds no room must not use one up.
-        if (_capacity?.HasRoomFor(backpack, 1) == false || _serials is null || !_serials.TryTake(out var serial))
+        if ((!ignoreCapacity && _capacity?.HasRoomFor(backpack, 1) == false) ||
+            _serials is null ||
+            !_serials.TryTake(out var serial))
         {
             return null;
         }

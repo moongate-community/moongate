@@ -428,15 +428,94 @@ public sealed class MountServiceTests
     }
 
     [Fact]
-    public void Dismount_OfAnEthereal_WithAFullBackpack_PutsTheStatueOnTheGroundAtTheRider()
+    public void Dismount_OfAnEthereal_WithAFullBackpack_StillGivesTheStatuette_PastTheLimit()
     {
         _service.TryMountEthereal(_rider, Statuette(inBackpack: true));
         _handling.BackpackFull = true;
 
         Assert.True(_service.Dismount(_rider));
 
+        Assert.Equal("ethereal_horse_statue", Assert.Single(_handling.Given).TemplateId);
+        Assert.DoesNotContain(_view.Calls, call => call.StartsWith("Appeared ", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Dismount_OfAnEthereal_WithNoBackpack_PutsTheStatueOnTheGroundAtTheRider()
+    {
+        _service.TryMountEthereal(_rider, Statuette(inBackpack: true));
+        _handling.NoBackpack = true;
+
+        Assert.True(_service.Dismount(_rider));
+
         Assert.Empty(_handling.Given);
         Assert.Contains(_view.Calls, call => call.StartsWith("Appeared ", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Dismount_OfAnEthereal_KeepsTheHueAndTheNameOfTheStatuette()
+    {
+        var statuette = Statuette(inBackpack: true);
+        statuette.Hue = new Hue(0x0481);
+        statuette.Name = "my steed";
+        _service.TryMountEthereal(_rider, statuette);
+
+        _service.Dismount(_rider);
+
+        var back = Assert.Single(_handling.Given);
+        Assert.Equal((0x0481, "my steed"), ((int)back.Hue.Value, back.Name));
+        Assert.Equal(["ethereal_horse_statue"], _handling.Refreshed);
+    }
+
+    [Fact]
+    public void Dismount_OfAnEthereal_WithAPlainStatuette_LeavesTheHueAndTheNameAlone()
+    {
+        _service.TryMountEthereal(_rider, Statuette(inBackpack: true));
+
+        _service.Dismount(_rider);
+
+        var back = Assert.Single(_handling.Given);
+        Assert.Equal((0, (string?)null), ((int)back.Hue.Value, back.Name));
+    }
+
+    [Fact]
+    public void TryMountEthereal_TheStatuetteCannotBeTaken_IsRefusedWithOnYourPerson()
+    {
+        var statuette = Statuette(inBackpack: true);
+        _handling.DeleteFails = true;
+
+        Assert.False(_service.TryMountEthereal(_rider, statuette));
+
+        Assert.Equal(1010095, Assert.Single(_speech.ToldClilocs).Cliloc);
+        Assert.False(_service.IsMounted(_rider));
+    }
+
+    [Fact]
+    public void TryMountEthereal_ThenDismount_ThenMountAgain_LeavesExactlyOneStatuetteAtEachStep()
+    {
+        _service.TryMountEthereal(_rider, Statuette(inBackpack: true));
+        Assert.Single(_handling.Deleted);
+        _service.Dismount(_rider);
+        var back = Assert.Single(_handling.Given);
+
+        var backpack = _items.GetWorn(_rider.Id).Single(worn => worn.Layer == LayerType.Backpack);
+        back.PutInContainer(backpack.Id, new Point2D(40, 40));
+        _items.Add([back]);
+
+        Assert.True(_service.TryMountEthereal(_rider, back));
+        Assert.Equal(2, _handling.Deleted.Count);
+        Assert.True(_service.IsMounted(_rider));
+        Assert.Single(_handling.Given);
+    }
+
+    [Fact]
+    public void Dismount_OfAnEthereal_ByAGhost_StillGivesTheStatuetteBack()
+    {
+        _service.TryMountEthereal(_rider, Statuette(inBackpack: true));
+        _rider.Body = GhostBodies.GhostOf(400);
+
+        Assert.True(_service.Dismount(_rider));
+
+        Assert.Single(_handling.Given);
     }
 
     private ItemEntity Statuette(bool inBackpack)

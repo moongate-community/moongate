@@ -28,6 +28,16 @@ public static class MountProps
     public const string EtherealTemplate = "ethereal_template";
 
     /// <summary>
+    ///     Prop of a mount item: the hue the statuette of an ethereal mount had, as a long.
+    /// </summary>
+    public const string EtherealHue = "ethereal_hue";
+
+    /// <summary>
+    ///     Prop of a mount item: the name the statuette of an ethereal mount had, when it was renamed.
+    /// </summary>
+    public const string EtherealName = "ethereal_name";
+
+    /// <summary>
     ///     Tag of a mobile template: the id of the item template, on the mount layer, that the creature turns into when it
     ///     is ridden. An empty value, or no tag, makes the creature no mount.
     /// </summary>

@@ -28,13 +28,20 @@ public sealed class StubItemHandlingService : IItemHandlingService
     /// </summary>
     public bool BackpackFull { get; set; }
 
+    /// <summary>
+    ///     Gets or sets whether <see cref="Give" /> finds no backpack at all.
+    /// </summary>
+    public bool NoBackpack { get; set; }
+
+    public List<string> Refreshed { get; } = [];
+
     public List<ItemEntity> Given { get; } = [];
 
     public List<ItemEntity> Deleted { get; } = [];
 
-    public ItemEntity? Give(MobileEntity owner, string template, int? amount = null)
+    public ItemEntity? Give(MobileEntity owner, string template, int? amount = null, bool ignoreCapacity = false)
     {
-        if (BackpackFull || Make(template, amount) is not { } item)
+        if (NoBackpack || (BackpackFull && !ignoreCapacity) || Make(template, amount) is not { } item)
         {
             return null;
         }
@@ -49,8 +56,18 @@ public sealed class StubItemHandlingService : IItemHandlingService
         throw new NotSupportedException();
     }
 
+    /// <summary>
+    ///     Gets or sets whether <see cref="Delete" /> is refused, as for an item held on the cursor.
+    /// </summary>
+    public bool DeleteFails { get; set; }
+
     public bool Delete(ItemEntity item)
     {
+        if (DeleteFails)
+        {
+            return false;
+        }
+
         Deleted.Add(item);
 
         return true;
@@ -58,7 +75,7 @@ public sealed class StubItemHandlingService : IItemHandlingService
 
     public void Refresh(ItemEntity item)
     {
-        throw new NotSupportedException();
+        Refreshed.Add(item.TemplateId ?? "");
     }
 
     public bool IsHeld(ItemEntity item)

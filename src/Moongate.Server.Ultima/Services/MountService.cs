@@ -181,11 +181,25 @@ public sealed class MountService : IMountService
         // The statuette goes last but one: it is the rider's only while the rider has the mount in exchange.
         if (!_handling.Delete(statuette))
         {
+            // Held on the cursor, or locked by another operation: it is not on the rider's person to use.
+            _speech.TellCliloc(rider, OnYourPersonCliloc);
+
             return false;
         }
 
         item.Movable = false;
         item.SetProp(MountProps.EtherealTemplate, statueTemplate);
+
+        if (statuette.Hue.Value != 0)
+        {
+            item.SetProp(MountProps.EtherealHue, (long)statuette.Hue.Value);
+        }
+
+        if (statuette.Name is { Length: > 0 } name)
+        {
+            item.SetProp(MountProps.EtherealName, name);
+        }
+
         _items.Add([item]);
         _items.Equip(item, rider.Id, LayerType.Mount);
         _view.WornItemChanged(rider, item);
@@ -212,7 +226,7 @@ public sealed class MountService : IMountService
         // An ethereal mount is no creature: its statuette comes back to the rider.
         if (ethereal is not null)
         {
-            GiveBack(rider, ethereal);
+            GiveBack(rider, ethereal, item);
 
             return true;
         }
@@ -235,7 +249,7 @@ public sealed class MountService : IMountService
     }
 
     // The statuette in the backpack, or on the ground where the rider stands when the backpack has no room.
-    private void GiveBack(MobileEntity rider, string statuetteTemplate)
+    private void GiveBack(MobileEntity rider, string statuetteTemplate, ItemEntity mount)
     {
         if (!_mobiles.IsInWorld(rider.Id))
         {
@@ -244,8 +258,12 @@ public sealed class MountService : IMountService
             return;
         }
 
-        if (_handling.Give(rider, statuetteTemplate) is not null)
+        // Its place in the backpack was freed when the rider mounted: the limit of items does not keep it out.
+        if (_handling.Give(rider, statuetteTemplate, ignoreCapacity: true) is { } given)
         {
+            Restore(given, mount);
+            _handling.Refresh(given);
+
             return;
         }
 
@@ -256,9 +274,24 @@ public sealed class MountService : IMountService
             return;
         }
 
+        Restore(statuette, mount);
         _items.Add([statuette]);
         _items.PlaceOnGround(statuette, rider.Map, rider.Location);
         _view.ItemAppeared(statuette);
+    }
+
+    // The hue and the name the statuette had before it was ridden.
+    private static void Restore(ItemEntity statuette, ItemEntity mount)
+    {
+        if (mount.TryGetProp<long>(MountProps.EtherealHue, out var hue) && hue is > 0 and <= ushort.MaxValue)
+        {
+            statuette.Hue = new Hue((ushort)hue);
+        }
+
+        if (mount.TryGetProp<string>(MountProps.EtherealName, out var name))
+        {
+            statuette.Name = name;
+        }
     }
 
     private async Task SpawnAsync(

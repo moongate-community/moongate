@@ -23,8 +23,10 @@ public interface IItemHandlingService
     ///     graphic, hue, name and rarity, no prop on either, 60000 at most): that stack is what is returned, and no
     ///     slot or serial is used. Null, with no serial used, for a mobile without a backpack, a backpack with no room
     ///     for another item, and as <see cref="Make" />.
+    ///     <paramref name="ignoreCapacity" /> puts the item in the backpack even when its limit of items is reached, for
+    ///     what was taken out of that backpack and is given back.
     /// </summary>
-    ItemEntity? Give(MobileEntity owner, string template, int? amount = null);
+    ItemEntity? Give(MobileEntity owner, string template, int? amount = null, bool ignoreCapacity = false);
 
     /// <summary>
     ///     Takes <paramref name="amount" /> units off the item, deleting it at 0, and shows the change. False for an

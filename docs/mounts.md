@@ -53,8 +53,9 @@ mounts, the nightmares and the other creatures of `templates/mobiles/mounts.toml
 A statuette of an ethereal mount (a horse, a llama, an ostard, a kirin, a unicorn, a ridgeback, a swamp dragon or a
 beetle, `templates/items/misc/ethereal-statues.toml`) lets its owner ride with no creature. Double click it while it
 lies in your backpack: it is gone and you sit on the ethereal mount. You read the client's text when it is not in
-your backpack, or when you ride already. Getting off, or dying, gives the statuette back in your backpack, or on the
-ground where you stand when the backpack is full. There is no wait to cast it and no follower slot. A game master
+your backpack, or when you ride already. Getting off, or dying, gives the statuette back in your backpack, past its limit of items
+(its place was freed when you rode), or on the ground where you stand when you have no backpack. It comes back with its
+hue and its name but a new serial. There is no wait to cast it and no follower slot. A game master
 makes one with `.add ethereal_horse_statue`. The statuette is a template with `script_id = "ethereal_mount"` and the tag
 `mount_item`, the template of the mount item that is worn.
 
