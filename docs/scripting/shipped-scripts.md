@@ -538,8 +538,38 @@ button: it refuses a character in jail (`jail.sentence`) or fighting (`combat.ta
 waits, and one whose pause (the prop `help.stuck_until`, seconds since 1970 from `world.now`) is not over,
 the staff excepted; it takes the nearest starting city from `help.nearest_city`, tells the wait from
 `help.settings`, and after `timer.after` of that many seconds moves the character with `mobile.teleport`
-if it stands where it did and is still allowed. `commands` runs `help` with `commands.execute_as` and `rules`
-tells message 30200.
+if it stands where it did and is still allowed. `commands` runs `help` with `commands.execute_as`, `rules`
+tells message 30200 and `call` opens `help_page_kind`.
+
+## help_page_kind.lua
+
+`scripts/gumps/help_page_kind.lua` is the script of the second step of *Call a game master*
+(`templates/gumps/help_page_kind.xml`). `question`, `bug`, `suggestion` and `harassment` ask `help.can_page`;
+a player that may not is told why (messages 30213 and 30214) before anything is typed. Otherwise it is told
+to type a line (30211), `prompt.ask` waits for it, and `help.create_page` sends the request with the
+`HelpPageKindType` of the button; Escape or an empty line says 30215, a refusal at the end says its reason again,
+and a sent request says 30212. A player in jail may call.
+
+## pages.lua
+
+`scripts/gumps/pages.lua` is the script of the queue of the staff (`templates/gumps/pages.xml`, opened by
+[`.pages`](../commands/pages.md)). `rows` fills the slot with `help.pages()`, the oldest first, ten a page, one
+button and one line a request (`#1 Gino, Bug, 3 min, open`); a row opens `pages_detail` on that request.
+Staff only: the slot stays empty for anyone else, and every button checks `world.is_staff` again.
+
+## pages_detail.lua
+
+`scripts/gumps/pages_detail.lua` is the script of one request (`templates/gumps/pages_detail.xml`). `go` takes
+the game master to the player (`mobile.location`) or, when it is offline, to where it asked; `take` calls
+`help.take`; `answer` takes the text of the field (`response.text[1]`), refuses an empty one and otherwise calls
+`help.answer` and returns to the queue; `close` calls `help.close`. A request that was closed meanwhile says so
+and changes nothing.
+
+## common/help_pages.lua
+
+`scripts/common/help_pages.lua` is the Lua module the two staff gumps share, taken with
+`require("common.help_pages")`: the words for a kind, a map, an age and a status, the line of a request and the
+arguments of its detail gump.
 
 ## jail_sentence.lua
 

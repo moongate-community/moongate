@@ -167,7 +167,7 @@ These do not depend on the gameplay phases and are done when an operator needs t
 - Account bans, IP limits, login attempt limits, packet throttles.
 - Staff tools: a props gump, an add menu, area commands. The named places of
   [`.go`](commands/go.md) and their gump are done.
-- GM page queue. The [jail](jail.md) and the [help and stuck menu](help.md) are done.
+- The [jail](jail.md), the [help and stuck menu](help.md) and the GM page queue are done.
 - Commands written in Lua.
 
 ## Later

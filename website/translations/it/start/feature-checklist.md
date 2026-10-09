@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b46eaf0a03fe16813931587dfb7a49aad7910c4607c978677dcd48063e55f4af","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"da851ef646892fc9e4d7f9c00c614ffdad9da10871fcf06dd091e8ace21e3c94","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 86 completati, 🟡 57 parzialmente completati, ❌ 126 non ancora realizzati.
+**269 sistemi:** ✅ 87 completati, 🟡 57 parzialmente completati, ❌ 125 non ancora realizzati.
 
 **Copertura: 32%** dei sistemi completati, **43%** contando un sistema parzialmente completato come metà.
 
@@ -289,7 +289,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Amministrazione remota | 🟡 | API gRPC con TLS; nessun pannello web |
 | Metriche e diagnostica | ✅ | Metriche del processo e dei plugin |
 | Ricaricamento a caldo | 🟡 | Script Lua; non dati o template |
-| Coda di richieste ai GM (page) | ❌ | |
+| Coda di richieste ai GM (page) | ✅ | Un giocatore chiama un game master dal menu Help (genere e una riga, una richiesta alla volta, una pausa); lo staff smaltisce la coda dal gump [`.pages`](commands/pages.md): andare dal giocatore, prendere in carico, rispondere, chiudere; la risposta arriva al giocatore online o al login successivo; vedi [Aiuto](help.md) |
 | Menu di aiuto e menu per personaggi bloccati | ✅ | Il pulsante Help apre un menu: «Sono bloccato» porta un personaggio alla città di partenza più vicina dopo un'attesa, con una pausa; comandi utili; regole del server; vedi [Aiuto](help.md) |
 | Prigioni | ✅ | Un gump elenca le celle e i detenuti; pene in giorni reali, multa in oro e nota di rilascio alla fine, una cassa di pane e acqua in ogni cella; un giocatore offline viene incarcerato per nome e sconta la pena dal login successivo; vedi [Prigione](jail.md) |
 | Elenco dei presenti | ❌ | |
