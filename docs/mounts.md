@@ -48,7 +48,21 @@ mount_item = "horse4"
 Children of a template inherit the tag. An empty value, `mount_item = ""`, makes a child no mount, as the ethereal
 mounts, the nightmares and the other creatures of `templates/mobiles/mounts.toml` are for now.
 
+## Ethereal mounts
+
+A statuette of an ethereal mount (a horse, a llama, an ostard, a kirin, a unicorn, a ridgeback, a swamp dragon or a
+beetle, `templates/items/misc/ethereal-statues.toml`) lets its owner ride with no creature. Double click it while it
+lies in your backpack: it is gone and you sit on the ethereal mount. You read the client's text when it is not in
+your backpack, or when you ride already. Getting off, or dying, gives the statuette back in your backpack, or on the
+ground where you stand when the backpack is full. There is no wait to cast it and no follower slot. A game master
+makes one with `.add ethereal_horse_statue`. The statuette is a template with `script_id = "ethereal_mount"` and the tag
+`mount_item`, the template of the mount item that is worn.
+
+## Fighting from the saddle
+
+A rider who attacks plays the actions of a mount: one hand, two hands, bow or crossbow. The animation that tells a
+blow was taken is the usual one. The ids are those of the client's animation table; they were not tried with a client.
+
 ## Not built yet
 
-Stabling, the bola and the dismount ability of weapons, the stop of harvesting while mounted, teleporters that deny
-mounts, mounted animations and stamina, and the ethereal mounts.
+The bola and the dismount ability of weapons.

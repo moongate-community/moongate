@@ -467,6 +467,12 @@ the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `e
 nobody and says nothing. A healer of a
 template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think. A healer with a shop sells and buys as a vendor does, through `scripts/common/shop.lua`: bandages, potions, ginseng and garlic.
 
+## ethereal_mount.lua
+
+`scripts/items/ethereal_mount.lua` is the script of the ethereal statuettes (`script_id = "ethereal_mount"`): its
+`on_use` calls `mount.ride_ethereal(user, serial)`, which says in the client's words why it refuses, and returns true
+so the double click opens nothing else. See [Mounts](../mounts.md#ethereal-mounts).
+
 ## ankh.lua and resurrect.lua
 
 `scripts/items/ankh.lua` is the script of the `decoration_ankh` template, the two pieces of each
