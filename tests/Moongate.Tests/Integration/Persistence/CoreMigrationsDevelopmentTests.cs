@@ -34,7 +34,8 @@ public sealed class CoreMigrationsDevelopmentTests
             typeof(ItemEntity),
             typeof(WorldStateEntity),
             typeof(JailSentenceEntity),
-            typeof(BulletinMessageEntity)
+            typeof(BulletinMessageEntity),
+            typeof(HelpPageEntity)
         );
     }
 
@@ -50,7 +51,8 @@ public sealed class CoreMigrationsDevelopmentTests
             typeof(ItemEntity),
             typeof(WorldStateEntity),
             typeof(JailSentenceEntity),
-            typeof(BulletinMessageEntity)
+            typeof(BulletinMessageEntity),
+            typeof(HelpPageEntity)
         );
     }
 

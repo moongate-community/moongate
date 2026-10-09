@@ -31,6 +31,7 @@ using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Combat;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
+using Moongate.Tests.TestSupport.Ultima.Help;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Jail;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -72,6 +73,7 @@ public sealed class HelpMenuGumpIntegrationTests : IAsyncLifetime
     private readonly List<ScriptErrorEvent> _errors = [];
 
     private BroadcastFixture _fixture = null!;
+    private HelpPageServices _helpPages = null!;
     private LuaScriptEngineService _engine = null!;
     private GumpModule _module = null!;
 
@@ -138,6 +140,9 @@ public sealed class HelpMenuGumpIntegrationTests : IAsyncLifetime
                 (30200, "Be kind to the other players, do not cheat and do not use bugs for your own gain.")
             )
         );
+        _helpPages = HelpPageServices.Create(_fixture);
+        await _helpPages.Service.StartAsync();
+        _container.RegisterInstance<IHelpPageService>(_helpPages.Service);
         _container.RegisterInstance<IGumpService>(_gumps);
         _container.RegisterInstance<IGumpTemplateService>(
             new GumpTemplateService(_gumps, new StubDataLoaderService().With(templates), _loop, _fixture.Sessions)
@@ -462,6 +467,7 @@ public sealed class HelpMenuGumpIntegrationTests : IAsyncLifetime
     public async Task DisposeAsync()
     {
         _engine.Dispose();
+        _helpPages.Dispose();
         _container.Dispose();
         _scripts.Dispose();
         await _fixture.DisposeAsync();

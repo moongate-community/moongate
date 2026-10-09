@@ -146,6 +146,8 @@ max_days = 30                         # The longest sentence the jail gump accep
 [ultima.help]
 stuck_wait_seconds = 5                # The seconds a character must stand still before "I am stuck" moves it.
 stuck_cooldown_minutes = 10           # The minutes before a player can use "I am stuck" again; 0 allows it at once.
+page_cooldown_seconds = 60           # The seconds between two requests of one player to the game masters; 0 allows it at once.
+page_history_days = 30                # The days a closed request is kept before it is deleted at startup.
 
 [ultima.bulletin_boards]
 expire_days = 7                       # A thread of a bulletin board goes this many days after its last reply; 0 keeps it.
@@ -292,6 +294,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
 | `ultima.jail.fine_gold`, `ultima.jail.max_days` | Defaults 500 (from 0 to 1,000,000,000) and 30 (from 1 to 3650). The gold taken from a prisoner when its sentence ends, from its backpack and then its bank box, and the longest sentence [`.jail`](commands/jail.md) accepts, in real days; see [Jail](jail.md). |
 | `ultima.help.stuck_wait_seconds`, `ultima.help.stuck_cooldown_minutes` | Defaults 5 (from 1 to 60) and 10 (from 0 to 1440). The wait and the pause of the "I am stuck" button of the [help](help.md) gump. |
+| `ultima.help.page_cooldown_seconds`, `ultima.help.page_history_days` | Defaults 60 (from 0 to 3600) and 30 (from 1 to 3650). The seconds a player waits between two requests to the game masters, and the days a closed request is kept before startup deletes it; see [Help](help.md). |
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Defaults 7 (from 0 to 3650; 0 keeps threads forever), 50 (from 1 to 200), 120 and 30 (from 0 to 86400). How long a thread of a [bulletin board](bulletin-boards.md) lasts after its last reply, how many messages a board holds, and how long a character waits between two new threads and between two posts on one board. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Defaults 125 (from 0 to 10000; 0 for no limit), 60000 (from 1 to 60000), 5000 and 1,000,000 (`min_check` from 1 to `max_check`, `max_check` up to 2,000,000,000). The items a [bank box](bank.md) holds, counted with what is inside its bags; the coins a banker hands out for one *withdraw*; the worth of the checks a banker writes. |
 

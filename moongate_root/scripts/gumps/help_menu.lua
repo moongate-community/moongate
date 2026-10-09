@@ -13,6 +13,7 @@
 --   stuck(player, response, args)     the "I am stuck" button
 --   commands(player, response, args)  runs .help as the player
 --   rules(player, response, args)     tells the rules of the server
+--   call(player, response, args)      opens help_page_kind, the first step of Call a game master
 -- ==============================================================================
 
 help_menu = {}
@@ -140,4 +141,8 @@ end
 
 function help_menu.rules(player, response, args)
     say(player, rules_message)
+end
+
+function help_menu.call(player, response, args)
+    gump.open(player, "help_page_kind")
 end
