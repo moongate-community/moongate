@@ -37,8 +37,7 @@ purchase is everything or nothing: when a check fails, nothing is taken and noth
   reserved before anything is taken; an order that needs more than the server has ready is refused with cliloc
   500187.
 - The goods go to the backpack. When they do not fit, they are put on the ground at the player's feet.
-- The player reads what was paid: cliloc 1151639 for the gold of the backpack, and 1151638 for the part that came out of
-  the bank, each with its own amount.
+- The player reads the total paid: cliloc 1151639, or 1151638 when part of it came out of the bank.
 
 The window closes after every answer, a purchase or a refusal. A reply that is not for the open window of that
 vendor, or that has more than 100 lines, is dropped.

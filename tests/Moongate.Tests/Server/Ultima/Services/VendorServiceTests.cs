@@ -300,11 +300,8 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         var paid = Assert.Single(_bank.Paid);
         Assert.Equal((2000, true, 1500), (paid.Amount, paid.UseBank, paid.FromBank));
-        // The backpack gave 500 and the bank 1500, and the player is told each.
-        Assert.Equal(
-            [(1151639, "500"), (1151638, "1500")],
-            _speech.ToldClilocs.Select(told => (told.Cliloc, told.Arguments))
-        );
+        // One line, with the whole total, said by where the gold came from.
+        Assert.Equal((1151638, "2000"), (_speech.ToldClilocs.Single().Cliloc, _speech.ToldClilocs.Single().Arguments));
         Assert.Equal(2, _items.GetContents(BackpackId()).Count);
     }
 
@@ -331,7 +328,6 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await BuyAsync(Reply(_vendor.Id, (lines[1], 2)));
 
         Assert.Equal(500191, _speech.ToldClilocs.Single().Cliloc);
-        Assert.Empty(_bank.Paid);
         Assert.Empty(_bank.Paid);
         Assert.Empty(_items.GetContents(BackpackId()));
         Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>());
@@ -503,19 +499,37 @@ public sealed class VendorServiceTests : IAsyncLifetime
         Assert.Empty(_fixture.Sender.Sent.OfType<VendorEndPacket>());
     }
 
-    // The bank says Ok to a withdrawal unless a test says otherwise.
+    // The bank says Ok to a payment unless a test says otherwise.
     [Fact]
-    public async Task Buy_ABankThatRefusesTheWithdrawal_RefusesThePurchase()
+    public async Task Buy_ABankThatCannotPay_RefusesThePurchase_BeforeAnySerialIsUsed()
     {
         Backpack();
         _bank.Gold[_player.Id] = 5000;
         _bank.Result = BankResultType.NotEnoughGold;
         var lines = await OpenAsync();
+        var before = _serials.Serials.Count;
 
         await BuyAsync(Reply(_vendor.Id, (lines[1], 2)));
 
         Assert.Equal(500191, _speech.ToldClilocs.Single().Cliloc);
         Assert.Empty(_bank.Paid);
+        Assert.Equal(before, _serials.Serials.Count);
+    }
+
+    [Fact]
+    public async Task Buy_ByAPlayerWhoseItemsAreBusy_IsRefused_BeforeAnySerialIsUsed()
+    {
+        Backpack();
+        _bank.Carried[_player.Id] = 100;
+        var lines = await OpenAsync();
+        _bank.Result = BankResultType.Busy;
+        var before = _serials.Serials.Count;
+
+        await BuyAsync(Reply(_vendor.Id, (lines[0], 2)));
+
+        Assert.Equal(500187, _speech.ToldClilocs.Single().Cliloc);
+        Assert.Empty(_bank.Paid);
+        Assert.Equal(before, _serials.Serials.Count);
     }
 
     [Fact]

@@ -297,18 +297,13 @@ public sealed class VendorService : IVendorService
 
         End(session, window);
 
-        // What came out of the backpack and what came out of the bank are told apart.
-        if (pays - fromBank > 0)
+        // As ModernUO: one line, with the whole total, said by where the gold came from.
+        if (pays > 0)
         {
-            _speech.TellCliloc(player, ClilocPaidFromBackpack, (pays - fromBank).ToString());
+            _speech.TellCliloc(player, fromBank > 0 ? ClilocPaidFromBank : ClilocPaidFromBackpack, pays.ToString());
         }
 
-        if (fromBank > 0)
-        {
-            _speech.TellCliloc(player, ClilocPaidFromBank, fromBank.ToString());
-        }
-
-        _fatigue?.LoadChanged(session, player, true);
+                _fatigue?.LoadChanged(session, player, true);
     }
 
     public bool OpenSell(GameSession session, MobileEntity vendor)
@@ -559,25 +554,20 @@ public sealed class VendorService : IVendorService
         return session.Get(SessionKeys.AccountType) >= AccountType.GameMaster;
     }
 
-    // Whether the backpack, and from 2000 the bank, hold the price; else the cliloc that says what is lacking.
+    // Whether the backpack, and from 2000 the bank, hold the price and may be taken from now; else the cliloc that says why.
     private bool CanAfford(MobileEntity player, int pays, out int shortage)
     {
         shortage = ClilocCannotAfford;
-        var carried = _bank.CarriedGold(player);
 
-        if (carried >= pays)
+        if (pays == 0)
         {
             return true;
         }
 
-        if (pays < BankFrom)
-        {
-            return false;
-        }
+        var result = _bank.CanPay(player, pays, pays >= BankFrom);
+        shortage = Shortage(result, pays);
 
-        shortage = ClilocBankLacksFunds;
-
-        return _bank.Balance(player) is { } balance && balance >= pays - carried;
+        return result == BankResultType.Ok;
     }
 
     // The backpack first. The bank is drawn on only from 2000 gold, for what the backpack lacks, and straight from its box:
@@ -592,18 +582,22 @@ public sealed class VendorService : IVendorService
             return true;
         }
 
-        var useBank = pays >= BankFrom;
-        var result = _bank.Pay(player, pays, useBank, out fromBank);
+        var result = _bank.Pay(player, pays, pays >= BankFrom, out fromBank);
+        refusal = Shortage(result, pays);
 
-        if (result == BankResultType.Ok)
+        return result == BankResultType.Ok;
+    }
+
+    // What the vendor says when it is not paid: the bank lacks funds from 2000, the backpack lacks them below, and an
+    // order that cannot be carried out when the character's items are busy.
+    private static int Shortage(BankResultType result, int pays)
+    {
+        if (result == BankResultType.Busy)
         {
-            return true;
+            return ClilocOrderCannotBeFulfilled;
         }
 
-        refusal = result == BankResultType.Busy ? ClilocOrderCannotBeFulfilled :
-            useBank ? ClilocBankLacksFunds : ClilocCannotAfford;
-
-        return false;
+        return pays >= BankFrom ? ClilocBankLacksFunds : ClilocCannotAfford;
     }
 
     // To the backpack when all of it fits, else at the feet of the player.

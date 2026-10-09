@@ -91,14 +91,18 @@ public interface IBankService : ISessionClosedListener
     long CarriedGold(MobileEntity player);
 
     /// <summary>
-    ///     Pays <paramref name="amount" /> gold out of what the player has, as a vendor is paid: the coins of the
-    ///     backpack and its bags first, smallest piles first, then, when <paramref name="useBank" /> is true, the coins of
-    ///     the bank box and then its checks. Everything is checked before anything moves, so it is all or nothing, and
-    ///     none of the limits of a withdrawal applies: the gold does not pass through the backpack. <paramref name="fromBank" />
-    ///     is how much came out of the bank box, to tell the player. <c>NotEnoughGold</c> when what the player has, in
-    ///     the
-    ///     places allowed, is less; <c>Busy</c> when its items are reserved by another operation; <c>BadAmount</c>
-    ///     under 1.
+    ///     Tells whether <see cref="Pay" /> would succeed, moving nothing: <c>Ok</c>, or why not: <c>NotEnoughGold</c> when
+    ///     what the player has, in the places allowed, is less; <c>Busy</c> when its items are reserved by another
+    ///     operation; <c>BadAmount</c> under 1; <c>NoPlayer</c> for an NPC.
+    /// </summary>
+    BankResultType CanPay(MobileEntity player, int amount, bool useBank);
+
+    /// <summary>
+    ///     Pays <paramref name="amount" /> gold out of what the player has, as a vendor is paid: the coins of the backpack
+    ///     and its bags first, smallest piles first, then, when <paramref name="useBank" /> is true, the coins of the
+    ///     bank box and then its checks. Everything is checked before anything moves (see <see cref="CanPay" />), so it is
+    ///     all or nothing, and none of the limits of a withdrawal applies: the gold does not pass through the backpack.
+    ///     <paramref name="fromBank" /> is how much came out of the bank box, to tell the player.
     /// </summary>
     BankResultType Pay(MobileEntity player, int amount, bool useBank, out int fromBank);
 

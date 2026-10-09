@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"7994da725fd80831728c074b0c00352b4a79f7ce7e4e690258d195fce26fab69","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"66d38c4f37c7e6426792e4483da153d07c69c9a64d53d0aa0541a2b8ca25c974","title":"Venditori"} -->
 
 # Venditori
 
@@ -38,8 +38,7 @@ acquisto è tutto o niente: quando un controllo fallisce, non viene preso nulla 
   riservati prima di prendere qualsiasi cosa; un ordine che ne richiede più di quelli pronti sul server viene rifiutato con il cliloc
   500187.
 - La merce va nello zaino. Quando non ci sta, viene messa a terra ai piedi del giocatore.
-- Il giocatore legge quanto ha pagato: cliloc 1151639 per l'oro dello zaino, e 1151638 per la parte uscita dalla banca, ciascuno con
-  la sua cifra.
+- Il giocatore legge il totale pagato: cliloc 1151639, oppure 1151638 quando una parte è uscita dalla banca.
 
 La finestra si chiude dopo ogni risposta, acquisto o rifiuto. Una risposta che non è per la finestra aperta di quel
 venditore, o che ha più di 100 righe, viene scartata.

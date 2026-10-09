@@ -607,6 +607,45 @@ public sealed class BankServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Pay_SeveralChecks_ArePaidSmallestFirst_AndTheLastOneKeepsTheRest()
+    {
+        var box = await BoxAsync();
+        var big = Check(box, 5000);
+        var small = Check(box, 300);
+
+        Assert.Equal(BankResultType.Ok, _bank.Pay(_aria, 1000, true, out var fromBank));
+
+        Assert.Equal(1000, fromBank);
+        Assert.False(_items.TryGet(small.Id, out _));
+        Assert.True(big.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
+        Assert.Equal(4300, left);
+    }
+
+    [Fact]
+    public void Pay_WithTheBankAllowedButNoBox_OrAnNpc_IsRefused()
+    {
+        Gold(Backpack(), 100);
+
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.Pay(_aria, 101, true, out _));
+        Assert.Equal(BankResultType.NoPlayer, _bank.Pay(new MobileEntity { Id = new Serial(900) }, 1, true, out _));
+    }
+
+    [Fact]
+    public async Task CanPay_AgreesWithPay_AndMovesNothing()
+    {
+        var box = await BoxAsync();
+        var loose = Gold(Backpack(), 300);
+        var banked = Gold(box, 700);
+
+        Assert.Equal(BankResultType.Ok, _bank.CanPay(_aria, 1000, true));
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.CanPay(_aria, 1001, true));
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.CanPay(_aria, 301, false));
+        Assert.Equal(BankResultType.BadAmount, _bank.CanPay(_aria, 0, true));
+
+        Assert.Equal((300, 700), (loose.Amount, banked.Amount));
+    }
+
+    [Fact]
     public void CarriedGold_WithNoBackpack_IsNone_AndAPaymentIsRefused()
     {
         Assert.Equal(0, _bank.CarriedGold(_aria));
