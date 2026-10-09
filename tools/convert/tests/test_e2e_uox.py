@@ -8,6 +8,7 @@ command and the two trees, the reports and the exit codes must be identical.
 from __future__ import annotations
 
 import os
+import re
 import subprocess
 import sys
 import tomllib
@@ -58,7 +59,8 @@ def test_every_pass_writes_valid_toml_and_the_report_counts_them(tmp_path):
     for name, content in files.items():
         assert tomllib.loads(content.decode("utf-8")) is not None, name
 
-    assert "mobiles" in result.stdout.lower() or "mobile" in result.stdout.lower()
+    assert "mobile" in result.stdout.lower()
+    assert re.search(r"Converted \d+ mobile", result.stdout)
 
 
 @pytest.mark.skipif(MGCTL is None, reason="MOONGATE_MGCTL is not set")

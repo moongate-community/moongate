@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 
@@ -138,3 +139,19 @@ def _drop_trailing_commas(text: str) -> str:
             i += 1
 
     return "".join(out)
+
+
+def walk_files(root: Path, suffix: str) -> list[Path]:
+    """Every file under a folder whose name ends with the suffix, in path order, as ``Directory.EnumerateFiles`` finds them: directory
+    links are followed and a folder that cannot be read is an error, not a silent gap."""
+    def fail(exception: OSError) -> None:
+        raise exception
+
+    found = [
+        Path(folder) / name
+        for folder, _, names in os.walk(root, onerror=fail, followlinks=True)
+        for name in names
+        if name.endswith(suffix)
+    ]
+
+    return sorted((path for path in found if path.is_file()), key=str)

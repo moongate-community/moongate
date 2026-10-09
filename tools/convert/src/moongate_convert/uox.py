@@ -16,7 +16,7 @@ from typing import TextIO
 from . import dfn, items, uox_data, uox_mobiles, uox_spawns, uox_starting_items
 from .dfn import DfnBlock, IgnoreCaseDict, IgnoreCaseSet
 from .item_index import ItemIndex
-from .textutil import read_lines, snake_case, write_text
+from .textutil import read_lines, snake_case, walk_files, write_text
 
 
 def run(
@@ -62,12 +62,17 @@ def run(
     if scripts_source is not None:
         try:
             scripts = uox_data.ScriptAssociations.load(_full(scripts_source))
-        except FileNotFoundError as exception:
+        except OSError as exception:
             error.write(f"{exception}\n")
 
             return 2
 
-    source_files = [source] if source.is_file() else sorted((path for path in source.rglob("*.dfn") if path.is_file()), key=str)
+    try:
+        source_files = [source] if source.is_file() else walk_files(source, ".dfn")
+    except OSError as exception:
+        error.write(f"{exception}\n")
+
+        return 2
 
     if not source_files:
         error.write(f"No .dfn files found under {source}\n")
@@ -382,16 +387,16 @@ def _verify_output(destination: Path, loot_destination: Path | None) -> tuple[li
     item_ids: set[str] = set()
 
     for item in templates:
-        if item["id"] in item_ids:
-            errors.append(f"item '{item['id']}' is defined more than once")
+        if item.get("id", "") in item_ids:
+            errors.append(f"item '{item.get('id', '')}' is defined more than once")
 
-        item_ids.add(item["id"])
+        item_ids.add(item.get("id", ""))
 
     for item in templates:
         base_id = item.get("base_id")
 
         if base_id is not None and base_id not in item_ids:
-            errors.append(f"item '{item['id']}' has BaseId '{base_id}', which does not exist")
+            errors.append(f"item '{item.get('id', '')}' has BaseId '{base_id}', which does not exist")
 
     if loot_destination is None:
         return errors, len(templates), 0
@@ -400,10 +405,10 @@ def _verify_output(destination: Path, loot_destination: Path | None) -> tuple[li
     loot_ids: set[str] = set()
 
     for table in tables:
-        if table["id"] in loot_ids:
-            errors.append(f"loot table '{table['id']}' is defined more than once")
+        if table.get("id", "") in loot_ids:
+            errors.append(f"loot table '{table.get('id', '')}' is defined more than once")
 
-        loot_ids.add(table["id"])
+        loot_ids.add(table.get("id", ""))
 
     for table in tables:
         for entry in table.get("entries", []):
@@ -411,10 +416,10 @@ def _verify_output(destination: Path, loot_destination: Path | None) -> tuple[li
             nested_id = entry.get("loot_template_id")
 
             if item_id is not None and item_id not in item_ids:
-                errors.append(f"loot table '{table['id']}' has an entry with ItemId '{item_id}', which does not exist")
+                errors.append(f"loot table '{table.get('id', '')}' has an entry with ItemId '{item_id}', which does not exist")
 
             if nested_id is not None and nested_id not in loot_ids:
-                errors.append(f"loot table '{table['id']}' has an entry with LootTemplateId '{nested_id}', which does not exist")
+                errors.append(f"loot table '{table.get('id', '')}' has an entry with LootTemplateId '{nested_id}', which does not exist")
 
     return errors, len(templates), len(tables)
 
@@ -427,7 +432,11 @@ def _read_all(root: Path, table: str) -> list[dict]:
     if not root.is_dir():
         return entities
 
-    for path in sorted(root.rglob("*.toml")):
-        entities.extend(tomllib.loads(path.read_text(encoding="utf-8-sig")).get(table, []))
+    for path in walk_files(root, ".toml"):
+        found = tomllib.loads(path.read_text(encoding="utf-8-sig")).get(table, [])
+
+        # A file in the destination this run did not write can have any shape; an entry that is no table is not one.
+        if isinstance(found, list):
+            entities.extend(entry for entry in found if isinstance(entry, dict))
 
     return entities

@@ -18,7 +18,7 @@ from .dfn import DfnBlock, IgnoreCaseDict
 from .report import ConversionReport
 from .spawn import MAP_NAMES, Spawn, SpawnArea, map_key
 from .spawn import serialize as serialize_spawns
-from .textutil import read_lines, snake_case, trim, try_int, write_text
+from .textutil import read_lines, snake_case, trim, try_int, walk_files, write_text
 from .tomlout import basic
 
 _LIST_HEADER_PREFIX = "npclist "
@@ -113,7 +113,7 @@ def _dfn_files(directory: Path) -> list[Path]:
     if not directory.is_dir():
         return []
 
-    return sorted((path for path in directory.rglob("*.dfn") if path.is_file()), key=str)
+    return walk_files(directory, ".dfn")
 
 
 # --- the npc lists ---

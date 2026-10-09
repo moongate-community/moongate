@@ -17,7 +17,7 @@ from .item_index import ItemIndex
 from .mobiles import BuildContext, Mobile
 from .report import ConversionReport
 from .specs import DiceSpec
-from .textutil import read_lines, snake_case, write_text
+from .textutil import read_lines, snake_case, walk_files, write_text
 
 _SCRIPT_ID_RULE = "must be a Lua identifier of lower-case letters, digits and underscores"
 
@@ -60,7 +60,7 @@ def _run(
     name_lists = names.build(dfn.parse(read_lines(name_lists_path)), dictionary) if name_lists_path.is_file() else []
     npc_directory = mobile_source / "npc"
     source_files = (
-        sorted((path for path in npc_directory.rglob("*.dfn") if path.is_file() and not _is_skipped_file(npc_directory, path)), key=str)
+        [path for path in walk_files(npc_directory, ".dfn") if not _is_skipped_file(npc_directory, path)]
         if npc_directory.is_dir()
         else []
     )
