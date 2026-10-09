@@ -168,3 +168,19 @@ def test_guildmasters(tmp_path):
     assert code == 0
     assert (tmp_path / "mobiles" / "guildmasters.toml").read_bytes() == (ROOT / "templates" / "mobiles" / "guildmasters.toml").read_bytes()
     assert (tmp_path / "npc_lists" / "npclists_guildmasters.toml").read_bytes() == (ROOT / "templates" / "npc_lists" / "npclists_guildmasters.toml").read_bytes()
+
+
+def test_taming(tmp_path):
+    code = main(
+        [
+            "modernuo-taming",
+            "--source", str(Path(SOURCE or "") / "Projects" / "UOContent"),
+            "--templates", str(ROOT / "templates" / "mobiles"),
+            "--destination", str(tmp_path),
+        ],
+        io.StringIO(),
+        io.StringIO(),
+    )
+
+    assert code == 0
+    assert (tmp_path / "taming.toml").read_bytes() == (ROOT / "data" / "taming.toml").read_bytes()

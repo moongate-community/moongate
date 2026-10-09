@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TextIO
 
-from . import books, chests, guildmasters, locations, signs, spawn, spawns, teleporters, uox, vendors
+from . import books, chests, guildmasters, locations, signs, spawn, spawns, taming, teleporters, uox, vendors
 
 # name -> (module run function, what --source is, what --destination is, help)
 _Run = Callable[[Path, Path, TextIO, TextIO], int]
@@ -116,6 +116,24 @@ def _vendors(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> in
     )
 
 
+def _taming_options(command: argparse.ArgumentParser) -> None:
+    command.add_argument("--source", required=True, type=Path, help="the Projects/UOContent folder of ModernUO, or its Mobiles folder")
+    command.add_argument(
+        "--templates", required=True, type=Path, help="the mobile templates folder (templates/mobiles): a creature class with no template there is skipped"
+    )
+    command.add_argument("--destination", required=True, type=Path, help="the data folder (data); taming.toml is written there, replacing that of a previous run")
+
+
+def _taming(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> int:
+    return taming.run(
+        Path(os.path.abspath(arguments.source)),
+        Path(os.path.abspath(arguments.templates)),
+        Path(os.path.abspath(arguments.destination)),
+        output,
+        error,
+    )
+
+
 def _guildmasters_options(command: argparse.ArgumentParser) -> None:
     command.add_argument(
         "--source", required=True, type=Path, help="the Projects/UOContent folder of ModernUO, or its Mobiles/Vendors/NPC/Guildmasters folder"
@@ -196,6 +214,11 @@ CUSTOM: dict[str, tuple[str, Callable[[argparse.ArgumentParser], None], _Custom]
         "Convert the guildmasters of ModernUO into mobile templates (a man and a woman for each trade) and npc lists",
         _guildmasters_options,
         _guildmasters,
+    ),
+    "modernuo-taming": (
+        "Convert the creatures of ModernUO that can be tamed (Tamable, MinTameSkill, ControlSlots) into data/taming.toml",
+        _taming_options,
+        _taming,
     ),
     "modernuo-vendors": (
         "Convert the shops of ModernUO's vendors (the SBInfo classes) into shop templates, one file a vendor class",

@@ -10,11 +10,12 @@ namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
 ///     Loads the creatures of <c>data/taming.toml</c>. The file may be missing: nothing can be tamed then. A creature
-///     whose template is not a mobile template or is there twice, a minimum skill outside 0 to 120 or slots outside 1 to
+///     whose template is not a mobile template or is there twice, a minimum skill outside -50 to 120 or slots outside 1 to
 ///     10 stop the server at startup, naming the creature.
 /// </summary>
 public class TamingLoader : IDataLoader<TamingCreature>
 {
+    private const double MinSkill = -50;
     private const double MaxSkill = 120;
     private const int MaxSlots = 10;
 
@@ -63,9 +64,9 @@ public class TamingLoader : IDataLoader<TamingCreature>
                 throw Invalid($"the creature {creature.Template} is there twice");
             }
 
-            if (creature.MinSkill is < 0 or > MaxSkill || double.IsNaN(creature.MinSkill))
+            if (creature.MinSkill is < MinSkill or > MaxSkill || double.IsNaN(creature.MinSkill))
             {
-                throw Invalid($"the minimum skill of {creature.Template} must be 0 to {MaxSkill}");
+                throw Invalid($"the minimum skill of {creature.Template} must be {MinSkill} to {MaxSkill}");
             }
 
             if (creature.Slots is < 1 or > MaxSlots)

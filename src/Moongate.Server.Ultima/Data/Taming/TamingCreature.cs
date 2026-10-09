@@ -13,7 +13,7 @@ public class TamingCreature
 
     /// <summary>
     ///     The Animal Taming it takes, in points, such as 29.1; the chance of a try grows from 0.1 under it to 49.9 above.
-    ///     0 to 120.
+    ///     -50 to 120: the small animals ask less than none.
     /// </summary>
     public double MinSkill { get; set; }
 

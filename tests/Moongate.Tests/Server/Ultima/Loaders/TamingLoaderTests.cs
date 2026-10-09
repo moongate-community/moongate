@@ -36,6 +36,15 @@ public sealed class TamingLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_ASmallAnimalThatAsksLessThanNone_IsRead()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/taming.toml", "[[creature]]\ntemplate = \"horse\"\nmin_skill = -18.9\n");
+
+        Assert.Equal(-18.9, Assert.Single((await CreateLoader(root).LoadDataAsync()).Entities).MinSkill);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_NoFile_LoadsNothing()
     {
         using var root = new TemporaryDirectory();
@@ -45,7 +54,7 @@ public sealed class TamingLoaderTests
 
     [Theory]
     [InlineData("template = \"dragonfly\"\nmin_skill = 10", "dragonfly")]
-    [InlineData("template = \"horse\"\nmin_skill = -1", "minimum skill")]
+    [InlineData("template = \"horse\"\nmin_skill = -50.5", "minimum skill")]
     [InlineData("template = \"horse\"\nmin_skill = 120.5", "minimum skill")]
     [InlineData("template = \"horse\"\nmin_skill = 10\nslots = 0", "slots")]
     [InlineData("template = \"horse\"\nmin_skill = 10\nslots = 11", "slots")]
