@@ -446,6 +446,19 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AnNpc_GetsNothingFromLumberjacking_WhateverItHolds()
+    {
+        _orc.Skills.Add(new MobileSkill { Skill = SkillType.Lumberjacking, Base = 1000 });
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Axe, true, 100, 200, 35);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        // 8 of the template, halved on a player: 4, as without the skill.
+        Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
     public void TheArmorOfAPlayer_IsThePieceTheBlowLands_AndTakesHalfToAllOfItsRating()
     {
         // A blow at the chest, which wears 30, takes 15 to 30 off; the orc's 8 halved is 4: the least is 1.

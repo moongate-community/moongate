@@ -98,6 +98,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     private readonly StubItemSerialPool _serials = new();
     private readonly ItemService _items;
     private readonly HarvestService _harvest;
+    private readonly HarvestResource _wood;
 
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
@@ -114,7 +115,6 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "yew_board", ItemId = new Serial(0x1BD7), Stackable = true },
             new ItemTemplate { Id = "heartwood_log", ItemId = new Serial(0x1BE0), Stackable = true },
             new ItemTemplate { Id = "heartwood_board", ItemId = new Serial(0x1BD7), Stackable = true },
-            new ItemTemplate { Id = "bloodwood_log", ItemId = new Serial(0x1BE0), Stackable = true },
             new ItemTemplate { Id = "bloodwood_board", ItemId = new Serial(0x1BD7), Stackable = true },
             new ItemTemplate { Id = "frostwood_log", ItemId = new Serial(0x1BE0), Stackable = true },
             new ItemTemplate { Id = "frostwood_board", ItemId = new Serial(0x1BD7), Stackable = true },
@@ -147,7 +147,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         // The least of the area: 2 cuts, back 20 minutes after the first.
         _harvest = new(
             new StubDataLoaderService().With(
-                new HarvestResource
+                _wood = new HarvestResource
                 {
                     Id = "wood", Area = 4, AmountMin = 2, AmountMax = 4, RespawnMinMinutes = 20, RespawnMaxMinutes = 30,
                     // The weights of the shipped data/harvest.toml: a place is plain unless the test draws otherwise.
@@ -712,7 +712,6 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     [InlineData(790, "ash_log", 1072542)]
     [InlineData(890, "yew_log", 1072543)]
     [InlineData(940, "heartwood_log", 1072544)]
-    [InlineData(970, "bloodwood_log", 1072545)]
     [InlineData(990, "frostwood_log", 1072546)]
     public void Chopping_InAPlaceOfAKind_AMasterGetsTheLogsOfTheKind(int draw, string logs, int text)
     {
@@ -728,6 +727,60 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Assert.Equal([UseOnWhat, text], Told());
         Assert.Equal((logs, 10), Assert.Single(Caught().Select(item => (item.TemplateId, item.Amount))));
         Assert.Equal(1, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
+    }
+
+    [Fact]
+    public void Chopping_WithAWoodWithoutVeins_AsARootOfBeforeTheKinds_GivesPlainLogs()
+    {
+        _wood.Vein.Clear();
+        // One swing, then the roll of a master's find: no roll is spent on a kind.
+        Rolls(0.0, 0.05);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Chopped, 1072548], Told());
+        Assert.Contains(Caught(), item => item.TemplateId == "0x1be0_log" && item.Amount == 10);
+    }
+
+    [Fact]
+    public void Chopping_AKindWhoseLogsTheRootDoesNotHave_GivesPlainLogs()
+    {
+        // Bloodwood, which these templates lack: a root that copied the script and the veins but not the items.
+        _place.Integers(0, 970);
+        Rolls(0.0, 0.5);
+        _random.Doubles(0.0);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Chopped], Told());
+        Assert.Equal(("0x1be0_log", 10), Assert.Single(Caught().Select(item => (item.TemplateId, item.Amount))));
+    }
+
+    [Fact]
+    public void LogsAndBoardsOfAKind_PileApartFromThePlainOnes()
+    {
+        var plain = Carry("0x1be0_log", 0x1BE0, 7);
+        Carry("0x1bd7_board", 0x1BD7, 3);
+        _place.Integers(0, 490);
+        Rolls(0.0, 0.5);
+        _random.Doubles(0.0);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Equal(7, plain.Amount);
+        var oak = Assert.Single(Caught(), item => item.TemplateId == "oak_log");
+        Assert.Equal(10, oak.Amount);
+
+        Use(oak.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal(3, Assert.Single(Caught(), item => item.TemplateId == "0x1bd7_board").Amount);
+        Assert.Equal(10, Assert.Single(Caught(), item => item.TemplateId == "oak_board").Amount);
     }
 
     [Fact]

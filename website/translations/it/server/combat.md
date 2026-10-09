@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"c8e3d4b84c101ff6826d290935efb2fc8783c71d5d409ba6a5c2fe6d0c0c6dd3","title":"Combattimento"} -->
+<!-- translation: {"sourceHash":"42bcd08e37c416e9e300ab7af7891fcf554f5b3220fcdfe3892fcf929a95ef90","title":"Combattimento"} -->
 
 # Combattimento
 
@@ -148,7 +148,7 @@ la finestra di stato mostra), e con queste differenze, come in ModernUO e UOX3:
 ## Non ancora
 
 Parata (uno scudo non conta ancora nulla), una faretra (le munizioni si prendono dallo zaino), mosse speciali, durabilità (`max_hits` è conservato, non usato), la
-forza richiesta da un'arma o da un'armatura (`strength_required` è conservato, non usato), il bonus di lumberjacking delle asce, liste
+forza richiesta da un'arma o da un'armatura (`strength_required` è conservato, non usato), liste
 di aggressori oltre il bersaglio, bende ed eventi di combattimento di Lua (`attack`, `hit`, `miss`,
 `get_hit`).
 

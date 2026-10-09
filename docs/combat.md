@@ -145,7 +145,7 @@ the status window shows), and with these differences, as ModernUO and UOX3 have 
 ## Not yet
 
 Parry (a shield counts for nothing yet), a quiver (ammunition is taken from the backpack), special moves, durability (`max_hits` is kept, not used), the
-strength a weapon or armor asks for (`strength_required` is kept, not used), the lumberjacking bonus of axes, aggressor
+strength a weapon or armor asks for (`strength_required` is kept, not used), aggressor
 lists beyond the target, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
 `get_hit`).
 

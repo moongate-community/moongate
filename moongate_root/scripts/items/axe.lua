@@ -184,10 +184,15 @@ local function finish(tool, user, map, x, y)
     -- The wood leaves the tree whether or not the backpack takes it: a full backpack is no way to chop for ever.
     trees.take_wood(map, x, y)
 
+    -- A root without the logs of the kind (templates/items/woods.toml) gets plain ones, as a full backpack tries to.
     if not item.give(user, wood.logs, LOGS_PER_CUT) then
-        mobile.message_cliloc(user, NO_ROOM)
+        wood = PLAIN
 
-        return
+        if not item.give(user, wood.logs, LOGS_PER_CUT) then
+            mobile.message_cliloc(user, NO_ROOM)
+
+            return
+        end
     end
 
     mobile.message_cliloc(user, wood.chopped)

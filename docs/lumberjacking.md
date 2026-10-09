@@ -26,7 +26,7 @@ chop one tree at a time: a second double click meanwhile does nothing.
 ## What you get
 
 The try is rolled on the Lumberjacking skill between 0 and 100, so the chance of a cut that works is the skill
-itself, and the skill may rise at every try. A cut that works gives 10 logs, which join the logs already in the
+itself, and the skill may rise at every try. That is for plain wood: the other [kinds of wood](#kinds-of-wood) are harder. A cut that works gives 10 logs, which join the logs already in the
 backpack. The axe does not wear out.
 
 These axes chop: the hatchet, the axe, the battle axe, the double axe, the executioner's axe, the large battle
@@ -96,7 +96,7 @@ as trees). See [Shipped scripts](scripting/shipped-scripts.md#axelua). A templat
 A root made before lumberjacking existed needs two things. Run `mgctl init`, which adds the script. Then add the
 resource `wood` to your `data/harvest.toml` and `script_id = "axe"` to the axe bases of
 `templates/items/gear/weapons/axes.toml`, or copy both files from the distribution: `mgctl init` never replaces
-a file you may have changed. For boards and kindling, copy `scripts/items/axe.lua` again if you had it already, and give `script_id = "blade"` to your knives, daggers and swords, or copy the files of `templates/items/gear/weapons` from the distribution. For the kinds of wood and the rare finds, copy `templates/items/woods.toml`, `scripts/items/axe.lua` and `scripts/common/trees.lua`, and add the `[[resource.vein]]` of the wood to your `data/harvest.toml`: without the veins every place is of plain wood.
+a file you may have changed. For boards and kindling, copy `scripts/items/axe.lua` again if you had it already, and give `script_id = "blade"` to your knives, daggers and swords, or copy the files of `templates/items/gear/weapons` from the distribution. For the kinds of wood and the rare finds, copy `templates/items/woods.toml`, `scripts/items/axe.lua` and `scripts/common/trees.lua`, and add the `[[resource.vein]]` of the wood to your `data/harvest.toml`: without the veins every place is of plain wood, and without the templates a cut gives plain logs.
 
 ## Not yet
 
