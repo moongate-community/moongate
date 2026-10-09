@@ -1,5 +1,6 @@
 [[item]]
 id = "practice_skinning_knife"
+script_id = "blade"
 item_id = 3780
 name = "a skinning knife (practice weapon)"
 rarity = "common"
@@ -60,6 +61,7 @@ loot_type = "newbied"
 
 [[item]]
 id = "practice_longsword"
+script_id = "blade"
 item_id = 3937
 name = "a longsword (practice weapon)"
 rarity = "common"

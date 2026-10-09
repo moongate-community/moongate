@@ -1,6 +1,7 @@
 [[item]]
 id = "base_cleaver"
 base_id = "base_item"
+script_id = "blade"
 item_id = 3778
 name = "cleaver"
 rarity = "common"
@@ -18,6 +19,7 @@ rarity = "common"
 [[item]]
 id = "0x0ec3"
 base_id = "0x0ec2_lbr"
+script_id = "blade"
 item_id = 3779
 rarity = "common"
 weapon_type = "axe"
@@ -25,6 +27,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_skinning_knife"
 base_id = "base_item"
+script_id = "blade"
 item_id = 3780
 name = "skinning knife"
 rarity = "common"
@@ -42,6 +45,7 @@ rarity = "common"
 [[item]]
 id = "0x0ec5"
 base_id = "0x0ec4_lbr"
+script_id = "blade"
 item_id = 3781
 rarity = "common"
 weapon_type = "sword"
@@ -49,6 +53,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_dagger"
 base_id = "base_item"
+script_id = "blade"
 item_id = 3921
 name = "dagger"
 rarity = "common"
@@ -66,6 +71,7 @@ rarity = "common"
 [[item]]
 id = "0x0f52"
 base_id = "0x0f51_lbr"
+script_id = "blade"
 item_id = 3922
 rarity = "common"
 weapon_type = "fencing"
@@ -73,6 +79,7 @@ weapon_type = "fencing"
 [[item]]
 id = "base_butcher_knife"
 base_id = "base_item"
+script_id = "blade"
 item_id = 5110
 name = "butcher knife"
 rarity = "common"
@@ -90,6 +97,7 @@ rarity = "common"
 [[item]]
 id = "0x13f7"
 base_id = "0x13f6_lbr"
+script_id = "blade"
 item_id = 5111
 rarity = "common"
 weapon_type = "sword"
@@ -162,6 +170,7 @@ rarity = "common"
 [[item]]
 id = "0x406a"
 base_id = "0x0902_lbr"
+script_id = "blade"
 item_id = 16490
 rarity = "common"
 weapon_type = "fencing"

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"bc0d73b0e47a06b4c9b3daf663386177256b9d807d63b35caf36d04a5ad7cccb","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"24de460e67cf9a6eba119b92c897c04a8659ac8ae98eee1f49def8c41cf0fc20","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -207,8 +207,8 @@ vedi [Taglio della legna](../lumberjacking.md). L'ascia deve essere in mano a ch
 statico scelto, e lo script contiene le grafiche che sono alberi. Il personaggio colpisce da una a tre volte
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare della legna (`harvest.amount`), l'abilità
 Lumberjacking viene provata tra 0 e 100 (`skill.check`), e un taglio riuscito toglie dal luogo
-(`harvest.take`) e dà 10 tronchi (`item.give`). Le costanti in cima allo script sono la distanza, i colpi,
-i tronchi e gli alberi. Chi sta tagliando è tenuto in memoria per seriale: un riavvio libera tutti.
+(`harvest.take`) e dà 10 tronchi (`item.give`). Le costanti in cima allo script sono la distanza, i colpi
+e i tronchi; gli alberi sono in `scripts/common/trees.lua`, condiviso con `scripts/items/blade.lua`, lo script di coltelli, pugnali e spade (`script_id = "blade"`), che stacca un legnetto da un albero. Usata sui tronchi nello zaino, l'ascia sega la pila in assi (`item.template`, `item.consume`, poi `item.give`). Chi sta tagliando è tenuto in memoria per seriale: un riavvio libera tutti.
 
 ## fishing_pole.lua
 

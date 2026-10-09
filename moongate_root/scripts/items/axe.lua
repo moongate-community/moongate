@@ -19,12 +19,17 @@
 --   The Lumberjacking skill is tried between 0 and 100, so the chance is the
 --   skill, and it may rise. The axe does not wear out.
 --
+--   Picked onto logs in the backpack instead of a tree, the axe saws the whole
+--   stack into boards, one for each log, with no skill tried.
+--
 -- Functions:
 --   on_use(serial, user)   the player user double clicks the axe serial
 --
 -- What it keeps:
 --   Who is chopping, in memory by serial, not saved: a restart frees everyone.
 -- ==============================================================================
+
+local trees = require("common.trees")
 
 axe = {}
 
@@ -42,8 +47,10 @@ local SWINGS = { 1, 2, 2, 2, 3 }
 local CHOP = 13
 local CHOP_SOUND = 0x13E
 
-local RESOURCE = "wood"
 local LOGS = "0x1be0_log"
+-- The other shape of a log, which shops sell: it is sawn too.
+local LOGS_OTHER = "0x1bdd_log"
+local BOARDS = "0x1bd7_board"
 local LOGS_PER_CUT = 10
 
 -- Client texts.
@@ -54,14 +61,8 @@ local TOO_FAR = 500446        -- That is too far away.
 local NO_WOOD = 500493        -- There's not enough wood here to harvest.
 local FAILED = 500495         -- You hack at the tree for a while, but fail to produce any useable wood.
 local NO_ROOM = 500497        -- You can't place any wood into your backpack!
+local IN_BACKPACK = 1062334   -- This item must be in your backpack to be used.
 local CHOPPED = 500498        -- the text for the logs put into the backpack
-
--- The graphics of the trees a player chops, alone or as a range.
-local TREES = {
-    { 0x0CCA, 0x0CE8 }, { 0x0CF8, 0x0D03 }, { 0x0D41, 0x0D53 }, { 0x0D57, 0x0D69 }, { 0x0D6E, 0x0D7F },
-    { 0x0D84, 0x0D90 }, { 0x0D95, 0x0D97 }, { 0x0D99, 0x0D9B }, { 0x0D9D, 0x0D9F }, { 0x0DA1, 0x0DA3 },
-    { 0x0DA5, 0x0DA7 }, { 0x0DA9, 0x0DAB }, { 0x12B5, 0x12C7 },
-}
 
 -- Who is chopping, by serial.
 local chopping = {}
@@ -69,22 +70,8 @@ local chopping = {}
 -- A number from 0 up to 1, drawn for each choice.
 axe.roll = math.random
 
-local function is_tree(graphic)
-    for _, range in ipairs(TREES) do
-        if graphic >= range[1] and graphic <= range[2] then
-            return true
-        end
-    end
-
-    return false
-end
-
 local function near(here, map, x, y)
     return here.map == map and math.abs(here.x - x) <= RANGE and math.abs(here.y - y) <= RANGE
-end
-
-local function has_wood(map, x, y)
-    return (harvest.amount(RESOURCE, map, x, y) or 0) > 0
 end
 
 -- The last swing landed.
@@ -104,7 +91,7 @@ local function finish(tool, user, map, x, y)
     end
 
     -- Someone else may have taken the last cut meanwhile.
-    if not has_wood(map, x, y) then
+    if not trees.has_wood(map, x, y) then
         mobile.message_cliloc(user, NO_WOOD)
 
         return
@@ -117,7 +104,7 @@ local function finish(tool, user, map, x, y)
     end
 
     -- The wood leaves the tree whether or not the backpack takes it: a full backpack is no way to chop for ever.
-    harvest.take(RESOURCE, map, x, y)
+    trees.take_wood(map, x, y)
 
     if not item.give(user, LOGS, LOGS_PER_CUT) then
         mobile.message_cliloc(user, NO_ROOM)
@@ -126,6 +113,36 @@ local function finish(tool, user, map, x, y)
     end
 
     mobile.message_cliloc(user, CHOPPED)
+end
+
+-- The axe used on an item: logs in the backpack become boards, one for each log; anything else is no tree.
+local function saw(user, picked)
+    local template = item.template(picked)
+
+    if template ~= LOGS and template ~= LOGS_OTHER then
+        mobile.message_cliloc(user, NOT_A_TREE)
+
+        return
+    end
+
+    -- Logs on the ground, in a chest or on a cursor stay logs: a pile on a cursor cannot be taken from.
+    if item.owner(picked) ~= user or item.is_held(picked) then
+        mobile.message_cliloc(user, IN_BACKPACK)
+
+        return
+    end
+
+    local amount = item.amount(picked)
+
+    -- The logs are taken before the boards are given: boards never come from logs that stayed.
+    if not amount or not item.consume(picked, amount) then
+        mobile.message_cliloc(user, IN_BACKPACK)
+
+        return
+    end
+
+    mobile.play_sound(user, CHOP_SOUND)
+    item.give(user, BOARDS, amount)
 end
 
 -- The player picked what to use the axe on.
@@ -140,7 +157,13 @@ local function chop(tool, user, picked)
         return
     end
 
-    if picked.kind ~= "location" or not is_tree(picked.graphic or 0) then
+    if picked.kind == "object" then
+        saw(user, picked.serial)
+
+        return
+    end
+
+    if not trees.is_tree(picked.graphic or 0) then
         mobile.message_cliloc(user, NOT_A_TREE)
 
         return
@@ -154,7 +177,7 @@ local function chop(tool, user, picked)
         return
     end
 
-    if not has_wood(map, x, y) then
+    if not trees.has_wood(map, x, y) then
         mobile.message_cliloc(user, NO_WOOD)
 
         return

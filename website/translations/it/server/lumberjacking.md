@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"62cb9b08b88ac110a7960dd47083e7c830edba5d7f805ae333ca12c2c7a56334","title":"Taglio della legna"} -->
+<!-- translation: {"sourceHash":"ac075f43338b4176ef25fdcfdf22d512c402196d3a68d110989d7266c48816a0","title":"Taglio della legna"} -->
 
 # Taglio della legna
 
@@ -34,6 +34,14 @@ zaino. L'ascia non si consuma.
 Queste asce tagliano: l'accetta, l'ascia, l'ascia da battaglia, l'ascia doppia, l'ascia del boia, la grande ascia da
 battaglia, l'ascia a due mani, l'ascia ornata e l'ascia da battaglia gargish. L'ascia gargish, le doppie asce corte e le asce da allenamento no, e un'ascia da guerra è una mazza.
 
+## Assi
+
+Fai doppio clic sull'ascia che hai in mano e scegli i tronchi nel tuo zaino invece di un albero: l'intera pila viene segata in assi, una per ogni tronco, subito e senza prova di abilità. Tronchi a terra, in un forziere o sul tuo cursore rispondono "This item must be in your backpack to be used."
+
+## Legnetti
+
+Fai doppio clic su un coltello, un pugnale o una spada che porti con te e scegli un albero entro 2 caselle: ne stacchi un legnetto, subito e senza prova di abilità. Nel luogo deve restare della legna, ma i legnetti non ne tolgono. Scegliere qualsiasi altra cosa risponde "You can't use a bladed item on that!"
+
 ## La legna di un luogo
 
 Ogni mappa è divisa in zone di 4 caselle per 4. Una zona contiene da 2 a 4 tagli, estratti la prima volta che qualcuno vi taglia:
@@ -45,8 +53,8 @@ Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno. I numeri so
 
 ## Cambiare le regole
 
-Le regole sono in `scripts/items/axe.lua`: la distanza, i colpi, i tronchi di un taglio e le grafiche che contano
-come alberi. Vedi [Script forniti](scripting/shipped-scripts.md#axelua). Un template taglia con `script_id = "axe"`.
+Le regole sono in `scripts/items/axe.lua` (la distanza, i colpi, i tronchi di un taglio, le assi), `scripts/items/blade.lua` (i legnetti) e `scripts/common/trees.lua` (le grafiche che contano
+come alberi). Vedi [Script forniti](scripting/shipped-scripts.md#axelua). Un template taglia con `script_id = "axe"`.
 
 ## Root esistenti
 
@@ -57,8 +65,7 @@ un file che potresti aver modificato.
 
 ## Non ancora
 
-Tronchi in assi, legnetti da ardere da un albero con un coltello, i tipi di legno (quercia, frassino, tasso e i più rari), i ritrovamenti
-rari, e il bonus delle asce in combattimento dato dall'abilità.
+I tipi di legno (quercia, frassino, tasso e i più rari), i ritrovamenti rari, e il bonus delle asce in combattimento dato dall'abilità.
 
 ## Vedi anche
 
