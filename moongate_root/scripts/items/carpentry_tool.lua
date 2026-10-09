@@ -20,20 +20,9 @@ local CRAFT = "carpentry"
 
 local IN_BACKPACK = 1062334   -- This item must be in your backpack to be used.
 
--- Whether the tool lies in the player's backpack or a bag of it: not on the ground, not in the bank box.
-local function in_backpack(user, serial)
-    for _, each in ipairs(item.find(user, item.template(serial) or "")) do
-        if each == serial then
-            return true
-        end
-    end
-
-    return false
-end
-
 -- Called when a player double clicks the tool.
 function carpentry_tool.on_use(serial, user)
-    if not in_backpack(user, serial) then
+    if not crafting.carries(user, serial) then
         mobile.message_cliloc(user, IN_BACKPACK)
 
         return true

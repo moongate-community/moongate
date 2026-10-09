@@ -38,6 +38,7 @@ using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Containers;
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
@@ -65,6 +66,8 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
 
     private const int Stool = 1;
     private const int Lute = 2;
+    private const int Staves = 3;
+    private const int Peg = 4;
 
     private const int InBackpack = 1062334;
     private const int Created = 1044154;
@@ -92,6 +95,8 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
     private readonly StubMovementService _movement = new();
     private readonly StubItemSerialPool _serials = new();
     private readonly StubContainerCapacityService _capacity = new();
+    private readonly StubInventoryMutationGuard _guard = new();
+    private readonly SettableClock _time = new();
     private readonly ItemService _items;
 
     private readonly ItemTemplateService _templates = new(
@@ -102,7 +107,9 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "oak_board", ItemId = new Serial(0x1BD7), Stackable = true },
             new ItemTemplate { Id = "0x175d_cloth", ItemId = new Serial(0x175D), Stackable = true },
             new ItemTemplate { Id = "0x0a2b", ItemId = new Serial(0x0A2B) },
-            new ItemTemplate { Id = "0x0eb3_lute", ItemId = new Serial(0x0EB3) }
+            new ItemTemplate { Id = "0x0eb3_lute", ItemId = new Serial(0x0EB3) },
+            new ItemTemplate { Id = "0x1eb1_barrel_staves", ItemId = new Serial(0x1EB1), Stackable = true },
+            new ItemTemplate { Id = "0x14f0_peg", ItemId = new Serial(0x14F0) }
         )
     );
 
@@ -129,6 +136,16 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
                                     Name = "Lute", Item = "0x0eb3_lute", SkillMin = 68.4, SkillMax = 93.4,
                                     Resources = [new() { Resource = "wood", Amount = 25 }, new() { Resource = "cloth", Amount = 10 }],
                                     Skills = [new() { Skill = "musicianship", Min = 45, Max = 70 }]
+                                },
+                                new()
+                                {
+                                    Name = "Barrel Staves", Item = "0x1eb1_barrel_staves", SkillMin = 0, SkillMax = 25,
+                                    Resources = [new() { Resource = "wood", Amount = 5 }]
+                                },
+                                new()
+                                {
+                                    Name = "Peg", Item = "0x14f0_peg", SkillMin = 0, SkillMax = 50,
+                                    Resources = [new() { Resource = "wood", Amount = 1 }]
                                 }
                             ]
                         }
@@ -245,6 +262,8 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IItemSerialPool>(_serials);
         _container.RegisterInstance<ITileDataService>(new FakeTileDataService());
         _container.RegisterInstance<IContainerCapacityService>(_capacity);
+        _container.RegisterInstance<IInventoryMutationGuard>(_guard);
+        _container.RegisterInstance<TimeProvider>(_time);
         _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.RegisterInstance<ICraftService>(_crafts);
         _container.RegisterInstance<IClockService>(new StubClockService());
@@ -527,6 +546,120 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
         var stool = Assert.Single(Made("0x0a2b"));
         Assert.True(_items.IsLyingOnGround(stool));
         Assert.Equal(_aria.Location, stool.GroundLocation);
+    }
+
+    [Fact]
+    public void BoardsTheInventoryRefusesToGive_MakeNothing_NotEvenOnTheGround()
+    {
+        // A pending reservation of the inventory refuses every take and every give.
+        var boards = Carry("0x1bd7_board", 0x1BD7, 9);
+
+        Make(Stool);
+        _guard.Allowed = false;
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal(9, boards.Amount);
+        Assert.Empty(Made("0x0a2b"));
+        Assert.DoesNotContain(Created, Told());
+    }
+
+    [Fact]
+    public void WithNoSerialLeftForTheItem_NothingIsTaken_AndTheItemIsNotSaidToBeMade()
+    {
+        var boards = Carry("0x1bd7_board", 0x1BD7, 9);
+        _capacity.HasRoomResult = false;
+        _serials.Serials.Clear();
+
+        Make(Stool);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal(9, boards.Amount);
+        Assert.DoesNotContain(Created, Told());
+    }
+
+    [Fact]
+    public void AnItemOfAKindOfWood_IsColouredAlone_NotTheStackOfItsKindAlreadyCarried()
+    {
+        Skill(650);
+        var plainStaves = Carry("0x1eb1_barrel_staves", 0x1EB1, 3);
+        var oak = Carry("oak_board", 0x1BD7, 5);
+        oak.Hue = new Hue(0x7DA);
+        Pick("oak");
+
+        Make(Staves);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal((3, new Hue(0)), (plainStaves.Amount, plainStaves.Hue));
+        var made = Assert.Single(Made("0x1eb1_barrel_staves"));
+        Assert.Equal((1, new Hue(0x7DA)), (made.Amount, made.Hue));
+        Assert.Equal(_backpack.Id, made.ContainerId);
+    }
+
+    [Fact]
+    public void AFailure_OfARecipeOfOneUnit_StillTakesIt()
+    {
+        Skill(0);
+        var boards = Carry("0x1bd7_board", 0x1BD7, 1);
+        _random.Doubles(0.9);
+
+        Make(Peg);
+        Fire(1.25);
+
+        // A failure that took nothing would be a free try of the skill.
+        Assert.Empty(_errors);
+        Assert.Equal(0, Left(boards));
+        Assert.Empty(Made("0x14f0_peg"));
+    }
+
+    [Fact]
+    public async Task BoardsInABagHeldOnTheCursor_DoNotCount()
+    {
+        var bag = Carry("backpack", 0x0E76, 1);
+        var boards = Carry("0x1bd7_board", 0x1BD7, 9);
+        _items.MoveToContainer(boards, bag.Id, new Point2D(5, 5));
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == _aria.Id);
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(bag.Id)));
+
+        Make(Stool);
+
+        Assert.Empty(_errors);
+        Assert.Equal([NoWood], Told());
+        Assert.Equal(9, boards.Amount);
+    }
+
+    [Fact]
+    public void AnAttemptWhoseSecondStrokeNeverCame_FreesThePlayerAfterAWhile()
+    {
+        // The stroke's timer is lost when the gump script that started it is reloaded.
+        Carry("0x1bd7_board", 0x1BD7, 18);
+
+        Make(Stool);
+        Make(Stool);
+        _time.Now += TimeSpan.FromSeconds(10);
+        Make(Stool);
+
+        Assert.Empty(_errors);
+        Assert.Equal([Busy], Told());
+        Assert.Equal(2, _timers.Timers.Count);
+    }
+
+    [Fact]
+    public void AnAttemptThatEndsBecauseTheToolLeftTheBackpack_FreesThePlayer()
+    {
+        Carry("0x1bd7_board", 0x1BD7, 9);
+
+        Make(Stool);
+        _items.PlaceOnGround(_saw, _aria.Map, _aria.Location);
+        Fire(1.25);
+        _items.MoveToContainer(_saw, _backpack.Id, new Point2D(10, 10));
+        Make(Stool);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Single(Made("0x0a2b"));
     }
 
     public async Task DisposeAsync()

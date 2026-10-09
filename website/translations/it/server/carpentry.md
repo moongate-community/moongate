@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2faaab1cc94b8de1b2e62e1c55fdc94fe2b5d2e5ca8dcfd0187eec4dd1af99a2","title":"Falegnameria"} -->
+<!-- translation: {"sourceHash":"46dc0a4f5f1684894070e64145a978c540e1de182d7d600f0b54f274bc4e9faf","title":"Falegnameria"} -->
 
 # Falegnameria
 
@@ -37,8 +37,8 @@ Ogni ricetta ha un minimo e un massimo di Carpentry. Al minimo la probabilità �
 alla certezza al massimo. Uno sgabello chiede da 11 a 36: a 23,5 la probabilità è tre su quattro. Ogni prova può far crescere le abilità della ricetta.
 
 - **Riuscita**: toglie tutti i materiali e crea l'oggetto nel tuo zaino, "You create the item.". Uno zaino senza
-  spazio li toglie comunque e mette l'oggetto ai tuoi piedi.
-- **Fallimento**: toglie metà di ogni materiale, arrotondata per difetto, "You failed to create the item, and some of your materials
+  spazio li toglie comunque e mette l'oggetto ai tuoi piedi. Un oggetto che non si può creare affatto non toglie nulla.
+- **Fallimento**: toglie metà di ogni materiale, arrotondata per difetto, e almeno un'unità del primo, "You failed to create the item, and some of your materials
   are lost."
 
 ## Tipi di legno

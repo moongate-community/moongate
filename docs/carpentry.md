@@ -35,8 +35,8 @@ Each recipe has a least and a most of Carpentry. At the least the chance is one 
 the most. A stool asks for 11 to 36: at 23.5 the chance is three in four. Every try may raise the skills of the recipe.
 
 - **Success** takes every resource and makes the item in your backpack, "You create the item.". A backpack with no
-  room still takes them and puts the item at your feet.
-- **Failure** takes half of each resource, rounded down, "You failed to create the item, and some of your materials
+  room still takes them and puts the item at your feet. An item that cannot be made at all takes nothing.
+- **Failure** takes half of each resource, rounded down, and at least one unit of the first, "You failed to create the item, and some of your materials
   are lost."
 
 ## Kinds of wood

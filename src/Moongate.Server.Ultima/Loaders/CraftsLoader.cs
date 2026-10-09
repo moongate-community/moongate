@@ -12,7 +12,8 @@ namespace Moongate.Server.Ultima.Loaders;
 
 /// <summary>
 ///     Loads the crafts of <c>data/crafts</c>, one a file, all but <c>resources.toml</c>. The folder may be missing: no
-///     craft then. A bad or repeated id, an unknown skill, a group or recipe without a name, an item or resource that is
+///     craft then. Skill names are kept in the snake_case form scripts read them by. A bad or repeated id, a craft
+///     without a name or groups, a group without recipes, an unknown skill, a group or recipe without a name, an item or resource that is
 ///     neither an item template nor a resource list, an amount below 1, a recipe without resources, or skill bounds
 ///     outside 0 to 150 or the least above the most stop the server at startup, naming the file.
 /// </summary>
@@ -82,9 +83,16 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
             throw Invalid(path, $"the craft id '{craft.Id}' {ScriptIdUtils.Rule}");
         }
 
-        if (!IsSkill(craft.Skill))
+        if (string.IsNullOrWhiteSpace(craft.Name))
         {
-            throw Invalid(path, $"the skill '{craft.Skill}' is no skill");
+            throw Invalid(path, $"the craft {craft.Id} has no name");
+        }
+
+        craft.Skill = SkillName(craft.Skill) ?? throw Invalid(path, $"the skill '{craft.Skill}' is no skill");
+
+        if (craft.Group.Count == 0)
+        {
+            throw Invalid(path, $"the craft {craft.Id} has no group");
         }
 
         foreach (var group in craft.Group)
@@ -92,6 +100,11 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
             if (string.IsNullOrWhiteSpace(group.Name))
             {
                 throw Invalid(path, "a group has no name");
+            }
+
+            if (group.Recipe.Count == 0)
+            {
+                throw Invalid(path, $"the group {group.Name} has no recipe");
             }
 
             foreach (var recipe in group.Recipe)
@@ -143,16 +156,17 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
 
         foreach (var skill in recipe.Skills)
         {
-            if (!IsSkill(skill.Skill) || !AreBounds(skill.Min, skill.Max))
-            {
-                throw Invalid(path, $"{where} asks for the skill '{skill.Skill}' with bad bounds or no such skill");
-            }
+            skill.Skill = (AreBounds(skill.Min, skill.Max) ? SkillName(skill.Skill) : null) ??
+                          throw Invalid(path, $"{where} asks for the skill '{skill.Skill}' with bad bounds or no such skill");
         }
     }
 
-    private static bool IsSkill(string name)
+    // The skill as scripts read it from mobile.skills, such as animal_lore; null for no skill.
+    private static string? SkillName(string name)
     {
-        return EnumNameUtils.TryParse<SkillType>(name, out var skill) && Enum.IsDefined(skill);
+        return EnumNameUtils.TryParse<SkillType>(name, out var skill) && Enum.IsDefined(skill)
+            ? EnumNameUtils.Format(skill)
+            : null;
     }
 
     private static bool AreBounds(double min, double max)

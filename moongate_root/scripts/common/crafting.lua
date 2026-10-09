@@ -4,7 +4,7 @@
 -- What it is for:
 --   The rules every craft shares, used with
 --   local crafting = require("common.crafting") by the tool scripts and the
---   crafting gump (scripts/gumps/craft.lua). The recipes are data
+--   crafting gump (scripts/gumps/craft_menu.lua). The recipes are data
 --   (data/crafts, read with the craft module); the kinds of wood are
 --   scripts/common/woods.lua.
 --
@@ -17,10 +17,12 @@
 --   tried, and the main skill is tried between twice its least minus its
 --   most and its most: the chance is one in two at the least and grows in a
 --   line to sure at the most, and the skill may rise.
---   Success takes every resource and makes the item in the backpack, with
---   the colour of the kind of wood; a full backpack still takes them and
---   puts the item at the player's feet. Failure takes half of each resource,
---   rounded down. The gump opens again with what happened.
+--   Success makes the item, in the backpack or, when it has no room, at the
+--   player's feet, with the colour of the kind of wood, and then takes every
+--   resource: an item that cannot be made takes nothing, and resources that
+--   cannot all be taken make nothing. Failure takes half of each resource,
+--   rounded down, and at least one unit of the first. The gump opens again
+--   with what happened.
 --
 -- Functions:
 --   crafting.open(user, tool, craft_id, notice)   opens the crafting gump
@@ -45,6 +47,9 @@ local crafting = {}
 -- Between the two strokes, in seconds.
 local STROKE = 1.25
 
+-- How long after its start an attempt whose second stroke never came no longer holds the player, in seconds.
+local GIVE_UP = 10
+
 -- Client texts, and the text the gump shows for each.
 local CREATED = 1044154       -- You create the item.
 local FAILED = 1044043        -- You failed to create the item, and some of your materials are lost.
@@ -68,8 +73,9 @@ local NOTICES = {
 local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH }
 
 local AT_YOUR_FEET = "Your backpack is full: the item is at your feet."
+local NOT_MADE = "The item could not be made."
 
--- Who is making something, the wood and the group each player picked.
+-- Who is making something, until when; the wood and the group each player picked.
 local busy = {}
 local kinds = {}
 local groups = {}
@@ -191,28 +197,46 @@ local function missing(user, recipe, kind)
     return nil
 end
 
--- Takes amount units from the stacks, in turn; gives the hue of the first stack taken from.
+-- Takes amount units from the stacks, in turn; gives how many it could not take.
 local function take(user, templates, amount)
-    local hue
-
     for _, serial in ipairs(stacks(user, templates)) do
         if amount <= 0 then
             break
         end
 
-        local here = item.amount(serial) or 0
-        local taken = math.min(here, amount)
+        local taken = math.min(item.amount(serial) or 0, amount)
 
-        if taken > 0 then
-            hue = hue or item.hue(serial)
-
-            if item.consume(serial, taken) then
-                amount = amount - taken
-            end
+        if taken > 0 and item.consume(serial, taken) then
+            amount = amount - taken
         end
     end
 
-    return hue
+    return amount
+end
+
+-- The hue of the first stack that would be taken, for an item made of a kind of wood.
+local function hue_of(user, templates)
+    local first = stacks(user, templates)[1]
+
+    return first and item.hue(first) or 0
+end
+
+-- Makes the item in the backpack, coloured before it looks for a stack so it joins only one of its colour, or at the
+-- feet when the backpack has no room. Gives its serial and whether it is at the feet; nil when it cannot be made.
+local function make_item(user, template, hue, here)
+    local made = item.give(user, template, nil, hue ~= 0 and hue or nil)
+
+    if made then
+        return made, false
+    end
+
+    made = item.create(template, here.map, here.x, here.y, here.z)
+
+    if made and hue ~= 0 then
+        item.set_hue(made, hue)
+    end
+
+    return made, made ~= nil
 end
 
 function crafting.carries(user, tool)
@@ -254,8 +278,11 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
     local passed = skill.check(user, craft.skill, 2 * recipe.skill_min - recipe.skill_max, recipe.skill_max)
 
     if not passed then
-        for _, resource in ipairs(recipe.resources) do
-            take(user, crafting.templates(resource.resource, kind), math.floor(resource.amount / 2))
+        for index, resource in ipairs(recipe.resources) do
+            -- At least one unit of the first: a failure that takes nothing would be a free try of the skill.
+            local lost = math.floor(resource.amount / 2)
+
+            take(user, crafting.templates(resource.resource, kind), index == 1 and math.max(1, lost) or lost)
         end
 
         mobile.message_cliloc(user, FAILED)
@@ -264,28 +291,38 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
         return
     end
 
-    local hue
+    local hue = 0
 
-    for _, resource in ipairs(recipe.resources) do
-        local taken = take(user, crafting.templates(resource.resource, kind), resource.amount)
-
-        if resource.resource == "wood" and kind ~= "plain" then
-            hue = taken
+    if kind ~= "plain" then
+        for _, resource in ipairs(recipe.resources) do
+            if resource.resource == "wood" then
+                hue = hue_of(user, crafting.templates("wood", kind))
+            end
         end
     end
 
-    local made = item.give(user, recipe.item)
+    -- The item first, then the resources: what cannot be made takes nothing, and what cannot be paid is not kept.
+    local made, at_feet = make_item(user, recipe.item, hue, here)
 
     if not made then
-        made = item.create(recipe.item, here.map, here.x, here.y, here.z)
+        mobile.message(user, NOT_MADE)
+        crafting.open(user, tool, craft_id, NOT_MADE)
 
-        if made then
-            mobile.message(user, AT_YOUR_FEET)
+        return
+    end
+
+    for _, resource in ipairs(recipe.resources) do
+        if take(user, crafting.templates(resource.resource, kind), resource.amount) > 0 then
+            item.delete(made)
+            mobile.message(user, NOT_MADE)
+            crafting.open(user, tool, craft_id, NOT_MADE)
+
+            return
         end
     end
 
-    if made and hue and hue ~= 0 then
-        item.set_hue(made, hue)
+    if at_feet then
+        mobile.message(user, AT_YOUR_FEET)
     end
 
     mobile.message_cliloc(user, CREATED)
@@ -293,7 +330,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 end
 
 function crafting.make(user, tool, craft_id, group, index)
-    if busy[user] then
+    if busy[user] and busy[user] > world.now() then
         mobile.message_cliloc(user, BUSY)
 
         return
@@ -333,7 +370,7 @@ function crafting.make(user, tool, craft_id, group, index)
         return
     end
 
-    busy[user] = true
+    busy[user] = world.now() + GIVE_UP
     mobile.play_sound(user, craft.sound)
 
     timer.after(STROKE, function()

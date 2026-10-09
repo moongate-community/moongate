@@ -16,7 +16,7 @@ name = "Chairs"
 
 [[group.recipe]]
 name = "Stool"
-item = "0x0a2b"
+item = "0x0a2b_a_stool"
 skill_min = 11.0
 skill_max = 36.0
 resources = [{ resource = "wood", amount = 9 }]

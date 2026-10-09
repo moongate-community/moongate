@@ -69,6 +69,7 @@ public sealed class CraftsLoaderTests
     [InlineData("name = \"Stool\"", "name = \"\"")]
     [InlineData("name = \"Chairs\"", "name = \"\"")]
     [InlineData("id = \"carpentry\"", "id = \"Car Pentry\"")]
+    [InlineData("name = \"Carpentry\"", "name = \"\"")]
     public async Task LoadDataAsync_ABadCraft_StopsTheServer_NamingTheFile(string good, string bad)
     {
         using var root = new TemporaryDirectory();
@@ -93,6 +94,34 @@ public sealed class CraftsLoaderTests
         var exception = await Assert.ThrowsAsync<InvalidDataException>(() => Load(root));
 
         Assert.Contains("resources.toml", exception.Message);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_SkillNames_AreKeptAsScriptsReadThem()
+    {
+        // A skill may be written in any case: scripts read the skills of a mobile by their snake_case names.
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/crafts/resources.toml", Resources);
+        root.CreateFile(
+            "data/crafts/carpentry.toml",
+            (Head + Lute).Replace("skill = \"carpentry\"", "skill = \"Carpentry\"").Replace("\"musicianship\"", "\"Musicianship\"")
+        );
+
+        var craft = Assert.Single((await Load(root)).Crafts);
+
+        Assert.Equal(("carpentry", "musicianship"), (craft.Skill, craft.Group[0].Recipe[0].Skills[0].Skill));
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("[[group]]\nname = \"Chairs\"\n")]
+    public async Task LoadDataAsync_ACraftWithoutGroupsOrAGroupWithoutRecipes_StopsTheServer(string groups)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/crafts/resources.toml", Resources);
+        root.CreateFile("data/crafts/carpentry.toml", "id = \"carpentry\"\nname = \"Carpentry\"\nskill = \"carpentry\"\nsound = 0x023D\n" + groups);
+
+        await Assert.ThrowsAsync<InvalidDataException>(() => Load(root));
     }
 
     [Fact]

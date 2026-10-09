@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"4f13d1fa2c8857c65b28def1c2b8739323d4c8141cfa6dd1ef418fe098276422","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"3d37e88cae7924b3ce49b9024eae4ea2131ce093dc9009d20fb8a851815e6c48","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 87 completati, 🟡 58 parzialmente completati, ❌ 124 non ancora realizzati.
+**269 sistemi:** ✅ 87 completati, 🟡 59 parzialmente completati, ❌ 123 non ancora realizzati.
 
 **Copertura: 32%** dei sistemi completati, **43%** contando un sistema parzialmente completato come metà.
 
@@ -114,7 +114,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | --- | --- | --- |
 | Usare e incrementare un'abilità | 🟡 | Un'[abilità](skills.md) viene usata dalla finestra delle abilità (`scripts/skills/<skill>.lua`), verificata da `skill.check` e incrementata con la formula di ModernUO; viene fornita solo Hiding, e le statistiche non aumentano ancora con le abilità |
 | Raccolta: estrazione mineraria, taglio della legna, pesca | 🟡 | [Pesca](fishing.md) con una canna: acqua entro 4 caselle, 8 secondi, un pesce, una vecchia calzatura o niente in base all'abilità; i pesci di un luogo si esauriscono per zona e ritornano ([`harvest.toml`](data-files/harvest.md)). [Taglio della legna](lumberjacking.md) con un'ascia in mano: un albero entro 2 caselle, da uno a tre colpi, 10 tronchi in base all'abilità, la legna di un luogo che si esaurisce allo stesso modo. [Estrazione](mining.md) con un piccone o una pala: minerale di ferro dalla roccia di montagne e grotte, fuso in lingotti a una forgia. I tronchi si segano in assi con l'ascia, e una lama stacca legnetti da un albero. Un luogo è di uno fra sette tipi di legno, ognuno con la sua abilità richiesta, un maestro trova cose rare insieme ai tronchi, e un'ascia colpisce più forte con il Lumberjacking. Niente altri metalli, niente prese speciali |
-| Motore di creazione: menu, ricette, risorse, qualità | ❌ | |
+| Motore di creazione: menu, ricette, risorse, qualità | 🟡 | Il gump di creazione, le ricette in [`data/crafts`](data-files/crafts.md), i materiali contati nello zaino e nelle sue borse, la probabilità e i tipi di legno, condivisi da tutti i mestieri; vedi [Falegnameria](carpentry.md). Ancora niente qualità (oggetti eccezionali) né marchio del creatore |
 | Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | 🟡 | [Falegnameria](carpentry.md): un attrezzo nello zaino apre il gump di creazione, 42 ricette da UOX3 in [`data/crafts`](data-files/crafts.md), create da assi comuni o da un tipo di legno che colora l'oggetto; una probabilità su due al minimo dell'abilità, certezza al massimo, metà dei materiali persa in un fallimento. Il motore è condiviso dai mestieri che verranno. Ancora niente oggetti eccezionali, marchio del creatore, usura degli attrezzi o ricrea l'ultimo; nessun altro mestiere |
 | Riparare e migliorare gli oggetti | ❌ | |
 | Addomesticamento e conoscenza degli animali | ❌ | |

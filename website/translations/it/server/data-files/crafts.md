@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"86fda27bc379eae745e88484bb9e09e7d7163d3045330f112d62506655c7de1a","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"c32756e7c1c8991a880e8bb932d5cb7fe17208c962cfedc59d5295ab28d576d4","title":"Mestieri"} -->
 
 # Mestieri
 
@@ -18,7 +18,7 @@ name = "Chairs"
 
 [[group.recipe]]
 name = "Stool"
-item = "0x0a2b"
+item = "0x0a2b_a_stool"
 skill_min = 11.0
 skill_max = 36.0
 resources = [{ resource = "wood", amount = 9 }]
