@@ -26,6 +26,7 @@ public sealed class SeasonalEventService : ISeasonalEventService
     private readonly IDataLoaderService _data;
     private readonly IWorldPropsService _props;
     private readonly ITimerService _timers;
+    private readonly IGameLoopService _loop;
     private readonly IEventScriptService _scripts;
     private readonly TimeProvider _time;
     private readonly TimeZoneInfo _zone;
@@ -38,10 +39,11 @@ public sealed class SeasonalEventService : ISeasonalEventService
         IDataLoaderService data,
         IWorldPropsService props,
         ITimerService timers,
+        IGameLoopService loop,
         IEventScriptService scripts,
         TimeProvider time,
         Data.Config.ScheduleConfig config
-    ) : this(data, props, timers, scripts, time, config.Resolve())
+    ) : this(data, props, timers, loop, scripts, time, config.Resolve())
     {
     }
 
@@ -49,11 +51,13 @@ public sealed class SeasonalEventService : ISeasonalEventService
         IDataLoaderService data,
         IWorldPropsService props,
         ITimerService timers,
+        IGameLoopService loop,
         IEventScriptService scripts,
         TimeProvider time,
         TimeZoneInfo zone
     )
     {
+        _loop = loop;
         _data = data;
         _props = props;
         _timers = timers;
@@ -67,14 +71,20 @@ public sealed class SeasonalEventService : ISeasonalEventService
         get { return _events.Select(Describe).ToList(); }
     }
 
-    public Task StartAsync()
+    public async Task StartAsync()
     {
         _events = _data.GetEntities<ScheduleFile>().SelectMany(file => file.Event).ToList();
-        Evaluate();
-        Arm();
-        _logger.Information("Loaded {Count} seasonal events", _events.Count);
 
-        return Task.CompletedTask;
+        // The props and the hooks belong to the game loop; startup runs off it.
+        var start = new LoopActionWorkItem(() =>
+            {
+                Evaluate();
+                Arm();
+            }
+        );
+        await _loop.PostAsync(start);
+        await start.Completion;
+        _logger.Information("Loaded {Count} seasonal events", _events.Count);
     }
 
     public Task StopAsync()
@@ -152,7 +162,15 @@ public sealed class SeasonalEventService : ISeasonalEventService
             delay = TimeSpan.FromMilliseconds(1);
         }
 
-        _timerId = _timers.RegisterTimer(TimerName, delay, OnMidnight);
+        try
+        {
+            _timerId = _timers.RegisterTimer(TimerName, delay, OnMidnight);
+        }
+        catch (Exception exception)
+        {
+            // A callback that throws would stop the game loop: the events wait for the next restart instead.
+            _logger.Error(exception, "The seasonal events could not arm their timer and stay as they are until a restart");
+        }
     }
 
     private void OnMidnight()
@@ -180,6 +198,17 @@ public sealed class SeasonalEventService : ISeasonalEventService
     }
 
     private void CallHook(ScheduleEvent item, string function)
+    {
+        // After the current work: not inside a running Lua script (a nested call is refused) and always on the loop.
+        var work = new LoopActionWorkItem(() => RunHook(item, function));
+
+        if (!_loop.TryPost(work))
+        {
+            _logger.Warning("The hook {Function} of the event {Event} could not be queued", function, item.Id);
+        }
+    }
+
+    private void RunHook(ScheduleEvent item, string function)
     {
         try
         {

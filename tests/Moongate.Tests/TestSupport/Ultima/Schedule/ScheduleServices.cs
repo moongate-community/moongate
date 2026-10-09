@@ -59,7 +59,7 @@ public sealed class ScheduleServices
             clock,
             TimeZoneInfo.Utc
         );
-        var events = new SeasonalEventService(data, props, timers, scripts, clock, TimeZoneInfo.Utc);
+        var events = new SeasonalEventService(data, props, timers, new StubGameLoop(), scripts, clock, TimeZoneInfo.Utc);
         await schedule.StartAsync();
         await events.StartAsync();
 

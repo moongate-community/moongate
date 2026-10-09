@@ -16,6 +16,7 @@ public sealed class SeasonalEventServiceTests
     private readonly RecordingTimerService _timers = new();
     private readonly RecordingEventScriptService _scripts = new();
     private readonly RecordingDataAccess<WorldStateEntity> _data = new();
+    private readonly StubGameLoop _loop = new();
     private WorldPropsService _props = null!;
 
     [Fact]
@@ -205,6 +206,41 @@ public sealed class SeasonalEventServiceTests
         Assert.False(utc.IsActive("halloween"));
     }
 
+    [Fact]
+    public async Task TheHooks_AreQueuedOnTheLoop_NotRunInsideTheCaller()
+    {
+        // A hook asked from inside a running Lua script must wait for the next work item of the loop.
+        _clock.Now = Local(2026, 10, 25, 12);
+        _loop.DeferTryPost = true;
+
+        await Start();
+
+        Assert.Empty(_scripts.Calls);
+        _loop.RunDeferred();
+        Assert.Equal(["on_start"], _scripts.Calls.Select(call => call.Function));
+    }
+
+    [Fact]
+    public async Task StartAsync_WorksOnTheLoop()
+    {
+        await Start();
+
+        Assert.True(_loop.PostedWorkItems > 0);
+    }
+
+    [Fact]
+    public async Task ATimerThatCannotBeArmed_DoesNotThrowFromTheMidnightCallback()
+    {
+        _clock.Now = Local(2026, 10, 19, 12);
+        await Start();
+        _clock.Now = Local(2026, 10, 20);
+        _timers.ThrowOnRegister = true;
+
+        var exception = Record.Exception(() => _timers.Fire(Assert.Single(_timers.Timers).Id));
+
+        Assert.Null(exception);
+    }
+
     private static DateTimeOffset Local(int year, int month, int day, int hour = 0, int minute = 0)
     {
         var local = new DateTime(year, month, day, hour, minute, 0, DateTimeKind.Unspecified);
@@ -234,6 +270,7 @@ public sealed class SeasonalEventServiceTests
             new StubDataLoaderService().With(Calendar()),
             _props,
             _timers,
+            _loop,
             _scripts,
             _clock,
             zone ?? TestZones.Europe

@@ -235,6 +235,20 @@ public sealed class ScheduleServiceTests
     }
 
     [Fact]
+    public async Task ATimerThatCannotBeArmed_DoesNotThrowFromTheCallback()
+    {
+        _clock.Now = Utc(2026, 1, 10, 4);
+        await Start(Task("tip", "day", "06:00", "broadcast", text: "Tip"));
+        _clock.Now = Utc(2026, 1, 10, 5);
+        _timers.ThrowOnRegister = true;
+
+        var exception = Record.Exception(() => _timers.Fire(Assert.Single(_timers.Timers).Id));
+
+        Assert.Null(exception);
+        Assert.Equal(["Tip"], _broadcast.Sent);
+    }
+
+    [Fact]
     public async Task StopAsync_UnregistersTheTimer()
     {
         var service = await Start(Nightly(600));

@@ -127,7 +127,15 @@ public sealed class ScheduleService : IScheduleService
             delay = TimeSpan.FromMilliseconds(1);
         }
 
-        _timerId = _timers.RegisterTimer(TimerName, delay, OnTimer);
+        try
+        {
+            _timerId = _timers.RegisterTimer(TimerName, delay, OnTimer);
+        }
+        catch (Exception exception)
+        {
+            // A callback that throws would stop the game loop: the schedule waits for the next restart instead.
+            _logger.Error(exception, "The schedule could not arm its timer and stops until a restart");
+        }
     }
 
     private void Disarm()
