@@ -88,6 +88,27 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void WornBy_IsWhoWearsOrHoldsTheItemItself_NotWhoCarriesItInABackpack()
+    {
+        // The sword is in the hand of the mobile 2, the potions in its backpack, the third item on the ground.
+        var result = Run(
+            $"return item.worn_by({_sword.Id.Value}), item.worn_by(0x40000002), item.worn_by(0x40000003), item.worn_by(0x4FFFFFFF)"
+        );
+
+        Assert.Equal(2, result[0].Read<int>());
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil, LuaValue.Nil), (result[1], result[2], result[3]));
+    }
+
+    [Fact]
+    public async Task WornBy_AnItemLiftedOntoTheCursor_IsInNobodysHands()
+    {
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == new Serial(2));
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(_sword.Id)));
+
+        Assert.Equal(LuaValue.Nil, Run($"return item.worn_by({_sword.Id.Value})")[0]);
+    }
+
+    [Fact]
     public void NameAmountAndOwner_DescribeTheItem()
     {
         var result = Run(

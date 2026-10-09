@@ -20,6 +20,7 @@ from .uox_data import WEAPON_TYPE_BY_GRAPHIC, ScriptAssociations
 FOOD_TYPE = 14
 DRINK_TYPE = 105
 DYES_TYPE = 208
+AXE_TYPE = 216
 SHIELD_TYPE = 107
 DYE_TUB_GRAPHIC = 0x0FAB
 TWO_HANDED = 2
@@ -201,6 +202,9 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     elif item_id not in NOT_DRUNK and kind == DRINK_TYPE:
         # What UOX3 lets a player drink: scripts/items/drink.lua, in place of UOX3's own pitchers.js.
         template.script_id = "drink"
+    elif kind == AXE_TYPE:
+        # What UOX3 chops a tree with: scripts/items/axe.lua.
+        template.script_id = "axe"
     elif kind == DYES_TYPE:
         # UOX3's dyes are hard-coded: scripts/items/dyes.lua.
         template.script_id = "dyes"

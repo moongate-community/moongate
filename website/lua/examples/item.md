@@ -51,6 +51,16 @@ function ring.can_pick_up(serial, picker)
 end
 ```
 
+## worn_by
+
+An axe chops only in the hands of who uses it, not from the backpack:
+
+```lua
+if item.worn_by(serial) ~= user then
+    mobile.message(user, "Take the axe in your hands first.")
+end
+```
+
 ## equip
 
 Taken from a chest on the ground, those who look into the chest see it go.

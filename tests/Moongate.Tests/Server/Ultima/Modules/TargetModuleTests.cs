@@ -53,9 +53,20 @@ public sealed class TargetModuleTests : IAsyncLifetime
         var picked = Assert.IsType<LuaTable>(Assert.Single(Assert.Single(_engine.FunctionCalls).Args));
         Assert.Equal("location", picked["kind"].Read<string>());
         Assert.Equal(
-            [(int)MapType.Felucca, 1500, 1600, -5],
-            new[] { "map", "x", "y", "z" }.Select(key => picked[key].Read<int>())
+            [(int)MapType.Felucca, 1500, 1600, -5, 0],
+            new[] { "map", "x", "y", "z", "graphic" }.Select(key => picked[key].Read<int>())
         );
+    }
+
+    [Fact]
+    public void PickLocation_AStatic_GivesItsGraphic_SoAScriptCanTellATree()
+    {
+        _targets.Result = TargetResult.ForLocation(MapType.Felucca, new Point3D(1500, 1600, 20), 0x0CDD);
+
+        Run("target.pick_location(2, function(picked) end)");
+
+        var picked = Assert.IsType<LuaTable>(Assert.Single(Assert.Single(_engine.FunctionCalls).Args));
+        Assert.Equal(0x0CDD, picked["graphic"].Read<int>());
     }
 
     [Theory,

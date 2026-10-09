@@ -97,6 +97,19 @@ public sealed class TargetResponsePacketHandlerTests : IAsyncDisposable
         Assert.Equal(new Point3D(6, 6, 8), Assert.Single(_results).Location);
     }
 
+    [Fact]
+    public async Task Handle_AStatic_TellsItsGraphic_AndTheLandTellsNone()
+    {
+        _tiles.Item(0x0CDD, TileFlagType.Impassable, 20);
+        _map.AddStatic(6, 6, 0x0CDD, 0);
+        await PendingAsync();
+        await RespondAsync(1, 0, 6, 6, 0, 0x0CDD);
+        await PendingAsync();
+        await RespondAsync(1, 0, 7, 7, 0, 0);
+
+        Assert.Equal([0x0CDD, 0], _results.Select(result => result.Graphic));
+    }
+
     [Theory]
     [InlineData(20, 26)]
     [InlineData(26, 26)]
