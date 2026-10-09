@@ -15,7 +15,12 @@ namespace Moongate.Tests.Integration.Server.Ultima.Events;
 public sealed class ChristmasScriptTests
 {
     private const string Prelude = """
-                                   log = { given = {}, told = {}, broadcast = {}, props = {} }
+                                   log = { given = {}, told = {}, broadcast = {}, props = {}, decor = {} }
+                                   decor = {
+                                   place = function(id, templates) log.decor[#log.decor + 1] = 'place:' .. id .. ':' .. #templates end,
+                                   remove = function(id) log.decor[#log.decor + 1] = 'remove:' .. id end,
+                                   }
+                                   require = function(name) return decor end
                                    now = 10000000
                                    full = false
                                    queue = {}
@@ -99,6 +104,16 @@ public sealed class ChristmasScriptTests
         );
 
         Assert.Equal(["msg30238", "msg30239"], result.Select(value => value.Read<string>()));
+    }
+
+    [Fact]
+    public void TheTowns_AreDecoratedAtTheStart_AndClearedAtTheEnd()
+    {
+        var result = Run(
+            "m.on_start('christmas', 'Christmas') m.on_end('christmas', 'Christmas') return log.decor[1], log.decor[2]"
+        );
+
+        Assert.Equal(["place:christmas:4", "remove:christmas"], result.Select(value => value.Read<string>()));
     }
 
     private static LuaValue[] Run(string body)

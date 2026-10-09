@@ -9,8 +9,8 @@
 --   decoration, in its backpack.
 --
 -- Functions:
---   on_start(id, name)            the event began: everybody is told
---   on_end(id, name)              the event is over: everybody is told
+--   on_start(id, name)            the event began: the towns are decorated, everybody is told
+--   on_end(id, name)              the event is over: the decorations go, everybody is told
 --   on_login(id, name, player)    a character entered the world while the event
 --                                 is on: it gets its gift if it did not get one
 --                                 in the last 200 days
@@ -19,7 +19,12 @@
 --   christmas.gift   the world.now() second of the gift
 -- ==============================================================================
 
+local holiday_decor = require("common.holiday_decor")
+
 christmas = {}
+
+-- The decorations of the towns, templates of templates/items/misc/holiday_decorations.toml.
+local TOWN_DECORATIONS = { "xm_snowy_tree", "xm_topiary", "xm_cactus", "xm_poinsettia" }
 
 -- Messages of data/messages/<language>/moongate.toml.
 local STARTED = 30238
@@ -51,10 +56,12 @@ local function decoration()
 end
 
 function christmas.on_start(id, name)
+    holiday_decor.place(id, TOWN_DECORATIONS)
     world.broadcast(localization.get(STARTED))
 end
 
 function christmas.on_end(id, name)
+    holiday_decor.remove(id)
     world.broadcast(localization.get(OVER))
 end
 

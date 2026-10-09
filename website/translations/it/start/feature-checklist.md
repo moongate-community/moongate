@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"889347347195161ec8d99a089c7dc1859f07eb98350e7307fd5b20cb9678e7bc","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"e51689ef89593d242d341bb994a2181161f822d56e6143779283c2a4be097e93","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -143,7 +143,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Creature acquatiche e anfibie | ✅ | Compaiono sull'acqua e nuotano |
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
 | Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, passando dalle porte chiuse che apre e aggirando quelle a chiave e i mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; un NPC che vaga non apre porte, e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
-| Animali e seguaci: comandi, lealtà, legame | 🟡 | La abilità [Animal Taming](animal-taming.md) doma circa 75 creature dei dati, con un limite di 5 seguaci mostrato nella finestra di stato. La creatura non segue né obbedisce ancora, e non ci sono lealtà né legame |
+| Animali e seguaci: comandi, lealtà, legame | 🟡 | La abilità [Animal Taming](animal-taming.md) doma circa 75 creature dei dati, con un limite di 5 seguaci mostrato nella finestra di stato. Un animale segue il padrone e obbedisce a come, follow, stay, stop, guard, kill, attack e release, da solo o con *all*. Niente lealtà, fame né legame |
 | Cavalcature | 🟡 | [Cavalcature](mounts.md): un game master dà un cavallo, un lama o uno struzzo con [`tame`](commands/tame.md); il suo proprietario ci sale con un doppio clic e ne scende con un doppio clic su di sé, oppure muore, e corre il doppio più veloce. Chi è in sella non può estrarre, pescare né usare Stealth, e un teletrasporto può rifiutarlo. La [stalla](mounts.md#the-stable) degli addestratori di animali custodisce gli animali di un giocatore, e le [statuette eteree](mounts.md#ethereal-mounts) danno una cavalcatura senza creatura. Chi è in sella colpisce con le animazioni dell'attacco in sella. Niente bola |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
 | Raccolte di nomi | ✅ | Elenchi di nomi per tipo e genere |
@@ -281,7 +281,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Comandi con livelli di accesso | ✅ | Dalla console (completamento di comandi e argomenti con TAB, cronologia con Su/Giù) e in gioco; vedi [Comandi](commands.md) |
 | Salvataggio del mondo | ✅ | Periodico e allo spegnimento, con `.save` |
 | Task a orario, spegnimento ed eventi stagionali | ✅ | `data/schedule.toml`: task per ora, giorno o settimana (spegnimento con avvisi, messaggio, funzione Lua), eventi per data con interruttore dello staff e hook `on_start`/`on_end`, in un fuso orario a scelta; vedi [Calendario](schedule.md) |
-| Eventi festivi | 🟡 | [Feste](holidays.md): Halloween (dal 24 ottobre al 15 novembre), dove i negozianti rispondono a "trick or treat" con una caramella o uno scherzo, e Natale (dal 24 dicembre al 1° gennaio), con palle di neve da lanciare e un regalo all'accesso una volta a stagione; niente decorazioni delle città per ora |
+| Eventi festivi | 🟡 | [Feste](holidays.md): Halloween (dal 24 ottobre al 15 novembre), dove i negozianti rispondono a "trick or treat" con una caramella o uno scherzo, e Natale (dal 24 dicembre al 1° gennaio), con palle di neve da lanciare e un regalo all'accesso una volta a stagione; entrambi decorano le città principali finché sono attivi |
 | Backup del database | ✅ | Esportazioni SQL a rotazione, pianificate e con `.sql_backup`; ripristino con psql |
 | Console | ✅ | |
 | Configurazione del server | ✅ | `moongate.toml`, validato all'avvio |
