@@ -41,6 +41,7 @@ export const contentEntries = [
   { source: 'docs/commands/where.md', slug: 'server/commands/where', title: 'where', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/go.md', slug: 'server/commands/go', title: 'go', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/moongate.md', slug: 'server/commands/moongate', title: 'moongate', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/pages.md', slug: 'server/commands/pages', title: 'pages', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/jail.md', slug: 'server/commands/jail', title: 'jail', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/fame.md', slug: 'server/commands/fame', title: 'fame', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/karma.md', slug: 'server/commands/karma', title: 'karma', group: 'Run a shard', subgroup: 'Commands' },

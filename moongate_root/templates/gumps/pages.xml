@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/pages.xml
+
+  What it is for:
+    The queue of the requests for the game masters, opened by .pages: the frame is here,
+    the rows come from pages.rows in scripts/gumps/pages.lua, the open and taken requests
+    oldest first, ten a page. A row opens pages_detail. Staff only: anyone else sees an
+    empty gump.
+
+  Arguments:
+    none
+-->
+<gump id="pages" x="80" y="60"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="460" height="400" />
+  <text x="20" y="15" hue="1152">Help requests</text>
+  <slot name="rows" x="20" y="45" />
+</gump>

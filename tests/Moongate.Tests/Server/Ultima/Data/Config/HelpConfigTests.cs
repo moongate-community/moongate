@@ -42,4 +42,30 @@ public sealed class HelpConfigTests
 
         Assert.Contains("ultima.help.stuck_wait_seconds", Assert.Throws<InvalidOperationException>(config.Validate).Message);
     }
+
+    [Fact]
+    public void Defaults_OfThePages_Are60SecondsAnd30Days()
+    {
+        var config = new HelpConfig();
+
+        Assert.Equal((60, 30), (config.PageCooldownSeconds, config.PageHistoryDays));
+    }
+
+    [Theory,
+     InlineData(-1, 30, "ultima.help.page_cooldown_seconds"),
+     InlineData(3601, 30, "ultima.help.page_cooldown_seconds"),
+     InlineData(60, 0, "ultima.help.page_history_days"),
+     InlineData(60, 3651, "ultima.help.page_history_days")]
+    public void Validate_APageSettingOutOfRange_NamesIt(int cooldown, int days, string setting)
+    {
+        var config = new HelpConfig { PageCooldownSeconds = cooldown, PageHistoryDays = days };
+
+        Assert.Contains(setting, Assert.Throws<InvalidOperationException>(config.Validate).Message);
+    }
+
+    [Theory, InlineData(0, 1), InlineData(3600, 3650)]
+    public void Validate_ThePageLimits_AreAccepted(int cooldown, int days)
+    {
+        new HelpConfig { PageCooldownSeconds = cooldown, PageHistoryDays = days }.Validate();
+    }
 }

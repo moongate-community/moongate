@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/help_page_kind.xml
+
+  What it is for:
+    The second step of Call a game master: what the request is about. Each button calls the
+    function of the same name in scripts/gumps/help_page_kind.lua, which asks the player to
+    type a line and sends the request. A right click closes it.
+
+  Arguments:
+    none
+-->
+<gump id="help_page_kind" x="120" y="120"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="320" height="190" />
+  <text x="20" y="15" hue="1152" message="30206" />
+  <button x="20" y="50" up="4005" down="4007" on_click="question" />
+  <text x="55" y="51" message="30207" />
+  <button x="20" y="80" up="4005" down="4007" on_click="bug" />
+  <text x="55" y="81" message="30208" />
+  <button x="20" y="110" up="4005" down="4007" on_click="suggestion" />
+  <text x="55" y="111" message="30209" />
+  <button x="20" y="140" up="4005" down="4007" on_click="harassment" />
+  <text x="55" y="141" message="30210" />
+</gump>
