@@ -186,6 +186,17 @@ client's own texts as system messages (ModernUO shows them over the one examined
   skill waits 10 seconds. Traps, houses and factions
   are not there yet.
 
+## axe.lua
+
+`scripts/items/axe.lua` is the script of the axes (`script_id = "axe"` on the axe bases, which every axe takes from
+its base): see [Lumberjacking](../lumberjacking.md). The axe must be in the hands of who double clicks it
+(`item.worn_by`). The place picked must be a tree within 2 tiles: `target.pick_location` gives the `graphic` of the
+static that was picked, and the script holds the graphics that are trees. The character swings one to three times
+(`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have wood left (`harvest.amount`), the
+Lumberjacking skill is tried between 0 and 100 (`skill.check`), and a cut that works takes from the place
+(`harvest.take`) and gives 10 logs (`item.give`). The constants at the top of the script are the range, the swings,
+the logs and the trees. Who is chopping is kept in memory by serial: a restart frees everyone.
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,

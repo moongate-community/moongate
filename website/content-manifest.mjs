@@ -81,6 +81,7 @@ export const contentEntries = [
   { source: 'docs/death.md', slug: 'server/death', title: 'Death and resurrection', group: 'Scripting and content' },
   { source: 'docs/skills.md', slug: 'server/skills', title: 'Skills', group: 'Scripting and content' },
   { source: 'docs/fishing.md', slug: 'server/fishing', title: 'Fishing', group: 'Scripting and content' },
+  { source: 'docs/lumberjacking.md', slug: 'server/lumberjacking', title: 'Lumberjacking', group: 'Scripting and content' },
   { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },

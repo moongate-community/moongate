@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3f055cb77335cd750a3f1e1a0fff6f4f941877a9c7e1d19fb292e2b9ce817edf","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"3ba0c6d6c4f19cdf53e2e620b037bffee025c8d4f19379e4ed81661301432a1e","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -113,7 +113,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Sistema | Moongate | Note |
 | --- | --- | --- |
 | Usare e incrementare un'abilità | 🟡 | Un'[abilità](skills.md) viene usata dalla finestra delle abilità (`scripts/skills/<skill>.lua`), verificata da `skill.check` e incrementata con la formula di ModernUO; viene fornita solo Hiding, e le statistiche non aumentano ancora con le abilità |
-| Raccolta: estrazione mineraria, taglio della legna, pesca | 🟡 | [Pesca](fishing.md) con una canna: acqua entro 4 caselle, 8 secondi, un pesce, una vecchia calzatura o niente in base all'abilità; i pesci di un luogo si esauriscono per zona e ritornano ([`harvest.toml`](data-files/harvest.md)). Niente estrazione mineraria né taglio della legna, niente prese speciali |
+| Raccolta: estrazione mineraria, taglio della legna, pesca | 🟡 | [Pesca](fishing.md) con una canna: acqua entro 4 caselle, 8 secondi, un pesce, una vecchia calzatura o niente in base all'abilità; i pesci di un luogo si esauriscono per zona e ritornano ([`harvest.toml`](data-files/harvest.md)). [Taglio della legna](lumberjacking.md) con un'ascia in mano: un albero entro 2 caselle, da uno a tre colpi, 10 tronchi in base all'abilità, la legna di un luogo che si esaurisce allo stesso modo. Niente estrazione mineraria, niente prese speciali, niente tipi di legno, niente assi |
 | Motore di creazione: menu, ricette, risorse, qualità | ❌ | |
 | Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | ❌ | |
 | Riparare e migliorare gli oggetti | ❌ | |

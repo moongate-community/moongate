@@ -1,9 +1,9 @@
-<!-- translation: {"sourceHash":"1637ad3be1267d90b0a492af349b21d23e0dadb1214e09ae7abf7da845701ea4","title":"Raccolta"} -->
+<!-- translation: {"sourceHash":"51edbeef7153f44e5473351b7dbcbc39494f52bcd6667ef68c7a3d44552b18c9","title":"Raccolta"} -->
 
 # Raccolta
 
-`harvest.toml` elenca ciò che si raccoglie dal mondo e si esaurisce: oggi i pesci della [pesca](../fishing.md),
-più avanti minerale e legna.
+`harvest.toml` elenca ciò che si raccoglie dal mondo e si esaurisce: oggi i pesci della [pesca](../fishing.md) e la legna del [taglio della legna](../lumberjacking.md),
+più avanti il minerale.
 
 ```toml
 [[resource]]

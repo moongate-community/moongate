@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e5761697e31a4494091d020608c11cff466c396683432b1e8b243fc8bd412f05","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"a3bcbbfa1b9b1bc89bd24ddfb29a6f4ca5a79e408105a6eff2aa9114e12fde4d","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -186,6 +186,17 @@ di `data/skills.toml`.
   cercatore più un tiro da -10 a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff
   viene trovato solo da altro staff; l'abilità aspetta 10 secondi.
   Trappole, case e fazioni non ci sono ancora.
+
+## axe.lua
+
+`scripts/items/axe.lua` è lo script delle asce (`script_id = "axe"` sulle asce base, da cui ogni ascia lo prende):
+vedi [Taglio della legna](../lumberjacking.md). L'ascia deve essere in mano a chi vi fa doppio clic
+(`item.worn_by`). Il punto scelto deve essere un albero entro 2 caselle: `target.pick_location` dà la `graphic` dello
+statico scelto, e lo script contiene le grafiche che sono alberi. Il personaggio colpisce da una a tre volte
+(`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare della legna (`harvest.amount`), l'abilità
+Lumberjacking viene provata tra 0 e 100 (`skill.check`), e un taglio riuscito toglie dal luogo
+(`harvest.take`) e dà 10 tronchi (`item.give`). Le costanti in cima allo script sono la distanza, i colpi,
+i tronchi e gli alberi. Chi sta tagliando è tenuto in memoria per seriale: un riavvio libera tutti.
 
 ## fishing_pole.lua
 
