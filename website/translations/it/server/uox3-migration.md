@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"beebff07a7453315ee9f05a22d670d64b38a4134bcd84e68bf28688579c3bb46","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"1e1888a3b5110007454faff295084b31e6718b5cc1c91b2bf5cb5ee565ed4108","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
@@ -275,9 +275,9 @@ pagnotte e infine una brocca d'acqua (vedi il [file distribuito](data-files/star
 
 ## Convertitori in Python
 
-I convertitori passano da `mgctl convert` a un pacchetto Python, `tools/convert`, una parte alla volta. Quelli di insegne, teletrasporti,
-luoghi nominati e forzieri del tesoro di ModernUO ci sono già, con le stesse opzioni e lo stesso output, byte per byte (unica eccezione: il convertitore dei luoghi corregge anche la Cella 7 del carcere, che ModernUO mette sul posto della Cella 6); gli altri restano in `mgctl`
-finché non vengono portati. Nelle sezioni sotto, `mgctl convert modernuo-signs` si può sostituire con:
+I convertitori passano da `mgctl convert` a un pacchetto Python, `tools/convert`, una parte alla volta. Quelli di ModernUO ci sono già tutti (insegne, teletrasporti,
+luoghi nominati, forzieri del tesoro, libri, venditori, maestri di gilda e spawn), con le stesse opzioni e lo stesso output, byte per byte (unica eccezione: il convertitore dei luoghi corregge anche la Cella 7 del carcere, che ModernUO mette sul posto della Cella 6); quelli di UOX3 restano in `mgctl`
+finché non vengono portati. Due differenze: `modernuo-books` non controlla che un libro stia nei pacchetti del client (quel controllo resta ai test C# del catalogo distribuito) e `modernuo-vendors` crea anche un negozio per il ladro e il ranger. Nelle sezioni sotto, `mgctl convert modernuo-signs` si può sostituire con:
 
 ```sh
 cd tools/convert

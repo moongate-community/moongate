@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from moongate_convert import locations, spawn, teleporters
+from moongate_convert import guildmasters, locations, spawn, teleporters
 
 REPOSITORY = Path(__file__).resolve().parents[3]
 
@@ -26,3 +26,11 @@ def test_the_maps_are_those_of_the_server():
     assert spawn.MAP_NAMES == maps
     assert [name for name, _ in teleporters.MAPS] == maps
     assert locations.MAPS == [name.lower() for name in maps]
+
+
+def test_the_skills_are_those_of_the_server():
+    assert guildmasters.SKILL_TYPES == enum_members("src/Moongate.Ultima/Types/SkillType.cs")
+
+
+def test_the_guilds_are_those_of_the_server():
+    assert sorted(guildmasters.GUILDS.values()) == sorted(enum_members("src/Moongate.Server.Ultima/Types/Guilds/NpcGuildType.cs"))
