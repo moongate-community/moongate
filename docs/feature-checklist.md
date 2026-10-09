@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 87 done, 🟡 57 partly done, ❌ 125 not built yet.
+**269 systems:** ✅ 87 done, 🟡 58 partly done, ❌ 124 not built yet.
 
 **Coverage: 32%** of the systems done, **43%** counting a partly done system as half.
 
@@ -63,7 +63,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Extended status (resistances, luck, caps) | ❌ | The stat locks are built, see Stats |
 | Staff privileges (move anything, see hidden, invulnerable) | 🟡 | Hidden ground items and hidden mobiles are shown only to staff, and `.go` takes a game master anywhere; no move anything or invulnerability |
 | Gargoyle flying | ❌ | |
-| Movement cost and stamina use by weight | ✅ | Running costs a point every 16 steps; overloaded, every step costs 5 and more, and with no stamina left the step is refused. No mounts yet |
+| Movement cost and stamina use by weight | ✅ | Running costs a point every 16 steps; overloaded, every step costs 5 and more, and with no stamina left the step is refused. A rider pays the same, no mounted discount yet |
 | Polymorph and incognito | ❌ | |
 | Experience and levels (optional) | ❌ | |
 | Factions | ❌ | |
@@ -142,7 +142,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
 | Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, through the closed doors it opens and around locked ones and furniture. Hurt creatures run from a fight (20% of their hit points, 10% for animals) and scared animals from a blow; an NPC that wanders opens no door, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
-| Mounts | ❌ | |
+| Mounts | 🟡 | [Mounts](mounts.md): a game master gives a horse, llama or ostard with [`tame`](commands/tame.md); its owner double clicks it to ride and double clicks self to get off, or dies, and rides twice as fast. No stable, no bola, no ethereal mounts |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |
 | Name pools | ✅ | Name lists by kind and gender |
 | Needs: food, grazing, desires | ❌ | |

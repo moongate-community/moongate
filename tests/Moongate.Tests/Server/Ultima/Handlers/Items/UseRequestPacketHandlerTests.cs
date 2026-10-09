@@ -22,6 +22,7 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
@@ -63,7 +64,9 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemTemplateService _itemTemplates = new(
         new StubDataLoaderService().With(new ItemTemplate { Id = "butte", ItemId = new Serial(0x100A), UseRange = 6 })
     );
+
     private readonly StubBankService _bank = new();
+    private readonly RecordingMountService _mounts = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -112,6 +115,79 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
         var paperdoll = Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
         Assert.Equal((Bran, "Bran", false), (paperdoll.Mobile, paperdoll.Title, paperdoll.CanLift));
+    }
+
+    [Fact]
+    public async Task Handle_ACreatureInRange_IsRidden_AndOpensNoPaperdoll()
+    {
+        var horse = Mobile(new Serial(0x100), "a horse", 17, new(1001, 1000, 0));
+        _mobiles.EnterWorld(horse);
+        await StartAsync(Aria);
+
+        await UseAsync(horse.Id);
+
+        var mount = Assert.Single(_mounts.Mounts);
+        Assert.Equal((Aria, horse.Id, false), (mount.Rider.Id, mount.Pet.Id, mount.Force));
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_ACreatureByAGameMaster_IsRiddenWithForce()
+    {
+        var horse = Mobile(new Serial(0x100), "a horse", 17, new(1001, 1000, 0));
+        _mobiles.EnterWorld(horse);
+        await StartAsync(Aria);
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        await UseAsync(horse.Id);
+
+        Assert.True(Assert.Single(_mounts.Mounts).Force);
+    }
+
+    [Fact]
+    public async Task Handle_AnotherPlayerWithAPaperdoll_IsNeverRidden()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(Bran);
+
+        Assert.Empty(_mounts.Mounts);
+        Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnCharacterWhileMounted_Dismounts_AndOpensNoPaperdoll()
+    {
+        _mounts.Mounted.Add(Aria);
+        await StartAsync(Aria);
+
+        await UseAsync(Aria);
+
+        Assert.Equal(Aria, Assert.Single(_mounts.Dismounts).Id);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnCharacterOnFoot_OpensItsPaperdoll_AndDismountsNobody()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(Aria);
+
+        Assert.Empty(_mounts.Dismounts);
+        Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnPaperdollButtonWhileMounted_StillOpensThePaperdoll()
+    {
+        _mounts.Mounted.Add(Aria);
+        await StartAsync(Aria);
+
+        await UseAsync(new Serial(Aria.Value | 0x80000000));
+
+        Assert.Empty(_mounts.Dismounts);
+        Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
     }
 
     [Fact]
@@ -655,7 +731,8 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             _bank,
             null,
             _itemTemplates,
-            _skillScripts
+            _skillScripts,
+            mounts: _mounts
         );
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));

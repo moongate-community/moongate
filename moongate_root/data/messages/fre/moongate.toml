@@ -267,3 +267,6 @@
 30218 = "Demandes d'aide en attente : {0}. Tapez .pages."
 30219 = "Ouvre le gump des demandes d'aide : les ouvertes et les prises en charge, pour aller voir le joueur, les prendre en charge, y répondre ou les fermer."
 30220 = "Le gump pages est absent : templates/gumps/pages.xml."
+30221 = "Donne la créature que vous ciblez à vous-même ou au personnage nommé : tame [nom]. Son maître peut la monter."
+30222 = "{0} appartient désormais à {1}."
+30223 = "{0} ne peut pas être apprivoisé."

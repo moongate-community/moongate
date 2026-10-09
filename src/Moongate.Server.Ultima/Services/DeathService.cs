@@ -86,6 +86,7 @@ public sealed class DeathService : IDeathService
     private readonly IMobileStateService? _state;
     private readonly INpcSenseService? _senses;
     private readonly IMurderService? _murders;
+    private readonly IMountService? _mounts;
     private readonly ILogger _logger;
 
     // Who is between its death and its removal: it does not die twice.
@@ -113,9 +114,11 @@ public sealed class DeathService : IDeathService
         IMobileStateService? state = null,
         INpcSenseService? senses = null,
         IMurderService? murders = null,
-        ILogger? logger = null
+        ILogger? logger = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
         _murders = murders;
         _state = state;
         _senses = senses;
@@ -188,6 +191,11 @@ public sealed class DeathService : IDeathService
         Finish(mobile, corpse, killer);
 
         return true;
+    }
+
+    public bool IsDying(Serial mobile)
+    {
+        return _dying.Contains(mobile);
     }
 
     public bool Resurrect(MobileEntity player)
@@ -308,6 +316,9 @@ public sealed class DeathService : IDeathService
         {
             _speech.PlaySound(player, sound);
         }
+
+        // The mount is not loot: the rider is on foot, and its horse stands where it falls, before the corpse is made.
+        _mounts?.Dismount(player);
 
         var corpse = MakeCorpse(player, killer);
 

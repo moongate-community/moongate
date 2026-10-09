@@ -32,6 +32,16 @@ public sealed class StubDeathService : IDeathService
         return Kills;
     }
 
+    /// <summary>
+    ///     Gets the mobiles <see cref="IsDying" /> answers true for.
+    /// </summary>
+    public HashSet<Serial> Dying { get; } = [];
+
+    public bool IsDying(Serial mobile)
+    {
+        return Dying.Contains(mobile);
+    }
+
     public List<MobileEntity> PlayersRaised { get; } = [];
 
     public bool Resurrect(MobileEntity player)

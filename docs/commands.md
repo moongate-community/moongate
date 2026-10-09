@@ -47,6 +47,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`add`](commands/add.md) | `add <template>`, then target a spot | No | Yes | GameMaster | Game |
 | [`remove`](commands/remove.md) | `remove`, then target an NPC or an item on the ground | No | Yes | GameMaster | Game |
 | [`kill`](commands/kill.md) | `kill`, then target an NPC | No | Yes | GameMaster | Game |
+| [`tame`](commands/tame.md) | `tame [name]`, then target a creature | No | Yes | GameMaster | Game |
 | [`resurrect`](commands/resurrect.md) | `resurrect`, then target a corpse | No | Yes | GameMaster | Game |
 | [`animate`](commands/animate.md) | `animate <action>`, then target a mobile | No | Yes | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, then target anything | No | Yes | GameMaster | Game |
@@ -96,7 +97,7 @@ commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
 ### By who uses them
 
 - **Everyone:** `help`, `echo`, `time`.
-- **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
+- **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `tame`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
 - **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
   `initial_spawn`, plus everything a

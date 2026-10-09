@@ -267,3 +267,6 @@
 30218 = "Žádostí o pomoc čeká: {0}. Napiš .pages."
 30219 = "Otevře gump žádostí o pomoc: otevřené a převzaté, abys mohl jít k hráči, převzít je, odpovědět nebo je zavřít."
 30220 = "Chybí gump pages: templates/gumps/pages.xml."
+30221 = "Přidělí vybrané stvoření tobě nebo jmenované postavě: tame [jméno]. Jeho majitel na něm může jezdit."
+30222 = "{0} nyní patří {1}."
+30223 = "{0} nelze ochočit."

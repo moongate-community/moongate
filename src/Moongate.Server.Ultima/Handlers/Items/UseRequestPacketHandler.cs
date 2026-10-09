@@ -5,6 +5,7 @@ using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
@@ -24,7 +25,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 ///     Answers a double click (0x06). On a container the session's character carries, such as its backpack or a bag in
 ///     it: the container's gump (0x24), then its items (0x3C). On a human-bodied mobile in view range, or on the
 ///     character's own paperdoll button (the serial with its high bit set): the paperdoll (0x88), with lifting allowed
-///     only on the character's own. Anything else is not handled yet.
+///     only on the character's own. On a creature that is a mount: the character rides it. On the character itself while it
+///     rides: it gets off. Anything else is not handled yet.
 /// </summary>
 /// <remarks>
 ///     A container is an item whose graphic has the tiledata Container flag; <see cref="IContainerLayoutService" />
@@ -56,6 +58,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     private readonly IItemTemplateService? _templates;
     private readonly ISkillScriptService? _skillScripts;
     private readonly IContainerViewService _views;
+    private readonly IMountService? _mounts;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -72,9 +75,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         IInventoryMutationGuard? inventory = null,
         IItemTemplateService? templates = null,
         ISkillScriptService? skillScripts = null,
-        IContainerViewService? views = null
+        IContainerViewService? views = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
         _skillScripts = skillScripts;
         _views = views ?? new ContainerViewService(items, layouts, sender, tooltips);
         _templates = templates;
@@ -105,7 +110,10 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
 
         if (session.CharacterId.IsValid && _mobiles.TryGet(packet.Target, out var mobile))
         {
-            OpenPaperdoll(session, mobile);
+            if (!TryRide(session, mobile))
+            {
+                OpenPaperdoll(session, mobile);
+            }
 
             return;
         }
@@ -178,6 +186,30 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     public bool HasPaperdoll(MobileEntity mobile)
     {
         return _bodies.Value.TryGetValue(mobile.Body, out var type) && type == BodyType.Human;
+    }
+
+    // A creature that is a mount is ridden, and the character itself, while it rides, gets off: no paperdoll either way.
+    private bool TryRide(GameSession session, MobileEntity target)
+    {
+        if (_mounts is null || !_mobiles.TryGet(session.CharacterId, out var rider))
+        {
+            return false;
+        }
+
+        if (target.Id == rider.Id)
+        {
+            return _mounts.IsMounted(rider) && _mounts.Dismount(rider);
+        }
+
+        if (!target.IsNpc || HasPaperdoll(target))
+        {
+            return false;
+        }
+
+        _mounts.TryMount(rider, target, session.AccountType >= AccountType.GameMaster);
+
+        // An animal has no paperdoll to open, whatever the mount said.
+        return true;
     }
 
     // A container lying on the ground, or inside one, within reach of the character, such as a treasure chest; one too
