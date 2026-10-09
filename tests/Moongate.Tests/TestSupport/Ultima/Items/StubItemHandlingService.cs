@@ -23,9 +23,25 @@ public sealed class StubItemHandlingService : IItemHandlingService
             : null;
     }
 
+    /// <summary>
+    ///     Gets or sets whether <see cref="Give" /> finds no room in the backpack.
+    /// </summary>
+    public bool BackpackFull { get; set; }
+
+    public List<ItemEntity> Given { get; } = [];
+
+    public List<ItemEntity> Deleted { get; } = [];
+
     public ItemEntity? Give(MobileEntity owner, string template, int? amount = null)
     {
-        throw new NotSupportedException();
+        if (BackpackFull || Make(template, amount) is not { } item)
+        {
+            return null;
+        }
+
+        Given.Add(item);
+
+        return item;
     }
 
     public bool Consume(ItemEntity item, int amount = 1)
@@ -35,7 +51,9 @@ public sealed class StubItemHandlingService : IItemHandlingService
 
     public bool Delete(ItemEntity item)
     {
-        throw new NotSupportedException();
+        Deleted.Add(item);
+
+        return true;
     }
 
     public void Refresh(ItemEntity item)

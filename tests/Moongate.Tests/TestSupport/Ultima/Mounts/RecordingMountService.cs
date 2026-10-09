@@ -37,6 +37,16 @@ public sealed class RecordingMountService : IMountService
         return Accepts;
     }
 
+    public List<(MobileEntity Rider, ItemEntity Statuette)> Ethereals { get; } = [];
+
+    public bool TryMountEthereal(MobileEntity rider, ItemEntity statuette)
+    {
+        Ethereals.Add((rider, statuette));
+        Calls.Add($"Ethereal {rider.Id.Value} {statuette.Id.Value}");
+
+        return Accepts;
+    }
+
     public bool Dismount(MobileEntity rider)
     {
         OnDismount?.Invoke();

@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
@@ -56,6 +57,8 @@ public sealed class MountServiceTests
         _mobiles = new(new StubMovementService(), sectors);
         _items = TestItems.Create(sectors);
         _handling.Templates["horse4"] = HorseMountGraphic;
+        _handling.Templates["etherealhorse"] = 0x3EAA;
+        _handling.Templates["ethereal_horse_statue"] = 0x20DD;
         _service = new(
             _mobiles,
             _items,
@@ -82,6 +85,16 @@ public sealed class MountServiceTests
             new Lazy<IDeathService>(() => _death),
             _inventory,
             _itemData,
+            new ItemTemplateService(
+                new StubDataLoaderService().With(
+                    new ItemTemplate
+                    {
+                        Id = "ethereal_horse_statue", ItemId = new Serial(0x20DD),
+                        Tags = new() { [MountProps.MountItemTag] = "etherealhorse" }
+                    },
+                    new ItemTemplate { Id = "plain_statue", ItemId = new Serial(0x1224) }
+                )
+            ),
             new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         )
         {
@@ -346,6 +359,105 @@ public sealed class MountServiceTests
 
         Assert.Empty(_itemData.Upserted);
         _npcs.Gate.SetResult();
+    }
+
+    [Fact]
+    public void TryMountEthereal_AStatuetteInTheBackpack_IsDeleted_AndTheMountItemIsWorn()
+    {
+        var statuette = Statuette(inBackpack: true);
+
+        var mounted = _service.TryMountEthereal(_rider, statuette);
+
+        Assert.True(mounted);
+        Assert.Same(statuette, Assert.Single(_handling.Deleted));
+        var item = Assert.Single(_items.GetWorn(_rider.Id), worn => worn.Layer == LayerType.Mount);
+        Assert.Equal((0x3EAA, false), (item.ItemId, item.Movable));
+        Assert.Equal("ethereal_horse_statue", item.GetProp<string>(MountProps.EtherealTemplate));
+        Assert.Empty(_npcs.Removals);
+    }
+
+    [Fact]
+    public void TryMountEthereal_AStatuetteNotInTheBackpack_IsRefusedWithOnYourPerson()
+    {
+        var statuette = Statuette(inBackpack: false);
+
+        Assert.False(_service.TryMountEthereal(_rider, statuette));
+
+        Assert.Equal(1010095, Assert.Single(_speech.ToldClilocs).Cliloc);
+        Assert.Empty(_handling.Deleted);
+        Assert.False(_service.IsMounted(_rider));
+    }
+
+    [Fact]
+    public void TryMountEthereal_AlreadyMounted_IsRefused_AndKeepsTheStatuette()
+    {
+        var statuette = Statuette(inBackpack: true);
+        Assert.True(_service.TryMount(_rider, _horse));
+
+        Assert.False(_service.TryMountEthereal(_rider, statuette));
+
+        Assert.Equal(1005583, Assert.Single(_speech.ToldClilocs).Cliloc);
+        Assert.Empty(_handling.Deleted);
+    }
+
+    [Fact]
+    public void TryMountEthereal_ADeadRider_OrAnItemThatIsNoStatuette_IsRefusedInSilence()
+    {
+        var statuette = Statuette(inBackpack: true);
+        var plain = new ItemEntity { Id = new(0x40000700), TemplateId = "plain_statue", ItemId = 0x1224, Amount = 1 };
+        _rider.Body = GhostBodies.GhostOf(400);
+
+        Assert.False(_service.TryMountEthereal(_rider, statuette));
+
+        _rider.Body = 400;
+        Assert.False(_service.TryMountEthereal(_rider, plain));
+        Assert.Empty(_speech.ToldClilocs);
+        Assert.Empty(_handling.Deleted);
+    }
+
+    [Fact]
+    public void Dismount_OfAnEthereal_GivesTheStatuetteBack_AndSpawnsNoCreature()
+    {
+        _service.TryMountEthereal(_rider, Statuette(inBackpack: true));
+
+        Assert.True(_service.Dismount(_rider));
+
+        Assert.False(_service.IsMounted(_rider));
+        Assert.Equal("ethereal_horse_statue", Assert.Single(_handling.Given).TemplateId);
+        Assert.Empty(_npcs.Spawns);
+    }
+
+    [Fact]
+    public void Dismount_OfAnEthereal_WithAFullBackpack_PutsTheStatueOnTheGroundAtTheRider()
+    {
+        _service.TryMountEthereal(_rider, Statuette(inBackpack: true));
+        _handling.BackpackFull = true;
+
+        Assert.True(_service.Dismount(_rider));
+
+        Assert.Empty(_handling.Given);
+        Assert.Contains(_view.Calls, call => call.StartsWith("Appeared ", StringComparison.Ordinal));
+    }
+
+    private ItemEntity Statuette(bool inBackpack)
+    {
+        var statuette = new ItemEntity
+            { Id = new(0x40000600), TemplateId = "ethereal_horse_statue", ItemId = 0x20DD, Amount = 1 };
+
+        if (inBackpack)
+        {
+            var backpack = new ItemEntity { Id = new(0x40000601), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+            backpack.Equip(_rider.Id, LayerType.Backpack);
+            statuette.PutInContainer(backpack.Id, new Point2D(40, 40));
+            _items.Add([backpack, statuette]);
+        }
+        else
+        {
+            statuette.PlaceOnGround(_rider.Map, _rider.Location);
+            _items.Add([statuette]);
+        }
+
+        return statuette;
     }
 
     private sealed class ReservedInventory : IInventoryMutationGuard

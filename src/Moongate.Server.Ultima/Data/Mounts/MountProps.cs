@@ -22,6 +22,12 @@ public static class MountProps
     public const string PetOwner = "pet_owner";
 
     /// <summary>
+    ///     Prop of a mount item: the id of the statuette template an ethereal mount was made from, which is given back
+    ///     when the rider gets off.
+    /// </summary>
+    public const string EtherealTemplate = "ethereal_template";
+
+    /// <summary>
     ///     Tag of a mobile template: the id of the item template, on the mount layer, that the creature turns into when it
     ///     is ridden. An empty value, or no tag, makes the creature no mount.
     /// </summary>
