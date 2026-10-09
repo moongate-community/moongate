@@ -191,7 +191,7 @@ second in the whole server; an NPC that may not search steps straight towards it
 [`npc.walk_to`](scripting/mobile-scripts.md#walking-a-path) is built on it.
 
 A path sees what the movement sees: a closed door, a crate or any impassable item on the
-ground blocks it, and it goes around; an NPC does not open doors. Other mobiles do not block
+ground blocks it, and it goes around. A search with `MovementAbilityType.OpenDoors` plans through the closed doors that are not locked, which is how `npc.walk_to` searches for an NPC that opens doors; the step itself is still stopped by the door, and the NPC opens it first. Other mobiles do not block
 a path, since the movement does not consider them. A tile on the way has one height in a
 search, the one of the shortest way to it, so a path cannot pass both over and under the same
 tile, such as across a bridge and then beneath it. The goal's own tile is different: it is

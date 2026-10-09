@@ -219,6 +219,12 @@ public class MobileTemplate
     public MobileMovementType? Movement { get; set; }
 
     /// <summary>
+    ///     Whether the mobiles open the closed doors in their way when they walk to a place. Unset: a human or a monster
+    ///     body does, an animal or a sea creature does not.
+    /// </summary>
+    public bool? OpensDoors { get; set; }
+
+    /// <summary>
     ///     Free values for scripts. A child template's tags add to and override its base's.
     /// </summary>
     public Dictionary<string, string>? Tags { get; set; }

@@ -142,6 +142,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
         container.Register<IPathfindingService, PathfindingService>(Reuse.Singleton);
         container.Register<INpcPathService, NpcPathService>(Reuse.Singleton);
+        container.Register<INpcDoorService, NpcDoorService>(Reuse.Singleton);
         container.AddUltimaScriptModules();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.

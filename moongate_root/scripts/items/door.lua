@@ -30,6 +30,9 @@
 -- Functions:
 --   on_use(serial, user)             a player double clicks the door;
 --                                    returns true
+--   on_npc_use(serial, opener)       an NPC walking to a place finds the door
+--                                    in its way: a closed door that is not
+--                                    locked opens; returns true when it did
 --   on_timer(serial, name)           the auto-close timer is due
 -- ==============================================================================
 
@@ -229,6 +232,24 @@ local function may_pass(serial, user)
     return false
 end
 
+-- Opens the door and its linked door, and starts the timer that closes them; false when it cannot swing aside.
+local function open(serial)
+    local doors = doors_of(serial)
+
+    if not open_one(serial) then
+        return false
+    end
+
+    if doors[2] then
+        open_one(doors[2])
+    end
+
+    cancel_auto_close(serial)
+    schedule_auto_close(serial, AUTO_CLOSE_SECONDS)
+
+    return true
+end
+
 -- Called when a player double clicks the door.
 function door.on_use(serial, user)
     if not is_open(serial) and item.get_prop(serial, "locked") and not may_pass(serial, user) then
@@ -241,18 +262,25 @@ function door.on_use(serial, user)
         return true
     end
 
-    local doors = doors_of(serial)
-
-    if not open_one(serial) then
-        return true
-    end
-
-    if doors[2] then
-        open_one(doors[2])
-    end
-
-    cancel_auto_close(serial)
-    schedule_auto_close(serial, AUTO_CLOSE_SECONDS)
+    open(serial)
 
     return true
+end
+
+-- Called for an NPC that walks to a place and finds the door in its way (npc.walk_to): a closed door that is not
+-- locked opens, with its linked door, and closes by itself as for a player. An NPC carries no key and closes
+-- nothing.
+function door.on_npc_use(serial, opener)
+    if is_open(serial) then
+        return false
+    end
+
+    -- Neither leaf of a double door may be locked: opening one opens both.
+    for _, each in ipairs(doors_of(serial)) do
+        if item.get_prop(each, "locked") then
+            return false
+        end
+    end
+
+    return open(serial)
 end

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3e47f58576ee0f58c12b34cda60cbeab7aced93d5a0ea349eb891082409b6f06","title":"File client e query sul mondo"} -->
+<!-- translation: {"sourceHash":"00f179d3224b9a308c0b85ba42a61b55b5cd5be5231d4a968e75c26c2e68ec17","title":"File client e query sul mondo"} -->
 
 # File client e query sul mondo
 
@@ -199,7 +199,7 @@ non può cercare fa un passo diritto verso la destinazione. La funzione Lua
 [`npc.walk_to`](scripting/mobile-scripts.md#walking-a-path) è costruita su questo.
 
 Un percorso vede ciò che vede il movimento: una porta chiusa, una cassa o qualsiasi
-oggetto invalicabile a terra lo blocca, e ci gira attorno; un NPC non apre porte.
+oggetto invalicabile a terra lo blocca, e ci gira attorno. Una ricerca con `MovementAbilityType.OpenDoors` pianifica attraverso le porte chiuse non a chiave, ed è così che `npc.walk_to` cerca per un NPC che apre le porte; il passo stesso viene comunque fermato dalla porta, e l'NPC prima la apre.
 Altri mobile non bloccano un percorso, perché il movimento non li considera.
 Un tile lungo il percorso ha una sola altezza nella ricerca, quella del percorso
 più breve fino a esso, quindi un percorso non può passare sia sopra sia sotto lo

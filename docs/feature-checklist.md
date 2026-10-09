@@ -140,7 +140,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance*, *withdraw* and *check*, and the word *deposit*, which has no keyword; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
-| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. Hurt creatures run from a fight (20% of their hit points, 10% for animals) and scared animals from a blow; NPCs do not open doors, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
+| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, through the closed doors it opens and around locked ones and furniture. Hurt creatures run from a fight (20% of their hit points, 10% for animals) and scared animals from a blow; an NPC that wanders opens no door, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
 | Pets and followers: commands, loyalty, bonding | ❌ | |
 | Mounts | ❌ | |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |
@@ -181,7 +181,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Items on the ground and their decay | ✅ | |
 | Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |
 | Loot tables | ✅ | Rolled into every spawned NPC's backpack, into the treasure chests and the town containers, and from scripts with `item.add_loot` |
-| Doors | ✅ | Open and close; linked double doors; a closed door blocks the way, staff walks through |
+| Doors | ✅ | Open and close; linked double doors; a closed door blocks the way, staff walks through; humans and monsters walking to a place open the ones that are not locked |
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
 | Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. A sample potion is drunk and used up, with no effect yet |

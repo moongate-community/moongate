@@ -328,6 +328,7 @@ public class MovementService : IMovementService
         var landBlocks = LandBlocks(land, canSwim, cantWalk);
         var considerLand = !LandHeights.IsIgnored(land.Id);
         var ignoreDoors = (ability & MovementAbilityType.PassDoors) != 0;
+        var openDoors = (ability & MovementAbilityType.OpenDoors) != 0;
         var tiles = TilesAt(map, x, y);
 
         LandHeights.Get(_mapService, map, x, y, out var landZ, out var landCenter, out _);
@@ -390,7 +391,7 @@ public class MovementService : IMovementService
                 continue;
             }
 
-            if (IsOk(tiles, ourZ, testTop, ignoreDoors))
+            if (IsOk(tiles, ourZ, testTop, ignoreDoors, openDoors))
             {
                 newZ = ourZ;
                 moveIsOk = true;
@@ -421,7 +422,7 @@ public class MovementService : IMovementService
             }
         }
 
-        if (shouldCheck && IsOk(tiles, landCenter, testTop, ignoreDoors))
+        if (shouldCheck && IsOk(tiles, landCenter, testTop, ignoreDoors, openDoors))
         {
             newZ = landCenter;
             moveIsOk = true;
@@ -436,8 +437,9 @@ public class MovementService : IMovementService
     }
 
     // ModernUO MovementImpl.IsOk: no impassable or surface static or ground item overlaps the space from ourZ to
-    // ourTop; a door does not count for a mover that passes doors.
-    private static bool IsOk(List<CellTile> tiles, int ourZ, int ourTop, bool ignoreDoors)
+    // ourTop; a door does not count for a mover that passes doors, nor a closed and unlocked one for a mover that opens
+    // them.
+    private static bool IsOk(List<CellTile> tiles, int ourZ, int ourTop, bool ignoreDoors, bool openDoors)
     {
         foreach (var tile in tiles)
         {
@@ -448,7 +450,7 @@ public class MovementService : IMovementService
                 continue;
             }
 
-            if (ignoreDoors && tile.IsItem && IsDoor(item))
+            if (tile.IsItem && (ignoreDoors || openDoors && tile.Openable) && Doors.IsDoor(item))
             {
                 continue;
             }
@@ -489,12 +491,6 @@ public class MovementService : IMovementService
         return true;
     }
 
-    // As ModernUO: the tiledata Door flag, and the few door graphics that lack it.
-    private static bool IsDoor(ItemTile tile)
-    {
-        return (tile.Flags & TileFlagType.Door) != 0 || tile.Id is 0x0692 or 0x0846 or 0x0873 or 0x06F5 or 0x06F6;
-    }
-
     // The statics of the cell, then the items lying on its ground.
     private List<CellTile> TilesAt(MapType map, int x, int y)
     {
@@ -519,7 +515,7 @@ public class MovementService : IMovementService
 
             if (item.GroundLocation is { } spot && _tileDataService.TryGetItem(item.ItemId, out var data))
             {
-                _cell.Add(new(data, spot.Z, true, IsFixed(item, data)));
+                _cell.Add(new(data, spot.Z, true, IsFixed(item, data), Doors.IsDoor(data) && Doors.CanBeOpened(item, _templates)));
             }
         }
 

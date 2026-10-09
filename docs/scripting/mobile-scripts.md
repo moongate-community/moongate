@@ -129,7 +129,7 @@ The script of the monsters, `monster.lua`, is described with the other
 
 ## Walking a path
 
-`npc.walk_to` lets an NPC reach a place around walls, water and cliffs. The script calls it
+`npc.walk_to` lets an NPC reach a place around walls, water and cliffs, and through the closed doors it opens: a human or a monster opens a door that is not locked, an animal or a sea creature does not, unless its mobile template says so with `opens_doors = true` or `false`. The script calls it
 on every tick and the NPC takes one step each time:
 
 ```lua
@@ -146,7 +146,7 @@ end
 
 | Answer | Means |
 | --- | --- |
-| `"moving"` | The NPC took a step |
+| `"moving"` | The NPC took a step, or asked a door in its way to open: it passes at a next call, and after three calls at a door that stays shut the answer is `"blocked"` |
 | `"arrived"` | It stands within `range` tiles of the place (default 0), at its height; it is not checked that nothing stands between them |
 | `"blocked"` | The step was refused, or the NPC waits to look for another way |
 | `"no_path"` | The last search did not reach the place: nothing leads there, or only somewhere near |
