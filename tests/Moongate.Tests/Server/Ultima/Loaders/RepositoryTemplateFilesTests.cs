@@ -576,6 +576,24 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedBlades_UseTheBladeScript_AndBoardsAndKindlingAreThere()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        // A dagger, a skinning knife, a butcher knife and a long sword cut; an axe keeps its own script, and the
+        // flower garland UOX3 binds to its blade script by mistake cuts nothing.
+        Assert.All(new[] { "0x0f51", "0x0f52", "0x0ec4", "0x13f6", "0x0f61" }, id => Assert.Equal("blade", items[id].ScriptId));
+        Assert.Equal("axe", items["0x0f49"].ScriptId);
+        Assert.NotEqual("blade", items["0x2306"].ScriptId);
+        // Every template with the script is a weapon.
+        Assert.All(items.Values.Where(item => item.ScriptId == "blade"), item => Assert.NotNull(item.WeaponType));
+
+        Assert.True(items["0x1bd7_board"].Stackable);
+        Assert.True(items["0x0de1_kindling"].Stackable);
+        Assert.True(items["0x1bdd_log"].Stackable);
+    }
+
+    [Fact]
     public async Task ShippedMiningToolsAndOre_UseTheirScripts_AndWhatTheyGiveIsThere()
     {
         var directories = Directories();

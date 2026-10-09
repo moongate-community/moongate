@@ -65,6 +65,25 @@ def test_what_uox3_calls_an_axe_gets_the_axe_script(uox_workspace):
     assert "script_id" not in by_name["war axe"]
 
 
+def test_the_blades_get_the_blade_script_by_their_graphic_but_what_is_no_weapon(uox_workspace):
+    uox_workspace.write_source(
+        "blades.dfn",
+        "[0x0f51]\n{\nname=dagger\nid=0x0f51\n}\n"
+        "[0x2306]\n{\nname=flower garland\nid=0x2306\n}\n"
+        "[0x0f49]\n{\nname=axe\nid=0x0f49\ntype=216\n}\n",
+    )
+    uox_workspace.write_scripts("jse_fileassociations.scp", "[SCRIPT_LIST]\n{\n5009=item/sword.js\n}\n")
+    uox_workspace.write_scripts("jse_objectassociations.scp", "[ENVOKE]\n{\n0x0f51=5009\n0x2306=5009\n}\n")
+
+    assert uox_workspace.run(scripts=True) == 0, uox_workspace.combined
+
+    # UOX3 binds its blade script by graphic, and to a garland by mistake: only what is a weapon takes scripts/items/blade.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items("blades.toml").values()}
+    assert by_name["dagger"]["script_id"] == "blade"
+    assert "script_id" not in by_name["flower garland"]
+    assert by_name["axe"]["script_id"] == "axe"
+
+
 def test_the_mining_tools_and_the_piles_of_ore_get_their_scripts(uox_workspace):
     uox_workspace.write_source(
         "mining.dfn",

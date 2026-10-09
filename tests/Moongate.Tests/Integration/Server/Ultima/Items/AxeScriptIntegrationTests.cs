@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Handlers.Items.Internal;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using DryIoc;
 using Moongate.Server.Ultima.Data.Regions;
@@ -71,6 +72,9 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     private const int Failed = 500495;
     private const int NoRoom = 500497;
     private const int Chopped = 500498;
+    private const int InBackpack = 1062334;
+    private const int NotOnThat = 500494;
+    private const int Kindled = 500491;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -94,7 +98,11 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "hatchet", ItemId = new Serial(0x0F43), ScriptId = "axe" },
-            new ItemTemplate { Id = "0x1be0_log", ItemId = new Serial(0x1BE0), Stackable = true }
+            new ItemTemplate { Id = "0x1be0_log", ItemId = new Serial(0x1BE0), Stackable = true },
+            new ItemTemplate { Id = "0x1bdd_log", ItemId = new Serial(0x1BDE), Stackable = true },
+            new ItemTemplate { Id = "0x1bd7_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "0x0de1_kindling", ItemId = new Serial(0x0DE1), Stackable = true },
+            new ItemTemplate { Id = "dagger", ItemId = new Serial(0x0F51), ScriptId = "blade" }
         )
     );
 
@@ -110,6 +118,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     private MobileEntity _aria = null!;
     private Point3D _tree;
     private readonly HashSet<string> _fired = [];
+    private uint _next = 0x40000050;
 
     public AxeScriptIntegrationTests()
     {
@@ -160,6 +169,8 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
             end
             """
         );
+        _scripts.Write("items/blade.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "blade.lua")));
+        _scripts.Write("common/trees.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "trees.lua")));
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
@@ -386,6 +397,149 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(0, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
     }
 
+    [Theory]
+    // Both shapes of a log are sawn, the whole stack, one board for each log.
+    [InlineData("0x1be0_log", 0x1BE0, 30)]
+    [InlineData("0x1bdd_log", 0x1BDE, 1)]
+    public void Sawing_LogsInTheBackpack_TurnsTheWholeStackIntoBoards(string template, int graphic, int amount)
+    {
+        var logs = Carry(template, graphic, amount);
+
+        Use(logs.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat], Told());
+        var boards = Assert.Single(Caught());
+        Assert.Equal(("0x1bd7_board", amount), (boards.TemplateId, boards.Amount));
+        Assert.Equal([0x13E], _speech.Sounds.Select(sound => sound.Sound));
+        // No tree, no swing, no skill tried.
+        Assert.Empty(_timers.Timers);
+        Assert.Equal(0, _random.Rolls);
+    }
+
+    [Fact]
+    public void Sawing_BoardsJoinTheBoardsAlreadyThere()
+    {
+        Carry("0x1bd7_board", 0x1BD7, 5);
+
+        Use(Carry("0x1be0_log", 0x1BE0, 10).Id);
+
+        Assert.Equal(15, Assert.Single(Caught()).Amount);
+    }
+
+    [Fact]
+    public async Task Sawing_LogsOnTheGroundOrOnACursor_NeedsThemInTheBackpack_AndGivesNoBoards()
+    {
+        var ground = Carry("0x1be0_log", 0x1BE0, 10);
+        _items.PlaceOnGround(ground, MapType.Trammel, new Point3D(_aria.Location.X + 1, _aria.Location.Y, 0));
+        Use(ground.Id);
+
+        // Lifted, the logs still count as lying in the backpack and cannot be taken from.
+        var held = Carry("0x1be0_log", 0x1BE0, 10);
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == _aria.Id);
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(held.Id)));
+        Use(held.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, InBackpack, UseOnWhat, InBackpack], Told());
+        Assert.Equal((10, 10), (ground.Amount, held.Amount));
+        Assert.DoesNotContain(Caught(), item => item.TemplateId == "0x1bd7_board");
+    }
+
+    [Fact]
+    public void Sawing_LogsInTheBankBox_NeedsThemInTheBackpack_ButLogsInABagAreSawn()
+    {
+        // The bank box is worn too, so its logs are the player's: a target reaches them with the bank closed.
+        var bank = new ItemEntity { Id = new Serial(0x40000091), TemplateId = "backpack", ItemId = 0x0E7C, Amount = 1 };
+        bank.Equip(new Serial((uint)Aria), LayerType.Bank);
+        var bag = new ItemEntity { Id = new Serial(0x40000092), TemplateId = "backpack", ItemId = 0x0E76, Amount = 1 };
+        bag.PutInContainer(_backpack.Id, new Point2D(20, 20));
+        _items.Add([bank, bag]);
+        var banked = Carry("0x1be0_log", 0x1BE0, 10);
+        _items.MoveToContainer(banked, bank.Id, new Point2D(10, 10));
+        var bagged = Carry("0x1be0_log", 0x1BE0, 7);
+        _items.MoveToContainer(bagged, bag.Id, new Point2D(10, 10));
+
+        Use(banked.Id);
+        Use(bagged.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, InBackpack, UseOnWhat], Told());
+        Assert.Equal(10, banked.Amount);
+        Assert.Equal(7, Assert.Single(Caught(), item => item.TemplateId == "0x1bd7_board").Amount);
+    }
+
+    [Fact]
+    public void Sawing_WhatIsNoLog_CannotUseAnAxeOnThat()
+    {
+        Use(Carry("0x1bd7_board", 0x1BD7, 5).Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, NotATree], Told());
+        Assert.Equal(5, Assert.Single(Caught()).Amount);
+    }
+
+    [Fact]
+    public void ABlade_OnATree_HacksOneKindlingOff_AtTheCostOfACutOfItsWood()
+    {
+        var dagger = Carry("dagger", 0x0F51, 1);
+
+        Use(dagger, _tree);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Kindled], Told());
+        var kindling = Assert.Single(Caught(), item => item.TemplateId == "0x0de1_kindling");
+        Assert.Equal(1, kindling.Amount);
+        Assert.Empty(_timers.Timers);
+        Assert.Equal(1, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
+    }
+
+    [Fact]
+    public void ABlade_GetsAsMuchKindlingAsThePlaceHasCuts_ThenNoneUntilTheWoodIsBack()
+    {
+        var dagger = Carry("dagger", 0x0F51, 1);
+
+        Use(dagger, _tree);
+        Use(dagger, _tree);
+        Use(dagger, _tree);
+
+        // Kindling a vendor buys must not come for ever from one tree.
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Kindled, UseOnWhat, Kindled, UseOnWhat, NoWood], Told());
+        Assert.Equal(2, Assert.Single(Caught(), item => item.TemplateId == "0x0de1_kindling").Amount);
+    }
+
+    [Fact]
+    public void ABlade_OnWhatIsNoTree_TooFar_OrWhereNoWoodIsLeft_GivesNothing()
+    {
+        var dagger = Carry("dagger", 0x0F51, 1);
+
+        Use(dagger, _tree, 0x1773);
+        Use(dagger, new Point3D(_aria.Location.X + 3, _aria.Location.Y, 20));
+        _harvest.TryTake("wood", MapType.Trammel, _tree.X, _tree.Y);
+        _harvest.TryTake("wood", MapType.Trammel, _tree.X, _tree.Y);
+        Use(dagger, _tree);
+        _targets.Result = TargetResult.ForObject(_aria.Id);
+        Run(dagger);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, NotOnThat, UseOnWhat, TooFar, UseOnWhat, NoWood, UseOnWhat, NotOnThat], Told());
+        Assert.DoesNotContain(Caught(), item => item.TemplateId == "0x0de1_kindling");
+    }
+
+    [Fact]
+    public void ABlade_LyingOnTheGround_GetsNoCursor()
+    {
+        var dagger = Carry("dagger", 0x0F51, 1);
+        _items.PlaceOnGround(dagger, MapType.Trammel, new Point3D(_aria.Location.X + 1, _aria.Location.Y, 0));
+
+        Use(dagger, _tree);
+
+        Assert.Empty(_errors);
+        Assert.Empty(Told());
+        Assert.Equal(0, _targets.Requests);
+    }
+
     [Fact]
     public void Chopping_WithTheAxeInTheBackpack_NeedsItEquipped()
     {
@@ -556,10 +710,32 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Run();
     }
 
+    // Double clicks another tool and picks a place.
+    private void Use(ItemEntity tool, Point3D place, int graphic = Tree)
+    {
+        _targets.Result = TargetResult.ForLocation(MapType.Trammel, place, graphic);
+        Run(tool);
+    }
+
+    // An item in the backpack.
+    private ItemEntity Carry(string template, int graphic, int amount)
+    {
+        var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = amount };
+        item.PutInContainer(_backpack.Id, new Point2D(70, 70));
+        _items.Add([item]);
+
+        return item;
+    }
+
     private void Run()
     {
+        Run(_axe);
+    }
+
+    private void Run(ItemEntity tool)
+    {
         _loop.DeferTryPost = true;
-        _itemScripts.Run(_axe, "on_use", Aria);
+        _itemScripts.Run(tool, "on_use", Aria);
 
         while (_loop.Deferred.Count > 0)
         {
@@ -584,10 +760,10 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         return _speech.ToldClilocs.Where(told => told.Player == _aria).Select(told => told.Cliloc).ToList();
     }
 
-    // What lies in the backpack.
+    // What lies in the backpack, the tools aside.
     private List<ItemEntity> Caught()
     {
-        return _items.GetContents(_backpack.Id).Where(item => item.Id != _axe.Id).ToList();
+        return _items.GetContents(_backpack.Id).Where(item => item.Id != _axe.Id && item.TemplateId != "dagger").ToList();
     }
 
     private static string RepositoryRoot()

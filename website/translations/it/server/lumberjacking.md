@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"62cb9b08b88ac110a7960dd47083e7c830edba5d7f805ae333ca12c2c7a56334","title":"Taglio della legna"} -->
+<!-- translation: {"sourceHash":"e6c6c109a4d371a6d1fe27e5a6f85416c7f18e1eb3520913cc993156ab5ea458","title":"Taglio della legna"} -->
 
 # Taglio della legna
 
@@ -34,6 +34,14 @@ zaino. L'ascia non si consuma.
 Queste asce tagliano: l'accetta, l'ascia, l'ascia da battaglia, l'ascia doppia, l'ascia del boia, la grande ascia da
 battaglia, l'ascia a due mani, l'ascia ornata e l'ascia da battaglia gargish. L'ascia gargish, le doppie asce corte e le asce da allenamento no, e un'ascia da guerra è una mazza.
 
+## Assi
+
+Fai doppio clic sull'ascia che hai in mano e scegli i tronchi nel tuo zaino invece di un albero: l'intera pila viene segata in assi, una per ogni tronco, subito e senza prova di abilità. Anche i tronchi in una borsa dello zaino vengono segati. Tronchi a terra, in un forziere, nella tua cassetta in banca o sul tuo cursore rispondono "This item must be in your backpack to be used."
+
+## Legnetti
+
+Fai doppio clic su un coltello, un pugnale o una spada che porti con te e scegli un albero entro 2 caselle: ne stacchi un legnetto, subito e senza prova di abilità. Nel luogo deve restare della legna, e ogni legnetto ne toglie un taglio, come un taglio d'ascia: un luogo ne dà qualcuno, poi nessuno finché la legna non ritorna. Scegliere qualsiasi altra cosa risponde "You can't use a bladed item on that!"
+
 ## La legna di un luogo
 
 Ogni mappa è divisa in zone di 4 caselle per 4. Una zona contiene da 2 a 4 tagli, estratti la prima volta che qualcuno vi taglia:
@@ -45,20 +53,19 @@ Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno. I numeri so
 
 ## Cambiare le regole
 
-Le regole sono in `scripts/items/axe.lua`: la distanza, i colpi, i tronchi di un taglio e le grafiche che contano
-come alberi. Vedi [Script forniti](scripting/shipped-scripts.md#axelua). Un template taglia con `script_id = "axe"`.
+Le regole sono in `scripts/items/axe.lua` (la distanza, i colpi, i tronchi di un taglio, le assi), `scripts/items/blade.lua` (i legnetti) e `scripts/common/trees.lua` (le grafiche che contano
+come alberi). Vedi [Script forniti](scripting/shipped-scripts.md#axelua). Un template taglia con `script_id = "axe"`.
 
 ## Root esistenti
 
 Una root creata prima che il taglio della legna esistesse ha bisogno di due cose. Esegui `mgctl init`, che aggiunge lo script. Poi aggiungi la
 risorsa `wood` al tuo `data/harvest.toml` e `script_id = "axe"` alle asce base di
 `templates/items/gear/weapons/axes.toml`, oppure copia entrambi i file dalla distribuzione: `mgctl init` non sostituisce mai
-un file che potresti aver modificato.
+un file che potresti aver modificato. Per assi e legnetti, copia di nuovo `scripts/items/axe.lua` se lo avevi già, e dai `script_id = "blade"` ai tuoi coltelli, pugnali e spade, oppure copia i file di `templates/items/gear/weapons` dalla distribuzione.
 
 ## Non ancora
 
-Tronchi in assi, legnetti da ardere da un albero con un coltello, i tipi di legno (quercia, frassino, tasso e i più rari), i ritrovamenti
-rari, e il bonus delle asce in combattimento dato dall'abilità.
+I tipi di legno (quercia, frassino, tasso e i più rari), i ritrovamenti rari, e il bonus delle asce in combattimento dato dall'abilità.
 
 ## Vedi anche
 

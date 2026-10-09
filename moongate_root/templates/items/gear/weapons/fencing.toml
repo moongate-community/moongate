@@ -355,6 +355,7 @@ rarity = "common"
 [[item]]
 id = "base_shortblade"
 base_id = "base_item"
+script_id = "blade"
 item_id = 2311
 name = "shortblade"
 rarity = "common"
@@ -372,6 +373,7 @@ rarity = "common"
 [[item]]
 id = "0x4076"
 base_id = "0x0907_lbr"
+script_id = "blade"
 item_id = 16502
 rarity = "common"
 weapon_type = "sword"
@@ -379,6 +381,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_bloodblade"
 base_id = "base_item"
+script_id = "blade"
 item_id = 2302
 name = "bloodblade"
 rarity = "common"
@@ -396,6 +399,7 @@ rarity = "common"
 [[item]]
 id = "0x4072"
 base_id = "0x08fe_lbr"
+script_id = "blade"
 item_id = 16498
 rarity = "common"
 weapon_type = "fencing"
@@ -403,6 +407,7 @@ weapon_type = "fencing"
 [[item]]
 id = "base_gargish_kryss"
 base_id = "base_item"
+script_id = "blade"
 item_id = 18620
 name = "gargish kryss"
 rarity = "common"
@@ -420,6 +425,7 @@ rarity = "common"
 [[item]]
 id = "0x48bd"
 base_id = "0x48bc_lbr"
+script_id = "blade"
 item_id = 18621
 rarity = "common"
 weapon_type = "fencing"

@@ -196,6 +196,10 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     script_id = scripts.script_id_for(block, graphic) if scripts is not None else None
     kind = _number(fields.get("TYPE"))
 
+    # UOX3 gives its blade script by graphic, to a flower garland among them: only a weapon cuts.
+    if script_id == "blade" and graphic not in WEAPON_TYPE_BY_GRAPHIC:
+        script_id = None
+
     if script_id is not None:
         template.script_id = script_id
     elif item_id not in NOT_EATEN and kind == FOOD_TYPE:
