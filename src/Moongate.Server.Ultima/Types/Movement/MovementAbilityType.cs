@@ -24,5 +24,11 @@ public enum MovementAbilityType : byte
     /// <summary>
     ///     Doors lying on the ground do not block, as for ModernUO's staff body and ghosts.
     /// </summary>
-    PassDoors = 4
+    PassDoors = 4,
+
+    /// <summary>
+    ///     Closed doors that are not locked do not block, for an NPC that opens them on its way: what a path may plan
+    ///     through, not what a step may take.
+    /// </summary>
+    OpenDoors = 8
 }

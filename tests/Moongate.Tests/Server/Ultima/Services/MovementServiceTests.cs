@@ -463,6 +463,21 @@ public sealed class MovementServiceTests
     }
 
     [Fact]
+    public void CheckMovement_OpenDoors_WalksThroughAClosedDoor_NotThroughALockedOne_AnOpenLeafOrAWall()
+    {
+        var opener = MovementAbilityType.Walk | MovementAbilityType.OpenDoors;
+        Ground(Door, 6, 5, 0);
+        Ground(Door, 4, 5, 0).SetProp("locked", true);
+        Ground(Door, 5, 4, 0).SetProp("door.open", true);
+        Ground(Crate, 5, 6, 0);
+
+        Assert.True(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.East, opener, out _));
+        Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.West, opener, out _));
+        Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.North, opener, out _));
+        Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.South, opener, out _));
+    }
+
+    [Fact]
     public void CheckMovement_PassDoors_WalksThroughADoor_NotThroughAWall()
     {
         Ground(Door, 6, 5, 0);
