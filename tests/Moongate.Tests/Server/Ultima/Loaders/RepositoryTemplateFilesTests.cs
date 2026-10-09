@@ -630,6 +630,29 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedCrafts_Load_WithTheFortyTwoRecipesOfCarpentry_AndItsToolsCarryTheScript()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var data = new StubDataLoaderService().With(items);
+        var lists = (await new CraftResourcesLoader(directories, data).LoadDataAsync()).Entities.ToArray();
+        data.With(lists);
+        var craft = Assert.Single((await new CraftsLoader(directories, data).LoadDataAsync()).Entities);
+
+        Assert.Equal(("carpentry", "carpentry", 0x023D), (craft.Id, craft.Skill, craft.Sound));
+        Assert.Equal(
+            ["Chairs", "Tables", "Containers", "Other Items", "Staves & Poles", "Musical items"],
+            craft.Group.Select(group => group.Name)
+        );
+        Assert.Equal(42, craft.Group.Sum(group => group.Recipe.Count));
+        Assert.Equal(["0x1bd7_board", "0x1bda_board"], lists.Single(list => list.Id == "wood").Templates);
+
+        var byId = items.ToDictionary(item => item.Id);
+        Assert.All(new[] { "0x1034_saw", "0x1028_dovetail_saw", "0x10e5_froe" }, id => Assert.Equal("carpentry_tool", byId[id].ScriptId));
+        Assert.NotEqual("carpentry_tool", byId["0x102e_nails"].ScriptId);
+    }
+
+    [Fact]
     public async Task ShippedMiningToolsAndOre_UseTheirScripts_AndWhatTheyGiveIsThere()
     {
         var directories = Directories();
