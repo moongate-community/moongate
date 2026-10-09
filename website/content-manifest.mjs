@@ -75,6 +75,7 @@ export const contentEntries = [
   { source: 'docs/bank.md', slug: 'server/bank', title: 'Bank', group: 'Scripting and content' },
   { source: 'docs/vendors.md', slug: 'server/vendors', title: 'Vendors', group: 'Scripting and content' },
   { source: 'docs/jail.md', slug: 'server/jail', title: 'Jail', group: 'Scripting and content' },
+  { source: 'docs/help.md', slug: 'server/help', title: 'Help', group: 'Scripting and content' },
   { source: 'docs/bulletin-boards.md', slug: 'server/bulletin-boards', title: 'Bulletin boards', group: 'Scripting and content' },
   { source: 'docs/context-menus.md', slug: 'server/context-menus', title: 'Context menus', group: 'Scripting and content' },
   { source: 'docs/combat.md', slug: 'server/combat', title: 'Combat', group: 'Scripting and content' },

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3f055cb77335cd750a3f1e1a0fff6f4f941877a9c7e1d19fb292e2b9ce817edf","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"b46eaf0a03fe16813931587dfb7a49aad7910c4607c978677dcd48063e55f4af","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 85 completati, 🟡 57 parzialmente completati, ❌ 127 non ancora realizzati.
+**269 sistemi:** ✅ 86 completati, 🟡 57 parzialmente completati, ❌ 126 non ancora realizzati.
 
-**Copertura: 32%** dei sistemi completati, **42%** contando un sistema parzialmente completato come metà.
+**Copertura: 32%** dei sistemi completati, **43%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -290,7 +290,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Metriche e diagnostica | ✅ | Metriche del processo e dei plugin |
 | Ricaricamento a caldo | 🟡 | Script Lua; non dati o template |
 | Coda di richieste ai GM (page) | ❌ | |
-| Menu di aiuto e menu per personaggi bloccati | ❌ | |
+| Menu di aiuto e menu per personaggi bloccati | ✅ | Il pulsante Help apre un menu: «Sono bloccato» porta un personaggio alla città di partenza più vicina dopo un'attesa, con una pausa; comandi utili; regole del server; vedi [Aiuto](help.md) |
 | Prigioni | ✅ | Un gump elenca le celle e i detenuti; pene in giorni reali, multa in oro e nota di rilascio alla fine, una cassa di pane e acqua in ogni cella; un giocatore offline viene incarcerato per nome e sconta la pena dal login successivo; vedi [Prigione](jail.md) |
 | Elenco dei presenti | ❌ | |
 | Strumenti dello staff: gump delle proprietà, menu di aggiunta, comandi di area | 🟡 | Il gump dei luoghi nominati, `.go`, con i 558 luoghi di ModernUO, e `.gmtools`, un gump con barra laterale di strumenti: forza il meteo, imposta la stagione della mappa, mostra l'ora e imposta la luce; nessun gump delle proprietà, menu di aggiunta o comando di area |
