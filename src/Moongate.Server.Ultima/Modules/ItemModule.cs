@@ -277,6 +277,19 @@ public sealed class ItemModule
     }
 
     /// <summary>
+    ///     Tells whether a player has lifted the item and holds it on its cursor; <c>item.is_held(serial)</c>. Such an
+    ///     item still counts where it was taken from until it is dropped, and cannot be consumed or changed.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether a player has lifted the item and holds it on the cursor: it still counts where it was taken from until it is dropped, and item.consume and item.set_item_id refuse it. False for an unknown item."
+    )]
+    public bool IsHeld(long serial)
+    {
+        return TryGetItem(serial, out var item) && IsHeld(item);
+    }
+
+    /// <summary>
     ///     Takes <paramref name="amount" /> units off the item, deleting it at 0; <c>item.consume(serial, 1)</c>.
     /// </summary>
     [ScriptFunction(

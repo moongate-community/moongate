@@ -3,7 +3,7 @@
 --
 -- What it is for:
 --   The item script of the pickaxes and the shovels: a player double clicks
---   the tool, carried or in its hands, picks the rock of a mountain or the floor
+--   the tool, carried, in its hands or lying within reach, picks the rock of a mountain or the floor
 --   of a cave within 2 tiles, swings once and digs out a pile of iron ore. A
 --   template uses it with script_id = "pickaxe".
 --
@@ -114,13 +114,16 @@ local function finish(tool, user, map, x, y)
         return
     end
 
-    mobile.play_sound(user, DIG_SOUNDS[math.min(math.floor(pickaxe.roll() * #DIG_SOUNDS) + 1, #DIG_SOUNDS)])
+    -- Drawn before the place is checked, so the rolls come in one order whatever follows.
+    local sound = DIG_SOUNDS[math.min(math.floor(pickaxe.roll() * #DIG_SOUNDS) + 1, #DIG_SOUNDS)]
 
     if not near(here, map, x, y) then
         mobile.message_cliloc(user, MOVED_AWAY)
 
         return
     end
+
+    mobile.play_sound(user, sound)
 
     -- Someone else may have taken the last ore meanwhile.
     if not has_ore(map, x, y) then
@@ -216,7 +219,8 @@ end
 
 -- Called when a player double clicks the tool.
 function pickaxe.on_use(serial, user)
-    if digging[user] then
+    -- A tool inside a chest on the ground is used through the chest: it must be taken out first.
+    if digging[user] or not has_tool(serial, user) then
         return true
     end
 

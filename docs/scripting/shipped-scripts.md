@@ -195,8 +195,8 @@ there: the script holds the lands that are rock and the statics that are a cave 
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have ore left (`harvest.amount`), the Mining
 skill is tried between 0 and 100 (`skill.check`), and a dig that works takes from the place (`harvest.take`) and gives
 a pile (`item.give`). A smelt picks a forge, an item (`item.item_id`, `item.in_range`) or a static, tries the skill
-between 25 and 75, and turns the pile into ingots (`item.consume`, `item.give`) or burns half of it away; a single ore
-that fails gets smaller (`item.set_item_id`). The constants at the top of each script are its numbers and its lists.
+between 25 and 75, and turns the pile into ingots (`item.consume`, then `item.give`) or burns half of it away; a single ore
+that fails gets smaller. A pile on a cursor is refused (`item.is_held`). The constants at the top of each script are its numbers and its lists.
 
 ## axe.lua
 

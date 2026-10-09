@@ -109,6 +109,17 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task IsHeld_TellsAnItemLiftedOntoACursor()
+    {
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == new Serial(2));
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(_sword.Id)));
+
+        var result = Run($"return item.is_held({_sword.Id.Value}), item.is_held(0x40000002), item.is_held(0x4FFFFFFF)");
+
+        Assert.Equal([true, false, false], result.Select(value => value.Read<bool>()));
+    }
+
+    [Fact]
     public void NameAmountAndOwner_DescribeTheItem()
     {
         var result = Run(

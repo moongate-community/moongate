@@ -54,7 +54,7 @@ always fails, from 75 it always works, and the try may raise the skill.
 
 A single small ore answers "There is not enough metal-bearing ore in this pile to make an ingot." Picking
 something that is no forge answers `That is not a forge.`, and a forge more than 2 tiles away "That is too far
-away."
+away." The ore is taken before the ingots are given: a backpack with no room for them loses the metal, and you read `You have no room in your backpack for the ingots: the metal is lost.` A pile you hold on your cursor, or one inside a chest on the ground, answers "The ore is too far away.": put it in your backpack or on the ground first.
 
 ## The ore of a place
 

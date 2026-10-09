@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3f98a7882e92dda0952b3fecafecb4bf6f1b4fb5aa6e149d275887fa25e16d50","title":"Estrazione e fusione"} -->
+<!-- translation: {"sourceHash":"814e403afc4a2932570fb6b0430f1d1bc9390f15f32af241d52bf8b1b03e034f","title":"Estrazione e fusione"} -->
 
 # Estrazione e fusione
 
@@ -56,7 +56,7 @@ fallisce sempre, da 75 riesce sempre, e la prova può far crescere l'abilità.
 
 Un singolo minerale piccolo risponde "There is not enough metal-bearing ore in this pile to make an ingot." Scegliere
 qualcosa che non è una forgia risponde `That is not a forge.`, e una forgia a più di 2 caselle "That is too far
-away."
+away." Il minerale viene tolto prima che i lingotti vengano dati: uno zaino senza posto per loro perde il metallo, e leggi `You have no room in your backpack for the ingots: the metal is lost.` Un mucchio che tieni sul cursore, o uno dentro un forziere a terra, risponde "The ore is too far away.": mettilo prima nello zaino o a terra.
 
 ## Il minerale di un luogo
 

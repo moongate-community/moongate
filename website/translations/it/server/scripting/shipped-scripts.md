@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e76a5a61913bbdab3a29d95c42f35718b71654ab30719c15b2d824877c2f7dbc","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"bc0d73b0e47a06b4c9b3daf663386177256b9d807d63b35caf36d04a5ad7cccb","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -196,8 +196,8 @@ lì: lo script contiene i terreni che sono roccia e gli statici che sono il pavi
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare del minerale (`harvest.amount`), l'abilità
 Mining viene provata tra 0 e 100 (`skill.check`), e uno scavo riuscito toglie dal luogo (`harvest.take`) e dà
 un mucchio (`item.give`). Una fusione sceglie una forgia, un oggetto (`item.item_id`, `item.in_range`) o uno statico, prova l'abilità
-tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, `item.give`) oppure ne brucia metà; un singolo minerale
-che fallisce rimpicciolisce (`item.set_item_id`). Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
+tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, poi `item.give`) oppure ne brucia metà; un singolo minerale
+che fallisce rimpicciolisce. Un mucchio su un cursore viene rifiutato (`item.is_held`). Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
 
 ## axe.lua
 

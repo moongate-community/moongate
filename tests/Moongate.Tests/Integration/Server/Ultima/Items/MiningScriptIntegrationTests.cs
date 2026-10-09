@@ -81,6 +81,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     private const int TooLittle = 501987;
     private const int Smelted = 501988;
     private const int Burnt = 501990;
+    private const int OreTooFar = 501976;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -447,15 +448,45 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Digging_WithTheToolLeftFarAway_StartsNothing()
+    public void Digging_WithTheToolLeftFarAway_GetsNoCursor()
     {
         _items.PlaceOnGround(_pick, MapType.Trammel, new Point3D(_aria.Location.X + 9, _aria.Location.Y, 0));
 
         Dig(_rock);
 
         Assert.Empty(_errors);
+        Assert.Empty(Told());
+        Assert.Equal(0, _targets.Requests);
+    }
+
+    [Fact]
+    public void Digging_WithTheToolPutAwayWhileTheCursorIsUp_StartsNothing()
+    {
+        _targets.Result = TargetResult.ForLocation(MapType.Trammel, _rock, 0, Rock);
+        _loop.DeferTryPost = true;
+        _itemScripts.Run(_pick, "on_use", Aria);
+        _items.PlaceOnGround(_pick, MapType.Trammel, new Point3D(_aria.Location.X + 9, _aria.Location.Y, 0));
+
+        while (_loop.Deferred.Count > 0)
+        {
+            _loop.RunDeferred();
+        }
+
+        _loop.DeferTryPost = false;
+
+        Assert.Empty(_errors);
         Assert.Equal([WhereToDig], Told());
         Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void Digging_ThePickIsNotHeardByWhoWalkedAway()
+    {
+        Dig(_rock);
+        _aria.Location = new Point3D(_rock.X - 5, _aria.Location.Y, _aria.Location.Z);
+        Fire(0.9);
+
+        Assert.Empty(_speech.Sounds);
     }
 
     [Theory]
@@ -538,11 +569,11 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     }
 
     [Theory]
-    // A single ore gets smaller instead: a large one medium, a medium one small.
-    [InlineData("0x19b9_iron_ore", 0x19B8)]
-    [InlineData("0x19b8_iron_ore", 0x19B7)]
-    [InlineData("0x19ba_iron_ore", 0x19B7)]
-    public void Smelting_ASingleOreThatFails_GetsSmaller(string template, int graphic)
+    // A single ore gets smaller instead: a large one medium, a medium one small. It is a pile of the smaller kind.
+    [InlineData("0x19b9_iron_ore", "0x19b8_iron_ore", 0x19B8)]
+    [InlineData("0x19b8_iron_ore", "0x19b7_iron_ore", 0x19B7)]
+    [InlineData("0x19ba_iron_ore", "0x19b7_iron_ore", 0x19B7)]
+    public void Smelting_ASingleOreThatFails_GetsSmaller(string template, string smaller, int graphic)
     {
         Skill(0);
         var pile = Pile(template, 1);
@@ -550,7 +581,101 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
         Smelt(pile, TargetResult.ForObject(_forge.Id));
 
         Assert.Empty(_errors);
-        Assert.Equal((graphic, 1), (pile.ItemId, pile.Amount));
+        Assert.Equal([WhichForge, Burnt], Told());
+        var left = Assert.Single(Carried());
+        Assert.Equal((smaller, graphic, 1), (left.TemplateId, left.ItemId, left.Amount));
+    }
+
+    [Fact]
+    public void Smelting_ASmallPileThatFails_LosesHalfToo()
+    {
+        Skill(0);
+        var pile = Pile("0x19b7_iron_ore", 3);
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x19B7, 1), (pile.ItemId, pile.Amount));
+    }
+
+    [Fact]
+    public async Task Smelting_APileLiftedOntoACursor_SmeltsNothing_AndTriesNoSkill()
+    {
+        // Lifted, the pile still counts as lying in the backpack and cannot be taken from: ingots must not come of it.
+        var pile = Pile("0x19b9_iron_ore", 100);
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == _aria.Id);
+        _targets.Result = TargetResult.ForObject(_forge.Id);
+        _loop.DeferTryPost = true;
+        _itemScripts.Run(pile, "on_use", Aria);
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(pile.Id)));
+
+        while (_loop.Deferred.Count > 0)
+        {
+            _loop.RunDeferred();
+        }
+
+        _loop.DeferTryPost = false;
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge, OreTooFar], Told());
+        Assert.Equal(100, pile.Amount);
+        Assert.DoesNotContain(Carried(), item => item.TemplateId == "0x1bf2_iron_ingot");
+        Assert.Equal(0, _random.Rolls);
+
+        // Held when it is double clicked: no cursor at all.
+        Run(pile);
+        Assert.Equal([WhichForge, OreTooFar, OreTooFar], Told());
+    }
+
+    [Fact]
+    public void Smelting_WithNoRoomForTheIngots_LosesTheMetal_TheOreIsGoneAllTheSame()
+    {
+        var pile = Pile("0x19b9_iron_ore", 5);
+        _serials.Serials.Clear();
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge], Told());
+        Assert.Equal("You have no room in your backpack for the ingots: the metal is lost.", _speech.Told[^1].Text);
+        Assert.Empty(Carried());
+    }
+
+    [Fact]
+    public void Smelting_MoreIngotsThanAStackHolds_GivesSeveralStacks()
+    {
+        var pile = Pile("0x19b9_iron_ore", 40_000);
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal([60_000, 20_000], Carried().Select(item => item.Amount).OrderDescending());
+    }
+
+    [Fact]
+    public void Smelting_APileLyingBesideThePlayer_Works_AndAPileInAChestOnTheGroundGetsNoCursor()
+    {
+        var pile = Pile("0x19b8_iron_ore", 4);
+        _items.PlaceOnGround(pile, MapType.Trammel, new Point3D(_aria.Location.X + 1, _aria.Location.Y, 0));
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge, Smelted], Told());
+        Assert.Equal(4, Assert.Single(Carried()).Amount);
+
+        var chest = new ItemEntity { Id = new Serial(0x40000090), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        _items.Add([chest]);
+        _items.PlaceOnGround(chest, MapType.Trammel, new Point3D(_aria.Location.X + 1, _aria.Location.Y, 0));
+        var inside = Pile("0x19b8_iron_ore", 4);
+        _items.MoveToContainer(inside, chest.Id, new Point2D(10, 10));
+        var requests = _targets.Requests;
+
+        Smelt(inside, TargetResult.ForObject(_forge.Id));
+
+        Assert.Equal(OreTooFar, Told()[^1]);
+        Assert.Equal(requests, _targets.Requests);
+        Assert.Equal(4, inside.Amount);
     }
 
     [Fact]
@@ -563,6 +688,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
         Run(pile);
 
         Assert.Empty(_errors);
+        Assert.Equal([OreTooFar], Told());
         Assert.DoesNotContain(Carried(), item => item.TemplateId == "0x1bf2_iron_ingot");
         Assert.Equal(5, pile.Amount);
     }

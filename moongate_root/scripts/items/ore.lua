@@ -14,7 +14,9 @@
 --             one 1 for every 2 ore (an odd one is left).
 --     fails   half the pile is burnt away, rounded down; a pile of one ore gets
 --             smaller instead: a large one becomes medium, a medium one small.
---   A single small ore is too little to smelt.
+--   A single small ore is too little to smelt. The ore is taken before the
+--   ingots are given, so a backpack with no room for them loses the metal, and a
+--   pile a player holds on its cursor is not smelted.
 --
 --   A forge is an item or a part of the map with one of the graphics below.
 --
@@ -45,7 +47,7 @@ local SMELTED = 501988        -- You smelt the ore removing the impurities and p
 local BURNT = 501990          -- You burn away the impurities but are left with less useable metal.
 local TOO_FAR = 500446        -- That is too far away.
 local NOT_A_FORGE = "That is not a forge."
-local NO_ROOM = "You have no room in your backpack for the ingots."
+local NO_ROOM = "You have no room in your backpack for the ingots: the metal is lost."
 
 -- The graphics of the forges, alone or as a range.
 local FORGES = {
@@ -62,10 +64,20 @@ local function is_forge(graphic)
     return false
 end
 
--- Whether the player can still reach the pile: carried, or lying within 2 tiles.
+-- The most a stack holds: more ingots than that are given as several stacks.
+local MAX_STACK = 60000
+
+-- Whether the player can still reach the pile: carried, or lying within 2 tiles, and on nobody's cursor. A pile
+-- lifted onto a cursor still counts where it was, and cannot be taken from: it must not be smelted.
 local function has_pile(pile, user)
-    return item.owner(pile) == user or item.in_range(pile, user, 2)
+    return not item.is_held(pile) and (item.owner(pile) == user or item.in_range(pile, user, 2))
 end
+
+-- The template of a pile by its graphic.
+local PILES = {
+    [SMALL] = "0x19b7_iron_ore",
+    [MEDIUM] = "0x19b8_iron_ore",
+}
 
 -- Whether what the player picked is a forge within reach; false with the reason told.
 local function forge_picked(user, picked)
@@ -150,11 +162,17 @@ local function smelt(pile, user, picked)
     end
 
     if not skill.check(user, "mining", 25, 75) then
-        -- Half the pile is lost; a single ore gets smaller instead.
-        if amount > 1 then
-            item.consume(pile, amount - math.floor(amount / 2))
-        else
-            item.set_item_id(pile, graphic == LARGE and MEDIUM or SMALL)
+        -- Half the pile is lost; a single ore gets smaller instead: it is taken, and a smaller one given.
+        local lost = amount > 1 and amount - math.floor(amount / 2) or 1
+
+        if not item.consume(pile, lost) then
+            mobile.message_cliloc(user, ORE_TOO_FAR)
+
+            return
+        end
+
+        if amount == 1 then
+            item.give(user, PILES[graphic == LARGE and MEDIUM or SMALL])
         end
 
         mobile.message_cliloc(user, BURNT)
@@ -162,19 +180,40 @@ local function smelt(pile, user, picked)
         return
     end
 
-    if not item.give(user, INGOT, ingots) then
-        mobile.message(user, NO_ROOM)
+    -- The ore is taken before the ingots are given: ingots never come from ore that stayed.
+    if not item.consume(pile, amount - left) then
+        mobile.message_cliloc(user, ORE_TOO_FAR)
 
         return
     end
 
-    item.consume(pile, amount - left)
     mobile.play_sound(user, SMELT_SOUND)
+
+    while ingots > 0 do
+        local stack = math.min(ingots, MAX_STACK)
+
+        -- A backpack with no room loses the metal, as it loses the ore of a dig.
+        if not item.give(user, INGOT, stack) then
+            mobile.message(user, NO_ROOM)
+
+            return
+        end
+
+        ingots = ingots - stack
+    end
+
     mobile.message_cliloc(user, SMELTED)
 end
 
 -- Called when a player double clicks the pile.
 function ore.on_use(serial, user)
+    -- A pile inside a chest on the ground is used through the chest: it must be taken out first.
+    if not has_pile(serial, user) then
+        mobile.message_cliloc(user, ORE_TOO_FAR)
+
+        return true
+    end
+
     mobile.message_cliloc(user, WHICH_FORGE)
 
     target.pick_location(user, function(picked)
