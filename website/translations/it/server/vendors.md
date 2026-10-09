@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"fab17988ed6b690093ff3fdf3a7d0d007a641b36e947a7fe96c5d5d280e95e13","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"7994da725fd80831728c074b0c00352b4a79f7ce7e4e690258d195fce26fab69","title":"Venditori"} -->
 
 # Venditori
 
@@ -31,13 +31,15 @@ acquisto è tutto o niente: quando un controllo fallisce, non viene preso nulla 
   master non paga nulla.
 - L'oro viene dallo zaino e dalle borse al suo interno. Quando lo zaino non basta e il totale è 2000 o più,
   la banca copre la differenza; sotto 2000 il venditore dice *thou canst not afford* (cliloc 500192) e la banca
-  non viene toccata. Una banca che non può coprire la differenza riceve la risposta cliloc 500191. Il controllo viene prima della creazione di
+  non viene toccata. La banca paga direttamente dalla sua cassetta, prima le monete e poi gli assegni, senza nessuno dei limiti di un prelievo (il suo massimo,
+  il peso dello zaino, il posto per una nuova pila). Una banca che non può coprire la differenza riceve la risposta cliloc 500191. Il controllo viene prima della creazione di
   qualsiasi oggetto, quindi un acquisto rifiutato non costa nulla.
 - Una riga impilabile dà una pila, ogni altra riga dà un oggetto per ogni pezzo. I serial per tutti sono
   riservati prima di prendere qualsiasi cosa; un ordine che ne richiede più di quelli pronti sul server viene rifiutato con il cliloc
   500187.
 - La merce va nello zaino. Quando non ci sta, viene messa a terra ai piedi del giocatore.
-- Il giocatore legge quanto ha pagato: cliloc 1151639 per l'oro dello zaino, 1151638 quando è stata usata la banca.
+- Il giocatore legge quanto ha pagato: cliloc 1151639 per l'oro dello zaino, e 1151638 per la parte uscita dalla banca, ciascuno con
+  la sua cifra.
 
 La finestra si chiude dopo ogni risposta, acquisto o rifiuto. Una risposta che non è per la finestra aperta di quel
 venditore, o che ha più di 100 righe, viene scartata.

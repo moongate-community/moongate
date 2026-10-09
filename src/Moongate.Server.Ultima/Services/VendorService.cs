@@ -297,9 +297,15 @@ public sealed class VendorService : IVendorService
 
         End(session, window);
 
-        if (pays > 0)
+        // What came out of the backpack and what came out of the bank are told apart.
+        if (pays - fromBank > 0)
         {
-            _speech.TellCliloc(player, fromBank ? ClilocPaidFromBank : ClilocPaidFromBackpack, pays.ToString());
+            _speech.TellCliloc(player, ClilocPaidFromBackpack, (pays - fromBank).ToString());
+        }
+
+        if (fromBank > 0)
+        {
+            _speech.TellCliloc(player, ClilocPaidFromBank, fromBank.ToString());
         }
 
         _fatigue?.LoadChanged(session, player, true);
@@ -574,10 +580,11 @@ public sealed class VendorService : IVendorService
         return _bank.Balance(player) is { } balance && balance >= pays - carried;
     }
 
-    // The backpack first. The bank is drawn on only from 2000 gold, for what the backpack lacks.
-    private bool TryPay(MobileEntity player, int pays, out bool fromBank, out int refusal)
+    // The backpack first. The bank is drawn on only from 2000 gold, for what the backpack lacks, and straight from its box:
+    // no limit of a withdrawal applies.
+    private bool TryPay(MobileEntity player, int pays, out int fromBank, out int refusal)
     {
-        fromBank = false;
+        fromBank = 0;
         refusal = ClilocCannotAfford;
 
         if (pays == 0)
@@ -585,30 +592,21 @@ public sealed class VendorService : IVendorService
             return true;
         }
 
-        var carried = _bank.CarriedGold(player);
+        var useBank = pays >= BankFrom;
+        var result = _bank.Pay(player, pays, useBank, out fromBank);
 
-        if (carried < pays)
+        if (result == BankResultType.Ok)
         {
-            if (pays < BankFrom)
-            {
-                return false;
-            }
-
-            var missing = pays - carried;
-            refusal = ClilocBankLacksFunds;
-
-            if (_bank.Balance(player) is not { } balance ||
-                balance < missing ||
-                _bank.Withdraw(player, (int)missing) != BankResultType.Ok)
-            {
-                return false;
-            }
-
-            fromBank = true;
-            refusal = ClilocCannotAfford;
+            return true;
         }
 
-        return _bank.TakeCarriedGold(player, pays);
+        refusal = result == BankResultType.Busy
+            ? ClilocOrderCannotBeFulfilled
+            : useBank
+                ? ClilocBankLacksFunds
+                : ClilocCannotAfford;
+
+        return false;
     }
 
     // To the backpack when all of it fits, else at the feet of the player.

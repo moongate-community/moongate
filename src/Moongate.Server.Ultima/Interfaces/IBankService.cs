@@ -91,10 +91,14 @@ public interface IBankService : ISessionClosedListener
     long CarriedGold(MobileEntity player);
 
     /// <summary>
-    ///     Takes coins from what the player carries, the smallest piles first. All or nothing: false, and nothing moves,
-    ///     when <paramref name="amount" /> is under 1 or more than <see cref="CarriedGold" />.
+    ///     Pays <paramref name="amount" /> gold out of what the player has, as a vendor is paid: the coins of the
+    ///     backpack and its bags first, smallest piles first, then, when <paramref name="useBank" /> is true, the coins of
+    ///     the bank box and then its checks. Everything is checked before anything moves, so it is all or nothing, and
+    ///     none of the limits of a withdrawal applies: the gold does not pass through the backpack. <paramref name="fromBank" />
+    ///     is how much came out of the bank box, to tell the player. <c>NotEnoughGold</c> when what the player has, in the
+    ///     places allowed, is less; <c>Busy</c> when its items are reserved by another operation; <c>BadAmount</c> under 1.
     /// </summary>
-    bool TakeCarriedGold(MobileEntity player, int amount);
+    BankResultType Pay(MobileEntity player, int amount, bool useBank, out int fromBank);
 
     /// <summary>
     ///     Gets what a bank check is worth; null for an item that is not one.

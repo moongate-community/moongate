@@ -517,40 +517,100 @@ public sealed class BankServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void TakeCarriedGold_TakesTheSmallestPilesFirst_AndLeavesTheRest()
+    public void Pay_FromTheBackpackOnly_TakesTheSmallestPilesFirst_AndLeavesTheRest()
     {
         var backpack = Backpack();
         var loose = Gold(backpack, 300);
         var inBag = Gold(In(backpack, "bag"), 500);
 
-        Assert.True(_bank.TakeCarriedGold(_aria, 600));
+        Assert.Equal(BankResultType.Ok, _bank.Pay(_aria, 600, false, out var fromBank));
 
+        Assert.Equal(0, fromBank);
         Assert.False(_items.TryGet(loose.Id, out _));
         Assert.Equal(200, inBag.Amount);
-        Assert.Equal(200, _bank.CarriedGold(_aria));
     }
 
     [Theory,
      InlineData(0),
-     InlineData(-5),
-     InlineData(801)]
-    public void TakeCarriedGold_NothingOrMoreThanIsCarried_IsRefused_AndNothingMoves(int amount)
+     InlineData(-5)]
+    public void Pay_NothingToPay_IsRefused_AndNothingMoves(int amount)
     {
-        var backpack = Backpack();
-        var loose = Gold(backpack, 300);
-        Gold(In(backpack, "bag"), 500);
+        var loose = Gold(Backpack(), 300);
 
-        Assert.False(_bank.TakeCarriedGold(_aria, amount));
+        Assert.Equal(BankResultType.BadAmount, _bank.Pay(_aria, amount, true, out _));
 
         Assert.Equal(300, loose.Amount);
-        Assert.Equal(800, _bank.CarriedGold(_aria));
     }
 
     [Fact]
-    public void CarriedGold_WithNoBackpack_IsNone()
+    public async Task Pay_WithoutTheBank_MoreThanIsCarried_IsRefused_AndNothingMoves()
+    {
+        var box = await BoxAsync();
+        var loose = Gold(Backpack(), 300);
+        var banked = Gold(box, 5000);
+
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.Pay(_aria, 301, false, out var fromBank));
+
+        Assert.Equal(0, fromBank);
+        Assert.Equal((300, 5000), (loose.Amount, banked.Amount));
+    }
+
+    [Fact]
+    public async Task Pay_MakesUpWhatTheBackpackLacksFromTheBox_CoinsFirst_ThenChecks()
+    {
+        var box = await BoxAsync();
+        var loose = Gold(Backpack(), 300);
+        var coins = Gold(box, 400);
+        var check = Check(box, 1000);
+
+        Assert.Equal(BankResultType.Ok, _bank.Pay(_aria, 1500, true, out var fromBank));
+
+        // 300 from the backpack, 400 from the coins of the box, 800 from the check.
+        Assert.Equal(1200, fromBank);
+        Assert.False(_items.TryGet(loose.Id, out _));
+        Assert.False(_items.TryGet(coins.Id, out _));
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var left));
+        Assert.Equal(200, left);
+    }
+
+    [Fact]
+    public async Task Pay_FromTheBank_HasNoLimitOfAWithdrawal_NoWeightAndNoPlaceForANewPile()
+    {
+        _config.MaxWithdraw = 1000;
+        _weight.HoldsResult = false;
+        var box = await BoxAsync();
+        Backpack();
+        var banked = Gold(box, 200_000);
+
+        // A withdrawal of this much is refused (over the limit, a backpack at its weight): a payment is not.
+        Assert.Equal(BankResultType.TooMuch, _bank.Withdraw(_aria, 150_000));
+        Assert.Equal(BankResultType.Ok, _bank.Pay(_aria, 150_000, true, out var fromBank));
+
+        Assert.Equal(150_000, fromBank);
+        Assert.Equal(50_000, banked.Amount);
+    }
+
+    [Fact]
+    public async Task Pay_MoreThanBackpackAndBoxHave_IsRefused_AndNothingMoves()
+    {
+        var box = await BoxAsync();
+        var loose = Gold(Backpack(), 300);
+        var banked = Gold(box, 400);
+        var check = Check(box, 200);
+
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.Pay(_aria, 901, true, out var fromBank));
+
+        Assert.Equal(0, fromBank);
+        Assert.Equal((300, 400), (loose.Amount, banked.Amount));
+        Assert.True(check.TryGetProp<long>(ItemPropKeys.BankWorth, out var worth));
+        Assert.Equal(200, worth);
+    }
+
+    [Fact]
+    public void CarriedGold_WithNoBackpack_IsNone_AndAPaymentIsRefused()
     {
         Assert.Equal(0, _bank.CarriedGold(_aria));
-        Assert.False(_bank.TakeCarriedGold(_aria, 1));
+        Assert.Equal(BankResultType.NotEnoughGold, _bank.Pay(_aria, 1, true, out _));
     }
 
     [Fact]

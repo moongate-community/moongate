@@ -29,13 +29,16 @@ purchase is everything or nothing: when a check fails, nothing is taken and noth
   master pays nothing.
 - The gold comes from the backpack and the bags inside it. When the backpack lacks it and the total is 2000 or more,
   the bank makes up the difference; under 2000 the vendor says *thou canst not afford* (cliloc 500192) and the bank
-  is left alone. A bank that cannot make up the difference is answered by cliloc 500191. The check comes before any
+  is left alone. The bank pays straight from its box, coins first and then checks, with none of the limits of a
+  withdrawal (its maximum, the weight of the backpack, room for a new pile). A bank that cannot make up the difference is
+  answered by cliloc 500191. The check comes before any
   item is made, so a refused purchase costs nothing.
 - A stackable line gives one stack, any other line gives one item for each piece. The serials for all of them are
   reserved before anything is taken; an order that needs more than the server has ready is refused with cliloc
   500187.
 - The goods go to the backpack. When they do not fit, they are put on the ground at the player's feet.
-- The player reads what was paid: cliloc 1151639 for gold of the backpack, 1151638 when the bank was used.
+- The player reads what was paid: cliloc 1151639 for the gold of the backpack, and 1151638 for the part that came out of
+  the bank, each with its own amount.
 
 The window closes after every answer, a purchase or a refusal. A reply that is not for the open window of that
 vendor, or that has more than 100 lines, is dropped.

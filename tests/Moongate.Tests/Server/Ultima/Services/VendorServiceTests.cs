@@ -227,7 +227,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         var bread = Assert.Single(_items.GetContents(BackpackId()));
         Assert.Equal(("bread", 2), (bread.TemplateId, bread.Amount));
         Assert.Equal(84, _bank.Carried[_player.Id]);
-        Assert.Equal(16, Assert.Single(_bank.Taken).Amount);
+        Assert.Equal(16, Assert.Single(_bank.Paid).Amount);
         Assert.Equal(_vendor.Id, Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>()).Vendor);
         Assert.Equal((1151639, "16"), (_speech.ToldClilocs.Single().Cliloc, _speech.ToldClilocs.Single().Arguments));
         Assert.Null(_session.Get(VendorSessionKeys.Window));
@@ -257,7 +257,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await BuyAsync(Reply(_vendor.Id, (lines[0], 1), (lines[0], 2)));
 
         Assert.Equal(3, Assert.Single(_items.GetContents(BackpackId())).Amount);
-        Assert.Equal(24, Assert.Single(_bank.Taken).Amount);
+        Assert.Equal(24, Assert.Single(_bank.Paid).Amount);
     }
 
     [Fact]
@@ -283,7 +283,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         await BuyAsync(Reply(_vendor.Id, (lines[0], 20)));
 
-        Assert.Empty(_bank.Withdrawn);
+        Assert.Empty(_bank.Paid);
         Assert.Equal(500192, _speech.ToldClilocs.Single().Cliloc);
         Assert.Empty(_items.GetContents(BackpackId()));
     }
@@ -298,9 +298,13 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         await BuyAsync(Reply(_vendor.Id, (lines[1], 2)));
 
-        Assert.Equal(1500, Assert.Single(_bank.Withdrawn).Amount);
-        Assert.Equal(2000, Assert.Single(_bank.Taken).Amount);
-        Assert.Equal((1151638, "2000"), (_speech.ToldClilocs.Single().Cliloc, _speech.ToldClilocs.Single().Arguments));
+        var paid = Assert.Single(_bank.Paid);
+        Assert.Equal((2000, true, 1500), (paid.Amount, paid.UseBank, paid.FromBank));
+        // The backpack gave 500 and the bank 1500, and the player is told each.
+        Assert.Equal(
+            [(1151639, "500"), (1151638, "1500")],
+            _speech.ToldClilocs.Select(told => (told.Cliloc, told.Arguments))
+        );
         Assert.Equal(2, _items.GetContents(BackpackId()).Count);
     }
 
@@ -313,7 +317,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         await BuyAsync(Reply(_vendor.Id, (lines[1], 1)));
 
-        Assert.Empty(_bank.Withdrawn);
+        Assert.Empty(_bank.Paid);
         Assert.Equal(500192, _speech.ToldClilocs.Single().Cliloc);
     }
 
@@ -327,8 +331,8 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await BuyAsync(Reply(_vendor.Id, (lines[1], 2)));
 
         Assert.Equal(500191, _speech.ToldClilocs.Single().Cliloc);
-        Assert.Empty(_bank.Withdrawn);
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
+        Assert.Empty(_bank.Paid);
         Assert.Empty(_items.GetContents(BackpackId()));
         Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>());
     }
@@ -343,7 +347,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await BuyAsync(Reply(_vendor.Id, (lines[1], 2)));
 
         Assert.Equal(2, _items.GetContents(BackpackId()).Count);
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
         Assert.Empty(_speech.ToldClilocs);
     }
 
@@ -361,7 +365,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await BuyAsync(Reply(_vendor.Id, (lines[1], 3)));
 
         Assert.Equal(500187, _speech.ToldClilocs.Single().Cliloc);
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
         Assert.Empty(_items.GetContents(BackpackId()));
         Assert.Equal(2, _serials.Serials.Count);
     }
@@ -388,7 +392,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await BuyAsync(Reply(_vendor.Id, (lines[0], 1)));
 
         Assert.Single(_view.Calls, call => call.StartsWith("Appeared"));
-        Assert.Equal(8, Assert.Single(_bank.Taken).Amount);
+        Assert.Equal(8, Assert.Single(_bank.Paid).Amount);
     }
 
     [Fact]
@@ -425,13 +429,13 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         await BuyAsync(Reply(_vendor.Id, (lines[0], 21)));
 
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
         Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>());
 
         lines = await OpenAsync();
         await BuyAsync(Reply(_vendor.Id, (new Serial(0x7FFF0000), 1)));
 
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
         Assert.Empty(_items.GetContents(BackpackId()));
     }
 
@@ -448,7 +452,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await BuyAsync(Reply(_vendor.Id, Enumerable.Repeat((lines[0], 1), 101).ToArray()));
 
         Assert.Empty(_fixture.Sender.Sent.OfType<VendorEndPacket>());
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
         Assert.NotNull(_session.Get(VendorSessionKeys.Window));
     }
 
@@ -462,7 +466,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         await BuyAsync(Reply(_vendor.Id, (lines[0], 1)));
 
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
         Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>());
         Assert.Null(_session.Get(VendorSessionKeys.Window));
     }
@@ -476,7 +480,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         Assert.Single(_fixture.Sender.Sent.OfType<VendorEndPacket>());
         Assert.Null(_session.Get(VendorSessionKeys.Window));
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
     }
 
     [Fact]
@@ -495,7 +499,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await BuyAsync(Reply(_vendor.Id, (lines[0], 1)));
 
         Assert.Null(_session.Get(VendorSessionKeys.Window));
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
         Assert.Empty(_fixture.Sender.Sent.OfType<VendorEndPacket>());
     }
 
@@ -505,13 +509,13 @@ public sealed class VendorServiceTests : IAsyncLifetime
     {
         Backpack();
         _bank.Gold[_player.Id] = 5000;
-        _bank.Result = BankResultType.Busy;
+        _bank.Result = BankResultType.NotEnoughGold;
         var lines = await OpenAsync();
 
         await BuyAsync(Reply(_vendor.Id, (lines[1], 2)));
 
         Assert.Equal(500191, _speech.ToldClilocs.Single().Cliloc);
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
     }
 
     [Fact]
@@ -780,7 +784,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
 
         var bought = Assert.Single(_items.GetContents(BackpackId()));
         Assert.Equal(("bread", 3, (ushort)0x44), (bought.TemplateId, bought.Amount, bought.Hue.Value));
-        Assert.Equal(15, Assert.Single(_bank.Taken).Amount);
+        Assert.Equal(15, Assert.Single(_bank.Paid).Amount);
 
         _fixture.Sender.Sent.Clear();
         await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor));
@@ -804,7 +808,7 @@ public sealed class VendorServiceTests : IAsyncLifetime
         await OnLoopAsync(() => _vendors.OpenBuy(other, _vendor));
         await BuyAsync(Reply(_vendor.Id, (lines[^1], 1)));
 
-        Assert.Empty(_bank.Taken);
+        Assert.Empty(_bank.Paid);
         Assert.Empty(_items.GetContents(BackpackId()));
     }
 

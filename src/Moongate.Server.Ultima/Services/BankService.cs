@@ -492,17 +492,55 @@ public sealed class BankService : IBankService
         return BackpackOf(player.Id) is { } backpack ? GoldIn(backpack).Sum(pile => (long)pile.Amount) : 0;
     }
 
-    public bool TakeCarriedGold(MobileEntity player, int amount)
+    public BankResultType Pay(MobileEntity player, int amount, bool useBank, out int fromBank)
     {
-        if (amount < 1 || CarriedGold(player) < amount || BackpackOf(player.Id) is not { } backpack)
+        fromBank = 0;
+
+        if (_inventory?.AllowsOwner(player.Id) == false)
         {
-            return false;
+            return BankResultType.Busy;
         }
 
-        var left = Take(GoldIn(backpack), amount);
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (amount < 1)
+        {
+            return BankResultType.BadAmount;
+        }
+
+        var carried = BackpackOf(player.Id) is { } backpack ? GoldIn(backpack) : [];
+        var box = useBank ? BoxOf(player.Id) : null;
+        var coins = box is null ? [] : GoldIn(box);
+        var checks = box is null ? [] : ChecksIn(box);
+        var inPack = carried.Sum(pile => (long)pile.Amount);
+        var inCoins = coins.Sum(pile => (long)pile.Amount);
+        var inChecks = checks.Sum(check => WorthOf(check) ?? 0);
+
+        // Checked whole before anything moves.
+        if (inPack + inCoins + inChecks < amount)
+        {
+            return BankResultType.NotEnoughGold;
+        }
+
+        var left = Take(carried, (int)Math.Min(amount, inPack));
+        var owed = amount - (int)Math.Min(amount, inPack);
+        var fromCoins = Math.Min(owed, (int)Math.Min(inCoins, int.MaxValue));
+        left += Take(coins, fromCoins);
+        TakeFromChecks(checks, owed - fromCoins);
+        fromBank = owed;
+
+        if (left > 0)
+        {
+            // Its callers counted these coins as theirs to take; they were checked above, so this is a fault.
+            _logger.Error("Bank: {Left} of {Amount} coins could not be taken for a payment of {Player}", left, amount, player.Id);
+        }
+
         LoadChanged(player);
 
-        return left == 0;
+        return BankResultType.Ok;
     }
 
     public long? WorthOf(ItemEntity item)
