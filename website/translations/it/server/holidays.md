@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"f96375cf372f5943f360f6dc329472258a695e1f40f9328947cbfd4942f7b7e8","title":"Feste"} -->
+<!-- translation: {"sourceHash":"1935fe1db5d87fa40a6972034e2c3fa6e3dc354f71a5fba48d8f4a1840f89662","title":"Feste"} -->
 
 # Feste
 
@@ -78,7 +78,7 @@ fine, o un server che era spento quel giorno (l'hook parte al prossimo avvio).
 - **Dove.** Attorno al centro di Britain, Trinsic, Vesper, Minoc, Yew, Skara Brae e Moonglow (i luoghi
   della categoria `Factions/Towns` di [`locations.toml`](data-files/locations.md)), su Felucca e su
   Trammel: fino a 8 punti per città e mappa, da 3 a 6 caselle dal centro. Un punto viene saltato quando
-  c'è qualcosa sopra, quando non c'è un pavimento, o quando il pavimento è a più di 8 livelli dal centro.
+  c'è una creatura o un oggetto sopra, quando non c'è un pavimento, o quando il pavimento è a più di 8 livelli dal centro.
 - **Cosa.** Halloween: zucche intagliate, zucche, teschi su una picca, uno spaventapasseri di zucca, una
   statua di gatto nero, una statua di ghoul. Natale: alberi innevati, topiari, cactus natalizi, stelle di
   Natale. I pezzi sono i template di `templates/items/misc/holiday_decorations.toml`, che non si possono

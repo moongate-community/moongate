@@ -20,6 +20,7 @@ public sealed class HolidayDecorScriptTests
                                    limit = 1000
                                    timer = { after = function(seconds, callback) log.timers[#log.timers + 1] = callback end }
                                    taken = {}
+                                   lying = {}
                                    nofloor = {}
                                    floor = 0
                                    serial = 100
@@ -34,6 +35,7 @@ public sealed class HolidayDecorScriptTests
                                        set_prop = function(k, v) log.props[k] = v return true end,
                                        standing_z = function(map, x, y, z) if nofloor[x .. ',' .. y] then return nil end return floor end,
                                        is_occupied = function(map, x, y) return taken[x .. ',' .. y] == true end,
+                                   items_in_range = function(map, x, y, r) if lying[x .. ',' .. y] then return { 5 } end return {} end,
                                    }
                                    item = {
                                        create = function(t, map, x, y, z) if #log.created >= limit then return nil end serial = serial + 1 log.created[#log.created + 1] = { t, map, x, y, z, serial } return serial end,
@@ -64,6 +66,12 @@ public sealed class HolidayDecorScriptTests
 
         // Two cells of Britain are lost on each map.
         Assert.Equal(28, result[0].Read<int>());
+    }
+
+    [Fact]
+    public void Place_SkipsACellWithAnItemOnIt()
+    {
+        Assert.Equal(30, Run("lying['1003,1003'] = true return m.place('x', { 'a' })")[0].Read<int>());
     }
 
     [Fact]
@@ -130,6 +138,41 @@ public sealed class HolidayDecorScriptTests
         Assert.Equal(10, result[0].Read<int>());
         Assert.Equal(10, result[1].Read<int>());
         Assert.Equal(LuaValue.Nil, result[2]);
+    }
+
+    [Fact]
+    public void ARemoveAndANewPlaceDuringAPause_LeaveTheOldTimerHarmless()
+    {
+        var result = Run(
+            "limit = 10 m.place('x', { 'a' }) m.remove('x') limit = 1000 m.place('x', { 'a' }) local old = log.timers[1] old() "
+            + "return #log.created, #log.deleted"
+        );
+
+        // 10 made, 10 removed, then the whole set again; the old timer added nothing.
+        Assert.Equal(42, result[0].Read<int>());
+        Assert.Equal(10, result[1].Read<int>());
+    }
+
+    [Fact]
+    public void ASpotThatNeverGetsASerial_IsGivenUpAfterSomeTries()
+    {
+        var result = Run(
+            "limit = 0 m.place('x', { 'a' }) local pauses = 0 "
+            + "while log.timers[1] and pauses < 200 do local t = table.remove(log.timers, 1) pauses = pauses + 1 t() end "
+            + "return pauses, #log.created");
+
+        Assert.True(result[0].Read<int>() < 200);
+        Assert.Equal(0, result[1].Read<int>());
+    }
+
+    [Theory,
+     InlineData("Britain"), InlineData("Trinsic"), InlineData("Vesper"), InlineData("Minoc"), InlineData("Yew"),
+     InlineData("Skara Brae"), InlineData("Moonglow")]
+    public void TheTownsTheScriptDecorates_AreInTheShippedLocationsOfFelucca(string town)
+    {
+        var text = File.ReadAllText(ShippedScript("../data/locations.toml"));
+
+        Assert.Contains($"map = \"felucca\"\ncategory = \"Factions/Towns\"\nname = \"{town}\"", text.Replace("\r\n", "\n"));
     }
 
     [Fact]

@@ -75,7 +75,7 @@ server that was off on that day (the hook runs at the next startup).
 - **Where.** Around the centre of Britain, Trinsic, Vesper, Minoc, Yew, Skara Brae and Moonglow (the
   places of the category `Factions/Towns` of [`locations.toml`](data-files/locations.md)), on Felucca
   and on Trammel: up to 8 spots a town and map, 3 to 6 tiles from the centre. A spot is skipped when
-  something stands there, when there is no floor, or when the floor is more than 8 levels away from the
+  a creature or an item stands there, when there is no floor, or when the floor is more than 8 levels away from the
   centre.
 - **What.** Halloween: jack o' lanterns, pumpkins, skulls on a pike, a pumpkin scarecrow, a black cat
   statue, a ghoul statue. Christmas: snowy trees, topiaries, festive cacti, poinsettias. The pieces
