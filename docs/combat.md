@@ -116,7 +116,7 @@ skill is the one of its own weapon, Wrestling when it holds none. A bow, a cross
 
 The armor rating of the whole player, which the status window shows, is the armor of each part weighted by the share
 of the blows it takes (rounded), and the damage shown there is the weapon's, with the bonuses. The numbers are those of UOX3's
-eras, converted by `mgctl convert uox` (see [Migrate from UOX3](uox3-migration.md)); a plain graphic inherits the LBR
+eras, converted by `moongate-convert uox` (see [Migrate from UOX3](uox3-migration.md)); a plain graphic inherits the LBR
 numbers, ModernUO's classic ones.
 
 ## Archers

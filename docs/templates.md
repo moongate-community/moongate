@@ -400,7 +400,7 @@ gender = "female"
 ```
 
 The shipped `templates/mobiles/` holds UOX3's NPCs, converted by
-[`mgctl convert uox`](uox3-migration.md#mobiles-and-name-lists). They are loaded at game and
+[`moongate-convert uox`](uox3-migration.md#mobiles-and-name-lists). They are loaded at game and
 standalone startup (`IMobileTemplateService`).
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
@@ -463,9 +463,9 @@ lights, furniture, teleporters and the like, about 32,800 placements in the 108 
 converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
 `havenisland.toml`, `havenmine.toml`, which ModernUO lacks) and the shop and world signs of
 ModernUO's `signs.cfg` (`signs.toml`, written by
-[`mgctl convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) and the world and dungeon
+[`moongate-convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) and the world and dungeon
 teleporters of its `teleporters.json` (`teleporters.toml`, written by
-[`mgctl convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
+[`moongate-convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
 `tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/`,
 `_old_magincia/` and `_bounty_boards/`. A folder or a file whose name starts with `_` is not loaded: rename

@@ -6,7 +6,7 @@ Moongate publishes Linux images to [GitHub Container Registry](https://github.co
 docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 ```
 
-The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships [`mgctl`](mgctl.md), which prepares the root, applies the migrations and converts UOX3 and ModernUO content, the core SQL, the [shard data files](data-files.md), the [templates](templates.md) and the example [scripts](scripting/shipped-scripts.md). The `sample-plugin` build target adds the sample plugin bundle.
+The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships [`mgctl`](mgctl.md), which prepares the root and applies the migrations, the core SQL, the [shard data files](data-files.md), the [templates](templates.md) and the example [scripts](scripting/shipped-scripts.md). The `sample-plugin` build target adds the sample plugin bundle.
 
 ## Build cache
 
@@ -106,15 +106,13 @@ With `persistence.auto_apply_migrations = true` in `config/moongate.toml` the se
 
 ## UOX3 content conversion
 
-The image's `/app/mgctl` converts UOX3 `.dfn` files to TOML with `convert uox`. Bind the source read-only and an output directory writable by the invoking user:
+The image does not convert content: the converters are a Python tool, `moongate-convert`, that runs from a checkout of the repository (it needs [uv](https://docs.astral.sh/uv/) and Python 3.13 or later, and no .NET). Run it on the host, with the UOX3 data in a folder you can read, and write the output where the container's `/data` volume is bind-mounted, or copy it in afterwards:
 
 ```sh
-docker run --rm --entrypoint /app/mgctl \
-  --user "$(id -u):$(id -g)" \
-  -v /path/to/uox3/dfndata/items:/uox-source:ro \
-  -v /path/to/templates:/uox-out \
-  moongate:local \
-  convert uox --source /uox-source --destination /uox-out/items --loot-destination /uox-out/loots
+cd tools/convert
+uv run moongate-convert uox \
+  --source /path/to/uox3/data/dfndata/items \
+  --destination /path/to/templates/items --loot-destination /path/to/templates/loots
 ```
 
 See [Migrate from UOX3](uox3-migration.md) for what the converter does and its current limits.

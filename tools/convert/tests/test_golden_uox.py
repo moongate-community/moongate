@@ -5,15 +5,12 @@ Opt in with ``MOONGATE_UOX3_DIR`` set to a checkout of UOX3 (the folder that hol
 combat fields and the kind of weapon (and the ones a script id was added to by hand): ``STALE`` names them, and the test fails when that list
 is not what differs, so a refreshed file must leave it.
 
-A second test, with ``MOONGATE_MGCTL`` set to the path of a built ``mgctl``, runs the C# converter on the same source and requires the same
-files, the same report and the same warnings.
 """
 
 from __future__ import annotations
 
 import io
 import os
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -23,7 +20,6 @@ from moongate_convert.cli import main
 REPOSITORY = Path(__file__).resolve().parents[3]
 ROOT = REPOSITORY / "moongate_root"
 SOURCE = os.environ.get("MOONGATE_UOX3_DIR")
-MGCTL = os.environ.get("MOONGATE_MGCTL")
 
 pytestmark = pytest.mark.skipif(SOURCE is None, reason="MOONGATE_UOX3_DIR is not set")
 
@@ -85,18 +81,3 @@ def test_the_items_and_loots_are_the_shipped_ones(tmp_path):
     assert [name for name, text in loots.items() if text != (shipped_loots / name).read_bytes()] == []
     assert {name for name, text in items.items() if text != (shipped_items / name).read_bytes()} == STALE
 
-
-@pytest.mark.skipif(MGCTL is None, reason="MOONGATE_MGCTL is not set")
-def test_the_csharp_converter_gives_the_same_files_report_and_warnings(tmp_path):
-    csharp, python = tmp_path / "csharp", tmp_path / "python"
-    csharp.mkdir()
-    reference = subprocess.run([MGCTL or "", "convert", "uox", *options(csharp)], capture_output=True, text=True, check=False)
-    output, error = io.StringIO(), io.StringIO()
-
-    code = main(["uox", *options(python)], output, error)
-
-    assert reference.returncode == code == 0
-    assert output.getvalue() == reference.stdout
-    assert error.getvalue() == reference.stderr
-    assert tree(python / "items") == tree(csharp / "items")
-    assert tree(python / "loots") == tree(csharp / "loots")

@@ -10,21 +10,18 @@ executables, `migration-runner/Moongate.MigrationRunner` and `mg-uoxconv`; there
 | --- | --- |
 | `mgctl init <root>` | Prepares a server root; this page. `mgctl <root>` does the same |
 | `mgctl migrate status\|apply --target auth\|world` | Lists or applies the versioned SQL; see [Persistence migrations](persistence-migrations.md) |
-| `mgctl convert uox ...` | Converts UOX3 `.dfn` content into TOML; see [Migrate from UOX3](uox3-migration.md) |
-| `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters\|modernuo-locations\|modernuo-chests ...` | Converts ModernUO's spawners, signs, teleporters, named places and treasure chests; see [Migrate from UOX3](uox3-migration.md#signs-of-modernuo) |
-| `mgctl convert modernuo-books --source <folder> --destination <folder>` | Imports static book texts; see [Import book texts](book-content-import.md) |
-| `mgctl convert modernuo-vendors --source <folder> --items <folder> --mobiles <folder> --destination <folder>` | Converts the shops of ModernUO's vendors; see [Shops](data-files/shops.md#convert-modernuos-shops) |
-| `mgctl convert modernuo-guildmasters --source <folder> --items <folder> --mobiles <folder> --npc-lists <folder>` | Converts the guildmasters of ModernUO into mobile templates and npc lists; see [Guildmasters](skills.md#guildmasters) |
 | `mgctl completion bash\|zsh\|fish` | Prints the script that completes mgctl with TAB; see [TAB completion](#tab-completion) |
 
 `mgctl --help` lists the commands and `mgctl <command> --help` the options of one.
 
+The data converters (UOX3 and ModernUO) are not part of `mgctl` any more: they are a Python tool, `moongate-convert`; see [Migrate from UOX3](uox3-migration.md#run-it).
+
 ## TAB completion
 
 `mgctl completion <shell>` prints a completion script for bash, zsh or fish. With it, TAB
-completes the commands (`mgctl mi` → `migrate`), the second word of `migrate` and `convert`,
+completes the commands (`mgctl mi` → `migrate`), the second word of `migrate`,
 the options of the command and what follows them: directories after `--root-directory` and
-the like, files after `--source`, `auth` or `world` after `--target`, and a directory for
+the like, `auth` or `world` after `--target`, and a directory for
 the root of `init`.
 
 The [Linux installer](installation.md) puts the scripts where the shells look for them, so

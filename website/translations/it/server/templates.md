@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b53eceff8591c00864633718777c79083b1901aa95772e96ded7fcf8ab8ee761","title":"Caricamento dei template TOML"} -->
+<!-- translation: {"sourceHash":"da965eab0ef753819312629bdc78634dd395f91a073e21a6aa1d067a875a7db9","title":"Caricamento dei template TOML"} -->
 
 # Caricamento dei template TOML
 
@@ -402,7 +402,7 @@ gender = "female"
 ```
 
 Il `templates/mobiles/` distribuito contiene gli NPC di UOX3, convertiti da
-[`mgctl convert uox`](uox3-migration.md#mobiles-and-name-lists). Vengono caricati all'avvio game e
+[`moongate-convert uox`](uox3-migration.md#mobiles-and-name-lists). Vengono caricati all'avvio game e
 standalone (`IMobileTemplateService`).
 
 `LootTemplate` e `LootEntry` sono lo stesso genere di struttura:
@@ -465,9 +465,9 @@ luci, mobili, teletrasporti e simili, circa 32.800 posizionamenti nei 108 file c
 convertito una volta da `Data/Decoration` di ModernUO, più New Haven di ServUO (`trammel/newhaven.toml`,
 `havenisland.toml`, `havenmine.toml`, assenti in ModernUO), le insegne dei negozi e del mondo da
 `signs.cfg` di ModernUO (`signs.toml`, scritto da
-[`mgctl convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) e i teletrasporti del mondo e dei dungeon
+[`moongate-convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) e i teletrasporti del mondo e dei dungeon
 dal suo `teleporters.json` (`teleporters.toml`, scritto da
-[`mgctl convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), un file TOML per file sorgente, in una cartella
+[`moongate-convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), un file TOML per file sorgente, in una cartella
 per mappa: `britannia/` (Trammel e Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
 `tokuno/`, `termur/` e gli insiemi speciali `_ruined_magincia_tram/`, `_ruined_magincia_fel/`,
 `_old_magincia/` e `_bounty_boards/`. Una cartella o un file il cui nome inizia con `_` non viene caricato: rinominalo

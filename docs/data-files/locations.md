@@ -30,7 +30,7 @@ differ only by case are one, spelled as the first place spells it.
 
 The shipped file holds the 558 places of ModernUO's `[Go` gump, on the six maps. Write it again
 from a ModernUO checkout with
-[`mgctl convert modernuo-locations`](../uox3-migration.md#named-places-of-modernuo).
+[`moongate-convert modernuo-locations`](../uox3-migration.md#named-places-of-modernuo).
 
 A place of a map the server does not load is left out, and so is one outside its map. The file
 may be missing: `.go` then takes numbers only.

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b45f0ec7e927f3811cf76e38126d088cf7ac5891c208283a80d0f2cc6cd1a40a","title":"Template di testi leggibili"} -->
+<!-- translation: {"sourceHash":"f36d3551ed42d949672e3f7743008b81820ee5a20cb0f2a64e3b9ad8b328920c","title":"Template di testi leggibili"} -->
 
 # Template di testi leggibili
 
@@ -138,7 +138,7 @@ i suoi testi importati rimangono pergamene finché non esegui entrambe queste op
    `id = "readable_book"`, `item_id = 0x0FF1`, `name = "a book"`, `script_id = "readable_book"`,
    `stackable = false`, `weight = 1`. `mgctl init` aggiunge autonomamente `scripts/items/readable_book.lua`.
 2. Sostituisci i file di `templates/books/modernuo` con quelli distribuiti, oppure esegui
-   [`mgctl convert modernuo-books`](../book-content-import.md) su di essi.
+   [`moongate-convert modernuo-books`](../book-content-import.md) su di essi.
 
 Esegui la prima operazione prima della seconda: un catalogo che nomina `readable_book` senza l'oggetto interrompe
 l'avvio. Le pergamene già consegnate rimangono pergamene; le nuove copie sono libri.

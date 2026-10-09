@@ -46,9 +46,10 @@ open its window: see [Vendors](../vendors.md).
 ## Convert ModernUO's shops
 
 ```bash
-mgctl convert modernuo-vendors --source ~/projects/others/ModernUO/Projects/UOContent \
-  --items moongate_root/templates/items --mobiles moongate_root/templates/mobiles \
-  --destination moongate_root/templates/shops
+cd tools/convert
+uv run moongate-convert modernuo-vendors --source ~/projects/others/ModernUO/Projects/UOContent \
+  --items ../../moongate_root/templates/items --mobiles ../../moongate_root/templates/mobiles \
+  --destination ../../moongate_root/templates/shops
 ```
 
 The converter reads the C# as syntax and runs nothing. It takes the lines of the `SBInfo` classes that each vendor

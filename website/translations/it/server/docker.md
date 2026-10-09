@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b900f77cee7eef15fd320f9db060dec40021995a5e086d79651e1428d3a298a6","title":"Eseguire con Docker"} -->
+<!-- translation: {"sourceHash":"8b0a791a2d2b1dbbbfae79f36878f18354d6c01970bc6aeb9a3460e80ada1913","title":"Eseguire con Docker"} -->
 
 # Eseguire con Docker
 
@@ -13,7 +13,7 @@ docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 L'immagine viene eseguita come utente non root con `MOONGATE_ROOT=/data`. Monta lì
 un volume persistente scrivibile e monta in sola lettura i tuoi file client Ultima
 Online; i file client non sono distribuiti con Moongate. Include [`mgctl`](mgctl.md),
-che prepara la radice, applica le migrazioni e converte contenuti UOX3 e ModernUO,
+che prepara la radice e applica le migrazioni,
 l'SQL core, i [file dei dati dello shard](data-files.md), i [template](templates.md)
 e gli [script](scripting/shipped-scripts.md) di esempio. La destinazione di build
 `sample-plugin` aggiunge il bundle del plugin di esempio.
@@ -162,16 +162,13 @@ da un rilascio provengono comunque da `mgctl init`.
 
 ## Conversione dei contenuti UOX3
 
-`/app/mgctl` dell'immagine converte file UOX3 `.dfn` in TOML con `convert uox`.
-Monta la sorgente in sola lettura e una directory di output scrivibile dall'utente chiamante:
+L'immagine non converte contenuti: i convertitori sono uno strumento Python, `moongate-convert`, che si lancia da un checkout del repository (servono [uv](https://docs.astral.sh/uv/) e Python 3.13 o successivo, non serve .NET). Eseguilo sull'host, con i dati UOX3 in una cartella leggibile, e scrivi l'output dove il volume `/data` del container è montato, oppure copialo dopo:
 
 ```sh
-docker run --rm --entrypoint /app/mgctl \
-  --user "$(id -u):$(id -g)" \
-  -v /path/to/uox3/dfndata/items:/uox-source:ro \
-  -v /path/to/templates:/uox-out \
-  moongate:local \
-  convert uox --source /uox-source --destination /uox-out/items --loot-destination /uox-out/loots
+cd tools/convert
+uv run moongate-convert uox \
+  --source /path/to/uox3/data/dfndata/items \
+  --destination /path/to/templates/items --loot-destination /path/to/templates/loots
 ```
 
 Vedi [Migrare da UOX3](uox3-migration.md) per comportamento e limiti attuali del convertitore.

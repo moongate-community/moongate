@@ -9,8 +9,6 @@ each of which the tests below name and check:
 * ``starting_items.toml`` has the empty ``book_values`` table Tomlyn writes for each entry only in the converter's output, and its common set
   was edited by hand afterwards (the blank book and the welcome letter).
 
-A second test, with ``MOONGATE_MGCTL`` set to the path of a built ``mgctl``, runs the C# converter on the same source and on some small
-sources of edge cases, and requires the same files and the same report.
 """
 
 from __future__ import annotations
@@ -18,7 +16,6 @@ from __future__ import annotations
 import io
 import os
 import re
-import subprocess
 import tomllib
 from pathlib import Path
 
@@ -31,7 +28,6 @@ from moongate_convert.cli import main
 REPOSITORY = Path(__file__).resolve().parents[3]
 ROOT = REPOSITORY / "moongate_root"
 SOURCE = os.environ.get("MOONGATE_UOX3_DIR")
-MGCTL = os.environ.get("MOONGATE_MGCTL")
 
 pytestmark = pytest.mark.skipif(SOURCE is None, reason="MOONGATE_UOX3_DIR is not set")
 
@@ -112,93 +108,6 @@ def test_the_starting_items_are_the_shipped_ones_apart_from_the_hand_edits(tmp_p
     # What the converter writes is what Tomlyn writes: an empty book_values table after every entry.
     # The header names the table once.
     assert made.count("[set.items.book_values]") == made.count("[[set.items]]") - 1 == 145
-
-
-def convert_with_csharp(workspace: Path, mobile_source: Path, items_source: Path) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        [
-            MGCTL or "", "convert", "uox",
-            "--source", str(items_source),
-            "--destination", str(workspace / "items"),
-            "--mobile-source", str(mobile_source),
-            "--mobile-destination", str(workspace / "mobiles"),
-            "--names-destination", str(workspace / "names.toml"),
-            "--starting-items-destination", str(workspace / "starting_items.toml"),
-            "--npc-lists-destination", str(workspace / "npc_lists"),
-            "--spawns-destination", str(workspace / "spawns"),
-        ],
-        capture_output=True,
-        text=True,
-        check=False,
-    )  # fmt: skip
-
-
-def the_passes_report(text: str, workspace: Path) -> list[str]:
-    """The lines the starting items and the spawn passes print, with the workspace taken out of the paths."""
-    lines = text.replace(str(workspace), "<workspace>").splitlines()
-    start = next(index for index, line in enumerate(lines) if line.startswith("Converted ") and "starting item set(s)" in line)
-
-    return lines[start:]
-
-
-def assert_same_as_csharp(tmp_path: Path, mobile_source: Path, items_source: Path) -> None:
-    csharp, python = tmp_path / "csharp", tmp_path / "python"
-    csharp.mkdir(parents=True)
-    python.mkdir(parents=True)
-    reference = convert_with_csharp(csharp, mobile_source, items_source)
-
-    assert reference.returncode == 0, reference.stderr
-
-    codes, output, error = run_passes(mobile_source, items_source, csharp / "mobiles", python)
-
-    assert codes == [0, 0], error
-    # Something was made, so equal empty folders cannot pass.
-    assert tree(python / "npc_lists") and tree(python / "spawns")
-    assert tree(python / "npc_lists") == tree(csharp / "npc_lists")
-    assert tree(python / "spawns") == tree(csharp / "spawns")
-    assert (python / "starting_items.toml").read_bytes() == (csharp / "starting_items.toml").read_bytes()
-    assert the_passes_report(output, python) == the_passes_report(reference.stdout, csharp)
-
-
-@pytest.mark.skipif(MGCTL is None, reason="MOONGATE_MGCTL is not set")
-def test_the_csharp_converter_gives_the_same_files_and_report_on_the_real_data(tmp_path):
-    assert_same_as_csharp(tmp_path, data() / "dfndata", data() / "dfndata" / "items")
-
-
-EDGE_FILES = {
-    "items/items.dfn": "[0x0eed]\n{\nid=0x0eed\nname=gold coin\n}\n[0x103b]\n{\nid=0x103b\nname=bread loaf\n}\n"
-    "[0x0f7a]\n{\nid=0x0f7a\nname=black pearl\n}\n[alias]\n{\nget=0x0f7a\n}\n[0x1f03]\n{\nid=0x1f03\nname=robe\n}\n"
-    "[ITEMLIST 6]\n{\nalias\n2|0x1f03\nblank\n}\n",
-    "newbie/newbie.dfn": "[BESTSKILL 0]\n{\nPACKITEM=0x0f7a,3,1\nEQUIPITEM=0x1f03,0x4ca,0\nPACKITEM=listobject6,2\nBAD=1\n}\n"
-    "[BESTSKILL 56]\n{\nPACKITEM=0x0f7a\n}\n[BESTSKILL 256]\n{\nPACKITEM=0x0f7a,-4\n}\n[DEFAULT ELF FEMALE]\n{\nEQUIPITEM=0x1f03\n}\n",
-    "npc/namelists.dfn": "",
-    "npc/monsters.dfn": "[orc]\n{\nNAME=an orc\nID=0x0011\n}\n[troll]\n{\nNAME=a troll\nID=0x0036\n}\n[gorilla]\n{\nNAME=a gorilla\nID=0x001D\n}\n",
-    "npc/npclists/npclists.dfn": "[NPCLIST a]\n{\nNPCLIST=b\norc\n}\n[NPCLIST b]\n{\nNPCLIST=a\ntroll\n}\n[NPCLIST ghosts]\n{\nunicorn\n}\n"
-    "[NPCLIST haunted]\n{\n3|NPCLIST=ghosts\norc\n}\n[NPCLIST Jungle]\n{\n20|Gorilla\n0|orc\n x|troll\n}\n[NPCLIST jungle]\n{\ntroll\n}\n"
-    "[NPCLIST covetous]\n{\nNPCLIST=trolls\ngorilla\n2|NPCLIST=trolls\n}\n[NPCLIST trolls]\n{\ntroll\norc\n}\n",
-    "spawn/felucca/spawn_felucca_town_test.dfn": "[REGIONSPAWN 0]\n{\nNAME=Shop\nNPC=orc\nNPCLIST=jungle\nMAXNPC=3\nX1=9\nY1=8\nX2=1\nY2=2\nMINTIME=10\nMAXTIME=5\n"
-    "ONLYOUTSIDE=1\nEXCLUDEAREA=4,4,2,2\nEXCLUDEAREA=1,1,2\nEXCLUDEAREA=6,6,7,7\nPREFZ=0x10\nDEFZ=-3\nCALL=0\n}\n"
-    "[REGIONSPAWN 1]\n{\nGET=0\nGET=1\nNAME=Child\nWORLD=0x1\nERAS=LBR,TOL\n}\n[REGIONSPAWN 2]\n{\nGET=1\nNPC=troll\nX1=1\nY1=1\nX2=2\nY2=2\nMAXNPCS=1\n}\n"
-    "[REGIONSPAWN 3]\n{\nNPC=orc\nMAXNPCS=1\nX1=1\nY1=1\nX2=2\nY2=2\nERAS=UO\n}\n[REGIONSPAWN 4]\n{\nNPC=orc\nMAXNPCS=0\nX1=1\nY1=1\nX2=2\nY2=2\n}\n"
-    "[REGIONSPAWN 5]\n{\nNPC=orc\nMAXNPCS=1\n}\n[REGIONSPAWN 5]\n{\nNPC=troll\nMAXNPCS=1\nX1=1\nY1=1\nX2=2\nY2=2\nWORLD=9\n}\n",
-    "spawn/tokuno/spawn_tokuno_Tokuno Lands.dfn": "[REGIONSPAWN 7]\n{\nNPC=gorilla\nMAXNPCS=2\nX1=1\nY1=1\nX2=2\nY2=2\n}\n",
-    "spawn/ilishenar/spawn_ilshenar_world_general.dfn": "[REGIONSPAWN 0]\n{\nNPC=orc\nMAXNPCS=1\nX1=1\nY1=1\nX2=5\nY2=5\n}\n",
-}
-
-
-@pytest.mark.skipif(MGCTL is None, reason="MOONGATE_MGCTL is not set")
-def test_the_csharp_converter_gives_the_same_files_and_report_on_the_edge_cases(tmp_path):
-    mobile_source = tmp_path / "dfndata"
-
-    for relative, content in EDGE_FILES.items():
-        path = mobile_source / relative
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
-
-    (tmp_path / "dictionaries").mkdir()
-    (tmp_path / "dictionaries" / "dictionary.ENG").write_text("", encoding="utf-8")
-
-    assert_same_as_csharp(tmp_path / "run", mobile_source, mobile_source / "items")
 
 
 def test_the_command_runs_the_passes_it_is_given(tmp_path):

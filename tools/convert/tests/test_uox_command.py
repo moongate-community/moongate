@@ -152,7 +152,7 @@ def test_a_failing_mobile_pass_ends_the_run_with_its_exit_code(uox_workspace, mo
     assert called == []
 
 
-def test_the_command_line_has_the_flags_of_mgctl_convert_uox(tmp_path):
+def test_the_command_line_has_the_flags_of_the_uox_command(tmp_path):
     source = tmp_path / "source"
     source.mkdir()
     (source / "items.dfn").write_text("[base_torch]\n{\nid=0x0f6b\n}\n[LOOTLIST gems]\n{\n10|blank\n}\n", encoding="utf-8")

@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import io
 import os
-import subprocess
 from pathlib import Path
 
 import pytest
@@ -22,7 +21,6 @@ from moongate_convert.cli import main
 REPOSITORY = Path(__file__).resolve().parents[3]
 ROOT = REPOSITORY / "moongate_root"
 SOURCE = os.environ.get("MOONGATE_UOX3_DIR")
-MGCTL = os.environ.get("MOONGATE_MGCTL")
 
 pytestmark = pytest.mark.skipif(SOURCE is None, reason="MOONGATE_UOX3_DIR is not set")
 
@@ -100,18 +98,3 @@ def test_the_names_and_the_mobiles_are_the_shipped_ones(tmp_path):
     assert kept - set(made) == HAND_WRITTEN
     assert {name for name, text in made.items() if text != (shipped / name).read_bytes()} == STALE
 
-
-@pytest.mark.skipif(MGCTL is None, reason="MOONGATE_MGCTL is not set")
-def test_the_csharp_converter_gives_the_same_mobiles_names_report_and_warnings(tmp_path):
-    csharp, python = tmp_path / "csharp", tmp_path / "python"
-    csharp.mkdir()
-    reference = subprocess.run([MGCTL or "", "convert", "uox", *options(csharp)], capture_output=True, text=True, check=False)
-    output, error = io.StringIO(), io.StringIO()
-
-    code = main(["uox", *options(python)], output, error)
-
-    assert reference.returncode == code == 0
-    assert output.getvalue().replace(str(python), "<root>") == reference.stdout.replace(str(csharp), "<root>")
-    assert error.getvalue().replace(str(python), "<root>") == reference.stderr.replace(str(csharp), "<root>")
-    assert tree(python / "mobiles") == tree(csharp / "mobiles")
-    assert (python / "names.toml").read_bytes() == (csharp / "names.toml").read_bytes()

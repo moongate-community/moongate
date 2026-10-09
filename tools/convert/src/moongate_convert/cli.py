@@ -1,4 +1,4 @@
-"""The ``moongate-convert`` command: one subcommand per converter, with the options of the C# ``mgctl convert`` it replaces."""
+"""The ``moongate-convert`` command: one subcommand per converter."""
 
 from __future__ import annotations
 

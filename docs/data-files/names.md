@@ -18,7 +18,7 @@ names = [
 | `names` | The names |
 
 The shipped file has UOX3's twenty lists (`namelists.dfn`), converted by
-[`mgctl convert uox`](../uox3-migration.md#mobiles-and-name-lists): `male`, `female`, `orc`,
+[`moongate-convert uox`](../uox3-migration.md#mobiles-and-name-lists): `male`, `female`, `orc`,
 `daemon`, `ratman` and so on. The loader trims ids and names and returns one `NameList` per list.
 
 ## Validation at startup

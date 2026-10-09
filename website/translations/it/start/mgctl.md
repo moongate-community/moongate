@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5215286c9869353f672a8186af9f4a6404aa0801d0719b84353f526da309814d","title":"mgctl, lo strumento Moongate"} -->
+<!-- translation: {"sourceHash":"90a8db04c8a947123c7c38e6b5858d4d57ece9c08abe05825ca4b85d012c7622","title":"mgctl, lo strumento Moongate"} -->
 
 # mgctl, lo strumento Moongate
 
@@ -12,21 +12,18 @@ eseguibili, `migration-runner/Moongate.MigrationRunner` e `mg-uoxconv`; in quel 
 | --- | --- |
 | `mgctl init <root>` | Prepara la directory radice del server; questa pagina. `mgctl <root>` fa lo stesso |
 | `mgctl migrate status\|apply --target auth\|world` | Elenca o applica l'SQL versionato; vedi [Migrazioni della persistenza](persistence-migrations.md) |
-| `mgctl convert uox ...` | Converte i contenuti `.dfn` di UOX3 in TOML; vedi [Migrare da UOX3](uox3-migration.md) |
-| `mgctl convert modernuo-spawns\|modernuo-signs\|modernuo-teleporters\|modernuo-locations\|modernuo-chests ...` | Converte spawner, insegne, teletrasporti, luoghi con nome e casse del tesoro di ModernUO; vedi [Migrare da UOX3](uox3-migration.md#signs-of-modernuo) |
-| `mgctl convert modernuo-books --source <folder> --destination <folder>` | Importa testi statici dei libri; vedi [Importare i testi dei libri](book-content-import.md) |
-| `mgctl convert modernuo-vendors --source <folder> --items <folder> --mobiles <folder> --destination <folder>` | Converte i negozi dei venditori di ModernUO; vedi [Negozi](data-files/shops.md#convert-modernuos-shops) |
-| `mgctl convert modernuo-guildmasters --source <folder> --items <folder> --mobiles <folder> --npc-lists <folder>` | Converte i maestri di gilda di ModernUO in template mobile e liste di PNG; vedi [Maestri di gilda](skills.md#guildmasters) |
 | `mgctl completion bash\|zsh\|fish` | Stampa lo script che completa mgctl con TAB; vedi [Completamento con TAB](#tab-completion) |
 
 `mgctl --help` elenca i comandi e `mgctl <command> --help` le opzioni di uno di essi.
 
+I convertitori di dati (UOX3 e ModernUO) non fanno più parte di `mgctl`: sono uno strumento Python, `moongate-convert`; vedi [Migrare da UOX3](uox3-migration.md#run-it).
+
 ## Completamento con TAB
 
 `mgctl completion <shell>` stampa uno script di completamento per bash, zsh o fish. Con esso, TAB
-completa i comandi (`mgctl mi` → `migrate`), la seconda parola di `migrate` e `convert`,
+completa i comandi (`mgctl mi` → `migrate`), la seconda parola di `migrate`,
 le opzioni del comando e ciò che le segue: directory dopo `--root-directory` e
-simili, file dopo `--source`, `auth` o `world` dopo `--target`, e una directory per
+simili, `auth` o `world` dopo `--target`, e una directory per
 la radice di `init`.
 
 L'[installatore Linux](installation.md) colloca gli script dove le shell li cercano, quindi

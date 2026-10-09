@@ -136,7 +136,7 @@ its imported texts stay parchments until you do both of these:
    `id = "readable_book"`, `item_id = 0x0FF1`, `name = "a book"`, `script_id = "readable_book"`,
    `stackable = false`, `weight = 1`. `mgctl init` adds `scripts/items/readable_book.lua` by itself.
 2. Replace the files of `templates/books/modernuo` with the shipped ones, or run
-   [`mgctl convert modernuo-books`](../book-content-import.md) on them.
+   [`moongate-convert modernuo-books`](../book-content-import.md) on them.
 
 Do the first before the second: a catalog that names `readable_book` without the item stops the
 startup. Scrolls already handed out stay scrolls; new copies are books.

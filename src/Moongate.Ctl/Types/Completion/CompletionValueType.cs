@@ -16,11 +16,6 @@ internal enum CompletionValueType
     Text,
 
     /// <summary>
-    ///     A file or a directory.
-    /// </summary>
-    File,
-
-    /// <summary>
     ///     A directory.
     /// </summary>
     Directory,

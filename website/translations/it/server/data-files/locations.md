@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"082a21f2854b7d8807471e3e0f17dbeccc5512d9a8c33aaef09d61006259f172","title":"Luoghi"} -->
+<!-- translation: {"sourceHash":"5989b9108244db8df37989769ee2608ee0fe7b8b64182a020f4e1cc31eb55c03","title":"Luoghi"} -->
 
 # Luoghi
 
@@ -32,7 +32,7 @@ differiscono solo per maiuscole e minuscole sono una sola, scritta come nel prim
 
 Il file distribuito contiene i 558 luoghi del gump `[Go` di ModernUO, sulle sei mappe. Rigeneralo
 da un checkout di ModernUO con
-[`mgctl convert modernuo-locations`](../uox3-migration.md#named-places-of-modernuo).
+[`moongate-convert modernuo-locations`](../uox3-migration.md#named-places-of-modernuo).
 
 Un luogo di una mappa che il server non carica viene escluso, così come uno esterno alla sua mappa. Il file
 può mancare: in questo caso `.go` accetta solo numeri.

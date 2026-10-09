@@ -44,7 +44,7 @@ dotnet nuget-license \
     echo
     echo "## mgctl"
     echo
-    echo "The \`mgctl\` executable, which prepares the root, applies the migrations and converts content, has its own dependency graph. Versions"
+    echo "The \`mgctl\` executable, which prepares the root and applies the migrations, has its own dependency graph. Versions"
     echo "listed here belong to that executable and do not replace server dependencies."
     echo
     sed '/^|[- |]*|$/s/ /-/g' "$runner_table"
