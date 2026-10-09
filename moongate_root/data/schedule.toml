@@ -1,0 +1,53 @@
+# ==============================================================================
+# Moongate - schedule.toml
+#
+# What it is for:
+#   The calendar of the shard: tasks that run at a time of the day or of the
+#   week (a shutdown with warnings, a message to everybody, a call to a Lua
+#   function) and seasonal events with a window of dates. Everything below is
+#   commented out: remove the # of an entry to turn it on, then restart the
+#   server. The hours are read in ultima.schedule.time_zone (config/moongate.toml);
+#   empty is the time zone of the system, which in a Docker container is UTC.
+#
+# Tasks, [[task]]:
+#   id        a name: lower case letters, digits and _, starting with a letter
+#   when      { every = "hour", at = ":30" }
+#             { every = "day", at = "04:00" }
+#             { every = "week", days = ["sun"], at = "18:00" }   (days: mon..sun)
+#   action    shutdown   stops the server in order at the time given; the warnings
+#                        are seconds before it, each one smaller than the one before
+#             broadcast  tells everybody: message = <id of a localized message> or text = "..."
+#             lua        calls run(id, scheduled) of scripts/events/<script>.lua, or the
+#                        function named in function
+#
+# Seasonal events, [[event]]:
+#   id, name  the name scripts know it by and the name the staff reads
+#   from, to  the first and the last day, MM-dd, every year; the window may
+#             cross the new year (12-20 to 01-06). The staff switches an event
+#             with the event command: on, off, or auto (follow the dates).
+#             scripts/events/<id>.lua gets on_start(id, name) and on_end(id, name).
+# ==============================================================================
+
+# [[task]]
+# id = "nightly_restart"
+# when = { every = "day", at = "04:00" }
+# action = "shutdown"
+# warnings = [600, 300, 60, 10]
+
+# [[task]]
+# id = "hourly_tip"
+# when = { every = "hour", at = ":30" }
+# action = "broadcast"
+# text = "Remember to visit the bank."
+
+# [[task]]
+# id = "daily_cleanup"
+# when = { every = "day", at = "06:00" }
+# action = "lua"
+# script = "cleanup"
+
+# [[event]]
+# id = "halloween"
+# name = "Halloween"
+# from = "10-20"
+# to = "11-02"
