@@ -4,8 +4,8 @@ namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
 ///     Lets a mobile ride a creature: the creature turns into a worn item on the mount layer, that keeps what is needed
-///     to make the creature again, and getting off makes it again beside the rider. As POL does, the creature is not kept
-///     alive off the map: an item worn by the rider is saved with it and nothing is left behind after a restart.
+///     to make the creature again, and getting off makes it again beside the rider. The creature is not kept alive off
+///     the map: an item worn by the rider is saved with it and nothing is left behind after a restart.
 /// </summary>
 /// <remarks>
 ///     Game loop only.

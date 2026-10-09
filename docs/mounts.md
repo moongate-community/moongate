@@ -18,7 +18,7 @@ A dead rider cannot mount. The paperdoll button of the client still opens your p
 
 ## What happens to the horse
 
-The horse does not stay alive off the map, as in ModernUO: it turns into data on the mount item the rider wears on
+The horse does not stay alive off the map: it turns into data on the mount item the rider wears on
 the mount layer (25). The item keeps the template of the horse and its owner, is saved with the rider, and nothing is
 left behind after a restart or a logout. Getting off removes the item at once and makes the horse again, from its
 template, on the tile of the rider, with its owner. The horse gets a new serial, and it keeps neither its hit points,
