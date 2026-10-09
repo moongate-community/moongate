@@ -143,6 +143,10 @@ initial_fill = true                   # The first spawn of each region after the
 fine_gold = 500                       # Gold coins taken from a prisoner when its jail sentence ends; 0 takes nothing.
 max_days = 30                         # The longest sentence the jail gump accepts, in real days.
 
+[ultima.help]
+stuck_wait_seconds = 5                # The seconds a character must stand still before "I am stuck" moves it.
+stuck_cooldown_minutes = 10           # The minutes before a player can use "I am stuck" again; 0 allows it at once.
+
 [ultima.bulletin_boards]
 expire_days = 7                       # A thread of a bulletin board goes this many days after its last reply; 0 keeps it.
 max_messages = 50                     # The messages a board holds; its oldest thread goes when it is full.
@@ -287,6 +291,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.crime.guards_enabled`, `guard_template`, `guard_seconds` | Default `true`, `guard` and 40 (from 1 to 86400). A player that says "guards" in a guarded region, by the keyword of its client in any language or by the plain word, calls the guards: for every criminal within 14 tiles that stands in a guarded region itself, the staff left out, an NPC of `guard_template` appears beside it, on a free tile a step away (on it when none is free), with the teleport effect and sound and says its line (message 30138); a criminal gets one guard at a time. The guard leaves the same way after `guard_seconds`. A guard kills what it goes for with one blow, and an archer guard shoots it. ModernUO is stricter about who can be called on: there, only who did its crime in that town in the last 15 seconds, and a murderer; here, anyone who is a criminal. A called guard bears the prop `guard.summoned`: one a stopped server left in the world is removed at the next start. Off, nobody comes. |
 | `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
 | `ultima.jail.fine_gold`, `ultima.jail.max_days` | Defaults 500 (from 0 to 1,000,000,000) and 30 (from 1 to 3650). The gold taken from a prisoner when its sentence ends, from its backpack and then its bank box, and the longest sentence [`.jail`](commands/jail.md) accepts, in real days; see [Jail](jail.md). |
+| `ultima.help.stuck_wait_seconds`, `ultima.help.stuck_cooldown_minutes` | Defaults 5 (from 1 to 60) and 10 (from 0 to 1440). The wait and the pause of the "I am stuck" button of the [help](help.md) gump. |
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Defaults 7 (from 0 to 3650; 0 keeps threads forever), 50 (from 1 to 200), 120 and 30 (from 0 to 86400). How long a thread of a [bulletin board](bulletin-boards.md) lasts after its last reply, how many messages a board holds, and how long a character waits between two new threads and between two posts on one board. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Defaults 125 (from 0 to 10000; 0 for no limit), 60000 (from 1 to 60000), 5000 and 1,000,000 (`min_check` from 1 to `max_check`, `max_check` up to 2,000,000,000). The items a [bank box](bank.md) holds, counted with what is inside its bags; the coins a banker hands out for one *withdraw*; the worth of the checks a banker writes. |
 

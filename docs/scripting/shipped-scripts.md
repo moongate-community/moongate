@@ -530,6 +530,17 @@ button checks `world.is_staff` again.
 To add a tool, write a panel function with the signature `function(g, player)` and add
 `{ id = "...", title = "...", panel = ... }` to `tools`.
 
+## help_menu.lua
+
+`scripts/gumps/help_menu.lua` is the script of the [help](../help.md) menu
+(`templates/gumps/help_menu.xml`), which the Help button of the paperdoll opens. `stuck` is the "I am stuck"
+button: it refuses a character in jail (`jail.sentence`) or fighting (`combat.target`), one that already
+waits, and one whose pause (the prop `help.stuck_until`, seconds since 1970 from `world.now`) is not over,
+the staff excepted; it takes the nearest starting city from `help.nearest_city`, tells the wait from
+`help.settings`, and after `timer.after` of that many seconds moves the character with `mobile.teleport`
+if it stands where it did and is still allowed. `commands` runs `help` with `commands.execute_as` and `rules`
+tells message 30200.
+
 ## jail_sentence.lua
 
 `scripts/gumps/jail_sentence.lua` is the script of the gump of the [jail](../jail.md)

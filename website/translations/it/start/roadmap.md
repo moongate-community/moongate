@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"81ef554f8de78b0c591c8cd7b2899f75c48fd4bf10e0680bd6025a591848298c","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"174f9df2c1b573d5e2e9e5d2926ef15f91283dd7d2eefa6d67da50b5a45e2549","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -169,7 +169,7 @@ Queste voci non dipendono dalle fasi di gioco e vengono completate quando un ope
 - Ban degli account, limiti IP, limiti ai tentativi di login, limitazione dei pacchetti.
 - Strumenti dello staff: gump delle props, menu di aggiunta, comandi di area. I luoghi nominati di
   [`.go`](commands/go.md) e il loro gump sono completati.
-- Coda di richieste ai GM, menu di aiuto e per personaggi bloccati. La [prigione](jail.md) è completata.
+- Coda di richieste ai GM. La [prigione](jail.md) e il [menu di aiuto e per personaggi bloccati](help.md) sono completati.
 - Comandi scritti in Lua.
 
 ## In seguito

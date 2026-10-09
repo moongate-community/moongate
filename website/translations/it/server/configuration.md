@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"c7405f45c1cf3bef56cca46d9e88243bd2e5381c4649f9d643778c0653535d36","title":"Configurazione"} -->
+<!-- translation: {"sourceHash":"56dad955adcd6def65ed97fe4aacb29357a12f7d7a9cc16904beb7f957dc3e2c","title":"Configurazione"} -->
 
 # Configurazione del server
 
@@ -144,6 +144,10 @@ initial_fill = true                   # The first spawn of each region after the
 [ultima.jail]
 fine_gold = 500                       # Gold coins taken from a prisoner when its jail sentence ends; 0 takes nothing.
 max_days = 30                         # The longest sentence the jail gump accepts, in real days.
+
+[ultima.help]
+stuck_wait_seconds = 5                # The seconds a character must stand still before "I am stuck" moves it.
+stuck_cooldown_minutes = 10           # The minutes before a player can use "I am stuck" again; 0 allows it at once.
 
 [ultima.bulletin_boards]
 expire_days = 7                       # A thread of a bulletin board goes this many days after its last reply; 0 keeps it.
@@ -291,6 +295,7 @@ Vedi [Persistenza PostgreSQL](persistence.md).
 | `ultima.crime.guards_enabled`, `guard_template`, `guard_seconds` | Valori predefiniti `true`, `guard` e 40 (da 1 a 86400). Un giocatore che dice "guards" in una regione sorvegliata, usando la parola chiave del client in qualsiasi lingua o la parola semplice, chiama le guardie: per ogni criminale entro 14 tile che si trova a sua volta in una regione sorvegliata, escluso lo staff, un NPC di `guard_template` appare accanto a lui, su un tile libero a un passo (sul suo se nessuno è libero), con effetto e suono di teletrasporto, e pronuncia la sua frase (messaggio 30138); un criminale riceve una guardia per volta. La guardia scompare allo stesso modo dopo `guard_seconds`. Una guardia uccide ciò che attacca con un colpo, e una guardia arciere gli spara. ModernUO è più restrittivo sui bersagli: lì solo chi ha commesso il crimine in quella città negli ultimi 15 secondi, e un assassino; qui chiunque sia criminale. Una guardia chiamata porta la proprietà `guard.summoned`: una lasciata nel mondo da un server arrestato viene rimossa all'avvio successivo. Disabilitato, non arriva nessuno. |
 | `ultima.spawns.initial_fill` | Valore predefinito `true`. La prima generazione di ogni regione di spawn dopo l'avvio la riempie immediatamente fino a `max`, così un mondo vuoto si popola in circa 10 minuti; `false` mantiene il comportamento di UOX3, dove anche la prima generazione porta solo `call` NPC. Usato nelle modalità game e standalone. Vedi [Spawn degli NPC](spawns.md#how-spawning-works). |
 | `ultima.jail.fine_gold`, `ultima.jail.max_days` | Valori predefiniti 500 (da 0 a 1.000.000.000) e 30 (da 1 a 3650). Oro prelevato da un prigioniero alla fine della pena, prima dallo zaino poi dalla banca, e pena massima accettata da [`.jail`](commands/jail.md), in giorni reali; vedi [Prigione](jail.md). |
+| `ultima.help.stuck_wait_seconds`, `ultima.help.stuck_cooldown_minutes` | Valori predefiniti 5 (da 1 a 60) e 10 (da 0 a 1440). L'attesa e la pausa del pulsante «Sono bloccato» del gump di [aiuto](help.md). |
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Valori predefiniti 7 (da 0 a 3650; 0 conserva per sempre le discussioni), 50 (da 1 a 200), 120 e 30 (da 0 a 86400). Durata di una discussione su una [bacheca](bulletin-boards.md) dall'ultima risposta, numero di messaggi contenuti, e attesa di un personaggio tra due nuove discussioni e tra due interventi sulla stessa bacheca. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Valori predefiniti 125 (da 0 a 10000; 0 senza limite), 60000 (da 1 a 60000), 5000 e 1.000.000 (`min_check` da 1 a `max_check`, `max_check` fino a 2.000.000.000). Oggetti contenuti in una [cassetta bancaria](bank.md), compresi quelli nelle borse; monete consegnate da un banchiere per un *prelievo*; valore degli assegni emessi dal banchiere. |
 

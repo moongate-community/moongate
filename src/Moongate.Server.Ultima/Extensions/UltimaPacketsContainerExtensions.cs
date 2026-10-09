@@ -97,7 +97,8 @@ public static class UltimaPacketsContainerExtensions
         RegisterIgnoredPacket<ProtocolExtensionPacket>(container);
         RegisterIgnoredPacket<ResynchronizeRequestPacket>(container);
         RegisterIgnoredPacket<OpenChatWindowPacket>(container);
-        RegisterIgnoredPacket<HelpRequestPacket>(container);
+        container.RegisterIncomingPacket<HelpRequestPacket>();
+        container.RegisterPacketHandler<HelpRequestPacket, HelpRequestPacketHandler>();
         RegisterIgnoredPacket<ClientTypePacket>(container);
         RegisterIgnoredPacket<PublicHouseContentPacket>(container);
         // What a player wrote in a book: its pages, its title and its author.

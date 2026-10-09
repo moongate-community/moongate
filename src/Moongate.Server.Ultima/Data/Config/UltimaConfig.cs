@@ -37,6 +37,8 @@ public class UltimaConfig : IConfigSection
 
     public JailConfig Jail { get; set; } = new();
 
+    public HelpConfig Help { get; set; } = new();
+
     public BulletinBoardsConfig BulletinBoards { get; set; } = new();
 
     public BankConfig Bank { get; set; } = new();
@@ -141,6 +143,13 @@ public class UltimaConfig : IConfigSection
         }
 
         Jail.Validate();
+
+        if (Help is null)
+        {
+            throw new InvalidOperationException("The ultima.help configuration section cannot be null.");
+        }
+
+        Help.Validate();
 
         if (BulletinBoards is null)
         {
