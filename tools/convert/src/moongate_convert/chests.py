@@ -13,7 +13,7 @@ from typing import TextIO
 
 from .report import ConversionReport
 from .spawn import MAP_NAMES, Spawn, folder_of, map_of, minutes, place, serialize
-from .textutil import load_loose_json, snake_case, write_text
+from .textutil import is_json_int, load_loose_json, snake_case, write_text
 
 FILE_NAME = "treasure_chests.toml"
 CLASS_PREFIX = "TreasureChestLevel"
@@ -52,7 +52,17 @@ def run(source: Path, destination: Path, output: TextIO, error: TextIO) -> int:
 
                     return 2
 
-                for index, spawner in enumerate(spawners):  # type: ignore[arg-type]
+                if not isinstance(spawners, list):
+                    error.write(f"{file}: not a list of spawners\n")
+
+                    return 2
+
+                for index, spawner in enumerate(spawners):
+                    if not _is_spawner(spawner):
+                        error.write(f"{file}: spawner {index + 1} is not a spawner\n")
+
+                        return 2
+
                     spawn_id = f"{folder}_chest_{snake_case(era)}_{stem}_{index}"
                     chests = _build(spawner, spawn_id, map_name, report)
 
@@ -75,6 +85,23 @@ def run(source: Path, destination: Path, output: TextIO, error: TextIO) -> int:
     return 0
 
 
+def _is_spawner(spawner: object) -> bool:
+    """A spawner has a location of three whole numbers, a list of entries and, when it has one, a whole count."""
+    if not isinstance(spawner, dict) or not isinstance(spawner.get("entries"), list):
+        return False
+
+    location = spawner.get("location")
+    count = spawner.get("count", 1)
+
+    return (
+        isinstance(location, list)
+        and len(location) >= 3
+        and all(is_json_int(part) for part in location[:3])
+        and is_json_int(count)
+        and all(isinstance(entry, dict) for entry in spawner["entries"])
+    )
+
+
 def _build(spawner: dict, spawn_id: str, folder_map: str, report: ConversionReport) -> Spawn | None:
     """One region for the chests of a spawner: it picks among their levels, and as many live at once as their caps allow."""
     count = max(1, spawner.get("count", 1))
@@ -88,7 +115,7 @@ def _build(spawner: dict, spawn_id: str, folder_map: str, report: ConversionRepo
             continue
 
         digits = name[len(CLASS_PREFIX) :]
-        level = int(digits) if re.fullmatch(r"\d+", digits) else None
+        level = int(digits) if re.fullmatch(r"[0-9]+", digits) else None
 
         if level is None or not 1 <= level <= LEVELS:
             report.count(f"unknown chest {name}")

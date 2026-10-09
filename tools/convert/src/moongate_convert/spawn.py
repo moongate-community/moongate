@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-from .textutil import snake_case
+from .textutil import snake_case, toml_escaped
 
 # How far above its spawner a spot may be, so a spawner in a cave does not spawn on the hill over it.
 HEADROOM = 16
@@ -67,16 +67,50 @@ def map_of(spawner: dict, folder: str) -> str:
 
 
 def minutes(spawner: dict, key: str) -> int:
-    """A ModernUO delay, ``hh:mm:ss``, in whole minutes, a minute at least."""
+    """A ModernUO delay in whole minutes, a minute at least; a delay that is no time span is a minute."""
     value = spawner.get(key)
-    match = re.fullmatch(r"(?:(\d+)\.)?(\d+):(\d+):(\d+)(?:\.\d+)?", value) if isinstance(value, str) else None
+    parsed = _time_span_minutes(value) if isinstance(value, str) else None
+
+    return 1 if parsed is None else max(1, parsed)
+
+
+_DAYS = r"(?P<days>\d+)"
+_NUMBER = r"\d+"
+_SPAN = re.compile(
+    rf"^(?:{_DAYS}|(?:(?P<d>\d+)\.)?(?P<a>{_NUMBER}):(?P<b>{_NUMBER})(?::(?P<c>{_NUMBER})(?:\.\d{{1,7}})?)?"
+    rf"|(?P<d4>\d+):(?P<h4>{_NUMBER}):(?P<m4>{_NUMBER}):(?P<s4>{_NUMBER})(?:\.\d{{1,7}})?)$",
+    re.ASCII,
+)
+
+
+def _time_span_minutes(text: str) -> int | None:
+    """The whole minutes of a .NET ``TimeSpan`` text (``d``, ``[d.]hh:mm[:ss]``, ``d:hh:mm:ss``), or None when .NET rejects it."""
+    match = _SPAN.match(text.strip(" \t\n\v\f\r"))
 
     if match is None:
-        return 1
+        return None
 
-    days, hours, mins, secs = (int(part or 0) for part in match.groups())
+    groups = match.groupdict()
 
-    return max(1, days * 1440 + hours * 60 + mins)
+    if groups["days"] is not None:
+        return int(groups["days"]) * 1440
+
+    if groups["d4"] is not None:
+        days, hours, mins, secs = (int(groups[name]) for name in ("d4", "h4", "m4", "s4"))
+    else:
+        days = int(groups["d"] or 0)
+        first, second, third = int(groups["a"]), int(groups["b"]), groups["c"]
+
+        if third is not None and groups["d"] is None and first > 23:
+            # .NET reads a first number over 23 as days: d:hh:mm.
+            days, hours, mins, secs = first, second, int(third), 0
+        else:
+            hours, mins, secs = first, second, int(third or 0)
+
+    if hours > 23 or mins > 59 or secs > 59:
+        return None
+
+    return days * 1440 + hours * 60 + mins
 
 
 def place(spawner: dict, spawn: Spawn) -> None:
@@ -102,10 +136,10 @@ def serialize(spawns: list[Spawn]) -> str:
     blocks = []
 
     for spawn in spawns:
-        lines = ["[[spawn]]", f'id = "{spawn.id}"', f'map = "{map_key(spawn.map)}"']
+        lines = ["[[spawn]]", f'id = "{toml_escaped(spawn.id)}"', f'map = "{map_key(spawn.map)}"']
 
         if spawn.name is not None:
-            lines.append(f'name = "{spawn.name}"')
+            lines.append(f'name = "{toml_escaped(spawn.name)}"')
 
         lines.append(f"mobile_ids = {_strings(spawn.mobile_ids)}")
         lines.append(f"npc_list_ids = {_strings(spawn.npc_list_ids)}")
@@ -117,6 +151,9 @@ def serialize(spawns: list[Spawn]) -> str:
 
         if not spawn.exclude:
             lines.append("exclude = []")
+
+        if not spawn.areas:
+            lines.append("areas = []")
 
         if spawn.pref_z is not None:
             lines.append(f"pref_z = {spawn.pref_z}")
@@ -138,4 +175,4 @@ def serialize(spawns: list[Spawn]) -> str:
 
 
 def _strings(values: list[str]) -> str:
-    return "[" + ", ".join(f'"{value}"' for value in values) + "]"
+    return "[" + ", ".join(f'"{toml_escaped(value)}"' for value in values) + "]"

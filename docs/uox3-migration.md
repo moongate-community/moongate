@@ -257,7 +257,7 @@ pitcher of water last (see the [shipped file](data-files/starting-items.md)).
 ## Converters in Python
 
 The converters are moving from `mgctl convert` to a Python package, `tools/convert`, a part at a time. The ones of ModernUO's signs, teleporters,
-named places and treasure chests are there already, with the same options and the same output, byte for byte; the others stay in `mgctl`
+named places and treasure chests are there already, with the same options and the same output, byte for byte (the one exception: the places converter also fixes Cell 7 of the jail, which ModernUO puts on the spot of Cell 6); the others stay in `mgctl`
 until they are ported. In the sections below, `mgctl convert modernuo-signs` can be replaced by:
 
 ```sh

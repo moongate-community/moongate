@@ -276,7 +276,7 @@ pagnotte e infine una brocca d'acqua (vedi il [file distribuito](data-files/star
 ## Convertitori in Python
 
 I convertitori passano da `mgctl convert` a un pacchetto Python, `tools/convert`, una parte alla volta. Quelli di insegne, teletrasporti,
-luoghi nominati e forzieri del tesoro di ModernUO ci sono già, con le stesse opzioni e lo stesso output, byte per byte; gli altri restano in `mgctl`
+luoghi nominati e forzieri del tesoro di ModernUO ci sono già, con le stesse opzioni e lo stesso output, byte per byte (unica eccezione: il convertitore dei luoghi corregge anche la Cella 7 del carcere, che ModernUO mette sul posto della Cella 6); gli altri restano in `mgctl`
 finché non vengono portati. Nelle sezioni sotto, `mgctl convert modernuo-signs` si può sostituire con:
 
 ```sh

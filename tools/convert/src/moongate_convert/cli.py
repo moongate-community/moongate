@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from collections.abc import Callable
 from pathlib import Path
@@ -61,7 +62,7 @@ def main(argv: list[str] | None = None, output: TextIO | None = None, error: Tex
     arguments = build_parser().parse_args(argv)
     run, *_ = COMMANDS[arguments.command]
 
-    return run(arguments.source.resolve(), arguments.destination.resolve(), output, error)
+    return run(Path(os.path.abspath(arguments.source)), Path(os.path.abspath(arguments.destination)), output, error)
 
 
 if __name__ == "__main__":

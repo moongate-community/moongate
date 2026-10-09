@@ -7,7 +7,8 @@ import re
 from pathlib import Path
 
 _WORD_SPLITTER = re.compile(r"[\s_-]|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")
-_INT = re.compile(r"\s*[+-]?\d+\s*")
+_SPACE = "[ \\t\\n\\v\\f\\r]*"
+_INT = re.compile(rf"{_SPACE}[+-]?[0-9]+{_SPACE}", re.ASCII)
 INT32_MIN = -(2**31)
 INT32_MAX = 2**31 - 1
 
@@ -25,7 +26,7 @@ def try_int(text: str) -> int | None:
     if not _INT.fullmatch(text):
         return None
 
-    value = int(text)
+    value = int(text.strip(" \t\n\v\f\r"))
 
     return value if INT32_MIN <= value <= INT32_MAX else None
 
@@ -37,7 +38,8 @@ def is_json_int(value: object) -> bool:
 
 def read_lines(path: Path) -> list[str]:
     """The lines of a text file, split on LF, CRLF and CR only, with no empty line for a final newline."""
-    text = path.read_text(encoding="utf-8")
+    # As File.ReadAllLines: a byte order mark is dropped and bad bytes are replaced, not an error.
+    text = path.read_text(encoding="utf-8-sig", errors="replace")
     lines = re.split(r"\r\n|\r|\n", text)
 
     if lines and lines[-1] == "":
