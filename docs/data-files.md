@@ -39,6 +39,7 @@ it.
 | <span id="starting-cities"></span><span id="validation-at-startup-1"></span>[`starting_cities.toml`](data-files/starting-cities.md) | `StartingCityContent` | maps | Yes, in the character list |
 | <span id="moongates"></span>[`moongates.toml`](data-files/moongates.md) | `MoongateFacet` | maps | Yes, by `.decorate` and the moongate script |
 | <span id="locations"></span>[`locations.toml`](data-files/locations.md) | `NamedLocation` | optional | Yes, by `.go` and its gump |
+| <span id="schedule"></span>[`schedule.toml`](data-files/schedule.md) | `ScheduleFile` | optional | Yes, by the schedule service and `.event` |
 | <span id="jail"></span>[`jail.toml`](data-files/jail.md) | `JailFile` | optional; before book templates | Yes, by `.jail` and its gump |
 | <span id="skills"></span><span id="validation-at-startup-2"></span>[`skills.toml`](data-files/skills.md) | `SkillContent` | starting cities | No |
 | <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | skills (every starting skill must exist) | Yes, character creation |

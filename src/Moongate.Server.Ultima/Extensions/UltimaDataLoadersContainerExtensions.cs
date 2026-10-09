@@ -5,6 +5,7 @@ using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Harvest;
 using Moongate.Server.Ultima.Data.Taming;
 using Moongate.Server.Ultima.Data.Jail;
+using Moongate.Server.Ultima.Data.Schedule;
 using Moongate.Server.Ultima.Data.Locations;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
@@ -68,8 +69,9 @@ public static class UltimaDataLoadersContainerExtensions
         // Shops name item and mobile templates, which load before.
         container.AddUltimaDataLoader<ShopsLoader, ShopDefinition>(26);
         container.AddUltimaDataLoader<HarvestLoader, HarvestResource>(27);
+        container.AddUltimaDataLoader<ScheduleLoader, ScheduleFile>(28);
         // After the mobile templates, which the creatures name.
-        container.AddUltimaDataLoader<TamingLoader, TamingCreature>(28);
+        container.AddUltimaDataLoader<TamingLoader, TamingCreature>(29);
 
         return container;
     }
