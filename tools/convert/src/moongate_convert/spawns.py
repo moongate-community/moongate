@@ -130,8 +130,11 @@ def _read_ids(folder: Path, table: str) -> set[str]:
         return ids
 
     for file in sorted(folder.rglob("*.toml")):
-        for entry in tomllib.loads(file.read_text(encoding="utf-8-sig")).get(table, []):
-            ids.add(entry["id"])
+        entries = tomllib.loads(file.read_text(encoding="utf-8-sig")).get(table, [])
+
+        for entry in entries if isinstance(entries, list) else []:
+            if isinstance(entry, dict) and isinstance(entry.get("id"), str):
+                ids.add(entry["id"])
 
     return ids
 
@@ -155,7 +158,7 @@ def _convert_map(
         if not directory.is_dir():
             continue
 
-        for file in sorted(directory.glob("*.json"), key=lambda path: path.name):
+        for file in sorted((path for path in directory.glob("*.json") if path.is_file()), key=lambda path: path.name):
             stem = snake_case(file.stem)
             key = stem if only is None else snake_case(only) + "s"
             spawns = by_file.setdefault(key, [])

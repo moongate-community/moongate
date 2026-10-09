@@ -10,8 +10,8 @@ from __future__ import annotations
 import re
 
 _SHORT = {"\\": "\\\\", '"': '\\"', "\b": "\\b", "\t": "\\t", "\f": "\\f", "\r": "\\r", "\n": "\\n"}
-_CONTROL = re.compile('[\\x00-\\x1f\\x7f"\\\\]')
-_MULTILINE_CONTROL = re.compile('[\\x00-\\x09\\x0b\\x0c\\x0e-\\x1f\\x7f"\\\\]')
+_CONTROL = re.compile('[\\x00-\\x1f\\x7f-\\x9f"\\\\]')
+_MULTILINE_CONTROL = re.compile('[\\x00-\\x08\\x0b\\x0c\\x0e-\\x1f\\x7f-\\x9f"\\\\]')
 
 
 def basic(text: str) -> str:
@@ -20,7 +20,7 @@ def basic(text: str) -> str:
 
 
 def multiline(text: str) -> str:
-    """A TOML multi-line basic string: the line ends, a carriage return too, stay as they are, so the text stays editable."""
+    """A TOML multi-line basic string: the tab and the line ends, a carriage return too, stay as they are, so the text stays editable."""
     return '"""' + _MULTILINE_CONTROL.sub(_escape, text) + '"""'
 
 

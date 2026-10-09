@@ -116,7 +116,11 @@ def test_books(tmp_path, convert):
     shipped = ROOT / "templates" / "books" / "modernuo"
     shutil.copytree(shipped, tmp_path / "books")
 
-    assert convert("modernuo-books", Path(SOURCE or "") / "Projects", tmp_path / "books").code == 0
+    result = convert("modernuo-books", Path(SOURCE or "") / "Projects", tmp_path / "books")
+
+    # The files were copied first: the report proves the converter read the sources and wrote the books.
+    assert result.code == 0
+    assert "62 books, 738 pages" in result.output
 
     compare(tmp_path / "books", shipped, [path.name for path in shipped.glob("*.toml")])
 

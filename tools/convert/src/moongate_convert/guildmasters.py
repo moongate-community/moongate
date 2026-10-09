@@ -402,7 +402,7 @@ def run(source: Path, items: Path, mobiles: Path, npc_lists: Path, output: TextI
         made: list[Mobile] = []
         lists: list[tuple[str, str, str]] = []
 
-        for path in sorted(root.glob(f"*{SUFFIX}.cs"), key=str):
+        for path in sorted((path for path in root.glob(f"*{SUFFIX}.cs") if path.is_file()), key=str):
             if path.stem == BASE_CLASS:
                 continue
 

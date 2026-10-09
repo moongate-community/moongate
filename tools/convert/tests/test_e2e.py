@@ -69,6 +69,9 @@ def test_every_converter_rebuilds_the_shipped_tree(tmp_path):
         assert result.returncode == 0, f"{arguments[0]}: {result.stderr}"
         assert result.stdout.strip(), f"{arguments[0]} reported nothing"
 
+        if arguments[0] == "modernuo-books":
+            assert "62 books, 738 pages" in result.stdout
+
     produced, shipped = tree(copy), tree(ROOT)
 
     assert set(produced) - set(shipped) == NOT_SHIPPED

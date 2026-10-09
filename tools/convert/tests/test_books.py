@@ -275,7 +275,9 @@ def test_leading_blank_pages_and_line_endings_keep_the_decoded_text(workspace, c
 
     assert workspace.run() == 0, workspace.last.error
 
-    assert workspace.read("special")["content"] == content
+    # The TOML reader of Python reads a CR or CRLF as a line feed; the file keeps them, as Tomlyn writes them.
+    assert workspace.read("special")["content"] == content.replace("\r\n", "\n").replace("\r", "\n")
+    assert "\r" not in content or content.encode() in workspace.path("special").read_bytes()
 
 
 @pytest.mark.parametrize(("content", "title", "author"), [("\\uD800", "Title", "Writer"), ("text", "\\uD800", "Writer"), ("text", "Title", "\\uDC00")])

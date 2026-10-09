@@ -7,6 +7,7 @@ only when the compiler would type it so.
 
 from __future__ import annotations
 
+import math
 import re
 from collections.abc import Iterator
 from pathlib import Path
@@ -276,7 +277,10 @@ def double_value(node: Node) -> float | None:
     if source[-1] in "fFmM":
         return None
 
-    return float(source.rstrip("dD"))
+    value = float(source.rstrip("dD"))
+
+    # Roslyn refuses a literal that overflows a double (1e400); tree-sitter reads it.
+    return value if math.isfinite(value) else None
 
 
 def utf16_length(value: str) -> int:

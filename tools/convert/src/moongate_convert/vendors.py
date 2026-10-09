@@ -504,7 +504,7 @@ def _cap_sell_prices(shops: list[Shop], report: ConversionReport) -> None:
 def _read_all(folder: Path, read: Callable[[str, str], list[T]]) -> list[T]:
     found: list[T] = []
 
-    for path in sorted(folder.rglob("*.cs"), key=str):
+    for path in sorted((path for path in folder.rglob("*.cs") if path.is_file()), key=str):
         found.extend(read(csharp.read_source(path), str(path)))
 
     return found

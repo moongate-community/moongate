@@ -479,9 +479,14 @@ def _graphic_in_hex(text: str) -> str:
     return _GRAPHIC.sub(lambda match: f"{match.group(1)}item_id = 0x{int(match.group(2)):04X}", text)
 
 
+def _lf(value: str | None) -> str | None:
+    """A text with every line end as a line feed: the TOML reader of Python normalizes a CRLF and refuses a lone CR, Tomlyn keeps both."""
+    return None if value is None else value.replace("\r\n", "\n").replace("\r", "\n")
+
+
 def _matches(text: str, expected: _Document) -> bool:
     try:
-        actual = tomllib.loads(text)
+        actual = tomllib.loads(_lf(text) or "")
     except tomllib.TOMLDecodeError:
         return False
 
@@ -491,7 +496,7 @@ def _matches(text: str, expected: _Document) -> bool:
     return (
         actual.get("title") == expected.title
         and actual.get("author") == expected.author
-        and actual.get("content") == expected.content
+        and _lf(actual.get("content")) == _lf(expected.content)
         and actual.get("item_template") == "readable_book"
         and actual.get("item_id") == expected.item_id
         and len(translations) == len(wanted)
@@ -499,7 +504,7 @@ def _matches(text: str, expected: _Document) -> bool:
             language in translations
             and translations[language].get("title") == translation.title
             and translations[language].get("author") == translation.author
-            and translations[language].get("content") == translation.content
+            and _lf(translations[language].get("content")) == _lf(translation.content)
             for language, translation in wanted.items()
         )
     )
