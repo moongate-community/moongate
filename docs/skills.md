@@ -152,7 +152,7 @@ price and `trainer.pay(npc, giver, item)` takes the gold, which is what an `on_d
 
 The twelve guildmasters of ModernUO (bard, blacksmith, fisher, healer, mage, merchant, miner, ranger, tailor, thief, tinker and
 warrior) are mobile templates, a man (`m_<trade>_guildmaster`) and a woman (`f_<trade>_guildmaster`) for each, and an npc
-list of the trade (`<trade>guildmaster`) that picks one. They are made by `mgctl convert modernuo-guildmasters` from
+list of the trade (`<trade>guildmaster`) that picks one. They are made by `moongate-convert modernuo-guildmasters` from
 ModernUO's classes: the title (*the blacksmith guildmaster* or *guildmistress*), the skills of the trade, the main ones
 between 80 and 100, and the guild, and what they wear and carry for the trade: the blacksmith an apron or a ringmail chest, a bascinet and a
 hammer, the mage and the healer a robe (in a blue or yellow hue) and the mage a staff. The kryss or dagger of the thief has no item

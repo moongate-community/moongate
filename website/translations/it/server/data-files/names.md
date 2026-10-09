@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6c5d9ff20f6e7287b8db1bffd3db30efebf7b4b63bdd81c18abb52ef8d5f41c3","title":"Nomi"} -->
+<!-- translation: {"sourceHash":"c099135c68f07a99edc376abfce3d05bd3d28096494daa4e6c6c2bf5626cceeb","title":"Nomi"} -->
 
 # Nomi
 
@@ -20,7 +20,7 @@ names = [
 | `names` | Nomi |
 
 Il file distribuito ha le venti liste UOX3 (`namelists.dfn`), convertite da
-[`mgctl convert uox`](../uox3-migration.md#mobiles-and-name-lists): `male`, `female`,
+[`moongate-convert uox`](../uox3-migration.md#mobiles-and-name-lists): `male`, `female`,
 `orc`, `daemon`, `ratman` e così via. Il loader rimuove spazi iniziali e finali da
 id e nomi e restituisce un `NameList` per lista.
 

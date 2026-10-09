@@ -1,17 +1,17 @@
-<!-- translation: {"sourceHash":"abbe654db9924d7f4146d557af967de3d5248f514ba6ab0c97cc92cbc0de8f5b","title":"Spawn degli NPC"} -->
+<!-- translation: {"sourceHash":"5f7b9b6044cfdfc76128c7cbb9a3a4c46fd2cd49ef5b24ddfc7dac444fbc01c8","title":"Spawn degli NPC"} -->
 
 # Spawn degli NPC
 
 Il mondo si popola di NPC dalle regioni di spawn, come `[REGIONSPAWN]` di UOX3: ogni
 regione mantiene vivi fino a `max` NPC, generandone pochi per volta, e ne genera di
 nuovi quando alcuni vengono rimossi o uccisi. I dati distribuiti sono quelli di UOX3,
-convertiti da [`mgctl convert uox`](uox3-migration.md): 2778 regioni su Felucca, Trammel
+convertiti da [`moongate-convert uox`](uox3-migration.md): 2778 regioni su Felucca, Trammel
 e Ilshenar, per circa 25.000 NPC al massimo, scelti da 446 liste di NPC. UOX3 non ha
 spawn per New Haven, quindi `spawns/trammel/town_new_haven.toml` aggiunge i suoi 57
 punti di spawn da ModernUO: venditori, banchieri, cittadini e animali della città,
 99 NPC in tutto. Malas, Tokuno e TerMur, per cui UOX3 non ha spawn, prendono i propri
 dagli spawner di ModernUO tramite
-[`mgctl convert modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1.206 regioni,
+[`moongate-convert modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1.206 regioni,
 circa 4.200 NPC, nei file `modernuo_*.toml` delle rispettive cartelle; gli spawner
 le cui creature non hanno ancora un template sono esclusi.
 
@@ -151,7 +151,7 @@ oggetti con i suoi oggetti vivi, e anche `.initial_spawn` la riempie.
 
 I `treasure_chests.toml` distribuiti per Felucca, Trammel e Ilshenar contengono i
 forzieri dei dungeon degli spawner ModernUO, scritti da
-[`mgctl convert modernuo-chests`](uox3-migration.md#treasure-chests-of-modernuo): 399
+[`moongate-convert modernuo-chests`](uox3-migration.md#treasure-chests-of-modernuo): 399
 regioni per un massimo di 633 forzieri. I quattro template, da `treasure_chest_level_1`
 a `treasure_chest_level_4` in `templates/items/treasure_chests.toml`, sono i
 `TreasureChestLevel1` fino a `4` di ModernUO:

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2f3ebaa5e6e466c4559cc9fe20bdc1d81c197895700ae856b5c8adecfe728576","title":"Negozi"} -->
+<!-- translation: {"sourceHash":"7ff5563f7e40fc7e4bad26a2b8360cdbe04afd831f2a77a92970346136fa85e9","title":"Negozi"} -->
 
 # Negozi
 
@@ -47,9 +47,10 @@ aprire la sua finestra: vedi [Venditori](../vendors.md).
 ## Convertire i negozi di ModernUO
 
 ```bash
-mgctl convert modernuo-vendors --source ~/projects/others/ModernUO/Projects/UOContent \
-  --items moongate_root/templates/items --mobiles moongate_root/templates/mobiles \
-  --destination moongate_root/templates/shops
+cd tools/convert
+uv run moongate-convert modernuo-vendors --source ~/projects/others/ModernUO/Projects/UOContent \
+  --items ../../moongate_root/templates/items --mobiles ../../moongate_root/templates/mobiles \
+  --destination ../../moongate_root/templates/shops
 ```
 
 Il convertitore legge il C# come sintassi e non esegue nulla. Prende le righe delle classi `SBInfo` che ogni classe di

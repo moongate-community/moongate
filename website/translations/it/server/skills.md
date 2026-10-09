@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"46b6e969adaf4c0c70cb1034bb080411c68f77587fa546ba66bae1c5f0bfe898","title":"Skill"} -->
+<!-- translation: {"sourceHash":"e4aa95fd6be0a8ec1ea24f381204ebd4fcb4dd82597b866942606c1b7dc936e4","title":"Skill"} -->
 
 # Skill
 
@@ -154,7 +154,7 @@ prezzo e `trainer.pay(npc, giver, item)` prende l'oro, che è ciò che risponde 
 
 I dodici maestri di gilda di ModernUO (bardo, fabbro, pescatore, guaritore, mago, mercante, minatore, ranger, sarto, ladro, calderaio e
 guerriero) sono template mobile, un uomo (`m_<trade>_guildmaster`) e una donna (`f_<trade>_guildmaster`) per ciascuno, e una
-lista di PNG del mestiere (`<trade>guildmaster`) che ne sceglie uno. Li crea `mgctl convert modernuo-guildmasters` dalle
+lista di PNG del mestiere (`<trade>guildmaster`) che ne sceglie uno. Li crea `moongate-convert modernuo-guildmasters` dalle
 classi di ModernUO: il titolo (*the blacksmith guildmaster* o *guildmistress*), le abilità del mestiere, le principali
 fra 80 e 100, e la gilda, e ciò che indossano e portano per il mestiere: il fabbro un grembiule o una maglia di maglia ad anelli, un bascinetto e un
 martello, il mago e il guaritore una veste (in tinta azzurra o gialla) e il mago un bastone. Il kryss o il pugnale del ladro non ha ancora

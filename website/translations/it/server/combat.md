@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"eb9ef98909cd0d477a6bbee39c69aeca8b6ccb50ca1eb6cf1336bffbdbd38c63","title":"Combattimento"} -->
+<!-- translation: {"sourceHash":"9f6f3033f8ec00a1c8acb91c5adae6fa3555bd7768e09fa4256eefb902e8330d","title":"Combattimento"} -->
 
 # Combattimento
 
@@ -119,7 +119,7 @@ difensore è quella della sua arma, Wrestling quando non ne impugna. Un arco, un
 
 Il valore di armatura dell'intero giocatore, mostrato dalla finestra di stato, è l'armatura di ogni parte pesata con la quota
 dei colpi che riceve (arrotondata), e il danno mostrato lì è quello dell'arma, con i bonus. I numeri sono quelli delle ere
-di UOX3, convertiti da `mgctl convert uox` (vedi [Migrare da UOX3](uox3-migration.md)); una grafica semplice eredita i numeri
+di UOX3, convertiti da `moongate-convert uox` (vedi [Migrare da UOX3](uox3-migration.md)); una grafica semplice eredita i numeri
 LBR, quelli classici di ModernUO.
 
 ## Arcieri
