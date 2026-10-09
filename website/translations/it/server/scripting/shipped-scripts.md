@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0fc6e18945333b2decfa06a95f3756105cd62960da59dad56f5d5b4a42f520e3","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"0ac3ec0f0ab8af9647e4ec245f6fee89e62e812b5c4eb3f0495234e8d13977c5","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -542,6 +542,17 @@ pulsante ricontrolla `world.is_staff`.
 
 Per aggiungere uno strumento, scrivi una funzione pannello con firma `function(g, player)` e aggiungi
 `{ id = "...", title = "...", panel = ... }` a `tools`.
+
+## help_menu.lua
+
+`scripts/gumps/help_menu.lua` è lo script del menu di [aiuto](../help.md)
+(`templates/gumps/help_menu.xml`), che si apre con il pulsante Help del paperdoll. `stuck` è il pulsante
+«Sono bloccato»: rifiuta un personaggio in prigione (`jail.sentence`) o in combattimento (`combat.target`),
+uno che sta già aspettando e uno la cui pausa (la proprietà `help.stuck_until`, secondi dal 1970 da
+`world.now`) non è finita, escluso lo staff; prende la città di partenza più vicina da `help.nearest_city`,
+dice l'attesa da `help.settings` e, dopo `timer.after` di quei secondi, sposta il personaggio con
+`mobile.teleport` se è dove era e se ha ancora il permesso. `commands` esegue `help` con
+`commands.execute_as` e `rules` dice il messaggio 30200.
 
 ## jail_sentence.lua
 

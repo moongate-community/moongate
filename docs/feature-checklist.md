@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 85 done, 🟡 57 partly done, ❌ 127 not built yet.
+**269 systems:** ✅ 86 done, 🟡 57 partly done, ❌ 126 not built yet.
 
-**Coverage: 32%** of the systems done, **42%** counting a partly done system as half.
+**Coverage: 32%** of the systems done, **43%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -288,7 +288,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Metrics and diagnostics | ✅ | Process and plugin metrics |
 | Hot reload | 🟡 | Lua scripts; not the data or templates |
 | GM help queue (pages) | ❌ | |
-| Help menu and stuck menu | ❌ | |
+| Help menu and stuck menu | ✅ | The Help button opens a menu: "I am stuck" takes a character to the nearest starting city after a wait, with a pause; useful commands; server rules; see [Help](help.md) |
 | Jails | ✅ | A gump lists the cells and who is in them; sentences in real days, a gold fine and a release note at the end, a chest of bread and water in every cell; a player who is offline is jailed by name and serves from its next login; see [Jail](jail.md) |
 | Who list | ❌ | |
 | Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places, and `.gmtools`, a gump with a sidebar of tools: it forces the weather, sets the season of the map and shows the time and sets the light; no property gump, add menu or area commands |

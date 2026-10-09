@@ -1905,8 +1905,8 @@
         "description": "Filler the client sends after the opcode; zeros."
       }
     ],
-    "notes": "Recognized and ignored for now. The client sends it when the player presses the Help button of the paperdoll.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "notes": "The client sends it when the player presses the Help button of the paperdoll.",
+    "handler": "HelpRequestPacketHandler: opens the help menu gump (help_menu) of the character."
   },
   "0xB5:incoming": {
     "category": "Chat",
