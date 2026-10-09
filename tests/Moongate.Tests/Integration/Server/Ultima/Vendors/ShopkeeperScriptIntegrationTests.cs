@@ -138,7 +138,7 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         var entries = Assert.IsType<LuaTable>(Assert.Single(result.Values));
         Assert.Equal(2, entries.ArrayLength);
         Assert.Equal(
-            [("buy", 6103, 8), ("sell", 6104, 8)],
+            [("buy", 3006103, 8), ("sell", 3006104, 8)],
             Enumerable.Range(1, 2)
                 .Select(index => entries[index].Read<LuaTable>())
                 .Select(entry => (entry["id"].Read<string>(), entry["cliloc"].Read<int>(), entry["range"].Read<int>()))
@@ -233,11 +233,11 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(4, entries.ArrayLength);
         var train = entries[3].Read<LuaTable>();
         Assert.Equal(
-            ("train:0", 6000, 8),
+            ("train:0", 3006000, 8),
             (train["id"].Read<string>(), train["cliloc"].Read<int>(), train["range"].Read<int>())
         );
         Assert.Equal(
-            ("train:" + (int)SkillType.Tailoring, 6000 + (int)SkillType.Tailoring),
+            ("train:" + (int)SkillType.Tailoring, 3006000 + (int)SkillType.Tailoring),
             (entries[4].Read<LuaTable>()["id"].Read<string>(), entries[4].Read<LuaTable>()["cliloc"].Read<int>())
         );
     }

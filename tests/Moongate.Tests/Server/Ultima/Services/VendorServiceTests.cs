@@ -192,6 +192,14 @@ public sealed class VendorServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task OpenBuy_LooksFromTheEyesOfTheVendorToTheEyesOfThePlayer_NotAlongTheFloor()
+    {
+        Assert.True(await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor)));
+
+        Assert.Equal((new Point3D(10, 10, 14), new Point3D(12, 10, 14)), Assert.Single(_sight.Checks));
+    }
+
+    [Fact]
     public async Task OpenBuy_OutOfSight_OrDead_OpensNothing()
     {
         _sight.Allow = false;
