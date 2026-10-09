@@ -165,4 +165,6 @@ public static class CommandMessages
     public const int UnhideDescription = 30189;
     public const int UnhideDone = 30190;
     public const int AlreadyThatWay = 30191;
+    public const int PagesDescription = 30219;
+    public const int PagesGumpMissing = 30220;
 }
