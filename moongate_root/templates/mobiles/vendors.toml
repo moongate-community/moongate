@@ -42,6 +42,7 @@ gender = "female"
 [[mobile]]
 id = "animaltrainer"
 base_id = "basevendor"
+script_id = "stablemaster"
 name_list = "{gender}"
 title = "the Animal Trainer"
 gender = "random"

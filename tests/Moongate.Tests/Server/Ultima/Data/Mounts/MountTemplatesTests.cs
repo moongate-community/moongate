@@ -47,6 +47,14 @@ public sealed class MountTemplatesTests
         );
     }
 
+    [Theory, InlineData("animaltrainer"), InlineData("m_animaltrainer"), InlineData("f_animaltrainer")]
+    public async Task AnimalTrainer_UsesTheStablemasterScript(string trainer)
+    {
+        var (mobiles, _) = await LoadAsync();
+
+        Assert.Equal("stablemaster", mobiles[trainer].ScriptId);
+    }
+
     [Fact]
     public async Task EveryMountItemTag_PointsToAnItemOnTheMountLayer()
     {

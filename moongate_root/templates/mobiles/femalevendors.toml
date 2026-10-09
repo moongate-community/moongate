@@ -744,6 +744,7 @@ hue = "0x0835-0x0852"
 [[mobile]]
 id = "f_animaltrainer"
 base_id = "basevendor"
+script_id = "stablemaster"
 name_list = "female"
 title = "the Animal Trainer"
 gender = "female"
