@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ac075f43338b4176ef25fdcfdf22d512c402196d3a68d110989d7266c48816a0","title":"Taglio della legna"} -->
+<!-- translation: {"sourceHash":"e6c6c109a4d371a6d1fe27e5a6f85416c7f18e1eb3520913cc993156ab5ea458","title":"Taglio della legna"} -->
 
 # Taglio della legna
 
@@ -36,11 +36,11 @@ battaglia, l'ascia a due mani, l'ascia ornata e l'ascia da battaglia gargish. L'
 
 ## Assi
 
-Fai doppio clic sull'ascia che hai in mano e scegli i tronchi nel tuo zaino invece di un albero: l'intera pila viene segata in assi, una per ogni tronco, subito e senza prova di abilità. Tronchi a terra, in un forziere o sul tuo cursore rispondono "This item must be in your backpack to be used."
+Fai doppio clic sull'ascia che hai in mano e scegli i tronchi nel tuo zaino invece di un albero: l'intera pila viene segata in assi, una per ogni tronco, subito e senza prova di abilità. Anche i tronchi in una borsa dello zaino vengono segati. Tronchi a terra, in un forziere, nella tua cassetta in banca o sul tuo cursore rispondono "This item must be in your backpack to be used."
 
 ## Legnetti
 
-Fai doppio clic su un coltello, un pugnale o una spada che porti con te e scegli un albero entro 2 caselle: ne stacchi un legnetto, subito e senza prova di abilità. Nel luogo deve restare della legna, ma i legnetti non ne tolgono. Scegliere qualsiasi altra cosa risponde "You can't use a bladed item on that!"
+Fai doppio clic su un coltello, un pugnale o una spada che porti con te e scegli un albero entro 2 caselle: ne stacchi un legnetto, subito e senza prova di abilità. Nel luogo deve restare della legna, e ogni legnetto ne toglie un taglio, come un taglio d'ascia: un luogo ne dà qualcuno, poi nessuno finché la legna non ritorna. Scegliere qualsiasi altra cosa risponde "You can't use a bladed item on that!"
 
 ## La legna di un luogo
 
@@ -61,7 +61,7 @@ come alberi). Vedi [Script forniti](scripting/shipped-scripts.md#axelua). Un tem
 Una root creata prima che il taglio della legna esistesse ha bisogno di due cose. Esegui `mgctl init`, che aggiunge lo script. Poi aggiungi la
 risorsa `wood` al tuo `data/harvest.toml` e `script_id = "axe"` alle asce base di
 `templates/items/gear/weapons/axes.toml`, oppure copia entrambi i file dalla distribuzione: `mgctl init` non sostituisce mai
-un file che potresti aver modificato.
+un file che potresti aver modificato. Per assi e legnetti, copia di nuovo `scripts/items/axe.lua` se lo avevi già, e dai `script_id = "blade"` ai tuoi coltelli, pugnali e spade, oppure copia i file di `templates/items/gear/weapons` dalla distribuzione.
 
 ## Non ancora
 

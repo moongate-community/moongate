@@ -34,11 +34,11 @@ axe, the two handed axe, the ornate axe and the gargish battle axe. The gargish 
 
 ## Boards
 
-Double click the axe in your hands and pick the logs in your backpack instead of a tree: the whole stack is sawn into boards, one for each log, at once and with no skill tried. Logs on the ground, in a chest or on your cursor answer "This item must be in your backpack to be used."
+Double click the axe in your hands and pick the logs in your backpack instead of a tree: the whole stack is sawn into boards, one for each log, at once and with no skill tried. Logs in a bag of the backpack are sawn too. Logs on the ground, in a chest, in your bank box or on your cursor answer "This item must be in your backpack to be used."
 
 ## Kindling
 
-Double click a knife, a dagger or a sword you carry and pick a tree within 2 tiles: you hack one kindling off it, at once and with no skill tried. The place must have wood left, but kindling takes none of it. Picking anything else answers "You can't use a bladed item on that!"
+Double click a knife, a dagger or a sword you carry and pick a tree within 2 tiles: you hack one kindling off it, at once and with no skill tried. The place must have wood left, and each kindling takes one cut of it, as a cut of an axe does: a place gives a few, then none until its wood is back. Picking anything else answers "You can't use a bladed item on that!"
 
 ## The wood of a place
 
@@ -59,7 +59,7 @@ as trees). See [Shipped scripts](scripting/shipped-scripts.md#axelua). A templat
 A root made before lumberjacking existed needs two things. Run `mgctl init`, which adds the script. Then add the
 resource `wood` to your `data/harvest.toml` and `script_id = "axe"` to the axe bases of
 `templates/items/gear/weapons/axes.toml`, or copy both files from the distribution: `mgctl init` never replaces
-a file you may have changed.
+a file you may have changed. For boards and kindling, copy `scripts/items/axe.lua` again if you had it already, and give `script_id = "blade"` to your knives, daggers and swords, or copy the files of `templates/items/gear/weapons` from the distribution.
 
 ## Not yet
 

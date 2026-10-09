@@ -7,8 +7,9 @@
 --   one kindling off it. A template uses it with script_id = "blade".
 --
 --   No skill is tried and nothing is waited for. The tree must stand in a place
---   with wood left (the resource "wood" of data/harvest.toml), but kindling
---   takes none of it: an axe gets the logs.
+--   with wood left (the resource "wood" of data/harvest.toml), and each kindling
+--   takes one cut of it, as a cut of an axe does: a place gives a few, then
+--   none until its wood is back.
 --
 -- Functions:
 --   on_use(serial, user)   the player user double clicks the blade serial
@@ -63,6 +64,9 @@ local function hack(tool, user, picked)
 
         return
     end
+
+    -- Kindling costs the place a cut of its wood, so a tree is not hacked at for ever.
+    trees.take_wood(picked.map, picked.x, picked.y)
 
     if not item.give(user, KINDLING) then
         mobile.message_cliloc(user, NO_ROOM)

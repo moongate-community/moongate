@@ -164,6 +164,7 @@ decays = true
 [[item]]
 id = "0x0902"
 base_id = "0x0902_lbr"
+script_id = "blade"
 item_id = 0
 rarity = "common"
 

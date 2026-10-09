@@ -447,6 +447,29 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Sawing_LogsInTheBankBox_NeedsThemInTheBackpack_ButLogsInABagAreSawn()
+    {
+        // The bank box is worn too, so its logs are the player's: a target reaches them with the bank closed.
+        var bank = new ItemEntity { Id = new Serial(0x40000091), TemplateId = "backpack", ItemId = 0x0E7C, Amount = 1 };
+        bank.Equip(new Serial((uint)Aria), LayerType.Bank);
+        var bag = new ItemEntity { Id = new Serial(0x40000092), TemplateId = "backpack", ItemId = 0x0E76, Amount = 1 };
+        bag.PutInContainer(_backpack.Id, new Point2D(20, 20));
+        _items.Add([bank, bag]);
+        var banked = Carry("0x1be0_log", 0x1BE0, 10);
+        _items.MoveToContainer(banked, bank.Id, new Point2D(10, 10));
+        var bagged = Carry("0x1be0_log", 0x1BE0, 7);
+        _items.MoveToContainer(bagged, bag.Id, new Point2D(10, 10));
+
+        Use(banked.Id);
+        Use(bagged.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, InBackpack, UseOnWhat], Told());
+        Assert.Equal(10, banked.Amount);
+        Assert.Equal(7, Assert.Single(Caught(), item => item.TemplateId == "0x1bd7_board").Amount);
+    }
+
+    [Fact]
     public void Sawing_WhatIsNoLog_CannotUseAnAxeOnThat()
     {
         Use(Carry("0x1bd7_board", 0x1BD7, 5).Id);
@@ -457,7 +480,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void ABlade_OnATree_HacksOneKindlingOff_AndTakesNoWood()
+    public void ABlade_OnATree_HacksOneKindlingOff_AtTheCostOfACutOfItsWood()
     {
         var dagger = Carry("dagger", 0x0F51, 1);
 
@@ -468,7 +491,22 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         var kindling = Assert.Single(Caught(), item => item.TemplateId == "0x0de1_kindling");
         Assert.Equal(1, kindling.Amount);
         Assert.Empty(_timers.Timers);
-        Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
+        Assert.Equal(1, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
+    }
+
+    [Fact]
+    public void ABlade_GetsAsMuchKindlingAsThePlaceHasCuts_ThenNoneUntilTheWoodIsBack()
+    {
+        var dagger = Carry("dagger", 0x0F51, 1);
+
+        Use(dagger, _tree);
+        Use(dagger, _tree);
+        Use(dagger, _tree);
+
+        // Kindling a vendor buys must not come for ever from one tree.
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Kindled, UseOnWhat, Kindled, UseOnWhat, NoWood], Told());
+        Assert.Equal(2, Assert.Single(Caught(), item => item.TemplateId == "0x0de1_kindling").Amount);
     }
 
     [Fact]

@@ -115,6 +115,17 @@ local function finish(tool, user, map, x, y)
     mobile.message_cliloc(user, CHOPPED)
 end
 
+-- Whether an item of that template lies in the backpack of the player or in a bag of it: not in the bank box.
+local function in_backpack(user, serial, template)
+    for _, each in ipairs(item.find(user, template)) do
+        if each == serial then
+            return true
+        end
+    end
+
+    return false
+end
+
 -- The axe used on an item: logs in the backpack become boards, one for each log; anything else is no tree.
 local function saw(user, picked)
     local template = item.template(picked)
@@ -125,8 +136,8 @@ local function saw(user, picked)
         return
     end
 
-    -- Logs on the ground, in a chest or on a cursor stay logs: a pile on a cursor cannot be taken from.
-    if item.owner(picked) ~= user or item.is_held(picked) then
+    -- Logs on the ground, in a chest, in the bank or on a cursor stay logs: a pile on a cursor cannot be taken from.
+    if not in_backpack(user, picked, template) or item.is_held(picked) then
         mobile.message_cliloc(user, IN_BACKPACK)
 
         return
@@ -142,7 +153,10 @@ local function saw(user, picked)
     end
 
     mobile.play_sound(user, CHOP_SOUND)
-    item.give(user, BOARDS, amount)
+
+    if not item.give(user, BOARDS, amount) then
+        mobile.message_cliloc(user, NO_ROOM)
+    end
 end
 
 -- The player picked what to use the axe on.
