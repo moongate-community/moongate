@@ -64,6 +64,7 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemTemplateService _itemTemplates = new(
         new StubDataLoaderService().With(new ItemTemplate { Id = "butte", ItemId = new Serial(0x100A), UseRange = 6 })
     );
+
     private readonly StubBankService _bank = new();
     private readonly RecordingMountService _mounts = new();
 

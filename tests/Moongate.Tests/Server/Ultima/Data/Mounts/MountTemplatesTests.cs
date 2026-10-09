@@ -1,5 +1,6 @@
 using Moongate.Core.Directories;
 using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -65,7 +66,7 @@ public sealed class MountTemplatesTests
         );
     }
 
-    private static async Task<(Dictionary<string, MobileTemplate> Mobiles, Dictionary<string, Moongate.Server.Ultima.Data.Templates.Items.ItemTemplate> Items)> LoadAsync()
+    private static async Task<(Dictionary<string, MobileTemplate> Mobiles, Dictionary<string, ItemTemplate> Items)> LoadAsync()
     {
         var directories = new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data", "templates"]);
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();

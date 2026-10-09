@@ -235,7 +235,10 @@ public sealed class MountServiceTests
         Assert.False(_service.IsMounted(_rider));
         Assert.Equal(("horse", MapType.Felucca, Spot), Assert.Single(_npcs.Spawns));
         Assert.Equal((long)_rider.Id.Value, _npcs.Spawned.GetProp<long>(MountProps.Owner));
-        Assert.Contains(_view.Calls, call => call.StartsWith($"OwnItemRemoved {_rider.Id.Value} ", StringComparison.Ordinal));
+        Assert.Contains(
+            _view.Calls,
+            call => call.StartsWith($"OwnItemRemoved {_rider.Id.Value} ", StringComparison.Ordinal)
+        );
     }
 
     [Fact]

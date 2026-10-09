@@ -155,7 +155,12 @@ public sealed class MountService : IMountService
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, "The {Template:l} of a rider could not be made again at {Location:l}", template, location);
+            _logger.Error(
+                exception,
+                "The {Template:l} of a rider could not be made again at {Location:l}",
+                template,
+                location
+            );
         }
     }
 
