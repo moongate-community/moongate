@@ -75,6 +75,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     private const int InBackpack = 1062334;
     private const int NotOnThat = 500494;
     private const int Kindled = 500491;
+    private const int StrangeWood = 1072652;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -91,6 +92,9 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingEffectService _effects = new();
     private readonly StubMovementService _movement = new();
     private readonly ManualTimeProvider _time = new();
+
+    // What the place draws when it fills: its cuts above the least, then its kind among the 1000 of the weights.
+    private readonly ScriptedRandom _place = new();
     private readonly StubItemSerialPool _serials = new();
     private readonly ItemService _items;
     private readonly HarvestService _harvest;
@@ -102,6 +106,23 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "0x1bdd_log", ItemId = new Serial(0x1BDE), Stackable = true },
             new ItemTemplate { Id = "0x1bd7_board", ItemId = new Serial(0x1BD7), Stackable = true },
             new ItemTemplate { Id = "0x0de1_kindling", ItemId = new Serial(0x0DE1), Stackable = true },
+            new ItemTemplate { Id = "oak_log", ItemId = new Serial(0x1BE0), Stackable = true },
+            new ItemTemplate { Id = "oak_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "ash_log", ItemId = new Serial(0x1BE0), Stackable = true },
+            new ItemTemplate { Id = "ash_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "yew_log", ItemId = new Serial(0x1BE0), Stackable = true },
+            new ItemTemplate { Id = "yew_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "heartwood_log", ItemId = new Serial(0x1BE0), Stackable = true },
+            new ItemTemplate { Id = "heartwood_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "bloodwood_log", ItemId = new Serial(0x1BE0), Stackable = true },
+            new ItemTemplate { Id = "bloodwood_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "frostwood_log", ItemId = new Serial(0x1BE0), Stackable = true },
+            new ItemTemplate { Id = "frostwood_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "bark_fragment", ItemId = new Serial(0x318F), Stackable = true },
+            new ItemTemplate { Id = "luminescent_fungi", ItemId = new Serial(0x318F), Stackable = true },
+            new ItemTemplate { Id = "switch", ItemId = new Serial(0x318F), Stackable = true },
+            new ItemTemplate { Id = "parasitic_plant", ItemId = new Serial(0x318F), Stackable = true },
+            new ItemTemplate { Id = "brilliant_amber", ItemId = new Serial(0x318F), Stackable = true },
             new ItemTemplate { Id = "dagger", ItemId = new Serial(0x0F51), ScriptId = "blade" }
         )
     );
@@ -128,11 +149,19 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
             new StubDataLoaderService().With(
                 new HarvestResource
                 {
-                    Id = "wood", Area = 4, AmountMin = 2, AmountMax = 4, RespawnMinMinutes = 20, RespawnMaxMinutes = 30
+                    Id = "wood", Area = 4, AmountMin = 2, AmountMax = 4, RespawnMinMinutes = 20, RespawnMaxMinutes = 30,
+                    // The weights of the shipped data/harvest.toml: a place is plain unless the test draws otherwise.
+                    Vein =
+                    [
+                        new() { Id = "plain", Weight = 490 }, new() { Id = "oak", Weight = 300 },
+                        new() { Id = "ash", Weight = 100 }, new() { Id = "yew", Weight = 50 },
+                        new() { Id = "heartwood", Weight = 30 }, new() { Id = "bloodwood", Weight = 20 },
+                        new() { Id = "frostwood", Weight = 10 }
+                    ]
                 }
             ),
             _time,
-            new ScriptedRandom()
+            _place
         );
     }
 
@@ -385,7 +414,8 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     [Fact]
     public void Chopping_TwiceInARow_StacksTheLogs()
     {
-        Rolls(0.0, 0.0);
+        // One swing each time; between the two the roll of a master's find, which finds nothing.
+        Rolls(0.0, 0.999, 0.0);
 
         Use(_tree);
         Fire(0.9);
@@ -675,6 +705,152 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal([UseOnWhat], Told());
         Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
+    }
+
+    [Theory]
+    [InlineData(490, "oak_log", 1072541)]
+    [InlineData(790, "ash_log", 1072542)]
+    [InlineData(890, "yew_log", 1072543)]
+    [InlineData(940, "heartwood_log", 1072544)]
+    [InlineData(970, "bloodwood_log", 1072545)]
+    [InlineData(990, "frostwood_log", 1072546)]
+    public void Chopping_InAPlaceOfAKind_AMasterGetsTheLogsOfTheKind(int draw, string logs, int text)
+    {
+        _place.Integers(0, draw);
+        // One swing; then the kind is kept (half of the times it is not); the try of the skill passes.
+        Rolls(0.0, 0.5);
+        _random.Doubles(0.0);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, text], Told());
+        Assert.Equal((logs, 10), Assert.Single(Caught().Select(item => (item.TemplateId, item.Amount))));
+        Assert.Equal(1, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
+    }
+
+    [Fact]
+    public void Chopping_InAPlaceOfAKind_HalfOfTheCutsGivePlainLogs()
+    {
+        // Oak.
+        _place.Integers(0, 490);
+        Rolls(0.0, 0.49);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Chopped], Told());
+        Assert.Equal(("0x1be0_log", 10), Assert.Single(Caught().Select(item => (item.TemplateId, item.Amount))));
+    }
+
+    [Theory]
+    // Oak asks for 65, yew for 95, frostwood for 100.
+    [InlineData(490, 649, "0x1be0_log")]
+    [InlineData(490, 650, "oak_log")]
+    [InlineData(890, 949, "0x1be0_log")]
+    [InlineData(890, 950, "yew_log")]
+    [InlineData(990, 999, "0x1be0_log")]
+    public void Chopping_AKind_AsksForItsSkill_OneWhoLacksItGetsPlainLogs(int draw, int tenths, string logs)
+    {
+        _place.Integers(0, draw);
+        Skill(tenths);
+        Rolls(0.0, 0.9);
+        _random.Doubles(0.0);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal(logs, Assert.Single(Caught()).TemplateId);
+    }
+
+    [Fact]
+    public void Chopping_AKind_IsTriedBetweenItsOwnBounds_HarderThanPlainWood()
+    {
+        // Oak at 65 is tried between 25 and 105: one chance in two, where plain wood would give 65 in 100.
+        _place.Integers(0, 490);
+        Skill(650);
+        Rolls(0.0, 0.9);
+        _random.Doubles(0.55);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Failed], Told());
+        Assert.Empty(Caught());
+    }
+
+    [Theory]
+    [InlineData(0.0, "bark_fragment", 1072548)]
+    [InlineData(0.099, "bark_fragment", 1072548)]
+    [InlineData(0.1, "luminescent_fungi", 1072550)]
+    [InlineData(0.13, "switch", 1072547)]
+    [InlineData(0.15, "parasitic_plant", 1072549)]
+    [InlineData(0.1605, "brilliant_amber", 1072551)]
+    public void Chopping_AMaster_SometimesFindsSomethingRareWithTheLogs(double roll, string find, int text)
+    {
+        Rolls(0.0, roll);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Chopped, text], Told());
+        Assert.Equal(
+            [("0x1be0_log", 10), (find, 1)],
+            Caught().Select(item => (item.TemplateId, item.Amount)).OrderBy(item => item.TemplateId != "0x1be0_log")
+        );
+    }
+
+    [Theory]
+    // Most cuts find nothing; one below 100 never does.
+    [InlineData(1000, 0.161)]
+    [InlineData(999, 0.0)]
+    public void Chopping_FindsNothingRare_MostOfTheTimes_AndNeverBelowAMaster(int tenths, double roll)
+    {
+        Skill(tenths);
+        Rolls(0.0, roll);
+        _random.Doubles(0.0);
+
+        Use(_tree);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, Chopped], Told());
+        Assert.Equal("0x1be0_log", Assert.Single(Caught()).TemplateId);
+    }
+
+    [Theory]
+    [InlineData("oak", 650)]
+    [InlineData("ash", 800)]
+    [InlineData("yew", 950)]
+    [InlineData("heartwood", 1000)]
+    [InlineData("bloodwood", 1000)]
+    [InlineData("frostwood", 1000)]
+    public void Sawing_LogsOfAKind_GivesItsBoards_ToOneWhoHasTheSkillOfTheKind(string kind, int tenths)
+    {
+        Skill(tenths);
+        var logs = Carry(kind + "_log", 0x1BE0, 12);
+
+        Use(logs.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat], Told());
+        Assert.Equal((kind + "_board", 12), Assert.Single(Caught().Select(item => (item.TemplateId, item.Amount))));
+
+        // One tenth of a point less, and the wood is too strange to work.
+        Skill(tenths - 1);
+        var more = Carry(kind + "_log", 0x1BE0, 5);
+
+        Use(more.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, UseOnWhat, StrangeWood], Told());
+        Assert.Equal(5, more.Amount);
+        Assert.Equal(12, Assert.Single(Caught(), item => item.TemplateId == kind + "_board").Amount);
     }
 
     public async Task DisposeAsync()

@@ -567,7 +567,7 @@ public sealed class RepositoryTemplateFilesTests
         var script = await File.ReadAllTextAsync(
             Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "axe.lua")
         );
-        var logs = System.Text.RegularExpressions.Regex.Match(script, "local LOGS = \"([^\"]+)\"").Groups[1].Value;
+        var logs = System.Text.RegularExpressions.Regex.Match(script, "local PLAIN = { logs = \"([^\"]+)\"").Groups[1].Value;
 
         Assert.True(items[logs].Stackable);
 
@@ -591,6 +591,42 @@ public sealed class RepositoryTemplateFilesTests
         Assert.True(items["0x1bd7_board"].Stackable);
         Assert.True(items["0x0de1_kindling"].Stackable);
         Assert.True(items["0x1bdd_log"].Stackable);
+    }
+
+    [Fact]
+    public async Task ShippedWoods_AreThere_WithTheHueOfTheirKind_AndTheVeinsTheAxeKnows()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+        var axe = await File.ReadAllTextAsync(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "axe.lua"));
+        var hues = new Dictionary<string, int>
+        {
+            ["oak"] = 0x7DA, ["ash"] = 0x4A7, ["yew"] = 0x4A8, ["heartwood"] = 0x4A9, ["bloodwood"] = 0x4AA,
+            ["frostwood"] = 0x47F
+        };
+
+        foreach (var (kind, hue) in hues)
+        {
+            var (logs, boards) = (items[kind + "_log"], items[kind + "_board"]);
+
+            Assert.Equal((0x1BE0u, 0x1BD7u), (logs.ItemId.Value, boards.ItemId.Value));
+            Assert.Equal(((int?)hue, (int?)hue), (logs.Hue?.Min, boards.Hue?.Min));
+            Assert.Equal(((bool?)true, (bool?)true), (logs.Stackable, boards.Stackable));
+        }
+
+        // Every template the script gives is shipped.
+        var given = System.Text.RegularExpressions.Regex.Matches(axe, "(?:logs|boards|template) = \"([^\"]+)\"")
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+        Assert.Equal(19, given.Length);
+        Assert.All(given, id => Assert.True(items.ContainsKey(id), id));
+        Assert.All(new[] { "bark_fragment", "brilliant_amber" }, id => Assert.True(items[id].Stackable));
+
+        // And every vein of the wood but the plain one is a kind the script knows.
+        var wood = (await new HarvestLoader(directories).LoadDataAsync()).Entities.Single(resource => resource.Id == "wood");
+        Assert.Equal(["plain", "oak", "ash", "yew", "heartwood", "bloodwood", "frostwood"], wood.Vein.Select(vein => vein.Id));
+        Assert.Equal(1000, wood.Vein.Sum(vein => vein.Weight));
+        Assert.All(wood.Vein.Skip(1), vein => Assert.Contains($"    {vein.Id} = {{ logs = ", axe));
     }
 
     [Fact]
