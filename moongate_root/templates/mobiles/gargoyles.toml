@@ -1,6 +1,5 @@
 [[mobile]]
 id = "gargoyle"
-script_id = "monster"
 name = "a gargoyle"
 name_list = "list_12"
 body = 4
@@ -14,6 +13,7 @@ karma = -3500
 fame = 3500
 loot = ["midlevelscrolls", "randomgems", "randomgems", "randompotions", "randompotions", "treasure_map_lvl1loot"]
 gold = "1d101+49"
+script_id = "monster"
 [mobile.skills]
 magery = "1d16+69"
 resisting_spells = "1d16+69"
@@ -29,7 +29,6 @@ death = 376
 
 [[mobile]]
 id = "stonegargoyle"
-script_id = "monster"
 name = "a stone gargoyle"
 body = 67
 skin_hue = 902
@@ -43,6 +42,7 @@ karma = -4000
 fame = 4000
 loot = ["randompotions", "randomgems", "randomgems", "stone_gargoyle_loot", "treasure_map_lvl2loot"]
 gold = "1d101+149"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+84"
 parrying = "1d11+34"
@@ -57,7 +57,6 @@ death = 376
 
 [[mobile]]
 id = "enslavedgargoyle"
-script_id = "monster"
 name = "an enslaved gargoyle"
 name_list = "list_12"
 title = "the enslaved gargoyle"
@@ -71,6 +70,7 @@ notoriety = "attackable"
 fame = 3500
 loot = ["randomgems"]
 gold = "1d51+249"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+69"
 parrying = "1d11+34"
@@ -85,7 +85,6 @@ death = 376
 
 [[mobile]]
 id = "firegargoyle"
-script_id = "monster"
 name = "a fire gargoyle"
 name_list = "fire_gargoyle"
 body = 130
@@ -99,6 +98,7 @@ karma = -3500
 fame = 3500
 loot = ["randomgems", "randomgems", "randompotions", "midlevelscrolls", "treasure_map_lvl1loot"]
 gold = "1d101+199"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d11+74"
 magery = "1d16+89"
@@ -114,7 +114,6 @@ death = 376
 
 [[mobile]]
 id = "gargoyledestroyer"
-script_id = "monster"
 name = "a gargoyle destroyer"
 name_list = "list_12"
 title = "the gargoyle destroyer"
@@ -129,6 +128,7 @@ karma = -10000
 fame = 10000
 loot = ["randomgems", "randomgems"]
 gold = "1d101+199"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d50+50"
 fencing = "1d11+89"
@@ -148,7 +148,6 @@ death = 376
 
 [[mobile]]
 id = "gargoyleenforcer"
-script_id = "monster"
 name = "a gargoyle enforcer"
 name_list = "list_12"
 title = "the gargoyle enforcer"
@@ -163,6 +162,7 @@ karma = -5000
 fame = 5000
 loot = ["midlevelscrolls"]
 gold = "1d51+274"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d11+69"
 evaluating_intelligence = "1d31+69"

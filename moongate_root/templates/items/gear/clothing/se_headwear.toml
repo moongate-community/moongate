@@ -5,6 +5,7 @@ item_id = 8965
 name = "flower garland"
 rarity = "common"
 weight = 3.0
+max_hits = 100
 buy_price = 14
 sell_price = 6
 
@@ -21,6 +22,7 @@ item_id = 10127
 name = "cloth ninja hood"
 rarity = "common"
 weight = 3.0
+max_hits = 100
 buy_price = 14
 sell_price = 6
 
@@ -37,6 +39,7 @@ item_id = 10136
 name = "kasa"
 rarity = "common"
 weight = 3.0
+max_hits = 100
 buy_price = 14
 sell_price = 6
 

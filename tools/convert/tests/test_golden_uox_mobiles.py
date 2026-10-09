@@ -1,9 +1,9 @@
 """The mobile pass of the ``uox`` command against the real data of UOX3.
 
 Opt in with ``MOONGATE_UOX3_DIR`` set to a checkout of UOX3 (the folder that holds ``data``). The name lists are the shipped ``names.toml``,
-byte for byte. The mobile templates are the shipped ones apart from the files that were edited by hand after they were converted (the script
-ids moved by the keys of the converter, the shopkeepers' notoriety, the tuning of the humans, the elementals and the undead): ``STALE`` names
-them, and the test fails when that list is not what differs, so a refreshed file must leave it.
+byte for byte. The mobile templates are the shipped ones apart from the files edited by hand after they were converted (the blood hue,
+the script id and the notoriety of some templates, the archer guard and the evil healers): ``STALE`` names them, and the test fails when that
+list is not what differs.
 
 The shipped folder holds hand-written mobiles too (``guildmasters.toml``, the cats and the lilly), and no converted file is missing from it.
 """
@@ -24,41 +24,21 @@ SOURCE = os.environ.get("MOONGATE_UOX3_DIR")
 
 pytestmark = pytest.mark.skipif(SOURCE is None, reason="MOONGATE_UOX3_DIR is not set")
 
-# Converted before the converter wrote the script id where it writes it now, or edited by hand since.
+# Hand edits in the shipped files: the blood hue, the script id and the notoriety of templates the converter does not set them for, and the
+# archer guard and the evil healers, which UOX3 has no data for.
 STALE = {
-    "agressiveanimals.toml",
-    "agressiveplants.toml",
-    "animals.toml",
-    "arachnids.toml",
-    "birds.toml",
     "champions.toml",
-    "christmascreatures.toml",
     "clockwork.toml",
-    "cursed_base.toml",
-    "daemons.toml",
     "dragons.toml",
-    "elementals.toml",
     "femalehuman.toml",
     "femalevendors.toml",
-    "gargoyles.toml",
-    "giants.toml",
-    "halloweencreatures.toml",
-    "humanoids_base.toml",
-    "lbrraces.toml",
-    "magicsummon.toml",
     "malehuman.toml",
     "malevendors.toml",
-    "miscmonsters.toml",
     "mounts.toml",
-    "npc_se/mounts_se.toml",
     "npc_se/undead_se.toml",
-    "reptiles.toml",
-    "savages.toml",
-    "seacreatures.toml",
     "townfolk.toml",
     "undead.toml",
     "vendors.toml",
-    "zealots_base.toml",
 }
 
 HAND_WRITTEN = {"guildmasters.toml", "moongate_cats.toml", "moongate_lilly.toml"}

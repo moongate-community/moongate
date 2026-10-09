@@ -56,7 +56,6 @@ gender = "female"
 
 [[mobile]]
 id = "brigand"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Brigand"
@@ -70,6 +69,7 @@ notoriety = "murderer"
 karma = -1000
 fame = 1000
 gold = "1d101+99"
+script_id = "monster"
 [mobile.skills]
 camping = "1d24+34"
 fencing = "1d33+45"
@@ -211,7 +211,6 @@ gender = "female"
 
 [[mobile]]
 id = "chaosdragoon"
-script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon"
 gender = "random"
@@ -224,6 +223,7 @@ karma = -5000
 fame = 5000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
 gold = "1d151+49"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d12+76"
 fencing = "1d10+82"
@@ -265,7 +265,6 @@ items = ["swampdragon"]
 
 [[mobile]]
 id = "chaosdragoonelite"
-script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon elite"
 gender = "random"
@@ -278,6 +277,7 @@ karma = -8000
 fame = 8000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems"]
 gold = "1d51+249"
+script_id = "monster"
 [mobile.skills]
 anatomy = 89
 evaluating_intelligence = 84
@@ -321,7 +321,6 @@ items = ["armorswampdragon"]
 
 [[mobile]]
 id = "executioner"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Executioner"
@@ -335,6 +334,7 @@ notoriety = "murderer"
 karma = -5000
 fame = 5000
 gold = "1d101+99"
+script_id = "monster"
 [mobile.skills]
 anatomy = 120
 camping = "1d33+35"
@@ -458,7 +458,6 @@ gender = "female"
 
 [[mobile]]
 id = "golemcontroller"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "golem_controller"
 title = "the controller"
@@ -473,6 +472,7 @@ notoriety = "murderer"
 karma = -4000
 fame = 4000
 gold = "1d151+349"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d50+50"
 magery = "1d6+94"
@@ -526,59 +526,6 @@ tactics = "1d11+89"
 wrestling = "1d11+89"
 [[mobile.equipment]]
 items = ["guardhalberd"]
-
-[[mobile.equipment]]
-items = ["0x1414"]
-
-[[mobile.equipment]]
-items = ["0x1413"]
-
-[[mobile.equipment]]
-items = ["0x141a"]
-
-[[mobile.equipment]]
-items = ["0x1410"]
-
-[[mobile.equipment]]
-items = ["0x1416"]
-gender = "male"
-
-[[mobile.equipment]]
-items = ["0x1c04"]
-gender = "female"
-
-# The guard of Ilshenar and Malas, as ModernUO's ArcherGuard: the guard with a bow, which shoots what it goes for from the
-# bow's range (scripts/mobiles/guard.lua); the guards called there are of this template (ultima.crime.archer_guard_template).
-[[mobile]]
-id = "archerguard"
-base_id = "basehuman"
-name_list = "{gender}"
-title = "the Guard"
-gender = "random"
-race = "human"
-strength = "1d501+999"
-dexterity = "1d51+149"
-intelligence = "1d51+449"
-hits = 2000
-damage = "1d301+1199"
-armor = 20
-karma = 10000
-fame = 10000
-script_id = "guard"
-notoriety = "invulnerable"
-[mobile.skills]
-archery = "1d11+89"
-detecting_hidden = "1d11+89"
-fencing = "1d11+89"
-forensic_evaluation = "1d11+89"
-mace_fighting = "1d11+89"
-resisting_spells = "1d11+89"
-parrying = "1d11+89"
-swordsmanship = "1d11+89"
-tactics = "1d11+89"
-wrestling = "1d11+89"
-[[mobile.equipment]]
-items = ["0x13b2"]
 
 [[mobile.equipment]]
 items = ["0x1414"]
@@ -797,7 +744,6 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "murderer_archmage"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Archmage"
@@ -812,6 +758,7 @@ notoriety = "murderer"
 karma = -3000
 fame = 3000
 gold = "1d151+349"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d70+30"
 magery = "1d6+94"
@@ -956,7 +903,6 @@ gender = "female"
 
 [[mobile]]
 id = "pirate"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Pirate"
@@ -966,6 +912,7 @@ strength = "1d15+85"
 dexterity = "1d35+65"
 intelligence = "1d15+70"
 notoriety = "murderer"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d10+48"
 parrying = "1d24+24"
@@ -1264,7 +1211,6 @@ items = ["0x170b_boots"]
 
 [[mobile]]
 id = "thief"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "{gender}"
 title = "the Thief"
@@ -1274,6 +1220,7 @@ strength = "1d15+60"
 dexterity = "1d15+85"
 intelligence = "1d15+70"
 notoriety = "attackable"
+script_id = "monster"
 [mobile.skills]
 detecting_hidden = "1d24+64"
 fencing = "1d24+59"
@@ -1445,4 +1392,55 @@ gender = "female"
 [[mobile.equipment]]
 items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
 hue = "0x0835-0x0852"
+gender = "female"
+
+[[mobile]]
+id = "archerguard"
+base_id = "basehuman"
+name_list = "{gender}"
+title = "the Guard"
+gender = "random"
+race = "human"
+strength = "1d501+999"
+dexterity = "1d51+149"
+intelligence = "1d51+449"
+hits = 2000
+damage = "1d301+1199"
+armor = 20
+karma = 10000
+fame = 10000
+script_id = "guard"
+notoriety = "invulnerable"
+[mobile.skills]
+archery = "1d11+89"
+detecting_hidden = "1d11+89"
+fencing = "1d11+89"
+forensic_evaluation = "1d11+89"
+mace_fighting = "1d11+89"
+resisting_spells = "1d11+89"
+parrying = "1d11+89"
+swordsmanship = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[[mobile.equipment]]
+items = ["0x13b2"]
+
+[[mobile.equipment]]
+items = ["0x1414"]
+
+[[mobile.equipment]]
+items = ["0x1413"]
+
+[[mobile.equipment]]
+items = ["0x141a"]
+
+[[mobile.equipment]]
+items = ["0x1410"]
+
+[[mobile.equipment]]
+items = ["0x1416"]
+gender = "male"
+
+[[mobile.equipment]]
+items = ["0x1c04"]
 gender = "female"

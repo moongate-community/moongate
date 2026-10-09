@@ -296,6 +296,7 @@ rarity = "common"
 movable = true
 weight = 60.0
 stackable = false
+max_hits = 100
 dyeable = false
 decays = false
 
@@ -322,6 +323,7 @@ rarity = "common"
 movable = true
 weight = 60.0
 stackable = false
+max_hits = 100
 dyeable = false
 decays = false
 
@@ -375,6 +377,7 @@ rarity = "common"
 movable = true
 weight = 60.0
 stackable = false
+max_hits = 100
 dyeable = false
 decays = false
 
@@ -387,6 +390,7 @@ rarity = "common"
 movable = true
 weight = 60.0
 stackable = false
+max_hits = 100
 dyeable = false
 decays = false
 

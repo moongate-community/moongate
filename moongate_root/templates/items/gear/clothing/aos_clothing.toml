@@ -6,6 +6,8 @@ name = "formal shirt"
 rarity = "common"
 weight = 1.0
 layer = "shirt"
+strength_required = 1
+max_hits = 50
 buy_price = 55
 sell_price = 27
 
@@ -23,6 +25,9 @@ name = "fur boots"
 rarity = "common"
 weight = 3.0
 layer = "shoes"
+strength_required = 10
+armor_rating = 6
+max_hits = 30
 dyeable = true
 buy_price = 45
 sell_price = 22
@@ -42,6 +47,8 @@ name = "fur sarong"
 rarity = "common"
 weight = 2.0
 layer = "outer_legs"
+armor_rating = 3
+max_hits = 50
 buy_price = 31
 sell_price = 15
 
@@ -59,6 +66,8 @@ name = "gilded dress"
 rarity = "common"
 weight = 2.0
 layer = "middle_torso"
+armor_rating = 4
+max_hits = 50
 buy_price = 56
 sell_price = 28
 

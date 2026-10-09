@@ -24,6 +24,7 @@ public sealed class IgnoredPacketHandlerTests
     [InlineData(0x08, 15)]
     [InlineData(0x13, 10)]
     [InlineData(0x22, 3)]
+    [InlineData(0x9B, 258)]
     [InlineData(0xB5, 64)]
     [InlineData(0xFB, 2)]
     public void FixedFollowUpPackets_DecodeAtTheirLengthOnly(byte opCode, int length)
@@ -87,6 +88,7 @@ public sealed class IgnoredPacketHandlerTests
         container.RegisterIncomingPacket<EquipRequestPacket>();
         container.RegisterIncomingPacket<ResynchronizeRequestPacket>();
         container.RegisterIncomingPacket<OpenChatWindowPacket>();
+        container.RegisterIncomingPacket<HelpRequestPacket>();
         container.RegisterIncomingPacket<ClientTypePacket>();
         container.RegisterIncomingPacket<PublicHouseContentPacket>();
         PacketRegistryFactory.Register(container);

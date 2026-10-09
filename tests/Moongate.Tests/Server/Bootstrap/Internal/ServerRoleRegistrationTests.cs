@@ -466,6 +466,7 @@ public sealed class ServerRoleRegistrationTests
                     typeof(ClientHardwareInfoPacket), typeof(AttackRequestPacket), typeof(LiftRequestPacket),
                     typeof(DropRequestPacket), typeof(TextCommandPacket), typeof(EquipRequestPacket),
                     typeof(ResynchronizeRequestPacket), typeof(UnicodeSpeechRequestPacket), typeof(OpenChatWindowPacket),
+                    typeof(HelpRequestPacket),
                     typeof(ClientTypePacket), typeof(PublicHouseContentPacket), typeof(GumpResponsePacket)
                 ],
                 packet => Assert.Contains(packet, container.Resolve<PacketHandlerRegistry>().Registrations.Keys)

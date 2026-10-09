@@ -3,144 +3,168 @@ id = "random_magic_item"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_item_1"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_item_2"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_item_3"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_item_4"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_item_5"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_weapon"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_weapon_1"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_weapon_2"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_weapon_3"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_weapon_4"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_weapon_5"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_armor"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_armor_1"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_armor_2"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_armor_3"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_armor_4"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_armor_5"
 base_id = "base_item"
 item_id = 3934
 rarity = "common"
+weapon_type = "sword"
 
 [[item]]
 id = "random_magic_wand"
 base_id = "base_item"
 item_id = 3570
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "random_magic_wand_1"
 base_id = "base_item"
 item_id = 3570
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "random_magic_wand_2"
 base_id = "base_item"
 item_id = 3570
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "random_magic_wand_3"
 base_id = "base_item"
 item_id = 3570
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "random_magic_wand_4"
 base_id = "base_item"
 item_id = 3570
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "random_magic_wand_5"
 base_id = "base_item"
 item_id = 3570
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "fireworks_wand"
@@ -148,6 +172,7 @@ base_id = "base_item"
 item_id = 3570
 name = "fireworks wand"
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "glacialstaff"
@@ -165,6 +190,8 @@ name = "a mask of orcish kin"
 rarity = "common"
 weight = 4.0
 layer = "helm"
+armor_rating = 5
+max_hits = 50
 dyeable = false
 buy_price = 50
 sell_price = 25
