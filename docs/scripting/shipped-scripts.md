@@ -472,6 +472,18 @@ template ending with `whealer`, a wandering one, takes a step with `npc.wander` 
 `scripts/items/ethereal_mount.lua` is the script of the ethereal statuettes (`script_id = "ethereal_mount"`): its
 `on_use` calls `mount.ride_ethereal(user, serial)`, which says in the client's words why it refuses, and returns true
 so the double click opens nothing else. See [Mounts](../mounts.md#ethereal-mounts).
+## stablemaster.lua and stable_claim.lua
+
+`scripts/mobiles/stablemaster.lua` is the script of the animal trainers (`script_id = "stablemaster"`). The words
+*stable* and *claim*, said within 12 cells, and the entries *Stable* and *Claim All* of the context menu drive the
+`stable` module: *stable* gives a cursor (`target.pick`) and calls `stable.stable` on the pet picked, answering with
+the client's text for each `StableResultType`; *claim* says the list intro and opens the gump `stable_claim`
+(`templates/gumps/stable_claim.xml`), or says there are no pets; *Claim All* calls `stable.claim` on the first place
+until the list is empty. Several trainers hear the same words and `stable.attend` lets one answer. An animal trainer
+keeps its shop and its lessons through `scripts/common/shop.lua` and `training.lua`.
+`scripts/gumps/stable_claim.lua` fills the gump with one button and the name of the pet for each pet of `stable.pets`,
+eight a page; a button checks the player is within 12 cells of the trainer and calls `stable.claim`; a list that
+changed since it was shown is shown again.
 
 ## ankh.lua and resurrect.lua
 

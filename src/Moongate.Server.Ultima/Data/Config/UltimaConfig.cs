@@ -43,6 +43,8 @@ public class UltimaConfig : IConfigSection
 
     public BankConfig Bank { get; set; } = new();
 
+    public StableConfig Stable { get; set; } = new();
+
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
     /// </summary>
@@ -164,5 +166,12 @@ public class UltimaConfig : IConfigSection
         }
 
         Bank.Validate();
+
+        if (Stable is null)
+        {
+            throw new InvalidOperationException("The ultima.stable configuration section cannot be null.");
+        }
+
+        Stable.Validate();
     }
 }

@@ -161,6 +161,10 @@ max_withdraw = 60000                  # Coins a banker hands out at one time.
 min_check = 5000                      # The smallest bank check a banker writes.
 max_check = 1000000                   # The largest.
 
+[ultima.stable]
+max_pets = 10                         # Pets a player may leave with the stablemasters, from 1 to 50.
+fee = 30                              # Gold a pet costs when it is stabled, from the backpack and then the bank; 0 makes it free.
+
 [persistence]
 auto_sync_schema = false
 auto_apply_migrations = false         # true: a start adds the bundled core SQL and applies what is pending.
@@ -297,6 +301,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.help.page_cooldown_seconds`, `ultima.help.page_history_days` | Defaults 60 (from 0 to 3600) and 30 (from 1 to 3650). The seconds a player waits between two requests to the game masters, and the days a closed request is kept before startup deletes it; see [Help](help.md). |
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Defaults 7 (from 0 to 3650; 0 keeps threads forever), 50 (from 1 to 200), 120 and 30 (from 0 to 86400). How long a thread of a [bulletin board](bulletin-boards.md) lasts after its last reply, how many messages a board holds, and how long a character waits between two new threads and between two posts on one board. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Defaults 125 (from 0 to 10000; 0 for no limit), 60000 (from 1 to 60000), 5000 and 1,000,000 (`min_check` from 1 to `max_check`, `max_check` up to 2,000,000,000). The items a [bank box](bank.md) holds, counted with what is inside its bags; the coins a banker hands out for one *withdraw*; the worth of the checks a banker writes. |
+| `ultima.stable.max_pets`, `ultima.stable.fee` | Defaults 10 (from 1 to 50) and 30 (from 0 to 100000). The pets a player may leave with an animal trainer, and what each costs when it is stabled: see the [stable](mounts.md#the-stable). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the

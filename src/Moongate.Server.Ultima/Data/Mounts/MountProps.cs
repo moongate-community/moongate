@@ -36,6 +36,9 @@ public static class MountProps
     ///     Prop of a mount item: the name the statuette of an ethereal mount had, when it was renamed.
     /// </summary>
     public const string EtherealName = "ethereal_name";
+    ///     Prop of a player: the template ids of the pets it left in a stable, joined by semicolons.
+    /// </summary>
+    public const string Stabled = "stabled";
 
     /// <summary>
     ///     Tag of a mobile template: the id of the item template, on the mount layer, that the creature turns into when it

@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Types.Help;
 using Moongate.Server.Ultima.Types.Jail;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Server.Ultima.Types.Stable;
 using Moongate.Server.Ultima.Types.Weather;
 using Moongate.Ultima.Types;
 
@@ -37,6 +38,7 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<MobileModule>();
         container.AddScriptModule<MountModule>();
+        container.AddScriptModule<StableModule>();
         container.AddScriptModule<TargetModule>();
         container.AddScriptModule<HuePickerModule>();
         container.AddScriptModule<SkillModule>();
@@ -61,6 +63,7 @@ public static class UltimaScriptContainerExtensions
         container.RegisterScriptEnum<SpeechType>();
         container.RegisterScriptEnum<DirectionType>();
         container.RegisterScriptEnum<JailResultType>();
+        container.RegisterScriptEnum<StableResultType>();
         container.RegisterScriptEnum<HelpPageKindType>();
         container.RegisterScriptEnum<HelpPageStatusType>();
         container.RegisterScriptEnum<BankResultType>();

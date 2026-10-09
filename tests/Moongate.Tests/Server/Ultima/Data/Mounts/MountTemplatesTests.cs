@@ -47,6 +47,20 @@ public sealed class MountTemplatesTests
         );
     }
 
+    [Theory,
+     InlineData("animaltrainer"),
+     InlineData("m_animaltrainer"),
+     InlineData("f_animaltrainer"),
+     InlineData("gypsyanimaltrainer"),
+     InlineData("m_gypsyanimaltrainer"),
+     InlineData("f_gypsyanimaltrainer")]
+    public async Task AnimalTrainer_UsesTheStablemasterScript(string trainer)
+    {
+        var (mobiles, _) = await LoadAsync();
+
+        Assert.Equal("stablemaster", mobiles[trainer].ScriptId);
+    }
+
     [Fact]
     public async Task EveryEtherealStatuette_NamesAnExistingMountItemOnTheMountLayer_AndUsesTheScript()
     {

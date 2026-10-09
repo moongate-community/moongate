@@ -48,6 +48,7 @@ local NOT_THERE = 501862      -- You can't mine there.
 local NOT_THAT = 501863       -- You can't mine that.
 local TOO_FAR = 500446        -- That is too far away.
 local MOVED_AWAY = 503041     -- You have moved too far away to continue mining.
+local RIDING = 501864         -- You can't mine while riding.
 local NO_METAL = 503040       -- There is no metal here to mine.
 local GONE = 503042           -- Someone has gotten to the metal before you.
 local FAILED = 503043         -- You loosen some rocks but fail to find any useable ore.
@@ -219,6 +220,12 @@ end
 
 -- Called when a player double clicks the tool.
 function pickaxe.on_use(serial, user)
+    if mobile.is_mounted(user) then
+        mobile.message_cliloc(user, RIDING)
+
+        return true
+    end
+
     -- A tool inside a chest on the ground is used through the chest: it must be taken out first.
     if digging[user] or not has_tool(serial, user) then
         return true
