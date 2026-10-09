@@ -22,6 +22,11 @@ public static class MountProps
     public const string PetOwner = "pet_owner";
 
     /// <summary>
+    ///     Prop of a player: the template ids of the pets it left in a stable, joined by semicolons.
+    /// </summary>
+    public const string Stabled = "stabled";
+
+    /// <summary>
     ///     Tag of a mobile template: the id of the item template, on the mount layer, that the creature turns into when it
     ///     is ridden. An empty value, or no tag, makes the creature no mount.
     /// </summary>

@@ -1,0 +1,205 @@
+using Moongate.Core.Geometry;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Bank;
+using Moongate.Server.Ultima.Types.Stable;
+using Moongate.Ultima.Types;
+using Serilog;
+
+namespace Moongate.Server.Ultima.Services;
+
+/// <summary>
+///     The stable of a player: see <see cref="IStableService" />.
+/// </summary>
+public sealed class StableService : IStableService
+{
+    private const char Separator = ';';
+    private const int SpawnAttempts = 3;
+
+    private readonly IMobileService _mobiles;
+    private readonly INpcService _npcs;
+    private readonly IMobileTemplateService _templates;
+    private readonly IBankService _bank;
+    private readonly StableConfig _config;
+    private readonly Lazy<IDeathService>? _death;
+    private readonly ILogger _logger;
+
+    /// <summary>
+    ///     Gets how long a failed spawn of a claimed pet waits before it is tried again.
+    /// </summary>
+    internal TimeSpan RetryDelay { get; init; } = TimeSpan.FromSeconds(1);
+
+    public StableService(
+        IMobileService mobiles,
+        INpcService npcs,
+        IMobileTemplateService templates,
+        IBankService bank,
+        StableConfig config,
+        Lazy<IDeathService>? death = null,
+        ILogger? logger = null
+    )
+    {
+        _death = death;
+        _mobiles = mobiles;
+        _npcs = npcs;
+        _templates = templates;
+        _bank = bank;
+        _config = config;
+        _logger = logger ?? Log.ForContext<StableService>();
+    }
+
+    public IReadOnlyList<string> Stabled(MobileEntity player)
+    {
+        return player.GetProp(MountProps.Stabled, "")
+            .Split(Separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    }
+
+    public StableResultType TryStable(MobileEntity player, MobileEntity pet)
+    {
+        if (player.IsNpc || !_mobiles.IsInWorld(player.Id))
+        {
+            return StableResultType.NoPlayer;
+        }
+
+        if (!pet.IsNpc ||
+            !_mobiles.IsInWorld(pet.Id) ||
+            pet.TemplateId is not { } templateId ||
+            !_templates.TryGet(templateId, out var template) ||
+            template.MountItem() is null)
+        {
+            return StableResultType.NotAPet;
+        }
+
+        if (pet.GetProp(MountProps.Owner, 0L) != player.Id.Value)
+        {
+            return StableResultType.NotYours;
+        }
+
+        if (player.Map != pet.Map || !MountService.WithinReach(player.Location, pet.Location))
+        {
+            return StableResultType.TooFar;
+        }
+
+        if (_death?.Value.IsDying(pet.Id) == true)
+        {
+            return StableResultType.Dying;
+        }
+
+        var stabled = Stabled(player).ToList();
+
+        if (stabled.Count >= _config.MaxPets)
+        {
+            return StableResultType.Full;
+        }
+
+        if (_config.Fee > 0 && !PayFee(player))
+        {
+            return StableResultType.NoGold;
+        }
+
+        // The creature goes last: when it cannot, the fee is given back.
+        if (!_npcs.Remove(pet.Id))
+        {
+            if (_config.Fee > 0)
+            {
+                _bank.GiveGold(player, _config.Fee);
+            }
+
+            return StableResultType.Failed;
+        }
+
+        stabled.Add(templateId);
+        player.SetProp(MountProps.Stabled, string.Join(Separator, stabled));
+
+        return StableResultType.Ok;
+    }
+
+    public StableResultType TryClaim(MobileEntity player, int index, string template)
+    {
+        if (player.IsNpc || !_mobiles.IsInWorld(player.Id))
+        {
+            return StableResultType.NoPlayer;
+        }
+
+        var stabled = Stabled(player).ToList();
+
+        if (index < 0 || index >= stabled.Count || !string.Equals(stabled[index], template, StringComparison.Ordinal))
+        {
+            return StableResultType.BadIndex;
+        }
+
+        stabled.RemoveAt(index);
+        Keep(player, stabled);
+
+        if (!_templates.TryGet(template, out _))
+        {
+            _logger.Warning("The stabled {Template:l} of {Player:l} is gone from the data and is dropped", template, player.Id);
+
+            return StableResultType.Failed;
+        }
+
+        var map = player.Map;
+        var location = player.Location;
+        var props = new Dictionary<string, object?> { [MountProps.Owner] = (long)player.Id.Value };
+
+        // Off the loop: a new creature is saved first, to get its serial.
+        _ = Task.Run(() => SpawnAsync(template, map, location, props));
+
+        return StableResultType.Ok;
+    }
+
+    private bool PayFee(MobileEntity player)
+    {
+        return _bank.CanPay(player, _config.Fee, true) == BankResultType.Ok &&
+               _bank.Pay(player, _config.Fee, true, out _) == BankResultType.Ok;
+    }
+
+    private static void Keep(MobileEntity player, List<string> stabled)
+    {
+        if (stabled.Count == 0)
+        {
+            player.RemoveProp(MountProps.Stabled);
+
+            return;
+        }
+
+        player.SetProp(MountProps.Stabled, string.Join(Separator, stabled));
+    }
+
+    private async Task SpawnAsync(
+        string template,
+        MapType map,
+        Point3D location,
+        IReadOnlyDictionary<string, object?> props
+    )
+    {
+        for (var attempt = 1; attempt <= SpawnAttempts; attempt++)
+        {
+            try
+            {
+                await _npcs.SpawnAsync(template, map, location, props);
+
+                return;
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(
+                    exception,
+                    "The stabled {Template:l} could not be made again at {Location:l} (attempt {Attempt} of {Attempts})",
+                    template,
+                    location,
+                    attempt,
+                    SpawnAttempts
+                );
+
+                if (attempt < SpawnAttempts)
+                {
+                    await Task.Delay(RetryDelay);
+                }
+            }
+        }
+    }
+}
