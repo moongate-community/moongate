@@ -192,14 +192,14 @@ public sealed class PetLoyaltyTests
     }
 
     [Fact]
-    public void Obey_AnEasyCreature_AlwaysObeysAndKeepsItsLoyalty()
+    public void Obey_AnEasyCreature_AlwaysObeys_AndStillGainsALoyaltyPoint()
     {
         var dog = Pet(0x100, "dog");
         dog.SetProp(MountProps.PetLoyalty, 50);
         _roll = 0.99;
 
         Assert.Equal(PetObeyResultType.Obeyed, _service.Obey(_player, dog));
-        Assert.Equal(50, _service.Loyalty(dog));
+        Assert.Equal(51, _service.Loyalty(dog));
     }
 
     [Fact]
@@ -274,6 +274,31 @@ public sealed class PetLoyaltyTests
         Assert.Equal(90, _service.Loyalty(horse));
         Assert.Equal(100, _service.Loyalty(wild));
         Assert.Empty(speech.SaidClilocs);
+    }
+
+    [Fact]
+    public void Drain_APetWhoseOwnerIsAway_KeepsItsLoyalty()
+    {
+        var loyalty = new PetLoyaltyService(new RecordingTimerService(), _mobiles, _service, new RecordingSpeechService(), _config);
+        var horse = Pet(0x100, "horse");
+        horse.SetProp(MountProps.Owner, 77L);
+
+        loyalty.Drain();
+
+        Assert.Equal(100, _service.Loyalty(horse));
+    }
+
+    [Fact]
+    public void Drain_APetWithABadProp_DoesNotStopTheOthers()
+    {
+        var loyalty = new PetLoyaltyService(new RecordingTimerService(), _mobiles, _service, new RecordingSpeechService(), _config);
+        var bad = Pet(0x100, "horse");
+        bad.SetProp(MountProps.PetLoyalty, "lots");
+        var good = Pet(0x101, "horse");
+
+        loyalty.Drain();
+
+        Assert.Equal(90, _service.Loyalty(good));
     }
 
     [Fact]

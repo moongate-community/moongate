@@ -67,7 +67,7 @@ It will not fight you, another pet of yours, or what is dead. Sending your pets 
 ## Loyalty, food and obedience
 
 A pet is loyal to you from 0 to 100, and starts at 100. Time wears it down: every hour
-(`[ultima.pets] loyalty_drain_minutes`) each pet in the world loses 10 (`loyalty_drain`), whether you are there or not. Below
+(`[ultima.pets] loyalty_drain_minutes`) each pet in the world loses 10 (`loyalty_drain`), as long as you are in the world too: a pet whose owner is away keeps what it has. Below
 10 it looks around desperately; at 0 it has decided it is better off without a master: it is wild again, as if you had
 released it. A pet in a stable or under you is not in the world, so it loses nothing, and it comes back at 100.
 
@@ -79,7 +79,7 @@ fish. Food it does not eat is given back, and the pet shies away. The kinds each
 Orders can be refused. Every order but *release* rolls a chance, from your Animal Taming and Animal Lore against the skill
 the creature asks, less one hundredth for each point of loyalty it lacks (ModernUO's rule): a creature that asks 29.1 or
 less, or a game master, always gets obeyed. With the creature asking 70, Taming 100 and no Animal Lore the chance is 22%;
-with both at 120 it is 99% at full loyalty. A pet that obeys gains 1 loyalty (`obey_gain`); one that does not growls,
+with both at 120 it is 99% at full loyalty. A pet that obeys gains 1 loyalty (`obey_gain`), even when it could not have refused; one that does not growls,
 loses 3 (`disobey_loss`) and does not do what you said; if that was its last loyalty it goes wild. A kill order rolls once
 you have chosen the target.
 
@@ -105,6 +105,6 @@ item)`; the skill script is `scripts/skills/animal_taming.lua`.
 
 ## Not built yet
 
-Animal Lore, so the loyalty of a pet cannot be seen (and counts as 0 in the chance to be obeyed); bonding; gold, metal and
+Animal Lore as a skill to learn and to read a pet's loyalty (the chance to be obeyed already counts the Animal Lore a character has); bonding; gold, metal and
 leather as food; loyalty kept through a stable or a mount; friend, transfer, drop and patrol; bringing the pets along when the owner
 travels by gate or spell; and the pets of a player who is offline stay where they were.

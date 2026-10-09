@@ -57,6 +57,7 @@ local ORDER = "pet.order"
 local EAT = MonsterAnimationType.Fidget1
 local HAPPIER = 502060
 local SHIES_AWAY = 1043257
+local WILD = 1043255
 
 -- What a pet that does not obey does: it growls and fidgets, angry.
 local ANGER = MonsterAnimationType.Fidget2
@@ -268,6 +269,10 @@ local function obeys(pet_serial, speaker)
     if result == PetObeyResultType.Disobeyed or result == PetObeyResultType.Wild then
         npc.play_sound(pet_serial, "attack")
         mobile.animate(pet_serial, ANGER)
+    end
+
+    if result == PetObeyResultType.Wild then
+        npc.say_cliloc(pet_serial, WILD)
     end
 
     return false

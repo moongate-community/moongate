@@ -136,7 +136,10 @@ public sealed class PetService : IPetService
             creature.RemoveProp(MountProps.PetRegion);
         }
 
-        Changed(new Serial((uint)owner));
+        if (owner is > 0 and <= uint.MaxValue)
+        {
+            Changed(new Serial((uint)owner));
+        }
 
         return true;
     }
@@ -196,10 +199,7 @@ public sealed class PetService : IPetService
 
         if (chance >= 1 || _roll() < chance)
         {
-            if (chance < 1)
-            {
-                AdjustLoyalty(creature, _config.ObeyGain);
-            }
+            AdjustLoyalty(creature, _config.ObeyGain);
 
             return PetObeyResultType.Obeyed;
         }

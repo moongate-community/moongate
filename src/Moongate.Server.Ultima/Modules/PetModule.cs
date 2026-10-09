@@ -214,11 +214,14 @@ public sealed class PetModule
             return PetFeedResultType.NotYours;
         }
 
+        var before = _pets.Loyalty(pet);
         var result = _pets.Feed(owner, pet, food.TemplateId, food.Amount);
 
         if (result is PetFeedResultType.Fed or PetFeedResultType.AlreadyHappy && !_handling.Delete(food))
         {
-            // The loyalty was given, the food could not be taken: the pet does not eat twice.
+            // The food could not be taken: the pet does not eat twice, so the loyalty it gained goes back.
+            _pets.AdjustLoyalty(pet, before - _pets.Loyalty(pet));
+
             return PetFeedResultType.WrongFood;
         }
 
