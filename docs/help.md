@@ -35,7 +35,9 @@ The button refuses, with a text, when:
   with the character, so a relog does not reset it, and a request that moved nobody does not spend it.
 
 Jail and fighting are checked again when the wait is over. A character that logs out during the wait
-is not moved. Game masters and above have no pause.
+is not moved. When the map of the city is not loaded the character stays where it is, is told `There is no
+city to take you to.` and spends no pause. Every move is logged at Information with the player, where it
+was and the city. Game masters and above have no pause.
 
 ## Useful commands
 
@@ -66,7 +68,7 @@ The Lua module `help` gives a script what the menu uses:
 | `help.settings()` | `{ wait_seconds, cooldown_minutes }` |
 | `help.nearest_city(player)` | `{ town, x, y, z, map }` of the nearest starting city, or nil |
 
-The texts of the menu are the messages 30192 to 30200, in every shipped language.
+The texts of the menu are the messages 30192 to 30204, in every shipped language.
 
 ## Not yet
 

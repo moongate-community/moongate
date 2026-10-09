@@ -73,7 +73,7 @@ function help_menu.stuck(player, response, args)
     local staff = world.is_staff(player)
     local until_when = mobile.get_prop(player, pause_key)
 
-    if not staff and until_when ~= nil and until_when > world.now() then
+    if not staff and type(until_when) == "number" and until_when > world.now() then
         say(player, pause_message, math.ceil((until_when - world.now()) / 60))
 
         return
@@ -117,8 +117,16 @@ function help_menu.stuck(player, response, args)
             return
         end
 
-        mobile.teleport(player, city.x, city.y, city.z, city.map)
+        -- The map of the city may not be loaded: nobody was moved, so no pause is spent.
+        if not mobile.teleport(player, city.x, city.y, city.z, city.map) then
+            say(player, no_city_message)
+
+            return
+        end
+
         say(player, taken_message, city.town)
+        log.info("Player {Player} was moved by I am stuck from {From} to {Town}", player,
+            string.format("%d,%d,%d", from.x, from.y, from.z), city.town)
 
         if not staff then
             mobile.set_prop(player, pause_key, world.now() + settings.cooldown_minutes * 60)

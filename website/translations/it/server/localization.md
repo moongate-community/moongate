@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"c5991c34bb764d0eac81a3360f62d5e57741d8f48316a53dc9829627b1d01102","title":"Localizzazione"} -->
+<!-- translation: {"sourceHash":"e59b22dccc9a423435a6e8d00893bf734428d887b0edf8e8e7836380d2df9845","title":"Localizzazione"} -->
 
 # Localizzazione
 
@@ -217,7 +217,7 @@ Risiedono in `data/messages/<language>/moongate.toml`, separati dai testi standa
 | 30150 | Nessun personaggio si chiama {0}. | La risposta di `jail <name>` quando nessun giocatore ha quel nome |
 | 30160 a 30163 | Mostra la versione eseguita dal server…, Moongate {0} "{1}" ({2}), compilato {3}., Mostra da quanto tempo il server è in esecuzione…, Attivo da {0}, dal {1}. | I comandi `version` e `uptime` |
 | 30181 a 30184 | Nessun documento {0} in templates/books., Il documento {0} è nel tuo zaino., ... | Risposte e descrizione di aiuto del [comando `book`](commands/book.md) |
-| 30192 a 30200 | You cannot ask to be moved while you are in jail., You cannot ask to be moved while you are fighting., You already asked to be moved: stand still., You can ask to be moved again in {0} minutes., Stand still for {0} seconds and you will be taken to {1}., You moved: you stay where you are., You have been taken to {0}., There is no city to take you to. e le regole del server | Cosa legge un giocatore dal gump di [aiuto](help.md): perché «Sono bloccato» viene rifiutato, l'attesa, lo spostamento e il testo delle regole |
+| 30192 a 30204 | You cannot ask to be moved while you are in jail., You cannot ask to be moved while you are fighting., You already asked to be moved: stand still., You can ask to be moved again in {0} minutes., Stand still for {0} seconds and you will be taken to {1}., You moved: you stay where you are., You have been taken to {0}., There is no city to take you to., le regole del server e le quattro etichette del gump (Help, I am stuck, Useful commands, Server rules) | Cosa legge un giocatore dal gump di [aiuto](help.md): perché «Sono bloccato» viene rifiutato, l'attesa, lo spostamento, il testo delle regole e le etichette del menu |
 | 30185, 30186 | Apre il gump degli strumenti del game master…, Il gump gmtools manca: templates/gumps/gmtools.xml. | Il comando `gmtools` |
 
 L'intestazione dei testi dei comandi in `eng/moongate.toml` elenca gli ID di entrambi gli insiemi.

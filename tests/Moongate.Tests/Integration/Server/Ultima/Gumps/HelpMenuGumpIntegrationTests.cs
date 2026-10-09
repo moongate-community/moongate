@@ -42,11 +42,7 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Integration.Server.Ultima.Gumps;
 
 /// <summary>
-///     Runs the help gump shipped in
-///     <c>
-///         moongate_root
-///     </c>
-///     (templates/gumps/help_menu.xml and
+///     Runs the help gump shipped in <c>moongate_root</c> (templates/gumps/help_menu.xml and
 ///     scripts/gumps/help_menu.lua) with the real Lua engine: what its three buttons do.
 /// </summary>
 public sealed class HelpMenuGumpIntegrationTests : IAsyncLifetime
@@ -251,6 +247,61 @@ public sealed class HelpMenuGumpIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_teleports.Teleports);
         Assert.Equal("You cannot ask to be moved while you are in jail.", Told(Player)[^1]);
+    }
+
+    [Fact]
+    public void Stuck_TheTeleportFails_SaysThereIsNoCity_AndSpendsNoPause()
+    {
+        _teleports.Result = false;
+        Press(Player, StuckButton);
+        FireTimers();
+
+        Assert.Equal("There is no city to take you to.", Told(Player)[^1]);
+        Assert.DoesNotContain("You have been taken to Near.", Told(Player));
+
+        _teleports.Result = true;
+        Press(Player, StuckButton);
+
+        Assert.StartsWith("Stand still for 5 seconds", Told(Player)[^1], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Stuck_FightingDuringTheWait_MovesNobody()
+    {
+        Press(Player, StuckButton);
+        _combat.Attacks.Add((Mobile(Player), Mobile(Other)));
+        FireTimers();
+
+        Assert.Empty(_teleports.Teleports);
+        Assert.Equal("You cannot ask to be moved while you are fighting.", Told(Player)[^1]);
+    }
+
+    [Fact]
+    public void Stuck_JailedDuringTheWait_SpendsNoPause()
+    {
+        Press(Player, StuckButton);
+        _jail.SentenceList.Add(Sentence(Player));
+        FireTimers();
+        _jail.SentenceList.Clear();
+
+        Press(Player, StuckButton);
+
+        Assert.StartsWith("Stand still for 5 seconds", Told(Player)[^1], StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Stuck_AfterLoggingOutDuringTheWait_ThePlayerCanAskAgain()
+    {
+        Press(Player, StuckButton);
+        _fixture.Mobiles.LeaveWorld(new Serial((uint)Player));
+        FireTimers();
+        _fixture.Mobiles.EnterWorld(
+            new MobileEntity { Id = new Serial((uint)Player), Name = "Player", Map = MapType.Trammel }
+        );
+
+        Press(Player, StuckButton);
+
+        Assert.StartsWith("Stand still for 5 seconds", Told(Player)[^1], StringComparison.Ordinal);
     }
 
     [Fact]

@@ -33,6 +33,7 @@ public sealed class HelpRequestPacketHandlerTests : IAsyncLifetime
         new HelpRequestPacketHandler(_fixture.Mobiles, GumpModule()).Handle(_session, new HelpRequestPacket());
 
         Assert.Equal("help", Assert.Single(_gumps.Opened).Gump.Layout.Build().Strings[0]);
+        Assert.Equal("help_menu", _gumps.Opened[0].Gump.Id);
     }
 
     [Fact]

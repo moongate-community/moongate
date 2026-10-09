@@ -9,16 +9,8 @@ using Moongate.Server.Ultima.Interfaces.Loaders;
 namespace Moongate.Server.Ultima.Modules;
 
 /// <summary>
-///     The
-///     <c>
-///         help
-///     </c>
-///     Lua module: the settings of the help gump and the starting city nearest to a character, for the
-///     "I am stuck" button;
-///     <c>
-///         help.nearest_city(player)
-///     </c>
-///     .
+///     The <c>help</c> Lua module: the settings of the help gump and the starting city nearest to a character, for the
+///     "I am stuck" button; <c>help.nearest_city(player)</c>.
 /// </summary>
 [ScriptModule(
     "help",
@@ -38,11 +30,7 @@ public sealed class HelpModule
     }
 
     /// <summary>
-    ///     Gets the starting city nearest to a character on its map;
-    ///     <c>
-    ///         local city = help.nearest_city(player)
-    ///     </c>
-    ///     .
+    ///     Gets the starting city nearest to a character on its map; <c>local city = help.nearest_city(player)</c>.
     /// </summary>
     [ScriptFunction(
         helpText:
@@ -60,7 +48,7 @@ public sealed class HelpModule
                        .Where(candidate => candidate.Map == mobile.Map)
                        .OrderBy(candidate => Squared(candidate, mobile.Location.X, mobile.Location.Y))
                        .FirstOrDefault() ??
-                   cities.FirstOrDefault();
+                   (cities.Count > 0 ? cities[0] : null);
 
         if (city is null)
         {
@@ -78,11 +66,7 @@ public sealed class HelpModule
     }
 
     /// <summary>
-    ///     Gets the settings of the gump;
-    ///     <c>
-    ///         local s = help.settings()
-    ///     </c>
-    ///     .
+    ///     Gets the settings of the gump; <c>local s = help.settings()</c>.
     /// </summary>
     [ScriptFunction(
         helpText:

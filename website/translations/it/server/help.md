@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0f24e15ea5428fb9b4a2bde9d1c42e4b1983cd5f05b702ed1a1ecef0fdec1247","title":"Aiuto"} -->
+<!-- translation: {"sourceHash":"ce0c2f5d734e74f45539439974fdad1c22232f0414bf9239e4642616bbf3505d","title":"Aiuto"} -->
 
 # Aiuto
 
@@ -38,7 +38,10 @@ Il pulsante rifiuta, con un testo, quando:
   ha spostato nessuno non la consuma.
 
 Prigione e combattimento vengono controllati di nuovo alla fine dell'attesa. Un personaggio che esce
-dal gioco durante l'attesa non viene spostato. Game master e superiori non hanno pausa.
+dal gioco durante l'attesa non viene spostato. Se la mappa della città non è caricata il personaggio resta
+dove è, gli viene detto `There is no
+city to take you to.` e non consuma la pausa. Ogni spostamento viene registrato nel log a livello
+Information con il giocatore, dove era e la città. Game master e superiori non hanno pausa.
 
 ## Comandi utili
 
@@ -69,7 +72,7 @@ Il modulo Lua `help` dà a uno script ciò che usa il menu:
 | `help.settings()` | `{ wait_seconds, cooldown_minutes }` |
 | `help.nearest_city(player)` | `{ town, x, y, z, map }` della città di partenza più vicina, oppure nil |
 
-I testi del menu sono i messaggi da 30192 a 30200, in tutte le lingue distribuite.
+I testi del menu sono i messaggi da 30192 a 30204, in tutte le lingue distribuite.
 
 ## Non ancora
 
