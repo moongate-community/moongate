@@ -185,6 +185,36 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AMonsterThatIsTamed_GoesForNobody()
+    {
+        _skeleton.SetProp("owner", 7L);
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+
+        Think(12);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_state.Flags);
+        Assert.Empty(_combat.Attacks);
+        Assert.Equal(new Point3D(1600, 1600, 0), _skeleton.Location);
+    }
+
+    [Fact]
+    public void AMonsterTamedWhileItHunts_LetsGoOfItsPrey()
+    {
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        Think(4);
+        Assert.Equal(["war 256 True"], _state.Flags);
+
+        _skeleton.SetProp("owner", 7L);
+        Think(2);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+        Think(12);
+        Assert.Empty(_combat.Attacks);
+    }
+
+    [Fact]
     public void ABlueNpcInSight_IsGoneForToo_WithNoPlayerAround()
     {
         _aria.Hidden = true;

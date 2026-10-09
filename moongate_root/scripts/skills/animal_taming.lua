@@ -174,6 +174,8 @@ local function roll(user, creature)
     local result = pet.tame(user, creature)
 
     if result == PetResultType.Ok then
+        -- What it was fighting, the tamer included, it fights no more.
+        combat.stop(creature)
         mobile.message_cliloc(user, ACCEPT)
     elseif TAME_REFUSALS[result] then
         mobile.message_cliloc(user, TAME_REFUSALS[result])

@@ -99,10 +99,17 @@ end
 
 -- Whether the guard reaches the mobile: a criminal, or a murderer with its red name, that stands in a guarded region, not
 -- too far from its post. So a criminal cannot lead it away step by step.
+local function is_tamed(who)
+    local owner = npc.get_prop(who, "owner")
+
+    return owner ~= nil and owner ~= 0
+end
+
 local function is_wanted(serial, who)
     -- A ghost is no one the guards want: its crimes died with it. A monster is, as in ModernUO: the creatures that go for
     -- everyone are known by their script.
-    if mobile.is_dead(who) or not (mobile.criminal(who) or mobile.is_murderer(who) or npc.script_id(who) == "monster") then
+    if mobile.is_dead(who) or
+        not (mobile.criminal(who) or mobile.is_murderer(who) or (npc.script_id(who) == "monster" and not is_tamed(who))) then
         return false
     end
 

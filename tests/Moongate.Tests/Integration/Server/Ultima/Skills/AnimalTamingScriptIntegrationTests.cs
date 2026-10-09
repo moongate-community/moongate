@@ -163,6 +163,7 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<TargetModule>();
         _container.AddScriptModule<PetModule>();
+        _container.AddScriptModule<CombatModule>();
         _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -224,6 +225,8 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
         Assert.Equal((long)_aria.Id.Value, _horse.GetProp<long>(MountProps.Owner));
         Assert.Equal(1, _pets.Followers(_aria));
         Assert.Empty(_timers.Timers);
+        // What the horse was fighting, it fights no more.
+        Assert.Equal([_horse], _combat.Stopped);
     }
 
     [Fact]

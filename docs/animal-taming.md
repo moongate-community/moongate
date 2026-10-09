@@ -32,6 +32,9 @@ refused at the pick: "You have no chance of taming this creature."
 | `You can no longer see the creature.` | There is something between you |
 | `The animal is too angry to continue taming.` | It was hurt since you began |
 
+A creature that is tamed goes for nobody any more, whatever it hunted before, and the guards of a town leave it alone: a
+tamed dragon is not a monster to them. It still defends itself when it is hit.
+
 ## Followers
 
 A player may have 5 followers (`[ultima.pets] max_followers`, 1 to 50). Each creature counts for its slots, usually 1: the
