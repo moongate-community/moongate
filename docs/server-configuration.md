@@ -117,6 +117,9 @@ npc_damage_rate = 1.0                 # Divides the damage an NPC does to a play
 max_range = 1                         # Tiles a melee swing reaches.
 combatant_seconds = 60                # Seconds a fighter keeps its target without swinging.
 display_damage_numbers = true         # The damage shows over the one hit.
+blood_enabled = true                  # A hit that does damage leaves blood on the ground.
+blood_pieces = 2                      # Most pieces around the one under the victim, from 0 to 8.
+blood_seconds = 5                     # Seconds a piece lies on the ground, from 1 to 60.
 archery_stand_still_seconds = 1.0     # Seconds a player must have stood still before it shoots; 0 for none.
 
 [ultima.crime]
@@ -140,6 +143,15 @@ initial_fill = true                   # The first spawn of each region after the
 fine_gold = 500                       # Gold coins taken from a prisoner when its jail sentence ends; 0 takes nothing.
 max_days = 30                         # The longest sentence the jail gump accepts, in real days.
 
+[ultima.help]
+stuck_wait_seconds = 5                # The seconds a character must stand still before "I am stuck" moves it.
+stuck_cooldown_minutes = 10           # The minutes before a player can use "I am stuck" again; 0 allows it at once.
+page_cooldown_seconds = 60           # The seconds between two requests of one player to the game masters; 0 allows it at once.
+page_history_days = 30                # The days a closed request is kept before it is deleted at startup.
+
+[ultima.schedule]
+time_zone = ""                        # The IANA time zone of the hours in data/schedule.toml, such as Europe/Rome; empty is the zone of the system.
+
 [ultima.bulletin_boards]
 expire_days = 7                       # A thread of a bulletin board goes this many days after its last reply; 0 keeps it.
 max_messages = 50                     # The messages a board holds; its oldest thread goes when it is full.
@@ -151,6 +163,18 @@ max_items = 125                       # Items a bank box holds, bags included; 0
 max_withdraw = 60000                  # Coins a banker hands out at one time.
 min_check = 5000                      # The smallest bank check a banker writes.
 max_check = 1000000                   # The largest.
+
+[ultima.pets]
+max_followers = 5                     # Followers a player may have, from 1 to 50: the slots of the creatures it tamed that are in the world, and of the one it rides.
+loyalty_drain_minutes = 60            # Minutes between two drains of the loyalty of the pets in the world, from 1 to 1440.
+loyalty_drain = 10                    # Loyalty a pet loses at each drain, from 1 to 100; at 0 it goes wild.
+food_gain = 10                        # Loyalty a pet gains for each item of food it eats, from 1 to 100.
+obey_gain = 1                         # Loyalty a pet gains when it obeys an order it could have refused, from 0 to 100.
+disobey_loss = 3                      # Loyalty a pet loses when it refuses one, from 0 to 100.
+
+[ultima.stable]
+max_pets = 10                         # Pets a player may leave with the stablemasters, from 1 to 50.
+fee = 30                              # Gold a pet costs when it is stabled, from the backpack and then the bank; 0 makes it free.
 
 [persistence]
 auto_sync_schema = false
@@ -277,14 +301,21 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.combat.max_range`, `combatant_seconds` | 1 (from 1 to 24) and 60 (from 1 to 3600). How many tiles a melee swing reaches, and how long a fighter keeps its target without swinging, as ModernUO's minute. |
 | `ultima.combat.archery_stand_still_seconds` | `1.0` (from 0 to 60). The seconds a player holding a bow or a crossbow must have stood still, since its last step, before it can shoot; a turn does not count. 0 asks for nothing. See [Archers](combat.md#archers) |
 | `ultima.combat.display_damage_numbers` | `true`. The damage of a hit shows over the one hit (packet `0x0B`), to the players in the fight. |
+| `ultima.combat.blood_enabled`, `blood_pieces`, `blood_seconds` | `true`, 2 (from 0 to 8) and 5 (from 1 to 60). A hit that does damage leaves a piece of [blood](combat.md#the-damage) under the one hit and from one to `blood_pieces` around it; each piece goes after `blood_seconds`, which the check of the ground items every 5 seconds can stretch. |
 | `ultima.crime.criminal_seconds` | Default 120 (from 1 to 86400), ModernUO's and UOX3's two minutes. A mobile that did a criminal act is a criminal for this long, its name in grey for those who see it; another act starts the time again, and a murderer stays red. The time is saved with a character, so leaving the world does not clear it; an NPC comes back innocent after a restart. A player reads the client's "You've committed a criminal act!!" when it becomes one. Nothing makes a criminal by itself yet: scripts do with `mobile.set_criminal`, the staff with `set criminal`. |
 | `ultima.murder.*` | The murder counts, as ModernUO's. `short_term_hours` (default 8) and `long_term_hours` (default 40), from 1 to 8760: a short-term murder and a reported kill are each forgotten after that time, one by one, in real time, offline hours included (ModernUO counts online time), while the player is in the world or when it comes back. `report_delay_seconds` (default 4), `recently_reported_minutes` (default 10) and `aggressor_seconds` (default 120), from 1 to 86400: how long after its death a player is asked to report who attacked it, how long before it can report the same killer again, and how long an attack on an innocent keeps its attacker reportable. See [Murder counts](death.md#murder-counts). |
 | `ultima.crime.archer_guard_template` | Default `archerguard`. The mobile template of a guard that is called in **Ilshenar** and **Malas**, as ModernUO's `DefaultGuardType`: a guard with a bow, which shoots what it goes for from the bow's range instead of striking from beside it (see [guard.lua](scripting/shipped-scripts.md#guardlua)). Everywhere else the guard of `guard_template` comes. |
 | `ultima.crime.guards_enabled`, `guard_template`, `guard_seconds` | Default `true`, `guard` and 40 (from 1 to 86400). A player that says "guards" in a guarded region, by the keyword of its client in any language or by the plain word, calls the guards: for every criminal within 14 tiles that stands in a guarded region itself, the staff left out, an NPC of `guard_template` appears beside it, on a free tile a step away (on it when none is free), with the teleport effect and sound and says its line (message 30138); a criminal gets one guard at a time. The guard leaves the same way after `guard_seconds`. A guard kills what it goes for with one blow, and an archer guard shoots it. ModernUO is stricter about who can be called on: there, only who did its crime in that town in the last 15 seconds, and a murderer; here, anyone who is a criminal. A called guard bears the prop `guard.summoned`: one a stopped server left in the world is removed at the next start. Off, nobody comes. |
 | `ultima.spawns.initial_fill` | Default `true`. The first spawn of each spawn region after the start fills it to its `max` at once, so an empty world is full in about 10 minutes; `false` keeps UOX3's way, where the first spawn also brings only `call` NPCs. Used in game and standalone modes. See [NPC spawns](spawns.md#how-spawning-works). |
 | `ultima.jail.fine_gold`, `ultima.jail.max_days` | Defaults 500 (from 0 to 1,000,000,000) and 30 (from 1 to 3650). The gold taken from a prisoner when its sentence ends, from its backpack and then its bank box, and the longest sentence [`.jail`](commands/jail.md) accepts, in real days; see [Jail](jail.md). |
+| `ultima.help.stuck_wait_seconds`, `ultima.help.stuck_cooldown_minutes` | Defaults 5 (from 1 to 60) and 10 (from 0 to 1440). The wait and the pause of the "I am stuck" button of the [help](help.md) gump. |
+| `ultima.help.page_cooldown_seconds`, `ultima.help.page_history_days` | Defaults 60 (from 0 to 3600) and 30 (from 1 to 3650). The seconds a player waits between two requests to the game masters, and the days a closed request is kept before startup deletes it; see [Help](help.md). |
+| `ultima.schedule.time_zone` | Empty (the zone of the system) or an IANA id such as `Europe/Rome`. An unknown id stops the startup. A Docker container is in UTC unless it has `TZ` set or this setting; on Linux the zones need the tzdata package. See [Schedule](schedule.md). |
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Defaults 7 (from 0 to 3650; 0 keeps threads forever), 50 (from 1 to 200), 120 and 30 (from 0 to 86400). How long a thread of a [bulletin board](bulletin-boards.md) lasts after its last reply, how many messages a board holds, and how long a character waits between two new threads and between two posts on one board. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Defaults 125 (from 0 to 10000; 0 for no limit), 60000 (from 1 to 60000), 5000 and 1,000,000 (`min_check` from 1 to `max_check`, `max_check` up to 2,000,000,000). The items a [bank box](bank.md) holds, counted with what is inside its bags; the coins a banker hands out for one *withdraw*; the worth of the checks a banker writes. |
+| `ultima.stable.max_pets`, `ultima.stable.fee` | Defaults 10 (from 1 to 50) and 30 (from 0 to 100000). The pets a player may leave with an animal trainer, and what each costs when it is stabled: see the [stable](mounts.md#the-stable). |
+| `ultima.pets.max_followers` | Default 5 (from 1 to 50). The followers a player may have: see [animal taming](animal-taming.md#followers). |
+| `ultima.pets.loyalty_drain_minutes`, `loyalty_drain`, `food_gain`, `obey_gain`, `disobey_loss` | Defaults 60 (from 1 to 1440), 10 (1 to 100), 10 (1 to 100), 1 (0 to 100) and 3 (0 to 100). How often and how much a pet's loyalty falls, what a piece of food and an obeyed order give back, and what a refusal costs: see [animal taming](animal-taming.md#loyalty-food-and-obedience). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the

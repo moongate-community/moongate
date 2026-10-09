@@ -1,3 +1,5 @@
+using Moongate.Tests.TestSupport.Ultima.Skills;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -20,6 +22,7 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
@@ -53,9 +56,17 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _coin = Item(0x40000004, 0x0EED);
     private readonly ItemEntity _otherBackpack = Item(0x40000005, BackpackGraphic, "other_backpack");
     private readonly ItemEntity _pouch = Item(0x40000006, PouchGraphic);
+    private readonly ItemEntity _branBag = Item(0x40000007, BagGraphic);
 
     private readonly RecordingItemScriptService _scripts = new();
+    private readonly StubSkillScriptService _skillScripts = new();
+
+    private readonly ItemTemplateService _itemTemplates = new(
+        new StubDataLoaderService().With(new ItemTemplate { Id = "butte", ItemId = new Serial(0x100A), UseRange = 6 })
+    );
+
     private readonly StubBankService _bank = new();
+    private readonly RecordingMountService _mounts = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -68,7 +79,8 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         _coin.PutInContainer(_bag.Id, new Point2D(30, 30));
         _otherBackpack.Equip(Bran, LayerType.Backpack);
         _pouch.PutInContainer(_backpack.Id, new Point2D(90, 90));
-        _items.Add([_backpack, _bag, _dagger, _coin, _otherBackpack, _pouch]);
+        _branBag.PutInContainer(_otherBackpack.Id, new Point2D(50, 50));
+        _items.Add([_backpack, _bag, _dagger, _coin, _otherBackpack, _pouch, _branBag]);
         _mobiles.EnterWorld(Mobile(Aria, "Aria", 401, new(1000, 1000, 0)));
         _mobiles.EnterWorld(Mobile(Bran, "Bran", 400, new(1010, 1000, 0)));
     }
@@ -103,6 +115,79 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
         var paperdoll = Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
         Assert.Equal((Bran, "Bran", false), (paperdoll.Mobile, paperdoll.Title, paperdoll.CanLift));
+    }
+
+    [Fact]
+    public async Task Handle_ACreatureInRange_IsRidden_AndOpensNoPaperdoll()
+    {
+        var horse = Mobile(new Serial(0x100), "a horse", 17, new(1001, 1000, 0));
+        _mobiles.EnterWorld(horse);
+        await StartAsync(Aria);
+
+        await UseAsync(horse.Id);
+
+        var mount = Assert.Single(_mounts.Mounts);
+        Assert.Equal((Aria, horse.Id, false), (mount.Rider.Id, mount.Pet.Id, mount.Force));
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_ACreatureByAGameMaster_IsRiddenWithForce()
+    {
+        var horse = Mobile(new Serial(0x100), "a horse", 17, new(1001, 1000, 0));
+        _mobiles.EnterWorld(horse);
+        await StartAsync(Aria);
+        await _fixture.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        await UseAsync(horse.Id);
+
+        Assert.True(Assert.Single(_mounts.Mounts).Force);
+    }
+
+    [Fact]
+    public async Task Handle_AnotherPlayerWithAPaperdoll_IsNeverRidden()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(Bran);
+
+        Assert.Empty(_mounts.Mounts);
+        Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnCharacterWhileMounted_Dismounts_AndOpensNoPaperdoll()
+    {
+        _mounts.Mounted.Add(Aria);
+        await StartAsync(Aria);
+
+        await UseAsync(Aria);
+
+        Assert.Equal(Aria, Assert.Single(_mounts.Dismounts).Id);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnCharacterOnFoot_OpensItsPaperdoll_AndDismountsNobody()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(Aria);
+
+        Assert.Empty(_mounts.Dismounts);
+        Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnPaperdollButtonWhileMounted_StillOpensThePaperdoll()
+    {
+        _mounts.Mounted.Add(Aria);
+        await StartAsync(Aria);
+
+        await UseAsync(new Serial(Aria.Value | 0x80000000));
+
+        Assert.Empty(_mounts.Dismounts);
+        Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
     }
 
     [Fact]
@@ -328,6 +413,20 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(500446, message.Cliloc);
     }
 
+    [Theory, InlineData(1006, true), InlineData(1007, false)]
+    public async Task Handle_AScriptedGroundItemWithAUseRange_RunsFromAsFarAsItSays(int x, bool reached)
+    {
+        var butte = new ItemEntity { Id = new(0x40000011), TemplateId = "butte", ItemId = 0x100A, Amount = 1 };
+        butte.PlaceOnGround(MapType.Felucca, new Point3D(x, 1000, 0));
+        _items.Add([butte]);
+        _scripts.Scripted.Add("butte");
+        await StartAsync(Aria);
+
+        await UseAsync(butte.Id);
+
+        Assert.Equal(reached ? ["0x40000011 on_use 2"] : [], _scripts.Calls);
+    }
+
     [Theory, InlineData(1002, true), InlineData(1003, false)]
     public async Task Handle_AScriptedGroundItem_RunsOnlyWithinTwoTiles(int x, bool reached)
     {
@@ -417,13 +516,36 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task Handle_AnotherCharactersBackpack_DoesNotOpen()
+    public async Task Handle_AnotherCharactersBackpack_DoesNotOpen_ButIsSnoopedByTheScriptOfTheSkill()
     {
         await StartAsync(Aria);
 
         await UseAsync(_otherBackpack.Id);
 
         Assert.Empty(_sender.Sent);
+        Assert.Equal([$"Snooping on_snoop {Aria.Value} {Bran.Value} {_otherBackpack.Id.Value}"], _skillScripts.Called);
+    }
+
+    [Fact]
+    public async Task Handle_ABagInTheBackpackOfAnotherCharacter_IsSnoopedToo()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(_branBag.Id);
+
+        Assert.Equal([$"Snooping on_snoop {Aria.Value} {Bran.Value} {_branBag.Id.Value}"], _skillScripts.Called);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnBackpackAndItsBags_AreNotSnooped()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(_backpack.Id);
+        await UseAsync(_pouch.Id);
+
+        Assert.Empty(_skillScripts.Called);
     }
 
     [Fact]
@@ -606,7 +728,11 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             TestTooltips.Create(_items, _mobiles),
             Titles(),
             _scripts,
-            _bank
+            _bank,
+            null,
+            _itemTemplates,
+            _skillScripts,
+            mounts: _mounts
         );
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));

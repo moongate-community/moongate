@@ -5,7 +5,9 @@
 #   The treasure chests of the dungeons, as ModernUO's TreasureChestLevel1 to 4:
 #   a spawn region (templates/spawns/<map>/treasure_chests.toml) puts one on the
 #   ground with its gold and loot inside; it decays 45 minutes later, opened or
-#   not, and the region makes a new one. They have no lock and no trap yet.
+#   not, and the region makes a new one. Each is locked when it is made, by
+#   scripts/items/treasure_chest.lua: a lockpick (scripts/items/lockpick.lua)
+#   with enough Lockpicking opens it. They have no trap yet.
 #
 # Fields:
 #   base_id        inherits base_item
@@ -14,6 +16,7 @@
 #   decays         true, with decay_minutes: an item that cannot be picked up
 #                  decays only when its template gives both
 #   decay_minutes  how long the chest stays
+#   script_id      treasure_chest: the chest takes its lock when it is made
 #   gold           the gold inside, as dice
 #   loot           the loot tables of templates/loots, each rolled once; a
 #                  table listed twice is rolled twice. The chest_ tables
@@ -24,6 +27,7 @@
 [[item]]
 id = "treasure_chest_level_1"
 base_id = "base_item"
+script_id = "treasure_chest"
 item_id = 0x0E43
 name = "treasure chest"
 rarity = "common"

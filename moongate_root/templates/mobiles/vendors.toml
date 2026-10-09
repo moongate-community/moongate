@@ -42,6 +42,7 @@ gender = "female"
 [[mobile]]
 id = "animaltrainer"
 base_id = "basevendor"
+script_id = "stablemaster"
 name_list = "{gender}"
 title = "the Animal Trainer"
 gender = "random"
@@ -749,6 +750,7 @@ items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 [[mobile]]
 id = "gypsyanimaltrainer"
 base_id = "basevendor"
+script_id = "stablemaster"
 name_list = "{gender}"
 title = "the Gypsy Animal Trainer"
 gender = "random"
@@ -1866,8 +1868,6 @@ items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_
 hue = "0x0835-0x0852"
 gender = "female"
 
-# The healers of the evil, as ModernUO's EvilHealer and EvilWanderingHealer: a healer that turns nobody away, the red
-# players included (scripts/mobiles/healer.lua knows them by the id starting with "evil").
 [[mobile]]
 id = "evilhealer"
 base_id = "healer"

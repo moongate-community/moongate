@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"dbc6893e26807869bbc7bdc766207289b64740fc3f9968d13d1a85e31f12aec2","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"e51689ef89593d242d341bb994a2181161f822d56e6143779283c2a4be097e93","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**268 sistemi:** ✅ 82 completati, 🟡 49 parzialmente completati, ❌ 137 non ancora realizzati.
+**271 sistemi:** ✅ 88 completati, 🟡 62 parzialmente completati, ❌ 121 non ancora realizzati.
 
-**Copertura: 31%** dei sistemi completati, **40%** contando un sistema parzialmente completato come metà.
+**Copertura: 32%** dei sistemi completati, **44%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -56,7 +56,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Crimini, timer criminale e conteggio degli omicidi | 🟡 | Flag criminale con relativo timer, salvato con il mobile; attaccare un innocente o saccheggiare il cadavere di uno rende criminali. Una vittima segnala i suoi assassini in un gump: uccisioni e omicidi a breve termine, cinque rendono assassino con il nome rosso, dimenticati con il tempo (8 e 40 ore). Ancora niente furti o altri crimini |
 | Fame e sete | ✅ | Entrambe da 0 a 20 e in diminuzione nel tempo: un giocatore affamato non recupera punti vita, uno assetato non recupera stamina; il cibo si mangia, le bevande si bevono un sorso alla volta |
 | Veleno | ❌ | |
-| Nascondersi e furtività | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) nasconde un giocatore fino al suo primo passo; nessuna Stealth, e parlare o essere colpiti non lo rivela ancora |
+| Nascondersi e furtività | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) nasconde un giocatore fino al suo primo passo, [Stealth](scripting/shipped-scripts.md#stealthlua) gli lascia fare alcuni passi inosservato; parlare o essere colpiti non lo rivela ancora |
 | Morte, cadaveri, fantasmi e resurrezione | 🟡 | Un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill`: cadavere con ciò che trasportava, animazione e suono di morte, decadimento dopo 7 minuti. Un giocatore resta come fantasma (nascosto ai vivi se non in modalità guerra, sentito come oOo, senza combattere, usare abilità o sollevare oggetti) e viene resuscitato a un ankh o da un guaritore (per un decimo della sua fama), con `.resurrect` o `mobile.resurrect`. Niente ossa |
 | Protezione dei giovani giocatori | ❌ | |
 | Denunce di omicidio e bacheche delle taglie | 🟡 | Il gump di denuncia che una vittima riceve dopo la morte funziona, con i conteggi che aggiunge; niente taglie né bacheche |
@@ -87,6 +87,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Abilità speciali dei mostri | ❌ | |
 | Danno elementale e resistenze | ❌ | |
 | Elenchi degli aggressori e timeout degli attacchi | ❌ | |
+| Sangue sul colpo | ✅ | Un colpo che fa danno lascia sangue a terra che sparisce dopo qualche secondo; il `blood_hue` di una creatura lo colora o, a `-1`, lo impedisce (`ultima.combat.blood_*`) |
 | Numeri del danno sopra le teste | ✅ | Il danno di un colpo appare sopra chi lo subisce (`ultima.combat.display_damage_numbers`) |
 
 ## Magia
@@ -112,23 +113,23 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Sistema | Moongate | Note |
 | --- | --- | --- |
 | Usare e incrementare un'abilità | 🟡 | Un'[abilità](skills.md) viene usata dalla finestra delle abilità (`scripts/skills/<skill>.lua`), verificata da `skill.check` e incrementata con la formula di ModernUO; viene fornita solo Hiding, e le statistiche non aumentano ancora con le abilità |
-| Raccolta: estrazione mineraria, taglio della legna, pesca | ❌ | |
-| Motore di creazione: menu, ricette, risorse, qualità | ❌ | |
-| Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | ❌ | |
+| Raccolta: estrazione mineraria, taglio della legna, pesca | 🟡 | [Pesca](fishing.md) con una canna: acqua entro 4 caselle, 8 secondi, un pesce, una vecchia calzatura o niente in base all'abilità; i pesci di un luogo si esauriscono per zona e ritornano ([`harvest.toml`](data-files/harvest.md)). [Taglio della legna](lumberjacking.md) con un'ascia in mano: un albero entro 2 caselle, da uno a tre colpi, 10 tronchi in base all'abilità, la legna di un luogo che si esaurisce allo stesso modo. [Estrazione](mining.md) con un piccone o una pala: minerale di ferro dalla roccia di montagne e grotte, fuso in lingotti a una forgia. I tronchi si segano in assi con l'ascia, e una lama stacca legnetti da un albero. Un luogo è di uno fra sette tipi di legno, ognuno con la sua abilità richiesta, un maestro trova cose rare insieme ai tronchi, e un'ascia colpisce più forte con il Lumberjacking. Niente altri metalli, niente prese speciali |
+| Motore di creazione: menu, ricette, risorse, qualità | 🟡 | Il gump di creazione, le ricette in [`data/crafts`](data-files/crafts.md), i materiali contati nello zaino e nelle sue borse, la probabilità e i tipi di legno, oggetti eccezionali e marchio del creatore, attrezzi che si consumano e ricrea l'ultimo, condivisi da tutti i mestieri; vedi [Falegnameria](carpentry.md). Un oggetto eccezionale per ora cambia solo il tooltip; niente riparazione |
+| Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | 🟡 | [Falegnameria](carpentry.md): un attrezzo nello zaino apre il gump di creazione, 42 ricette da UOX3 in [`data/crafts`](data-files/crafts.md), create da assi comuni o da un tipo di legno che colora l'oggetto; una probabilità su due al minimo dell'abilità, certezza al massimo, metà dei materiali persa in un fallimento. Oggetti eccezionali con il marchio del creatore a 100, attrezzi che si consumano, ricrea l'ultimo. Il motore è condiviso dai mestieri che verranno; ancora nessun altro mestiere |
 | Riparare e migliorare gli oggetti | ❌ | |
 | Addomesticamento e conoscenza degli animali | ❌ | |
-| Guarigione e veterinaria | ❌ | |
-| Scassinamento, rimozione delle trappole | ❌ | Le porte si chiudono e si aprono con la loro chiave |
-| Frugare e rubare | ❌ | |
-| Inseguimento, individuazione dei nascosti, medicina legale, parlare con gli spiriti | ❌ | |
+| Guarigione e veterinaria | 🟡 | La [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura (Healing e Anatomy, Veterinary e Animal Lore) e resuscita un fantasma; niente veleno, niente sanguinamento, niente animali |
+| Scassinamento, rimozione delle trappole | 🟡 | Il [grimaldello](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) scassina un oggetto chiuso (i forzieri del tesoro dei dungeon nascono chiusi); niente trappole, quindi niente rimozione. Le porte si chiudono e si aprono con la loro chiave |
+| Frugare e rubare | 🟡 | [Snooping](scripting/shipped-scripts.md#snoopinglua) apre lo zaino di un altro mobile con un doppio clic; niente furto |
+| Inseguimento, individuazione dei nascosti, medicina legale, parlare con gli spiriti | 🟡 | [Individuazione dei nascosti e medicina legale](scripting/shipped-scripts.md#the-lore-skills) funzionano (niente trappole, niente gilda dei ladri); niente inseguimento, niente parlare con gli spiriti |
 | Abilità del bardo: musicalità, pacificazione, provocazione, discordanza | ❌ | |
-| Abilità di conoscenza: anatomia, conoscenza delle armi, identificazione degli oggetti, valutazione dell'intelligenza, identificazione dei sapori | ❌ | |
+| Abilità di conoscenza: anatomia, conoscenza delle armi, identificazione degli oggetti, valutazione dell'intelligenza, identificazione dei sapori | 🟡 | [Anatomia e valutazione dell'intelligenza](scripting/shipped-scripts.md#the-lore-skills) leggono le caratteristiche di un bersaglio; niente conoscenza delle armi (manca la durabilità), niente identificazione degli oggetti, niente identificazione dei sapori |
 | Meditazione, mendicità, pastorizia, campeggio, avvelenamento | ❌ | |
 | Smembrare i cadaveri | ❌ | |
 | Regioni delle risorse (minerali, legna, pesci per area, rigenerazione) | ❌ | |
 | Lavorazione delle risorse: fusione, telai, filatoi, pelli | ❌ | |
 | Classi e limiti delle abilità (totale abilità, totale statistiche) | 🟡 | Il totale delle abilità si ferma a `ultima.skills.total_cap` (700.0) e il totale delle statistiche a `ultima.skills.stat_cap` (225), entrambi riducendo ciò che è impostato in diminuzione; nessuna classe |
-| Oggetti di allenamento: manichini, bersagli per borseggio, bersagli per tiro con l'arco | ❌ | |
+| Oggetti di allenamento: manichini, bersagli per borseggio, bersagli per tiro con l'arco | 🟡 | I [manichini](scripting/shipped-scripts.md#training_dummylua) rispondono al colpo e fanno salire l'abilità dell'arma fino a 25, e i [bersagli per il tiro con l'arco](scripting/shipped-scripts.md#archery_buttelua) prendono le frecce e danno il punteggio; niente bersagli per borseggio, niente freccette |
 
 ## NPC
 
@@ -141,9 +142,9 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Parole chiave del parlato e risposte | 🟡 | Le parole chiave del client raggiungono `on_speech` in qualsiasi lingua; i banchieri rispondono a *bank*, *balance*, *withdraw* e *check*, e alla parola *deposit*, che non ha una parola chiave; nessuna parola chiave dei venditori ancora |
 | Creature acquatiche e anfibie | ✅ | Compaiono sull'acqua e nuotano |
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
-| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, aggirando porte chiuse e mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; gli NPC non aprono le porte e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
-| Animali e seguaci: comandi, lealtà, legame | ❌ | |
-| Cavalcature | ❌ | |
+| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, passando dalle porte chiuse che apre e aggirando quelle a chiave e i mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; un NPC che vaga non apre porte, e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
+| Animali e seguaci: comandi, lealtà, legame | 🟡 | La abilità [Animal Taming](animal-taming.md) doma circa 75 creature dei dati, con un limite di 5 seguaci mostrato nella finestra di stato. Un animale segue il padrone e obbedisce a come, follow, stay, stop, guard, kill, attack e release, da solo o con *all*, a meno che la poca lealtà o la skill del padrone lo faccia rifiutare. La lealtà scende col tempo, il cibo trascinato su un animale la ripristina e a 0 torna selvatico. Niente Animal Lore, legame né fame oltre a questo |
+| Cavalcature | 🟡 | [Cavalcature](mounts.md): un game master dà un cavallo, un lama o uno struzzo con [`tame`](commands/tame.md); il suo proprietario ci sale con un doppio clic e ne scende con un doppio clic su di sé, oppure muore, e corre il doppio più veloce. Chi è in sella non può estrarre, pescare né usare Stealth, e un teletrasporto può rifiutarlo. La [stalla](mounts.md#the-stable) degli addestratori di animali custodisce gli animali di un giocatore, e le [statuette eteree](mounts.md#ethereal-mounts) danno una cavalcatura senza creatura. Chi è in sella colpisce con le animazioni dell'attacco in sella. Niente bola |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
 | Raccolte di nomi | ✅ | Elenchi di nomi per tipo e genere |
 | Bisogni: cibo, pascolo, desideri | ❌ | |
@@ -158,15 +159,15 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 
 | Sistema | Moongate | Note |
 | --- | --- | --- |
-| Venditori: acquisto, vendita, rifornimento | ❌ | I prezzi degli oggetti sono nei template; nulla compra o vende |
+| Venditori: acquisto, vendita, rifornimento | ✅ | La finestra del negozio, la merce e le tabelle di vendita dei negozi di ModernUO, oro dello zaino poi della banca, tutto o niente, il rifornimento orario e la rivendita di ciò che i giocatori hanno venduto; vedi [Venditori](vendors.md) |
 | Banchiere e cassetta di banca | ✅ | La parola chiave *bank* in qualsiasi lingua del client; aperta mentre il giocatore resta fermo; saldo, prelievo e deposito tramite parlato; limite di oggetti; vedi [Banca](bank.md) |
 | Stalliere, veterinario | ❌ | |
-| Istruttori delle abilità | ❌ | |
+| Istruttori delle abilità | 🟡 | Venditori e guaritori insegnano le abilità che hanno a 60,0 o più, in cambio di oro trascinato su di loro; vedi [Abilità](skills.md#trainers) |
 | Guaritori che resuscitano | 🟡 | Un fantasma che si avvicina a un guaritore riceve l'offerta di tornare in vita; i guaritori malvagi non sono ancora posizionati nel mondo |
 | Venditori dei giocatori | ❌ | |
 | Mercenari | ❌ | |
 | Missioni di scorta | ❌ | |
-| Maestri di gilda | ❌ | |
+| Maestri di gilda | ✅ | I dodici maestri di gilda di ModernUO insegnano il loro mestiere, accettano membri per la loro gilda con parole e oro, e sono collocati dagli spawn di ModernUO; vedi [Abilità](skills.md#guildmasters) |
 | Ordini di produzione in massa | ❌ | |
 
 ## Oggetti
@@ -182,7 +183,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Oggetti a terra e relativo decadimento | ✅ | |
 | Oggetti da script | ✅ | Script Lua per gli oggetti: uso, equipaggiamento, rimozione, raccolta, rilascio, creazione, oscurità, un giocatore che vi cammina sopra, parlato nelle vicinanze |
 | Tabelle del bottino | ✅ | Generato nello zaino di ogni NPC comparso, nei forzieri del tesoro e nei contenitori cittadini, e dagli script con `item.add_loot` |
-| Porte | ✅ | Apertura e chiusura; porte doppie collegate; una porta chiusa blocca il passaggio, lo staff la attraversa |
+| Porte | ✅ | Apertura e chiusura; porte doppie collegate; una porta chiusa blocca il passaggio, lo staff la attraversa; umani e mostri che camminano verso un luogo aprono quelle non a chiave |
 | Serrature e chiavi | ✅ | Le porte chiuse a chiave si aprono per un giocatore che porta la loro chiave |
 | Luci | ✅ | Accensione e spegnimento; i lampioni si accendono di notte |
 | Pozioni e cibo | 🟡 | Il cibo si mangia: fame, stamina, suono e gesto. Le bevande si bevono a sorsi, lasciando una brocca o un bicchiere vuoto; nessun riempimento, nessuna ubriachezza. Una pozione di esempio viene bevuta e consumata, senza ancora alcun effetto |
@@ -279,6 +280,8 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | --- | --- | --- |
 | Comandi con livelli di accesso | ✅ | Dalla console (completamento di comandi e argomenti con TAB, cronologia con Su/Giù) e in gioco; vedi [Comandi](commands.md) |
 | Salvataggio del mondo | ✅ | Periodico e allo spegnimento, con `.save` |
+| Task a orario, spegnimento ed eventi stagionali | ✅ | `data/schedule.toml`: task per ora, giorno o settimana (spegnimento con avvisi, messaggio, funzione Lua), eventi per data con interruttore dello staff e hook `on_start`/`on_end`, in un fuso orario a scelta; vedi [Calendario](schedule.md) |
+| Eventi festivi | 🟡 | [Feste](holidays.md): Halloween (dal 24 ottobre al 15 novembre), dove i negozianti rispondono a "trick or treat" con una caramella o uno scherzo, e Natale (dal 24 dicembre al 1° gennaio), con palle di neve da lanciare e un regalo all'accesso una volta a stagione; entrambi decorano le città principali finché sono attivi |
 | Backup del database | ✅ | Esportazioni SQL a rotazione, pianificate e con `.sql_backup`; ripristino con psql |
 | Console | ✅ | |
 | Configurazione del server | ✅ | `moongate.toml`, validato all'avvio |
@@ -288,8 +291,8 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Amministrazione remota | 🟡 | API gRPC con TLS; nessun pannello web |
 | Metriche e diagnostica | ✅ | Metriche del processo e dei plugin |
 | Ricaricamento a caldo | 🟡 | Script Lua; non dati o template |
-| Coda di richieste ai GM (page) | ❌ | |
-| Menu di aiuto e menu per personaggi bloccati | ❌ | |
+| Coda di richieste ai GM (page) | ✅ | Un giocatore chiama un game master dal menu Help (genere e una riga, una richiesta alla volta, una pausa); lo staff smaltisce la coda dal gump [`.pages`](commands/pages.md): andare dal giocatore, prendere in carico, rispondere, chiudere; la risposta arriva al giocatore online o al login successivo; vedi [Aiuto](help.md) |
+| Menu di aiuto e menu per personaggi bloccati | ✅ | Il pulsante Help apre un menu: «Sono bloccato» porta un personaggio alla città di partenza più vicina dopo un'attesa, con una pausa; comandi utili; regole del server; vedi [Aiuto](help.md) |
 | Prigioni | ✅ | Un gump elenca le celle e i detenuti; pene in giorni reali, multa in oro e nota di rilascio alla fine, una cassa di pane e acqua in ogni cella; un giocatore offline viene incarcerato per nome e sconta la pena dal login successivo; vedi [Prigione](jail.md) |
 | Elenco dei presenti | ❌ | |
 | Strumenti dello staff: gump delle proprietà, menu di aggiunta, comandi di area | 🟡 | Il gump dei luoghi nominati, `.go`, con i 558 luoghi di ModernUO, e `.gmtools`, un gump con barra laterale di strumenti: forza il meteo, imposta la stagione della mappa, mostra l'ora e imposta la luce; nessun gump delle proprietà, menu di aggiunta o comando di area |

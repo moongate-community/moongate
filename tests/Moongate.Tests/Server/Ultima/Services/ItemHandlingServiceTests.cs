@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Internal.Items;
@@ -26,11 +27,13 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
 
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
         .Item(0x0EED, TileFlagType.Generic, 0)
+        .Item(0x0F5E, TileFlagType.Weapon, 0)
         .Item(0x0E75, TileFlagType.Container, 0);
 
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
+            new ItemTemplate { Id = "sword", ItemId = new Serial(0x0F5E) },
             new ItemTemplate { Id = "backpack", ItemId = new Serial(0x0E75) }
         )
     );
@@ -53,15 +56,7 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
         _backpack.Equip(_owner.Id, LayerType.Backpack);
         _gold.PutInContainer(_backpack.Id, new Point2D(20, 20));
         _items.Add([_backpack, _gold]);
-        _handling = new(
-            _items,
-            _fixture.Sessions,
-            _fixture.Sender,
-            _view,
-            TestTooltips.Create(_items, _fixture.Mobiles),
-            new FakeItemFactoryService(_templates, _tiles),
-            _serials
-        );
+        _handling = Handling();
     }
 
     [Fact]
@@ -69,12 +64,89 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
     {
         _serials.Serials.Enqueue(new Serial(0x40000F00));
 
+        var given = _handling.Give(_owner, "sword");
+
+        Assert.NotNull(given);
+        Assert.Equal((new Serial(0x40000F00), 1, (Serial?)_backpack.Id), (given.Id, given.Amount, given.ContainerId));
+        Assert.Contains(given, _items.GetContents(_backpack.Id));
+        Assert.Contains(_fixture.Sender.Sent.OfType<ContainerItemUpdatePacket>(), packet => packet.Item.Serial == given.Id);
+    }
+
+    [Fact]
+    public void Give_WhatStacks_JoinsTheStackOfItsKindInTheBackpack_AndUsesNoSerial()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+
+        var given = _handling.Give(_owner, "gold", 30);
+
+        // The 100 coins of the backpack are 130: no new item, no new slot.
+        Assert.Same(_gold, given);
+        Assert.Equal(130, _gold.Amount);
+        Assert.Equal([_gold], _items.GetContents(_backpack.Id));
+        Assert.Single(_serials.Serials);
+        Assert.Contains(_fixture.Sender.Sent.OfType<ContainerItemUpdatePacket>(), packet => packet.Item.Serial == _gold.Id);
+    }
+
+    [Fact]
+    public void Give_WhatStacks_JoinsItsStack_EvenWhenTheBackpackHasNoRoomForAnotherItem()
+    {
+        var handling = Handling(capacity: new StubContainerCapacityService { HasRoomResult = false });
+
+        Assert.Same(_gold, handling.Give(_owner, "gold", 5));
+        Assert.Equal(105, _gold.Amount);
+    }
+
+    [Theory]
+    // Another hue, a prop of its own, or a stack that would pass 60000: a stack apart.
+    [InlineData(0x21, false, 100)]
+    [InlineData(0, true, 100)]
+    [InlineData(0, false, 59_990)]
+    public void Give_WhatStacks_MakesAnItemApart_WhenNoStackInTheBackpackCanTakeIt(int hue, bool marked, int amount)
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        _gold.Hue = new Hue((ushort)hue);
+        _gold.Amount = amount;
+
+        if (marked)
+        {
+            _gold.SetProp("blessed.by", "Aria");
+        }
+
         var given = _handling.Give(_owner, "gold", 30);
 
         Assert.NotNull(given);
-        Assert.Equal((new Serial(0x40000F00), 30, (Serial?)_backpack.Id), (given.Id, given.Amount, given.ContainerId));
-        Assert.Contains(given, _items.GetContents(_backpack.Id));
-        Assert.Contains(_fixture.Sender.Sent.OfType<ContainerItemUpdatePacket>(), packet => packet.Item.Serial == given.Id);
+        Assert.NotSame(_gold, given);
+        Assert.Equal((30, amount), (given.Amount, _gold.Amount));
+        Assert.Equal(2, _items.GetContents(_backpack.Id).Count);
+    }
+
+    [Fact]
+    public void Give_WithAHue_IsAnItemOfThatHue_ApartFromTheStackOfAnotherHue_AndJoinsOneOfItsOwn()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+
+        var given = _handling.Give(_owner, "gold", 30, hue: new Hue(0x7DA));
+
+        // Coloured before it looks for a stack: the 100 plain coins stay as they are.
+        Assert.NotNull(given);
+        Assert.NotSame(_gold, given);
+        Assert.Equal((30, new Hue(0x7DA)), (given.Amount, given.Hue));
+        Assert.Equal(100, _gold.Amount);
+        Assert.Same(given, _handling.Give(_owner, "gold", 5, hue: new Hue(0x7DA)));
+        Assert.Equal(35, given.Amount);
+    }
+
+    [Fact]
+    public void Give_WhatDoesNotStack_IsAnItemApartEachTime()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        _serials.Serials.Enqueue(new Serial(0x40000F01));
+
+        var first = _handling.Give(_owner, "sword");
+        var second = _handling.Give(_owner, "sword");
+
+        Assert.NotSame(first, second);
+        Assert.Equal(3, _items.GetContents(_backpack.Id).Count);
     }
 
     [Fact]
@@ -92,26 +164,30 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
     public void Give_IntoABackpackWithNoRoom_IsNull_AndUsesNoSerial()
     {
         _serials.Serials.Enqueue(new Serial(0x40000F00));
-        var handling = new ItemHandlingService(
-            _items,
-            _fixture.Sessions,
-            _fixture.Sender,
-            _view,
-            TestTooltips.Create(_items, _fixture.Mobiles),
-            new FakeItemFactoryService(_templates, _tiles),
-            _serials,
-            capacity: new StubContainerCapacityService { HasRoomResult = false }
-        );
+        var handling = Handling(capacity: new StubContainerCapacityService { HasRoomResult = false });
 
-        Assert.Null(handling.Give(_owner, "gold", 30));
+        Assert.Null(handling.Give(_owner, "sword"));
         Assert.Single(_serials.Serials);
         Assert.Single(_items.GetContents(_backpack.Id));
     }
 
     [Fact]
+    public void Give_IgnoringTheCapacity_PutsItInABackpackWithNoRoom()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        var handling = Handling(capacity: new StubContainerCapacityService { HasRoomResult = false });
+
+        var given = handling.Give(_owner, "sword", ignoreCapacity: true);
+
+        Assert.NotNull(given);
+        Assert.Equal(_backpack.Id, given.ContainerId);
+        Assert.Equal(2, _items.GetContents(_backpack.Id).Count);
+    }
+
+    [Fact]
     public void Give_AnUnknownTemplateOrWithNoSerialLeft_IsNull()
     {
-        Assert.Null(_handling.Give(_owner, "gold", 30));
+        Assert.Null(_handling.Give(_owner, "sword"));
         _serials.Serials.Enqueue(new Serial(0x40000F00));
         Assert.Null(_handling.Give(_owner, "atlantis", 1));
         Assert.Single(_serials.Serials);
@@ -154,10 +230,42 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Consume_AnItemInsideABagHeldOnACursor_IsFalse()
+    {
+        // A lifted bag stays where it was until it is dropped, and so does what it holds: none of it can be taken.
+        var bag = new ItemEntity { Id = new Serial(0x40000777), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        bag.PutInContainer(_backpack.Id, new Point2D(30, 30));
+        _items.Add([bag]);
+        _items.MoveToContainer(_gold, bag.Id, new Point2D(10, 10));
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(_owner.Id, out var session));
+        await _fixture.Network.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, new HeldItem(bag.Id)));
+
+        Assert.True(_handling.IsHeld(_gold));
+        Assert.False(_handling.Consume(_gold, 10));
+        Assert.Equal(100, _gold.Amount);
+    }
+
+    [Fact]
     public void Delete_AWornItemOrAContainerThatHoldsItems_IsFalse()
     {
         Assert.False(_handling.Delete(_backpack));
         Assert.True(_items.TryGet(_backpack.Id, out _));
+    }
+
+    private ItemHandlingService Handling(IContainerCapacityService? capacity = null)
+    {
+        return new(
+            _items,
+            _fixture.Sessions,
+            _fixture.Sender,
+            _view,
+            TestTooltips.Create(_items, _fixture.Mobiles),
+            new FakeItemFactoryService(_templates, _tiles),
+            _serials,
+            capacity: capacity,
+            templates: _templates,
+            tiles: _tiles
+        );
     }
 
     public async Task DisposeAsync()

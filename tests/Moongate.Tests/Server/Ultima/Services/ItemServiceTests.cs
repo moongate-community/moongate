@@ -635,6 +635,22 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void CanReach_WithARange_ReachesFartherThanTwoTiles_ButNotFartherThanTheRange()
+    {
+        var items = TestItems.Create(sight: _sight);
+        var butte = Item(0x40000051);
+        items.Add([butte]);
+        items.PlaceOnGround(butte, MapType.Trammel, new Point3D(1501, 1628, 10));
+
+        Assert.False(items.CanReach(_aria, butte));
+        Assert.True(items.CanReach(_aria, butte, 6));
+
+        items.PlaceOnGround(butte, MapType.Trammel, new Point3D(1503, 1628, 10));
+
+        Assert.False(items.CanReach(_aria, butte, 6));
+    }
+
+    [Fact]
     public void CanReach_AGroundItemSomeoneHolds_IsFalse()
     {
         var items = TestItems.Create(sight: _sight);
@@ -706,6 +722,26 @@ public sealed class ItemServiceTests
         items.Remove([shirt.Id]);
 
         Assert.Empty(items.GetWorn(Aria));
+    }
+
+    [Fact]
+    public void GetWornAt_GivesTheItemOnThatLayerOnly()
+    {
+        var items = TestItems.Create();
+        var shirt = Item(0x40000050);
+        var mount = Item(0x40000051);
+        shirt.Equip(Aria, LayerType.Shirt);
+        mount.Equip(Aria, LayerType.Mount);
+        items.Add([shirt, mount]);
+
+        Assert.Same(mount, items.GetWornAt(Aria, LayerType.Mount));
+        Assert.Same(shirt, items.GetWornAt(Aria, LayerType.Shirt));
+        Assert.Null(items.GetWornAt(Aria, LayerType.Backpack));
+        Assert.Null(items.GetWornAt(new Serial(0x999), LayerType.Mount));
+
+        items.Remove([mount.Id]);
+
+        Assert.Null(items.GetWornAt(Aria, LayerType.Mount));
     }
 
     [Fact]

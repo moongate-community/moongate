@@ -107,6 +107,18 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AWornImmovableItem_IsNotLifted()
+    {
+        _shirt.Movable = false;
+        await StartAsync(Aria);
+
+        await LiftAsync(_shirt.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal((Aria, LayerType.Shirt), (_shirt.MobileId!.Value, _shirt.Layer!.Value));
+    }
+
+    [Fact]
     public async Task Handle_ALift_ShowsThePlayerItsWeightAgain_WithoutAWarning()
     {
         await StartAsync(Aria);

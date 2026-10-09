@@ -215,6 +215,11 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30150 | No character is named {0}. | What `jail <name>` answers when no player has the name |
 | 30160 to 30163 | Shows the version the server runs…, Moongate {0} "{1}" ({2}), built {3}., Shows how long the server has been running…, Up for {0}, since {1}. | The `version` and `uptime` commands |
 | 30181 to 30184 | No document {0} in templates/books., Document {0} is in your backpack., ... | The [`book` command](commands/book.md) replies and help description |
+| 30192 to 30204 | You cannot ask to be moved while you are in jail., You cannot ask to be moved while you are fighting., You already asked to be moved: stand still., You can ask to be moved again in {0} minutes., Stand still for {0} seconds and you will be taken to {1}., You moved: you stay where you are., You have been taken to {0}., There is no city to take you to., the rules of the server, and the four labels of the gump (Help, I am stuck, Useful commands, Server rules) | What a player reads from the [help](help.md) gump: why "I am stuck" is refused, the wait, the move, the rules text and the labels of the menu |
+| 30205 to 30220 | Call a game master, What is it about?, Question, Bug, Suggestion, Harassment, the typing prompt, the answers to a request, the alert to the staff, the answer line, the waiting count, and the description of the `pages` command | What a player and a game master read from the [help](help.md) queue |
+| 30224 to 30229 | The server will shut down in {0} minutes., the description of the `event` command and its replies | What a player and an administrator read from the [schedule](schedule.md) |
+| 30230 to 30237 | Oooooh, aren't you cute!, TRICK!, You receive some candy., the announcements of the season | What a shopkeeper says and a player reads in [trick or treat](holidays.md#halloween-trick-or-treat) |
+| 30238 to 30240 | Merry Christmas!, The Christmas season is over., Happy Holidays! Gift items have been placed in your backpack. | The announcements and the gift of [Christmas](holidays.md#christmas-snowballs-and-gifts) |
 | 30185, 30186 | Opens the gump of the game master's tools…, The gmtools gump is missing: templates/gumps/gmtools.xml. | The `gmtools` command |
 
 The header of the command texts in `eng/moongate.toml` lists the ids of both sets.

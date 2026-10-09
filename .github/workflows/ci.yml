@@ -56,6 +56,22 @@ jobs:
       - name: Build
         run: dotnet build Moongate.slnx -c Release --no-restore
 
+  # The data converters are Python: their unit tests run on every pull request. The golden and end to end tests need checkouts of
+  # ModernUO and UOX3 and run locally.
+  convert-tests:
+    runs-on: [self-hosted, gung-dotnet]
+
+    container:
+      image: ghcr.io/astral-sh/uv:python3.13-bookworm
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Test the converters
+        working-directory: tools/convert
+        run: uv run --locked pytest
+
   build-and-test:
     if: ${{ (github.event_name == 'pull_request' && github.base_ref == 'main') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     # Self-hosted runner on gung-server-01, registered with the custom label

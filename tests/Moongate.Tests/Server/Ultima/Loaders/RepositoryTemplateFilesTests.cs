@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Books;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Types.Guilds;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Items;
@@ -25,7 +26,6 @@ namespace Moongate.Tests.Server.Ultima.Loaders;
 /// </summary>
 public sealed class RepositoryTemplateFilesTests
 {
-
     [Theory]
     [InlineData("eng")]
     [InlineData("ita")]
@@ -365,7 +365,7 @@ public sealed class RepositoryTemplateFilesTests
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
-        Assert.Equal(677, mobiles.Count);
+        Assert.Equal(699, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
         // Moongate's own cats inherit the UOX3 cat and add their name and script.
         Assert.Equal(
@@ -451,6 +451,250 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedBlood_IsSevenDecayingGroundItems_AndTheUndeadAndTheGolemsDoNotBleed()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            ).LoadDataAsync())
+            .Entities.ToDictionary(t => t.Id);
+
+        // Each piece the blood service puts down is a template that is not movable and decays, and has a graphic.
+        Assert.All(
+            BloodService.Templates,
+            id =>
+            {
+                var piece = Assert.Single(items, item => item.Id == id);
+                Assert.Equal((false, true, true), (piece.Movable ?? true, piece.Decays ?? false, piece.ItemId.Value != 0));
+            }
+        );
+
+        Assert.Equal(-1, mobiles["skeleton"].BloodHue);
+        Assert.Equal(-1, mobiles["zombie"].BloodHue);
+        Assert.Equal(-1, mobiles["golem"].BloodHue);
+        Assert.Null(mobiles["orc"].BloodHue);
+    }
+
+    [Fact]
+    public async Task ShippedDummiesAndButtes_UseTheirScripts_AndTheButtesAreShotFromAfar()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.All(
+            new[] { "0x1070_training_dummy", "0x1071_training_dummy", "0x1074_training_dummy", "0x1075_training_dummy" },
+            id => Assert.Equal("training_dummy", items[id].ScriptId)
+        );
+        Assert.All(
+            new[] { "0x100a_archery_butte", "0x100b_archery_butte" },
+            id => Assert.Equal(("archery_butte", (int?)6), (items[id].ScriptId, items[id].UseRange))
+        );
+
+        foreach (var script in new[] { "training_dummy.lua", "archery_butte.lua" })
+        {
+            Assert.True(File.Exists(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", script)));
+        }
+    }
+
+    [Fact]
+    public async Task ShippedLockpicksAndTreasureChests_UseTheirScripts_AndTheScriptsAreThere()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.All(
+            new[] { "0x14fb_lockpick", "0x14fc_lockpick", "0x14fd_lockpicks", "0x14fe_lockpicks" },
+            id => Assert.Equal("lockpick", items[id].ScriptId)
+        );
+        Assert.All(
+            new[] { "treasure_chest_level_1", "treasure_chest_level_2", "treasure_chest_level_3", "treasure_chest_level_4" },
+            id => Assert.Equal("treasure_chest", items[id].ScriptId)
+        );
+
+        foreach (var script in new[] { "lockpick.lua", "treasure_chest.lua" })
+        {
+            Assert.True(File.Exists(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", script)));
+        }
+    }
+
+    [Fact]
+    public async Task ShippedBandage_UsesTheBandageScript_AndTheScriptIsThere()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+
+        var bandage = Assert.Single(items, item => item.Id == "0x0e21_clean_bandage");
+
+        Assert.Equal("bandage", bandage.ScriptId);
+        Assert.True(File.Exists(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "bandage.lua")));
+    }
+
+    [Fact]
+    public async Task ShippedFishingPoles_UseTheFishingPoleScript_AndWhatItPullsOutIsThere()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.Equal("fishing_pole", items["0x0dbf_fishing_pole"].ScriptId);
+        Assert.Equal("fishing_pole", items["0x0dc0_fishing_pole"].ScriptId);
+
+        var script = await File.ReadAllTextAsync(
+            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "fishing_pole.lua")
+        );
+        var caught = System.Text.RegularExpressions.Regex.Matches(script, "template = \"([^\"]+)\"")
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+
+        // Four fish and four pieces of footwear, each an item template of the distribution.
+        Assert.Equal(8, caught.Length);
+        Assert.All(caught, template => Assert.Contains(template, items.Keys));
+    }
+
+    [Fact]
+    public async Task ShippedAxes_UseTheAxeScript_AndItsLogsAndWoodAreThere()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        // The hatchet and the axe of every era take the script from their base; a war axe chops nothing.
+        Assert.All(
+            new[] { "0x0f43", "0x0f43_lbr", "0x0f43_t2a", "0x0f49", "0x0f49_aos", "0x13fb", "0x0f4b" },
+            id => Assert.Equal("axe", items[id].ScriptId)
+        );
+        Assert.NotEqual("axe", items["0x13b0"].ScriptId);
+
+        var script = await File.ReadAllTextAsync(
+            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "common", "woods.lua")
+        );
+        var logs = System.Text.RegularExpressions.Regex.Match(script, "id = \"plain\", name = \"plain\", logs = \"([^\"]+)\"").Groups[1].Value;
+
+        Assert.True(items[logs].Stackable);
+
+        var wood = Assert.Single((await new HarvestLoader(directories).LoadDataAsync()).Entities, r => r.Id == "wood");
+        Assert.Equal((4, 2, 4, 20, 30), (wood.Area, wood.AmountMin, wood.AmountMax, wood.RespawnMinMinutes, wood.RespawnMaxMinutes));
+    }
+
+    [Fact]
+    public async Task ShippedBlades_UseTheBladeScript_AndBoardsAndKindlingAreThere()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        // A dagger, a skinning knife, a butcher knife and a long sword cut; an axe keeps its own script, and the
+        // flower garland UOX3 binds to its blade script by mistake cuts nothing.
+        Assert.All(new[] { "0x0f51", "0x0f52", "0x0ec4", "0x13f6", "0x0f61" }, id => Assert.Equal("blade", items[id].ScriptId));
+        Assert.Equal("axe", items["0x0f49"].ScriptId);
+        Assert.NotEqual("blade", items["0x2306"].ScriptId);
+        // Every template with the script is a weapon.
+        Assert.All(items.Values.Where(item => item.ScriptId == "blade"), item => Assert.NotNull(item.WeaponType));
+
+        Assert.True(items["0x1bd7_board"].Stackable);
+        Assert.True(items["0x0de1_kindling"].Stackable);
+        Assert.True(items["0x1bdd_log"].Stackable);
+    }
+
+    [Fact]
+    public async Task ShippedWoods_AreThere_WithTheHueOfTheirKind_AndTheVeinsTheAxeKnows()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+        var scripts = Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts");
+        var axe = await File.ReadAllTextAsync(Path.Combine(scripts, "items", "axe.lua")) +
+                  await File.ReadAllTextAsync(Path.Combine(scripts, "common", "woods.lua"));
+        var hues = new Dictionary<string, int>
+        {
+            ["oak"] = 0x7DA, ["ash"] = 0x4A7, ["yew"] = 0x4A8, ["heartwood"] = 0x4A9, ["bloodwood"] = 0x4AA,
+            ["frostwood"] = 0x47F
+        };
+
+        foreach (var (kind, hue) in hues)
+        {
+            var (logs, boards) = (items[kind + "_log"], items[kind + "_board"]);
+
+            Assert.Equal((0x1BE0u, 0x1BD7u), (logs.ItemId.Value, boards.ItemId.Value));
+            Assert.Equal(((int?)hue, (int?)hue), (logs.Hue?.Min, boards.Hue?.Min));
+            Assert.Equal(((bool?)true, (bool?)true), (logs.Stackable, boards.Stackable));
+        }
+
+        // Every template the scripts give is shipped: the logs and boards of the kinds, and the finds.
+        var given = System.Text.RegularExpressions.Regex.Matches(axe, "(?:logs|boards|other_logs|other_boards|template) = \"([^\"]+)\"")
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+        Assert.Equal(21, given.Length);
+        Assert.All(given, id => Assert.True(items.ContainsKey(id), id));
+        Assert.All(new[] { "bark_fragment", "brilliant_amber" }, id => Assert.True(items[id].Stackable));
+
+        // And every vein of the wood but the plain one is a kind the script knows.
+        var wood = (await new HarvestLoader(directories).LoadDataAsync()).Entities.Single(resource => resource.Id == "wood");
+        Assert.Equal(["plain", "oak", "ash", "yew", "heartwood", "bloodwood", "frostwood"], wood.Vein.Select(vein => vein.Id));
+        Assert.Equal(1000, wood.Vein.Sum(vein => vein.Weight));
+        Assert.All(wood.Vein.Skip(1), vein => Assert.Contains($"{{ id = \"{vein.Id}\", name = ", axe));
+    }
+
+    [Fact]
+    public async Task ShippedCrafts_Load_WithTheFortyTwoRecipesOfCarpentry_AndItsToolsCarryTheScript()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var data = new StubDataLoaderService().With(items);
+        var lists = (await new CraftResourcesLoader(directories, data).LoadDataAsync()).Entities.ToArray();
+        data.With(lists);
+        var craft = Assert.Single((await new CraftsLoader(directories, data).LoadDataAsync()).Entities);
+
+        Assert.Equal(("carpentry", "carpentry", 0x023D), (craft.Id, craft.Skill, craft.Sound));
+        Assert.Equal(
+            ["Chairs", "Tables", "Containers", "Other Items", "Staves & Poles", "Musical items"],
+            craft.Group.Select(group => group.Name)
+        );
+        Assert.Equal(42, craft.Group.Sum(group => group.Recipe.Count));
+        Assert.Equal(["0x1bd7_board", "0x1bda_board"], lists.Single(list => list.Id == "wood").Templates);
+
+        var byId = items.ToDictionary(item => item.Id);
+        Assert.All(new[] { "0x1034_saw", "0x1028_dovetail_saw", "0x10e5_froe" }, id => Assert.Equal("carpentry_tool", byId[id].ScriptId));
+        Assert.NotEqual("carpentry_tool", byId["0x102e_nails"].ScriptId);
+    }
+
+    [Fact]
+    public async Task ShippedMiningToolsAndOre_UseTheirScripts_AndWhatTheyGiveIsThere()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.All(
+            new[] { "0x0e85_pickaxe", "0x0e86", "0x0f39_a_shovel", "0x0f3a" },
+            id => Assert.Equal("pickaxe", items[id].ScriptId)
+        );
+
+        var scripts = Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items");
+        var piles = System.Text.RegularExpressions.Regex
+            .Matches(await File.ReadAllTextAsync(Path.Combine(scripts, "pickaxe.lua")), "template = \"([^\"]+)\"")
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+
+        // The four piles a dig gives are ore, stack, and are smelted by the ore script.
+        Assert.Equal(4, piles.Length);
+        Assert.All(piles, pile => Assert.Equal(("ore", true), (items[pile].ScriptId, items[pile].Stackable)));
+
+        var ingot = System.Text.RegularExpressions.Regex
+            .Match(await File.ReadAllTextAsync(Path.Combine(scripts, "ore.lua")), "local INGOT = \"([^\"]+)\"")
+            .Groups[1]
+            .Value;
+        Assert.True(items[ingot].Stackable);
+
+        var ore = Assert.Single((await new HarvestLoader(directories).LoadDataAsync()).Entities, r => r.Id == "ore");
+        Assert.Equal((8, 10, 34, 10, 20), (ore.Area, ore.AmountMin, ore.AmountMax, ore.RespawnMinMinutes, ore.RespawnMaxMinutes));
+    }
+
+    [Fact]
+    public async Task ShippedHarvest_HasTheFishOfTheFishingPoles()
+    {
+        var resources = (await new HarvestLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+
+        var fish = Assert.Single(resources, resource => resource.Id == "fish");
+        Assert.Equal((8, 5, 15, 10, 20), (fish.Area, fish.AmountMin, fish.AmountMax, fish.RespawnMinMinutes, fish.RespawnMaxMinutes));
+    }
+
+    [Fact]
     public async Task ShippedHealers_UseTheHealerScript()
     {
         var directories = Directories();
@@ -504,6 +748,80 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedShops_LoadAgainstTheShippedItemsAndMobiles_AndTheirVendorsHaveTheShopkeeperScript()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
+            .LoadDataAsync()).Entities.ToArray();
+
+        var shops = (await new ShopsLoader(directories, new StubDataLoaderService().With(items).With(mobiles))
+            .LoadDataAsync()).Entities;
+
+        Assert.Contains(shops, shop => shop.Id == "baker" && shop.Buy.Count > 0);
+        Assert.Contains(shops, shop => shop.Id == "baker" && shop.Sell.Any(line => line.Item == "0x103b_bread_loaf"));
+        var scripts = mobiles.ToDictionary(template => template.Id, template => template.ScriptId);
+        // A vendor that is a banker or a healer keeps its own script; the others use the shopkeeper's.
+        Assert.All(
+            shops.SelectMany(shop => shop.Vendors),
+            vendor => Assert.Contains(scripts[vendor], new[] { "shopkeeper", "healer", "banker" })
+        );
+        Assert.Equal("shopkeeper", scripts["m_baker"]);
+
+        // Buying from one vendor and selling to another is never a profit.
+        var lowestBuy = shops.SelectMany(shop => shop.Buy)
+            .GroupBy(line => line.Item)
+            .ToDictionary(group => group.Key, group => group.Min(line => line.Price));
+        Assert.All(
+            shops.SelectMany(shop => shop.Sell).Where(line => lowestBuy.ContainsKey(line.Item)),
+            line => Assert.True(
+                line.Price <= lowestBuy[line.Item],
+                $"{line.Item} is bought at {line.Price} but sold from {lowestBuy[line.Item]}"
+            )
+        );
+    }
+
+    [Fact]
+    public async Task ShippedGuildmasters_AreVendorsOfTheirTrade_WithAManAWomanAndAList()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
+            .LoadDataAsync()).Entities;
+
+        var masters = mobiles.Where(template => template.Id.EndsWith("_guildmaster", StringComparison.Ordinal)).ToList();
+
+        // Twelve trades, a man and a woman each.
+        Assert.Equal(24, masters.Count);
+        Assert.All(masters, master => Assert.Equal("basevendor", master.BaseId));
+        // The miner's guildmaster names no guild in ModernUO: it teaches only.
+        Assert.Equal(
+            ["m_miner_guildmaster", "f_miner_guildmaster"],
+            masters.Where(master => master.NpcGuild is null).Select(master => master.Id)
+        );
+        var smith = masters.Single(master => master.Id == "m_blacksmith_guildmaster");
+        Assert.Equal(NpcGuildType.Blacksmiths, smith.NpcGuild);
+        Assert.Equal("the blacksmith guildmaster", smith.Title);
+        Assert.True(smith.Skills!.ContainsKey("blacksmithy"));
+        Assert.Equal(
+            "shopkeeper",
+            mobiles.Single(template => template.Id == "m_blacksmith_guildmaster").ScriptId ?? "shopkeeper"
+        );
+    }
+
+    [Fact]
     public async Task ShippedBankers_AllHaveTheBankerScript()
     {
         var directories = Directories();
@@ -544,8 +862,8 @@ public sealed class RepositoryTemplateFilesTests
                 .LoadDataAsync())
             .Entities.ToDictionary(spawn => spawn.Id);
 
-        Assert.Equal(446, lists.Length);
-        Assert.Equal(4450, spawns.Count);
+        Assert.Equal(457, lists.Length);
+        Assert.Equal(4677, spawns.Count);
         // The treasure chests of ModernUO's spawners: regions of items.
         var chests = spawns.Values.Where(spawn =>
                 spawn.ItemIds.Count > 0 && !spawn.Id.StartsWith("felucca_jail_chest_", StringComparison.Ordinal)

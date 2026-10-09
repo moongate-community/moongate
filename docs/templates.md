@@ -289,6 +289,7 @@ own, see [TOML value types](toml-types.md).
 | `Dyeable` | `dyeable = true` on what a dye tub can give its hue, as UOX3's `dyeable`: the converted clothing has it from `base_clothing`, and a template takes it away with `dyeable = false` (a death robe). Unset is not dyeable. See [dyes.lua and dye_tub.lua](scripting/shipped-scripts.md#dyeslua-and-dye_tublua) |
 | `BuyPrice`, `SellPrice` | What vendors sell it for and pay for it; unset means vendors do not trade it |
 | `Decays`, `DecayMinutes` | Whether the item decays on the ground, and after how many minutes; unset decays when movable, after 60 minutes, as ModernUO. An item that cannot be picked up decays only when its template has both `decays = true` and `decay_minutes`, as the treasure chests. An item decays when it lies on the ground, is movable (or has both of those) and its template is visible to players. The countdown (`DecayAt`, saved with the item, so downtime counts) starts when it lands on the ground, again when a lifted item bounces back there, and stops when it is picked up, moved into a container or worn; the rest of a split stack keeps the stack's time. A check every 5 seconds deletes the due items, a container with its contents, whether or not a player is near |
+| `UseRange` | How many tiles away a player may double click the item lying on the ground to run its `on_use`, from 1 to 24; unset is 2, as ModernUO's reach of an item. The archery butte has 6, since it is shot from five or six tiles. A base template's is inherited |
 | `Loot`, `Gold` | What a container holds when a [spawn region of items](spawns.md#regions-of-items-treasure-chests) makes it: `loot = ["reagents", "reagents"]` rolls each loot table once (list one twice to roll it twice) and `gold = "1d100+29"` puts that much gold inside, in piles of at most 65,535. Unset takes the base template's, else nothing. Only a spawn region fills the item: one made by a command or a script is empty |
 | `LootType` | `regular`, `newbied`, `blessed` or `cursed`: what happens when the owner dies; unset is `regular` |
 | `Tags` | Free script values in an `[item.tags]` table; a child's explicit tags replace the entire base map |
@@ -346,7 +347,9 @@ to 120; a constant is a bare integer.
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
 | `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |
 | `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death`; a mobile script plays them by kind with `npc.play_sound(serial, "idle")` |
+| `BloodHue` | The hue of the blood the creature leaves when it is hit: 0 for red, `-1` for one that does not bleed, as ServUO's `BloodHue` and Source-X's `BLOODCOLOR`; a base template's is inherited. Unset: red. The undead and the golems have `-1`. See [Combat](combat.md#the-damage) |
 | `FleeAt` | The percent of its hit points (0 to 100) under which a creature that fights runs from the fight, `-1` for one that never does, as UOX3's `FLEEAT`; a base template's is inherited. Unset: the script's own, 20 for a monster and 10 for an animal. See [Creature scripts](scripting/shipped-scripts.md#commoncreaturelua) |
+| `NpcGuild` | The guild this guildmaster takes members for: `mages`, `warriors`, `thieves`, `rangers`, `healers`, `miners`, `merchants`, `tinkers`, `tailors`, `fishermen`, `bards` or `blacksmiths`. Unset: the NPC is no guildmaster. See [Guildmasters](skills.md#guildmasters) |
 | `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death` and `on_drag_drop` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting/mobile-scripts.md) |
 | `Visibility` | As in `ItemTemplate` |
 | `Movement` | `land`, `water` (a dolphin: it spawns and swims on the water only) or `both` (a walrus: it walks and swims, and spawns on land else on the water); unset is `land` |
@@ -397,7 +400,7 @@ gender = "female"
 ```
 
 The shipped `templates/mobiles/` holds UOX3's NPCs, converted by
-[`mgctl convert uox`](uox3-migration.md#mobiles-and-name-lists). They are loaded at game and
+[`moongate-convert uox`](uox3-migration.md#mobiles-and-name-lists). They are loaded at game and
 standalone startup (`IMobileTemplateService`).
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
@@ -460,9 +463,9 @@ lights, furniture, teleporters and the like, about 32,800 placements in the 108 
 converted once from ModernUO's `Data/Decoration`, plus ServUO's New Haven (`trammel/newhaven.toml`,
 `havenisland.toml`, `havenmine.toml`, which ModernUO lacks) and the shop and world signs of
 ModernUO's `signs.cfg` (`signs.toml`, written by
-[`mgctl convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) and the world and dungeon
+[`moongate-convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) and the world and dungeon
 teleporters of its `teleporters.json` (`teleporters.toml`, written by
-[`mgctl convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
+[`moongate-convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
 `tokuno/`, `termur/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/`,
 `_old_magincia/` and `_bounty_boards/`. A folder or a file whose name starts with `_` is not loaded: rename

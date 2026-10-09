@@ -1,6 +1,5 @@
 [[mobile]]
 id = "bird"
-script_id = "scared_animal"
 name = "a bird"
 name_list = "bird"
 body = 6
@@ -11,6 +10,7 @@ intelligence = "1d4"
 mana = 0
 damage = 2
 fame = 150
+script_id = "scared_animal"
 [mobile.skills]
 hiding = 5
 parrying = 5
@@ -49,7 +49,6 @@ name = "a crow"
 
 [[mobile]]
 id = "chicken"
-script_id = "scared_animal"
 name = "a chicken"
 body = 208
 strength = 5
@@ -58,6 +57,7 @@ intelligence = 5
 damage = 2
 armor = 1
 fame = 150
+script_id = "scared_animal"
 [mobile.skills]
 tactics = 5
 wrestling = 5
@@ -70,6 +70,7 @@ death = 114
 
 [[mobile]]
 id = "eagle"
+script_id = "animal"
 name = "an eagle"
 body = 5
 skin_hue = 0
@@ -138,7 +139,6 @@ wrestling = "1d11+19"
 
 [[mobile]]
 id = "raven"
-script_id = "scared_animal"
 base_id = "bird"
 name = "a raven"
 skin_hue = 1
@@ -149,6 +149,7 @@ mana = 0
 damage = 1
 armor = 3
 fame = 300
+script_id = "scared_animal"
 [mobile.skills]
 hiding = "1d11+4"
 resisting_spells = 5

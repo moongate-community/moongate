@@ -47,7 +47,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x22` | `MovementAckPacket` | Outgoing | Fixed 3 | — |
 | `0x21` | `MovementRejectPacket` | Outgoing | Fixed 8 | — |
 | `0x77` | `MobileMovingPacket` | Outgoing | Fixed 17 | — |
-| `0x06` | `UseRequestPacket` | Incoming | Fixed 5 | `UseRequestPacketHandler`: opens a container the character carries, or a paperdoll |
+| `0x06` | `UseRequestPacket` | Incoming | Fixed 5 | `UseRequestPacketHandler`: opens a container the character carries, or a paperdoll; rides a creature that is a mount, and gets off when the character double clicks itself |
 | `0x03` | `AsciiSpeechRequestPacket` | Incoming | Variable, minimum 9 | `SpeechRequestPacketHandler`: local say or in-game dot command |
 | `0xAD` | `UnicodeSpeechRequestPacket` | Incoming | Variable, minimum 14 | `SpeechRequestPacketHandler`: Unicode and encoded-keyword say or dot command |
 | `0xAE` | `UnicodeSpeechMessagePacket` | Outgoing | Variable, minimum 50 | Player speech and private command output |
@@ -72,12 +72,18 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0xAF` | `DeathAnimationPacket` | Outgoing | Fixed 13 | — |
 | `0x2C` | `DeathStatusPacket` | Outgoing | Fixed 2 | — |
 | `0x89` | `CorpseEquipmentPacket` | Outgoing | Variable | — |
+| `0x74` | `VendorBuyListPacket` | Outgoing | Variable | The prices and names of a vendor's shop window |
+| `0x3B` | `VendorEndPacket` | Outgoing | Fixed 8 | Closes the shop window |
+| `0x3B` | `VendorBuyReplyPacket` | Incoming | Variable, minimum 8 | `VendorBuyReplyPacketHandler`: the purchase of the shop window |
+| `0x9E` | `VendorSellListPacket` | Outgoing | Variable | What a vendor offers to buy from the player |
+| `0x9F` | `VendorSellReplyPacket` | Incoming | Variable, minimum 9 | `VendorSellReplyPacketHandler`: the sale of the sell list |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
 | `0x95` | `HuePickerResponsePacket` | Incoming | Fixed 9 | `HuePickerResponsePacketHandler`: gives the hue picked to the player's open picker |
 | `0x05` | `AttackRequestPacket` | Incoming | Fixed 5 | `AttackRequestPacketHandler`: the character [fights](combat.md) the mobile; a refused request is answered with `0xAA` and zero |
 | `0x22`, `0xB5`, `0xFB` | `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x9B` | `HelpRequestPacket` | Incoming | Fixed 258 | `HelpRequestPacketHandler`: opens the [help menu](help.md) of the character |
 | `0xAA` | `CombatantPacket` | Outgoing | Fixed 5 | — |
 | `0x2F` | `SwingPacket` | Outgoing | Fixed 10 | — |
 | `0x0B` | `DamagePacket` | Outgoing | Fixed 7 | — |

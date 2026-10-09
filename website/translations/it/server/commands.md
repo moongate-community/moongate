@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3ca6d01ab695b3d2999eab6d2aa77f3b358dd456f6184061351f6eae3237612e","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"669330ca13ece02b5ff25421845addf94c31348c36ad51a36c8d3fb4044a1312","title":"Panoramica"} -->
 
 # Comandi del server
 
@@ -49,11 +49,16 @@ ruolo è la modalità del server che registra il comando: `Login`, `Game` o entr
 | [`add`](commands/add.md) | `add <template>`, poi seleziona un punto | No | Sì | GameMaster | Game |
 | [`remove`](commands/remove.md) | `remove`, poi seleziona un NPC o un oggetto a terra | No | Sì | GameMaster | Game |
 | [`kill`](commands/kill.md) | `kill`, poi seleziona un NPC | No | Sì | GameMaster | Game |
+| [`tame`](commands/tame.md) | `tame [name]`, poi seleziona una creatura | No | Sì | GameMaster | Game |
 | [`resurrect`](commands/resurrect.md) | `resurrect`, poi seleziona un cadavere | No | Sì | GameMaster | Game |
 | [`animate`](commands/animate.md) | `animate <action>`, poi seleziona un mobile | No | Sì | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, poi seleziona qualsiasi cosa | No | Sì | GameMaster | Game |
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Sì | GameMaster | Game |
 | [`gmtools`](commands/gmtools.md) | `gmtools` | No | Sì | GameMaster | Game |
+| [`pages`](commands/pages.md) | `pages` | No | Sì | GameMaster | Game |
+| [`event`](commands/event.md) | `event [list\|on\|off\|auto <id>]` | Sì | Sì | Administrator | Game |
+| [`hide`](commands/hide.md) | `hide` | No | Sì | GameMaster | Game |
+| [`unhide`](commands/unhide.md) | `unhide` | No | Sì | GameMaster | Game |
 | [`moongate`](commands/moongate.md) | `moongate <x>,<y>,<z> [map]` | No | Sì | GameMaster | Game |
 | [`jail`](commands/jail.md) | `jail [name]` | No | Sì | GameMaster | Game |
 | [`fame`](commands/fame.md) | `fame <0..32000>`, poi seleziona un mobile | No | Sì | GameMaster | Game |
@@ -95,9 +100,9 @@ commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
 ### In base a chi li usa
 
 - **Tutti:** `help`, `echo`, `time`.
-- **Game master:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `moongate`, `fame`, `karma`, `globallight`,
+- **Game master:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `tame`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
-- **Amministratori:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
+- **Amministratori:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `event`, `decorate`,
   `initial_spawn`, più tutto ciò che
   usa un game master.
 - **Solo console:** `console`, `script`.

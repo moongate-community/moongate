@@ -1,7 +1,7 @@
 [[mobile]]
 id = "base_humanoid"
-script_id = "monster"
 notoriety = "attackable"
+script_id = "monster"
 
 [[mobile]]
 id = "base_orc"

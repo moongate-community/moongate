@@ -976,6 +976,24 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         AssertAt(_coins, _bag.Id, new Point2D(60, 70));
     }
 
+    // A stack lifted from a chest on the ground, of which the script kept part: the rest stays in the chest, and the
+    // giver still sees it there.
+    [Fact]
+    public async Task Handle_OnAnNpcWhoseScriptTakesPartOfAStackLiftedFromAChestOnTheGround_ShowsTheRestWhereItIs()
+    {
+        var banker = Npc(1498);
+        var (chest, _) = GroundChest(1497);
+        _items.MoveToContainer(_coins, chest.Id, new Point2D(60, 70), 0);
+        _npcScripts.Result = ScriptResult.Completed([true]);
+        _npcScripts.OnRun = _ => _coins.Amount -= 1;
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, banker.Id);
+
+        Assert.DoesNotContain(_sender.Sent, packet => packet is RemoveEntityPacket);
+        Assert.Equal(chest.Id, _coins.ContainerId);
+    }
+
     // The script moved it to someone else: the giver's client forgets it.
     [Fact]
     public async Task Handle_OnAnNpcWhoseScriptMovesTheItemToSomeoneElse_RemovesItForTheGiver()

@@ -1,11 +1,12 @@
 [[mobile]]
 id = "base_undead"
-script_id = "monster"
+blood_hue = -1
 notoriety = "attackable"
+script_id = "monster"
 
 [[mobile]]
 id = "zombie"
-flee_at = -1
+blood_hue = -1
 name = "a zombie"
 body = 3
 skin_hue = 0
@@ -20,6 +21,7 @@ fame = 600
 loot = ["bonearmor"]
 gold = "1d13+3"
 script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d26+14"
 parrying = "1d11+19"
@@ -34,8 +36,7 @@ death = 475
 
 [[mobile]]
 id = "ancientlich"
-script_id = "monster"
-flee_at = -1
+blood_hue = -1
 name_list = "ancient_lich"
 body = 79
 skin_hue = 0
@@ -50,6 +51,8 @@ karma = -23000
 fame = 23000
 loot = ["lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "lichlord_loot", "lichlord_loot", "lichlord_loot", "lichlord_loot", "treasure_map_lvl5loot"]
 gold = "1d201+1299"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 evaluating_intelligence = "1d2+98"
 magery = 120
@@ -67,8 +70,7 @@ death = 416
 
 [[mobile]]
 id = "lichlord"
-script_id = "monster"
-flee_at = -1
+blood_hue = -1
 name = "a lich lord"
 body = 79
 skin_hue = 0
@@ -82,6 +84,8 @@ karma = -18000
 fame = 18000
 loot = ["lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "lichlord_loot", "lichlord_loot", "lichlord_loot", "lichlord_loot", "treasure_map_lvl4loot"]
 gold = "1d301+399"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 magery = "1d11+89"
 resisting_spells = 120
@@ -99,7 +103,7 @@ death = 416
 
 [[mobile]]
 id = "lich"
-flee_at = -1
+blood_hue = -1
 name = "a lich"
 body = 24
 skin_hue = 0
@@ -114,6 +118,7 @@ fame = 8000
 loot = ["lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "randomgems", "randomgems", "lich_loot", "lich_loot", "treasure_map_lvl1loot", "treasure_map_lvl3loot"]
 gold = "1d51+199"
 script_id = "monster"
+flee_at = -1
 [mobile.skills]
 evaluating_intelligence = 100
 magery = "1d11+69"
@@ -130,6 +135,7 @@ death = 416
 
 [[mobile]]
 id = "spectre"
+blood_hue = -1
 name = "a spectre"
 body = 26
 skin_hue = 26231
@@ -161,6 +167,7 @@ death = 386
 
 [[mobile]]
 id = "wraith"
+blood_hue = -1
 name = "a wraith"
 body = 26
 skin_hue = 26231
@@ -189,6 +196,7 @@ death = 386
 
 [[mobile]]
 id = "shade"
+blood_hue = -1
 base_id = "spectre"
 name = "a shade"
 body = 26
@@ -201,7 +209,7 @@ death = 386
 
 [[mobile]]
 id = "skeleton"
-flee_at = -1
+blood_hue = -1
 name = "a skeleton"
 body = 50
 skin_hue = 0
@@ -216,6 +224,7 @@ fame = 450
 loot = ["bonearmor"]
 gold = "1d51-1"
 script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d16+44"
 parrying = "1d11+44"
@@ -230,6 +239,7 @@ death = 455
 
 [[mobile]]
 id = "boneaxeman"
+blood_hue = -1
 base_id = "skeleton"
 name = "a bone axeman"
 body = 56
@@ -242,8 +252,7 @@ death = 455
 
 [[mobile]]
 id = "boneknight"
-script_id = "monster"
-flee_at = -1
+blood_hue = -1
 name = "a bone knight"
 body = 147
 skin_hue = 0
@@ -257,6 +266,8 @@ karma = -3000
 fame = 3000
 loot = ["bonearmor", "bonearmor", "randompotions"]
 gold = "1d151-1"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d16+74"
 parrying = "1d11+89"
@@ -276,6 +287,7 @@ items = ["0x1440"]
 
 [[mobile]]
 id = "skeletalknight"
+blood_hue = -1
 base_id = "boneknight"
 name = "a skeletal knight"
 damage = "1d15+5"
@@ -288,8 +300,7 @@ wrestling = "1d11+84"
 
 [[mobile]]
 id = "bonemage"
-script_id = "monster"
-flee_at = -1
+blood_hue = -1
 name = "a bone magi"
 body = 148
 skin_hue = 2014
@@ -303,6 +314,8 @@ karma = -3000
 fame = 3000
 loot = ["lowlevelscrolls", "lowlevelscrolls", "randomgems", "randomgems", "randomgems"]
 gold = "1d151+49"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 magery = "1d11+69"
 resisting_spells = "1d21+59"
@@ -318,6 +331,7 @@ death = 455
 
 [[mobile]]
 id = "skeletalmage"
+blood_hue = -1
 base_id = "bonemage"
 name = "a skeletal mage"
 skin_hue = 0
@@ -332,8 +346,7 @@ wrestling = "1d11+44"
 
 [[mobile]]
 id = "mummy"
-script_id = "monster"
-flee_at = -1
+blood_hue = -1
 name = "a mummy"
 body = 154
 skin_hue = 1102
@@ -347,6 +360,8 @@ karma = -4000
 fame = 4000
 loot = ["midlevelscrolls", "midlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "mummy_loot", "mummy_loot", "mummy_loot", "mummy_loot", "mummy_loot", "mummy_loot"]
 gold = "1d101+49"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d26+14"
 parrying = "1d11+19"
@@ -361,8 +376,7 @@ death = 475
 
 [[mobile]]
 id = "rottingcorpse"
-script_id = "monster"
-flee_at = -1
+blood_hue = -1
 name = "a rotting corpse"
 body = 155
 strength = "1d50+300"
@@ -376,6 +390,8 @@ karma = -6000
 fame = 6000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
 gold = "1d901+599"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = 120
 poisoning = 120
@@ -390,6 +406,7 @@ death = 475
 
 [[mobile]]
 id = "ghoul"
+blood_hue = -1
 base_id = "wraith"
 name = "a ghoul"
 body = 153
@@ -404,7 +421,7 @@ death = 1158
 
 [[mobile]]
 id = "spectralarmor"
-flee_at = -1
+blood_hue = -1
 base_id = "base_undead"
 name = "a spectral armor"
 body = 637
@@ -420,6 +437,7 @@ karma = -4000
 fame = 4000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
 gold = "1d101+49"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d11+89"
 parrying = "1d11+89"
@@ -442,6 +460,7 @@ hue = 2101
 
 [[mobile]]
 id = "base_lady_of_the_snow"
+blood_hue = -1
 base_id = "base_undead"
 name = "lady of the snow"
 body = 252
@@ -454,10 +473,12 @@ death = 880
 
 [[mobile]]
 id = "ladyofthesnow"
+blood_hue = -1
 base_id = "ladyofthesnow_se"
 
 [[mobile]]
 id = "base_revenant_lion"
+blood_hue = -1
 base_id = "base_undead"
 name = "revenant lion"
 body = 251
@@ -470,4 +491,5 @@ death = 1301
 
 [[mobile]]
 id = "revenantlion"
+blood_hue = -1
 base_id = "revenant_lion_se"

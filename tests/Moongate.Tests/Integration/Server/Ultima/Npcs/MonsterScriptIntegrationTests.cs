@@ -118,6 +118,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ICombatService>(_combat);
         _container.RegisterScriptEnum<MonsterAnimationType>();
         _container.RegisterScriptEnum<BodyType>();
+        _container.RegisterScriptEnum<Moongate.Server.Ultima.Types.Speech.SpeechKeywordType>();
         _container.RegisterInstance<IDataLoaderService>(
             new StubDataLoaderService().With(
                 new BodyContent { Body = new(0x32), Type = BodyType.Monster },
@@ -133,6 +134,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
                 }
             );
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
+        _scripts.Write("common/pet_orders.lua", File.ReadAllText(ShippedScript("common/pet_orders.lua")));
         _scripts.Write("mobiles/monster.lua", File.ReadAllText(ShippedScript("mobiles/monster.lua")));
         var options = new ScriptEngineOptions
         {
@@ -182,6 +184,36 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(DirectionType.East, _skeleton.Direction);
         Assert.Equal([(_skeleton, _aria)], _combat.Attacks);
         Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AMonsterThatIsTamed_GoesForNobody()
+    {
+        _skeleton.SetProp("owner", 7L);
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+
+        Think(12);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_state.Flags);
+        Assert.Empty(_combat.Attacks);
+        Assert.Equal(new Point3D(1600, 1600, 0), _skeleton.Location);
+    }
+
+    [Fact]
+    public void AMonsterTamedWhileItHunts_LetsGoOfItsPrey()
+    {
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+        Think(4);
+        Assert.Equal(["war 256 True"], _state.Flags);
+
+        _skeleton.SetProp("owner", 7L);
+        Think(2);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(["war 256 True", "war 256 False"], _state.Flags);
+        Think(12);
+        Assert.Empty(_combat.Attacks);
     }
 
     [Fact]

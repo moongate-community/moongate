@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"53833c20af5b945cdb0b6bea16bd9512b04d8419fcaf6651d6dd529caa50ffa1","title":"Skill"} -->
+<!-- translation: {"sourceHash":"e4aa95fd6be0a8ec1ea24f381204ebd4fcb4dd82597b866942606c1b7dc936e4","title":"Skill"} -->
 
 # Skill
 
@@ -127,8 +127,54 @@ L'attesa di una statistica è tenuta in memoria per personaggio, quindi uscire e
 sì. I personaggi esistenti hanno tutti i lucchetti su dopo l'aggiornamento; la migrazione `0024_mobile_stat_locks.sql`
 aggiunge le tre colonne.
 
+## Istruttori
+
+Un venditore o un guaritore insegna le abilità che ha a 60,0 o più, come gli istruttori di ModernUO. Le abilità sono quelle del suo
+template mobile, quindi un venditore insegna quelle uscite così alte. I banchieri non insegnano: l'oro trascinato su di loro viene
+depositato.
+
+- **Chiedere.** Il menu contestuale del PNG ha una voce *Train* per ogni abilità che insegna e di cui il giocatore sa meno, da
+  8 caselle. Dire *train* entro 4 caselle, da vivo, fa elencare al PNG le abilità che insegna, o dire che non ha nulla da insegnare.
+- **Prezzo.** Il PNG insegna fino a un terzo del suo valore, al massimo 42,0 e mai oltre il tetto dell'abilità del giocatore.
+  Scegliere una voce gli fa dire il prezzo: 1 oro per ogni decimo di punto, quindi 10 oro per un punto intero (420 oro per
+  42,0), e che per meno insegna meno. Il preventivo dura finché non viene pagato, viene dato un altro prezzo o la sessione finisce.
+- **Pagare.** Il giocatore trascina oro sul PNG, da 2 caselle. L'abilità sale subito di un decimo di punto per ogni moneta,
+  fino a quanto preventivato; si prende solo l'oro necessario e il resto della pila resta al giocatore. Un trascinamento
+  senza preventivo di quel PNG, o di qualunque cosa che non sia oro, torna indietro.
+- **Rifiuti.** Il giocatore sa già quanto il PNG insegnerebbe (*thou knowest all I can teach*) o di più; l'abilità non è
+  bloccata verso l'alto, oppure il tetto totale (`ultima.skills.total_cap`) non lascia posto nemmeno abbassando le abilità
+  bloccate verso il basso, che cedono nell'ordine delle abilità; il giocatore è morto. Un oro trascinato che non può più
+  insegnare riceve la stessa risposta, e il preventivo viene scartato.
+
+Uno script dà a un PNG queste lezioni con il modulo `trainer` e `common/training.lua`; `shopkeeper.lua` e
+`healer.lua` lo fanno già. `trainer.skills(npc, player)` elenca le abilità, `trainer.quote(npc, player, skill)` dà un
+prezzo e `trainer.pay(npc, giver, item)` prende l'oro, che è ciò che risponde un `on_drag_drop`.
+
+## Maestri di gilda
+
+I dodici maestri di gilda di ModernUO (bardo, fabbro, pescatore, guaritore, mago, mercante, minatore, ranger, sarto, ladro, calderaio e
+guerriero) sono template mobile, un uomo (`m_<trade>_guildmaster`) e una donna (`f_<trade>_guildmaster`) per ciascuno, e una
+lista di PNG del mestiere (`<trade>guildmaster`) che ne sceglie uno. Li crea `moongate-convert modernuo-guildmasters` dalle
+classi di ModernUO: il titolo (*the blacksmith guildmaster* o *guildmistress*), le abilità del mestiere, le principali
+fra 80 e 100, e la gilda, e ciò che indossano e portano per il mestiere: il fabbro un grembiule o una maglia di maglia ad anelli, un bascinetto e un
+martello, il mago e il guaritore una veste (in tinta azzurra o gialla) e il mago un bastone. Il kryss o il pugnale del ladro non ha ancora
+un template oggetto. Sono venditori come gli altri, quindi insegnano ciò che sanno ([Istruttori](#trainers)); vende solo
+quello del fabbro, come in ModernUO. Gli spawn di ModernUO li collocano nelle città.
+
+Un maestro di gilda accetta membri per la gilda del suo mestiere. Il giocatore dice il nome del maestro e *join* o *member*
+entro 2 caselle per sentire il prezzo, 500 oro (il maestro parla solo a quel giocatore, sopra la testa), e trascina esattamente quell'oro su di lui per iscriversi. Un giocatore appartiene al massimo a una
+gilda (la gilda è una prop salvata del personaggio) e gli viene detto se è già membro o di un'altra gilda. La gilda dei
+ladri chiede di non avere uccisioni e Stealing 60,0 (anche il maestro dei ladri delle città di UOX3 è ora un maestro di gilda). Dire il nome e *resign* o *quit* lascia la gilda, non prima di
+una settimana dall'iscrizione. Il maestro dei minatori in ModernUO non nomina nessuna gilda, quindi insegna soltanto. L'iscrizione non ha
+ancora effetto: nulla la legge. L'età e il tempo di gioco che ModernUO chiede a un nuovo membro non sono conservati.
+
+Il campo di template `npc_guild` (`blacksmiths`, `thieves`...) rende un PNG un maestro di gilda, e il modulo Lua `npcguild`
+(`of`, `member`, `quote`, `join`, `resign`) con `common/guild.lua` dà al suo script le parole e l'oro.
+
 ## Vedi anche
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)
+- [`bandage.lua`](scripting/shipped-scripts.md#bandagelua): Healing, con le bende
+- [Le abilità di osservazione](scripting/shipped-scripts.md#the-lore-skills): Anatomy, Evaluating Intelligence, Forensic Evaluation e Detecting Hidden
 - [Configurazione del server](server-configuration.md): `[ultima.skills]`
 - [Roadmap](roadmap.md): 1.2

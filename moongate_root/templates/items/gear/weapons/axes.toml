@@ -1,6 +1,7 @@
 [[item]]
 id = "base_large_battle_axe"
 base_id = "base_item"
+script_id = "axe"
 item_id = 5114
 name = "large battle axe"
 rarity = "common"
@@ -26,6 +27,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_two_handed_axe"
 base_id = "base_item"
+script_id = "axe"
 item_id = 5186
 name = "two handed axe"
 rarity = "common"
@@ -51,6 +53,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_hatchet"
 base_id = "base_item"
+script_id = "axe"
 item_id = 3907
 name = "hatchet"
 rarity = "common"
@@ -75,6 +78,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_executioners_axe"
 base_id = "base_item"
+script_id = "axe"
 item_id = 3909
 name = "executioner's axe"
 rarity = "common"
@@ -100,6 +104,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_battle_axe"
 base_id = "base_item"
+script_id = "axe"
 item_id = 3911
 name = "battle axe"
 rarity = "common"
@@ -125,6 +130,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_axe"
 base_id = "base_item"
+script_id = "axe"
 item_id = 3913
 name = "axe"
 rarity = "common"
@@ -150,6 +156,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_double_axe"
 base_id = "base_item"
+script_id = "axe"
 item_id = 3915
 name = "double axe"
 rarity = "common"
@@ -175,6 +182,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_ornate_axe"
 base_id = "base_item"
+script_id = "axe"
 item_id = 11560
 name = "ornate axe"
 rarity = "common"
@@ -200,6 +208,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_gargish_battle_axe"
 base_id = "base_item"
+script_id = "axe"
 item_id = 18608
 name = "gargish battle axe"
 rarity = "common"

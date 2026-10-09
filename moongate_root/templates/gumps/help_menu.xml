@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/help_menu.xml
+
+  What it is for:
+    The menu the Help button of the paperdoll opens. I am stuck calls help_menu.stuck in
+    scripts/gumps/help_menu.lua, Useful commands calls help_menu.commands, Server rules
+    calls help_menu.rules, Call a game master calls help_menu.call, which opens help_page_kind.
+    A right click closes it.
+
+  Arguments:
+    none
+-->
+<gump id="help_menu" x="120" y="120"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="320" height="190" />
+  <text x="20" y="15" hue="1152" message="30201" />
+  <button x="20" y="50" up="4005" down="4007" on_click="stuck" />
+  <text x="55" y="51" message="30202" />
+  <button x="20" y="80" up="4005" down="4007" on_click="commands" />
+  <text x="55" y="81" message="30203" />
+  <button x="20" y="110" up="4005" down="4007" on_click="rules" />
+  <text x="55" y="111" message="30204" />
+  <button x="20" y="140" up="4005" down="4007" on_click="call" />
+  <text x="55" y="141" message="30205" />
+</gump>

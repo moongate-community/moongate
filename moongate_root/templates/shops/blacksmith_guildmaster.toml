@@ -1,0 +1,4058 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
+[[shop]]
+id = "blacksmith_guildmaster"
+vendors = ["m_blacksmith_guildmaster", "f_blacksmith_guildmaster"]
+[[shop.buy]]
+item = "0x1bf2_iron_ingot"
+price = 5
+amount = 16
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0fbb_tongs"
+price = 13
+amount = 14
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1b72_lbr"
+price = 66
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1b73_lbr"
+price = 50
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1b74_lbr"
+price = 123
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1b76_lbr"
+price = 231
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1b78_lbr"
+price = 70
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1b7b_lbr"
+price = 121
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1b7a_lbr"
+price = 30
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1413_lbr"
+price = 104
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1415_lbr"
+price = 243
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1411_lbr"
+price = 218
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1410_lbr"
+price = 188
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1414_lbr"
+price = 155
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1412_lbr"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1408_lbr"
+price = 18
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x140a_lbr"
+price = 31
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x140a_lbr"
+price = 18
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x140e_lbr"
+price = 18
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x140c_lbr"
+price = 18
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13bb_lbr"
+price = 17
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13bf_lbr"
+price = 143
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13be_lbr"
+price = 149
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13ec_lbr"
+price = 121
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13f0_lbr"
+price = 90
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13ee_lbr"
+price = 85
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13eb_lbr"
+price = 93
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f45_lbr"
+price = 30
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f4d_lbr"
+price = 60
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f47_lbr"
+price = 26
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1442_lbr"
+price = 32
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13b1_lbr"
+price = 35
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13f6_lbr"
+price = 14
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f4f_lbr"
+price = 46
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13fc_lbr"
+price = 55
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1440_lbr"
+price = 24
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f51_lbr"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x143e_lbr"
+price = 42
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x143c_lbr"
+price = 26
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13fe_lbr"
+price = 33
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1400_lbr"
+price = 32
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f5e_lbr"
+price = 35
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f60_lbr"
+price = 55
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13b7_lbr"
+price = 27
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13b9_lbr"
+price = 55
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0ec2_lbr"
+price = 15
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f49_lbr"
+price = 40
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f4b_lbr"
+price = 52
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e85_pickaxe"
+price = 22
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e87_lbr"
+price = 19
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13b5_lbr"
+price = 36
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0ec4_lbr"
+price = 14
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13fa_lbr"
+price = 33
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13af_lbr"
+price = 29
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0df0_lbr"
+price = 22
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13b3_lbr"
+price = 16
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13f8_lbr"
+price = 16
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f5c_lbr"
+price = 28
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x143a_lbr"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e89_lbr"
+price = 19
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e81_lbr"
+price = 20
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13e3_lbr"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1402_lbr"
+price = 23
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f62_lbr"
+price = 31
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1438_lbr"
+price = 25
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1406_lbr"
+price = 31
+amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0fbb_tongs"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bf2_iron_ingot"
+price = 4
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_a"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_aos"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_b"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_c"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_d"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_g"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_lbr"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_s"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_t2a"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_tol"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_va"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b73_ve"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_a"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_aos"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_b"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_c"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_d"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_g"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_lbr"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_s"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_t2a"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_tol"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_va"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b72_ve"
+price = 33
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_a"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_aos"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_b"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_c"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_d"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_g"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_lbr"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_s"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_t2a"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_tol"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_va"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7b_ve"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_a"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_aos"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_b"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_c"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_d"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_g"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_lbr"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_s"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_t2a"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_tol"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_va"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b74_ve"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_a"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_aos"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_b"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_c"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_d"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_g"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_lbr"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_s"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_t2a"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_tol"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_va"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b76_ve"
+price = 115
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_a"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_aos"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_b"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_c"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_d"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_g"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_lbr"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_s"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_t2a"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_tol"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_va"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b78_ve"
+price = 35
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_b"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_c"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_d"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_g"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_lbr"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_s"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_t2a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_tol"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_va"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1b7a_ve"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_a"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_aos"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_b"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_c"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_d"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_g"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_lbr"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_s"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_t2a"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_tol"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_va"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1410_ve"
+price = 94
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_a"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_aos"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_b"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_c"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_d"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_g"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_lbr"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_s"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_t2a"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_tol"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_va"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1415_ve"
+price = 121
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_a"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_aos"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_b"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_c"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_d"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_g"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_lbr"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_s"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_t2a"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_tol"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_va"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1414_ve"
+price = 72
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_a"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_aos"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_b"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_c"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_d"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_g"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_lbr"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_s"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_t2a"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_tol"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_va"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1413_ve"
+price = 52
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_a"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_aos"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_b"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_c"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_d"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_g"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_lbr"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_s"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_t2a"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_tol"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_va"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1411_ve"
+price = 109
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_a"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_aos"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_b"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_c"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_d"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_g"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_lbr"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_s"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_t2a"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_tol"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_va"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c04_ve"
+price = 113
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c06_aos"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c06_lbr"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c06_t2a"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c06_tol"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c02_aos"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c02_lbr"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c02_t2a"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c02_tol"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c00_aos"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c00_lbr"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c00_t2a"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c00_tol"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c08_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c08_lbr"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c08_t2a"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c08_tol"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0a_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0a_lbr"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0a_t2a"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0a_tol"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0c_aos"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0c_lbr"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0c_t2a"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1c0c_tol"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_b"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_c"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_d"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_g"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_s"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_tol"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_va"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140c_ve"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_b"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_c"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_d"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_g"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_s"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_tol"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_va"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1408_ve"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_b"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_c"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_d"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_g"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_s"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_va"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1409_ve"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_b"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_c"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_d"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_g"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_s"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_tol"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_va"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140a_ve"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_b"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_c"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_d"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_g"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_s"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_va"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140b_ve"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_b"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_c"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_d"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_g"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_s"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_tol"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_va"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140e_ve"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_b"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_c"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_d"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_g"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_s"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_va"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x140f_ve"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_b"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_c"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_d"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_g"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_lbr"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_s"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_t2a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_tol"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_va"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1412_ve"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_b"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_c"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_d"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_g"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_s"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_va"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1419_ve"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_a"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_aos"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_b"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_c"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_d"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_g"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_lbr"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_s"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_t2a"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_tol"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_va"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bb_ve"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_a"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_aos"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_b"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_c"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_d"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_g"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_lbr"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_s"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_t2a"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_tol"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_va"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13bf_ve"
+price = 71
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_a"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_aos"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_b"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_c"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_d"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_g"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_lbr"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_s"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_t2a"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_tol"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_va"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13be_ve"
+price = 74
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_a"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_aos"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_b"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_c"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_d"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_g"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_lbr"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_s"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_t2a"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_tol"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_va"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ee_ve"
+price = 42
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_a"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_aos"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_b"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_c"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_d"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_g"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_lbr"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_s"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_t2a"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_tol"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_va"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13ec_ve"
+price = 60
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_a"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_aos"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_b"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_c"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_d"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_g"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_lbr"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_s"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_t2a"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_tol"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_va"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13eb_ve"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_a"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_aos"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_b"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_c"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_d"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_g"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_lbr"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_s"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_t2a"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_tol"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_va"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f0_ve"
+price = 45
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f47_aos"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f47_lbr"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f47_t2a"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f47_tol"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4b_aos"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4b_lbr"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4b_t2a"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4b_tol"
+price = 26
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_lbr"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_t2a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f45_tol"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fa_aos"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fa_lbr"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fa_t2a"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fa_tol"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e85_pickaxe"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1442_aos"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1442_lbr"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1442_t2a"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1442_tol"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13af_aos"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13af_lbr"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13af_t2a"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13af_tol"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f49_aos"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f49_lbr"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f49_t2a"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f49_tol"
+price = 20
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_aos"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_lbr"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_t2a"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4d_tol"
+price = 30
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143e_aos"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143e_lbr"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143e_t2a"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143e_tol"
+price = 21
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_lbr"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_t2a"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_tol"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec2_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec2_lbr"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec2_t2a"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec2_tol"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f51_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f51_lbr"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f51_t2a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f51_tol"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_aos"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_lbr"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_t2a"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0ec4_tol"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b3_aos"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b3_lbr"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b3_t2a"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b3_tol"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143c_aos"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143c_lbr"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143c_t2a"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143c_tol"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_aos"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_lbr"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_t2a"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5c_tol"
+price = 14
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143a_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143a_lbr"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143a_t2a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x143a_tol"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1438_aos"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1438_lbr"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1438_t2a"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1438_tol"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1406_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1406_lbr"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1406_t2a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1406_tol"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fc_aos"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fc_lbr"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fc_t2a"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fc_tol"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b1_aos"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b1_lbr"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b1_t2a"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b1_tol"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4f_aos"
+price = 23
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4f_lbr"
+price = 23
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4f_t2a"
+price = 23
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4f_tol"
+price = 23
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f62_aos"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f62_lbr"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f62_t2a"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f62_tol"
+price = 15
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e87_tol"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1402_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1402_lbr"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1402_t2a"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1402_tol"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df0_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df0_lbr"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df0_t2a"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df0_tol"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_aos"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_lbr"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_t2a"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f8_tol"
+price = 8
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_aos"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_lbr"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_t2a"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e89_tol"
+price = 9
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_lbr"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_t2a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e81_tol"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_aos"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_lbr"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_t2a"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_tol"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5e_aos"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5e_lbr"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5e_t2a"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f5e_tol"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1440_aos"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1440_lbr"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1440_t2a"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1440_tol"
+price = 12
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fe_aos"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fe_lbr"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fe_t2a"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fe_tol"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1400_aos"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1400_lbr"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1400_t2a"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1400_tol"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f60_aos"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f60_lbr"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f60_t2a"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f60_tol"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b5_aos"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b5_lbr"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b5_t2a"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b5_tol"
+price = 18
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b7_aos"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b7_lbr"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b7_t2a"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b7_tol"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b9_aos"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b9_lbr"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b9_t2a"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b9_tol"
+price = 27
+amount = 1
+hue = 0
+name = ""

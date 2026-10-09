@@ -1,0 +1,134 @@
+# ==============================================================================
+# Moongate - templates/items/woods.toml
+#
+# What it is for:
+#   The wood the converted item files do not have: the logs and the boards of
+#   the six kinds of wood a lumberjack finds beside plain wood (oak, ash, yew,
+#   heartwood, bloodwood, frostwood), and the five rare things a master finds
+#   with the logs. scripts/items/axe.lua gives them by these ids.
+#
+# Fields:
+#   base_id     the plain log or board it is one of, or base_item
+#   item_id     the graphic, for the rare finds
+#   name        the name shown
+#   hue         the colour of the kind
+#   weight      in stones
+#   stackable   piles in one item
+# ==============================================================================
+
+[[item]]
+id = "oak_log"
+base_id = "0x1be0_log"
+name = "oak log"
+hue = 2010
+
+[[item]]
+id = "oak_board"
+base_id = "0x1bd7_board"
+name = "oak board"
+hue = 2010
+
+[[item]]
+id = "ash_log"
+base_id = "0x1be0_log"
+name = "ash log"
+hue = 1191
+
+[[item]]
+id = "ash_board"
+base_id = "0x1bd7_board"
+name = "ash board"
+hue = 1191
+
+[[item]]
+id = "yew_log"
+base_id = "0x1be0_log"
+name = "yew log"
+hue = 1192
+
+[[item]]
+id = "yew_board"
+base_id = "0x1bd7_board"
+name = "yew board"
+hue = 1192
+
+[[item]]
+id = "heartwood_log"
+base_id = "0x1be0_log"
+name = "heartwood log"
+hue = 1193
+
+[[item]]
+id = "heartwood_board"
+base_id = "0x1bd7_board"
+name = "heartwood board"
+hue = 1193
+
+[[item]]
+id = "bloodwood_log"
+base_id = "0x1be0_log"
+name = "bloodwood log"
+hue = 1194
+
+[[item]]
+id = "bloodwood_board"
+base_id = "0x1bd7_board"
+name = "bloodwood board"
+hue = 1194
+
+[[item]]
+id = "frostwood_log"
+base_id = "0x1be0_log"
+name = "frostwood log"
+hue = 1151
+
+[[item]]
+id = "frostwood_board"
+base_id = "0x1bd7_board"
+name = "frostwood board"
+hue = 1151
+
+[[item]]
+id = "bark_fragment"
+base_id = "base_item"
+item_id = 0x318F
+name = "bark fragment"
+rarity = "rare"
+weight = 1.0
+stackable = true
+
+[[item]]
+id = "luminescent_fungi"
+base_id = "base_item"
+item_id = 0x3191
+name = "luminescent fungi"
+rarity = "rare"
+weight = 1.0
+stackable = true
+
+[[item]]
+id = "switch"
+base_id = "base_item"
+item_id = 0x2F5F
+name = "switch"
+rarity = "rare"
+weight = 1.0
+stackable = true
+
+[[item]]
+id = "parasitic_plant"
+base_id = "base_item"
+item_id = 0x3190
+name = "parasitic plant"
+rarity = "rare"
+weight = 1.0
+stackable = true
+
+[[item]]
+id = "brilliant_amber"
+base_id = "base_item"
+item_id = 0x3199
+name = "brilliant amber"
+rarity = "rare"
+weight = 1.0
+stackable = true

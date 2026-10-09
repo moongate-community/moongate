@@ -59,6 +59,73 @@ public sealed class StubBankService : IBankService
 
     public List<(MobileEntity Player, int Amount)> Deposited { get; } = [];
 
+    /// <summary>
+    ///     The coins each player carries; a withdrawal that moves the gold adds to them, taking carried gold removes from them.
+    /// </summary>
+    public Dictionary<Serial, long> Carried { get; } = [];
+
+    /// <summary>
+    ///     The payments, with whether the bank could be used and how much of each came out of the bank.
+    /// </summary>
+    public List<(MobileEntity Player, int Amount, bool UseBank, int FromBank)> Paid { get; } = [];
+
+    public List<(MobileEntity Player, int Amount)> Given { get; } = [];
+
+    public BankResultType GiveGold(MobileEntity player, int amount)
+    {
+        if (Result is { } result)
+        {
+            return result;
+        }
+
+        Given.Add((player, amount));
+        Carried[player.Id] = Carried.GetValueOrDefault(player.Id) + amount;
+
+        return BankResultType.Ok;
+    }
+
+    public long CarriedGold(MobileEntity player)
+    {
+        return Carried.GetValueOrDefault(player.Id);
+    }
+
+    public BankResultType CanPay(MobileEntity player, int amount, bool useBank)
+    {
+        if (Result is { } result)
+        {
+            return result;
+        }
+
+        var bank = useBank ? Gold.GetValueOrDefault(player.Id) : 0;
+
+        return amount < 1 ? BankResultType.BadAmount :
+            Carried.GetValueOrDefault(player.Id) + bank < amount ? BankResultType.NotEnoughGold : BankResultType.Ok;
+    }
+
+    public BankResultType Pay(MobileEntity player, int amount, bool useBank, out int fromBank)
+    {
+        fromBank = 0;
+        var carried = Carried.GetValueOrDefault(player.Id);
+        var bank = useBank ? Gold.GetValueOrDefault(player.Id) : 0;
+
+        if (Result is { } result)
+        {
+            return result;
+        }
+
+        if (amount < 1 || carried + bank < amount)
+        {
+            return amount < 1 ? BankResultType.BadAmount : BankResultType.NotEnoughGold;
+        }
+
+        fromBank = (int)Math.Max(0, amount - carried);
+        Carried[player.Id] = Math.Max(0, carried - amount);
+        Gold[player.Id] = Gold.GetValueOrDefault(player.Id) - fromBank;
+        Paid.Add((player, amount, useBank, fromBank));
+
+        return BankResultType.Ok;
+    }
+
     public int? Balance(MobileEntity player)
     {
         return player.IsNpc ? null : Gold.GetValueOrDefault(player.Id);
@@ -74,6 +141,7 @@ public sealed class StubBankService : IBankService
         }
 
         Gold[player.Id] = Gold.GetValueOrDefault(player.Id) - amount;
+        Carried[player.Id] = Carried.GetValueOrDefault(player.Id) + amount;
 
         return BankResultType.Ok;
     }

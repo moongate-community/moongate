@@ -11,6 +11,7 @@ using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
@@ -42,6 +43,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly RecordingNpcSenseService _senses = new();
     private readonly RecordingMurderService _murders = new();
+    private readonly RecordingMountService _mounts = new();
+    private readonly Moongate.Tests.TestSupport.Ultima.Pets.StubPetService _pets = new();
 
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
         .Item(0x0EED, TileFlagType.Generic, 0)
@@ -121,6 +124,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
             state: _state,
             senses: _senses,
             murders: _murders,
+            mounts: _mounts,
+            pets: new Lazy<Moongate.Server.Ultima.Interfaces.IPetService>(() => _pets),
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -330,6 +335,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
 
         Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
         Assert.Equal(2L, corpse.GetProp<long>("corpse.killer"));
+        Assert.Equal(_aria.Name, corpse.GetProp<string>("corpse.killer_name"));
     }
 
     [Fact]
@@ -399,6 +405,23 @@ public sealed class DeathServiceTests : IAsyncLifetime
         _loop.RunDeferred();
 
         Assert.Equal([_orc.Id], _npcs.Removals);
+    }
+
+    [Fact]
+    public void IsDying_FromTheDeathOfAnNpcToItsRemoval_IsTrue()
+    {
+        _engine.IsRunningScript = true;
+        _loop.DeferTryPost = true;
+
+        Assert.False(_death.IsDying(_orc.Id));
+
+        _death.Kill(_orc, _aria);
+
+        Assert.True(_death.IsDying(_orc.Id));
+
+        _loop.RunDeferred();
+
+        Assert.False(_death.IsDying(_orc.Id));
     }
 
     [Fact]
@@ -741,6 +764,39 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.Contains($"OwnItemRemoved {_aria.Id.Value} {robe.Id.Value}", _view.Calls);
         Assert.Contains(_items.GetWorn(_aria.Id), item => item.TemplateId == "death_shroud");
         Assert.DoesNotContain(_items.GetWorn(_aria.Id), item => item.TemplateId == "death_robe");
+    }
+
+    [Fact]
+    public void Kill_AnNpcWithAnOwner_TellsThePetServiceItsOwnerLostAFollower()
+    {
+        _orc.SetProp("owner", 77L);
+
+        Assert.True(_death.Kill(_orc));
+
+        Assert.Equal([new Serial(77)], _pets.ChangedFor);
+    }
+
+    [Fact]
+    public void Kill_AnNpcWithNoOwner_TellsNobody()
+    {
+        Assert.True(_death.Kill(_orc));
+
+        Assert.Empty(_pets.ChangedFor);
+    }
+
+    [Fact]
+    public void Kill_APlayerOnAMount_DismountsItBeforeTheCorpseIsMade()
+    {
+        _aria.Body = 0x0190;
+        _mounts.Mounted.Add(_aria.Id);
+        var corpseExisted = true;
+        _mounts.OnDismount = () => corpseExisted = _items.TryGet(new Serial(CorpseSerial), out _);
+
+        _death.Kill(_aria, _orc);
+
+        Assert.Equal(_aria, Assert.Single(_mounts.Dismounts));
+        Assert.False(corpseExisted);
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out _));
     }
 
     [Fact]

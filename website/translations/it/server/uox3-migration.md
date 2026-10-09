@@ -1,11 +1,11 @@
-<!-- translation: {"sourceHash":"1cb57f6c219939134a64425d83b6097d6f38b14b0710c65427a63269442c6f93","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"d7e537a517d203bdbd343e76dff33dfcb4d3072f523bc048c1ebc3728f7ead0f","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
-`mgctl convert uox` converte le definizioni oggetto `.dfn` e le liste di bottino
+`moongate-convert uox` converte le definizioni oggetto `.dfn` e le liste di bottino
 [UOX3](https://github.com/UOX3DevTeam/UOX3) in TOML `ItemTemplate` e `LootTemplate`
 Moongate, e NPC, liste di NPC, regioni di spawn e liste di nomi UOX3 in `MobileTemplate`,
-TOML di liste NPC e spawn e `names.toml`. Altri sei comandi convertono
+TOML di liste NPC e spawn e `names.toml`. Altri comandi convertono
 [insegne](#signs-of-modernuo), [teletrasporti](#teleporters-of-modernuo),
 [luoghi nominati](#named-places-of-modernuo), [forzieri del tesoro](#treasure-chests-of-modernuo),
 [spawner](#spawns-of-modernuo) e [testi dei libri](book-content-import.md) ModernUO.
@@ -14,26 +14,28 @@ il server le carica all'avvio da `templates/`.
 
 ## Eseguirlo
 
-Da un checkout del sorgente:
+I convertitori sono uno strumento Python, `moongate-convert`, in `tools/convert` del repository. Servono
+[uv](https://docs.astral.sh/uv/) e Python 3.13 o successivo, non serve .NET. Esegui ogni comando di questa pagina da quella cartella:
 
 ```sh
-dotnet run --project src/Moongate.Ctl -- convert uox \
+cd tools/convert
+uv run moongate-convert uox \
   --source <file-or-directory> --destination <dir> [--loot-destination <dir>] \
   [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>] \
   [--starting-items-destination <file>] [--scripts-source <js-dir>] \
   [--npc-lists-destination <dir> --spawns-destination <dir>]
 ```
 
-Archivi di rilascio e immagini Docker distribuiscono lo stesso tool come `mgctl`
-(`/app/mgctl` nell'immagine); vedi [Conversione dei contenuti UOX3](docker.md#uox3-content-conversion)
-per un esempio `docker run` quando non c'è un SDK .NET locale.
+`uv run moongate-convert --help` elenca i comandi e `uv run moongate-convert <command> --help` le opzioni di uno di essi.
+I percorsi degli esempi sotto sono quelli del repository, visti da `tools/convert`. L'immagine Docker non contiene lo
+strumento: vedi [Conversione dei contenuti UOX3](docker.md#uox3-content-conversion).
 
 `--source` è un singolo file `.dfn` o una directory cercata ricorsivamente per ogni
 `.dfn` al suo interno. `--destination` riceve un `<name>.toml` per `.dfn` sorgente,
 allo stesso percorso relativo, contenente un `[[item]]` per blocco con un proprio
 `id=`. `--loot-destination` è facoltativo; senza di esso i blocchi `LOOTLIST` vengono
-saltati. Un'invocazione senza argomenti stampa l'help ed esce con `0`; un argomento
-obbligatorio mancante esce con `1`. I tre argomenti mobile vanno insieme (vedi
+saltati. Un'invocazione senza argomenti, o con un argomento
+obbligatorio mancante, esce con `2` e l'uso. I tre argomenti mobile vanno insieme (vedi
 [Mobile e liste di nomi](#mobiles-and-name-lists)). `--scripts-source` è la cartella
 `data/js` di UOX3. Usandola, un oggetto il cui script UOX3 ha un equivalente Lua
 Moongate riceve il suo `script_id`: lo script del `script=` del blocco, altrimenti
@@ -273,14 +275,26 @@ convertitore aggiunge all'insieme comune le voci proprie di Moongate per gli ogg
 presenti nella sorgente: prima 1000 monete d'oro al posto di `STARTGOLD`, poi tre
 pagnotte e infine una brocca d'acqua (vedi il [file distribuito](data-files/starting-items.md)).
 
+## Comportamento dei convertitori
+
+Un sorgente che non è come dovrebbe (un intervallo di bottino invertito, due intestazioni che diventano lo stesso id, un colore
+fuori intervallo, un file o una cartella illeggibili) ferma l'esecuzione con codice di uscita 2 e un messaggio, e non viene scritto
+nulla. `modernuo-books` non controlla che un libro stia nei pacchetti
+del client (lo fanno i test del server sul catalogo distribuito), `modernuo-vendors` crea anche un negozio per il ladro e il
+ranger, e `modernuo-locations` corregge la Cella 7 del carcere, che ModernUO mette sul posto della Cella 6.
+
+Alcuni file distribuiti sono più vecchi del convertitore o modificati a mano, quindi riconvertire non li restituisce byte per
+byte: i test di `tools/convert` li nominano. I test (`uv run pytest` e, con i checkout di UOX3 e ModernUO, quelli golden e end to end)
+sono descritti in `tools/convert/README.md`.
+
 ## Insegne di ModernUO
 
 Le insegne dei negozi e del mondo provengono da `signs.cfg` ModernUO, il file che il
 suo `[SignGen` posiziona:
 
 ```sh
-dotnet run --project src/Moongate.Ctl -- convert modernuo-signs \
-  --source <ModernUO>/Distribution/Data/signs.cfg --destination moongate_root/templates/decorations
+uv run moongate-convert modernuo-signs \
+  --source <ModernUO>/Distribution/Data/signs.cfg --destination ../../moongate_root/templates/decorations
 ```
 
 Scrive un `signs.toml` per [cartella di decorazioni](templates.md#decorations)
@@ -299,8 +313,8 @@ I teletrasporti del mondo e dei dungeon provengono da `teleporters.json` ModernU
 il file che il suo `[TelGen` posiziona:
 
 ```sh
-dotnet run --project src/Moongate.Ctl -- convert modernuo-teleporters \
-  --source <ModernUO>/Distribution/Data/teleporters.json --destination moongate_root/templates/decorations
+uv run moongate-convert modernuo-teleporters \
+  --source <ModernUO>/Distribution/Data/teleporters.json --destination ../../moongate_root/templates/decorations
 ```
 
 Scrive un `teleporters.toml` per cartella di mappa delle
@@ -319,8 +333,8 @@ diventano [`locations.toml`](data-files/locations.md), che [`.go`](commands/go.m
 elenca e raggiunge:
 
 ```sh
-dotnet run --project src/Moongate.Ctl -- convert modernuo-locations \
-  --source <ModernUO>/Distribution/Data/Locations --destination moongate_root/data/locations.toml
+uv run moongate-convert modernuo-locations \
+  --source <ModernUO>/Distribution/Data/Locations --destination ../../moongate_root/data/locations.toml
 ```
 
 Legge `felucca.json`, `trammel.json`, `ilshenar.json`, `malas.json`, `tokuno.json` e
@@ -336,8 +350,8 @@ a `4`, accanto alle creature o da soli. Questo comando prende solo i forzieri su
 ogni mappa e lascia le creature ai convertitori degli spawn:
 
 ```sh
-dotnet run --project src/Moongate.Ctl -- convert modernuo-chests \
-  --source <ModernUO>/Distribution/Data/Spawns --destination moongate_root/templates/spawns
+uv run moongate-convert modernuo-chests \
+  --source <ModernUO>/Distribution/Data/Spawns --destination ../../moongate_root/templates/spawns
 ```
 
 Legge le ere `shared` e `post-uoml` e scrive un `treasure_chests.toml` per cartella
@@ -354,9 +368,9 @@ UOX3 non ha spawn per Malas, Tokuno e TerMur. Il comando `modernuo-spawns` li pr
 dagli spawner [ModernUO](https://github.com/modernuo/ModernUO):
 
 ```sh
-dotnet run --project src/Moongate.Ctl -- convert modernuo-spawns \
+uv run moongate-convert modernuo-spawns \
   --source <ModernUO>/Distribution/Data/Spawns --maps malas,tokuno,termur \
-  --mobiles moongate_root/templates/mobiles --destination moongate_root/templates/spawns
+  --mobiles ../../moongate_root/templates/mobiles --destination ../../moongate_root/templates/spawns
 ```
 
 Legge le ere `shared` e `post-uoml` di ogni mappa (il mondo di un client moderno) e
@@ -366,7 +380,9 @@ esecuzione nelle cartelle delle mappe convertite; gli altri file della cartella
 restano intatti, e una mappa senza nulla da scrivere mantiene i propri file.
 L'id di una regione nomina era, file e indice dello spawner al suo interno
 (`malas_modernuo_post_uoml_south_12`), così rimane uguale quando un'esecuzione
-successiva, con più template, risolve più mobile. Usalo per mappe non coperte da
+successiva, con più template, risolve più mobile. Con `--only Guildmaster` converte solo le voci delle classi il cui nome finisce così, in
+`modernuo_guildmasters.toml`, e lascia stare gli altri file `modernuo_` (le liste di PNG sono lette dalla cartella `npc_lists` accanto a quella di `--mobiles`, e il maestro dei ladri, che gli spawn delle città di UOX3 collocano già, viene saltato): così i maestri di gilda di Trammel, Felucca e
+Ilshenar vengono collocati senza sovrapporre gli altri spawn di ModernUO a quelli di UOX3. Usalo per mappe non coperte da
 UOX3: su Felucca o Trammel aggiungerebbe gli spawn ModernUO sopra quelli UOX3.
 Una regione prende la mappa nominata dallo spawner, non sempre quella della cartella,
 e va nella cartella di quella mappa, poiché il server prende la mappa di una regione

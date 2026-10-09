@@ -6,6 +6,7 @@ intelligence = "1d26+49"
 damage = "1d13+2"
 armor = 10
 notoriety = "invulnerable"
+script_id = "shopkeeper"
 
 [[mobile]]
 id = "m_bard"
@@ -758,6 +759,7 @@ hue = "0x0835-0x0852"
 [[mobile]]
 id = "m_animaltrainer"
 base_id = "basevendor"
+script_id = "stablemaster"
 name_list = "male"
 title = "the Animal Trainer"
 gender = "male"
@@ -1371,6 +1373,7 @@ hue = "0x0835-0x0852"
 [[mobile]]
 id = "m_gypsyanimaltrainer"
 base_id = "basevendor"
+script_id = "stablemaster"
 name_list = "male"
 title = "the Gypsy Animal Trainer"
 gender = "male"

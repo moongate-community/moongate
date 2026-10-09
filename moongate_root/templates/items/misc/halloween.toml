@@ -5,6 +5,9 @@ item_id = 3179
 name = "jack o lantern"
 rarity = "common"
 weight = 3.0
+damage_min = 1
+damage_max = 5
+speed = 3
 decays = true
 [item.tags]
 jackolantern = "1"

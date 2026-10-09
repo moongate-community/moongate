@@ -10,6 +10,8 @@ public sealed class StubItemSerialPool : IItemSerialPool
 {
     public Queue<Serial> Serials { get; } = new();
 
+    public int Available => Serials.Count;
+
     public Task StartAsync()
     {
         return Task.CompletedTask;

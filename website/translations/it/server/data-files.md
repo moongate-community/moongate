@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"038e531a982eb4f1535ce49574b8e4d97fbe22b690f4d9cd3ad719a0d7b46c44","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"a22e929a43e54c61b99eaec6000c418148bf357d166ac318849d6e6db6e43774","title":"Panoramica"} -->
 
 # File dei dati dello shard
 
@@ -40,6 +40,7 @@ viene eseguito dopo di esso.
 | <span id="starting-cities"></span><span id="validation-at-startup-1"></span>[`starting_cities.toml`](data-files/starting-cities.md) | `StartingCityContent` | mappe | Sì, nell'elenco dei personaggi |
 | <span id="moongates"></span>[`moongates.toml`](data-files/moongates.md) | `MoongateFacet` | mappe | Sì, da `.decorate` e dallo script moongate |
 | <span id="locations"></span>[`locations.toml`](data-files/locations.md) | `NamedLocation` | facoltativo | Sì, da `.go` e dal suo gump |
+| <span id="schedule"></span>[`schedule.toml`](data-files/schedule.md) | `ScheduleFile` | facoltativo | Sì, dal servizio del calendario e da `.event` |
 | <span id="jail"></span>[`jail.toml`](data-files/jail.md) | `JailFile` | facoltativo; prima dei template dei libri | Sì, da `.jail` e dal suo gump |
 | <span id="skills"></span><span id="validation-at-startup-2"></span>[`skills.toml`](data-files/skills.md) | `SkillContent` | città iniziali | No |
 | <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | abilità (ogni abilità iniziale deve esistere) | Sì, creazione dei personaggi |
@@ -54,6 +55,8 @@ viene eseguito dopo di esso.
 | [`motd.toml`](motd.md) | `MotdLine` | dopo template mobile e registrazione delle variabili dei plugin | Sì, a ogni ingresso del personaggio; file facoltativo |
 | [`titles.toml`](data-files/titles.md) | `FameKarmaTitle` | dopo MOTD | Mostrato nel titolo del paperdoll |
 | [`templates/books/<name>.toml`](data-files/books.md) | `BookTemplate` | dopo i template oggetto | Pergamene personalizzate e libri nativi; gump delle pergamene, copertine/pagine dei libri e libri scrivibili |
+| [`templates/shops/<name>.toml`](data-files/shops.md) | `ShopDefinition` | dopo i template oggetto e mobile | Sì, tramite `IShopService`: cosa vende ogni venditore nella sua [finestra del negozio](vendors.md) |
+| [`harvest.toml`](data-files/harvest.md) | `HarvestResource` | facoltativo; dopo i negozi | Sì, tramite `IHarvestService`: i pesci della [pesca](fishing.md), per zona |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | dopo template oggetto e template dei libri (ogni id referenziato deve esistere) | Sì, tramite `IStartingItemsService` |
 
 "No" significa che il file viene caricato e validato, ma nessun sistema di gioco lo

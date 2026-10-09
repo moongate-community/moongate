@@ -34,6 +34,7 @@ namespace Moongate.Server.Ultima.Modules;
 public sealed class MobileModule
 {
     private const double TenthsPerPoint = 10.0;
+    private const int MaximumStealthSteps = 1000;
 
     private readonly IMobileService _mobiles;
     private readonly ITeleportService _teleports;
@@ -48,6 +49,7 @@ public sealed class MobileModule
     private readonly IWeightService? _weight;
     private readonly ICrimeService? _crimes;
     private readonly IDeathService? _death;
+    private readonly IMountService? _mounts;
 
     private readonly ISessionService? _sessions;
     private readonly IPacketSendService? _sender;
@@ -67,9 +69,11 @@ public sealed class MobileModule
         ICrimeService? crimes = null,
         IDeathService? death = null,
         ISessionService? sessions = null,
-        IPacketSendService? sender = null
+        IPacketSendService? sender = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
         _sessions = sessions;
         _sender = sender;
         _death = death;
@@ -122,6 +126,48 @@ public sealed class MobileModule
     public string? Name(long serial)
     {
         return TryGetMobile(serial, out var mobile) ? mobile.Name : null;
+    }
+
+    /// <summary>
+    ///     Gets how many steps a hidden player may still take unseen; <c>mobile.stealth_steps(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "How many more steps the mobile may take hidden before a step shows it, as the Stealth skill gave them; 0 for none, nil for a mobile not in the world."
+    )]
+    public int? StealthSteps(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) ? mobile.AllowedStealthSteps : null;
+    }
+
+    /// <summary>
+    ///     Sets how many steps a hidden player may take unseen; <c>mobile.set_stealth_steps(who, 8)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Sets how many steps the hidden mobile may take before a step shows it (0 to 1000); hiding or showing it again clears them, and running always shows it. False for a mobile not in the world or a number out of range."
+    )]
+    public bool SetStealthSteps(long serial, int steps)
+    {
+        if (steps is < 0 or > MaximumStealthSteps || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        mobile.AllowedStealthSteps = steps;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets whether the mobile is female; <c>mobile.is_female(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText: "Whether the mobile, a player or an NPC, is female; false for a male one and for an unknown serial."
+    )]
+    public bool IsFemale(long serial)
+    {
+        return TryGetMobile(serial, out var mobile) && mobile.Gender == GenderType.Female;
     }
 
     /// <summary>
@@ -852,6 +898,18 @@ public sealed class MobileModule
     public bool IsDead(long serial)
     {
         return TryGetMobile(serial, out var mobile) && mobile.IsDead;
+    }
+
+    /// <summary>
+    ///     Gets whether the mobile sits on a mount; <c>mobile.is_mounted(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "True when the mobile rides a mount, such as a horse; false for a mobile on foot or a serial that is not a mobile in the world."
+    )]
+    public bool IsMounted(long serial)
+    {
+        return _mounts is not null && TryGetMobile(serial, out var mobile) && _mounts.IsMounted(mobile);
     }
 
     /// <summary>

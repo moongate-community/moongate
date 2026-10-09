@@ -8,7 +8,7 @@
 --   hidden, out of war mode; on a failure it is seen, also when it was hidden.
 --   Either way it waits before another skill the delay of hiding in
 --   data/skills.toml, 10 seconds. Its first step shows it again (the server
---   does that): there is no Stealth yet.
+--   does that), unless the Stealth skill allowed it (stealth.lua).
 --
 --   A skill script is a table named after the skill, as data/skills.toml
 --   names it, in scripts/skills/<skill>.lua.

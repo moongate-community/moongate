@@ -1,0 +1,166 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
+[[shop]]
+id = "bowyer"
+vendors = ["bowyer", "m_bowyer", "f_bowyer"]
+[[shop.buy]]
+item = "0x1022_fletcher's_tools"
+price = 2
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f4f_lbr"
+price = 55
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13fc_lbr"
+price = 55
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13b1_lbr"
+price = 40
+amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x1022_fletcher's_tools"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bfb_20"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f3f_arrow"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bd4_shaft"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bd1_feather"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fc_aos"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fc_lbr"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fc_t2a"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13fc_tol"
+price = 27
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b1_aos"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b1_lbr"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b1_t2a"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b1_tol"
+price = 17
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4f_aos"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4f_lbr"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4f_t2a"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f4f_tol"
+price = 25
+amount = 1
+hue = 0
+name = ""

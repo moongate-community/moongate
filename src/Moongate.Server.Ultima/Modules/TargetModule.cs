@@ -14,7 +14,7 @@ namespace Moongate.Server.Ultima.Modules;
 /// <summary>
 ///     The <c>target</c> Lua module: gives a player the target cursor and runs a function with what it clicked, as an
 ///     item used on another does; <c>target.pick(user, function(picked) ... end)</c>. The function gets a table:
-///     <c>{ kind = "object", serial }</c>, <c>{ kind = "location", map, x, y, z }</c> or
+///     <c>{ kind = "object", serial }</c>, <c>{ kind = "location", map, x, y, z, graphic, land }</c> or
 ///     <c>{ kind = "canceled", reason }</c>, the reason being <c>canceled</c> (the player put the cursor away),
 ///     <c>overridden</c> (another cursor took its place) or <c>disconnected</c>.
 /// </summary>
@@ -56,7 +56,7 @@ public sealed class TargetModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Gives the player a cursor to pick a place; the function gets { kind = 'location', map, x, y, z }, an object when one was clicked, or { kind = 'canceled', reason } (reason is 'canceled' for ESC, 'overridden' when another cursor took its place, 'disconnected' when the player left). A cursor a script replaces is told canceled on the next turn of the game loop. False for an NPC or a player not in the world."
+        "Gives the player a cursor to pick a place; the function gets { kind = 'location', map, x, y, z, graphic, land } (graphic is the static picked there, which is really on the map, or 0 for the land; land is the land tile of the cell, read from the map), an object when one was clicked, or { kind = 'canceled', reason } (reason is 'canceled' for ESC, 'overridden' when another cursor took its place, 'disconnected' when the player left). A cursor a script replaces is told canceled on the next turn of the game loop. False for an NPC or a player not in the world."
     )]
     public bool PickLocation(long player, [ScriptParameterType("function")] LuaValue callback)
     {
@@ -133,6 +133,10 @@ public sealed class TargetModule
                 table["x"] = result.Location.X;
                 table["y"] = result.Location.Y;
                 table["z"] = result.Location.Z;
+                // The static that was picked, so a script can tell a tree or a rock; 0 for the land.
+                table["graphic"] = result.Graphic;
+                // The land of the cell, under a static too, so a script can tell the rock of a mountain.
+                table["land"] = result.Land;
 
                 break;
             default:

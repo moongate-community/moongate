@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6b881bca7259f1df96eea3dc259f512e9f907b417db0c78aefac7639201c5c39","title":"Caricamento dei template TOML"} -->
+<!-- translation: {"sourceHash":"da965eab0ef753819312629bdc78634dd395f91a073e21a6aa1d067a875a7db9","title":"Caricamento dei template TOML"} -->
 
 # Caricamento dei template TOML
 
@@ -291,6 +291,7 @@ convertitore, vedi [Tipi di valore TOML](toml-types.md).
 | `Dyeable` | `dyeable = true` su ciò a cui una vasca di tintura può assegnare la propria tinta, come `dyeable` di UOX3: gli abiti convertiti lo ricevono da `base_clothing` e un template lo rimuove con `dyeable = false` (una veste da morto). Se non impostato non è tingibile. Vedi [dyes.lua e dye_tub.lua](scripting/shipped-scripts.md#dyeslua-and-dye_tublua) |
 | `BuyPrice`, `SellPrice` | Il prezzo a cui i venditori lo vendono e lo acquistano; non impostato significa che non lo commerciano |
 | `Decays`, `DecayMinutes` | Se l'oggetto decade a terra e dopo quanti minuti; se non impostato decade quando spostabile, dopo 60 minuti, come in ModernUO. Un oggetto che non può essere raccolto decade solo quando il suo template ha sia `decays = true` sia `decay_minutes`, come le casse del tesoro. Un oggetto decade quando si trova a terra, è spostabile (oppure ha entrambi quei valori) e il suo template è visibile ai giocatori. Il conto alla rovescia (`DecayAt`, salvato con l'oggetto, quindi il tempo di fermo conta) inizia quando atterra a terra, di nuovo quando un oggetto sollevato viene respinto lì e si ferma quando viene raccolto, spostato in un contenitore o indossato; il resto di una pila divisa mantiene il tempo della pila. Un controllo ogni 5 secondi elimina gli oggetti scaduti, un contenitore con il suo contenuto, indipendentemente dalla presenza di un giocatore vicino |
+| `UseRange` | Da quante caselle di distanza un giocatore può fare doppio clic sull'oggetto a terra per eseguirne l'`on_use`, da 1 a 24; non impostato vale 2, come la portata di un oggetto in ModernUO. Il bersaglio per tiro con l'arco ha 6, perché si tira da cinque o sei caselle. Quello di un template base è ereditato |
 | `Loot`, `Gold` | Ciò che un contenitore contiene quando una [regione di spawn di oggetti](spawns.md#regions-of-items-treasure-chests) lo crea: `loot = ["reagents", "reagents"]` tira ogni tabella del bottino una volta (elencane una due volte per tirarla due volte) e `gold = "1d100+29"` inserisce quella quantità di oro, in pile di al massimo 65.535. Se non impostato prende quello del template base, altrimenti nulla. Solo una regione di spawn riempie l'oggetto: uno creato da un comando o uno script è vuoto |
 | `LootType` | `regular`, `newbied`, `blessed` o `cursed`: cosa accade quando il proprietario muore; se non impostato è `regular` |
 | `Tags` | Valori liberi per gli script in una tabella `[item.tags]`; i tag espliciti di un figlio sostituiscono l'intera mappa base |
@@ -348,7 +349,9 @@ a 120; una costante è un intero senza virgolette.
 | `Equipment` | Voci `[[mobile.equipment]]`: `items` (id di template di oggetto, uno scelto), `hue` e `gender` per equipaggiare un solo genere |
 | `Loot`, `Gold` | Id di template del bottino e dadi dell'oro tirati nello zaino allo spawn; nessun sistema di cadaveri ancora |
 | `Sounds` | `[mobile.sounds]` con `start_attack`, `idle`, `attack`, `hurt`, `death`; uno script di mobile li riproduce per tipo con `npc.play_sound(serial, "idle")` |
+| `BloodHue` | Il colore del sangue che la creatura lascia quando è colpita: 0 per il rosso, `-1` per una che non sanguina, come il `BloodHue` di ServUO e il `BLOODCOLOR` di Source-X; quello di un template base è ereditato. Non impostato: rosso. I non morti e i golem hanno `-1`. Vedi [Combattimento](combat.md#the-damage) |
 | `FleeAt` | La percentuale dei suoi punti vita (da 0 a 100) sotto cui una creatura che combatte scappa dallo scontro, `-1` per una che non scappa mai, come `FLEEAT` di UOX3; quella di un template base viene ereditata. Non impostato: quella dello script, 20 per un mostro e 10 per un animale. Vedi [Script delle creature](scripting/shipped-scripts.md#commoncreaturelua) |
+| `NpcGuild` | La gilda per cui questo maestro di gilda accetta membri: `mages`, `warriors`, `thieves`, `rangers`, `healers`, `miners`, `merchants`, `tinkers`, `tailors`, `fishermen`, `bards` o `blacksmiths`. Non impostato: il PNG non è un maestro di gilda. Vedi [Maestri di gilda](skills.md#guildmasters) |
 | `ScriptId` | La tabella Lua globale, definita da `scripts/mobiles/<script_id>.lua`, i cui `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death` e `on_drag_drop` gestiscono l'NPC; un identificatore Lua minuscolo. Vedi [Script dei mobile](scripting/mobile-scripts.md) |
 | `Visibility` | Come in `ItemTemplate` |
 | `Movement` | `land`, `water` (un delfino: viene generato e nuota solo in acqua) o `both` (un tricheco: cammina e nuota, e viene generato a terra altrimenti in acqua); se non impostato è `land` |
@@ -399,7 +402,7 @@ gender = "female"
 ```
 
 Il `templates/mobiles/` distribuito contiene gli NPC di UOX3, convertiti da
-[`mgctl convert uox`](uox3-migration.md#mobiles-and-name-lists). Vengono caricati all'avvio game e
+[`moongate-convert uox`](uox3-migration.md#mobiles-and-name-lists). Vengono caricati all'avvio game e
 standalone (`IMobileTemplateService`).
 
 `LootTemplate` e `LootEntry` sono lo stesso genere di struttura:
@@ -462,9 +465,9 @@ luci, mobili, teletrasporti e simili, circa 32.800 posizionamenti nei 108 file c
 convertito una volta da `Data/Decoration` di ModernUO, più New Haven di ServUO (`trammel/newhaven.toml`,
 `havenisland.toml`, `havenmine.toml`, assenti in ModernUO), le insegne dei negozi e del mondo da
 `signs.cfg` di ModernUO (`signs.toml`, scritto da
-[`mgctl convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) e i teletrasporti del mondo e dei dungeon
+[`moongate-convert modernuo-signs`](uox3-migration.md#signs-of-modernuo)) e i teletrasporti del mondo e dei dungeon
 dal suo `teleporters.json` (`teleporters.toml`, scritto da
-[`mgctl convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), un file TOML per file sorgente, in una cartella
+[`moongate-convert modernuo-teleporters`](uox3-migration.md#teleporters-of-modernuo)), un file TOML per file sorgente, in una cartella
 per mappa: `britannia/` (Trammel e Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
 `tokuno/`, `termur/` e gli insiemi speciali `_ruined_magincia_tram/`, `_ruined_magincia_fel/`,
 `_old_magincia/` e `_bounty_boards/`. Una cartella o un file il cui nome inizia con `_` non viene caricato: rinominalo

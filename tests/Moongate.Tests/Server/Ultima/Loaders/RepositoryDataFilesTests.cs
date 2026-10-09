@@ -101,7 +101,7 @@ public sealed class RepositoryDataFilesTests
                 [SkillType.Begging] = 30,
                 [SkillType.Peacemaking] = 1,
                 [SkillType.Cartography] = 1,
-                [SkillType.DetectingHidden] = 30,
+                [SkillType.DetectingHidden] = 10,
                 [SkillType.Discordance] = 1,
                 [SkillType.EvaluatingIntelligence] = 1,
                 [SkillType.ForensicEvaluation] = 1,
@@ -136,7 +136,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5648, messages.Count);
+        Assert.Equal(5702, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -226,7 +226,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5648, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5702, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,

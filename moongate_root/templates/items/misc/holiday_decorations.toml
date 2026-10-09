@@ -1,0 +1,79 @@
+# ==============================================================================
+# Moongate - templates/items/misc/holiday_decorations.toml
+#
+# What it is for:
+#   The decorations the holiday events put in the towns while they are on
+#   (scripts/common/holiday_decor.lua, called by scripts/events/halloween.lua
+#   and christmas.lua). Each derives from a converted template of halloween.toml
+#   or christmas.toml and only changes what a decoration needs: it cannot be
+#   lifted and it never decays, so it stays until the event ends and removes it.
+#
+# Fields:
+#   as every item template; base_id, movable = false, decays = false.
+# ==============================================================================
+
+[[item]]
+id = "hw_jack_o_lantern"
+base_id = "2006jackolantern"
+movable = false
+decays = false
+
+[[item]]
+id = "hw_pumpkin"
+base_id = "2006pumpkinhalloween"
+movable = false
+decays = false
+
+[[item]]
+id = "hw_skulls_on_pike"
+base_id = "skulls_on_pike"
+movable = false
+decays = false
+
+[[item]]
+id = "hw_pumpkin_scarecrow"
+base_id = "pumpkinscarecrow"
+movable = false
+decays = false
+
+[[item]]
+id = "hw_black_cat"
+base_id = "blackcat"
+movable = false
+decays = false
+
+[[item]]
+id = "hw_ghoul_statue"
+base_id = "halloween_ghoul_statue"
+movable = false
+decays = false
+
+[[item]]
+id = "hw_leering_jack_o_lantern"
+base_id = "leeringjackolantern"
+movable = false
+decays = false
+
+[[item]]
+id = "xm_snowy_tree"
+base_id = "0x2377_a_snowy_tree"
+movable = false
+decays = false
+
+[[item]]
+id = "xm_topiary"
+base_id = "0x2378_a_decorative_topiary"
+movable = false
+decays = false
+
+[[item]]
+id = "xm_cactus"
+base_id = "0x2376_a_festive_cactus"
+movable = false
+decays = false
+
+[[item]]
+id = "xm_poinsettia"
+base_id = "0x2330_poinsettia"
+movable = false
+decays = false

@@ -4,6 +4,7 @@ notoriety = "attackable"
 
 [[mobile]]
 id = "horse"
+script_id = "animal"
 name = "a horse"
 body = 228
 strength = "1d77+21"
@@ -25,6 +26,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = "horse4"
 
 [[mobile]]
 id = "brownhorse"
@@ -37,6 +40,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = "horse2"
 
 [[mobile]]
 id = "grayhorse"
@@ -49,6 +54,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = "horse3"
 
 [[mobile]]
 id = "darkhorse"
@@ -61,6 +68,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = "horse1"
 
 [[mobile]]
 id = "etherealhorse"
@@ -74,6 +83,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "llama"
@@ -98,6 +109,8 @@ idle = 1012
 attack = 1013
 hurt = 1014
 death = 185
+[mobile.tags]
+mount_item = "llama"
 
 [[mobile]]
 id = "ethereallama"
@@ -111,11 +124,11 @@ idle = 1012
 attack = 1013
 hurt = 1014
 death = 185
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "frenziedostard"
-script_id = "monster"
-flee_at = -1
 base_id = "horse"
 name = "a frenzied ostard"
 body = 219
@@ -129,6 +142,8 @@ armor = 15
 notoriety = "attackable"
 karma = -1500
 fame = 1500
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d6+74"
 parrying = "1d11+74"
@@ -140,6 +155,8 @@ idle = 630
 attack = 631
 hurt = 632
 death = 633
+[mobile.tags]
+mount_item = "frenziedostard"
 
 [[mobile]]
 id = "forestostard"
@@ -166,6 +183,8 @@ idle = 625
 attack = 626
 hurt = 627
 death = 628
+[mobile.tags]
+mount_item = "forestostard"
 
 [[mobile]]
 id = "desertostard"
@@ -190,6 +209,8 @@ idle = 625
 attack = 626
 hurt = 627
 death = 628
+[mobile.tags]
+mount_item = "desertostard"
 
 [[mobile]]
 id = "etherealostard"
@@ -203,10 +224,11 @@ idle = 625
 attack = 626
 hurt = 627
 death = 628
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "nightmare"
-script_id = "monster"
 base_id = "horse"
 name = "a nightmare"
 body = 116
@@ -220,6 +242,7 @@ karma = -14000
 fame = 14000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "randompotions", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
 gold = "1d51+249"
+script_id = "monster"
 [mobile.skills]
 magery = "1d41+9"
 resisting_spells = "1d16+84"
@@ -232,6 +255,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "darknightmare"
@@ -244,6 +269,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "manenightmare"
@@ -256,6 +283,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "purenightmare"
@@ -268,6 +297,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "unicorn"
@@ -297,6 +328,8 @@ idle = 1213
 attack = 1214
 hurt = 1215
 death = 1216
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealunicorn"
@@ -310,6 +343,8 @@ idle = 1213
 attack = 1214
 hurt = 1215
 death = 1216
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "kirin"
@@ -339,6 +374,8 @@ idle = 966
 attack = 967
 hurt = 968
 death = 969
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "warhorse1"
@@ -364,6 +401,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "warhorse2"
@@ -375,6 +414,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "warhorse3"
@@ -386,6 +427,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "warhorse4"
@@ -397,10 +440,11 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "darksteed"
-script_id = "monster"
 base_id = "horse"
 name = "a dark steed"
 body = 114
@@ -412,6 +456,7 @@ armor = 30
 notoriety = "attackable"
 karma = -14000
 fame = 14000
+script_id = "monster"
 [mobile.skills]
 magery = "1d41+9"
 resisting_spells = "1d16+84"
@@ -424,6 +469,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "silversteed"
@@ -450,10 +497,12 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "skeletalmount"
-script_id = "monster"
+blood_hue = -1
 base_id = "horse"
 name = "a skeletal steed"
 body = 793
@@ -465,6 +514,7 @@ armor = 30
 notoriety = "attackable"
 karma = -10000
 fame = 10000
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+84"
 parrying = "1d41+54"
@@ -476,10 +526,11 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "giantbeetle"
-script_id = "monster"
 base_id = "horse"
 name = "a giant beetle"
 body = 791
@@ -491,6 +542,7 @@ armor = 30
 notoriety = "attackable"
 karma = -4000
 fame = 4000
+script_id = "monster"
 [mobile.skills]
 wrestling = 100
 tactics = 100
@@ -501,6 +553,8 @@ idle = 542
 attack = 354
 hurt = 355
 death = 541
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealgiantbeetle"
@@ -514,6 +568,8 @@ idle = 542
 attack = 543
 hurt = 544
 death = 545
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "firebeetle"
@@ -534,6 +590,8 @@ idle = 542
 attack = 543
 hurt = 544
 death = 545
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "firesteed"
@@ -561,6 +619,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "ridgeback"
@@ -585,6 +645,8 @@ idle = 1013
 attack = 1012
 hurt = 1015
 death = 1011
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "savageridgeback"
@@ -597,6 +659,8 @@ idle = 1013
 attack = 1012
 hurt = 1015
 death = 1011
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealridgeback"
@@ -610,6 +674,8 @@ idle = 1013
 attack = 1012
 hurt = 1015
 death = 1011
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "swampdragon"
@@ -636,6 +702,8 @@ idle = 363
 attack = 364
 hurt = 365
 death = 366
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "armoredswampdragon"
@@ -649,6 +717,8 @@ idle = 363
 attack = 364
 hurt = 365
 death = 366
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealswampdragon"
@@ -662,6 +732,8 @@ idle = 363
 attack = 364
 hurt = 365
 death = 366
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "reptalon"
@@ -686,6 +758,8 @@ idle = 1277
 attack = 1276
 hurt = 1278
 death = 1279
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealreptalon"
@@ -699,6 +773,8 @@ idle = 1277
 attack = 1276
 hurt = 1278
 death = 1279
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "cusidhe"
@@ -726,6 +802,8 @@ idle = 1399
 attack = 1398
 hurt = 1401
 death = 1397
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealcusidhe"
@@ -739,6 +817,8 @@ idle = 1399
 attack = 1398
 hurt = 1401
 death = 1397
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "chargerofthefallen"
@@ -763,6 +843,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealkirin"
@@ -788,6 +870,8 @@ idle = 164
 attack = 165
 hurt = 166
 death = 167
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealboura"
@@ -801,6 +885,8 @@ idle = 1507
 attack = 1504
 hurt = 1506
 death = 1505
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealchargerofthefallen"
@@ -814,6 +900,8 @@ idle = 169
 attack = 170
 hurt = 171
 death = 172
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "etherealtiger"
@@ -827,6 +915,8 @@ idle = 1651
 attack = 1649
 hurt = 1650
 death = 1648
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "base_hiryu"
@@ -843,7 +933,12 @@ death = 1275
 [[mobile]]
 id = "hiryu"
 base_id = "hiryu_se"
+[mobile.tags]
+mount_item = ""
 
 [[mobile]]
 id = "lesserhiryu"
 base_id = "lesser_hiryu_se"
+[mobile.tags]
+mount_item = ""
+

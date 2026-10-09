@@ -1,0 +1,124 @@
+# What it is for:
+#   One npc list for each trade of guildmaster, with its man and its woman, so that a spawn names the trade only.
+#
+# Fields:
+#   see templates.md
+[[npc_list]]
+id = "bardguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_bard_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_bard_guildmaster"
+
+[[npc_list]]
+id = "blacksmithguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_blacksmith_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_blacksmith_guildmaster"
+
+[[npc_list]]
+id = "fisherguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_fisher_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_fisher_guildmaster"
+
+[[npc_list]]
+id = "healerguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_healer_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_healer_guildmaster"
+
+[[npc_list]]
+id = "mageguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_mage_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_mage_guildmaster"
+
+[[npc_list]]
+id = "merchantguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_merchant_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_merchant_guildmaster"
+
+[[npc_list]]
+id = "minerguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_miner_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_miner_guildmaster"
+
+[[npc_list]]
+id = "rangerguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_ranger_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_ranger_guildmaster"
+
+[[npc_list]]
+id = "tailorguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_tailor_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_tailor_guildmaster"
+
+[[npc_list]]
+id = "thiefguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_thief_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_thief_guildmaster"
+
+[[npc_list]]
+id = "tinkerguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_tinker_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_tinker_guildmaster"
+
+[[npc_list]]
+id = "warriorguildmaster"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "m_warrior_guildmaster"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "f_warrior_guildmaster"

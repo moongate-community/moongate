@@ -36,6 +36,18 @@ public sealed class DecorationService : IDecorationService, IDisposable
     public const string BulletinBoardTemplate = "bulletin_board";
 
     public const string AnkhTemplate = "decoration_ankh";
+
+    /// <summary>
+    ///     The template of a training dummy the files place: its script swings the weapon of whoever uses it, as
+    ///     <c>training_dummy.lua</c>.
+    /// </summary>
+    public const string TrainingDummyTemplate = "decoration_training_dummy";
+
+    /// <summary>
+    ///     The template of an archery butte the files place: <c>archery_butte.lua</c> and a use range of six tiles.
+    /// </summary>
+    public const string ArcheryButteTemplate = "decoration_archery_butte";
+
     public const string DoorTemplate = "decoration_door";
     public const string LightTemplate = "decoration_light";
     public const string TeleporterTemplate = "decoration_teleporter";
@@ -66,6 +78,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
     private const string BulletinBoardType = "BulletinBoard";
     private const string AnkhWestType = "AnkhWest";
     private const string AnkhNorthType = "AnkhNorth";
+    private const string TrainingDummyType = "TrainingDummy";
+    private const string ArcheryButteType = "ArcheryButte";
 
     // The second piece of each ankh, as ModernUO's AnkhWest and AnkhNorth place it: the graphic and the cell next to the
     // first, for the first's graphic, bloodied or not.
@@ -441,7 +455,7 @@ public sealed class DecorationService : IDecorationService, IDisposable
     }
 
     // The template of a kind that was placed as plain decoration before its script was written: a container that
-    // fills up, a clock, a bulletin board. Null for the others.
+    // fills up, a clock, a bulletin board, a training dummy, an archery butte. Null for the others.
     private static string? LaterTemplateOf(string type)
     {
         if (IsFillable(type))
@@ -454,6 +468,8 @@ public sealed class DecorationService : IDecorationService, IDisposable
             ClockType                     => ClockTemplate,
             BulletinBoardType             => BulletinBoardTemplate,
             AnkhWestType or AnkhNorthType => AnkhTemplate,
+            TrainingDummyType             => TrainingDummyTemplate,
+            ArcheryButteType              => ArcheryButteTemplate,
             _                             => null
         };
     }

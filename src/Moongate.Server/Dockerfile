@@ -34,7 +34,6 @@ COPY ["src/Moongate.Server.Ultima/Moongate.Server.Ultima.csproj", "src/Moongate.
 COPY ["src/Moongate.Ultima/Moongate.Ultima.csproj", "src/Moongate.Ultima/"]
 COPY ["src/Moongate.Scripting/Moongate.Scripting.csproj", "src/Moongate.Scripting/"]
 COPY ["src/Moongate.Server/Moongate.Server.csproj", "src/Moongate.Server/"]
-COPY ["src/Moongate.UoxItemConverter/Moongate.UoxItemConverter.csproj", "src/Moongate.UoxItemConverter/"]
 # Restore the same architecture and self-contained assets used by publish.
 # Keep NuGet packages in this layer so external CI caches carry them too.
 RUN dotnet restore "src/Moongate.Server/Moongate.Server.csproj" -a "$TARGETARCH" -p:Configuration="$BUILD_CONFIGURATION" -p:SelfContained=true \

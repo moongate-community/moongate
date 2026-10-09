@@ -160,4 +160,20 @@ public static class CommandMessages
     public const int BookDescription = 30184;
     public const int GmToolsDescription = 30185;
     public const int GmToolsGumpMissing = 30186;
+    public const int HideDescription = 30187;
+    public const int HideDone = 30188;
+    public const int UnhideDescription = 30189;
+    public const int UnhideDone = 30190;
+    public const int AlreadyThatWay = 30191;
+    public const int PagesDescription = 30219;
+    public const int PagesGumpMissing = 30220;
+    public const int TameDescription = 30221;
+    public const int Tamed = 30222;
+    public const int CannotTame = 30223;
+    public const int ShuttingDownInMinutes = 30224;
+    public const int EventDescription = 30225;
+    public const int EventListLine = 30226;
+    public const int EventSwitched = 30227;
+    public const int EventUnknown = 30228;
+    public const int EventNone = 30229;
 }

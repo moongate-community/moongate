@@ -1,6 +1,5 @@
 [[mobile]]
 id = "graydragon"
-script_id = "monster"
 name = "a dragon"
 body = 12
 strength = "1d30+795"
@@ -13,6 +12,7 @@ karma = -15000
 fame = 15000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "treasure_map_lvl4loot"]
 gold = "1d201+1199"
+script_id = "monster"
 [mobile.skills]
 anatomy = 99
 magery = "1d11+29"
@@ -45,7 +45,6 @@ base_id = "graydragon"
 
 [[mobile]]
 id = "graydrake"
-script_id = "monster"
 name = "a drake"
 body = 60
 strength = "1d30+400"
@@ -58,6 +57,7 @@ karma = -5500
 fame = 5500
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl2loot"]
 gold = "1d151+99"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+64"
 parrying = "1d16+64"
@@ -88,7 +88,6 @@ base_id = "graydrake"
 
 [[mobile]]
 id = "shadowwyrm"
-script_id = "monster"
 name = "a shadow wyrm"
 body = 106
 strength = "1d101+899"
@@ -101,6 +100,7 @@ karma = -22500
 fame = 22500
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl5loot"]
 gold = "1d801+1199"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d50+50"
 magery = "1d21+79"
@@ -118,7 +118,6 @@ death = 366
 
 [[mobile]]
 id = "whitewyrm"
-script_id = "monster"
 name = "a white wyrm"
 body = 49
 strength = "1d40+720"
@@ -131,6 +130,7 @@ karma = -18000
 fame = 18000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl4loot"]
 gold = "1d801+599"
+script_id = "monster"
 [mobile.skills]
 anatomy = 101
 magery = "1d2+98"
@@ -147,7 +147,6 @@ death = 366
 
 [[mobile]]
 id = "ancientwyrm"
-script_id = "monster"
 name = "an ancient wyrm"
 body = 46
 strength = "1d101+1099"
@@ -160,6 +159,7 @@ karma = -22500
 fame = 22500
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "treasure_map_lvl5loot"]
 gold = "1d201+1099"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d50+50"
 magery = "1d21+79"
@@ -177,7 +177,6 @@ death = 366
 
 [[mobile]]
 id = "wyvern"
-script_id = "monster"
 name = "a wyvern"
 body = 62
 strength = "1d39+201"
@@ -190,6 +189,7 @@ karma = -4000
 fame = 4000
 loot = ["midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl2loot"]
 gold = "1d51+249"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+64"
 parrying = "1d16+64"
@@ -235,8 +235,7 @@ death = 366
 
 [[mobile]]
 id = "skeletaldragon"
-script_id = "monster"
-flee_at = -1
+blood_hue = -1
 name = "a skeletal dragon"
 body = 104
 strength = "1d101+899"
@@ -249,6 +248,8 @@ karma = -22500
 fame = 22500
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
 gold = "1d501+1499"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 evaluating_intelligence = "1d50+50"
 magery = "1d21+79"

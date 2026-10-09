@@ -6,9 +6,8 @@ namespace Moongate.Ctl.Internal;
 
 /// <summary>
 ///     Writes the completion scripts of bash, zsh and fish from the commands of <see cref="CompletionCatalog" />: the
-///     first word, the second word of <c>migrate</c> and <c>convert</c>, then the options of the command and what
-///     follows
-///     each (a directory, a file or a fixed word).
+///     first word, the second word of <c>migrate</c>, then the options of the command and what
+///     follows each (a directory or a fixed word).
 /// </summary>
 internal static class CompletionScripts
 {
@@ -238,13 +237,13 @@ internal static class CompletionScripts
         return text.ToString();
     }
 
-    // The first words in the order of the catalog: init, migrate, convert, completion.
+    // The first words in the order of the catalog: init, migrate, completion.
     private static IEnumerable<string> FirstWords(IReadOnlyList<CompletionCommand> commands)
     {
         return commands.Select(command => command.Path.Split(' ')[0]).Distinct();
     }
 
-    // The commands of two words, by their first: migrate and convert.
+    // The commands of two words, by their first: migrate.
     private static IEnumerable<IGrouping<string, CompletionCommand>> Groups(IReadOnlyList<CompletionCommand> commands)
     {
         return commands.Where(command => command.Path.Contains(' ')).GroupBy(command => command.Path.Split(' ')[0]);
@@ -260,7 +259,6 @@ internal static class CompletionScripts
         return word switch
         {
             "migrate" => "List or apply the database migrations",
-            "convert" => "Convert UOX3 and ModernUO content",
             _         => commands.First(command => command.Path == word).Help
         };
     }
@@ -272,7 +270,6 @@ internal static class CompletionScripts
         {
             CompletionValueType.Choice => $"COMPREPLY=( $(compgen -W \"{string.Join(' ', option.Choices)}\" -- \"$cur\") )",
             CompletionValueType.Directory => "_mgctl_paths -d \"$cur\"",
-            CompletionValueType.File => "_mgctl_paths -f \"$cur\"",
             _ => null
         };
     }
@@ -296,7 +293,6 @@ internal static class CompletionScripts
         {
             CompletionValueType.Choice    => $":value:({string.Join(' ', option.Choices)})",
             CompletionValueType.Directory => ":directory:_files -/",
-            CompletionValueType.File      => ":file:_files",
             CompletionValueType.Text      => ":value:",
             _                             => ""
         };
@@ -322,7 +318,6 @@ internal static class CompletionScripts
         {
             CompletionValueType.Choice    => $" -r -a '{string.Join(' ', option.Choices)}'",
             CompletionValueType.Directory => " -r -a '(__fish_complete_directories)'",
-            CompletionValueType.File      => " -r -F",
             CompletionValueType.Text      => " -r",
             _                             => ""
         };

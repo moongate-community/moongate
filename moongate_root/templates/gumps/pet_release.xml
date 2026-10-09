@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/pet_release.xml
+
+  What it is for:
+    The question the word "release" asks of the owner of a pet: to let it go or not. Yes calls pet_release.yes in
+    scripts/gumps/pet_release.lua, which lets the creature go; No calls pet_release.no, which does nothing.
+
+  Arguments:
+    pet   the serial of the creature
+-->
+<gump id="pet_release" x="120" y="120"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="320" height="170" />
+  <html x="20" y="18" width="280" height="80">Do you wish to release this pet? It will be wild again and will no longer obey you.</html>
+  <button x="20" y="125" up="4005" down="4007" on_click="yes" />
+  <text x="55" y="126">Release</text>
+  <button x="180" y="125" up="4017" down="4019" on_click="no" />
+  <text x="215" y="126">Keep</text>
+</gump>

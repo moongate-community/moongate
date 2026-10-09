@@ -1,0 +1,845 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
+[[shop]]
+id = "vagabond"
+vendors = ["vagabond", "m_vagabond", "f_vagabond"]
+[[shop.buy]]
+item = "0x104b_clock"
+price = 22
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x102e_nails"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x104f_clock_parts"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1051_axle_with_gears"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1053_gears"
+price = 2
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1055_hinge"
+price = 2
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1057_sextant"
+price = 13
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1059_sextant_parts"
+price = 5
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x105b_axle"
+price = 2
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x105d_springs"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x100f_gold_key"
+price = 8
+amount = 20
+hue = 0
+name = "1024111"
+
+[[shop.buy]]
+item = "0x1010_iron_key"
+price = 8
+amount = 20
+hue = 0
+name = "1024112"
+
+[[shop.buy]]
+item = "0x1013_rusty_iron_key"
+price = 8
+amount = 20
+hue = 0
+name = "1024115"
+
+[[shop.buy]]
+item = "0x14fc_lockpick"
+price = 12
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1ebc_tinker's_tools"
+price = 7
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1bd7_board"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1bf2_iron_ingot"
+price = 5
+amount = 16
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f9d_sewing_kit"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x10e4_draw_knife"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x10e5_froe"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x10e7_scorp"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x10e6_inshave"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13f6_lbr"
+price = 13
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f9f_scissors"
+price = 11
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0fbb_tongs"
+price = 13
+amount = 14
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1028_dovetail_saw"
+price = 12
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1034_saw"
+price = 15
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x102a_hammer"
+price = 17
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x13e3_lbr"
+price = 23
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f39_a_shovel"
+price = 12
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x102c_moulding_plane"
+price = 11
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1030_jointing_plane"
+price = 10
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1032_smoothing_plane"
+price = 11
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e85_pickaxe"
+price = 25
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e9c_drum"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0e9e_tambourine"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0eb2_lap_harp"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0eb3_lute"
+price = 21
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x108a_ring"
+price = 27
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1085_necklace"
+price = 26
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1088_necklace"
+price = 27
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1089_necklace"
+price = 27
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x108b_beads"
+price = 27
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1086_bracelet"
+price = 27
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1087_earrings"
+price = 27
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1bf2_iron_ingot"
+price = 6
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f21_star_sapphire"
+price = 125
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f10_emerald"
+price = 100
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f19_sapphire"
+price = 100
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f13_#"
+price = 75
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f15_citrine"
+price = 50
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f16_amethyst"
+price = 100
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f2d_tourmaline"
+price = 75
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f25_#"
+price = 50
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f26_diamond"
+price = 200
+amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0e9c_drum"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e9e_tambourine"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e9d_tambourine"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0eb2_lap_harp"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0eb3_lute"
+price = 10
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f39_a_shovel"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f9d_sewing_kit"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f9f_scissors"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0fbb_tongs"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x100e_copper_key"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x100f_gold_key"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1010_iron_key"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1013_rusty_iron_key"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1028_dovetail_saw"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x102c_moulding_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x102e_nails"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1030_jointing_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1032_smoothing_plane"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1034_saw"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x104b_clock"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x104f_clock_parts"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1051_axle_with_gears"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1053_gears"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1055_hinge"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1057_sextant"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1059_sextant_parts"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x105b_axle"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x105d_springs"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e4_draw_knife"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e5_froe"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e6_inshave"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x10e7_scorp"
+price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x14fc_lockpick"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bd7_board"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bdd_log"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1be0_log"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0e85_pickaxe"
+price = 16
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x102a_hammer"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_lbr"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_t2a"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13e3_tol"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_aos"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_lbr"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_t2a"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13f6_tol"
+price = 6
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1bf2_iron_ingot"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f25_#"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f16_amethyst"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f15_citrine"
+price = 25
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f26_diamond"
+price = 100
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f10_emerald"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f13_#"
+price = 37
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f19_sapphire"
+price = 50
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f21_star_sapphire"
+price = 62
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f2d_tourmaline"
+price = 47
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x108a_ring"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1085_necklace"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1088_necklace"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1089_necklace"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x108b_beads"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1086_bracelet"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1087_earrings"
+price = 13
+amount = 1
+hue = 0
+name = ""

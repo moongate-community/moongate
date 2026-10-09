@@ -1,6 +1,7 @@
 [[item]]
 id = "0x14fb_lockpick"
 base_id = "base_item"
+script_id = "lockpick"
 item_id = 5371
 name = "lockpick"
 rarity = "common"
@@ -14,6 +15,7 @@ decays = true
 [[item]]
 id = "0x14fc_lockpick"
 base_id = "base_item"
+script_id = "lockpick"
 item_id = 5372
 name = "lockpick"
 rarity = "common"
@@ -27,6 +29,7 @@ decays = true
 [[item]]
 id = "0x14fd_lockpicks"
 base_id = "base_item"
+script_id = "lockpick"
 item_id = 5373
 name = "lockpicks"
 rarity = "common"
@@ -40,6 +43,7 @@ decays = true
 [[item]]
 id = "0x14fe_lockpicks"
 base_id = "base_item"
+script_id = "lockpick"
 item_id = 5374
 name = "lockpicks"
 rarity = "common"

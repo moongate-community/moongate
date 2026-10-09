@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**268 systems:** ✅ 82 done, 🟡 49 partly done, ❌ 137 not built yet.
+**271 systems:** ✅ 88 done, 🟡 62 partly done, ❌ 121 not built yet.
 
-**Coverage: 31%** of the systems done, **40%** counting a partly done system as half.
+**Coverage: 32%** of the systems done, **44%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -54,7 +54,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Crimes, criminal timer and murder counts | 🟡 | The criminal flag with its timer, saved with the mobile; attacking an innocent or looting the corpse of one makes a criminal. A victim reports its killers in a gump: kills and short-term murders, five make a red murderer, forgotten with time (8 and 40 hours). No theft or other crimes yet |
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |
 | Poison | ❌ | |
-| Hiding and stealth | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) hides a player until its first step; no Stealth, and speaking or being hit does not show it yet |
+| Hiding and stealth | 🟡 | [Hiding](scripting/shipped-scripts.md#hidinglua) hides a player until its first step, [Stealth](scripting/shipped-scripts.md#stealthlua) lets it take some steps unseen; speaking or being hit does not show it yet |
 | Death, corpses, ghosts and resurrection | 🟡 | An NPC or a player dies by a fight, `.kill` or `mobile.kill`: corpse with what it carried, death animation and sound, decay after 7 minutes. A player stays as a ghost (hidden from the living unless in war mode, heard as oOo, no fight, skill or lifting) and is raised at an ankh or by a healer (for a tenth of its fame), by `.resurrect` or `mobile.resurrect`. No bones |
 | Young player protection | ❌ | |
 | Murder reports and bounty boards | 🟡 | The report gump a victim gets after its death works, with the counts it adds; no bounty and no boards |
@@ -63,7 +63,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Extended status (resistances, luck, caps) | ❌ | The stat locks are built, see Stats |
 | Staff privileges (move anything, see hidden, invulnerable) | 🟡 | Hidden ground items and hidden mobiles are shown only to staff, and `.go` takes a game master anywhere; no move anything or invulnerability |
 | Gargoyle flying | ❌ | |
-| Movement cost and stamina use by weight | ✅ | Running costs a point every 16 steps; overloaded, every step costs 5 and more, and with no stamina left the step is refused. No mounts yet |
+| Movement cost and stamina use by weight | ✅ | Running costs a point every 16 steps; overloaded, every step costs 5 and more, and with no stamina left the step is refused. A rider pays the same, no mounted discount yet |
 | Polymorph and incognito | ❌ | |
 | Experience and levels (optional) | ❌ | |
 | Factions | ❌ | |
@@ -85,6 +85,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Monster special abilities | ❌ | |
 | Elemental damage and resistances | ❌ | |
 | Aggressor lists and attack timeouts | ❌ | |
+| Blood on a hit | ✅ | A hit that does damage leaves blood on the ground that goes after a few seconds; a creature's `blood_hue` colours it or, at `-1`, stops it (`ultima.combat.blood_*`) |
 | Damage numbers over heads | ✅ | The damage of a hit shows over the one hit (`ultima.combat.display_damage_numbers`) |
 
 ## Magic
@@ -110,23 +111,23 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Using a skill and gaining it | 🟡 | A [skill](skills.md) is used from the skill window (`scripts/skills/<skill>.lua`), checked by `skill.check` and gained with ModernUO's formula; only Hiding is shipped, and stats do not rise with skills yet |
-| Gathering: mining, lumberjacking, fishing | ❌ | |
-| Crafting engine: menus, recipes, resources, quality | ❌ | |
-| The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | ❌ | |
+| Gathering: mining, lumberjacking, fishing | 🟡 | [Fishing](fishing.md) with a pole: water within 4 tiles, 8 seconds, a fish, old footwear or nothing by the skill; the fish of a place run out by area and come back ([`harvest.toml`](data-files/harvest.md)). [Lumberjacking](lumberjacking.md) with an axe in the hands: a tree within 2 tiles, one to three swings, 10 logs by the skill, the wood of a place running out the same way. [Mining](mining.md) with a pickaxe or a shovel: iron ore from the rock of mountains and caves, smelted into ingots at a forge. Logs are sawn into boards with the axe, and a blade hacks kindling off a tree. A place is of one of seven kinds of wood, each asking for its skill, a master finds rare things with the logs, and an axe hits harder with Lumberjacking. No other metals, no special catches |
+| Crafting engine: menus, recipes, resources, quality | 🟡 | The crafting gump, recipes in [`data/crafts`](data-files/crafts.md), resources counted across the backpack and its bags, the chance and the kinds of wood, exceptional items and the maker's mark, tools that wear out and make last, shared by every craft; see [Carpentry](carpentry.md). An exceptional item changes nothing but its tooltip yet; no repair |
+| The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | 🟡 | [Carpentry](carpentry.md): a tool in the backpack opens the crafting gump, 42 recipes from UOX3 in [`data/crafts`](data-files/crafts.md), made from plain boards or a kind of wood that colours the item; one chance in two at the least skill, sure at the most, half of the materials lost on a failure. Exceptional items with the maker's mark at 100, tools that wear out, make last. The engine is shared by the crafts to come; no other craft yet |
 | Repairing and enhancing items | ❌ | |
 | Taming and animal lore | ❌ | |
-| Healing and veterinary | ❌ | |
-| Lockpicking, remove trap | ❌ | Doors lock and open with their key |
-| Snooping and stealing | ❌ | |
-| Tracking, detect hidden, forensics, spirit speak | ❌ | |
+| Healing and veterinary | 🟡 | The clean [bandage](scripting/shipped-scripts.md#bandagelua) heals a player or a creature (Healing and Anatomy, Veterinary and Animal Lore) and raises a ghost; no poison, no bleeding, no pets |
+| Lockpicking, remove trap | 🟡 | The [lockpick](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) picks a locked item (the dungeon treasure chests are made locked); no trap, so no remove trap. Doors lock and open with their key |
+| Snooping and stealing | 🟡 | [Snooping](scripting/shipped-scripts.md#snoopinglua) opens the backpack of another mobile on a double click; no stealing |
+| Tracking, detect hidden, forensics, spirit speak | 🟡 | [Detect hidden and forensic evaluation](scripting/shipped-scripts.md#the-lore-skills) work (no traps, no thieves' guild); no tracking, no spirit speak |
 | Bard skills: musicianship, peacemaking, provocation, discordance | ❌ | |
-| Lore skills: anatomy, arms lore, item ID, evaluate intelligence, taste ID | ❌ | |
+| Lore skills: anatomy, arms lore, item ID, evaluate intelligence, taste ID | 🟡 | [Anatomy and evaluating intelligence](scripting/shipped-scripts.md#the-lore-skills) read a target's stats; no arms lore (no durability), no item ID, no taste ID |
 | Meditation, begging, herding, camping, poisoning | ❌ | |
 | Carving corpses | ❌ | |
 | Resource regions (ore, wood, fish per area, regrowing) | ❌ | |
 | Resource processing: smelting, looms, spinning wheels, hides | ❌ | |
 | Skill classes and caps (skill total, stat total) | 🟡 | The skill total stops at `ultima.skills.total_cap` (700.0) and the stat total at `ultima.skills.stat_cap` (225), both lowering what is locked down; no classes |
-| Training objects: dummies, pickpocket dips, archery buttes | ❌ | |
+| Training objects: dummies, pickpocket dips, archery buttes | 🟡 | The [training dummies](scripting/shipped-scripts.md#training_dummylua) swing back and teach a weapon's skill up to 25, and the [archery buttes](scripting/shipped-scripts.md#archery_buttelua) take arrows and score; no pickpocket dips, no dart boards |
 
 ## NPCs
 
@@ -139,9 +140,9 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Speech keywords and answers | 🟡 | The client's keywords reach `on_speech` in any language; the bankers answer *bank*, *balance*, *withdraw* and *check*, and the word *deposit*, which has no keyword; no vendor keywords yet |
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
-| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, around closed doors and furniture. Hurt creatures run from a fight (20% of their hit points, 10% for animals) and scared animals from a blow; NPCs do not open doors, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
-| Pets and followers: commands, loyalty, bonding | ❌ | |
-| Mounts | ❌ | |
+| Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, through the closed doors it opens and around locked ones and furniture. Hurt creatures run from a fight (20% of their hit points, 10% for animals) and scared animals from a blow; an NPC that wanders opens no door, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
+| Pets and followers: commands, loyalty, bonding | 🟡 | The [Animal Taming](animal-taming.md) skill tames about 75 creatures of the data, with a limit of 5 followers shown in the status window. A pet follows its owner and obeys come, follow, stay, stop, guard, kill, attack and release, alone or with *all*, unless its low loyalty or the owner's skill makes it refuse. Loyalty falls with time, food dropped on a pet restores it, and at 0 it goes wild. No Animal Lore, bonding or hunger beyond that |
+| Mounts | 🟡 | [Mounts](mounts.md): a game master gives a horse, llama or ostard with [`tame`](commands/tame.md); its owner double clicks it to ride and double clicks self to get off, or dies, and rides twice as fast. A rider cannot mine, fish or use Stealth, and a teleporter can refuse it. The [stable](mounts.md#the-stable) of the animal trainers keeps the pets of a player, and the [ethereal statuettes](mounts.md#ethereal-mounts) give a mount with no creature. A rider swings with the mounted attack animations. No bola |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |
 | Name pools | ✅ | Name lists by kind and gender |
 | Needs: food, grazing, desires | ❌ | |
@@ -156,15 +157,15 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Vendors: buy, sell, restock | ❌ | Item prices are in the templates; nothing buys or sells |
+| Vendors: buy, sell, restock | ✅ | The shop window, the goods and the sell tables of ModernUO's shops, gold from the backpack then the bank, everything or nothing, the hourly restock and the resale of what players sold; see [Vendors](vendors.md) |
 | Banker and bank box | ✅ | The *bank* keyword in any client language; open while the player stands still; balance, withdraw and deposit by speech; a limit of items; see [Bank](bank.md) |
 | Stable master, veterinarian | ❌ | |
-| Skill trainers | ❌ | |
+| Skill trainers | 🟡 | Vendors and healers teach the skills they have at 60.0 or more, for gold dropped on them; see [Skills](skills.md#trainers) |
 | Healers that resurrect | 🟡 | A ghost that comes near a healer is offered to live again; the evil healers are not placed in the world yet |
 | Player vendors | ❌ | |
 | Hirelings | ❌ | |
 | Escort quests | ❌ | |
-| Guildmasters | ❌ | |
+| Guildmasters | ✅ | The twelve guildmasters of ModernUO teach their trade, take members for their guild by speech and gold, and are placed by the ModernUO spawns; see [Skills](skills.md#guildmasters) |
 | Bulk order deeds | ❌ | |
 
 ## Items
@@ -180,7 +181,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Items on the ground and their decay | ✅ | |
 | Scripted items | ✅ | Lua item scripts: use, equip, unequip, pick up, drop, create, darkness, a player stepping on them, speech nearby |
 | Loot tables | ✅ | Rolled into every spawned NPC's backpack, into the treasure chests and the town containers, and from scripts with `item.add_loot` |
-| Doors | ✅ | Open and close; linked double doors; a closed door blocks the way, staff walks through |
+| Doors | ✅ | Open and close; linked double doors; a closed door blocks the way, staff walks through; humans and monsters walking to a place open the ones that are not locked |
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
 | Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. A sample potion is drunk and used up, with no effect yet |
@@ -277,6 +278,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | --- | --- | --- |
 | Commands with access levels | ✅ | From the console (TAB completion of commands and arguments, Up/Down history) and in game; see [Commands](commands.md) |
 | World save | ✅ | Periodic and on shutdown, with `.save` |
+| Scheduled tasks, shutdown and seasonal events | ✅ | `data/schedule.toml`: tasks by hour, day or week (shutdown with warnings, message, Lua function), events by date with a staff switch and `on_start`/`on_end` hooks, in a chosen time zone; see [Schedule](schedule.md) |
+| Holiday events | 🟡 | [Holidays](holidays.md): Halloween (October 24 to November 15), where shopkeepers answer "trick or treat" with a candy or a trick, and Christmas (December 24 to January 1), with snowballs to throw and a gift at login once a season; both decorate the main towns while they are on |
 | Database backup | ✅ | Rotating SQL exports on a schedule and with `.sql_backup`; restore with psql |
 | Console | ✅ | |
 | Server configuration | ✅ | `moongate.toml`, validated at startup |
@@ -286,8 +289,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Remote administration | 🟡 | gRPC API with TLS; no web panel |
 | Metrics and diagnostics | ✅ | Process and plugin metrics |
 | Hot reload | 🟡 | Lua scripts; not the data or templates |
-| GM help queue (pages) | ❌ | |
-| Help menu and stuck menu | ❌ | |
+| GM help queue (pages) | ✅ | A player calls a game master from the Help menu (kind and a line, one request at a time, a pause); the staff works through the queue from the [`.pages`](commands/pages.md) gump: go to the player, take, answer, close; the answer reaches the player online or at the next login; see [Help](help.md) |
+| Help menu and stuck menu | ✅ | The Help button opens a menu: "I am stuck" takes a character to the nearest starting city after a wait, with a pause; useful commands; server rules; see [Help](help.md) |
 | Jails | ✅ | A gump lists the cells and who is in them; sentences in real days, a gold fine and a release note at the end, a chest of bread and water in every cell; a player who is offline is jailed by name and serves from its next login; see [Jail](jail.md) |
 | Who list | ❌ | |
 | Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places, and `.gmtools`, a gump with a sidebar of tools: it forces the weather, sets the season of the map and shows the time and sets the light; no property gump, add menu or area commands |

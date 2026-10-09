@@ -15,6 +15,8 @@ item_id = 5439
 name = "bandana"
 rarity = "common"
 weight = 1.0
+armor_rating = 1
+max_hits = 100
 buy_price = 14
 sell_price = 6
 
@@ -32,6 +34,8 @@ name = "feathered hat"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 27
 sell_price = 13
 
@@ -49,6 +53,8 @@ name = "floppy hat"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 25
 sell_price = 12
 
@@ -66,6 +72,8 @@ name = "bonnet"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 26
 sell_price = 13
 
@@ -83,6 +91,8 @@ name = "cap"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 27
 sell_price = 13
 
@@ -100,6 +110,8 @@ name = "jester hat"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 31
 sell_price = 15
 
@@ -117,6 +129,8 @@ name = "skullcap"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 1
+max_hits = 50
 buy_price = 12
 sell_price = 6
 
@@ -135,6 +149,8 @@ name = "straw hat"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 25
 sell_price = 12
 
@@ -152,6 +168,8 @@ name = "tall straw hat"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 26
 sell_price = 13
 
@@ -169,6 +187,8 @@ name = "wide-brim hat"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 26
 sell_price = 13
 
@@ -186,6 +206,8 @@ name = "wizard's hat"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 30
 sell_price = 15
 
@@ -203,6 +225,7 @@ name = "jester's cap"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
 buy_price = 31
 sell_price = 15
 
@@ -220,6 +243,8 @@ name = "tricorne hat"
 rarity = "common"
 weight = 1.0
 layer = "helm"
+armor_rating = 3
+max_hits = 50
 buy_price = 26
 sell_price = 13
 
@@ -237,6 +262,8 @@ name = "tribal mask"
 rarity = "common"
 weight = 2.0
 layer = "helm"
+armor_rating = 5
+max_hits = 50
 buy_price = 40
 sell_price = 20
 
@@ -254,6 +281,8 @@ name = "tribal mask"
 rarity = "common"
 weight = 2.0
 layer = "helm"
+armor_rating = 5
+max_hits = 50
 buy_price = 40
 sell_price = 20
 
@@ -271,6 +300,8 @@ name = "bear mask"
 rarity = "common"
 weight = 5.0
 layer = "helm"
+armor_rating = 6
+max_hits = 50
 buy_price = 50
 sell_price = 25
 
@@ -288,6 +319,8 @@ name = "deer mask"
 rarity = "common"
 weight = 4.0
 layer = "helm"
+armor_rating = 6
+max_hits = 50
 buy_price = 50
 sell_price = 25
 
@@ -305,6 +338,8 @@ name = "orc mask"
 rarity = "common"
 weight = 4.0
 layer = "helm"
+armor_rating = 5
+max_hits = 50
 buy_price = 50
 sell_price = 25
 

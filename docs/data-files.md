@@ -39,6 +39,7 @@ it.
 | <span id="starting-cities"></span><span id="validation-at-startup-1"></span>[`starting_cities.toml`](data-files/starting-cities.md) | `StartingCityContent` | maps | Yes, in the character list |
 | <span id="moongates"></span>[`moongates.toml`](data-files/moongates.md) | `MoongateFacet` | maps | Yes, by `.decorate` and the moongate script |
 | <span id="locations"></span>[`locations.toml`](data-files/locations.md) | `NamedLocation` | optional | Yes, by `.go` and its gump |
+| <span id="schedule"></span>[`schedule.toml`](data-files/schedule.md) | `ScheduleFile` | optional | Yes, by the schedule service and `.event` |
 | <span id="jail"></span>[`jail.toml`](data-files/jail.md) | `JailFile` | optional; before book templates | Yes, by `.jail` and its gump |
 | <span id="skills"></span><span id="validation-at-startup-2"></span>[`skills.toml`](data-files/skills.md) | `SkillContent` | starting cities | No |
 | <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | skills (every starting skill must exist) | Yes, character creation |
@@ -53,6 +54,10 @@ it.
 | [`motd.toml`](motd.md) | `MotdLine` | after mobile templates and plugin variable registration | Yes, on every character entry; optional file |
 | [`titles.toml`](data-files/titles.md) | `FameKarmaTitle` | after MOTD | Shown in the paperdoll title |
 | [`templates/books/<name>.toml`](data-files/books.md) | `BookTemplate` | after item templates | Personalized scrolls and native books; parchment gumps, book covers/pages and writable books |
+| [`templates/shops/<name>.toml`](data-files/shops.md) | `ShopDefinition` | after item and mobile templates | Yes, through `IShopService`: what each vendor sells in its [shop window](vendors.md) |
+| [`taming.toml`](data-files/taming.md) | `TamingCreature` | optional; after the mobile templates | Yes, through `ITamingService`: the creatures of [animal taming](animal-taming.md) |
+| [`pet_food.toml`](data-files/pet-food.md) | `PetFood` | optional; after the item templates | Yes, through `IPetFoodService`: what the pets of [animal taming](animal-taming.md) eat |
+| [`harvest.toml`](data-files/harvest.md) | `HarvestResource` | optional; after the shops | Yes, through `IHarvestService`: the fish of [fishing](fishing.md), by area |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | after item templates and book templates (every referenced id must exist) | Yes, through `IStartingItemsService` |
 
 "No" means the file is loaded and validated, but no game system reads it yet. A

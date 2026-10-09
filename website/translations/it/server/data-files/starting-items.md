@@ -1,10 +1,10 @@
-<!-- translation: {"sourceHash":"0b2db168b5df03ff995e6d5c2660492c8ff3ddb902cdb53cc997511a36520406","title":"Oggetti iniziali"} -->
+<!-- translation: {"sourceHash":"6dfec71b5f00fb25d1a251cc49c416a329de44e8755b95a95a5d7eead4d52786","title":"Oggetti iniziali"} -->
 
 # Oggetti iniziali
 
 `starting_items.toml` contiene gli oggetti ricevuti da un nuovo personaggio. Il file
 distribuito è scritto da `newbie.dfn` UOX3, con voci specifiche dello shard come la
-lettera di benvenuto. [`mgctl convert uox`](../uox3-migration.md#starting-items) può
+lettera di benvenuto. [`moongate-convert uox`](../uox3-migration.md#starting-items) può
 rigenerare le sue voci UOX3. `IStartingItemsService.GiveAsync` lo applica a un nuovo personaggio.
 
 Un personaggio riceve ogni `[[set]]` con `common = true`, più ogni insieme di cui
@@ -74,7 +74,7 @@ equip = false
 Anche cibo e bevande sono normali voci: l'insieme comune del file distribuito dà
  tre pagnotte e una brocca d'acqua, così un nuovo personaggio ha qualcosa contro
 [fame e sete](../server-configuration.md). Né essi né l'oro fanno parte di
-`newbie.dfn` UOX3: `mgctl convert uox` aggiunge da solo le tre voci all'insieme comune,
+`newbie.dfn` UOX3: `moongate-convert uox` aggiunge da solo le tre voci all'insieme comune,
 per gli oggetti presenti nella sorgente.
 
 ```toml
@@ -153,7 +153,7 @@ e tutti gli oggetti iniziali vengono annullati nella stessa transazione.
 
 Una radice esistente conserva il proprio `data/starting_items.toml` modificato
 quando esegui `mgctl init`: aggiungi manualmente la voce sopra e riavvia il server.
-Rimuoverla disabilita la lettera. `mgctl convert uox` rigenera gli oggetti iniziali
+Rimuoverla disabilita la lettera. `moongate-convert uox` rigenera gli oggetti iniziali
 senza questa associazione specifica dello shard; aggiungila di nuovo dopo la conversione.
 
 ## Validazione all'avvio

@@ -83,6 +83,12 @@ public interface IItemService : IPersistenceDeletionSource
     IReadOnlyList<ItemEntity> GetWorn(Serial mobile);
 
     /// <summary>
+    ///     Gets the live item the mobile wears on <paramref name="layer" />, or null; it builds no list, for the code that
+    ///     asks at every step.
+    /// </summary>
+    ItemEntity? GetWornAt(Serial mobile, LayerType layer);
+
+    /// <summary>
     ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump, in the
     ///     grid slot <paramref name="gridIndex" /> when it is free and otherwise in the next free one.
     /// </summary>
@@ -103,6 +109,12 @@ public interface IItemService : IPersistenceDeletionSource
     ///     of sight.
     /// </summary>
     bool CanReach(MobileEntity mobile, ItemEntity item);
+
+    /// <summary>
+    ///     Gets whether the mobile can reach the ground item from <paramref name="range" /> tiles away, as
+    ///     <see cref="CanReach(MobileEntity, ItemEntity)" /> does from 2: same map, in line of sight.
+    /// </summary>
+    bool CanReach(MobileEntity mobile, ItemEntity item, int range);
 
     /// <summary>
     ///     Lays the item on the ground at <paramref name="x" />, <paramref name="y" /> within 2 tiles of the mobile, on the

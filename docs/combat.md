@@ -52,7 +52,8 @@ so 2.5 seconds at 100 stamina. A swing:
 - The base is the weapon a player holds (a number from its `damage_min` to its `damage_max`), the dice of the template of
   an NPC (`damage`), or 1 to 8 for fists.
 - Raised by the attacker's tactics (`+ (tactics - 50)%`), strength and anatomy (`strength/5%`, `anatomy/5%`, and
-  10% more at anatomy 100). Tactics and anatomy are tried at every hit and teach a player.
+  10% more at anatomy 100). Tactics and anatomy are tried at every hit and teach a player. An axe is raised the same
+  way by Lumberjacking (`lumberjacking/5%`, and 10% more at 100), which a blow does not try.
 - Halved when the target is a player or the attacker is an NPC; a player hitting an NPC does all of it.
   `npc_damage_rate` divides what an NPC does to a player.
 - The armor takes its share off. A **player** is hit on a part of the body, chosen as ModernUO chooses it (neck 7%,
@@ -61,9 +62,16 @@ so 2.5 seconds at 100 stamina. A swing:
   zone's share of it, from half to all, is taken. At least 1 is done.
 - The damage is shown over the target to the players in the fight (`0x0B`, `display_damage_numbers`) and the
   health bar moves.
+- A hit that does damage leaves **blood** on the ground: a piece under the one hit and from one to `blood_pieces`
+  around it, within a tile, one of the seven graphics of ModernUO's blood (`0x1645`, `0x122A` to `0x122F`), in the hue
+  of the creature. They are ground items of the `blood_splash_*` templates and go after `blood_seconds` (5), as
+  ModernUO's and Source-X's; the ground items are checked every 5 seconds, so a piece can last that much longer. A
+  creature whose template says `blood_hue = -1` does not bleed: the undead and the golems. A player bleeds red. Fists,
+  swords and arrows bleed alike; there is no blood from a spell, yet. Blood is for show: it gives way when the pool of
+  reserved item serials runs short, so the loot and the split stacks keep theirs, and a piece never lies off the map.
 
 The status window of a player shows the damage of its fists, `1` to `8` with the same bonuses of tactics, strength and
-anatomy (the least is never under 1); the status of an NPC shows none.
+anatomy (the least is never under 1), and of Lumberjacking for an axe; the status of an NPC shows none.
 
 A mobile with no hit points left dies as when a game master [kills it](death.md), with the attacker as its killer
 and its corpse: an NPC leaves the world, a [player](death.md#death-of-a-player) stays as a ghost. A ghost does not fight,
@@ -78,11 +86,15 @@ another keeps at it. A player that is hit does not fight back by itself: it clic
 ## Settings
 
 `[ultima.combat]`, see [Server configuration](server-configuration.md): `global_attack_speed`, `attack_stamina`,
-`npc_damage_rate`, `max_range`, `combatant_seconds` and `display_damage_numbers`.
+`npc_damage_rate`, `max_range`, `combatant_seconds`, `display_damage_numbers`, `blood_enabled`, `blood_pieces` and
+`blood_seconds`.
 
 ## Lua
 
-The `combat` module: `combat.attack(attacker, target)`, `combat.stop(mobile)` and `combat.target(mobile)`.
+The `combat` module: `combat.attack(attacker, target)`, `combat.stop(mobile)`, `combat.target(mobile)` and
+`combat.range(mobile)`; and, for what practices on a dummy or a butte, `combat.weapon(mobile)` (the skill, whether it is
+a bow, its range, its projectile and ammunition), `combat.swing(mobile, x, y)` (turns and plays the swing, no fight)
+and `combat.spend_ammo(mobile)` (takes an arrow or a bolt).
 
 ## Weapons and armor
 
@@ -105,7 +117,7 @@ skill is the one of its own weapon, Wrestling when it holds none. A bow, a cross
 
 The armor rating of the whole player, which the status window shows, is the armor of each part weighted by the share
 of the blows it takes (rounded), and the damage shown there is the weapon's, with the bonuses. The numbers are those of UOX3's
-eras, converted by `mgctl convert uox` (see [Migrate from UOX3](uox3-migration.md)); a plain graphic inherits the LBR
+eras, converted by `moongate-convert uox` (see [Migrate from UOX3](uox3-migration.md)); a plain graphic inherits the LBR
 numbers, ModernUO's classic ones.
 
 ## Archers
@@ -133,7 +145,7 @@ the status window shows), and with these differences, as ModernUO and UOX3 have 
 ## Not yet
 
 Parry (a shield counts for nothing yet), a quiver (ammunition is taken from the backpack), special moves, durability (`max_hits` is kept, not used), the
-strength a weapon or armor asks for (`strength_required` is kept, not used), the lumberjacking bonus of axes, aggressor
+strength a weapon or armor asks for (`strength_required` is kept, not used), aggressor
 lists beyond the target, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
 `get_hit`).
 

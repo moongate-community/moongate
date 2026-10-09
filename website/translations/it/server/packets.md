@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0df269eac693221bc04a843b94fe3cf32fe63555742a971da765d1177ebcadd2","title":"Pacchetti e handler"} -->
+<!-- translation: {"sourceHash":"2f4ef046db7d5dd10737c5e1e13254de3df37d248d603a8be587c2afe0fd9dac","title":"Pacchetti e handler"} -->
 
 # Pacchetti e handler
 
@@ -49,7 +49,7 @@ modalità, perché l'Enhanced Client lo invia anche al server di accesso:
 | `0x22` | `MovementAckPacket` | In uscita | Fissa 3 | — |
 | `0x21` | `MovementRejectPacket` | In uscita | Fissa 8 | — |
 | `0x77` | `MobileMovingPacket` | In uscita | Fissa 17 | — |
-| `0x06` | `UseRequestPacket` | In ingresso | Fissa 5 | `UseRequestPacketHandler`: apre un contenitore trasportato dal personaggio oppure un paperdoll |
+| `0x06` | `UseRequestPacket` | In ingresso | Fissa 5 | `UseRequestPacketHandler`: apre un contenitore trasportato dal personaggio oppure un paperdoll; fa salire su una creatura che è una cavalcatura, e fa scendere quando il personaggio fa doppio clic su sé stesso |
 | `0x03` | `AsciiSpeechRequestPacket` | In ingresso | Variabile, minimo 9 | `SpeechRequestPacketHandler`: parlato locale o comando con punto in gioco |
 | `0xAD` | `UnicodeSpeechRequestPacket` | In ingresso | Variabile, minimo 14 | `SpeechRequestPacketHandler`: parlato Unicode e con parole chiave codificate oppure comando con punto |
 | `0xAE` | `UnicodeSpeechMessagePacket` | In uscita | Variabile, minimo 50 | Parlato del giocatore e output privato dei comandi |
@@ -74,12 +74,18 @@ modalità, perché l'Enhanced Client lo invia anche al server di accesso:
 | `0xAF` | `DeathAnimationPacket` | In uscita | Fissa 13 | — |
 | `0x2C` | `DeathStatusPacket` | In uscita | Fissa 2 | — |
 | `0x89` | `CorpseEquipmentPacket` | In uscita | Variabile | — |
+| `0x74` | `VendorBuyListPacket` | In uscita | Variabile | I prezzi e i nomi della finestra del negozio di un venditore |
+| `0x3B` | `VendorEndPacket` | In uscita | Fissa 8 | Chiude la finestra del negozio |
+| `0x3B` | `VendorBuyReplyPacket` | In entrata | Variabile, minimo 8 | `VendorBuyReplyPacketHandler`: l'acquisto della finestra del negozio |
+| `0x9E` | `VendorSellListPacket` | In uscita | Variabile | Cosa offre di comprare un venditore dal giocatore |
+| `0x9F` | `VendorSellReplyPacket` | In entrata | Variabile, minimo 9 | `VendorSellReplyPacketHandler`: la vendita dell'elenco |
 | `0x6C` | `TargetCursorPacket` | In uscita | Fissa 19 | — |
 | `0x6C` | `TargetResponsePacket` | In ingresso | Fissa 19 | `TargetResponsePacketHandler`: completa il bersaglio in attesa del giocatore |
 | `0x95` | `HuePickerPacket` | In uscita | Fissa 9 | — |
 | `0x95` | `HuePickerResponsePacket` | In ingresso | Fissa 9 | `HuePickerResponsePacketHandler`: fornisce la tinta scelta al selettore aperto del giocatore |
 | `0x05` | `AttackRequestPacket` | In ingresso | Fissa 5 | `AttackRequestPacketHandler`: il personaggio [combatte](combat.md) il mobile; una richiesta rifiutata riceve `0xAA` e zero |
 | `0x22`, `0xB5`, `0xFB` | `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | In ingresso | Fissa 3, 64, 2 | `IgnoredPacketHandler<T>`: riconosciuto e ignorato per ora (log Debug) |
+| `0x9B` | `HelpRequestPacket` | In ingresso | Fissa 258 | `HelpRequestPacketHandler`: apre il [menu di aiuto](help.md) del personaggio |
 | `0xAA` | `CombatantPacket` | In uscita | Fissa 5 | — |
 | `0x2F` | `SwingPacket` | In uscita | Fissa 10 | — |
 | `0x0B` | `DamagePacket` | In uscita | Fissa 7 | — |

@@ -13,4 +13,9 @@ public interface IItemSerialPool : IMoongateStartupService
     ///     Takes a reserved serial; false when the pool is empty, which starts a refill.
     /// </summary>
     bool TryTake(out Serial serial);
+
+    /// <summary>
+    ///     Gets how many reserved serials are left, for what may be given up when they run short, such as blood.
+    /// </summary>
+    int Available { get; }
 }

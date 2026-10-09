@@ -45,6 +45,10 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 - Open the bank box at a banker by saying *bank*, in any client language; ask the *balance*,
   *withdraw* and *deposit* gold by speech, have a bank *check* written and cash it with a double
   click, or drop gold and checks on the banker to deposit them. The box holds a limited number of items: [Bank](bank.md).
+- Buy from the vendors and sell to them: pick *Buy* or *Sell* in their context menu or say *vendor buy* or *vendor sell*,
+  choose in the window and pay with the gold of the backpack, or of the bank from 2000: [Vendors](vendors.md).
+- Learn skills from the vendors and healers: pick *Train* in their menu or say *train*, then drop the gold they quote on
+  them: [Trainers](skills.md#trainers).
 - Get hit points, mana and stamina back with time, get hungry and thirsty, eat and drink; tire by running or by carrying too much.
 - Open the treasure chests of the dungeons and the shop crates that fill up; read a clock; switch war mode.
 - Dye clothes: dyes give a dye tub the hue picked in the client's hue picker, and the tub gives it to the clothing.
@@ -138,7 +142,7 @@ See all of them in [Commands](commands.md).
   [Your first gump](gump-tutorial.md).
 - Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
   `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `readable_book.lua`, `readable_scroll.lua`, `bulletin_board.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
-  `banker.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
+  `banker.lua`, `shopkeeper.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
   and `gumps/tutorial_list.lua`.
 - Not yet: timers on mobiles, combat and skill events.
 
@@ -172,8 +176,8 @@ See all of them in [Commands](commands.md).
   or character operations yet.
 - Plugins under `plugins/` register services, commands, Lua modules, metrics, entities, SQL and
   their own config section. See [Writing a plugin](plugins.md).
-- Tools: [`mgctl`](mgctl.md) prepares the server root, applies the database migrations and converts
-  UOX3 and ModernUO content. A [Docker example](docker-login-realms.md) runs one login and
+- Tools: [`mgctl`](mgctl.md) prepares the server root, applies the database migrations; the Python
+  [`moongate-convert`](uox3-migration.md#run-it) converts UOX3 and ModernUO content. A [Docker example](docker-login-realms.md) runs one login and
   two game servers.
 
 ## Settings with no effect yet

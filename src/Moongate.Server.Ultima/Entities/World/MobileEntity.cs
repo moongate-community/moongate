@@ -315,6 +315,13 @@ public class MobileEntity : IMoongateEntity
     public DateTimeOffset? LastMovedAt { get; set; }
 
     /// <summary>
+    ///     How many more steps the mobile may take hidden before a step shows it, as ModernUO's allowed stealth steps:
+    ///     the Stealth skill sets it, and hiding or showing again clears it. It is not a column.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int AllowedStealthSteps { get; set; }
+
+    /// <summary>
     ///     Whether the mobile is in war mode. It is not a column: a mobile comes back in peace.
     /// </summary>
     [Column(IsIgnore = true)]

@@ -3,7 +3,6 @@ id = "base_animals"
 
 [[mobile]]
 id = "brownbear"
-script_id = "animal"
 name = "a bear"
 body = 167
 strength = "1d25+75"
@@ -13,6 +12,7 @@ mana = 0
 damage = "1d11+1"
 armor = 8
 fame = 450
+script_id = "animal"
 [mobile.skills]
 resisting_spells = "1d21+19"
 parrying = "1d21+24"
@@ -43,6 +43,7 @@ death = 99
 
 [[mobile]]
 id = "boar"
+script_id = "animal"
 name = "a boar"
 body = 290
 strength = 25
@@ -66,6 +67,7 @@ death = 200
 
 [[mobile]]
 id = "bull"
+script_id = "animal"
 name = "a bull"
 body = 232
 skin_hue = "0x08FD-0x090E"
@@ -90,6 +92,7 @@ death = 104
 
 [[mobile]]
 id = "bullfrog"
+script_id = "animal"
 name = "a bullfrog"
 body = 81
 skin_hue = 0
@@ -114,7 +117,6 @@ death = 618
 
 [[mobile]]
 id = "cat"
-script_id = "animal"
 name = "a cat"
 body = 201
 skin_hue = "0x08FD-0x090E"
@@ -124,6 +126,7 @@ intelligence = 5
 mana = 0
 damage = 1
 armor = 4
+script_id = "animal"
 [mobile.skills]
 hiding = "1d21+14"
 resisting_spells = 50
@@ -139,7 +142,6 @@ death = 109
 
 [[mobile]]
 id = "cougar"
-script_id = "animal"
 name = "a cougar"
 body = 63
 strength = "1d25+55"
@@ -149,6 +151,7 @@ mana = 0
 damage = "1d11+1"
 armor = 8
 fame = 450
+script_id = "animal"
 [mobile.skills]
 hiding = "1d11+4"
 resisting_spells = "1d16+14"
@@ -164,6 +167,7 @@ death = 119
 
 [[mobile]]
 id = "cow"
+script_id = "animal"
 name = "a cow"
 body = 216
 strength = 30
@@ -187,7 +191,6 @@ death = 124
 
 [[mobile]]
 id = "dog"
-script_id = "animal"
 name = "a dog"
 body = 217
 skin_hue = "0x08FD-0x090E"
@@ -198,6 +201,7 @@ mana = 0
 damage = "1d4+3"
 armor = 6
 fame = 300
+script_id = "animal"
 [mobile.skills]
 resisting_spells = "1d26+21"
 parrying = "1d26+27"
@@ -212,6 +216,7 @@ death = 137
 
 [[mobile]]
 id = "goat"
+script_id = "animal"
 name = "a goat"
 body = 209
 strength = 19
@@ -235,6 +240,7 @@ death = 157
 
 [[mobile]]
 id = "gorilla"
+script_id = "animal"
 name = "a gorilla"
 body = 29
 strength = "1d43+52"
@@ -258,7 +264,6 @@ death = 162
 
 [[mobile]]
 id = "greywolf"
-script_id = "animal"
 name = "a grey wolf"
 body = 25
 skin_hue = 998
@@ -270,6 +275,7 @@ damage = "1d7+1"
 armor = 9
 karma = 0
 fame = 450
+script_id = "animal"
 [mobile.skills]
 hiding = "1d16+44"
 resisting_spells = "1d16+19"
@@ -289,7 +295,6 @@ base_id = "greywolf"
 
 [[mobile]]
 id = "grizbear"
-script_id = "animal"
 name = "a grizzly bear"
 body = 212
 strength = "1d30+125"
@@ -299,6 +304,7 @@ mana = 0
 damage = "1d10+5"
 armor = 12
 fame = 1000
+script_id = "animal"
 [mobile.skills]
 resisting_spells = "1d16+24"
 parrying = "1d16+69"
@@ -336,7 +342,6 @@ death = 132
 
 [[mobile]]
 id = "hind"
-script_id = "scared_animal"
 name = "a hind"
 body = 237
 strength = "1d31+20"
@@ -346,6 +351,7 @@ mana = 0
 damage = 4
 armor = 4
 fame = 300
+script_id = "scared_animal"
 [mobile.skills]
 hiding = "1d21+9"
 resisting_spells = 15
@@ -375,6 +381,7 @@ hiding = "1d16+44"
 [[mobile]]
 id = "mountaingoat"
 base_id = "goat"
+script_id = "animal"
 name = "a mountain goat"
 body = 88
 strength = "1d43+21"
@@ -398,6 +405,7 @@ death = 157
 
 [[mobile]]
 id = "packhorse"
+script_id = "animal"
 name = "a pack horse"
 body = 291
 strength = "1d77+43"
@@ -422,6 +430,7 @@ death = 172
 
 [[mobile]]
 id = "packllama"
+script_id = "animal"
 name = "a pack llama"
 body = 292
 strength = "1d29+51"
@@ -446,7 +455,6 @@ death = 185
 
 [[mobile]]
 id = "panther"
-script_id = "animal"
 name = "a panther"
 body = 214
 strength = "1d25+60"
@@ -456,6 +464,7 @@ mana = 0
 damage = "1d13+1"
 armor = 8
 fame = 450
+script_id = "animal"
 [mobile.skills]
 hiding = "1d11+14"
 resisting_spells = "1d16+14"
@@ -471,6 +480,7 @@ death = 190
 
 [[mobile]]
 id = "pig"
+script_id = "animal"
 name = "a pig"
 body = 203
 strength = 20
@@ -494,7 +504,6 @@ death = 200
 
 [[mobile]]
 id = "polarbear"
-script_id = "animal"
 name = "a polar bear"
 body = 213
 strength = "1d25+115"
@@ -504,6 +513,7 @@ mana = 0
 damage = "1d10+4"
 armor = 9
 fame = 1500
+script_id = "animal"
 [mobile.skills]
 resisting_spells = "1d16+44"
 parrying = "1d16+9"
@@ -518,7 +528,6 @@ death = 167
 
 [[mobile]]
 id = "rabbit"
-script_id = "scared_animal"
 name = "a rabbit"
 body = 205
 skin_hue = "0x08FD-0x090E"
@@ -529,6 +538,7 @@ mana = 0
 damage = 1
 armor = 3
 fame = 150
+script_id = "scared_animal"
 [mobile.skills]
 hiding = "1d21+24"
 resisting_spells = 50
@@ -542,6 +552,7 @@ death = 203
 
 [[mobile]]
 id = "rat"
+script_id = "animal"
 name = "a rat"
 body = 238
 strength = 9
@@ -566,6 +577,7 @@ death = 208
 
 [[mobile]]
 id = "sheep"
+script_id = "animal"
 name = "a sheep"
 body = 207
 strength = 19
@@ -589,7 +601,6 @@ death = 218
 
 [[mobile]]
 id = "snowleopard"
-script_id = "animal"
 name = "a snow leopard"
 body = 64
 skin_hue = 72
@@ -600,6 +611,7 @@ mana = 0
 damage = "1d9+1"
 armor = 12
 fame = 450
+script_id = "animal"
 [mobile.skills]
 hiding = "1d21+4"
 resisting_spells = "1d11+24"
@@ -615,7 +627,6 @@ death = 119
 
 [[mobile]]
 id = "timberwolf"
-script_id = "animal"
 name = "a timber wolf"
 body = 225
 strength = "1d25+55"
@@ -625,6 +636,7 @@ mana = 0
 damage = "1d7+3"
 armor = 9
 fame = 450
+script_id = "animal"
 [mobile.skills]
 hiding = "1d6+4"
 resisting_spells = "1d18+27"
@@ -640,7 +652,6 @@ death = 233
 
 [[mobile]]
 id = "whitewolf"
-script_id = "animal"
 name = "a white wolf"
 body = 37
 skin_hue = 906
@@ -651,6 +662,7 @@ mana = 0
 damage = "1d7+1"
 armor = 8
 fame = 450
+script_id = "animal"
 [mobile.skills]
 hiding = "1d16+4"
 resisting_spells = "1d16+19"
@@ -691,13 +703,13 @@ death = 233
 
 [[mobile]]
 id = "squirrel"
-script_id = "scared_animal"
 name = "a squirrel"
 body = 278
 strength = "1d7+43"
 dexterity = 35
 intelligence = 5
 damage = "1d2"
+script_id = "scared_animal"
 [mobile.skills]
 resisting_spells = 4
 parrying = 4
@@ -712,7 +724,6 @@ death = 203
 
 [[mobile]]
 id = "ferret"
-script_id = "scared_animal"
 name = "a ferret"
 body = 279
 strength = "1d8+40"
@@ -720,6 +731,7 @@ dexterity = 55
 intelligence = 75
 damage = "1d3+6"
 armor = 1
+script_id = "scared_animal"
 [mobile.skills]
 resisting_spells = 4
 parrying = 4
@@ -763,3 +775,4 @@ death = 1269
 [[mobile]]
 id = "gaman"
 base_id = "gaman_se"
+script_id = "animal"

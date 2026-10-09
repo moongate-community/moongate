@@ -2,7 +2,7 @@
 
 `starting_items.toml` holds the items a new character gets. The shipped file is written
 from UOX3's `newbie.dfn`, with shard-specific entries such as the welcome letter.
-[`mgctl convert uox`](../uox3-migration.md#starting-items) can regenerate its UOX3 entries.
+[`moongate-convert uox`](../uox3-migration.md#starting-items) can regenerate its UOX3 entries.
 `IStartingItemsService.GiveAsync` applies it to a new character.
 
 A character gets every `[[set]]` with `common = true`, plus every set whose filters it
@@ -72,7 +72,7 @@ equip = false
 Food and drink are ordinary entries too: the common set of the shipped file gives three loaves of
 bread and a pitcher of water, so a new character has something against
 [hunger and thirst](../server-configuration.md). Neither they nor the gold are part of UOX3's
-`newbie.dfn`: `mgctl convert uox` adds the three entries to the common set by itself, for the items
+`newbie.dfn`: `moongate-convert uox` adds the three entries to the common set by itself, for the items
 the source has.
 
 ```toml
@@ -149,7 +149,7 @@ the character, backpack and all starting items are rolled back in the same trans
 
 An existing root keeps its edited `data/starting_items.toml` when you run
 `mgctl init`: add the entry above yourself and restart the server. Removing it
-disables the letter. `mgctl convert uox` regenerates starting items without this
+disables the letter. `moongate-convert uox` regenerates starting items without this
 shard-specific binding; add it again after converting.
 
 ## Validation at startup

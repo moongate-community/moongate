@@ -66,6 +66,16 @@ public sealed class RecordingSpeechService : ISpeechService
     /// </summary>
     public List<string> SaidAffixes { get; } = [];
 
+    public List<(MobileEntity Speaker, MobileEntity Player, int Cliloc, string Arguments, string Affix)> SaidTo { get; } =
+        [];
+
+    public bool SayClilocTo(MobileEntity speaker, MobileEntity player, int cliloc, string arguments = "", string affix = "")
+    {
+        SaidTo.Add((speaker, player, cliloc, arguments, affix));
+
+        return true;
+    }
+
     public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "", string affix = "")
     {
         SaidClilocs.Add((speaker, cliloc, arguments));
@@ -79,6 +89,11 @@ public sealed class RecordingSpeechService : ISpeechService
         Told.Add((player, text));
         ToldHues.Add(hue);
 
-        return true;
+        return TellResult;
     }
+
+    /// <summary>
+    ///     Gets or sets what <see cref="Tell" /> answers: false is a player with no session to read it.
+    /// </summary>
+    public bool TellResult { get; set; } = true;
 }

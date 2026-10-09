@@ -2,12 +2,12 @@
 
 The world fills itself with NPCs from spawn regions, as UOX3's `[REGIONSPAWN]`: every region keeps
 up to its `max` NPCs alive, spawning a few at a time, and spawns new ones when some are removed or
-killed. The shipped data is UOX3's, converted by [`mgctl convert uox`](uox3-migration.md): 2778 regions on
+killed. The shipped data is UOX3's, converted by [`moongate-convert uox`](uox3-migration.md): 2778 regions on
 Felucca, Trammel and Ilshenar, for up to about 25,000 NPCs, picking from 446 NPC lists. UOX3 has no
 spawns for New Haven, so `spawns/trammel/town_new_haven.toml` adds its 57 spawn points from
 ModernUO: the vendors, the bankers, the townsfolk and the town animals, 99 NPCs in all. Malas,
 Tokuno and TerMur, which UOX3 has no spawns for either, take theirs from ModernUO's spawners through
-[`mgctl convert modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1,206 regions, about 4,200
+[`moongate-convert modernuo-spawns`](uox3-migration.md#spawns-of-modernuo): 1,206 regions, about 4,200
 NPCs, in the `modernuo_*.toml` files of their folders; the spawners whose creatures have no template
 yet are left out.
 
@@ -136,7 +136,7 @@ items with its live items, and `.initial_spawn` fills it too.
 
 The shipped `treasure_chests.toml` of Felucca, Trammel and Ilshenar hold the dungeon chests of
 ModernUO's spawners, written by
-[`mgctl convert modernuo-chests`](uox3-migration.md#treasure-chests-of-modernuo): 399 regions for
+[`moongate-convert modernuo-chests`](uox3-migration.md#treasure-chests-of-modernuo): 399 regions for
 up to 633 chests. The four templates, `treasure_chest_level_1` to `treasure_chest_level_4` in
 `templates/items/treasure_chests.toml`, are ModernUO's `TreasureChestLevel1` to `4`:
 
@@ -158,7 +158,7 @@ items into it, a pile onto a pile of the same kind; the players around see what 
 of another spawned chest. A chest
 cannot be picked up, by all but the staff, and decays 45 minutes after it was made, opened or not,
 with what is left inside; the region then makes a new one 5 to 10 minutes later. The containers of the towns work another way: they stay and
-[fill up when opened](scripting/shipped-scripts.md#fillablelua). Chests have no lock and no trap yet, each level has one
+[fill up when opened](scripting/shipped-scripts.md#fillablelua). Chests are made [locked](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) and have no trap yet, each level has one
 look, and the time to decay is fixed, where ModernUO picks 15 to 74 minutes.
 
 ## Water and amphibious NPCs

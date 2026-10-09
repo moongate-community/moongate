@@ -37,9 +37,17 @@ public class UltimaConfig : IConfigSection
 
     public JailConfig Jail { get; set; } = new();
 
+    public HelpConfig Help { get; set; } = new();
+
+    public ScheduleConfig Schedule { get; set; } = new();
+
     public BulletinBoardsConfig BulletinBoards { get; set; } = new();
 
     public BankConfig Bank { get; set; } = new();
+
+    public StableConfig Stable { get; set; } = new();
+
+    public PetsConfig Pets { get; set; } = new();
 
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
@@ -142,6 +150,20 @@ public class UltimaConfig : IConfigSection
 
         Jail.Validate();
 
+        if (Help is null)
+        {
+            throw new InvalidOperationException("The ultima.help configuration section cannot be null.");
+        }
+
+        Help.Validate();
+
+        if (Schedule is null)
+        {
+            throw new InvalidOperationException("The ultima.schedule configuration section cannot be null.");
+        }
+
+        Schedule.Validate();
+
         if (BulletinBoards is null)
         {
             throw new InvalidOperationException("The ultima.bulletin_boards configuration section cannot be null.");
@@ -155,5 +177,19 @@ public class UltimaConfig : IConfigSection
         }
 
         Bank.Validate();
+
+        if (Stable is null)
+        {
+            throw new InvalidOperationException("The ultima.stable configuration section cannot be null.");
+        }
+
+        Stable.Validate();
+
+        if (Pets is null)
+        {
+            throw new InvalidOperationException("The ultima.pets configuration section cannot be null.");
+        }
+
+        Pets.Validate();
     }
 }

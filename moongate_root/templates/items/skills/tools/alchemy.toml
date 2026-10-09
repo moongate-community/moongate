@@ -57,11 +57,11 @@ base_id = "base_item"
 item_id = 6217
 name = "heating stand"
 rarity = "common"
+script_id = "light"
 weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-script_id = "light"
 
 [[item]]
 id = "unlitheatingstand"
@@ -75,11 +75,11 @@ base_id = "base_item"
 item_id = 6218
 name = "heating stand"
 rarity = "common"
+script_id = "light"
 weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-script_id = "light"
 
 [[item]]
 id = "litheatingstand"
@@ -93,11 +93,11 @@ base_id = "base_item"
 item_id = 6221
 name = "heating stand"
 rarity = "common"
+script_id = "light"
 weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-script_id = "light"
 
 [[item]]
 id = "0x184e_heating_stand"
@@ -105,11 +105,11 @@ base_id = "base_item"
 item_id = 6222
 name = "heating stand"
 rarity = "common"
+script_id = "light"
 weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-script_id = "light"
 
 [[item]]
 id = "0x0e24_empty_vial"
@@ -610,6 +610,7 @@ item_id = 3722
 name = "blowpipe"
 rarity = "common"
 weight = 1.0
+weapon_type = "mace"
 buy_price = 9
 sell_price = 4
 decays = true

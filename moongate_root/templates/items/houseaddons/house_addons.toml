@@ -289,18 +289,21 @@ decays = false
 [[item]]
 id = "0x1070_training_dummy"
 base_id = "base_item"
+script_id = "training_dummy"
 item_id = 4208
 name = "training dummy"
 rarity = "common"
 movable = true
 weight = 60.0
 stackable = false
+max_hits = 100
 dyeable = false
 decays = false
 
 [[item]]
 id = "0x1071_training_dummy"
 base_id = "base_item"
+script_id = "training_dummy"
 item_id = 4209
 name = "training dummy"
 rarity = "common"
@@ -313,18 +316,21 @@ decays = false
 [[item]]
 id = "0x1074_training_dummy"
 base_id = "base_item"
+script_id = "training_dummy"
 item_id = 4212
 name = "training dummy"
 rarity = "common"
 movable = true
 weight = 60.0
 stackable = false
+max_hits = 100
 dyeable = false
 decays = false
 
 [[item]]
 id = "0x1075_training_dummy"
 base_id = "base_item"
+script_id = "training_dummy"
 item_id = 4213
 name = "training dummy"
 rarity = "common"
@@ -337,6 +343,8 @@ decays = false
 [[item]]
 id = "0x100a_archery_butte"
 base_id = "base_item"
+script_id = "archery_butte"
+use_range = 6
 item_id = 4106
 name = "archery butte"
 rarity = "common"
@@ -349,6 +357,8 @@ decays = false
 [[item]]
 id = "0x100b_archery_butte"
 base_id = "base_item"
+script_id = "archery_butte"
+use_range = 6
 item_id = 4107
 name = "archery butte"
 rarity = "common"
@@ -367,6 +377,7 @@ rarity = "common"
 movable = true
 weight = 60.0
 stackable = false
+max_hits = 100
 dyeable = false
 decays = false
 
@@ -379,6 +390,7 @@ rarity = "common"
 movable = true
 weight = 60.0
 stackable = false
+max_hits = 100
 dyeable = false
 decays = false
 

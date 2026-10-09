@@ -1,10 +1,10 @@
 [[mobile]]
 id = "basehuman"
-flee_at = 20
 race = "human"
 damage = "1d8+2"
 armor = 10
 notoriety = "innocent"
+flee_at = 20
 
 [[mobile]]
 id = "male"
@@ -123,7 +123,6 @@ items = ["0x1410"]
 
 [[mobile]]
 id = "m_murderer_archmage"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Archmage"
@@ -138,6 +137,7 @@ notoriety = "murderer"
 karma = -3000
 fame = 3000
 gold = "1d151+349"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d70+30"
 magery = "1d6+94"
@@ -218,7 +218,6 @@ items = ["0x1fa1_tunic", "0x1f03_robe"]
 
 [[mobile]]
 id = "m_pirate"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Pirate"
@@ -228,6 +227,7 @@ strength = "1d15+85"
 dexterity = "1d35+65"
 intelligence = "1d15+70"
 notoriety = "murderer"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d10+48"
 parrying = "1d24+24"
@@ -437,7 +437,6 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "m_brigand"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Brigand"
@@ -451,6 +450,7 @@ notoriety = "murderer"
 karma = -1000
 fame = 1000
 gold = "1d101+99"
+script_id = "monster"
 [mobile.skills]
 camping = "1d24+34"
 fencing = "1d33+45"
@@ -569,58 +569,7 @@ items = ["0x1515_cloak"]
 hue = "0x0835-0x0852"
 
 [[mobile]]
-id = "m_thief_guildmaster"
-base_id = "basehuman"
-name_list = "male"
-title = "the Thief Guildmaster"
-gender = "male"
-race = "human"
-strength = "1d15+60"
-dexterity = "1d15+85"
-intelligence = "1d15+70"
-[mobile.skills]
-detecting_hidden = "1d24+64"
-fencing = "1d24+59"
-hiding = "1d24+59"
-lockpicking = "1d24+64"
-resisting_spells = "1d24+24"
-poisoning = "1d24+34"
-remove_trap = "1d24+59"
-snooping = "1d37+63"
-stealing = "1d37+63"
-stealth = "1d24+64"
-tactics = "1d33+25"
-[mobile.sounds]
-death = 348
-[[mobile.equipment]]
-items = ["0x0f51", "0x1401", "0x1405"]
-
-[[mobile.equipment]]
-items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
-hue = "0x0835-0x0852"
-
-[[mobile.equipment]]
-items = ["0x1517_shirt"]
-hue = "0x0835-0x0852"
-
-[[mobile.equipment]]
-items = ["0x152e_short_pants", "0x1539_long_pants"]
-hue = "0x0835-0x0852"
-
-[[mobile.equipment]]
-items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
-
-[[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x1f03_robe"]
-hue = "0x0835-0x0852"
-
-[[mobile.equipment]]
-items = ["0x1515_cloak"]
-hue = "0x0835-0x0852"
-
-[[mobile]]
 id = "m_thief"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Thief"
@@ -630,6 +579,7 @@ strength = "1d15+60"
 dexterity = "1d15+85"
 intelligence = "1d15+70"
 notoriety = "attackable"
+script_id = "monster"
 [mobile.skills]
 detecting_hidden = "1d24+64"
 fencing = "1d24+59"
@@ -1199,7 +1149,6 @@ hue = "0x0835-0x0852"
 
 [[mobile]]
 id = "m_golemcontroller"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "golem_controller"
 title = "the controller"
@@ -1214,6 +1163,7 @@ notoriety = "murderer"
 karma = -4000
 fame = 4000
 gold = "1d151+349"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d50+50"
 magery = "1d6+94"
@@ -1242,7 +1192,6 @@ hue = 2117
 
 [[mobile]]
 id = "m_executioner"
-script_id = "monster"
 base_id = "basehuman"
 name_list = "male"
 title = "the Executioner"
@@ -1256,6 +1205,7 @@ notoriety = "murderer"
 karma = -5000
 fame = 5000
 gold = "1d101+99"
+script_id = "monster"
 [mobile.skills]
 anatomy = 120
 camping = "1d33+35"
@@ -1288,7 +1238,6 @@ items = ["0x0f46"]
 
 [[mobile]]
 id = "m_chaosdragoon"
-script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon"
 gender = "male"
@@ -1301,6 +1250,7 @@ karma = -5000
 fame = 5000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
 gold = "1d151+49"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d12+76"
 fencing = "1d10+82"
@@ -1344,7 +1294,6 @@ items = ["swampdragon"]
 
 [[mobile]]
 id = "m_chaosdragoonelite"
-script_id = "monster"
 base_id = "basehuman"
 name = "a chaos dragoon elite"
 gender = "male"
@@ -1357,6 +1306,7 @@ karma = -8000
 fame = 8000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems"]
 gold = "1d51+249"
+script_id = "monster"
 [mobile.skills]
 anatomy = 89
 evaluating_intelligence = 84
@@ -1434,12 +1384,12 @@ items = ["0x1515_cloak"]
 
 [[mobile]]
 id = "lordbritish"
-flee_at = -1
 name = "Lord British"
 body = 990
 damage = "1d101+99"
 armor = 100
 notoriety = "innocent"
+flee_at = -1
 [mobile.sounds]
 hurt = 341
 death = 348
@@ -1452,12 +1402,12 @@ hue = 902
 
 [[mobile]]
 id = "lordblackthorn"
-flee_at = -1
 name = "Lord Blackthorn"
 body = 991
 damage = "1d101+99"
 armor = 100
 notoriety = "attackable"
+flee_at = -1
 [mobile.sounds]
 hurt = 341
 death = 348
@@ -1466,7 +1416,6 @@ items = ["0x2043_lord_blackthorne"]
 
 [[mobile]]
 id = "dupre"
-flee_at = -1
 name = "Dupre"
 title = "the Fighter"
 gender = "male"
@@ -1474,6 +1423,7 @@ race = "human"
 damage = "1d101+99"
 armor = 100
 notoriety = "innocent"
+flee_at = -1
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
@@ -1481,13 +1431,13 @@ items = ["0x2050_dupre_the_fighter"]
 
 [[mobile]]
 id = "garriot"
-flee_at = -1
 name = "Garriot"
 gender = "male"
 race = "human"
 damage = "1d101+99"
 armor = 100
 notoriety = "innocent"
+flee_at = -1
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]

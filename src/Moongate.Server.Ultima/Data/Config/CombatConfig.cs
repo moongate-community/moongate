@@ -10,6 +10,8 @@ public sealed class CombatConfig
     private const int MaximumRange = 24;
     private const int MaximumSeconds = 3600;
     private const double MaximumStandStill = 60;
+    private const int MaximumBloodPieces = 8;
+    private const int MaximumBloodSeconds = 60;
 
     /// <summary>
     ///     Gets or sets the factor that divides the delay between two swings: 2 makes every fighter swing twice as
@@ -49,6 +51,23 @@ public sealed class CombatConfig
     public double ArcheryStandStillSeconds { get; set; } = 1.0;
 
     /// <summary>
+    ///     Gets or sets whether a hit that does damage leaves blood on the ground, as ModernUO and Source-X.
+    /// </summary>
+    public bool BloodEnabled { get; set; } = true;
+
+    /// <summary>
+    ///     Gets or sets the most pieces of blood a hit leaves beside the one under the victim, from 0 to 8; each hit
+    ///     leaves a random number from 1 to this. 0 leaves only the one.
+    /// </summary>
+    public int BloodPieces { get; set; } = 2;
+
+    /// <summary>
+    ///     Gets or sets the seconds a piece of blood lies on the ground, as ModernUO's and Source-X's five. The ground items
+    ///     are checked every 5 seconds, so it can last that much longer.
+    /// </summary>
+    public int BloodSeconds { get; set; } = 5;
+
+    /// <summary>
     ///     Validates the section before server services begin startup.
     /// </summary>
     public void Validate()
@@ -85,6 +104,20 @@ public sealed class CombatConfig
         {
             throw new InvalidOperationException(
                 $"ultima.combat.archery_stand_still_seconds must be from 0 to {MaximumStandStill}, found {ArcheryStandStillSeconds}."
+            );
+        }
+
+        if (BloodPieces is < 0 or > MaximumBloodPieces)
+        {
+            throw new InvalidOperationException(
+                $"ultima.combat.blood_pieces must be from 0 to {MaximumBloodPieces}, found {BloodPieces}."
+            );
+        }
+
+        if (BloodSeconds is < 1 or > MaximumBloodSeconds)
+        {
+            throw new InvalidOperationException(
+                $"ultima.combat.blood_seconds must be from 1 to {MaximumBloodSeconds}, found {BloodSeconds}."
             );
         }
 

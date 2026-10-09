@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Core.Extensions;
@@ -86,6 +87,8 @@ public sealed class DeathService : IDeathService
     private readonly IMobileStateService? _state;
     private readonly INpcSenseService? _senses;
     private readonly IMurderService? _murders;
+    private readonly IMountService? _mounts;
+    private readonly Lazy<IPetService>? _pets;
     private readonly ILogger _logger;
 
     // Who is between its death and its removal: it does not die twice.
@@ -113,9 +116,13 @@ public sealed class DeathService : IDeathService
         IMobileStateService? state = null,
         INpcSenseService? senses = null,
         IMurderService? murders = null,
-        ILogger? logger = null
+        ILogger? logger = null,
+        IMountService? mounts = null,
+        Lazy<IPetService>? pets = null
     )
     {
+        _pets = pets;
+        _mounts = mounts;
         _murders = murders;
         _state = state;
         _senses = senses;
@@ -188,6 +195,11 @@ public sealed class DeathService : IDeathService
         Finish(mobile, corpse, killer);
 
         return true;
+    }
+
+    public bool IsDying(Serial mobile)
+    {
+        return _dying.Contains(mobile);
     }
 
     public bool Resurrect(MobileEntity player)
@@ -308,6 +320,9 @@ public sealed class DeathService : IDeathService
         {
             _speech.PlaySound(player, sound);
         }
+
+        // The mount is not loot: the rider is on foot, and its horse stands where it falls, before the corpse is made.
+        _mounts?.Dismount(player);
 
         var corpse = MakeCorpse(player, killer);
 
@@ -530,6 +545,12 @@ public sealed class DeathService : IDeathService
     {
         _npcs.Remove(mobile.Id);
         _dying.Remove(mobile.Id);
+
+        // A pet that dies is one follower less for its owner.
+        if (mobile.GetProp(MountProps.Owner, 0L) is > 0 and var owner && owner <= uint.MaxValue)
+        {
+            _pets?.Value.Changed(new Serial((uint)owner));
+        }
     }
 
     // Null when the corpse template is missing or no serial is left: the NPC dies all the same, with what it carried.
@@ -575,6 +596,7 @@ public sealed class DeathService : IDeathService
         if (killer is not null)
         {
             corpse.SetProp(CorpseProps.Killer, (long)killer.Id.Value);
+            corpse.SetProp(CorpseProps.KillerName, killer.Name);
         }
 
         corpse.PlaceOnGround(mobile.Map, mobile.Location);

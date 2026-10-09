@@ -4,7 +4,6 @@ notoriety = "attackable"
 
 [[mobile]]
 id = "direwolf"
-script_id = "monster"
 name = "a dire wolf"
 body = 23
 strength = "1d25+95"
@@ -15,6 +14,7 @@ armor = 11
 notoriety = "attackable"
 karma = -2500
 fame = 2500
+script_id = "monster"
 [mobile.skills]
 hiding = "1d11+4"
 resisting_spells = "1d18+57"
@@ -30,7 +30,6 @@ death = 233
 
 [[mobile]]
 id = "giantrat"
-script_id = "monster"
 name = "a giant rat"
 body = 215
 strength = "1d43+31"
@@ -43,6 +42,7 @@ notoriety = "attackable"
 karma = -300
 fame = 300
 gold = "1d26-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d6+24"
 parrying = "1d11+44"
@@ -57,7 +57,6 @@ death = 396
 
 [[mobile]]
 id = "gianttoad"
-script_id = "monster"
 name = "a giant toad"
 body = 80
 strength = "1d25+75"
@@ -70,6 +69,7 @@ notoriety = "attackable"
 karma = -750
 fame = 750
 gold = "1d26-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+24"
 parrying = "1d36+37"
@@ -84,7 +84,6 @@ death = 623
 
 [[mobile]]
 id = "scorpion"
-script_id = "monster"
 name = "a giant scorpion"
 body = 48
 skin_hue = 0
@@ -97,6 +96,7 @@ armor = 14
 notoriety = "attackable"
 karma = -2000
 fame = 2000
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d6+29"
 parrying = "1d11+59"
@@ -112,7 +112,6 @@ death = 401
 
 [[mobile]]
 id = "sewerrat"
-script_id = "monster"
 name = "a sewer rat"
 body = 238
 strength = 9
@@ -124,6 +123,7 @@ armor = 3
 notoriety = "attackable"
 karma = -300
 fame = 300
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 50
 tactics = 50
@@ -137,7 +137,6 @@ death = 208
 
 [[mobile]]
 id = "phoenix"
-script_id = "monster"
 name = "a phoenix"
 body = 5
 skin_hue = 1209
@@ -149,6 +148,7 @@ armor = 25
 fame = 15000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems"]
 gold = "1d401+599"
+script_id = "monster"
 [mobile.skills]
 magery = "1d11+89"
 resisting_spells = "1d35+85"
@@ -164,11 +164,11 @@ death = 147
 
 [[mobile]]
 id = "base_bakekitsune"
-script_id = "monster"
 base_id = "base_agressiveanimals"
 name = "a bake kitsune"
 body = 246
 notoriety = "murderer"
+script_id = "monster"
 [mobile.sounds]
 start_attack = 1246
 idle = 1245

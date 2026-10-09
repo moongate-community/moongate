@@ -42,6 +42,11 @@ public sealed class CombatGearServiceTests
                     },
                     new ItemTemplate
                     {
+                        Id = "battle_axe", ItemId = new Serial(0x0F47), Layer = LayerType.TwoHanded, TwoHandedWeapon = true,
+                        WeaponType = WeaponType.Axe, DamageMin = 10, DamageMax = 20, Speed = 30
+                    },
+                    new ItemTemplate
+                    {
                         Id = "bow", ItemId = new Serial(0x13B2), Layer = LayerType.TwoHanded, TwoHandedWeapon = true,
                         WeaponType = WeaponType.Bow, DamageMin = 9, DamageMax = 41, Speed = 25
                     },
@@ -250,6 +255,19 @@ public sealed class CombatGearServiceTests
     }
 
     [Fact]
+    public void WithGear_AnAxeInTheHands_ShowsItsDamageWithLumberjacking()
+    {
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 1000 });
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Lumberjacking, Base = 1000 });
+        Wear("battle_axe");
+
+        var status = _gear.WithGear(new MobileStatusInfo { Serial = Aria, Name = "Aria" }, _aria);
+
+        // 10 and 20 with tactics 100 (+50%), then strength 100 (+20%) and lumberjacking 100 (+30%): 22 and 45
+        Assert.Equal((22, 45), (status.DamageMin, status.DamageMax));
+    }
+
+    [Fact]
     public void WithGear_ABowInTheHands_ShowsTheDamageOfTheBow()
     {
         _aria.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 1000 });
@@ -294,7 +312,7 @@ public sealed class CombatGearServiceTests
         return template switch
         {
             "longsword" or "club"          => LayerType.OneHanded,
-            "halberd" or "bow" or "heater" => LayerType.TwoHanded,
+            "halberd" or "bow" or "heater" or "battle_axe" => LayerType.TwoHanded,
             "plate_tunic"                  => LayerType.InnerTorso,
             "studded_tunic"                => LayerType.Shirt,
             "plate_skirt"                  => LayerType.OuterLegs,

@@ -50,8 +50,8 @@ its own: it comes with the priority that gives it its rule.
 
 | Content | Waits for | Priority |
 | --- | --- | --- |
-| Training dummies, archery buttes and dart boards (107 placed) | Skill gain (1.2) | 2 |
-| Locks and lockpicking of the treasure chests and of the town containers | Skill check (1.2) | 2 |
+| Dart boards (the training dummies and archery buttes work now) | Throwing skill (5.4) | 8 |
+| Locks on the town containers (the dungeon treasure chests are locked and picked now) | Lock levels in the data | 2 |
 | Traps of the chests, and the 490 traps placed in the dungeons | Damage (2.1) | 4 |
 | Wands in the treasure chests | Spells (4.3) | 7 |
 | Forges and anvils that craft | Crafting (5.2) | 8 |
@@ -104,7 +104,7 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 | 2.1 | 🟡 | **War mode, swing timer, melee and archery**: hit chance, damage, armour, parry, durability. Done: a [fight](combat.md) with fists or a weapon, the swing timer, the hit by skill, the damage and the armor of an NPC or of what a player wears, and archery with a bow or a crossbow, for a player and for an NPC. Left: parry, durability | The core loop of the game |
 | 2.2 | ❌ | **Aggressor lists**. Today only the [murder report](death.md#murder-counts) keeps who attacked an innocent, for `aggressor_seconds`; no attack timeouts and no loot rights | Notoriety, guards and loot rights rest on them |
 | 2.3 | 🟡 | **Death, corpse, ghost, resurrection**; healer NPCs and shrines. Done: an NPC or a player dies by a fight, `.kill` or `mobile.kill` and leaves its [corpse](death.md) with what it carried; a player stays as a [ghost](death.md#death-of-a-player) and comes back at an ankh or at a healer, by `.resurrect` or `mobile.resurrect`. Left: bones, bounties and the places of the evil healers | Gives combat a result |
-| 2.4 | ❌ | **Bandages and healing** | Needed as soon as damage exists |
+| 2.4 | 🟡 | **Bandages and healing**. Done: the clean [bandage](scripting/shipped-scripts.md#bandagelua) heals a player or a creature and raises a ghost, with the formulas of ModernUO's classic Healing. Left: poison and bleeding to cure, and pets to raise | Needed as soon as damage exists |
 | 2.5 | ❌ | **Combat events for Lua**: attack, hit, miss, damage, death, resurrect | Lets content change the rules |
 | 2.6 | ❌ | **Combat settings**: swing speed, damage rules, corpse decay | A shard owner expects to tune them |
 
@@ -124,7 +124,7 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
-| 4.1 | 🟡 | **Vendors**: buy, sell, restock; skill trainers. Done: the bank box, balance, deposit and withdraw by speech, bank checks, gold handed to the banker | Gives gold a use | UOX3 `shoplist.dfn` (38 lists used by 86 NPCs); prices are converted already |
+| 4.1 | 🟡 | **Vendors**: buy, sell, restock; skill trainers. Done: the bank box, balance, deposit and withdraw by speech, bank checks, gold handed to the banker, [buying from and selling to vendors](vendors.md) with ModernUO's shops, restock and resale; [skill trainers](skills.md#trainers) for vendors and healers; the [guildmasters](skills.md#guildmasters) with their guilds | Gives gold a use | UOX3 `shoplist.dfn` (38 lists used by 86 NPCs); prices are converted already |
 | 4.2 | ❌ | **Secure trade** between players | Player economy | |
 | 4.3 | ❌ | **Spell casting and Magery**: spellbooks, reagents, scrolls, words of power, the 64 spells | Half of all characters cast | UOX3 `spells.dfn` (mana, reagents, delay, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebooks** | The way players travel; needs the region rules of 3.5 | |
@@ -134,10 +134,10 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 
 | Step | State | What | Why it comes here | Data ready to import |
 | --- | --- | --- | --- | --- |
-| 5.1 | ❌ | **Gathering**: mining, lumberjacking, fishing, with resource regions that run out and regrow | Feeds crafting | |
-| 5.2 | ❌ | **Crafting engine**, then each craft as data; repair | The peaceful play style and the player economy | UOX3 `create/` (618 recipes) |
+| 5.1 | 🟡 | **Gathering**: mining, lumberjacking, fishing, with resource regions that run out and regrow. Done: fishing with a pole, lumberjacking with an axe, its boards, kinds of wood and rare finds, mining iron ore and smelting it, and the areas that run out and come back. Left: the other metals, the special catches of fishing | Feeds crafting | |
+| 5.2 | 🟡 | **Crafting engine**, then each craft as data; repair. Done: the engine, its gump and [carpentry](carpentry.md), with exceptional items, the maker's mark, tool wear and make last. Left: the other crafts, repair | The peaceful play style and the player economy | UOX3 `create/` (618 recipes) |
 | 5.3 | ❌ | **Taming, pet commands, stables, mounts** | Needs AI (3.2), notoriety (3.4) and vendors (4.1) | UOX3 `TOTAME`, `CONTROLSLOTS`, `FOOD` tags |
-| 5.4 | ❌ | **The remaining active skills**: hiding, stealth, stealing, snooping, lore skills, bard skills, tracking | Each is small once 1.2 exists | |
+| 5.4 | 🟡 | **The remaining active skills**: hiding, stealth, stealing, snooping, lore skills, bard skills, tracking. Done: hiding, [stealth](scripting/shipped-scripts.md#stealthlua), [snooping](scripting/shipped-scripts.md#snoopinglua), detect hidden, anatomy, evaluating intelligence and forensic evaluation ([the lore skills](scripting/shipped-scripts.md#the-lore-skills)). Left: stealing, tracking, arms lore, item ID, taste ID, the bard skills | Each is small once 1.2 exists | |
 
 ## Phase 6: playing together
 
@@ -167,8 +167,9 @@ These do not depend on the gameplay phases and are done when an operator needs t
 - Account bans, IP limits, login attempt limits, packet throttles.
 - Staff tools: a props gump, an add menu, area commands. The named places of
   [`.go`](commands/go.md) and their gump are done.
-- GM page queue, help and stuck menu. The [jail](jail.md) is done.
+- The [jail](jail.md), the [help and stuck menu](help.md) and the GM page queue are done.
 - Commands written in Lua.
+- The [schedule](schedule.md) is done: timed tasks, the shutdown with warnings and seasonal events by date. Halloween's trick or treat and Christmas' snowballs and gifts are done, and the towns are decorated for both ([Holidays](holidays.md)).
 
 ## Later
 
@@ -176,7 +177,7 @@ After phase 7. Each of these needs most of what comes before.
 
 - **Quests**: an engine for quests and escorts; about 35,000 lines in ModernUO.
 - **Champion spawns, treasure maps, camps.** The dungeon chests respawn and the town containers
-  fill up already; their locks and traps come with priorities 2 and 4.
+  fill up already; the dungeon chests are locked already, and their traps and the locks of the town containers come with priorities 4 and 2.
 - **Virtues and factions.**
 - **The modern ruleset**: item properties and resistances, random magic loot, special moves,
   Necromancy, Chivalry, Bushido, Ninjitsu, Spellweaving, Mysticism, bulk orders, custom house

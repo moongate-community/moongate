@@ -73,6 +73,20 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.RemoveDescription
         );
+        container.RegisterCommand<HideCommand>(
+            "hide",
+            "Hides you in a puff of smoke: the players do not see you and your steps do not show you.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.HideDescription
+        );
+        container.RegisterCommand<UnhideCommand>(
+            "unhide",
+            "Shows you again in a puff of smoke.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.UnhideDescription
+        );
         container.RegisterCommand<ResurrectCommand>(
             "resurrect",
             "Raises the NPC whose corpse you target: it is born again where the corpse lies.",
@@ -86,6 +100,13 @@ public static class UltimaCommandsContainerExtensions
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.AnimateDescription
+        );
+        container.RegisterCommand<TameCommand>(
+            "tame",
+            "Gives the creature you target to yourself, or to the character you name: tame [name]. Its owner can ride it.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.TameDescription
         );
         container.RegisterCommand<KillCommand>(
             "kill",
@@ -157,6 +178,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.Regular,
             CommandMessages.TimeDescription
         );
+        container.RegisterCommand<EventCommand>(
+            "event",
+            "Shows the seasonal events and switches one: event list, event on <id>, event off <id>, event auto <id>.",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator,
+            CommandMessages.EventDescription
+        );
         container.RegisterCommand<SeasonCommand>(
             "season",
             "Shows the season where you stand and your map's or, with a season or auto, sets your map's until the restart.",
@@ -219,6 +247,13 @@ public static class UltimaCommandsContainerExtensions
             CommandSourceType.InGame,
             AccountType.GameMaster,
             CommandMessages.GmToolsDescription
+        );
+        container.RegisterCommand<PagesCommand>(
+            "pages",
+            "Opens the gump of the help requests: the open and taken ones, to go to the player, take them, answer or close them.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.PagesDescription
         );
         container.RegisterCommand<JailCommand>(
             "jail",

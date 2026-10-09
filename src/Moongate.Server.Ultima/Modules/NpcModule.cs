@@ -63,6 +63,7 @@ public sealed class NpcModule
     private readonly IMovementService? _movement;
     private readonly ISessionService? _sessions;
     private readonly ILineOfSightService? _sight;
+    private readonly INpcDoorService? _doors;
     private readonly ILogger _logger = Log.ForContext<NpcModule>();
 
     public NpcModule(
@@ -79,9 +80,11 @@ public sealed class NpcModule
         IPathfindingService? finder = null,
         IMovementService? movement = null,
         ISessionService? sessions = null,
-        ILineOfSightService? sight = null
+        ILineOfSightService? sight = null,
+        INpcDoorService? doors = null
     )
     {
+        _doors = doors;
         _sessions = sessions;
         _sight = sight;
         _paths = paths;
@@ -188,7 +191,7 @@ public sealed class NpcModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "One step along a path to x, y (z defaults to the ground there), a run when running is true: 'arrived' within range tiles of it (default 0), 'moving' after a step, 'blocked' when the step was refused or it waits to look for another way, 'no_path' when the last search did not reach the place; nil for an unknown NPC, a negative range or a z outside -128 to 127."
+        "One step along a path to x, y (z defaults to the ground there), a run when running is true: 'arrived' within range tiles of it (default 0), 'moving' after a step or after opening a door in its way (an NPC that opens doors, see opens_doors), 'blocked' when the step was refused or it waits to look for another way, 'no_path' when the last search did not reach the place; nil for an unknown NPC, a negative range or a z outside -128 to 127."
     )]
     public string? WalkTo(long serial, int x, int y, int? z = null, int? range = null, bool running = false)
     {
@@ -197,7 +200,10 @@ public sealed class NpcModule
             return null;
         }
 
-        var step = _paths.Next(npc, goal, range ?? 0, AbilityOf(npc));
+        // An NPC that opens doors plans its way through the closed ones; the step itself is still stopped by them.
+        var opens = _doors?.OpensDoors(npc) == true;
+        var ability = opens ? AbilityOf(npc) | MovementAbilityType.OpenDoors : AbilityOf(npc);
+        var step = _paths.Next(npc, goal, range ?? 0, ability);
 
         switch (step.Kind)
         {
@@ -210,6 +216,17 @@ public sealed class NpcModule
         }
 
         var moved = Take(npc, step.Direction, running);
+
+        if (moved)
+        {
+            _doors?.Moved(npc);
+        }
+        else if (opens && _doors!.TryOpen(npc, step.Direction))
+        {
+            // A door in the way is asked to open and the path is kept: the NPC passes at its next step.
+            return "moving";
+        }
+
         _paths.Stepped(npc, moved);
 
         return moved ? "moving" : "blocked";

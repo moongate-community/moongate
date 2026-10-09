@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ca08c39f67453fc9840bb527747ec92458bf3119c2ed40bb9a8b514b4f1373a3","title":"Configurazione"} -->
+<!-- translation: {"sourceHash":"f4eb50634f57ab726fbe8aea72debab9ff860fd008ac40a6ab35e7df317e1a03","title":"Configurazione"} -->
 
 # Configurazione del server
 
@@ -119,6 +119,9 @@ npc_damage_rate = 1.0                 # Divides the damage an NPC does to a play
 max_range = 1                         # Tiles a melee swing reaches.
 combatant_seconds = 60                # Seconds a fighter keeps its target without swinging.
 display_damage_numbers = true         # The damage shows over the one hit.
+blood_enabled = true                  # A hit that does damage leaves blood on the ground.
+blood_pieces = 2                      # Most pieces around the one under the victim, from 0 to 8.
+blood_seconds = 5                     # Seconds a piece lies on the ground, from 1 to 60.
 archery_stand_still_seconds = 1.0     # Seconds a player must have stood still before it shoots; 0 for none.
 
 [ultima.crime]
@@ -142,6 +145,15 @@ initial_fill = true                   # The first spawn of each region after the
 fine_gold = 500                       # Gold coins taken from a prisoner when its jail sentence ends; 0 takes nothing.
 max_days = 30                         # The longest sentence the jail gump accepts, in real days.
 
+[ultima.help]
+stuck_wait_seconds = 5                # The seconds a character must stand still before "I am stuck" moves it.
+stuck_cooldown_minutes = 10           # The minutes before a player can use "I am stuck" again; 0 allows it at once.
+page_cooldown_seconds = 60           # The seconds between two requests of one player to the game masters; 0 allows it at once.
+page_history_days = 30                # The days a closed request is kept before it is deleted at startup.
+
+[ultima.schedule]
+time_zone = ""                        # The IANA time zone of the hours in data/schedule.toml, such as Europe/Rome; empty is the zone of the system.
+
 [ultima.bulletin_boards]
 expire_days = 7                       # A thread of a bulletin board goes this many days after its last reply; 0 keeps it.
 max_messages = 50                     # The messages a board holds; its oldest thread goes when it is full.
@@ -153,6 +165,10 @@ max_items = 125                       # Items a bank box holds, bags included; 0
 max_withdraw = 60000                  # Coins a banker hands out at one time.
 min_check = 5000                      # The smallest bank check a banker writes.
 max_check = 1000000                   # The largest.
+
+[ultima.stable]
+max_pets = 10                         # Pets a player may leave with the stablemasters, from 1 to 50.
+fee = 30                              # Gold a pet costs when it is stabled, from the backpack and then the bank; 0 makes it free.
 
 [persistence]
 auto_sync_schema = false
@@ -281,14 +297,19 @@ Vedi [Persistenza PostgreSQL](persistence.md).
 | `ultima.combat.max_range`, `combatant_seconds` | 1 (da 1 a 24) e 60 (da 1 a 3600). Tile raggiunti da un colpo in mischia, e durata del mantenimento del bersaglio senza colpire, come il minuto di ModernUO. |
 | `ultima.combat.archery_stand_still_seconds` | `1.0` (da 0 a 60). I secondi in cui un giocatore che impugna un arco o una balestra deve essere rimasto fermo, dal suo ultimo passo, prima di poter sparare; un cambio di direzione non conta. 0 non chiede nulla. Vedi [Arcieri](combat.md#archers) |
 | `ultima.combat.display_damage_numbers` | `true`. Il danno del colpo viene mostrato sopra chi lo riceve (pacchetto `0x0B`), ai giocatori nel combattimento. |
+| `ultima.combat.blood_enabled`, `blood_pieces`, `blood_seconds` | `true`, 2 (da 0 a 8) e 5 (da 1 a 60). Un colpo che fa danno lascia un pezzo di [sangue](combat.md#the-damage) sotto chi è colpito e da uno a `blood_pieces` intorno; ogni pezzo sparisce dopo `blood_seconds`, che il controllo degli oggetti a terra ogni 5 secondi può allungare. |
 | `ultima.crime.criminal_seconds` | Valore predefinito 120 (da 1 a 86400), i due minuti di ModernUO e UOX3. Un mobile che compie un atto criminale resta criminale per questa durata, con il nome grigio per chi lo vede; un altro atto riavvia il tempo, e un assassino resta rosso. Il tempo viene salvato con il personaggio, quindi uscire dal mondo non lo azzera; un NPC torna innocente dopo un riavvio. Un giocatore legge il messaggio client "Hai commesso un atto criminale!!" quando diventa criminale. Nulla rende ancora criminali automaticamente: lo fanno gli script con `mobile.set_criminal`, lo staff con `set criminal`. |
 | `ultima.murder.*` | I conteggi degli omicidi, come in ModernUO. `short_term_hours` (predefinito 8) e `long_term_hours` (predefinito 40), da 1 a 8760: un omicidio a breve termine e un'uccisione segnalata vengono dimenticati dopo questo tempo, uno alla volta, in tempo reale, comprese le ore passate fuori dal mondo (ModernUO conta il tempo online), mentre il giocatore è nel mondo o quando ci ritorna. `report_delay_seconds` (predefinito 4), `recently_reported_minutes` (predefinito 10) e `aggressor_seconds` (predefinito 120), da 1 a 86400: quanto tempo dopo la morte a un giocatore viene chiesto di segnalare chi lo ha attaccato, quanto prima che possa segnalare di nuovo lo stesso assassino, e per quanto tempo un attacco a un innocente mantiene segnalabile chi l'ha compiuto. Vedi [Conteggi degli omicidi](death.md#murder-counts). |
 | `ultima.crime.archer_guard_template` | Predefinito `archerguard`. Il template di mobile di una guardia chiamata a **Ilshenar** e **Malas**, come il `DefaultGuardType` di ModernUO: una guardia con un arco, che spara a ciò che attacca dalla portata dell'arco invece di colpirlo da accanto (vedi [guard.lua](scripting/shipped-scripts.md#guardlua)). Altrove arriva la guardia di `guard_template`. |
 | `ultima.crime.guards_enabled`, `guard_template`, `guard_seconds` | Valori predefiniti `true`, `guard` e 40 (da 1 a 86400). Un giocatore che dice "guards" in una regione sorvegliata, usando la parola chiave del client in qualsiasi lingua o la parola semplice, chiama le guardie: per ogni criminale entro 14 tile che si trova a sua volta in una regione sorvegliata, escluso lo staff, un NPC di `guard_template` appare accanto a lui, su un tile libero a un passo (sul suo se nessuno è libero), con effetto e suono di teletrasporto, e pronuncia la sua frase (messaggio 30138); un criminale riceve una guardia per volta. La guardia scompare allo stesso modo dopo `guard_seconds`. Una guardia uccide ciò che attacca con un colpo, e una guardia arciere gli spara. ModernUO è più restrittivo sui bersagli: lì solo chi ha commesso il crimine in quella città negli ultimi 15 secondi, e un assassino; qui chiunque sia criminale. Una guardia chiamata porta la proprietà `guard.summoned`: una lasciata nel mondo da un server arrestato viene rimossa all'avvio successivo. Disabilitato, non arriva nessuno. |
 | `ultima.spawns.initial_fill` | Valore predefinito `true`. La prima generazione di ogni regione di spawn dopo l'avvio la riempie immediatamente fino a `max`, così un mondo vuoto si popola in circa 10 minuti; `false` mantiene il comportamento di UOX3, dove anche la prima generazione porta solo `call` NPC. Usato nelle modalità game e standalone. Vedi [Spawn degli NPC](spawns.md#how-spawning-works). |
 | `ultima.jail.fine_gold`, `ultima.jail.max_days` | Valori predefiniti 500 (da 0 a 1.000.000.000) e 30 (da 1 a 3650). Oro prelevato da un prigioniero alla fine della pena, prima dallo zaino poi dalla banca, e pena massima accettata da [`.jail`](commands/jail.md), in giorni reali; vedi [Prigione](jail.md). |
+| `ultima.help.stuck_wait_seconds`, `ultima.help.stuck_cooldown_minutes` | Valori predefiniti 5 (da 1 a 60) e 10 (da 0 a 1440). L'attesa e la pausa del pulsante «Sono bloccato» del gump di [aiuto](help.md). |
+| `ultima.help.page_cooldown_seconds`, `ultima.help.page_history_days` | Valori predefiniti 60 (da 0 a 3600) e 30 (da 1 a 3650). I secondi che un giocatore aspetta tra due richieste ai game master e i giorni per cui una richiesta chiusa viene conservata prima che l'avvio la cancelli; vedi [Aiuto](help.md). |
+| `ultima.schedule.time_zone` | Vuoto (il fuso del sistema) oppure un id IANA come `Europe/Rome`. Un id sconosciuto ferma l'avvio. Un container Docker è in UTC a meno che abbia `TZ` o questa impostazione; su Linux i fusi richiedono il pacchetto tzdata. Vedi [Calendario](schedule.md). |
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Valori predefiniti 7 (da 0 a 3650; 0 conserva per sempre le discussioni), 50 (da 1 a 200), 120 e 30 (da 0 a 86400). Durata di una discussione su una [bacheca](bulletin-boards.md) dall'ultima risposta, numero di messaggi contenuti, e attesa di un personaggio tra due nuove discussioni e tra due interventi sulla stessa bacheca. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Valori predefiniti 125 (da 0 a 10000; 0 senza limite), 60000 (da 1 a 60000), 5000 e 1.000.000 (`min_check` da 1 a `max_check`, `max_check` fino a 2.000.000.000). Oggetti contenuti in una [cassetta bancaria](bank.md), compresi quelli nelle borse; monete consegnate da un banchiere per un *prelievo*; valore degli assegni emessi dal banchiere. |
+| `ultima.stable.max_pets`, `ultima.stable.fee` | Valori predefiniti 10 (da 1 a 50) e 30 (da 0 a 100000). I animali che un giocatore può lasciare a un addestratore, e quanto costa ciascuno quando viene messo in stalla: vedi la [stalla](mounts.md#the-stable). |
 
 Le impostazioni di gioco si trovano sotto `[ultima]` come sottotabelle (`[ultima.world]`,
 `[ultima.characters]`, ...). L'oro iniziale non è un'impostazione: è un oggetto

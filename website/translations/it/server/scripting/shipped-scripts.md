@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"4c74f65d5e2e31d023294653a435c5f40a5f096123abed8608b2c29a67193d52","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"bdb4d7f42b42a112f0c09f86c06eea1215f1a0b30efb42880b673b4b73385744","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -121,7 +121,7 @@ successiva, la porta si sposta di lato secondo la prop `facing` e riproduce il s
 `decoration_type` (metallo, legno, cancello o segreta). Un doppio clic su una porta aperta chiude entrambe
 quando nessuno si trova in uno dei due vani. Una porta aperta si chiude da sola dopo 20 secondi, poi
 riprova ogni 10 secondi mentre il vano è occupato. Una porta che non può spostarsi di lato, come
-una al bordo della mappa, resta chiusa. Lo stato aperto è la prop `door.open`, con la
+una al bordo della mappa, resta chiusa. Un NPC che cammina verso un luogo e trova una porta chiusa sulla sua strada la apre tramite `on_npc_use(serial, opener)`: la porta e quella collegata si aprono e si richiudono da sole come per un giocatore, e una porta chiusa a chiave, o una porta doppia con una delle due ante a chiave, resta chiusa senza una parola. Lo stato aperto è la prop `door.open`, con la
 posizione chiusa in `door.x`, `door.y` e `door.z`, salvata con la porta, così come il timer di chiusura automatica (il timer `close` della porta, avviato con
 `item.start_timer`): una porta lasciata aperta quando il server si arresta si chiude quando torna attivo. Una porta salvata
 aperta da una versione precedente non ha timer e resta aperta finché qualcuno la usa. Una porta chiusa con la prop `locked` non
@@ -164,6 +164,195 @@ brocca o una bottiglia 5, una caraffa 10, un bicchiere o una tazza 1; i sorsi ri
 Una volta vuota, una brocca, un bicchiere o una tazza passa alla grafica vuota, viene rinominata e resta; una bottiglia o caraffa
 scompare. Un giocatore dissetato legge "Sei semplicemente troppo pieno per bere ancora!" e non beve nulla.
 Riempimento, versamento e ubriachezza non sono ancora presenti.
+
+## Le abilità di osservazione
+
+Quattro abilità della finestra delle abilità, in `scripts/skills/`, come in ModernUO. Il giocatore sceglie un bersaglio e
+legge i testi del client come messaggi di sistema (ModernUO li mostra sopra chi è esaminato). Ognuna aspetta il `delay`
+di `data/skills.toml`.
+
+- **`anatomy.lua`:** un mobile entro 8 caselle; il controllo da 0 a 100 che riesce dice quanto sembra forte e agile e,
+  da 65 punti, quanta resistenza gli resta. Ciò che legge è sbagliato fino a 25 meno uno ogni 4 punti dell'abilità. Un
+  controllo fallito legge che non riesce a farsi un'idea delle sue caratteristiche fisiche; se stessi, un PNG invulnerabile
+  e un oggetto hanno testi propri.
+- **`evaluating_intelligence.lua`:** lo stesso per la mente: da 0 a 120, "He", "She" o "It" (`mobile.is_female`) e, da
+  76 punti, il mana rimasto; sbagliato fino a 20 meno uno ogni 5 punti.
+- **`forensic_evaluation.lua`:** un cadavere entro 10 caselle, da 0 a 100: un cadavere umano dice da chi è stato ucciso
+  (`corpse.killer` e `corpse.killer_name`, "no one" se non da qualcuno); quello di un animale o di un mostro legge
+  "You notice nothing unusual.". Un mobile, da 40 a 100, "You notice nothing unusual.", perché non c'è
+  una gilda dei ladri. Chi ha disturbato il cadavere e chi lo ha studiato prima non viene ancora registrato.
+- **`detecting_hidden.lua`:** un luogo entro 12 caselle, o se stessi: ogni giocatore o PNG nascosto entro un decimo
+  dell'abilità in caselle (la metà se il controllo fallisce, e nessuna sotto 10 punti) viene mostrato se l'abilità del
+  cercatore più un tiro da -10 a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff
+  viene trovato solo da altro staff; l'abilità aspetta 10 secondi.
+  Trappole, case e fazioni non ci sono ancora.
+
+## pickaxe.lua e ore.lua
+
+`scripts/items/pickaxe.lua` è lo script dei picconi e delle pale (`script_id = "pickaxe"`) e
+`scripts/items/ore.lua` quello dei quattro mucchi di minerale di ferro (`script_id = "ore"`): vedi [Estrazione e fusione](../mining.md).
+Uno scavo sceglie un luogo (`target.pick_location`), che dà il `land` della casella e la `graphic` di uno statico scelto
+lì: lo script contiene i terreni che sono roccia e gli statici che sono il pavimento di una grotta. Il personaggio colpisce
+(`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare del minerale (`harvest.amount`), l'abilità
+Mining viene provata tra 0 e 100 (`skill.check`), e uno scavo riuscito toglie dal luogo (`harvest.take`) e dà
+un mucchio (`item.give`). Una fusione sceglie una forgia, un oggetto (`item.item_id`, `item.in_range`) o uno statico, prova l'abilità
+tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, poi `item.give`) oppure ne brucia metà; un singolo minerale
+che fallisce rimpicciolisce. Un mucchio su un cursore viene rifiutato (`item.is_held`). Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
+
+## axe.lua
+
+`scripts/items/axe.lua` è lo script delle asce (`script_id = "axe"` su nove asce base, da cui le loro asce lo prendono):
+vedi [Taglio della legna](../lumberjacking.md). L'ascia deve essere in mano a chi vi fa doppio clic
+(`item.worn_by`). Il punto scelto deve essere un albero entro 2 caselle: `target.pick_location` dà la `graphic` dello
+statico scelto, e lo script contiene le grafiche che sono alberi. Il personaggio colpisce da una a tre volte
+(`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare della legna (`harvest.amount`), l'abilità
+Lumberjacking viene provata tra 0 e 100 (`skill.check`), e un taglio riuscito toglie dal luogo
+(`harvest.take`) e dà 10 tronchi (`item.give`). Le costanti in cima allo script sono la distanza, i colpi
+e i tronchi; gli alberi sono in `scripts/common/trees.lua`, condiviso con `scripts/items/blade.lua`, lo script di coltelli, pugnali e spade (`script_id = "blade"`), che stacca un legnetto da un albero. Usata sui tronchi nello zaino, l'ascia sega la pila in assi (`item.template`, `item.consume`, poi `item.give`). Un luogo è di un solo tipo di legno, la vena della sua zona (`harvest.vein`): `scripts/common/woods.lua` contiene tronchi e assi di ogni tipo, il Lumberjacking richiesto (`mobile.skills`) e i limiti tra cui il taglio viene provato, condiviso con la falegnameria, e la tabella `FINDS` ciò che un maestro trova insieme ai tronchi. Chi sta tagliando è tenuto in memoria per seriale: un riavvio libera tutti.
+
+## crafting.lua e carpentry_tool.lua
+
+`scripts/common/crafting.lua` contiene le regole condivise da tutti i mestieri: vedi [Falegnameria](../carpentry.md). Legge le
+ricette con `craft.get` e gli elenchi di materiali con `craft.resource`, conta e toglie i materiali dalle pile
+che il giocatore porta (`item.find`, `item.amount`, `item.consume`; una pila sul cursore è esclusa con `item.is_held`),
+esegue i due colpi (`mobile.play_sound`, `timer.after`), prova le altre abilità della ricetta e poi quella principale
+tra il doppio del minimo meno il massimo e il massimo (`skill.check`), così la probabilità al minimo è una su due, e
+crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), con il colore del tipo di legno
+(passando il colore del tipo di legno a `item.give`, oppure `item.set_hue` ai piedi). Una riuscita può essere eccezionale (`crafting.roll`, le proprietà `quality`, `crafter_id`, `crafter_name`), e ogni tentativo la cui abilità viene provata toglie un uso all'attrezzo (la proprietà `uses_remaining`, estratta tra 25 e 75, `item.delete` all'ultimo). Chi sta creando, il gruppo e il legno scelti da ogni giocatore e l'ultima ricetta iniziata da ciascuno (`crafting.make_last`) sono tenuti in memoria.
+`scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` sugli attrezzi da falegname) apre il gump di creazione
+dallo zaino; il gump è `templates/gumps/craft_menu.xml` con `scripts/gumps/craft_menu.lua`, uno per tutti i mestieri.
+
+## fishing_pole.lua
+
+`scripts/items/fishing_pole.lua` è lo script delle canne da pesca (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,
+`script_id = "fishing_pole"`): vedi [Pesca](../fishing.md). Fai doppio clic sulla canna e scegli dell'acqua entro 4 caselle e
+in vista (`target.pick_location`, `world.is_water`, `world.line_of_sight`). Il personaggio lancia (`mobile.animate`),
+l'acqua schizza 1,5 secondi dopo (`effect.at`, `world.play_sound`) e il risultato arriva dopo 8 secondi
+(`timer.after`). Nel luogo devono restare dei pesci (`harvest.amount`), l'abilità Fishing viene provata tra 0 e 100
+(`skill.check`), e la presa viene messa nello zaino (`item.give`) e tolta dal luogo (`harvest.take`).
+Le costanti in cima allo script sono la distanza, i secondi e ciò che esce. Chi sta pescando è tenuto in
+memoria per seriale: un riavvio libera tutti.
+
+## bandage.lua
+
+`scripts/items/bandage.lua` è lo script della benda pulita (`0x0e21_clean_bandage`, `script_id = "bandage"`),
+come la Healing classica di ModernUO. Si fa doppio clic, si sceglie a chi è destinata e si aspetta: chi è stato
+scelto viene curato, o resuscitato.
+
+- **Portata:** la benda nello zaino, e chi la riceve entro 1 casella; più lontano, il "too far away" del client.
+  Il curatore deve vedere chi riceve la benda: uno nascosto o dietro un muro "can not be seen". Usare una benda
+  rivela un curatore nascosto. La benda esce dalla pila quando la cura inizia. Una seconda benda dello stesso curatore sostituisce la prima.
+- **L'attesa:** 3 secondi per un curatore con 100 di destrezza o più, 4 da 40, 5 sotto; 5 in più per resuscitare
+  un fantasma; 9,4 + 0,6 × (120 − destrezza) / 10 su sé stessi. Il curatore deve restare entro 1 casella e vivo,
+  altrimenti la cura va persa insieme alla benda.
+- **Un vivo ferito:** riesce con una probabilità di (Healing + 10) %, e cura da Anatomy / 5 + Healing / 5 + 3 fino
+  a Anatomy / 5 + Healing / 2 + 10 punti; un tiro sotto 1 cura 1 e dice che le bende hanno aiutato appena. Una
+  creatura con il corpo di un mostro o di un animale è un caso per Veterinary e Animal Lore, con un punto in più
+  ogni 100 punti vita. Chi non è ferito legge "That being is not damaged!" e la benda resta.
+- **Un fantasma:** servono 80 punti di Healing e di Anatomy e una probabilità di (Healing − 68) / 50; poi al
+  fantasma viene chiesto, nel gump degli ankh, se vuole tornare, e gli costa un decimo della fama, come a un ankh.
+- **Abilità:** entrambe vengono provate per la crescita dopo una cura, anche se il tiro non è riuscito, e dopo una
+  resurrezione riuscita.
+
+Non ci sono ancora veleno e sanguinamento, quindi nessuna cura per essi; e il terreno dove un fantasma viene
+resuscitato non viene controllato, come non lo è a un ankh.
+
+## stealth.lua
+
+`scripts/skills/stealth.lua` è lo script di Stealth, come quello classico di ModernUO. Un giocatore nascosto usa
+l'abilità e, se il controllo riesce, può fare alcuni passi senza essere mostrato: un decimo della sua Stealth in passi,
+almeno uno (`mobile.set_stealth_steps`; il server li conta in `MoveRequestPacketHandler`). Correre lo mostra sempre.
+Nascondersi o essere mostrati di nuovo azzera i passi.
+
+- **Prima del controllo:** chi non è nascosto riceve l'invito a nascondersi prima (502725); chi ha meno di 80 punti di
+  Hiding "non è nascosto abbastanza bene" (502726), e chi ha un valore di armatura (`combat.armor_rating`) di 26 o più "non
+  può sperare di muoversi in silenzio" (502727): entrambi vengono mostrati.
+- **Il controllo** va da -20 a 80 punti, ciascuno aumentato del doppio del valore di armatura. Un successo legge "You begin
+  to move quietly." (502730); un fallimento legge "You fail in your attempt to move unnoticed." (502731) e mostra il
+  giocatore. L'abilità aspetta 10 secondi in ogni caso.
+- **Non c'è ancora:** le regole di Stealth delle versioni successive (il costo dei passi per armatura, il furtivo in sella).
+
+## snooping.lua
+
+`scripts/skills/snooping.lua` è lo script di Snooping, come quello di ModernUO. Non si usa dalla finestra delle abilità:
+un doppio clic sullo zaino di un altro mobile non lo apre, il server chiama `on_snoop(user, owner, container)` di questo
+script (`ISkillScriptService.Call`). Lo fa per lo zaino e per un sacco al suo interno, e non per un giocatore morto.
+
+- **Lo staff fruga chiunque, sempre:** un game master o un amministratore non ha bisogno di distanza, abilità o regole, non
+  perde karma e non viene notato, e può frugare un proprietario morto e un altro membro dello staff. Il comando `hide`
+  lo nasconde prima.
+- **Regole** per gli altri: entro una casella dal proprietario; niente se il proprietario è morto; un game master o un
+  amministratore non si può frugare, e nemmeno un giocatore invulnerabile ("You cannot perform negative acts on your
+  target."; Moongate non ha ancora regole sugli atti dannosi per mappa, che questo sostituisce). Un PNG in una regione
+  sorvegliata di una mappa diversa da Felucca si fruga solo se non è umano, oppure attaccabile, oppure assassino: lo dice il
+  commento di ModernUO, anche se il suo codice lascia frugare chiunque un PNG in una città attiva.
+- **Un giocatore che non è staff** perde 4 di karma, come `AwardKarma` di ModernUO prende una perdita (di più da un buon
+  nome, niente sotto -400, mai sotto -15000, e la perdita viene comunicata), ed è notato dai giocatori entro 8 caselle ("You notice <nome>
+  attempting to peek into <proprietario>'s belongings."): sempre sotto 100 punti di Snooping, con una probabilità pari ai
+  punti su cento di passare inosservato.
+- **Il controllo** va da 0 a 100 punti: un successo apre lo zaino sul client del giocatore (`item.show_contents`); un
+  fallimento legge "You failed to peek into the container." e mostra il giocatore, più probabilmente quanto meno ha di
+  Hiding. Lo staff vede sempre.
+- **Non c'è ancora:** le trappole dei contenitori. Gli oggetti visti non si possono sollevare: il sollevamento di un
+  oggetto che il giocatore non possiede è rifiutato come prima.
+
+## lockpick.lua e treasure_chest.lua
+
+`scripts/items/lockpick.lua` è lo script dei grimaldelli (`0x14fb`, `0x14fc`, `0x14fd` e `0x14fe`,
+`script_id = "lockpick"`), come il `Lockpick` di ModernUO. Si fa doppio clic, si sceglie un oggetto chiuso a chiave entro
+una casella, e dopo tre secondi viene provata l'abilità; il giocatore deve restare entro una casella.
+
+Si può scassinare un oggetto con queste prop: `locked` (true finché è chiuso), `lock.level` e `lock.max`, i punti di
+Lockpicking da cui la prova può appena riuscire e da cui non fallisce mai, e `lock.required`, il minimo per provare. Una
+serratura senza `lock.level` "non si può scassinare con mezzi normali"; chi ha meno di `lock.required` "non vede come si
+possa manovrare quella serratura". Un successo apre l'oggetto per sempre (`locked` è false, `lock.picker` è il giocatore);
+un fallimento rompe il grimaldello una volta su quattro, che esce dalla sua pila. Lockpicking è un'abilità che sale con
+l'uso, come le altre.
+
+`scripts/items/treasure_chest.lua` è lo script dei quattro forzieri del tesoro dei dungeon
+(`templates/items/treasure_chests.toml`, `script_id = "treasure_chest"`), come i `TreasureChestLevel1` a `4` di ModernUO.
+Un forziere nasce chiuso: chiede 57, 72, 84 e 92 punti di Lockpicking per livello, e la prova va da quel valore meno un
+tiro da 1 a 10 a quel valore più un tiro da 1 a 10. Un forziere chiuso non si apre ("It appears to be locked."); un game
+master lo apre ("That is locked, but you open it with your godly powers."); uno scassinato si apre come ogni contenitore.
+Nessuno tranne un game master lascia cadere un oggetto in un forziere chiuso (`can_insert`). Le trappole dei forzieri di
+ModernUO non ci sono ancora, e ciò che è già dentro un forziere aperto su un client si può ancora sollevare. I forzieri
+creati prima di questa versione non hanno serratura e restano come erano finché non decadono.
+
+## training_dummy.lua
+
+`scripts/items/training_dummy.lua` è lo script dei manichini da allenamento (`0x1070` e `0x1071` rivolti a sud, `0x1074`
+e `0x1075` rivolti a est), come il `TrainingDummy` di ModernUO: i template hanno `script_id = "training_dummy"`, e così anche
+`decoration_training_dummy`, che `.decorate` dà ai manichini dei file. Si fa
+doppio clic su un manichino con un'arma da mischia in mano, o a mani nude: il giocatore si gira e colpisce
+(`combat.swing`), il manichino mostra la grafica oscillante da un quarto di secondo, con il suono di un colpo, e dopo
+tre secondi torna a riposo, e l'abilità dell'arma (Wrestling per i pugni) viene provata da -25 a 25 punti, quindi può
+salire fino a 25.
+
+Un arco o una balestra non possono allenarsi su di esso ("You can't practice ranged weapons on this."), l'arma deve
+raggiungerlo (una casella, `combat.range`), un manichino che oscilla ancora fa aspettare il giocatore, e un'abilità a
+25 legge "Your skill cannot improve any further by simply practicing with a dummy.". Non c'è il controllo del
+giocatore in sella: le cavalcature non esistono ancora.
+
+## archery_butte.lua
+
+`scripts/items/archery_butte.lua` è lo script dei bersagli per il tiro con l'arco (`0x100A` rivolto a est, `0x100B`
+rivolto a sud), come l'`ArcheryButte` di ModernUO: i template hanno `script_id = "archery_butte"` e `use_range = 6`, come
+`decoration_archery_butte`, che `.decorate` dà ai bersagli dei file, così il giocatore può fare doppio clic da dove tira.
+Un mondo decorato prima di questa versione li ha come semplice decorazione: un nuovo `.decorate` li trasforma in questi.
+
+- **Tiro:** con un arco o una balestra, ci si mette davanti al bersaglio, in linea con esso, a cinque o sei caselle, e
+  si fa doppio clic. Una freccia o un dardo viene speso (`combat.spend_ammo`), il giocatore tira (`combat.swing` e la
+  freccia che vola, `effect.moving`) e l'abilità dell'arma viene provata da -25 a 25 punti: può salire, e il tiro può
+  mancare. Tra due tiri allo stesso bersaglio passano due secondi. I testi dicono che cosa non va quando il giocatore sta
+  dietro, fuori linea, troppo lontano o troppo vicino.
+- **Punteggio:** un tiro a segno vale 50 (il centro, uno su dieci), 10, 5 o 2 punti, e al giocatore viene detto il suo
+  totale a quel bersaglio e quanti tiri ha fatto. La freccia può spezzarsi, più probabilmente quante più munizioni
+  sono conficcate nel bersaglio (il 2 per cento ciascuna), e allora vale di più e va persa. I testi sono detti a chi
+  tira, non agli altri.
+- **Raccolta:** doppio clic sul bersaglio entro una casella, quando ci sono frecce o dardi conficcati (prop
+  `butte.arrows` e `butte.bolts`): vanno nello zaino e i punteggi vengono azzerati.
+
+I bersagli per freccette non esistono ancora.
 
 ## dyes.lua e dye_tub.lua
 
@@ -213,8 +402,8 @@ l'abilità.
 
 In entrambi i casi attende prima di un'altra abilità il `delay` di `hiding` in
 [`data/skills.toml`](../data-files/skills.md), 10 secondi. Il primo passo lo mostra di nuovo, con "Sei stato
-rivelato!" (500814): il server lo fa per ogni giocatore nascosto di un account regolare, perché
-non c'è ancora Stealth; girarsi sul posto non lo fa. Lo staff si nasconde per osservare e resta nascosto.
+rivelato!" (500814): il server lo fa per ogni giocatore nascosto di un account regolare, a
+meno che [Stealth](#stealthlua) non abbia permesso il passo; girarsi sul posto non lo fa. Lo staff si nasconde per osservare e resta nascosto.
 Parlare, essere colpiti e la vista di chi sta vicino non lo mostrano ancora.
 
 ## Props di rigenerazione
@@ -290,7 +479,35 @@ al think precedente viene guardato (`npc.look_at`), riceve il suono `0x1F2` e le
 il gump `resurrect` con l'argomento `healer`, come il `BaseHealer` di ModernUO. Un guaritore aspetta 2 secondi (4 think)
 tra due offerte, e un fantasma incontrato durante l'attesa riceve l'offerta quando finisce. Un criminale viene rifiutato con il
 testo del client 501222, e un assassino (rosso) con 501223, e un giocatore con karma negativo si sente dire 501224 e riceve comunque l'offerta. Un guaritore malvagio, il cui id di template inizia con `evil` (`evilhealer`, `evilwhealer`), non rifiuta nessuno e non dice nulla. Un guaritore di un
-template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think.
+template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think. Un guaritore con un negozio vende e compra come un venditore, tramite `scripts/common/shop.lua`: bende, pozioni, ginseng e aglio.
+
+## ethereal_mount.lua
+
+`scripts/items/ethereal_mount.lua` è lo script delle statuette eteree (`script_id = "ethereal_mount"`): il suo
+`on_use` chiama `mount.ride_ethereal(user, serial)`, che dice con le parole del client perché rifiuta, e restituisce true
+così il doppio clic non apre nient'altro. Vedi [Cavalcature](../mounts.md#ethereal-mounts).
+## stablemaster.lua e stable_claim.lua
+
+`scripts/mobiles/stablemaster.lua` è lo script degli addestratori di animali (`script_id = "stablemaster"`). Le parole
+*stable* e *claim*, dette entro 12 celle, e le voci *Stable* e *Claim All* del menu contestuale guidano il modulo
+`stable`: *stable* dà un cursore (`target.pick`) e chiama `stable.stable` sull'animale scelto, rispondendo con
+il testo del client per ogni `StableResultType`; *claim* dice l'introduzione dell'elenco e apre il gump `stable_claim`
+(`templates/gumps/stable_claim.xml`), oppure dice che non ci sono animali; *Claim All* chiama `stable.claim` sul primo posto
+finché l'elenco non è vuoto. Più addestratori sentono le stesse parole e `stable.attend` ne fa rispondere uno. Un addestratore di animali
+mantiene il suo negozio e le sue lezioni tramite `scripts/common/shop.lua` e `training.lua`.
+`scripts/gumps/stable_claim.lua` riempie il gump con un pulsante e il nome dell'animale per ogni animale di `stable.pets`,
+otto per pagina; un pulsante controlla che il giocatore sia entro 12 celle dall'addestratore e chiama `stable.claim`; un elenco
+cambiato da quando è stato mostrato viene mostrato di nuovo.
+
+## animal_taming.lua
+
+`scripts/skills/animal_taming.lua` è l'abilità Animal Taming: `on_use` dice "Tame which animal?" (502789), dà un cursore
+(`target.pick`) e restituisce un'attesa di 1 secondo. La scelta viene rifiutata con il testo del client se non è una creatura, è un giocatore,
+non è in `taming.toml` (`pet.info`), ha un padrone, ci sono troppi seguaci (`pet.followers` e `pet.max_followers`), supera l'abilità
+o è a più di 3 caselle. Poi tre o quattro volte ogni 3 secondi (`timer.after`) ricontrolla la distanza (7), che il domatore sia
+vivo, la linea di vista (`world.line_of_sight`), che la creatura sia ancora selvatica e non ferita (`mobile.stats`), e dice una
+frase gentile; l'ultima tira `skill.check(user, "animal_taming", min - 0.1, min + 49.9)` e `pet.tame`. Vedi
+[Domatura degli animali](../animal-taming.md).
 
 ## ankh.lua e resurrect.lua
 
@@ -377,6 +594,47 @@ pulsante ricontrolla `world.is_staff`.
 
 Per aggiungere uno strumento, scrivi una funzione pannello con firma `function(g, player)` e aggiungi
 `{ id = "...", title = "...", panel = ... }` a `tools`.
+
+## help_menu.lua
+
+`scripts/gumps/help_menu.lua` è lo script del menu di [aiuto](../help.md)
+(`templates/gumps/help_menu.xml`), che si apre con il pulsante Help del paperdoll. `stuck` è il pulsante
+«Sono bloccato»: rifiuta un personaggio in prigione (`jail.sentence`) o in combattimento (`combat.target`),
+uno che sta già aspettando e uno la cui pausa (la proprietà `help.stuck_until`, secondi dal 1970 da
+`world.now`) non è finita, escluso lo staff; prende la città di partenza più vicina da `help.nearest_city`,
+dice l'attesa da `help.settings` e, dopo `timer.after` di quei secondi, sposta il personaggio con
+`mobile.teleport` se è dove era e se ha ancora il permesso. `commands` esegue `help` con
+`commands.execute_as`, `rules` dice il messaggio 30200 e `call` apre `help_page_kind`.
+
+## help_page_kind.lua
+
+`scripts/gumps/help_page_kind.lua` è lo script del secondo passo di *Call a game master*
+(`templates/gumps/help_page_kind.xml`). `question`, `bug`, `suggestion` e `harassment` interrogano `help.can_page`;
+a un giocatore che non può viene detto perché (messaggi 30213 e 30214) prima che scriva qualcosa. Altrimenti
+gli viene detto di scrivere una riga (30211), `prompt.ask` la aspetta e `help.create_page` manda la richiesta
+con l'`HelpPageKindType` del pulsante; Esc o una riga vuota dice 30215, un rifiuto alla fine ripete il suo
+motivo e una richiesta inviata dice 30212. Può chiamare anche un giocatore in prigione.
+
+## pages.lua
+
+`scripts/gumps/pages.lua` è lo script della coda dello staff (`templates/gumps/pages.xml`, aperta da
+[`.pages`](../commands/pages.md)). `rows` riempie lo slot con `help.pages()`, dalla più vecchia, dieci per pagina,
+un pulsante e una riga per richiesta (`#1 Gino, Bug, 3 min, open`); una riga apre `pages_detail` su quella
+richiesta. Solo per lo staff: lo slot resta vuoto per chiunque altro, e ogni pulsante ricontrolla `world.is_staff`.
+
+## pages_detail.lua
+
+`scripts/gumps/pages_detail.lua` è lo script di una richiesta (`templates/gumps/pages_detail.xml`). `go` porta il
+game master dal giocatore (`mobile.location`) o, se è offline, dove ha chiesto; `take` chiama `help.take`;
+`answer` prende il testo del campo (`response.text[1]`), rifiuta un campo vuoto e altrimenti chiama
+`help.answer` e torna alla coda; `close` chiama `help.close`. Una richiesta chiusa nel frattempo lo dice e non
+cambia nulla.
+
+## common/help_pages.lua
+
+`scripts/common/help_pages.lua` è il modulo Lua che i due gump dello staff condividono, preso con
+`require("common.help_pages")`: le parole per un genere, una mappa, un'età e uno stato, la riga di una richiesta
+e gli argomenti del suo gump di dettaglio.
 
 ## jail_sentence.lua
 

@@ -1,0 +1,1919 @@
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_5_warriorguildmaster"
+map = "trammel"
+name = "Trammel warriorguildmaster"
+mobile_ids = []
+npc_list_ids = ["warriorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 1341
+y1 = 1733
+x2 = 1341
+y2 = 1733
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_9_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2709
+y1 = 2130
+x2 = 2709
+y2 = 2130
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_10_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 1846
+y1 = 2715
+x2 = 1846
+y2 = 2715
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_12_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 3554
+y1 = 1202
+x2 = 3554
+y2 = 1202
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_16_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 21
+only_outside = false
+[[spawn.areas]]
+x1 = 2471
+y1 = 564
+x2 = 2471
+y2 = 564
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_19_tinkerguildmaster"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 2461
+y1 = 457
+x2 = 2461
+y2 = 457
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_20"
+map = "trammel"
+name = "Trammel warriorguildmaster"
+mobile_ids = []
+npc_list_ids = ["warriorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 2019
+y1 = 2748
+x2 = 2019
+y2 = 2748
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_22_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 4394
+y1 = 1083
+x2 = 4394
+y2 = 1083
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_23_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 2634
+y1 = 2083
+x2 = 2634
+y2 = 2083
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_24"
+map = "trammel"
+name = "Trammel warriorguildmaster"
+mobile_ids = []
+npc_list_ids = ["warriorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 1939
+y1 = 2739
+x2 = 1939
+y2 = 2739
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_27_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 42
+only_outside = false
+[[spawn.areas]]
+x1 = 1547
+y1 = 1659
+x2 = 1547
+y2 = 1659
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_30_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2840
+y1 = 885
+x2 = 2840
+y2 = 885
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_33_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 21
+only_outside = false
+[[spawn.areas]]
+x1 = 5203
+y1 = 86
+x2 = 5203
+y2 = 86
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_34_tinkerguildmaster"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3720
+y1 = 2126
+x2 = 3720
+y2 = 2126
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_36_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 650
+y1 = 2178
+x2 = 650
+y2 = 2178
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_37_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2920
+y1 = 856
+x2 = 2920
+y2 = 856
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_39"
+map = "trammel"
+name = "Trammel fisherguildmaster"
+mobile_ids = []
+npc_list_ids = ["fisherguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1437
+y1 = 3750
+x2 = 1437
+y2 = 3750
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_40_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 1485
+y1 = 1550
+x2 = 1485
+y2 = 1550
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_42_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1395
+y1 = 3705
+x2 = 1395
+y2 = 3705
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_43_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1467
+y1 = 1686
+x2 = 1467
+y2 = 1686
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_47_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 5752
+y1 = 3272
+x2 = 5752
+y2 = 3272
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_51_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 3774
+y1 = 1265
+x2 = 3774
+y2 = 1265
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_64_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 3546
+y1 = 1185
+x2 = 3546
+y2 = 1185
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_68_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 5296
+y1 = 3978
+x2 = 5296
+y2 = 3978
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_69_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2245
+y1 = 1231
+x2 = 2245
+y2 = 1231
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_70_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1425
+y1 = 3981
+x2 = 1425
+y2 = 3981
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_74_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 5191
+y1 = 3989
+x2 = 5191
+y2 = 3989
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_77"
+map = "trammel"
+name = "Trammel merchantguildmaster"
+mobile_ids = []
+npc_list_ids = ["merchantguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3703
+y1 = 2249
+x2 = 3703
+y2 = 2249
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_79_tinkerguildmaster"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2899
+y1 = 790
+x2 = 2899
+y2 = 790
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_80"
+map = "trammel"
+name = "Trammel merchantguildmaster"
+mobile_ids = []
+npc_list_ids = ["merchantguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 1474
+y1 = 1597
+x2 = 1474
+y2 = 1597
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_82_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 27
+only_outside = false
+[[spawn.areas]]
+x1 = 5737
+y1 = 3222
+x2 = 5737
+y2 = 3222
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_85_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 25
+only_outside = false
+[[spawn.areas]]
+x1 = 5731
+y1 = 3192
+x2 = 5731
+y2 = 3192
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_97_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1419
+y1 = 3859
+x2 = 1419
+y2 = 3859
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_105_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1454
+y1 = 4003
+x2 = 1454
+y2 = 4003
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_107_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 630
+y1 = 2194
+x2 = 630
+y2 = 2194
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_108"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 615
+y1 = 2213
+x2 = 625
+y2 = 2223
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_110"
+map = "trammel"
+name = "Trammel minerguildmaster"
+mobile_ids = []
+npc_list_ids = ["minerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3665
+y1 = 2140
+x2 = 3665
+y2 = 2140
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_112_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 1935
+y1 = 2766
+x2 = 1935
+y2 = 2766
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_118_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 659
+y1 = 2141
+x2 = 659
+y2 = 2141
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_122"
+map = "trammel"
+name = "Trammel minerguildmaster"
+mobile_ids = []
+npc_list_ids = ["minerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 2455
+y1 = 487
+x2 = 2455
+y2 = 487
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_129_tinkerguildmaster"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 2940
+y1 = 3500
+x2 = 2940
+y2 = 3500
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_130_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 41
+only_outside = false
+[[spawn.areas]]
+x1 = 5148
+y1 = 60
+x2 = 5148
+y2 = 60
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_131"
+map = "trammel"
+name = "Trammel warriorguildmaster"
+mobile_ids = []
+npc_list_ids = ["warriorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 50
+only_outside = false
+[[spawn.areas]]
+x1 = 3026
+y1 = 3345
+x2 = 3036
+y2 = 3355
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_133"
+map = "trammel"
+name = "Trammel warriorguildmaster"
+mobile_ids = []
+npc_list_ids = ["warriorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 2478
+y1 = 427
+x2 = 2478
+y2 = 427
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_137_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2961
+y1 = 621
+x2 = 2961
+y2 = 621
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_143"
+map = "trammel"
+name = "Trammel fisherguildmaster"
+mobile_ids = []
+npc_list_ids = ["fisherguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3683
+y1 = 2252
+x2 = 3683
+y2 = 2252
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_151_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2918
+y1 = 672
+x2 = 2918
+y2 = 672
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_156_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 53
+only_outside = false
+[[spawn.areas]]
+x1 = 5234
+y1 = 4025
+x2 = 5234
+y2 = 4025
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_157_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 4448
+y1 = 1090
+x2 = 4448
+y2 = 1090
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_166"
+map = "trammel"
+name = "Trammel minerguildmaster"
+mobile_ids = []
+npc_list_ids = ["minerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 1417
+y1 = 1578
+x2 = 1417
+y2 = 1578
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_167"
+map = "trammel"
+name = "Trammel minerguildmaster"
+mobile_ids = []
+npc_list_ids = ["minerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 2505
+y1 = 432
+x2 = 2505
+y2 = 432
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_168_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 4458
+y1 = 1060
+x2 = 4458
+y2 = 1060
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_172"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 3002
+y1 = 3403
+x2 = 3012
+y2 = 3413
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_176_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3666
+y1 = 2235
+x2 = 3666
+y2 = 2235
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_196_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 5263
+y1 = 129
+x2 = 5263
+y2 = 129
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_197_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 1388
+y1 = 1588
+x2 = 1388
+y2 = 1588
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_205_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 1349
+y1 = 1778
+x2 = 1349
+y2 = 1778
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_208_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1911
+y1 = 2805
+x2 = 1911
+y2 = 2805
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_212_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1416
+y1 = 3779
+x2 = 1416
+y2 = 3779
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_213_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 5300
+y1 = 90
+x2 = 5300
+y2 = 90
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_220_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 643
+y1 = 1083
+x2 = 643
+y2 = 1083
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_224_bardguildmaster"
+map = "trammel"
+name = "Trammel bardguildmaster"
+mobile_ids = []
+npc_list_ids = ["bardguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2424
+y1 = 555
+x2 = 2424
+y2 = 555
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_230_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 602
+y1 = 2180
+x2 = 602
+y2 = 2180
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_231_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 3003
+y1 = 3355
+x2 = 3003
+y2 = 3355
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_233"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 1422
+y1 = 1654
+x2 = 1422
+y2 = 1654
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_235_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3687
+y1 = 2227
+x2 = 3687
+y2 = 2227
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_239"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 4545
+y1 = 860
+x2 = 4545
+y2 = 860
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_240_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 540
+y1 = 966
+x2 = 540
+y2 = 966
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_241"
+map = "trammel"
+name = "Trammel warriorguildmaster"
+mobile_ids = []
+npc_list_ids = ["warriorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2841
+y1 = 907
+x2 = 2841
+y2 = 907
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_242_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 2997
+y1 = 3428
+x2 = 2997
+y2 = 3428
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_245_tinkerguildmaster"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 32
+only_outside = false
+[[spawn.areas]]
+x1 = 5726
+y1 = 3243
+x2 = 5726
+y2 = 3243
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_248"
+map = "trammel"
+name = "Trammel warriorguildmaster"
+mobile_ids = []
+npc_list_ids = ["warriorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 3053
+y1 = 3395
+x2 = 3063
+y2 = 3405
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_254"
+map = "trammel"
+name = "Trammel fisherguildmaster"
+mobile_ids = []
+npc_list_ids = ["fisherguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2963
+y1 = 813
+x2 = 2963
+y2 = 813
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_257_bardguildmaster"
+map = "trammel"
+name = "Trammel bardguildmaster"
+mobile_ids = []
+npc_list_ids = ["bardguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 1455
+y1 = 1557
+x2 = 1455
+y2 = 1557
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_261_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 1471
+y1 = 1611
+x2 = 1471
+y2 = 1611
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_263_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 46
+only_outside = false
+[[spawn.areas]]
+x1 = 1418
+y1 = 1547
+x2 = 1418
+y2 = 1547
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_269"
+map = "trammel"
+name = "Trammel bardguildmaster"
+mobile_ids = []
+npc_list_ids = ["bardguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 3740
+y1 = 1197
+x2 = 3740
+y2 = 1197
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_272_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1356
+y1 = 3780
+x2 = 1356
+y2 = 3780
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_273_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3699
+y1 = 2218
+x2 = 3699
+y2 = 2218
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_274"
+map = "trammel"
+name = "Trammel minerguildmaster"
+mobile_ids = []
+npc_list_ids = ["minerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2855
+y1 = 734
+x2 = 2855
+y2 = 734
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_278_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 1590
+y1 = 1654
+x2 = 1590
+y2 = 1654
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_283_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 26
+only_outside = false
+[[spawn.areas]]
+x1 = 2883
+y1 = 3502
+x2 = 2883
+y2 = 3502
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_286_tinkerguildmaster"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1404
+y1 = 3802
+x2 = 1404
+y2 = 3802
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_296"
+map = "trammel"
+name = "Trammel rangerguildmaster"
+mobile_ids = []
+npc_list_ids = ["rangerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 557
+y1 = 2143
+x2 = 567
+y2 = 2153
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_299_mageguildmaster"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2890
+y1 = 651
+x2 = 2890
+y2 = 651
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_300_tailorguildmaster"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 31
+only_outside = false
+[[spawn.areas]]
+x1 = 1981
+y1 = 2838
+x2 = 1981
+y2 = 2838
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_305_healerguildmaster"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 2577
+y1 = 599
+x2 = 2577
+y2 = 599
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_306"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 1848
+y1 = 2680
+x2 = 1848
+y2 = 2680
+
+[[spawn]]
+id = "trammel_modernuo_shared_vendors_311_blacksmithguildmaster"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 54
+only_outside = false
+[[spawn.areas]]
+x1 = 5225
+y1 = 4000
+x2 = 5225
+y2 = 4000
+
+[[spawn]]
+id = "trammel_modernuo_post_uoml_vendors_6"
+map = "trammel"
+name = "Trammel tailorguildmaster"
+mobile_ids = []
+npc_list_ids = ["tailorguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3494
+y1 = 2551
+x2 = 3494
+y2 = 2551
+
+[[spawn]]
+id = "trammel_modernuo_post_uoml_vendors_10"
+map = "trammel"
+name = "Trammel healerguildmaster"
+mobile_ids = []
+npc_list_ids = ["healerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 52
+only_outside = false
+[[spawn.areas]]
+x1 = 3463
+y1 = 2558
+x2 = 3463
+y2 = 2558
+
+[[spawn]]
+id = "trammel_modernuo_post_uoml_vendors_20"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 57
+only_outside = false
+[[spawn.areas]]
+x1 = 3469
+y1 = 2536
+x2 = 3469
+y2 = 2536
+
+[[spawn]]
+id = "trammel_modernuo_post_uoml_vendors_21"
+map = "trammel"
+name = "Trammel blacksmithguildmaster"
+mobile_ids = []
+npc_list_ids = ["blacksmithguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 3526
+y1 = 2536
+x2 = 3526
+y2 = 2536
+
+[[spawn]]
+id = "trammel_modernuo_post_uoml_vendors_30"
+map = "trammel"
+name = "Trammel tinkerguildmaster"
+mobile_ids = []
+npc_list_ids = ["tinkerguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 69
+only_outside = false
+[[spawn.areas]]
+x1 = 3458
+y1 = 2524
+x2 = 3458
+y2 = 2524
+
+[[spawn]]
+id = "trammel_modernuo_post_uoml_vendors_32"
+map = "trammel"
+name = "Trammel mageguildmaster"
+mobile_ids = []
+npc_list_ids = ["mageguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 43
+only_outside = false
+[[spawn.areas]]
+x1 = 3495
+y1 = 2527
+x2 = 3495
+y2 = 2527
+
+[[spawn]]
+id = "trammel_modernuo_post_uoml_vendors_74"
+map = "trammel"
+name = "Trammel fisherguildmaster"
+mobile_ids = []
+npc_list_ids = ["fisherguildmaster"]
+item_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 14
+only_outside = false
+[[spawn.areas]]
+x1 = 4544
+y1 = 2320
+x2 = 4558
+y2 = 2334

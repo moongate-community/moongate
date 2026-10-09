@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6c7739e7e09dd9cda41d6dc089752f0200fbc7d70c2b90373f9f4605e4a9ed1b","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"76cd213ff40a08b46dec54c19402dadbb1bcece0e5b7253782e6499a713d7d75","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -52,8 +52,8 @@ separatamente: arrivano con la priorità che dà loro la regola.
 
 | Contenuto | Attende | Priorità |
 | --- | --- | --- |
-| Manichini da allenamento, bersagli di tiro con l'arco e bersagli per freccette (107 posizionati) | Incremento delle abilità (1.2) | 2 |
-| Serrature e scassinamento dei forzieri del tesoro e dei contenitori cittadini | Verifica delle abilità (1.2) | 2 |
+| Bersagli per freccette (i manichini e i bersagli per il tiro con l'arco ora funzionano) | Abilità Throwing (5.4) | 8 |
+| Serrature dei contenitori cittadini (i forzieri del tesoro dei dungeon ora sono chiusi e si scassinano) | Livelli di serratura nei dati | 2 |
 | Trappole dei forzieri e le 490 trappole posizionate nei dungeon | Danno (2.1) | 4 |
 | Bacchette nei forzieri del tesoro | Incantesimi (4.3) | 7 |
 | Forge e incudini per la creazione | Creazione (5.2) | 8 |
@@ -106,7 +106,7 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | 2.1 | 🟡 | **Modalità guerra, timer dei colpi, corpo a corpo e tiro con l'arco**: probabilità di colpire, danno, armatura, parata, durabilità. Completato: un [combattimento](combat.md) a pugni o con un'arma, timer dei colpi, colpo tramite abilità, danno e armatura di un NPC o di ciò che un giocatore indossa. e il tiro con l'arco con un arco o una balestra, per un giocatore e per un NPC. Restano: parata, durabilità | Il ciclo fondamentale del gioco |
 | 2.2 | ❌ | **Elenchi degli aggressori**. Oggi solo il [rapporto di omicidio](death.md#murder-counts) ricorda chi ha attaccato un innocente, per `aggressor_seconds`; nessun timeout degli attacchi e nessun diritto sul bottino | Notorietà, guardie e diritti sul bottino si basano su di essi |
 | 2.3 | 🟡 | **Morte, cadavere, fantasma, resurrezione**; NPC guaritori e santuari. Completato: un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill` e lascia il proprio [cadavere](death.md) con ciò che trasportava; un giocatore resta come [fantasma](death.md#death-of-a-player) e torna in vita a un ankh o da un guaritore, con `.resurrect` o `mobile.resurrect`. Restano: ossa, taglie e le postazioni dei guaritori malvagi | Dà un risultato al combattimento |
-| 2.4 | ❌ | **Bende e guarigione** | Necessarie appena esiste il danno |
+| 2.4 | 🟡 | **Bende e guarigione**. Completato: la [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura e resuscita un fantasma, con le formule della Healing classica di ModernUO. Restano: veleno e sanguinamento da curare, e gli animali da resuscitare | Necessarie appena esiste il danno |
 | 2.5 | ❌ | **Eventi di combattimento per Lua**: attacco, colpo riuscito, colpo mancato, danno, morte, resurrezione | Permette ai contenuti di modificare le regole |
 | 2.6 | ❌ | **Impostazioni del combattimento**: velocità dei colpi, regole del danno, decadimento dei cadaveri | Un proprietario di shard si aspetta di regolarle |
 
@@ -126,7 +126,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
-| 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
+| 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere, [acquisto e vendita ai venditori](vendors.md) con i negozi di ModernUO, rifornimento e rivendita; [istruttori di abilità](skills.md#trainers) per venditori e guaritori; i [maestri di gilda](skills.md#guildmasters) con le loro gilde | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
 | 4.2 | ❌ | **Scambio sicuro** tra giocatori | Economia dei giocatori | |
 | 4.3 | ❌ | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebook** | Il modo in cui i giocatori viaggiano; richiede le regole delle regioni di 3.5 | |
@@ -136,10 +136,10 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
-| 5.1 | ❌ | **Raccolta**: estrazione mineraria, taglio della legna, pesca, con regioni di risorse che si esauriscono e rigenerano | Alimenta la creazione | |
-| 5.2 | ❌ | **Motore di creazione**, poi ogni mestiere come dati; riparazione | Lo stile di gioco pacifico e l'economia dei giocatori | UOX3 `create/` (618 ricette) |
+| 5.1 | 🟡 | **Raccolta**: estrazione mineraria, taglio della legna, pesca, con regioni di risorse che si esauriscono e rigenerano. Fatto: la pesca con la canna, il taglio della legna con l'ascia, le sue assi, i tipi di legno e i ritrovamenti rari, l'estrazione del minerale di ferro e la sua fusione, e le zone che si esauriscono e ritornano. Resta: gli altri metalli, le prese speciali della pesca | Alimenta la creazione | |
+| 5.2 | 🟡 | **Motore di creazione**, poi ogni mestiere come dati; riparazione. Fatto: il motore, il suo gump e la [falegnameria](carpentry.md), con oggetti eccezionali, marchio del creatore, usura degli attrezzi e ricrea l'ultimo. Resta: gli altri mestieri, la riparazione | Lo stile di gioco pacifico e l'economia dei giocatori | UOX3 `create/` (618 ricette) |
 | 5.3 | ❌ | **Addomesticamento, comandi degli animali, stalle, cavalcature** | Richiede IA (3.2), notorietà (3.4) e venditori (4.1) | Tag UOX3 `TOTAME`, `CONTROLSLOTS`, `FOOD` |
-| 5.4 | ❌ | **Le abilità attive rimanenti**: nascondersi, furtività, furto, frugare, abilità di conoscenza, abilità del bardo, inseguimento | Ciascuna è piccola quando esiste 1.2 | |
+| 5.4 | 🟡 | **Le abilità attive rimanenti**: nascondersi, furtività, furto, frugare, abilità di conoscenza, abilità del bardo, inseguimento. Completato: nascondersi, [furtività](scripting/shipped-scripts.md#stealthlua), [frugare](scripting/shipped-scripts.md#snoopinglua), individuazione dei nascosti, anatomia, valutazione dell'intelligenza e medicina legale ([le abilità di osservazione](scripting/shipped-scripts.md#the-lore-skills)). Restano: furto, inseguimento, conoscenza delle armi, identificazione degli oggetti e dei sapori, le abilità del bardo | Ciascuna è piccola quando esiste 1.2 | |
 
 ## Fase 6: giocare insieme
 
@@ -169,8 +169,9 @@ Queste voci non dipendono dalle fasi di gioco e vengono completate quando un ope
 - Ban degli account, limiti IP, limiti ai tentativi di login, limitazione dei pacchetti.
 - Strumenti dello staff: gump delle props, menu di aggiunta, comandi di area. I luoghi nominati di
   [`.go`](commands/go.md) e il loro gump sono completati.
-- Coda di richieste ai GM, menu di aiuto e per personaggi bloccati. La [prigione](jail.md) è completata.
+- La [prigione](jail.md), il [menu di aiuto e per personaggi bloccati](help.md) e la coda di richieste ai GM sono completati.
 - Comandi scritti in Lua.
+- Il [calendario](schedule.md) è fatto: task a orario, spegnimento con avvisi ed eventi stagionali per data. Il dolcetto o scherzetto di Halloween e le palle di neve e i regali di Natale sono fatti, e le città sono decorate per entrambi ([Feste](holidays.md)).
 
 ## In seguito
 
@@ -178,7 +179,7 @@ Dopo la fase 7. Ciascuna di queste voci richiede gran parte di ciò che precede.
 
 - **Missioni**: un motore per missioni e scorte; circa 35.000 righe in ModernUO.
 - **Spawn dei campioni, mappe del tesoro, accampamenti.** I forzieri dei dungeon ricompaiono e i contenitori cittadini
-  si riempiono già; le loro serrature e trappole arrivano con le priorità 2 e 4.
+  si riempiono già; i forzieri dei dungeon sono già chiusi a chiave, e le loro trappole e le serrature dei contenitori cittadini arrivano con le priorità 4 e 2.
 - **Virtù e fazioni.**
 - **Le regole moderne**: proprietà e resistenze degli oggetti, bottino magico casuale, mosse speciali,
   Necromancy, Chivalry, Bushido, Ninjitsu, Spellweaving, Mysticism, ordini di produzione in massa, progettazione

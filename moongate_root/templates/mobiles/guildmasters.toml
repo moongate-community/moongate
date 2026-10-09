@@ -1,0 +1,760 @@
+# What it is for:
+#   The guildmasters of the trades: a vendor-like NPC with the skills of its trade, the main ones from 80 to 100, who teaches them
+#   and takes members for the guild of the trade (npc_guild). One man and one woman for each trade; the npc list
+#   of the same name, without the sex, picks one of them.
+#
+# Fields:
+#   see templates.md; npc_guild is the guild the NPC takes members for: a player says join to it and pays 500 gold
+[[mobile]]
+id = "m_bard_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the bard guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "bards"
+[mobile.skills]
+archery = "1d21+79"
+discordance = "1d21+79"
+musicianship = "1d21+79"
+peacemaking = "1d21+79"
+provocation = "1d21+79"
+swordsmanship = "1d21+79"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_bard_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the bard guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "bards"
+[mobile.skills]
+archery = "1d21+79"
+discordance = "1d21+79"
+musicianship = "1d21+79"
+peacemaking = "1d21+79"
+provocation = "1d21+79"
+swordsmanship = "1d21+79"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "m_blacksmith_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the blacksmith guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "blacksmiths"
+[mobile.skills]
+arms_lore = "1d24+64"
+blacksmithy = "1d11+89"
+mace_fighting = "1d33+35"
+parrying = "1d33+35"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x153d_full_apron", "0x13ec_lbr"]
+
+[[mobile.equipment]]
+items = ["0x140c_lbr"]
+
+[[mobile.equipment]]
+items = ["0x13e3_lbr"]
+
+[[mobile]]
+id = "f_blacksmith_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the blacksmith guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "blacksmiths"
+[mobile.skills]
+arms_lore = "1d24+64"
+blacksmithy = "1d11+89"
+mace_fighting = "1d33+35"
+parrying = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x153d_full_apron", "0x13ec_lbr"]
+
+[[mobile.equipment]]
+items = ["0x140c_lbr"]
+
+[[mobile.equipment]]
+items = ["0x13e3_lbr"]
+
+[[mobile]]
+id = "m_fisher_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the fisher guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "fishermen"
+[mobile.skills]
+fishing = "1d21+79"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_fisher_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the fisher guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "fishermen"
+[mobile.skills]
+fishing = "1d21+79"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "m_healer_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the healer guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "healers"
+[mobile.skills]
+anatomy = "1d16+84"
+healing = "1d11+89"
+forensic_evaluation = "1d24+74"
+resisting_spells = "1d24+74"
+spirit_speak = "1d24+64"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x06A5-0x06DA"
+
+[[mobile]]
+id = "f_healer_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the healer guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "healers"
+[mobile.skills]
+anatomy = "1d16+84"
+healing = "1d11+89"
+forensic_evaluation = "1d24+74"
+resisting_spells = "1d24+74"
+spirit_speak = "1d24+64"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x06A5-0x06DA"
+
+[[mobile]]
+id = "m_mage_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the mage guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "mages"
+[mobile.skills]
+evaluating_intelligence = "1d16+84"
+inscription = "1d24+64"
+resisting_spells = "1d37+63"
+magery = "1d11+89"
+wrestling = "1d24+59"
+meditation = "1d16+84"
+mace_fighting = "1d33+35"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x13f8_lbr"]
+
+[[mobile]]
+id = "f_mage_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the mage guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "mages"
+[mobile.skills]
+evaluating_intelligence = "1d16+84"
+inscription = "1d24+64"
+resisting_spells = "1d37+63"
+magery = "1d11+89"
+wrestling = "1d24+59"
+meditation = "1d16+84"
+mace_fighting = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x13f8_lbr"]
+
+[[mobile]]
+id = "m_merchant_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the merchant guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "merchants"
+[mobile.skills]
+item_identification = "1d16+84"
+arms_lore = "1d16+84"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_merchant_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the merchant guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "merchants"
+[mobile.skills]
+item_identification = "1d16+84"
+arms_lore = "1d16+84"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "m_miner_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the miner guildmaster"
+gender = "male"
+race = "human"
+[mobile.skills]
+item_identification = "1d24+59"
+mining = "1d11+89"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_miner_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the miner guildmistress"
+gender = "female"
+race = "human"
+[mobile.skills]
+item_identification = "1d24+59"
+mining = "1d11+89"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "m_ranger_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the ranger guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "rangers"
+[mobile.skills]
+animal_lore = "1d37+63"
+camping = "1d24+74"
+hiding = "1d24+74"
+resisting_spells = "1d24+74"
+tactics = "1d24+64"
+archery = "1d11+89"
+tracking = "1d11+89"
+stealth = "1d24+59"
+fencing = "1d33+35"
+herding = "1d33+35"
+swordsmanship = "1d24+44"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_ranger_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the ranger guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "rangers"
+[mobile.skills]
+animal_lore = "1d37+63"
+camping = "1d24+74"
+hiding = "1d24+74"
+resisting_spells = "1d24+74"
+tactics = "1d24+64"
+archery = "1d11+89"
+tracking = "1d11+89"
+stealth = "1d24+59"
+fencing = "1d33+35"
+herding = "1d33+35"
+swordsmanship = "1d24+44"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "m_tailor_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the tailor guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "tailors"
+[mobile.skills]
+tailoring = "1d11+89"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_tailor_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the tailor guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "tailors"
+[mobile.skills]
+tailoring = "1d11+89"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "m_thief_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the thief guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "thieves"
+[mobile.skills]
+detecting_hidden = "1d24+74"
+hiding = "1d24+64"
+lockpicking = "1d16+84"
+snooping = "1d11+89"
+poisoning = "1d24+59"
+stealing = "1d11+89"
+fencing = "1d24+74"
+stealth = "1d16+84"
+remove_trap = "1d16+84"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_thief_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the thief guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "thieves"
+[mobile.skills]
+detecting_hidden = "1d24+74"
+hiding = "1d24+64"
+lockpicking = "1d16+84"
+snooping = "1d11+89"
+poisoning = "1d24+59"
+stealing = "1d11+89"
+fencing = "1d24+74"
+stealth = "1d16+84"
+remove_trap = "1d16+84"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "m_tinker_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the tinker guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "tinkers"
+[mobile.skills]
+lockpicking = "1d24+64"
+tinkering = "1d11+89"
+remove_trap = "1d16+84"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_tinker_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the tinker guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "tinkers"
+[mobile.skills]
+lockpicking = "1d24+64"
+tinkering = "1d11+89"
+remove_trap = "1d16+84"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "m_warrior_guildmaster"
+base_id = "basevendor"
+name_list = "male"
+title = "the warrior guildmaster"
+gender = "male"
+race = "human"
+npc_guild = "warriors"
+[mobile.skills]
+arms_lore = "1d24+74"
+parrying = "1d16+84"
+resisting_spells = "1d24+59"
+tactics = "1d16+84"
+swordsmanship = "1d11+89"
+mace_fighting = "1d24+59"
+fencing = "1d24+59"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_warrior_guildmaster"
+base_id = "basevendor"
+name_list = "female"
+title = "the warrior guildmistress"
+gender = "female"
+race = "human"
+npc_guild = "warriors"
+[mobile.skills]
+arms_lore = "1d24+74"
+parrying = "1d16+84"
+resisting_spells = "1d24+59"
+tactics = "1d16+84"
+swordsmanship = "1d11+89"
+mace_fighting = "1d24+59"
+fencing = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"

@@ -29,21 +29,14 @@ public sealed class CompletionTests
     [ToolFact("bash")]
     public async Task Bash_TheFirstWord_OffersEveryCommand()
     {
-        Assert.Equal(["--help", "--version", "completion", "convert", "init", "migrate"], await CompleteAsync("mgctl", ""));
-        Assert.Equal(["completion", "convert"], await CompleteAsync("mgctl", "co"));
+        Assert.Equal(["--help", "--version", "completion", "init", "migrate"], await CompleteAsync("mgctl", ""));
+        Assert.Equal(["completion"], await CompleteAsync("mgctl", "co"));
     }
 
     [ToolFact("bash")]
     public async Task Bash_TheSecondWordOfAGroup_OffersItsCommands()
     {
         Assert.Equal(["apply", "status"], await CompleteAsync("mgctl", "migrate", ""));
-        Assert.Equal(
-            [
-                "modernuo-books", "modernuo-chests", "modernuo-locations", "modernuo-signs", "modernuo-spawns",
-                "modernuo-teleporters", "uox"
-            ],
-            await CompleteAsync("mgctl", "convert", "")
-        );
         Assert.Equal(["bash", "fish", "zsh"], await CompleteAsync("mgctl", "completion", ""));
     }
 
@@ -77,7 +70,6 @@ public sealed class CompletionTests
     {
         using var directory = new TemporaryDirectory();
         Directory.CreateDirectory(Path.Combine(directory.Path, "my root"));
-        File.WriteAllText(Path.Combine(directory.Path, "signs.cfg"), "");
 
         Assert.Equal(["auth", "world"], await CompleteAsync("mgctl", "migrate", "apply", "--target", ""));
         Assert.Equal(["world"], await CompleteAsync("mgctl", "migrate", "status", "--target", "w"));
@@ -86,13 +78,9 @@ public sealed class CompletionTests
             [Path.Combine(directory.Path, "my root")],
             await CompleteAsync("mgctl", "migrate", "apply", "--root-directory", directory.Path + "/")
         );
-        Assert.Equal(
-            [Path.Combine(directory.Path, "my root"), Path.Combine(directory.Path, "signs.cfg")],
-            await CompleteAsync("mgctl", "convert", "modernuo-signs", "--source", directory.Path + "/")
-        );
         Assert.Equal([Path.Combine(directory.Path, "my root")], await CompleteAsync("mgctl", "init", directory.Path + "/"));
         // Free text: nothing to offer.
-        Assert.Empty(await CompleteAsync("mgctl", "convert", "modernuo-spawns", "--maps", ""));
+        Assert.Empty(await CompleteAsync("mgctl", "init", "--admin-certificate-hosts", ""));
     }
 
     [ToolFact("zsh")]

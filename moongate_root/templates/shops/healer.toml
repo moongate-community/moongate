@@ -1,0 +1,89 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
+[[shop]]
+id = "healer"
+vendors = ["healer", "m_healer", "f_healer"]
+[[shop.buy]]
+item = "0x0e21_clean_bandage"
+price = 5
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f0c_b_yellow_potion"
+price = 15
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f85_ginseng"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f84_garlic"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0f0b_b_red_potion"
+price = 15
+amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x0e21_clean_bandage"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f0c_b_yellow_potion"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f0b_b_red_potion"
+price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f84_garlic"
+price = 2
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0f85_ginseng"
+price = 2
+amount = 1
+hue = 0
+name = ""

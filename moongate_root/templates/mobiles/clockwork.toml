@@ -1,5 +1,6 @@
 [[mobile]]
 id = "craftedgolem"
+blood_hue = -1
 name = "golem"
 body = 752
 strength = "1d100+250"
@@ -26,13 +27,14 @@ repairResource = "0x1f1c"
 
 [[mobile]]
 id = "golem"
-script_id = "monster"
+blood_hue = -1
 base_id = "craftedgolem"
 loot = ["arcane_gems", "randomgems", "randomgems", "golem_loot"]
+script_id = "monster"
 
 [[mobile]]
 id = "exodusoverseer"
-script_id = "monster"
+blood_hue = -1
 name = "exodus overseer"
 body = 756
 strength = "1d100+550"
@@ -45,6 +47,7 @@ karma = -10000
 fame = 10000
 loot = ["exodus_overseer_loot", "arcane_gems"]
 gold = "1d221+29"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d19+79"
 parrying = "1d19+79"
@@ -59,7 +62,7 @@ death = 529
 
 [[mobile]]
 id = "exodusminionlord"
-script_id = "monster"
+blood_hue = -1
 name = "exodus minion lord"
 body = 763
 strength = "1d101+1499"
@@ -72,6 +75,7 @@ karma = -15000
 fame = 15000
 loot = ["exodus_minion_lord_loot", "exodus_minion_lord_loot", "arcane_gems"]
 gold = "1d621+79"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d2+98"
 parrying = "1d2+98"
@@ -86,7 +90,7 @@ death = 529
 
 [[mobile]]
 id = "exodusminion"
-script_id = "monster"
+blood_hue = -1
 name = "exodus minion"
 body = 757
 strength = "1d100+850"
@@ -99,6 +103,7 @@ karma = -18000
 fame = 18000
 loot = ["exodus_minion_loot", "arcane_gems"]
 gold = "1d196+24"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d2+98"
 parrying = "1d2+98"

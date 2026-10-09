@@ -43,6 +43,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly ICrimeService? _crimes;
     private readonly ICombatGearService? _gear;
     private readonly IMurderService? _murders;
+    private readonly IPetService? _pets;
 
     public CharacterEnterWorldService(
         IMobileService mobiles,
@@ -57,10 +58,12 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         IWeightService? weight = null,
         ICrimeService? crimes = null,
         ICombatGearService? gear = null,
-        IMurderService? murders = null
+        IMurderService? murders = null,
+        IPetService? pets = null
     )
     {
         _murders = murders;
+        _pets = pets;
         _gear = gear;
         _crimes = crimes;
         _weight = weight;
@@ -197,6 +200,11 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
             _mobiles.GetEquipment(character, play.Equipment)
         );
         var status = _mobiles.GetStatus(character);
+
+        if (_pets is not null)
+        {
+            status = status with { Followers = _pets.Followers(character), FollowersMax = _pets.MaxFollowers };
+        }
 
         if (_gear is not null)
         {

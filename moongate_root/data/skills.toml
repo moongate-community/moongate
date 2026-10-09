@@ -257,7 +257,7 @@ str_gain = 0.0
 dex_gain = 0.4
 int_gain = 0.6
 gain_factor = 1.0
-delay = 30.0
+delay = 10.0
 
 [[skill]]
 id = "discordance"

@@ -1,6 +1,5 @@
 [[mobile]]
 id = "deepseaserpent"
-script_id = "monster"
 name = "a deep sea serpent"
 body = 145
 strength = "1d175+250"
@@ -11,6 +10,7 @@ armor = 20
 notoriety = "attackable"
 karma = -6000
 fame = 6000
+script_id = "monster"
 movement = "water"
 [mobile.skills]
 magery = "1d11+49"
@@ -50,7 +50,6 @@ death = 142
 
 [[mobile]]
 id = "kraken"
-script_id = "monster"
 name = "a kraken"
 body = 77
 skin_hue = 0
@@ -64,6 +63,7 @@ karma = -11000
 fame = 11000
 loot = ["treasure_map_lvl4loot", "kraken_loot"]
 gold = "1d301+299"
+script_id = "monster"
 movement = "water"
 [mobile.skills]
 resisting_spells = "1d6+14"
@@ -78,7 +78,6 @@ death = 850
 
 [[mobile]]
 id = "seaserpent"
-script_id = "monster"
 name = "a sea serpent"
 body = 150
 skin_hue = 649
@@ -92,6 +91,7 @@ karma = -6000
 fame = 6000
 loot = ["treasure_map_lvl2loot"]
 gold = "1d51+49"
+script_id = "monster"
 movement = "water"
 [mobile.skills]
 magery = "1d11+49"
@@ -107,6 +107,7 @@ death = 451
 
 [[mobile]]
 id = "walrus"
+script_id = "animal"
 name = "a walrus"
 body = 221
 strength = "1d9+20"

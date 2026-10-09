@@ -120,7 +120,7 @@ one, the door swings aside by its `facing` prop and plays the sound of its
 `decoration_type` (metal, wood, gate or secret). Double clicking an open door closes both
 when nobody stands in either doorway. An open door closes by itself after 20 seconds, then
 tries again every 10 seconds while the doorway is taken. A door that cannot swing aside, such
-as one at the edge of the map, stays closed. The open state is the prop `door.open`, with the
+as one at the edge of the map, stays closed. An NPC that walks to a place and finds a closed door in its way opens it through `on_npc_use(serial, opener)`: the door and its linked door open and close by themselves as for a player, and a locked door, or a double door with either leaf locked, stays shut without a word. The open state is the prop `door.open`, with the
 closed spot in `door.x`, `door.y` and `door.z`, saved with the door, and so is the auto-close timer (the door's `close` timer, started with
 `item.start_timer`): a door left open when the server stops closes once the server is back. A door saved
 open by an older version has no timer and stays open until someone uses it. A closed door with the prop `locked` does not
@@ -163,6 +163,192 @@ pitcher or a bottle 5, a jug 10, a glass or a mug 1; the sips left are kept in t
 Once empty, a pitcher, a glass or a mug turns into its empty graphic, is renamed and stays; a bottle or a jug
 is gone. A quenched player reads "You are simply too full to drink any more!" and drinks nothing.
 Refilling, pouring and drunkenness are not there yet.
+
+## The lore skills
+
+Four skills of the skill window, in `scripts/skills/`, as ModernUO's. The player picks a target and reads the
+client's own texts as system messages (ModernUO shows them over the one examined). Each waits the `delay` of
+`data/skills.toml`.
+
+- **`anatomy.lua`:** a mobile within 8 tiles; the check from 0 to 100 that passes reads how strong and how
+  dexterous it looks, and from 65 points how much endurance it has left. What it reads is off by up to 25 less one for
+  every 4 points of the skill. A failed check reads that it cannot get a sense of its physical characteristics; oneself,
+  an invulnerable NPC and an item have their own texts.
+- **`evaluating_intelligence.lua`:** the same for the mind: from 0 to 120, "He", "She" or "It" (`mobile.is_female`)
+  and, from 76 points, the mana left; off by up to 20 less one for every 5 points.
+- **`forensic_evaluation.lua`:** a corpse within 10 tiles, from 0 to 100: a human corpse tells whom it was killed by
+  (`corpse.killer` and `corpse.killer_name`, "no one" when it was not by someone); that of an animal or a monster reads
+  "You notice nothing unusual.". A mobile, from 40 to 100, "You notice nothing unusual.", since
+  there is no thieves' guild. Who disturbed the corpse and who studied it before are not kept yet.
+- **`detecting_hidden.lua`:** a place within 12 tiles, or oneself: every hidden player or NPC within a tenth of the
+  skill in tiles of it (half when the check fails, and none under 10 points) is shown if the detector's skill plus a roll
+  of -10 to 10 is not under its Hiding plus its own; it reads "You have been revealed!". Staff are found by staff only; the
+  skill waits 10 seconds. Traps, houses and factions
+  are not there yet.
+
+## pickaxe.lua and ore.lua
+
+`scripts/items/pickaxe.lua` is the script of the pickaxes and the shovels (`script_id = "pickaxe"`) and
+`scripts/items/ore.lua` that of the four piles of iron ore (`script_id = "ore"`): see [Mining and smelting](../mining.md).
+A dig picks a place (`target.pick_location`), which gives the `land` of the cell and the `graphic` of a static picked
+there: the script holds the lands that are rock and the statics that are a cave floor. The character swings
+(`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have ore left (`harvest.amount`), the Mining
+skill is tried between 0 and 100 (`skill.check`), and a dig that works takes from the place (`harvest.take`) and gives
+a pile (`item.give`). A smelt picks a forge, an item (`item.item_id`, `item.in_range`) or a static, tries the skill
+between 25 and 75, and turns the pile into ingots (`item.consume`, then `item.give`) or burns half of it away; a single ore
+that fails gets smaller. A pile on a cursor is refused (`item.is_held`). The constants at the top of each script are its numbers and its lists.
+
+## axe.lua
+
+`scripts/items/axe.lua` is the script of the axes (`script_id = "axe"` on nine axe bases, which their axes take from
+their base): see [Lumberjacking](../lumberjacking.md). The axe must be in the hands of who double clicks it
+(`item.worn_by`). The place picked must be a tree within 2 tiles: `target.pick_location` gives the `graphic` of the
+static that was picked, and the script holds the graphics that are trees. The character swings one to three times
+(`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have wood left (`harvest.amount`), the
+Lumberjacking skill is tried between 0 and 100 (`skill.check`), and a cut that works takes from the place
+(`harvest.take`) and gives 10 logs (`item.give`). The constants at the top of the script are the range, the swings
+and the logs; the trees are in `scripts/common/trees.lua`, shared with `scripts/items/blade.lua`, the script of the knives, daggers and swords (`script_id = "blade"`), which hacks one kindling off a tree. Picked onto logs in the backpack, the axe saws the stack into boards (`item.template`, `item.consume`, then `item.give`). A place is of one kind of wood, the vein of its area (`harvest.vein`): `scripts/common/woods.lua` holds the logs and boards of each kind, the Lumberjacking it asks for (`mobile.skills`) and the bounds its cut is tried between, shared with carpentry, and the table `FINDS` what a master finds with the logs. Who is chopping is kept in memory by serial: a restart frees everyone.
+
+## crafting.lua and carpentry_tool.lua
+
+`scripts/common/crafting.lua` holds the rules every craft shares: see [Carpentry](../carpentry.md). It reads the
+recipes with `craft.get` and the resource lists with `craft.resource`, counts and takes the resources across the stacks
+the player carries (`item.find`, `item.amount`, `item.consume`; a pile on the cursor is left out with `item.is_held`),
+plays the two strokes (`mobile.play_sound`, `timer.after`), tries the other skills of the recipe and then the main one
+between twice its least minus its most and its most (`skill.check`), so the chance is one in two at the least, and
+makes the item (`item.give`, else `item.create` at the player's feet), with the hue of the kind of wood
+(passing the hue of the kind of wood to `item.give`, or `item.set_hue` at the feet). A success may be exceptional (`crafting.roll`, the props `quality`, `crafter_id`, `crafter_name`), and every attempt whose skill is tried takes a use of the tool (the prop `uses_remaining`, drawn 25 to 75, `item.delete` at the last). Who is making something, the group and wood each player picked and the last recipe each started (`crafting.make_last`) are kept in memory.
+`scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` on the carpentry tools) opens the crafting gump
+from the backpack; the gump is `templates/gumps/craft_menu.xml` with `scripts/gumps/craft_menu.lua`, one for every craft.
+
+## fishing_pole.lua
+
+`scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,
+`script_id = "fishing_pole"`): see [Fishing](../fishing.md). Double click the pole and pick water within 4 tiles and
+in sight (`target.pick_location`, `world.is_water`, `world.line_of_sight`). The character casts (`mobile.animate`),
+the water splashes 1.5 seconds later (`effect.at`, `world.play_sound`) and the result comes after 8 seconds
+(`timer.after`). The place must have fish left (`harvest.amount`), the Fishing skill is tried between 0 and 100
+(`skill.check`), and a catch is given into the backpack (`item.give`) and taken from the place (`harvest.take`).
+The constants at the top of the script are the range, the seconds and what comes out. Who is fishing is kept in
+memory by serial: a restart frees everyone.
+
+## bandage.lua
+
+`scripts/items/bandage.lua` is the script of the clean bandage (`0x0e21_clean_bandage`, `script_id = "bandage"`),
+as ModernUO's classic Healing. Double click it, pick who it is for and wait: the one picked is healed, or raised.
+
+- **Reach:** the bandage in the backpack, and who it is for within 1 tile; farther, the client's "too far away".
+  The healer must see who it is for: a hidden one or one behind a wall "can not be seen". Using a bandage reveals a
+  hidden healer. The bandage is taken out of the stack when the healing begins. A second bandage of the same healer replaces the
+  first.
+- **The wait:** 3 seconds for a healer with 100 dexterity or more, 4 from 40, 5 under it; 5 more to raise a
+  ghost; 9.4 + 0.6 × (120 − dexterity) / 10 on itself. The healer has to stay within 1 tile and alive, or the
+  healing is lost with its bandage.
+- **A living one that is hurt:** it works with a chance of (Healing + 10) %, and heals from
+  Anatomy / 5 + Healing / 5 + 3 up to Anatomy / 5 + Healing / 2 + 10 points; a roll under 1 heals 1 and says the
+  bandages barely helped. A creature with the body of a monster or an animal is a case for Veterinary and Animal
+  Lore, with a point more per 100 of its hit points. One that is not hurt reads "That being is not damaged!" and
+  keeps the bandage.
+- **A ghost:** it needs 80 points of Healing and of Anatomy and a chance of (Healing − 68) / 50; then the ghost
+  is asked in the gump of the ankhs whether to come back, and it costs a tenth of its fame, as at an ankh.
+- **Skills:** both are tried for a rise after a healing, whether the roll worked or not, and after a raise that
+  worked.
+
+There is no poison and no bleeding in the game yet, so there is no cure; and the ground where a ghost is raised is
+not checked, as it is not at an ankh.
+
+## stealth.lua
+
+`scripts/skills/stealth.lua` is the script of Stealth, as ModernUO's classic one. A hidden player uses the skill and,
+if the check passes, may take a few steps without being shown: a tenth of its Stealth in steps, at least one
+(`mobile.set_stealth_steps`; the server counts them in `MoveRequestPacketHandler`). Running always shows the player.
+Hiding or being shown again clears the steps.
+
+- **Before the check:** a player that is not hidden is told to hide first (502725); one with under 80 points of Hiding
+  is "not hidden well enough" (502726), and one whose armor rating (`combat.armor_rating`) is 26 or more "could not hope
+  to move quietly" (502727): both are shown.
+- **The check** runs from -20 to 80 points, each raised by twice the armor rating. A success reads "You begin to move
+  quietly." (502730); a failure reads "You fail in your attempt to move unnoticed." (502731) and shows the player.
+  The skill waits 10 seconds either way.
+- **Not there yet:** the rules of Stealth of the later versions (the steps cost by armor, sneaking by a mount).
+
+## snooping.lua
+
+`scripts/skills/snooping.lua` is the script of Snooping, as ModernUO's. It is not used from the skill window: a double
+click on the backpack of another mobile does not open it, the server calls `on_snoop(user, owner, container)` of this
+script (`ISkillScriptService.Call`). It does so for the backpack and for a bag inside it, and not for a dead player.
+
+- **Staff snoops anyone, always:** a game master or an administrator needs no distance, no skill, no rule, loses no
+  karma and is not noticed, and may snoop a dead owner and another staff member. The `hide` command hides it first.
+- **Rules** for the others: within a tile of the owner; nothing for a dead owner; a game master or administrator
+  cannot be snooped, nor an invulnerable player ("You cannot perform negative acts on your target."; Moongate has no
+  rules of harmful acts by map yet, which this stands in for). An NPC in a guarded region of another map than Felucca is
+  snooped only when it is not human, or attackable, or a murderer: ModernUO's comment says so, though its code lets
+  anyone snoop an NPC in an active town.
+- **A player who is not staff** loses 4 karma, as ModernUO's `AwardKarma` takes a loss (more from a good name, nothing
+  under -400, never under -15000, and the loss is told), and is noticed by the players within 8 tiles ("You notice <name>
+  attempting to peek into <owner>'s belongings."): always under 100 points of Snooping, with a chance of the points in a
+  hundred of passing unnoticed.
+- **The check** runs from 0 to 100 points: a success opens the backpack on the client of the player (`item.show_contents`);
+  a failure reads "You failed to peek into the container." and shows the player, more likely the less it has of Hiding.
+  Staff always see.
+- **Not there yet:** the traps of containers. The items seen cannot be lifted: a lift of an item the player does not own is
+  refused as before.
+
+## lockpick.lua and treasure_chest.lua
+
+`scripts/items/lockpick.lua` is the script of the lockpicks (`0x14fb`, `0x14fc`, `0x14fd` and `0x14fe`,
+`script_id = "lockpick"`), as ModernUO's `Lockpick`. Double click it, pick a locked item within a tile, and three
+seconds later the skill is tried; the player must stay within a tile.
+
+What can be picked is an item with these props: `locked` (true while it is locked), `lock.level` and `lock.max`, the
+points of Lockpicking where the try may just succeed and where it never fails, and `lock.required`, the least points
+to try at all. A lock without `lock.level` "cannot be picked by normal means"; a player under `lock.required` "does
+not see how that lock can be manipulated". A success unlocks the item for good (`locked` is false, `lock.picker` is
+the player); a failure breaks the lockpick one time in four, which is taken out of its stack. Lockpicking is a skill
+that rises with use, as the others.
+
+`scripts/items/treasure_chest.lua` is the script of the four treasure chests of the dungeons
+(`templates/items/treasure_chests.toml`, `script_id = "treasure_chest"`), as ModernUO's `TreasureChestLevel1` to `4`.
+A chest is made locked: it asks 57, 72, 84 and 92 points of Lockpicking by level, and the try runs from that less a roll
+of 1 to 10 to that plus a roll of 1 to 10. A locked chest does not open ("It appears to be locked."); a game master opens
+it ("That is locked, but you open it with your godly powers."); a picked chest opens as any container. Nobody but a
+game master drops an item into a locked chest (`can_insert`). The traps of ModernUO's chests are not there yet, and
+what is already inside a chest open on a client can still be lifted. Chests made before this release have no lock and
+stay as they were until they decay.
+
+## training_dummy.lua
+
+`scripts/items/training_dummy.lua` is the script of the training dummies (`0x1070` and `0x1071` facing south, `0x1074`
+and `0x1075` facing east), as ModernUO's `TrainingDummy`: the templates carry `script_id = "training_dummy"`, and so does
+`decoration_training_dummy`, which `.decorate` gives the dummies of the files. Double
+click a dummy with a melee weapon in hand, or none: the player turns and swings at it (`combat.swing`), the dummy
+shows its swinging graphic from a quarter of a second, with the sound of a hit, and rests again after three seconds,
+and the skill of the weapon (Wrestling for fists) is tried from -25 to 25 points, so it may rise up to 25.
+
+A bow or a crossbow cannot practice on it ("You can't practice ranged weapons on this."), the weapon must reach it (a
+tile, `combat.range`), a dummy that still swings makes the player wait, and a skill at 25 reads "Your skill cannot
+improve any further by simply practicing with a dummy.". There is no check for a mounted player: mounts are not built.
+
+## archery_butte.lua
+
+`scripts/items/archery_butte.lua` is the script of the archery buttes (`0x100A` facing east, `0x100B` facing south), as
+ModernUO's `ArcheryButte`: the templates carry `script_id = "archery_butte"` and `use_range = 6`, as does
+`decoration_archery_butte`, which `.decorate` gives the buttes of the files, so the player may double click it from where it
+shoots. A world decorated before this release has them as plain decoration: `.decorate` again turns them into these.
+
+- **Shooting:** with a bow or a crossbow, stand in front of the butte, in line with it, five or six tiles away, and
+  double click it. An arrow or a bolt is spent (`combat.spend_ammo`), the player shoots (`combat.swing` and the arrow
+  flying, `effect.moving`) and the archery of the weapon is tried from -25 to 25 points: it may rise, and the shot
+  may miss. Two seconds go between two shots at a butte. The texts say what is wrong when the player stands behind,
+  off the line, too far or too near.
+- **Score:** a shot that hits scores 50 (the bullseye, one in ten), 10, 5 or 2 points, and the player is told its total
+  at that butte and how many shots. The arrow may split, which is likelier the more ammunition is stuck in the butte
+  (2 percent for each), and then it scores more and is lost. The texts are told to the shooter, not to the others.
+- **Gathering:** double click the butte within a tile, when arrows or bolts are stuck in it (props `butte.arrows` and
+  `butte.bolts`): they go to the backpack and the scores are cleared.
+
+The dart boards are not built.
 
 ## dyes.lua and dye_tub.lua
 
@@ -212,8 +398,8 @@ the skill.
 
 Either way it waits before another skill the `delay` of `hiding` in
 [`data/skills.toml`](../data-files/skills.md), 10 seconds. Its first step shows it again, with "You have
-been revealed!" (500814): the server does that for every hidden player of a regular account, since
-there is no Stealth yet; a turn on the spot does not. The staff hides to watch and stays hidden.
+been revealed!" (500814): the server does that for every hidden player of a regular account, unless
+[Stealth](#stealthlua) allowed the step; a turn on the spot does not. The staff hides to watch and stays hidden.
 Speaking, being hit and the sight of who stands near do not show it yet.
 
 ## Regeneration props
@@ -291,7 +477,49 @@ between two offers, and a ghost met during the wait is offered when it is over. 
 client text 501222 and a murderer (red) with 501223, and a player of negative karma is told 501224 and offered all
 the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `evilwhealer`), refuses
 nobody and says nothing. A healer of a
-template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think.
+template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think. A healer with a shop sells and buys as a vendor does, through `scripts/common/shop.lua`: bandages, potions, ginseng and garlic.
+
+## ethereal_mount.lua
+
+`scripts/items/ethereal_mount.lua` is the script of the ethereal statuettes (`script_id = "ethereal_mount"`): its
+`on_use` calls `mount.ride_ethereal(user, serial)`, which says in the client's words why it refuses, and returns true
+so the double click opens nothing else. See [Mounts](../mounts.md#ethereal-mounts).
+## stablemaster.lua and stable_claim.lua
+
+`scripts/mobiles/stablemaster.lua` is the script of the animal trainers (`script_id = "stablemaster"`). The words
+*stable* and *claim*, said within 12 cells, and the entries *Stable* and *Claim All* of the context menu drive the
+`stable` module: *stable* gives a cursor (`target.pick`) and calls `stable.stable` on the pet picked, answering with
+the client's text for each `StableResultType`; *claim* says the list intro and opens the gump `stable_claim`
+(`templates/gumps/stable_claim.xml`), or says there are no pets; *Claim All* calls `stable.claim` on the first place
+until the list is empty. Several trainers hear the same words and `stable.attend` lets one answer. An animal trainer
+keeps its shop and its lessons through `scripts/common/shop.lua` and `training.lua`.
+`scripts/gumps/stable_claim.lua` fills the gump with one button and the name of the pet for each pet of `stable.pets`,
+eight a page; a button checks the player is within 12 cells of the trainer and calls `stable.claim`; a list that
+changed since it was shown is shown again.
+
+## pet_orders.lua and pet_release.lua
+
+`scripts/common/pet_orders.lua` is what `common/creature.lua` runs for a creature that has an `owner`: `think` follows the
+order in the prop `pet.order` (`follow`, `come`, `stay` or `guard`; `follow` when it has none), and `listen`, from the
+`on_speech` of the creature scripts, reads the words of the owner (`SpeechKeywordType.PetCome`, `AllStay` and the others)
+within 14 tiles. The "all" words are carried out by the first pet that asks `pet.attend(owner)`, for every pet of the owner
+within reach; `kill` asks for a target with `target.pick`; `release` opens the gump `pet_release`
+(`templates/gumps/pet_release.xml`), whose Release button calls `pet.release` after checking the pet is still the player's and
+within 14 tiles. Every order but `release` first rolls `pet.obey(owner, pet)` (the chance is `pet.control_chance`): a pet that
+refuses growls and fidgets and does not take the order. `feed(serial, giver, given)` is what the creature scripts return from
+`on_drag_drop`: the owner's food goes to `pet.feed`, which takes the stack and raises the loyalty (`pet.loyalty`); food the
+creature does not eat is given back. See [Animal taming](../animal-taming.md#what-you-can-tell-it) and
+[loyalty, food and obedience](../animal-taming.md#loyalty-food-and-obedience).
+
+## animal_taming.lua
+
+`scripts/skills/animal_taming.lua` is the Animal Taming skill: `on_use` says "Tame which animal?" (502789), gives a cursor
+(`target.pick`) and returns a wait of 1 second. The pick is refused with the client's text if it is no creature, a player,
+not in `taming.toml` (`pet.info`), owned, too many followers (`pet.followers` and `pet.max_followers`), above the skill
+or more than 3 tiles away. Then three or four times of 3 seconds (`timer.after`) check again the distance (7), the
+tamer alive, the line of sight (`world.line_of_sight`), the creature still wild and not hurt (`mobile.stats`), and say a
+kind line; the last rolls `skill.check(user, "animal_taming", min - 0.1, min + 49.9)` and `pet.tame`. See
+[Animal taming](../animal-taming.md).
 
 ## ankh.lua and resurrect.lua
 
@@ -378,6 +606,47 @@ button checks `world.is_staff` again.
 
 To add a tool, write a panel function with the signature `function(g, player)` and add
 `{ id = "...", title = "...", panel = ... }` to `tools`.
+
+## help_menu.lua
+
+`scripts/gumps/help_menu.lua` is the script of the [help](../help.md) menu
+(`templates/gumps/help_menu.xml`), which the Help button of the paperdoll opens. `stuck` is the "I am stuck"
+button: it refuses a character in jail (`jail.sentence`) or fighting (`combat.target`), one that already
+waits, and one whose pause (the prop `help.stuck_until`, seconds since 1970 from `world.now`) is not over,
+the staff excepted; it takes the nearest starting city from `help.nearest_city`, tells the wait from
+`help.settings`, and after `timer.after` of that many seconds moves the character with `mobile.teleport`
+if it stands where it did and is still allowed. `commands` runs `help` with `commands.execute_as`, `rules`
+tells message 30200 and `call` opens `help_page_kind`.
+
+## help_page_kind.lua
+
+`scripts/gumps/help_page_kind.lua` is the script of the second step of *Call a game master*
+(`templates/gumps/help_page_kind.xml`). `question`, `bug`, `suggestion` and `harassment` ask `help.can_page`;
+a player that may not is told why (messages 30213 and 30214) before anything is typed. Otherwise it is told
+to type a line (30211), `prompt.ask` waits for it, and `help.create_page` sends the request with the
+`HelpPageKindType` of the button; Escape or an empty line says 30215, a refusal at the end says its reason again,
+and a sent request says 30212. A player in jail may call.
+
+## pages.lua
+
+`scripts/gumps/pages.lua` is the script of the queue of the staff (`templates/gumps/pages.xml`, opened by
+[`.pages`](../commands/pages.md)). `rows` fills the slot with `help.pages()`, the oldest first, ten a page, one
+button and one line a request (`#1 Gino, Bug, 3 min, open`); a row opens `pages_detail` on that request.
+Staff only: the slot stays empty for anyone else, and every button checks `world.is_staff` again.
+
+## pages_detail.lua
+
+`scripts/gumps/pages_detail.lua` is the script of one request (`templates/gumps/pages_detail.xml`). `go` takes
+the game master to the player (`mobile.location`) or, when it is offline, to where it asked; `take` calls
+`help.take`; `answer` takes the text of the field (`response.text[1]`), refuses an empty one and otherwise calls
+`help.answer` and returns to the queue; `close` calls `help.close`. A request that was closed meanwhile says so
+and changes nothing.
+
+## common/help_pages.lua
+
+`scripts/common/help_pages.lua` is the Lua module the two staff gumps share, taken with
+`require("common.help_pages")`: the words for a kind, a map, an age and a status, the line of a request and the
+arguments of its detail gump.
 
 ## jail_sentence.lua
 

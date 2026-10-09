@@ -12,6 +12,8 @@
 --   teleport.map   the destination map (a MapType number) when it is another
 --                  one; without it the player stays on its map
 --   active         false turns the teleporter off
+--   deny_mounted   true makes it refuse whoever rides a mount: the rider stays
+--                  where it is and is told to dismount first
 --   creatures      true lets NPCs through too; without it only players travel
 --   source_effect  true shows a puff of smoke where the mobile left
 --   dest_effect    true shows a puff of smoke where the mobile arrived
@@ -26,10 +28,21 @@ teleporter = {}
 
 local teleport = require("common.teleport")
 
+-- You must dismount before proceeding.
+local MUST_DISMOUNT = 1077252
+
 local function travel(serial, who)
-    if item.get_prop(serial, "active") ~= false then
-        teleport.send(serial, who)
+    if item.get_prop(serial, "active") == false then
+        return
     end
+
+    if teleport.is_on(item.get_prop(serial, "deny_mounted")) and mobile.is_mounted(who) then
+        mobile.message_cliloc(who, MUST_DISMOUNT)
+
+        return
+    end
+
+    teleport.send(serial, who)
 end
 
 -- Called when a player steps onto the teleporter.

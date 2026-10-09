@@ -1,6 +1,7 @@
 [[item]]
 id = "base_cutlass"
 base_id = "base_item"
+script_id = "blade"
 item_id = 5184
 name = "cutlass"
 rarity = "common"
@@ -18,6 +19,7 @@ rarity = "common"
 [[item]]
 id = "0x1441"
 base_id = "0x1440_lbr"
+script_id = "blade"
 item_id = 5185
 rarity = "common"
 weapon_type = "sword"
@@ -25,6 +27,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_katana"
 base_id = "base_item"
+script_id = "blade"
 item_id = 5118
 name = "katana"
 rarity = "common"
@@ -41,6 +44,7 @@ rarity = "common"
 [[item]]
 id = "0x13ff"
 base_id = "0x13fe_lbr"
+script_id = "blade"
 item_id = 5119
 rarity = "common"
 weapon_type = "sword"
@@ -48,6 +52,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_broadsword"
 base_id = "base_item"
+script_id = "blade"
 item_id = 3934
 name = "broadsword"
 rarity = "common"
@@ -64,6 +69,7 @@ rarity = "common"
 [[item]]
 id = "0x0f5f"
 base_id = "0x0f5e_lbr"
+script_id = "blade"
 item_id = 3935
 rarity = "common"
 weapon_type = "sword"
@@ -71,6 +77,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_longsword"
 base_id = "base_item"
+script_id = "blade"
 item_id = 3936
 name = "longsword"
 rarity = "common"
@@ -87,6 +94,7 @@ rarity = "common"
 [[item]]
 id = "0x0f61"
 base_id = "0x0f60_lbr"
+script_id = "blade"
 item_id = 3937
 rarity = "common"
 weapon_type = "sword"
@@ -94,6 +102,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_long_sword"
 base_id = "base_item"
+script_id = "blade"
 item_id = 5047
 name = "long sword"
 rarity = "common"
@@ -110,6 +119,7 @@ rarity = "common"
 [[item]]
 id = "0x13b8"
 base_id = "0x13b7_lbr"
+script_id = "blade"
 item_id = 5048
 rarity = "common"
 weapon_type = "sword"
@@ -117,6 +127,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_scimitar"
 base_id = "base_item"
+script_id = "blade"
 item_id = 5045
 name = "scimitar"
 rarity = "common"
@@ -133,6 +144,7 @@ rarity = "common"
 [[item]]
 id = "0x13b6"
 base_id = "0x13b5_lbr"
+script_id = "blade"
 item_id = 5046
 rarity = "common"
 weapon_type = "sword"
@@ -140,6 +152,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_viking_sword"
 base_id = "base_item"
+script_id = "blade"
 item_id = 5049
 name = "viking sword"
 rarity = "common"
@@ -156,6 +169,7 @@ rarity = "common"
 [[item]]
 id = "0x13ba"
 base_id = "0x13b9_lbr"
+script_id = "blade"
 item_id = 5050
 rarity = "common"
 weapon_type = "sword"
@@ -163,6 +177,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_bone_harvester"
 base_id = "base_item"
+script_id = "blade"
 item_id = 9915
 name = "bone harvester"
 rarity = "common"
@@ -180,6 +195,7 @@ rarity = "common"
 [[item]]
 id = "0x26c5"
 base_id = "0x26bb_lbr"
+script_id = "blade"
 item_id = 9925
 rarity = "common"
 weapon_type = "sword"
@@ -187,6 +203,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_crescent_blade"
 base_id = "base_item"
+script_id = "blade"
 item_id = 9921
 name = "crescent blade"
 rarity = "common"
@@ -205,6 +222,7 @@ rarity = "common"
 [[item]]
 id = "0x26cb"
 base_id = "0x26c1_lbr"
+script_id = "blade"
 item_id = 9931
 rarity = "common"
 weapon_type = "sword"
@@ -212,6 +230,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_paladin_sword"
 base_id = "base_item"
+script_id = "blade"
 item_id = 9934
 name = "paladin sword"
 rarity = "common"
@@ -229,6 +248,7 @@ rarity = "common"
 [[item]]
 id = "0x26cf"
 base_id = "0x26ce_lbr"
+script_id = "blade"
 item_id = 9935
 rarity = "common"
 weapon_type = "sword"
@@ -236,6 +256,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_no_dachi"
 base_id = "base_item"
+script_id = "blade"
 item_id = 10146
 name = "no-dachi"
 rarity = "common"
@@ -254,6 +275,7 @@ rarity = "common"
 [[item]]
 id = "0x27ed"
 base_id = "0x27a2_lbr"
+script_id = "blade"
 item_id = 10221
 rarity = "common"
 weapon_type = "sword"
@@ -261,6 +283,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_wakizashi"
 base_id = "base_item"
+script_id = "blade"
 item_id = 10148
 name = "wakizashi"
 rarity = "common"
@@ -278,6 +301,7 @@ rarity = "common"
 [[item]]
 id = "0x27ef"
 base_id = "0x27a4_lbr"
+script_id = "blade"
 item_id = 10223
 rarity = "common"
 weapon_type = "sword"
@@ -285,6 +309,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_bokuto"
 base_id = "base_item"
+script_id = "blade"
 item_id = 10152
 name = "bokuto"
 rarity = "common"
@@ -302,6 +327,7 @@ rarity = "common"
 [[item]]
 id = "0x27f3"
 base_id = "0x27a8_lbr"
+script_id = "blade"
 item_id = 10227
 rarity = "common"
 weapon_type = "sword"
@@ -401,6 +427,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_dread_sword"
 base_id = "base_item"
+script_id = "blade"
 item_id = 2315
 name = "dread sword"
 rarity = "common"
@@ -418,6 +445,7 @@ rarity = "common"
 [[item]]
 id = "0x4074"
 base_id = "0x090b_lbr"
+script_id = "blade"
 item_id = 16500
 rarity = "common"
 weapon_type = "sword"
@@ -425,6 +453,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_gargish_bone_harvester"
 base_id = "base_item"
+script_id = "blade"
 item_id = 18630
 name = "gargish bone harvester"
 rarity = "common"
@@ -442,6 +471,7 @@ rarity = "common"
 [[item]]
 id = "0x48c7"
 base_id = "0x48c6_lbr"
+script_id = "blade"
 item_id = 18631
 rarity = "common"
 weapon_type = "sword"
@@ -449,6 +479,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_glass_sword"
 base_id = "base_item"
+script_id = "blade"
 item_id = 2316
 name = "glass sword"
 rarity = "common"
@@ -466,6 +497,7 @@ rarity = "common"
 [[item]]
 id = "0x4073"
 base_id = "0x090c_lbr"
+script_id = "blade"
 item_id = 16499
 rarity = "common"
 weapon_type = "sword"
@@ -497,6 +529,7 @@ weapon_type = "axe"
 [[item]]
 id = "base_gargish_katana"
 base_id = "base_item"
+script_id = "blade"
 item_id = 18618
 name = "gargish katana"
 rarity = "common"
@@ -514,6 +547,7 @@ rarity = "common"
 [[item]]
 id = "0x48bb"
 base_id = "0x48ba_lbr"
+script_id = "blade"
 item_id = 18619
 rarity = "common"
 weapon_type = "sword"
@@ -521,6 +555,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_gargish_butcher_knife"
 base_id = "base_item"
+script_id = "blade"
 item_id = 18614
 name = "gargish butcher knife"
 rarity = "common"
@@ -538,6 +573,7 @@ rarity = "common"
 [[item]]
 id = "0x48b7"
 base_id = "0x48b6_lbr"
+script_id = "blade"
 item_id = 18615
 rarity = "common"
 weapon_type = "sword"
@@ -545,6 +581,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_stone_war_sword"
 base_id = "base_item"
+script_id = "blade"
 item_id = 2304
 name = "stone war sword"
 rarity = "common"
@@ -562,6 +599,7 @@ rarity = "common"
 [[item]]
 id = "0x4071"
 base_id = "0x0900_lbr"
+script_id = "blade"
 item_id = 16497
 rarity = "common"
 weapon_type = "sword"
@@ -569,6 +607,7 @@ weapon_type = "sword"
 [[item]]
 id = "base_gargish_talwar"
 base_id = "base_item"
+script_id = "blade"
 item_id = 2312
 name = "gargish talwar"
 rarity = "common"
@@ -586,6 +625,7 @@ rarity = "common"
 [[item]]
 id = "0x4075"
 base_id = "0x0908_lbr"
+script_id = "blade"
 item_id = 16501
 rarity = "common"
 weapon_type = "sword"

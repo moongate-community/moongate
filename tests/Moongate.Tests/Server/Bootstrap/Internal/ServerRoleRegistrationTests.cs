@@ -129,6 +129,64 @@ public sealed class ServerRoleRegistrationTests
         );
     }
 
+    // The npc module takes the door service as an optional one: were it not there to build, no NPC would open a
+    // door and nothing would say why.
+    [Fact]
+    public void Register_TheNpcModule_IsGivenTheDoorService()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+        container.RegisterMoongateEventBus();
+        container.Register<IEventBusService, Moongate.Server.Services.Events.EventBusService>(Reuse.Singleton);
+        container.Register<ICommandSystemService, Moongate.Server.Services.Commands.CommandSystemService>(Reuse.Singleton);
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        var module = container.Resolve<Moongate.Server.Ultima.Modules.NpcModule>();
+        var field = module.GetType()
+            .GetField("_doors", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+
+        Assert.IsType<Moongate.Server.Ultima.Services.NpcDoorService>(field!.GetValue(module));
+    }
+
+    // What gives items takes the templates and the tile data as optional services: without them nothing given would
+    // join a stack, and nothing would say why.
+    [Fact]
+    public void Register_WhatGivesItems_KnowsWhatStacks()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+        container.RegisterMoongateEventBus();
+        container.Register<IEventBusService, Moongate.Server.Services.Events.EventBusService>(Reuse.Singleton);
+        container.Register<ICommandSystemService, Moongate.Server.Services.Commands.CommandSystemService>(Reuse.Singleton);
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        var handling = container.Resolve<Moongate.Server.Ultima.Interfaces.IItemHandlingService>();
+        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+
+        Assert.NotNull(handling.GetType().GetField("_templates", flags)!.GetValue(handling));
+        Assert.NotNull(handling.GetType().GetField("_tiles", flags)!.GetValue(handling));
+    }
+
     [Fact]
     public void Register_EveryCommand_HasATranslatedDescription()
     {
@@ -149,7 +207,7 @@ public sealed class ServerRoleRegistrationTests
         var definitions = container.Resolve<CommandRegistry>()
             .Registrations.Values.Select(registration => registration.Definition)
             .Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30186));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30229));
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Standalone)]
@@ -276,9 +334,20 @@ public sealed class ServerRoleRegistrationTests
         Assert.NotNull(container.Resolve<ISkillService>());
         Assert.NotNull(container.Resolve<ISkillUseService>());
         Assert.NotNull(container.Resolve<ICombatService>());
+        Assert.NotNull(container.Resolve<ICraftService>());
         Assert.NotNull(container.Resolve<MobileModule>());
         Assert.NotNull(container.Resolve<KillCommand>());
         Assert.NotNull(container.Resolve<ResurrectCommand>());
+        Assert.NotNull(container.Resolve<IMountService>());
+        Assert.NotNull(container.Resolve<MountModule>());
+        Assert.NotNull(container.Resolve<IStableService>());
+        Assert.NotNull(container.Resolve<IPetService>());
+        Assert.NotNull(container.Resolve<ITamingService>());
+        Assert.NotNull(container.Resolve<IMobileStateService>());
+        Assert.NotNull(container.Resolve<StableModule>());
+        Assert.NotNull(container.Resolve<TameCommand>());
+        Assert.NotNull(container.Resolve<UseRequestPacketHandler>());
+        Assert.NotNull(container.Resolve<MoveRequestPacketHandler>());
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
@@ -437,6 +506,7 @@ public sealed class ServerRoleRegistrationTests
                     typeof(ClientHardwareInfoPacket), typeof(AttackRequestPacket), typeof(LiftRequestPacket),
                     typeof(DropRequestPacket), typeof(TextCommandPacket), typeof(EquipRequestPacket),
                     typeof(ResynchronizeRequestPacket), typeof(UnicodeSpeechRequestPacket), typeof(OpenChatWindowPacket),
+                    typeof(HelpRequestPacket),
                     typeof(ClientTypePacket), typeof(PublicHouseContentPacket), typeof(GumpResponsePacket)
                 ],
                 packet => Assert.Contains(packet, container.Resolve<PacketHandlerRegistry>().Registrations.Keys)
@@ -444,10 +514,12 @@ public sealed class ServerRoleRegistrationTests
             // The host registers the event bus; this test container does not.
             container.RegisterMoongateEventBus();
             var listeners = container.ResolveMany<ISessionClosedListener>().ToList();
-            Assert.Equal(6, listeners.Count);
+            Assert.Equal(8, listeners.Count);
             Assert.Contains(listeners, listener => listener is HuePickerService);
             Assert.Contains(listeners, listener => listener is PromptService);
             Assert.Contains(listeners, listener => listener is BankService);
+            Assert.Contains(listeners, listener => listener is VendorService);
+            Assert.Contains(listeners, listener => listener is TrainingService);
             Assert.Contains(listeners, listener => listener is CharacterLeaveWorldService);
             Assert.Contains(listeners, listener => listener is TargetService);
             Assert.Contains(listeners, listener => listener is GumpService);

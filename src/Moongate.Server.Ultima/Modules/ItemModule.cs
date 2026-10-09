@@ -57,6 +57,7 @@ public sealed class ItemModule
     private readonly IItemTimerService? _timers;
 
     private readonly IInventoryMutationGuard? _inventory;
+    private readonly IContainerViewService? _views;
 
     public ItemModule(
         IItemService items,
@@ -75,9 +76,11 @@ public sealed class ItemModule
         ILootService? loot = null,
         IEquipmentService? equipment = null,
         IItemTimerService? timers = null,
-        IInventoryMutationGuard? inventory = null
+        IInventoryMutationGuard? inventory = null,
+        IContainerViewService? views = null
     )
     {
+        _views = views;
         _inventory = inventory;
         _timers = timers;
         _equipment = equipment;
@@ -103,13 +106,14 @@ public sealed class ItemModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Makes an item from a template in the mobile's backpack and gives its serial; the owner sees it at once and its next save keeps it. Nil for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack), or when no serial is ready: the server keeps 64 in reserve and refills them in the background, so making more in one go gives nil for the rest; try again later."
+        "Makes an item from a template in the mobile's backpack and gives its serial; what stacks joins the stack of its kind already lying in the backpack (same template, hue and name, no prop of its own, 60000 at most) and the serial is that stack's. The owner sees it at once and its next save keeps it. Nil for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack), a hue outside 0 to 65535, or when no serial is ready: the server keeps 64 in reserve and refills them in the background, so making more in one go gives nil for the rest; try again later. hue, when given, colours the item before it looks for a stack, so it joins only a stack of that colour."
     )]
-    public long? Give(long mobile, string template, int? amount = null)
+    public long? Give(long mobile, string template, int? amount = null, int? hue = null)
     {
         return mobile is > 0 and <= uint.MaxValue &&
+               hue is null or (>= 0 and <= ushort.MaxValue) &&
                _mobiles.TryGet(new Serial((uint)mobile), out var owner) &&
-               _handling.Give(owner, template, amount) is { } item
+               _handling.Give(owner, template, amount, hue: hue is { } colour ? new Hue((ushort)colour) : null) is { } item
             ? item.Id.Value
             : null;
     }
@@ -260,6 +264,33 @@ public sealed class ItemModule
     }
 
     /// <summary>
+    ///     Gets the serial of the mobile wearing or holding the item itself, such as an axe in its hands;
+    ///     <c>item.worn_by(serial) == user</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The serial of the mobile that wears the item or holds it in its hands (a backpack is worn too); nil for an item inside a backpack or another container, on the ground, lifted onto a player's cursor or unknown."
+    )]
+    public long? WornBy(long serial)
+    {
+        // An item lifted off the paperdoll is still its wearer's until it is dropped: it is in nobody's hands.
+        return TryGetItem(serial, out var item) && item.MobileId is { } wearer && !IsHeld(item) ? wearer.Value : null;
+    }
+
+    /// <summary>
+    ///     Tells whether a player has lifted the item and holds it on its cursor; <c>item.is_held(serial)</c>. Such an
+    ///     item still counts where it was taken from until it is dropped, and cannot be consumed or changed.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether a player has lifted the item and holds it on the cursor: it still counts where it was taken from until it is dropped, and item.consume and item.set_item_id refuse it. False for an unknown item."
+    )]
+    public bool IsHeld(long serial)
+    {
+        return TryGetItem(serial, out var item) && IsHeld(item);
+    }
+
+    /// <summary>
     ///     Takes <paramref name="amount" /> units off the item, deleting it at 0; <c>item.consume(serial, 1)</c>.
     /// </summary>
     [ScriptFunction(
@@ -374,6 +405,8 @@ public sealed class ItemModule
         if (value is null)
         {
             item.RemoveProp(key);
+            // A prop may be what its tooltip shows, such as the uses left of a tool.
+            Refresh(item);
 
             return true;
         }
@@ -384,6 +417,7 @@ public sealed class ItemModule
         }
 
         item.SetProp(key, prop);
+        Refresh(item);
 
         return true;
     }
@@ -996,6 +1030,31 @@ public sealed class ItemModule
     private GameSession? OwnerSession(ItemEntity item)
     {
         return _items.GetOwner(item) is { } owner ? SessionOf(owner) : null;
+    }
+
+    /// <summary>
+    ///     Shows a container, and what is directly in it, to a player; <c>item.show_contents(backpack, user)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Opens the container on the player's client, with the items directly inside it, as a double click would, with no check of whether the player may: the script has decided. False for a serial that is not an item container, or a player not in the world."
+    )]
+    public bool ShowContents(long container, long player)
+    {
+        if (_views is null ||
+            !TryGetItem(container, out var item) ||
+            player is <= 0 or > uint.MaxValue ||
+            SessionOf(new Serial((uint)player)) is not { } session ||
+            _tiles is null ||
+            !_tiles.TryGetItem(item.ItemId, out var tile) ||
+            (tile.Flags & TileFlagType.Container) == 0)
+        {
+            return false;
+        }
+
+        _views.Show(session, item);
+
+        return true;
     }
 
     private GameSession? SessionOf(Serial character)

@@ -188,9 +188,12 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         child.Fame ??= parent.Fame;
         child.Gold ??= parent.Gold;
         child.ScriptId ??= parent.ScriptId;
+        child.NpcGuild ??= parent.NpcGuild;
         child.FleeAt ??= parent.FleeAt;
+        child.BloodHue ??= parent.BloodHue;
         child.Visibility ??= parent.Visibility;
         child.Movement ??= parent.Movement;
+        child.OpensDoors ??= parent.OpensDoors;
         child.Loot ??= parent.Loot is null ? null : [.. parent.Loot];
         child.Equipment ??= parent.Equipment?.Select(entry => new MobileEquipmentEntry
                 { Items = [.. entry.Items], Hue = entry.Hue, Gender = entry.Gender }

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"482be478e9870deb1c9a441257d28656b002ce419f2f07da093a1272f44be770","title":"Scrivere un modulo Lua"} -->
+<!-- translation: {"sourceHash":"364994a83c431af3cd3ae30c0d0cbba37ff7cf6e3f659de601c517d6906ad43d","title":"Scrivere un modulo Lua"} -->
 
 # Scrivere un modulo Lua
 
@@ -85,7 +85,7 @@ greeting = greeter.hello('Moongate', Tone.Warm)
 function report() return greeting, greeter.DEFAULT_GREETING end
 ```
 
-All'avvio il motore scrive `definitions.lua` per il completamento nell'editor. Il file completo inizia con un'intestazione `---@meta` e la funzione integrata `wait`, e da un server attivo dichiara anche i moduli integrati `engine`, `timer`, `events` e `log`, quelli del plugin Ultima `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `hue_picker`, `prompt`, `skill`, `combat`, `gump`, `bank`, `effect`, `moongates` e `locations`, e qualsiasi altro elemento registrato. L'estratto sotto è ciò che producono il modulo di esempio e il suo enum:
+All'avvio il motore scrive `definitions.lua` per il completamento nell'editor. Il file completo inizia con un'intestazione `---@meta` e la funzione integrata `wait`, e da un server attivo dichiara anche i moduli integrati `engine`, `timer`, `events` e `log`, quelli del plugin Ultima `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `hue_picker`, `prompt`, `skill`, `combat`, `gump`, `bank`, `vendor`, `trainer`, `effect`, `moongates` e `locations`, e qualsiasi altro elemento registrato. L'estratto sotto è ciò che producono il modulo di esempio e il suo enum:
 
 ```lua
 ---@enum Tone

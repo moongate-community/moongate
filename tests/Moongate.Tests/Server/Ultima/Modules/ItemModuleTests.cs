@@ -88,6 +88,38 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void WornBy_IsWhoWearsOrHoldsTheItemItself_NotWhoCarriesItInABackpack()
+    {
+        // The sword is in the hand of the mobile 2, the potions in its backpack, the third item on the ground.
+        var result = Run(
+            $"return item.worn_by({_sword.Id.Value}), item.worn_by(0x40000002), item.worn_by(0x40000003), item.worn_by(0x4FFFFFFF)"
+        );
+
+        Assert.Equal(2, result[0].Read<int>());
+        Assert.Equal((LuaValue.Nil, LuaValue.Nil, LuaValue.Nil), (result[1], result[2], result[3]));
+    }
+
+    [Fact]
+    public async Task WornBy_AnItemLiftedOntoTheCursor_IsInNobodysHands()
+    {
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == new Serial(2));
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(_sword.Id)));
+
+        Assert.Equal(LuaValue.Nil, Run($"return item.worn_by({_sword.Id.Value})")[0]);
+    }
+
+    [Fact]
+    public async Task IsHeld_TellsAnItemLiftedOntoACursor()
+    {
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == new Serial(2));
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(_sword.Id)));
+
+        var result = Run($"return item.is_held({_sword.Id.Value}), item.is_held(0x40000002), item.is_held(0x4FFFFFFF)");
+
+        Assert.Equal([true, false, false], result.Select(value => value.Read<bool>()));
+    }
+
+    [Fact]
     public void NameAmountAndOwner_DescribeTheItem()
     {
         var result = Run(
@@ -385,6 +417,17 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Give_WithAHue_MakesTheItemOfThatHue()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        var result = Run("return item.give(2, 'gold', 10, 0x7DA)");
+
+        Assert.True(_items.TryGet(new Serial((uint)result[0].Read<long>()), out var gold));
+        Assert.Equal((10, new Hue(0x7DA)), (gold.Amount, gold.Hue));
+    }
+
+    [Fact]
     public void Give_WithNoSerialLeft_IsNil()
     {
         Assert.Equal(LuaValue.Nil, Run("return item.give(2, 'gold')")[0]);
@@ -450,6 +493,15 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Equal("a strange brew", result[2].Read<string>());
         Assert.Equal(("a strange brew", new Hue(0x26)), (_ground.Name, _ground.Hue));
         Assert.Equal(2, _view.Calls.Count(call => call.StartsWith("Appeared", StringComparison.Ordinal)));
+    }
+
+    [Fact]
+    public void SetProp_OnACarriedItem_SendsItsOwnerTheNewTooltip()
+    {
+        // A tool's uses left are a prop its tooltip shows: the client asks for a new tooltip only when told.
+        Run($"item.set_prop({_potions.Id.Value}, 'uses_remaining', 12)");
+
+        Assert.Contains(_fixture.Sender.Sent.OfType<PropertyListInfoPacket>(), packet => packet.Serial == _potions.Id);
     }
 
     [Fact]

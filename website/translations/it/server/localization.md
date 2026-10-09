@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"d342d916e0f214cc6573ef96f533e73f03c29c14159baceee665631fab9ec8dc","title":"Localizzazione"} -->
+<!-- translation: {"sourceHash":"43b39ccaffb9291c74e46876da40c25761a41e17d0e6d88aa8f9a12bca35eb8a","title":"Localizzazione"} -->
 
 # Localizzazione
 
@@ -217,6 +217,11 @@ Risiedono in `data/messages/<language>/moongate.toml`, separati dai testi standa
 | 30150 | Nessun personaggio si chiama {0}. | La risposta di `jail <name>` quando nessun giocatore ha quel nome |
 | 30160 a 30163 | Mostra la versione eseguita dal server…, Moongate {0} "{1}" ({2}), compilato {3}., Mostra da quanto tempo il server è in esecuzione…, Attivo da {0}, dal {1}. | I comandi `version` e `uptime` |
 | 30181 a 30184 | Nessun documento {0} in templates/books., Il documento {0} è nel tuo zaino., ... | Risposte e descrizione di aiuto del [comando `book`](commands/book.md) |
+| 30192 a 30204 | You cannot ask to be moved while you are in jail., You cannot ask to be moved while you are fighting., You already asked to be moved: stand still., You can ask to be moved again in {0} minutes., Stand still for {0} seconds and you will be taken to {1}., You moved: you stay where you are., You have been taken to {0}., There is no city to take you to., le regole del server e le quattro etichette del gump (Help, I am stuck, Useful commands, Server rules) | Cosa legge un giocatore dal gump di [aiuto](help.md): perché «Sono bloccato» viene rifiutato, l'attesa, lo spostamento, il testo delle regole e le etichette del menu |
+| 30205 a 30220 | Call a game master, What is it about?, Question, Bug, Suggestion, Harassment, il prompt di scrittura, le risposte a una richiesta, l'avviso allo staff, la riga della risposta, il conteggio delle richieste in attesa e la descrizione del comando `pages` | Cosa leggono un giocatore e un game master dalla coda di [aiuto](help.md) |
+| 30224 a 30229 | The server will shut down in {0} minutes., la descrizione del comando `event` e le sue risposte | Cosa leggono un giocatore e un amministratore dal [calendario](schedule.md) |
+| 30230 a 30237 | Oooooh, aren't you cute!, TRICK!, You receive some candy., gli annunci della stagione | Cosa dice un negoziante e cosa legge un giocatore in [dolcetto o scherzetto](holidays.md#halloween-trick-or-treat) |
+| 30238 a 30240 | Merry Christmas!, The Christmas season is over., Happy Holidays! Gift items have been placed in your backpack. | Gli annunci e il regalo del [Natale](holidays.md#christmas-snowballs-and-gifts) |
 | 30185, 30186 | Apre il gump degli strumenti del game master…, Il gump gmtools manca: templates/gumps/gmtools.xml. | Il comando `gmtools` |
 
 L'intestazione dei testi dei comandi in `eng/moongate.toml` elenca gli ID di entrambi gli insiemi.

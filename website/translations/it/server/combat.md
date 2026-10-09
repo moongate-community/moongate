@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2f183a806c44c1f2932833886c058a833033bb40f19c88778fe273a6fe07c037","title":"Combattimento"} -->
+<!-- translation: {"sourceHash":"42bcd08e37c416e9e300ab7af7891fcf554f5b3220fcdfe3892fcf929a95ef90","title":"Combattimento"} -->
 
 # Combattimento
 
@@ -54,7 +54,8 @@ quindi 2,5 secondi a 100 di stamina. Un colpo:
 - La base è l'arma che un giocatore impugna (un numero dal suo `damage_min` al suo `damage_max`), i dadi del template di
   un NPC (`damage`), oppure da 1 a 8 per i pugni.
 - Aumentata dalla tattica dell'attaccante (`+ (tactics - 50)%`), dalla forza e dall'anatomia (`strength/5%`, `anatomy/5%`, e
-  un altro 10% con anatomia a 100). Tattica e anatomia vengono provate a ogni colpo a segno e fanno crescere un giocatore.
+  un altro 10% con anatomia a 100). Tattica e anatomia vengono provate a ogni colpo a segno e fanno crescere un giocatore. Un'ascia viene aumentata allo stesso
+  modo dal Lumberjacking (`lumberjacking/5%`, e un altro 10% a 100), che un colpo non prova.
 - Dimezzato quando il bersaglio è un giocatore o l'attaccante è un NPC; un giocatore che colpisce un NPC lo infligge tutto.
   `npc_damage_rate` divide ciò che un NPC fa a un giocatore.
 - L'armatura ne toglie la sua parte. Un **giocatore** viene colpito in una parte del corpo, scelta come la sceglie ModernUO (collo 7%,
@@ -63,9 +64,17 @@ quindi 2,5 secondi a 100 di stamina. Un colpo:
   la quota di una zona, da metà a tutta. Viene inflitto almeno 1.
 - Il danno è mostrato sopra il bersaglio ai giocatori nel combattimento (`0x0B`, `display_damage_numbers`) e la
   barra della salute si muove.
+- Un colpo che fa danno lascia del **sangue** a terra: un pezzo sotto chi è colpito e da uno a `blood_pieces`
+  intorno, a una casella di distanza, con una delle sette grafiche del sangue di ModernUO (`0x1645`, da `0x122A` a
+  `0x122F`), del colore della creatura. Sono oggetti a terra dei template `blood_splash_*` e spariscono dopo
+  `blood_seconds` (5), come in ModernUO e Source-X; gli oggetti a terra si controllano ogni 5 secondi, quindi un pezzo
+  può durare altrettanto di più. Una creatura il cui template dice `blood_hue = -1` non sanguina: i non morti e i
+  golem. Un giocatore sanguina di rosso. Pugni, spade e frecce sanguinano allo stesso modo; per ora un incantesimo
+  non fa sangue. Il sangue è solo scena: cede il posto quando la riserva dei serial degli oggetti si assottiglia, così il
+  bottino e le pile divise hanno i loro, e un pezzo non finisce mai fuori mappa.
 
 La finestra di stato di un giocatore mostra il danno dei suoi pugni, da `1` a `8` con gli stessi bonus di tattica, forza e
-anatomia (il minimo non scende mai sotto 1); lo stato di un NPC non ne mostra.
+anatomia (il minimo non scende mai sotto 1), e di Lumberjacking per un'ascia; lo stato di un NPC non ne mostra.
 
 Un mobile senza più punti ferita muore come quando un game master [lo uccide](death.md), con l'attaccante come uccisore
 e il suo cadavere: un NPC lascia il mondo, un [giocatore](death.md#death-of-a-player) resta come fantasma. Un fantasma non combatte,
@@ -80,11 +89,15 @@ un altro continua con quello. Un giocatore colpito non risponde da solo: clicca.
 ## Impostazioni
 
 `[ultima.combat]`, vedi [Configurazione del server](server-configuration.md): `global_attack_speed`, `attack_stamina`,
-`npc_damage_rate`, `max_range`, `combatant_seconds` e `display_damage_numbers`.
+`npc_damage_rate`, `max_range`, `combatant_seconds`, `display_damage_numbers`, `blood_enabled`, `blood_pieces` e
+`blood_seconds`.
 
 ## Lua
 
-Il modulo `combat`: `combat.attack(attacker, target)`, `combat.stop(mobile)` e `combat.target(mobile)`.
+Il modulo `combat`: `combat.attack(attacker, target)`, `combat.stop(mobile)`, `combat.target(mobile)` e
+`combat.range(mobile)`; e, per ciò che si allena su un manichino o un bersaglio, `combat.weapon(mobile)` (l'abilità, se
+è un arco, la sua portata, il proiettile e le munizioni), `combat.swing(mobile, x, y)` (gira e mostra il colpo, senza
+combattimento) e `combat.spend_ammo(mobile)` (toglie una freccia o un dardo).
 
 ## Armi e armature
 
@@ -107,7 +120,7 @@ difensore è quella della sua arma, Wrestling quando non ne impugna. Un arco, un
 
 Il valore di armatura dell'intero giocatore, mostrato dalla finestra di stato, è l'armatura di ogni parte pesata con la quota
 dei colpi che riceve (arrotondata), e il danno mostrato lì è quello dell'arma, con i bonus. I numeri sono quelli delle ere
-di UOX3, convertiti da `mgctl convert uox` (vedi [Migrare da UOX3](uox3-migration.md)); una grafica semplice eredita i numeri
+di UOX3, convertiti da `moongate-convert uox` (vedi [Migrare da UOX3](uox3-migration.md)); una grafica semplice eredita i numeri
 LBR, quelli classici di ModernUO.
 
 ## Arcieri
@@ -135,7 +148,7 @@ la finestra di stato mostra), e con queste differenze, come in ModernUO e UOX3:
 ## Non ancora
 
 Parata (uno scudo non conta ancora nulla), una faretra (le munizioni si prendono dallo zaino), mosse speciali, durabilità (`max_hits` è conservato, non usato), la
-forza richiesta da un'arma o da un'armatura (`strength_required` è conservato, non usato), il bonus di lumberjacking delle asce, liste
+forza richiesta da un'arma o da un'armatura (`strength_required` è conservato, non usato), liste
 di aggressori oltre il bersaglio, bende ed eventi di combattimento di Lua (`attack`, `hit`, `miss`,
 `get_hit`).
 

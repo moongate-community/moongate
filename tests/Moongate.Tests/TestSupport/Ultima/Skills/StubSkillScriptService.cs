@@ -19,6 +19,18 @@ public sealed class StubSkillScriptService : ISkillScriptService
 
     public List<(SkillType Skill, MobileEntity User)> Used { get; } = [];
 
+    /// <summary>
+    ///     The functions it was asked to call, as "snooping on_snoop 2 3".
+    /// </summary>
+    public List<string> Called { get; } = [];
+
+    public ScriptResult Call(SkillType skill, string function, params object?[] args)
+    {
+        Called.Add($"{skill} {function} {string.Join(' ', args)}");
+
+        return Result;
+    }
+
     public ScriptResult Use(SkillType skill, MobileEntity user)
     {
         Used.Add((skill, user));

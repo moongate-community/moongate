@@ -10,6 +10,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
@@ -29,6 +30,7 @@ public sealed class MobileModuleTests
 {
     private readonly RecordingCrimeService _crimes = new();
     private readonly StubDeathService _death = new();
+    private readonly RecordingMountService _mounts = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingMobileStateService _state = new();
@@ -68,6 +70,35 @@ public sealed class MobileModuleTests
         var backpack = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
         backpack.Equip(_aria.Id, LayerType.Backpack);
         _items.Add([backpack]);
+    }
+
+    [Fact]
+    public void StealthSteps_AreSetAndRead_AndOnlyWithinRangeForAMobileInTheWorld()
+    {
+        var result = Run(
+            "return mobile.stealth_steps(2), mobile.set_stealth_steps(2, 8), mobile.stealth_steps(2), mobile.set_stealth_steps(2, -1), mobile.set_stealth_steps(2, 1001), mobile.set_stealth_steps(999, 3), mobile.stealth_steps(999)"
+        );
+
+        Assert.Equal(0, result[0].Read<int>());
+        Assert.True(result[1].Read<bool>());
+        Assert.Equal(8, result[2].Read<int>());
+        Assert.False(result[3].Read<bool>());
+        Assert.False(result[4].Read<bool>());
+        Assert.False(result[5].Read<bool>());
+        Assert.Equal(LuaValue.Nil, result[6]);
+        Assert.Equal(8, _aria.AllowedStealthSteps);
+    }
+
+    [Fact]
+    public void IsFemale_IsTrueOnlyForAFemaleMobile_PlayerOrNpc()
+    {
+        _aria.Gender = GenderType.Female;
+
+        var result = Run("return mobile.is_female(2), mobile.is_female(256), mobile.is_female(999)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.False(result[1].Read<bool>());
+        Assert.False(result[2].Read<bool>());
     }
 
     [Fact]
@@ -411,6 +442,17 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void IsMounted_ARiderIsTrue_AFootWalkerAndAnUnknownSerialAreFalse()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+
+        var result = Run("return mobile.is_mounted(2), mobile.is_mounted(999)");
+
+        Assert.Equal([true, false], result.Select(value => value.Read<bool>()));
+        Assert.False(Run("return mobile.is_mounted(256)")[0].Read<bool>());
+    }
+
+    [Fact]
     public void Resurrect_ADeadPlayer_RaisesItAtOnce_AndIsDeadSaysWhoIs()
     {
         _aria.AccountId = new Serial(0x42);
@@ -712,7 +754,8 @@ public sealed class MobileModuleTests
                 ),
                 new StubWeightService { CarriedStones = 37, MaximumStones = 215 },
                 _crimes,
-                _death
+                _death,
+                mounts: _mounts
             )
         );
 

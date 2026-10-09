@@ -1,20 +1,22 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Effects;
-using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Data.Internal.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
-using Moongate.Server.Ultima.Data.Bodies;
-using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.Combat;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -85,6 +87,8 @@ public sealed class CombatService : ICombatService
     private readonly IMurderService? _murders;
     private readonly IEffectService? _effects;
     private readonly IAmmoService? _ammo;
+    private readonly IBloodService? _blood;
+    private readonly IMountService? _mounts;
     private string? _timerId;
 
     public CombatService(
@@ -108,10 +112,14 @@ public sealed class CombatService : ICombatService
         Random? random = null,
         IMurderService? murders = null,
         IEffectService? effects = null,
-        IAmmoService? ammo = null
+        IAmmoService? ammo = null,
+        IBloodService? blood = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
         _ammo = ammo;
+        _blood = blood;
         _effects = effects;
         _murders = murders;
         _mobiles = mobiles;
@@ -201,6 +209,32 @@ public sealed class CombatService : ICombatService
     public int RangeOf(MobileEntity mobile)
     {
         return RangedOf(mobile)?.Range ?? _config.MaxRange;
+    }
+
+    public WeaponInfo? HeldWeaponOf(MobileEntity mobile)
+    {
+        return RangedOf(mobile) ?? WeaponOf(mobile);
+    }
+
+    public void PlaySwing(MobileEntity mobile, int x, int y)
+    {
+        var direction = mobile.Location.GetDirectionTo(new Point3D(x, y, mobile.Location.Z)) & (DirectionType)0x07;
+
+        if (!mobile.Frozen && (mobile.Location.X != x || mobile.Location.Y != y) && direction != mobile.Direction)
+        {
+            mobile.Direction = direction;
+
+            // Its own client too: the movement packet carries the facing, and the one that walks next steps from it.
+            _view.MobileFlagsChanged(mobile);
+        }
+
+        var (action, frames) = SwingAnimation(mobile, HeldWeaponOf(mobile));
+        _view.MobileAnimated(mobile, action, frames, 1);
+    }
+
+    public bool SpendAmmo(MobileEntity shooter)
+    {
+        return RangedOf(shooter) is { } weapon && _ammo is not null && _ammo.Spend(shooter, weapon);
     }
 
     public MobileEntity? TargetOf(MobileEntity mobile)
@@ -487,6 +521,11 @@ public sealed class CombatService : ICombatService
         _view.MobileAnimated(target, action, frames, 1);
         ShowDamage(attacker, target, damage);
 
+        if (damage > 0)
+        {
+            _blood?.Splash(target);
+        }
+
         _murders?.Struck(attacker, target);
         var hits = target.Hits - damage;
 
@@ -591,7 +630,9 @@ public sealed class CombatService : ICombatService
             damage,
             Points(attacker, SkillType.Tactics),
             attacker.Strength,
-            Points(attacker, SkillType.Anatomy)
+            Points(attacker, SkillType.Anatomy),
+            // One who fells trees hits harder with an axe; the skill is not tried, it grows on trees.
+            weapon?.Type == WeaponType.Axe ? Points(attacker, SkillType.Lumberjacking) : 0
         );
         // As ModernUO's classic: a player hit, or a hit by an NPC, does half; a player hitting an NPC does all.
         var halved = !target.IsNpc || attacker.IsNpc;
@@ -670,11 +711,19 @@ public sealed class CombatService : ICombatService
         return _bodies.Value.GetValueOrDefault(mobile.Body, BodyType.Monster);
     }
 
+    // A rider swings with the actions of a mount; a walker with the ones of its weapon.
+    private HumanAnimationType HumanSwing(MobileEntity attacker, WeaponInfo? weapon)
+    {
+        return _mounts?.IsMounted(attacker) == true
+            ? WeaponFamilies.MountedAction(weapon?.Type, weapon?.TwoHanded == true)
+            : WeaponFamilies.Action(weapon?.Type, weapon?.TwoHanded == true);
+    }
+
     private (int Action, int Frames) SwingAnimation(MobileEntity attacker, WeaponInfo? weapon)
     {
         return BodyOf(attacker) switch
         {
-            BodyType.Human  => ((int)WeaponFamilies.Action(weapon?.Type, weapon?.TwoHanded == true), SwingFrames),
+            BodyType.Human  => ((int)HumanSwing(attacker, weapon), SwingFrames),
             BodyType.Animal => ((int)AnimalAnimationType.Attack1, OtherSwingFrames),
             _               => ((int)MonsterAnimationType.Attack1, OtherSwingFrames)
         };

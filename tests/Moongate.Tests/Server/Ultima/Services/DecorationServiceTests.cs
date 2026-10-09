@@ -42,6 +42,16 @@ public sealed class DecorationServiceTests
                 },
                 new ItemTemplate
                 {
+                    Id = "decoration_training_dummy", ItemId = new Serial(0x1070), Movable = false, Decays = false,
+                    ScriptId = "training_dummy"
+                },
+                new ItemTemplate
+                {
+                    Id = "decoration_archery_butte", ItemId = new Serial(0x100A), Movable = false, Decays = false,
+                    ScriptId = "archery_butte", UseRange = 6
+                },
+                new ItemTemplate
+                {
                     Id = "decoration_ankh", ItemId = new Serial(0x0003), Movable = false, Decays = false, ScriptId = "ankh"
                 },
                 new ItemTemplate
@@ -181,6 +191,32 @@ public sealed class DecorationServiceTests
 
         var clock = Assert.Single(_items.Items);
         Assert.Equal(("decoration_clock", 0x104B), (clock.TemplateId, clock.ItemId));
+    }
+
+    [Theory]
+    [InlineData("TrainingDummy", 0x1074, "decoration_training_dummy")]
+    [InlineData("TrainingDummy", 0x1070, "decoration_training_dummy")]
+    [InlineData("ArcheryButte", 0x100A, "decoration_archery_butte")]
+    [InlineData("ArcheryButte", 0x100B, "decoration_archery_butte")]
+    public async Task DecorateAsync_ADummyOrAButte_UsesItsTemplate_WithTheGraphicOfTheEntry(string type, int graphic, string template)
+    {
+        await Service(File("trammel", Block(type, graphic))).DecorateAsync(_progress);
+
+        var placed = Assert.Single(_items.Items);
+        Assert.Equal((template, graphic), (placed.TemplateId, placed.ItemId));
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AButtePlacedAsPlainDecoration_BecomesAButte_AndCountsAsThere()
+    {
+        var butte = new ItemEntity { Id = new Serial(0x40000511), TemplateId = "decoration", ItemId = 0x100A, Amount = 1 };
+        _items.Add([butte]);
+        _items.PlaceOnGround(butte, MapType.Trammel, new Point3D(1500, 1600, 10));
+
+        var result = await Service(File("trammel", Block("ArcheryButte", 0x100A))).DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), result);
+        Assert.Equal("decoration_archery_butte", butte.TemplateId);
     }
 
     [Theory, InlineData(0x1E5E), InlineData(0x1E5F)]
@@ -402,6 +438,23 @@ public sealed class DecorationServiceTests
             },
             teleporter.Props
         );
+    }
+
+    [Fact]
+    public async Task DecorateAsync_PlacesATeleporterThatDeniesRiders_WithItsFlagAsAProp()
+    {
+        var block = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(5690, 569, 25), ["deny_mounted"] = "true" },
+            new Point3D(5827, 593, 0)
+        );
+
+        await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        var teleporter = Assert.Single(_items.Items);
+        Assert.Equal("true", teleporter.GetProp<string>("deny_mounted"));
+        Assert.Equal(5690L, teleporter.GetProp<long>("teleport.x"));
     }
 
     [Fact]

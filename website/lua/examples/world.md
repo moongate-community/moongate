@@ -108,3 +108,19 @@ Whether guards protect the region of the place, such as a town:
 ```lua
 world.is_guarded(MapType.Trammel, 1496, 1628, 10)
 ```
+
+## is_water
+
+Whether a creature could swim on a cell, as a fishing pole asks of the place a player picked:
+
+```lua
+world.is_water(MapType.Trammel, 1496, 1640)
+```
+
+## play_sound
+
+A splash on the water, heard by the players around the place:
+
+```lua
+world.play_sound(MapType.Trammel, 1496, 1640, -5, 0x364)
+```

@@ -44,7 +44,7 @@ end
 | Field of an entry | |
 | --- | --- |
 | `id` | The entry's own name in the script, given back at the choice. Required |
-| `cliloc` | The number of the text of the client the entry shows, such as 3006105 `Open Bank Box`. Required |
+| `cliloc` | The number of the text of the client the entry shows, such as 3006105 `Open Bank Box`. It is the whole number: ModernUO and ServUO write these texts without the 3000000 (6105), and a number written so shows `MegaCliloc missing` in the client. Required |
 | `range` | From how many tiles it can be chosen, 0 to 18; 18 when unset |
 | `enabled` | `false` shows the entry greyed out; `true` when unset |
 

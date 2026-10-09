@@ -41,6 +41,8 @@ public sealed class ItemSerialPool : IItemSerialPool
         }
     }
 
+    public int Available => _serials.Count;
+
     public bool TryTake(out Serial serial)
     {
         var taken = _serials.TryDequeue(out serial);

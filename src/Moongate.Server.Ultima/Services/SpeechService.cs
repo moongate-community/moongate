@@ -50,14 +50,13 @@ public sealed class SpeechService : ISpeechService
 
     public int SayCliloc(MobileEntity speaker, int cliloc, string arguments = "", string affix = "")
     {
-        var body = Math.Clamp(speaker.Body, 0, ushort.MaxValue);
+        return SendAround(speaker.Map, speaker.Location, Spoken(speaker, cliloc, arguments, affix), speaker);
+    }
 
-        // A text with something of the server after it travels in a packet of its own.
-        IOutgoingPacket message = affix.Length == 0
-            ? LocalizedMessagePacket.Spoken(speaker.Id, body, cliloc, speaker.Name, arguments)
-            : LocalizedMessageAffixPacket.Spoken(speaker.Id, body, cliloc, speaker.Name, affix, arguments);
-
-        return SendAround(speaker.Map, speaker.Location, message, speaker);
+    public bool SayClilocTo(MobileEntity speaker, MobileEntity player, int cliloc, string arguments = "", string affix = "")
+    {
+        return _sessions.TryGetByCharacterId(player.Id, out var session) &&
+               _sender.TrySend(session.SessionId, Spoken(speaker, cliloc, arguments, affix));
     }
 
     public int PlaySound(MobileEntity source, int sound)
@@ -84,6 +83,16 @@ public sealed class SpeechService : ISpeechService
     {
         return _sessions.TryGetByCharacterId(player.Id, out var session) &&
                _sender.TrySend(session.SessionId, LocalizedMessagePacket.System(cliloc, arguments, hue));
+    }
+
+    // A text with something of the server after it travels in a packet of its own.
+    private static IOutgoingPacket Spoken(MobileEntity speaker, int cliloc, string arguments, string affix)
+    {
+        var body = Math.Clamp(speaker.Body, 0, ushort.MaxValue);
+
+        return affix.Length == 0
+            ? LocalizedMessagePacket.Spoken(speaker.Id, body, cliloc, speaker.Name, arguments)
+            : LocalizedMessageAffixPacket.Spoken(speaker.Id, body, cliloc, speaker.Name, affix, arguments);
     }
 
     // With a speaker, those who do not see it do not hear it or its sounds either, as ModernUO.

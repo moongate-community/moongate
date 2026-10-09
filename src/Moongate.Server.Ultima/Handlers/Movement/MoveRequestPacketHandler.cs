@@ -22,13 +22,15 @@ namespace Moongate.Server.Ultima.Handlers.Movement;
 ///     <see cref="IMoveOverService" />.
 /// </summary>
 /// <remarks>
-///     Each step books the next one 400 ms later walking, 200 ms running; a step may come up to 200 ms early, which
-///     absorbs normal network jitter. A turn uses no time.
+///     Each step books the next one 400 ms later walking, 200 ms running, or 200 and 100 ms for a rider on a mount; a
+///     step may come up to 200 ms early, which absorbs normal network jitter. A turn uses no time.
 /// </remarks>
 public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 {
     private const long WalkDelayMs = 400;
     private const long RunDelayMs = 200;
+    private const long MountedWalkDelayMs = 200;
+    private const long MountedRunDelayMs = 100;
     private const long CreditMs = 200;
     private const byte LastSequence = 255;
 
@@ -47,6 +49,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private readonly IFatigueService? _fatigue;
     private readonly IMobileStateService? _state;
     private readonly ISpeechService? _speech;
+    private readonly IMountService? _mounts;
 
     public MoveRequestPacketHandler(
         IMobileService mobiles,
@@ -57,9 +60,11 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         IMoveOverService? moveOver = null,
         IFatigueService? fatigue = null,
         IMobileStateService? state = null,
-        ISpeechService? speech = null
+        ISpeechService? speech = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
         _state = state;
         _speech = speech;
         _fatigue = fatigue;
@@ -125,15 +130,19 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
             return;
         }
 
+        var mounted = _mounts?.IsMounted(mobile) == true;
+
         mobile.LastMovedAt = _time.GetUtcNow();
-        state.NextStepAt = Math.Max(now, state.NextStepAt) + (packet.Running ? RunDelayMs : WalkDelayMs);
-        _fatigue?.Stepped(session, mobile, packet.Running);
+        state.NextStepAt = Math.Max(now, state.NextStepAt) + DelayOf(mounted, packet.Running);
+        // The horse runs, not the rider: a rider pays no stamina to run, and an overloaded one tires as if it walked.
+        _fatigue?.Stepped(session, mobile, packet.Running && !mounted);
         // As ModernUO, a step closes the bank box.
         _bank?.Close(mobile);
 
-        // And it shows who hid: there is no Stealth yet. The staff hides to watch, and stays hidden.
-        // A ghost hides by being dead: war mode shows it, not a step.
-        if (mobile.Hidden && !mobile.IsDead && session.AccountType < AccountType.GameMaster && _state is not null)
+        // And it shows who hid, as ModernUO: a step the Stealth skill allowed does not, running always does. The staff
+        // hides to watch, and stays hidden. A ghost hides by being dead: war mode shows it, not a step.
+        if (mobile.Hidden && !mobile.IsDead && session.AccountType < AccountType.GameMaster && _state is not null &&
+            (mobile.AllowedStealthSteps-- <= 0 || packet.Running))
         {
             _state.SetHidden(mobile, false);
             _speech?.TellCliloc(mobile, RevealedCliloc);
@@ -163,6 +172,18 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     {
         state.ExpectedSequence = 0;
         _sender.TrySend(session.SessionId, new MovementRejectPacket(sequence, mobile.Location, mobile.Direction));
+    }
+
+    // A rider covers the ground twice as fast: 200 ms a step walking and 100 ms running, 400 and 200 on foot.
+    private static long DelayOf(bool mounted, bool running)
+    {
+        return (running, mounted) switch
+        {
+            (true, true)  => MountedRunDelayMs,
+            (true, false) => RunDelayMs,
+            (false, true) => MountedWalkDelayMs,
+            _             => WalkDelayMs
+        };
     }
 
     private long NowMs()

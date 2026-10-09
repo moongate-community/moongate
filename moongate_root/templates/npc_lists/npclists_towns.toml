@@ -963,16 +963,6 @@ weight = 1
 mobile_id = "f_artist"
 
 [[npc_list]]
-id = "thiefguildmaster"
-[[npc_list.entries]]
-weight = 1
-mobile_id = "m_thief_guildmaster"
-
-[[npc_list.entries]]
-weight = 1
-mobile_id = "f_thief_guildmaster"
-
-[[npc_list]]
 id = "lakeshire_npclist_1"
 [[npc_list.entries]]
 weight = 40

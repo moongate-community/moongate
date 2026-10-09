@@ -126,6 +126,7 @@ weapon_type = "mace"
 [[item]]
 id = "base_halberd"
 base_id = "base_item"
+script_id = "blade"
 item_id = 5182
 name = "halberd"
 rarity = "common"
@@ -144,6 +145,7 @@ rarity = "common"
 [[item]]
 id = "0x143f"
 base_id = "0x143e_lbr"
+script_id = "blade"
 item_id = 5183
 rarity = "common"
 weapon_type = "sword"
@@ -151,6 +153,7 @@ weapon_type = "sword"
 [[item]]
 id = "guardhalberd"
 base_id = "base_item"
+script_id = "blade"
 item_id = 5183
 name = "a guard's halberd"
 rarity = "common"
@@ -172,6 +175,7 @@ loot_type = "newbied"
 [[item]]
 id = "base_bardiche"
 base_id = "base_item"
+script_id = "blade"
 item_id = 3917
 name = "bardiche"
 rarity = "common"
@@ -190,6 +194,7 @@ rarity = "common"
 [[item]]
 id = "0x0f4e"
 base_id = "0x0f4d_lbr"
+script_id = "blade"
 item_id = 3918
 rarity = "common"
 weapon_type = "pole_arm"
@@ -197,6 +202,7 @@ weapon_type = "pole_arm"
 [[item]]
 id = "base_scythe"
 base_id = "base_item"
+script_id = "blade"
 item_id = 9914
 name = "scythe"
 rarity = "common"
@@ -215,6 +221,7 @@ rarity = "common"
 [[item]]
 id = "0x26c4"
 base_id = "0x26ba_lbr"
+script_id = "blade"
 item_id = 9924
 rarity = "common"
 weapon_type = "pole_arm"
@@ -222,6 +229,7 @@ weapon_type = "pole_arm"
 [[item]]
 id = "base_bladed_staff"
 base_id = "base_item"
+script_id = "blade"
 item_id = 9917
 name = "bladed staff"
 rarity = "common"
@@ -240,6 +248,7 @@ rarity = "common"
 [[item]]
 id = "0x26c7"
 base_id = "0x26bd_lbr"
+script_id = "blade"
 item_id = 9927
 rarity = "common"
 weapon_type = "sword"
@@ -297,6 +306,7 @@ weapon_type = "mace"
 [[item]]
 id = "base_gargish_bardiche"
 base_id = "base_item"
+script_id = "blade"
 item_id = 18612
 name = "gargish bardiche"
 rarity = "common"
@@ -315,6 +325,7 @@ rarity = "common"
 [[item]]
 id = "0x48b5"
 base_id = "0x48b4_lbr"
+script_id = "blade"
 item_id = 18613
 rarity = "common"
 weapon_type = "pole_arm"
@@ -322,6 +333,7 @@ weapon_type = "pole_arm"
 [[item]]
 id = "base_gargish_scythe"
 base_id = "base_item"
+script_id = "blade"
 item_id = 18628
 name = "gargish scythe"
 rarity = "common"
@@ -340,6 +352,7 @@ rarity = "common"
 [[item]]
 id = "0x48c5"
 base_id = "0x48c4_lbr"
+script_id = "blade"
 item_id = 18629
 rarity = "common"
 weapon_type = "pole_arm"

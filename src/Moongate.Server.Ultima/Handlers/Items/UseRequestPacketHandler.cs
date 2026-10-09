@@ -5,6 +5,7 @@ using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
@@ -14,6 +15,7 @@ using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Titles;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Services;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -23,7 +25,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 ///     Answers a double click (0x06). On a container the session's character carries, such as its backpack or a bag in
 ///     it: the container's gump (0x24), then its items (0x3C). On a human-bodied mobile in view range, or on the
 ///     character's own paperdoll button (the serial with its high bit set): the paperdoll (0x88), with lifting allowed
-///     only on the character's own. Anything else is not handled yet.
+///     only on the character's own. On a creature that is a mount: the character rides it. On the character itself while it
+///     rides: it gets off. Anything else is not handled yet.
 /// </summary>
 /// <remarks>
 ///     A container is an item whose graphic has the tiledata Container flag; <see cref="IContainerLayoutService" />
@@ -37,6 +40,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     private const int DeadCliloc = 1019048;
     private const string UseFunction = "on_use";
     private const string GhostUseFunction = "on_ghost_use";
+    private const string SnoopFunction = "on_snoop";
 
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
@@ -51,6 +55,10 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     private readonly IItemScriptService? _scripts;
     private readonly IBankService? _bank;
     private readonly IInventoryMutationGuard? _inventory;
+    private readonly IItemTemplateService? _templates;
+    private readonly ISkillScriptService? _skillScripts;
+    private readonly IContainerViewService _views;
+    private readonly IMountService? _mounts;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -64,9 +72,17 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         IFameKarmaTitleService titles,
         IItemScriptService? scripts = null,
         IBankService? bank = null,
-        IInventoryMutationGuard? inventory = null
+        IInventoryMutationGuard? inventory = null,
+        IItemTemplateService? templates = null,
+        ISkillScriptService? skillScripts = null,
+        IContainerViewService? views = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
+        _skillScripts = skillScripts;
+        _views = views ?? new ContainerViewService(items, layouts, sender, tooltips);
+        _templates = templates;
         _inventory = inventory;
         _bank = bank;
         _tooltips = tooltips;
@@ -94,7 +110,10 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
 
         if (session.CharacterId.IsValid && _mobiles.TryGet(packet.Target, out var mobile))
         {
-            OpenPaperdoll(session, mobile);
+            if (!TryRide(session, mobile))
+            {
+                OpenPaperdoll(session, mobile);
+            }
 
             return;
         }
@@ -128,6 +147,23 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
             return;
         }
 
+        // The backpack of another mobile, and a bag in it, is not opened but snooped, by the script of the skill.
+        if (_items.GetOwner(item) is { } owner &&
+            owner != session.CharacterId &&
+            _mobiles.IsInWorld(owner) &&
+            _items.GetWornRoot(item) is { Layer: LayerType.Backpack })
+        {
+            _skillScripts?.Call(
+                SkillType.Snooping,
+                SnoopFunction,
+                (long)session.CharacterId.Value,
+                (long)owner.Value,
+                (long)item.Id.Value
+            );
+
+            return;
+        }
+
         if (_items.GetOwner(item) != session.CharacterId && !CanOpenOnTheGround(session, item))
         {
             _logger.Debug(
@@ -139,16 +175,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
             return;
         }
 
-        var gump = _layouts.GetLayout(item.ItemId).Gump;
-        _sender.TrySend(session.SessionId, new DisplayContainerPacket(item.Id, gump, session.UsesHighSeasContainers()));
-        var contents = _items.GetContents(item.Id);
-        _sender.TrySend(session.SessionId, new ContainerContentPacket(contents, session.UsesContainerGrid()));
-
-        // As ModernUO and Source-X: each item shown is followed by its tooltip revision.
-        foreach (var content in contents)
-        {
-            _sender.TrySend(session.SessionId, _tooltips.Info(content));
-        }
+        _views.Show(session, item);
     }
 
     public void Use(GameSession session, Serial target)
@@ -159,6 +186,30 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
     public bool HasPaperdoll(MobileEntity mobile)
     {
         return _bodies.Value.TryGetValue(mobile.Body, out var type) && type == BodyType.Human;
+    }
+
+    // A creature that is a mount is ridden, and the character itself, while it rides, gets off: no paperdoll either way.
+    private bool TryRide(GameSession session, MobileEntity target)
+    {
+        if (_mounts is null || !_mobiles.TryGet(session.CharacterId, out var rider))
+        {
+            return false;
+        }
+
+        if (target.Id == rider.Id)
+        {
+            return _mounts.IsMounted(rider) && _mounts.Dismount(rider);
+        }
+
+        if (!target.IsNpc || HasPaperdoll(target))
+        {
+            return false;
+        }
+
+        _mounts.TryMount(rider, target, session.AccountType >= AccountType.GameMaster);
+
+        // An animal has no paperdoll to open, whatever the mount said.
+        return true;
     }
 
     // A container lying on the ground, or inside one, within reach of the character, such as a treasure chest; one too
@@ -182,6 +233,17 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         return false;
     }
 
+    // Whether the character reaches what it uses on the ground: within the use range of the item's template, such as
+    // the archery butte's six tiles, else the 2 tiles of any ground item.
+    private bool CanReachToUse(MobileEntity character, ItemEntity item, ItemEntity root)
+    {
+        // The longer reach is of the item that lies on the ground itself, not of one inside a container there.
+        return item == root && _templates is not null && _templates.TryGet(item.TemplateId, out var template) &&
+               template.UseRange is { } range
+            ? _items.CanReach(character, root, range)
+            : _items.CanReach(character, root);
+    }
+
     // The item's on_use, for an item the character carries or reaches on the ground; true when the script handled the
     // double click, by returning true or by waiting, so the default action must not follow.
     private bool RunOnUse(GameSession session, ItemEntity item)
@@ -199,7 +261,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         if (_items.GetOwner(item) != character.Id &&
             (_items.GetGroundRoot(item) is not { } root ||
              !_items.IsLyingOnGround(root) ||
-             !_items.CanReach(character, root)))
+             !CanReachToUse(character, item, root)))
         {
             _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, TooFarCliloc, "", ""));
 

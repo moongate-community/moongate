@@ -17,13 +17,7 @@ public sealed class CtlCommandTests
 
         Assert.Equal(0, result.ExitCode);
 
-        foreach (var command in new[]
-                 {
-                     "init", "migrate status", "migrate apply", "convert uox", "convert modernuo-spawns",
-                     "convert modernuo-signs", "convert modernuo-teleporters", "convert modernuo-locations",
-                     "convert modernuo-chests",
-                     "convert modernuo-books"
-                 })
+        foreach (var command in new[] { "init", "migrate status", "migrate apply", "completion" })
         {
             Assert.Contains(command, result.Output);
         }
@@ -55,7 +49,7 @@ public sealed class CtlCommandTests
     [Theory]
     [InlineData("needs one of: status, apply", "migrate")]
     [InlineData("needs one of: status, apply", "migrate", "aply", "--target", "world")]
-    [InlineData("needs one of: uox, modernuo-spawns", "convert")]
+    [InlineData("unknown command 'convert'", "convert", "uox")]
     [InlineData("needs a root directory", "init")]
     [InlineData("unknown command 'help'", "help")]
     [InlineData("unknown command 'status'", "status")]
@@ -70,37 +64,6 @@ public sealed class CtlCommandTests
         Assert.Equal(2, result.ExitCode);
         Assert.Contains(expected, result.Output);
         Assert.Empty(Directory.EnumerateFileSystemEntries(directory.Path));
-    }
-
-    [Fact]
-    public async Task Run_ConvertHelp_ShowsTheOptionsOfTheCommand()
-    {
-        var result = await CtlProcess.RunAsync("convert", "modernuo-teleporters", "--help");
-
-        Assert.Equal(0, result.ExitCode);
-        Assert.Contains("--source", result.Output);
-        Assert.Contains("--destination", result.Output);
-    }
-
-    [Fact]
-    public async Task Run_ConvertModernUoSigns_WritesTheDecorationFile()
-    {
-        using var directory = new TemporaryDirectory();
-        var source = Path.Combine(directory.Path, "signs.cfg");
-        File.WriteAllText(source, "2 2979 3632 2537 0 The Shakin' Bakery\n");
-        var destination = Path.Combine(directory.Path, "decorations");
-
-        var result = await CtlProcess.RunAsync(
-            "convert",
-            "modernuo-signs",
-            "--source",
-            source,
-            "--destination",
-            destination
-        );
-
-        Assert.True(result.ExitCode == 0, result.Output);
-        Assert.Contains("The Shakin' Bakery", File.ReadAllText(Path.Combine(destination, "trammel", "_signs.toml")));
     }
 
     [Fact]

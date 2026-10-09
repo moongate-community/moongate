@@ -51,7 +51,7 @@ The [Lua API reference](https://moongate.sh/lua/) has a page for each module, wi
 function's signature, parameters and return type; it is generated from the server's code.
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail`, `board` and `commands` in game and standalone modes.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `vendor`, `trainer`, `effect`, `moongates`, `locations`, `jail`, `board` and `commands` in game and standalone modes.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -71,6 +71,8 @@ Some modules have a page that says more:
 | `effect` | [Effects](scripting/effects.md) |
 | `gump` | [Gumps](gumps.md), with [gumps built in Lua](gumps.md#gumps-built-in-lua), and [Your first gump](gump-tutorial.md) |
 | `bank` | [Bank](bank.md) |
+| `vendor` | [Vendors](vendors.md) |
+| `trainer` | [Trainers](skills.md#trainers) |
 | `dice` | The forms of [DiceSpec](toml-types.md#dicespec) |
 | `localization` | [Read a message from Lua](localization.md#read-a-message-from-lua) |
 | `locations` | [Locations](data-files/locations.md) and the [`go` command](commands/go.md) |

@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Combat;
@@ -17,6 +18,7 @@ using Moongate.Tests.TestSupport.Randomness;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Combat;
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Effects;
@@ -46,6 +48,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private readonly RecordingMurderService _murders = new();
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingAmmoService _ammo = new();
+    private readonly RecordingBloodService _blood = new();
+    private readonly RecordingMountService _mounts = new();
     private readonly StubCombatGearService _gear = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubSkillService _skills = new();
@@ -112,7 +116,9 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _random,
             _murders,
             _effects,
-            _ammo
+            _ammo,
+            _blood,
+            _mounts
         );
     }
 
@@ -249,6 +255,27 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Contains($"Struck {_aria.Id.Value} {_orc.Id.Value}", _murders.Calls);
     }
 
+    [Fact]
+    public void AHit_ThatDoesDamage_LeavesBloodWhereTheTargetStands()
+    {
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Equal([_orc], _blood.Splashed);
+    }
+
+    [Fact]
+    public void AHit_OnAnInvulnerable_LeavesNoBlood()
+    {
+        _orc.Notoriety = NotorietyType.Invulnerable;
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Empty(_blood.Splashed);
+    }
+
     [Theory]
     [InlineData(NotorietyType.Attackable)]
     [InlineData(NotorietyType.Enemy)]
@@ -315,6 +342,48 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Equal((new Serial(2), new Serial(Orc)), (swing.Attacker, swing.Defender));
         // Punch, 7 frames.
         Assert.Contains("Animated 2 31 7 1", _view.Calls);
+    }
+
+    [Theory,
+     InlineData(WeaponType.Sword, false, 26),
+     InlineData(WeaponType.Mace, false, 26),
+     InlineData(WeaponType.Fencing, false, 26),
+     InlineData(WeaponType.Sword, true, 29),
+     InlineData(WeaponType.PoleArm, false, 29),
+     InlineData(WeaponType.Bow, true, 27),
+     InlineData(WeaponType.Crossbow, true, 28)]
+    public void ARider_SwingsWithTheActionsOfAMount(WeaponType type, bool twoHanded, int action)
+    {
+        _mounts.Mounted.Add(_aria.Id);
+        _gear.Weapon = new(SkillType.Swordsmanship, type, twoHanded, 5, 33, 35);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains($"Animated 2 {action} 7 1", _view.Calls);
+    }
+
+    [Fact]
+    public void ARiderWithBareFists_SwingsTheOneHandActionOfAMount()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains("Animated 2 26 7 1", _view.Calls);
+    }
+
+    [Fact]
+    public void AWalker_StillSwingsTheActionOfItsWeapon_WithAMountServicePresent()
+    {
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains("Animated 2 9 7 1", _view.Calls);
+        Assert.DoesNotContain("Animated 2 26 7 1", _view.Calls);
     }
 
     [Fact]
@@ -392,6 +461,23 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Equal(30 - 14, _orc.Hits);
     }
 
+    [Theory]
+    // 14 from the roll; an axe at lumberjacking 100 hits three tenths harder: 18
+    [InlineData(WeaponType.Axe, 18)]
+    [InlineData(WeaponType.Sword, 14)]
+    public void AnAxe_HitsHarderWithLumberjacking_AnotherWeaponDoesNot_AndTheSkillIsNotTried(WeaponType type, int damage)
+    {
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Lumberjacking, Base = 1000 });
+        _gear.Weapon = new(SkillType.Swordsmanship, type, false, 10, 20, 35);
+        _random.Integers(4);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Equal(30 - damage, _orc.Hits);
+        Assert.DoesNotContain(_skills.Checks, check => check.Item2 == SkillType.Lumberjacking);
+    }
+
     [Fact]
     public void ANpcIsNotGivenTheWeaponsItWears_ItKeepsItsTemplateDice()
     {
@@ -401,6 +487,19 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Tick();
 
         // 8 of the template, halved on a player: 4.
+        Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
+    public void AnNpc_GetsNothingFromLumberjacking_WhateverItHolds()
+    {
+        _orc.Skills.Add(new MobileSkill { Skill = SkillType.Lumberjacking, Base = 1000 });
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Axe, true, 100, 200, 35);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        // 8 of the template, halved on a player: 4, as without the skill.
         Assert.Equal(26, _aria.Hits);
     }
 
@@ -527,6 +626,46 @@ public sealed class CombatServiceTests : IAsyncLifetime
         _gear.Ranged = Bow;
 
         Assert.Equal((10, 10), (_combat.RangeOf(_orc), _combat.RangeOf(_aria)));
+    }
+
+    [Fact]
+    public void HeldWeaponOf_IsTheBowFirst_ThenTheMeleeWeaponOfAPlayer_AndNothingForFists()
+    {
+        Assert.Null(_combat.HeldWeaponOf(_aria));
+
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35);
+        Assert.Equal(SkillType.Swordsmanship, _combat.HeldWeaponOf(_aria)!.Skill);
+
+        _gear.Ranged = Bow;
+        Assert.Equal(WeaponType.Bow, _combat.HeldWeaponOf(_aria)!.Type);
+    }
+
+    [Fact]
+    public void PlaySwing_TurnsTheMobileTowardsThePlace_AndAnimatesTheSwingOfItsWeapon()
+    {
+        _aria.Location = new Point3D(10, 10, 0);
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35);
+
+        // West of where it stands: a bare-handed or armed swing is the action of its weapon.
+        _combat.PlaySwing(_aria, 8, 10);
+
+        Assert.Equal(DirectionType.West, _aria.Direction);
+        Assert.Contains("FlagsChanged 2", _view.Calls);
+        Assert.Contains(_view.Calls, call => call.StartsWith("Animated 2 "));
+    }
+
+    [Fact]
+    public void SpendAmmo_TakesOneForAMobileWithABow_AndNothingForOneWithout()
+    {
+        Assert.False(_combat.SpendAmmo(_aria));
+        Assert.Empty(_ammo.Spent);
+
+        _gear.Ranged = Bow;
+        Assert.True(_combat.SpendAmmo(_aria));
+        Assert.Equal([_aria], _ammo.Spent);
+
+        _ammo.Has = false;
+        Assert.False(_combat.SpendAmmo(_aria));
     }
 
     [Fact]

@@ -438,6 +438,98 @@ public sealed class BankService : IBankService
         return BankResultType.Ok;
     }
 
+    public BankResultType GiveGold(MobileEntity player, int amount)
+    {
+        if (_inventory?.AllowsOwner(player.Id) == false)
+        {
+            return BankResultType.Busy;
+        }
+
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return BankResultType.NoPlayer;
+        }
+
+        if (amount < 1)
+        {
+            return BankResultType.BadAmount;
+        }
+
+        var piles = (amount + PileMaximum - 1) / PileMaximum;
+        var target = new[] { BackpackOf(player.Id), BoxOf(player.Id) }.FirstOrDefault(container =>
+            container is not null && _capacity.HasRoomFor(container, piles)
+        );
+
+        if (target is null)
+        {
+            return BankResultType.BackpackFull;
+        }
+
+        var made = new List<ItemEntity>(piles);
+
+        for (var remaining = amount; remaining > 0; remaining -= PileMaximum)
+        {
+            if (_handling.Make(_itemsConfig.GoldTemplate, Math.Min(remaining, PileMaximum)) is not { } pile)
+            {
+                return BankResultType.Busy;
+            }
+
+            made.Add(pile);
+        }
+
+        foreach (var pile in made)
+        {
+            Put(pile, target);
+        }
+
+        LoadChanged(player);
+
+        return BankResultType.Ok;
+    }
+
+    public long CarriedGold(MobileEntity player)
+    {
+        return BackpackOf(player.Id) is { } backpack ? GoldIn(backpack).Sum(pile => (long)pile.Amount) : 0;
+    }
+
+    public BankResultType CanPay(MobileEntity player, int amount, bool useBank)
+    {
+        return Plan(player, amount, useBank).Result;
+    }
+
+    public BankResultType Pay(MobileEntity player, int amount, bool useBank, out int fromBank)
+    {
+        fromBank = 0;
+        var (result, pack, coins, checks, inPack, inCoins) = Plan(player, amount, useBank);
+
+        if (result != BankResultType.Ok)
+        {
+            return result;
+        }
+
+        var fromPack = (int)Math.Min(amount, inPack);
+        var owed = amount - fromPack;
+        var fromCoins = Math.Min(owed, (int)Math.Min(inCoins, int.MaxValue));
+        var left = Take(pack, fromPack) + Take(coins, fromCoins);
+        TakeFromChecks(checks, owed - fromCoins);
+        fromBank = owed;
+
+        if (left > 0)
+        {
+            // The coins were checked above, so this is a fault; the player has paid the less.
+            _logger.Error(
+                "Bank: {Left} of {Amount} coins could not be taken for a payment of {Player}",
+                left,
+                amount,
+                player.Id
+            );
+        }
+
+        LoadChanged(player);
+
+        return BankResultType.Ok;
+    }
+
     public long? WorthOf(ItemEntity item)
     {
         return CheckWorth(item);
@@ -828,6 +920,45 @@ public sealed class BankService : IBankService
     private ItemEntity Coins(int amount)
     {
         return new() { TemplateId = _itemsConfig.GoldTemplate, ItemId = GoldItemId, Amount = amount };
+    }
+
+    // What a payment would take, checked whole: the piles of the backpack, the coins and the checks of the box (only when
+    // the bank may be used), and how much the backpack and the coins hold. Nothing moves.
+    private (BankResultType Result, List<ItemEntity> Pack, List<ItemEntity> Coins, List<ItemEntity> Checks, long InPack, long
+        InCoins) Plan(
+            MobileEntity player,
+            int amount,
+            bool useBank
+        )
+    {
+        List<ItemEntity> none = [];
+
+        if (_inventory?.AllowsOwner(player.Id) == false)
+        {
+            return (BankResultType.Busy, none, none, none, 0, 0);
+        }
+
+        if (player.IsNpc || !_mobiles.TryGet(player.Id, out _))
+        {
+            return (BankResultType.NoPlayer, none, none, none, 0, 0);
+        }
+
+        if (amount < 1)
+        {
+            return (BankResultType.BadAmount, none, none, none, 0, 0);
+        }
+
+        var pack = BackpackOf(player.Id) is { } backpack ? GoldIn(backpack) : none;
+        var box = useBank ? BoxOf(player.Id) : null;
+        var coins = box is null ? none : GoldIn(box);
+        var checks = box is null ? none : ChecksIn(box);
+        var inPack = pack.Sum(pile => (long)pile.Amount);
+        var inCoins = coins.Sum(pile => (long)pile.Amount);
+        var inChecks = checks.Sum(check => WorthOf(check) ?? 0);
+
+        return inPack + inCoins + inChecks < amount
+            ? (BankResultType.NotEnoughGold, none, none, none, 0, 0)
+            : (BankResultType.Ok, pack, coins, checks, inPack, inCoins);
     }
 
     private ItemEntity? BackpackOf(Serial player)

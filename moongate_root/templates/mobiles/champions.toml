@@ -1,6 +1,5 @@
 [[mobile]]
 id = "paroxysmus"
-script_id = "monster"
 name = "Chief Paroxysmus"
 body = 256
 strength = "1d291+4759"
@@ -13,6 +12,7 @@ notoriety = "attackable"
 karma = -15000
 fame = 15000
 gold = "1d801+1199"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = 120
@@ -28,7 +28,6 @@ death = 1391
 
 [[mobile]]
 id = "abyssmalhorror"
-script_id = "monster"
 name = "an abyssmal horror"
 body = 312
 strength = "1d20+400"
@@ -41,6 +40,7 @@ notoriety = "attackable"
 karma = -26000
 fame = 26000
 gold = "1d401+1599"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d4+116"
 tactics = 100
@@ -57,7 +57,7 @@ death = 1109
 
 [[mobile]]
 id = "bonedaemon"
-script_id = "monster"
+blood_hue = -1
 name = "a bone daemon"
 body = 308
 strength = 1000
@@ -70,6 +70,7 @@ notoriety = "attackable"
 karma = -20000
 fame = 20000
 gold = "1d1001+3999"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d26+49"
 tactics = 100
@@ -86,7 +87,6 @@ death = 1169
 
 [[mobile]]
 id = "barracoon"
-script_id = "monster"
 name = "Barracoon"
 title = "the Piper"
 gender = "male"
@@ -101,6 +101,7 @@ notoriety = "attackable"
 karma = -22500
 fame = 22500
 gold = "1d2001+3999"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 100
 tactics = "1d4+96"
@@ -129,7 +130,6 @@ hue = 421
 
 [[mobile]]
 id = "darkfather"
-script_id = "monster"
 name = "a demon knight"
 name_list = "dark_father"
 title = "the Dark Father"
@@ -144,6 +144,7 @@ notoriety = "attackable"
 karma = -28000
 fame = 28000
 gold = "1d801+2199"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = 100
@@ -160,7 +161,7 @@ death = 361
 
 [[mobile]]
 id = "darknightcreeper"
-script_id = "monster"
+blood_hue = -1
 name = "a darknight creeper"
 name_list = "darknight_creeper"
 title = "the Darknight Creeper"
@@ -175,6 +176,7 @@ notoriety = "attackable"
 karma = -22000
 fame = 22000
 gold = "1d401+1599"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 90
 tactics = 100
@@ -192,7 +194,6 @@ death = 1217
 
 [[mobile]]
 id = "dreadhorn"
-script_id = "monster"
 name = "Dread Horn"
 body = 257
 strength = 300
@@ -205,6 +206,7 @@ notoriety = "attackable"
 karma = -1500
 fame = 1500
 gold = 1000
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 80
 tactics = 80
@@ -218,7 +220,6 @@ death = 172
 
 [[mobile]]
 id = "fleshrenderer"
-script_id = "monster"
 name = "a fleshrenderer"
 body = 315
 strength = "1d60+400"
@@ -231,6 +232,7 @@ notoriety = "attackable"
 karma = -23000
 fame = 23000
 gold = "1d401+1599"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = 100
@@ -244,7 +246,6 @@ death = 843
 
 [[mobile]]
 id = "impaler"
-script_id = "monster"
 name = "an impaler"
 name_list = "impaler"
 title = "the Impaler"
@@ -259,6 +260,7 @@ notoriety = "attackable"
 karma = -24000
 fame = 24000
 gold = "1d401+1599"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 100
 tactics = 100
@@ -267,7 +269,6 @@ poisoning = 120
 
 [[mobile]]
 id = "ladymelisande"
-script_id = "monster"
 name = "Lady Melisande"
 body = 258
 strength = 500
@@ -280,6 +281,7 @@ notoriety = "attackable"
 karma = -20000
 fame = 20000
 gold = "1d501+1499"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = 100
@@ -293,7 +295,6 @@ death = 593
 
 [[mobile]]
 id = "lordoaks"
-script_id = "monster"
 name = "Lord Oaks"
 body = 175
 strength = "1d448+402"
@@ -306,6 +307,7 @@ notoriety = "attackable"
 karma = 22500
 fame = 22500
 gold = "1d2501+3499"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d21+99"
 tactics = 100
@@ -323,7 +325,6 @@ death = 759
 
 [[mobile]]
 id = "mephitis"
-script_id = "monster"
 name = "Mephitis"
 body = 173
 strength = "1d496+504"
@@ -336,6 +337,7 @@ notoriety = "attackable"
 karma = -22500
 fame = 22500
 gold = "1d501+2499"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d51+69"
 tactics = "1d4+96"
@@ -349,7 +351,6 @@ death = 391
 
 [[mobile]]
 id = "interredgrizzle"
-script_id = "monster"
 name = "Monstrous Interred Grizzle"
 body = 259
 strength = "1d291+4759"
@@ -362,6 +363,7 @@ notoriety = "attackable"
 karma = -15000
 fame = 15000
 gold = "1d3001+2999"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = 120
 magery = 120
@@ -377,7 +379,6 @@ death = 1407
 
 [[mobile]]
 id = "neira"
-script_id = "monster"
 name = "Neira"
 title = "the Necromancer"
 gender = "female"
@@ -392,6 +393,7 @@ notoriety = "attackable"
 karma = -22500
 fame = 22500
 gold = "1d501+2499"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = "1d4+96"
@@ -414,7 +416,6 @@ hue = 32
 
 [[mobile]]
 id = "rikktor"
-script_id = "monster"
 name = "Rikktor"
 body = 172
 strength = "1d200+700"
@@ -427,6 +428,7 @@ notoriety = "attackable"
 karma = -22500
 fame = 22500
 gold = "1d1001+3999"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = 100
@@ -441,7 +443,6 @@ death = 366
 
 [[mobile]]
 id = "semidar"
-script_id = "monster"
 name = "Semidar"
 body = 174
 strength = "1d99+501"
@@ -454,6 +455,7 @@ notoriety = "attackable"
 karma = -24000
 fame = 24000
 gold = "1d501+5999"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = "1d16+89"
@@ -470,7 +472,6 @@ death = 1204
 
 [[mobile]]
 id = "serado"
-script_id = "monster"
 name = "Serado"
 title = "the Awakened"
 body = 249
@@ -483,6 +484,7 @@ armor = 20
 notoriety = "attackable"
 karma = -22500
 fame = 22500
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = 120
@@ -497,7 +499,7 @@ death = 1258
 
 [[mobile]]
 id = "shadowknight"
-script_id = "monster"
+blood_hue = -1
 name = "a shadowknight"
 name_list = "shadow_knight"
 title = "the Shadow Knight"
@@ -512,6 +514,7 @@ notoriety = "attackable"
 karma = -25000
 fame = 25000
 gold = "1d401+1599"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = 100
@@ -528,7 +531,6 @@ death = 707
 
 [[mobile]]
 id = "shimmeringeffusion"
-script_id = "monster"
 name = "Shimmering Effusion"
 body = 261
 strength = 250
@@ -541,6 +543,7 @@ notoriety = "attackable"
 karma = -25000
 fame = 25000
 gold = "1d401+1599"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = 100
@@ -557,7 +560,6 @@ death = 1421
 
 [[mobile]]
 id = "silvani"
-script_id = "monster"
 name = "Silvani"
 body = 176
 strength = "1d148+252"
@@ -570,6 +572,7 @@ notoriety = "attackable"
 karma = 20000
 fame = 20000
 gold = "1d1001+1999"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d21+99"
 tactics = "1d4+96"
@@ -586,7 +589,6 @@ death = 1129
 
 [[mobile]]
 id = "theharrower"
-script_id = "monster"
 name = "The Harrower"
 body = 146
 strength = "1d100+900"
@@ -598,6 +600,7 @@ armor = 20
 notoriety = "attackable"
 karma = -25000
 fame = 25000
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = "1d21+89"
@@ -614,7 +617,6 @@ death = 1153
 
 [[mobile]]
 id = "trueharrower"
-script_id = "monster"
 name = "The True Harrower"
 body = 780
 strength = "1d100+900"
@@ -626,6 +628,7 @@ armor = 20
 notoriety = "attackable"
 karma = -25000
 fame = 25000
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = "1d21+89"
@@ -642,7 +645,6 @@ death = 361
 
 [[mobile]]
 id = "travesty"
-script_id = "monster"
 name = "Travesty"
 body = 264
 strength = "1d30+170"
@@ -654,6 +656,7 @@ armor = 20
 notoriety = "attackable"
 karma = -8000
 fame = 8000
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 tactics = "1d21+69"

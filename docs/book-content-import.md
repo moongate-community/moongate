@@ -1,6 +1,6 @@
 # Import book texts
 
-`mgctl convert modernuo-books` reads the static book texts shipped in ModernUO and writes
+`moongate-convert modernuo-books` reads the static book texts shipped in ModernUO and writes
 Moongate [readable document templates](data-files/books.md). It parses C# syntax without
 compiling or running emulator code. These documents are [books](data-files/books.md#books-and-parchments):
 they open the client's own book, read only, each with the cover of its source.
@@ -8,12 +8,13 @@ they open the client's own book, read only, each with the cover of its source.
 ## Convert the catalog
 
 ```sh
-dotnet run --project src/Moongate.Ctl -c Release -- convert modernuo-books \
+cd tools/convert
+uv run moongate-convert modernuo-books \
   --source <ModernUO>/Projects/UOContent \
-  --destination moongate_root/templates/books/modernuo
+  --destination ../../moongate_root/templates/books/modernuo
 ```
 
-With a released tool, use `mgctl convert modernuo-books` with the same options.
+The tool is the Python package in `tools/convert` (it needs [uv](https://docs.astral.sh/uv/) and Python 3.13 or later); it does not check that a book fits the client's packets, which the server's own tests of the shipped catalog do.
 `--source` is a folder, searched recursively for `.cs` files; use the full `Projects/UOContent`
 folder to include the Khaldun journals as well as the library. `--destination` is the folder
 receiving the generated TOMLs. Source folders/files and output files that are symbolic links

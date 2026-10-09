@@ -1,6 +1,7 @@
 [[item]]
 id = "0x0dbf_fishing_pole"
 base_id = "base_item"
+script_id = "fishing_pole"
 item_id = 3519
 name = "fishing pole"
 rarity = "common"
@@ -14,6 +15,7 @@ decays = true
 [[item]]
 id = "0x0dc0_fishing_pole"
 base_id = "base_item"
+script_id = "fishing_pole"
 item_id = 3520
 name = "fishing pole"
 rarity = "common"

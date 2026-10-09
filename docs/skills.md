@@ -125,8 +125,55 @@ The wait of a stat is kept by character in memory, so logging out and in does no
 does. Existing characters are all up after the upgrade; the migration `0024_mobile_stat_locks.sql`
 adds the three columns.
 
+## Trainers
+
+A vendor or a healer teaches the skills it has at 60.0 or more, as ModernUO's trainers do. The skills are those of its
+mobile template, so a vendor teaches whichever skills rolled that high. Bankers do not teach: gold dropped on them is
+deposited.
+
+- **Ask.** The context menu of the NPC has a *Train* entry for each skill it teaches and the player knows less of, from
+  8 tiles. Saying *train* within 4 tiles, alive, has the NPC list the skills it teaches, or say it has nothing to teach.
+- **Price.** The NPC teaches up to a third of its own value, 42.0 at most and never above the player's cap for the skill.
+  Picking an entry makes it say the price: 1 gold for each tenth of a point, so 10 gold for a whole point (420 gold for
+  42.0), and that for less it teaches less. The quote lasts until it is paid, another one is given, or the session ends.
+- **Pay.** The player drops gold on the NPC, from 2 tiles. The skill rises at once by one tenth of a point for each gold
+  piece, up to what was quoted; only the gold needed is taken, and the rest of the pile stays with the player. A drop
+  without a quote from that NPC, or of anything but gold, goes back.
+- **Refused.** The player already knows as much as the NPC would teach (*thou knowest all I can teach*) or more; the
+  skill is not locked up, or the total cap (`ultima.skills.total_cap`) leaves no room even after lowering the skills
+  locked down, which give way in the order of the skills; the player is dead. A gold drop that can no longer teach
+  gets the same answer, and the quote is dropped.
+
+A script gives an NPC these lessons with the `trainer` module and `common/training.lua`; `shopkeeper.lua` and
+`healer.lua` already do. `trainer.skills(npc, player)` lists the skills, `trainer.quote(npc, player, skill)` quotes a
+price and `trainer.pay(npc, giver, item)` takes the gold, which is what an `on_drag_drop` answers.
+
+## Guildmasters
+
+The twelve guildmasters of ModernUO (bard, blacksmith, fisher, healer, mage, merchant, miner, ranger, tailor, thief, tinker and
+warrior) are mobile templates, a man (`m_<trade>_guildmaster`) and a woman (`f_<trade>_guildmaster`) for each, and an npc
+list of the trade (`<trade>guildmaster`) that picks one. They are made by `moongate-convert modernuo-guildmasters` from
+ModernUO's classes: the title (*the blacksmith guildmaster* or *guildmistress*), the skills of the trade, the main ones
+between 80 and 100, and the guild, and what they wear and carry for the trade: the blacksmith an apron or a ringmail chest, a bascinet and a
+hammer, the mage and the healer a robe (in a blue or yellow hue) and the mage a staff. The kryss or dagger of the thief has no item
+template yet. They are vendors like the others, so they teach what they know ([Trainers](#trainers)); only the
+blacksmith's sells, as in ModernUO. The ModernUO spawns place them in the towns.
+
+A guildmaster takes members for the guild of its trade. A player says the guildmaster's name and *join* or *member*
+within 2 tiles to hear the price, 500 gold (the guildmaster speaks to that player only, over its head), and drops exactly that gold on it to join. A player belongs to one guild at
+most (the guild is a saved prop of the character) and is told when it is a member already or of another guild. The
+thieves' guild asks for no kills and Stealing 60.0 (the thieves' guildmaster of the towns of UOX3 is a guildmaster too, now). Saying the name and *resign* or *quit* leaves the guild, no sooner than
+a week after joining. The miner's guildmaster names no guild in ModernUO, so it only teaches. A membership has no
+effect yet: nothing reads it. The age and the playing time ModernUO asks of a new member are not kept.
+
+The template field `npc_guild` (`blacksmiths`, `thieves`...) makes an NPC a guildmaster, and the `npcguild` Lua module
+(`of`, `member`, `quote`, `join`, `resign`) with `common/guild.lua` gives its script the words and the gold.
+
 ## See also
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)
+- [`bandage.lua`](scripting/shipped-scripts.md#bandagelua): Healing, with the bandages
+- [Animal Taming](animal-taming.md): the skill that makes a wild creature the player's own
+- [The lore skills](scripting/shipped-scripts.md#the-lore-skills): Anatomy, Evaluating Intelligence, Forensic Evaluation and Detecting Hidden
 - [Server configuration](server-configuration.md): `[ultima.skills]`
 - [Roadmap](roadmap.md): 1.2

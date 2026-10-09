@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Types.Guilds;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
@@ -17,6 +18,7 @@ public class MobileTemplate
     private const int MaximumSkillValue = 120; // A skill goes up to 120 with bonuses.
     private const int MaximumResistance = 100;
     private const int MaximumPercent = 100;
+    private const int MaximumHue = ushort.MaxValue;
 
     /// <summary>
     ///     The stable id a spawn, a loot table or the <c>addnpc</c> command names this template by.
@@ -186,10 +188,25 @@ public class MobileTemplate
     public string? ScriptId { get; set; }
 
     /// <summary>
+    ///     The guild this guildmaster takes members for, such as <c>blacksmiths</c>: a player says <c>join</c> to it
+    ///     and
+    ///     pays 500 gold. Unset: it is no guildmaster.
+    /// </summary>
+    public NpcGuildType? NpcGuild { get; set; }
+
+    /// <summary>
     ///     The percent of its hit points under which the creature runs from a fight, from 0 to 100; -1 for one that never
     ///     does, as UOX3's <c>FLEEAT</c>. Unset: the script's own, 20 for a monster and 10 for an animal.
     /// </summary>
     public int? FleeAt { get; set; }
+
+    /// <summary>
+    ///     The hue of the blood the creature leaves when it is hit, 0 for the red of blood; -1 for one that does not
+    ///     bleed, such as the undead and the golems, as ServUO's <c>BloodHue</c> and Source-X's <c>BLOODCOLOR</c>.
+    ///     Unset:
+    ///     red.
+    /// </summary>
+    public int? BloodHue { get; set; }
 
     /// <summary>
     ///     The lowest account type that sees the mobile. Unset: everyone.
@@ -200,6 +217,12 @@ public class MobileTemplate
     ///     Where the mobiles move: land, water or both. Unset is land.
     /// </summary>
     public MobileMovementType? Movement { get; set; }
+
+    /// <summary>
+    ///     Whether the mobiles open the closed doors in their way when they walk to a place. Unset: a human or a monster
+    ///     body does, an animal or a sea creature does not.
+    /// </summary>
+    public bool? OpensDoors { get; set; }
 
     /// <summary>
     ///     Free values for scripts. A child template's tags add to and override its base's.
@@ -265,6 +288,11 @@ public class MobileTemplate
         if (Tags is not null && Tags.Keys.Any(string.IsNullOrWhiteSpace))
         {
             throw Invalid("tags", "must not have an empty key");
+        }
+
+        if (BloodHue is < -1 or > MaximumHue)
+        {
+            throw Invalid("blood_hue", "must be from -1 to 65535");
         }
 
         if (FleeAt is < -1 or > MaximumPercent)
