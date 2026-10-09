@@ -1,14 +1,11 @@
 """The mobile pass of the ``uox`` command: UOX3's NPCs, creatures and name lists as mobile templates and ``names.toml``.
 
-The tests of ``UoxMobileConverterTests`` of the C# converter, ported. A second set, with ``MOONGATE_MGCTL`` set to the path of a built
-``mgctl``, runs the C# converter on the same sources and requires the same files, report and warnings.
+The tests of ``UoxMobileConverterTests`` of the C# converter, ported.
 """
 
 from __future__ import annotations
 
 import io
-import os
-import subprocess
 import tomllib
 from pathlib import Path
 
@@ -17,7 +14,6 @@ import pytest
 from moongate_convert import uox
 from moongate_convert.specs import DiceSpec
 
-MGCTL = os.environ.get("MOONGATE_MGCTL")
 ITEMS = "[0x0eed]\n{\nid=0x0eed\n}\n"
 NAMES = "[RANDOMNAME 1]\n{\nAaron\n}\n[RANDOMNAME 2]\n{\nAba\n}\n"
 
@@ -439,128 +435,3 @@ def test_a_range_too_wide_for_a_die_is_a_bad_number_where_the_csharp_throws(work
 
     assert workspace.run() == 0, workspace.combined
     assert "1 x bad number" in workspace.output.getvalue()
-
-
-# --- the C# converter as the reference ---
-
-# Sources that reach the corners of the converter: each is run through both converters, which must write the same files and say the same.
-CASES: dict[str, dict[str, str]] = {
-    "no npc folder, no name lists": {"items.dfn": ITEMS},
-    "name lists with blanks, duplicates and unknown dictionary ids": {
-        "items.dfn": ITEMS,
-        "dfndata/npc/namelists.dfn": "[RANDOMNAME 3]\n{\n  \n1\n2//two\n 3 \nOrc\nOrc\n}\n[RANDOMNAME 99]\n{\nx\n}\n"
-        "[RANDOMNAME 4]\n{\n7//\n}\n[RANDOMNAME abc]\n{\nzed\n}\n[OTHER]\n{\nq\n}\n",
-        "dictionaries/dictionary.ENG": "1=\n3=three\nx=1\n",
-    },
-    "numbers that are not numbers, ranges and limits": {
-        "items.dfn": ITEMS,
-        "dfndata/npc/a.dfn": "[x]\n{\nID=0x0011\nSTR=abc\nDEX=1 2 3\nINT=120 96\nHP=-5 5\nMANA=7\nMANAMAX=9\nSTAMINA=3\nSTAMINAMAX=\n"
-        "GOLD=0x10\nKARMA=-1 -9\nFAME=2147483647 2147483640\nMAGERY=99999\nTACTICS=-50\nWRESTLING=15 25\nDAMAGE=5 5\nATT=2 4\n"
-        "ELEMENTRESIST=1 2 3\nELEMENTRESIST=a b c d\nRESISTCOLD=x\nFLAG=evil\nFLAG=weird\nNPCAI= 4 \n}\n",
-    },
-    "tags, skin, colour lists and hair": {
-        "items.dfn": ITEMS + "[ITEMLIST 13]\n{\n0x203b\n}\n[ITEMLIST 14]\n{\n0x203c\n}\n[0x1517]\n{\nid=0x1517\n}\n",
-        "dfndata/colors/colors.dfn": "[RANDOMCOLOR 1]\n{\n0x0010\n0x0011\n0x0012\n}\n[RANDOMCOLOR 2]\n{\n0x0010\n0x0012\n}\n"
-        "[RANDOMCOLOR 3]\n{\n0x0020\n}\n[RANDOMCOLOR 4]\n{\nred\n}\n",
-        "dfndata/npc/a.dfn": "[x]\n{\nID=0x0011\nSKIN=0x0455\nSKINLIST=1\nCUSTOMINTTAG=Level 7\nCUSTOMSTRINGTAG=Say hello there\n"
-        "CUSTOMINTTAG=Lonely\nCUSTOMINTTAG= 5\nCUSTOMINTTAG=Level 9\nEQUIPITEM=listobject14\nEQUIPITEM=0x1517\nCOLORLIST=3\nCOLOR=bad\n"
-        "COLOUR=0x0033\nEQUIPITEM=0x1517\nCOLOURLIST=1\nCOLORLIST=77\n}\n[y]\n{\nID=0x0190\nSKIN=0x0455\nSKINLIST=1\nCOLOR=0x0010\n}\n"
-        "[z]\n{\nSKINLIST=4\nSKINLIST=zz\nSKIN=9999999\n}\n",
-    },
-    "texts: dictionary ids, comments, quotes and accents": {
-        "items.dfn": ITEMS,
-        "dictionaries/dictionary.ENG": "100=the \"Great\" \\ one\n101=Città\n",
-        "dfndata/npc/a.dfn": "[a]\n{\nNAME=100\nTITLE=101\n}\n[b]\n{\nNAME=#//a comment\nTITLE=#\n}\n[c]\n{\nNAME=999//unknown\nTITLE=999\n}\n"
-        "[d]\n{\nNAME=Plain Name\nTITLE=the Wise\nNAMELIST=x\n}\n[e]\n{\nNAMELIST=77\n}\n[f]\n{\nNAMELIST=2\nID=0x0190\n}\n",
-    },
-    "inheritance corners": {
-        "items.dfn": ITEMS,
-        "dfndata/npc/a.dfn": "[a]\n{\nID=0x0011\n}\n[A]\n{\nID=0x0012\n}\n[b]\n{\nGET=missing\n}\n[c]\n{\nGET=a a2 a3\n}\n"
-        "[d]\n{\nGET=a b\n}\n[e]\n{\nGETLBR=a\nGET=b\n}\n[f]\n{\nGET=NPCLIST 1\n}\n[NPCLIST 1]\n{\nx\n}\n"
-        "[RANDOMNAME 1]\n{\nx\n}\n",
-        "dfndata/npc/npclists/skip.dfn": "[should_not_be_read]\n{\nID=0x0011\n}\n",
-        "dfndata/npc/sub/deep.dfn": "[deep]\n{\nGET=a\n}\n",
-        "dfndata/npc/sub/empty.dfn": "// nothing\n",
-    },
-    "gender pairs that differ in everything": {
-        "items.dfn": "[0x13e4]\n{\nid=0x13e4\n}\n[0x1517]\n{\nid=0x1517\n}\n",
-        "dfndata/creatures/creatures.dfn": "[CREATURE 0x190]\n{\nSOUND_DIE=0x15c\nSOUND_IDLE=1\n}\n[CREATURE 0x191]\n{\nSOUND_DIE=0x151\nSOUND_IDLE=1\n}\n"
-        "[CREATURE 0x25D]\n{\nSOUND_DIE=0x15c\n}\n[CREATURE 0x25E]\n{\nSOUND_DIE=0x15c\n}\n",
-        "dfndata/npc/namelists.dfn": NAMES,
-        "dfndata/npc/a.dfn": "[hum]\n{\nFLAG=INNOCENT\n}\n[hum2]\n{\nFLAG=EVIL\n}\n"
-        "[m_a]\n{\nGET=hum\nNAMELIST=1\nID=0x0190\nTITLE=the man\nSTR=10\nDEX=5\nMAGERY=100\nTACTICS=200\nRESISTFIRE=10\nGOLD=5\n"
-        "EQUIPITEM=0x13e4\nCOLOR=0x0010\nEQUIPITEM=0x1517\nLOOT=a\nCUSTOMINTTAG=Level 1\n}\n"
-        "[f_a]\n{\nGET=hum2\nNAMELIST=2\nID=0x0191\nTITLE=the woman\nSTR=20\nINT=5\nTACTICS=200\nMAGERY=100\nRESISTFIRE=20\nGOLD=6\n"
-        "EQUIPITEM=0x13e4\nCOLOR=0x0010\nEQUIPITEM=0x1517\nCOLOR=0x0011\nCUSTOMINTTAG=Level 2\n}\n[a]\n{\nGET=m_a f_a\n}\n"
-        "[m_b]\n{\nID=0x025D\nNAMELIST=1\n}\n[f_b]\n{\nID=0x025E\nNAMELIST=1\n}\n[b]\n{\nGET=f_b m_b\n}\n"
-        "[m_c]\n{\nID=0x0190\nNAMELIST=3\n}\n[f_c]\n{\nID=0x0191\nNAMELIST=4\n}\n[c]\n{\nGET=m_c f_c\n}\n"
-        "[m_d]\n{\nID=0x0190\n}\n[f_d]\n{\nID=0x025E\n}\n[d]\n{\nGET=m_d f_d\n}\n[e]\n{\nGET=m_d f_missing\n}\n"
-        "[m_e]\n{\nID=0x0190\n}\n[m_e2]\n{\nID=0x0190\n}\n[e2]\n{\nGET=m_e m_e2\n}\n",
-    },
-    "swimming through get chains": {
-        "items.dfn": ITEMS,
-        "dfndata/creatures/creatures.dfn": "[CREATURE 0x97]\n{\nMOVEMENT= water \nSOUND_ATTACK=3\n}\n[CREATURE 0xdd]\n{\nMOVEMENT=BOTH\n}\n"
-        "[CREATURE zz]\n{\nMOVEMENT=BOTH\n}\n[CREATURE 0x11]\n{\nMOVEMENT=FLY\n}\n",
-        "dfndata/npc/a.dfn": "[d]\n{\nID=0x0097\n}\n[d2]\n{\nGET=d\n}\n[d3]\n{\nGET=d2\nID=0x0011\n}\n[d4]\n{\nGET=d3\nID=0x0011\n}\n"
-        "[d5]\n{\nGET=d2\nID=0x00dd\n}\n[loop1]\n{\nGET=loop2\n}\n[loop2]\n{\nGET=loop1\n}\n[loop3]\n{\nGET=loop3\nID=0x0011\n}\n",
-    },
-    "a mobile that fails validation, and several that do": {
-        "items.dfn": ITEMS,
-        "dfndata/npc/a.dfn": "[x]\n{\nID=0x0011\nDEF=-5\nSTR=-1 3\n}\n[y]\n{\nID=0x0011\nHP=-3\nMAGERY=-10\n}\n[z]\n{\nID=0x0011\nFAME=-4\n}\n",
-    },
-    "unresolved references everywhere": {
-        "items.dfn": "[0x13e4]\n{\nid=0x13e4\n}\n[LOOTLIST known]\n{\n0x13e4\n}\n[ITEMLIST 5]\n{\n0x13e4\nblank\n3|0x13e4\n9|nothing\n}\n",
-        "dfndata/npc/a.dfn": "[x]\n{\nID=0x0011\nEQUIPITEM=nothing\nEQUIPITEM=listobject5\nEQUIPITEM=listobject77\nEQUIPITEM=listobjectx\n"
-        "LOOT=known\nLOOT=known,3\nLOOT=known,0\nLOOT=known,x\nLOOT=known,2 5\nLOOT=KNOWN\nLOOT=\nLOOT=missing,2\n}\n",
-    },
-    "a value out of range and a duplicate header": {
-        "items.dfn": ITEMS,
-        "dfndata/npc/a.dfn": "[x]\n{\nID=0x0011\nFLEEAT=-1\n}\n[X]\n{\nID=0x0012\n}\n[y]\n{\nFLEEAT=100\n}\n[z]\n{\nFLEEAT=101\n}\n"
-        "[w]\n{\nFLEEAT=-2\n}\n",
-        "dfndata/npc/b.dfn": "[x]\n{\nID=0x0013\n}\n",
-    },
-}
-
-
-def _files(root: Path) -> dict[str, bytes]:
-    return {path.relative_to(root).as_posix(): path.read_bytes() for path in sorted(root.rglob("*")) if path.is_file()}
-
-
-def _write_case(root: Path, files: dict[str, str]) -> None:
-    for relative, content in files.items():
-        target = root / ("source" if relative == "items.dfn" else "") / ("items.dfn" if relative == "items.dfn" else relative)
-        Workspace.write(target, content)
-
-
-def _arguments(root: Path) -> list[str]:
-    return [
-        "--source", str(root / "source"),
-        "--destination", str(root / "destination"),
-        "--loot-destination", str(root / "loot-destination"),
-        "--mobile-source", str(root / "dfndata"),
-        "--mobile-destination", str(root / "mobile-destination"),
-        "--names-destination", str(root / "names" / "names.toml"),
-    ]  # fmt: skip
-
-
-@pytest.mark.skipif(MGCTL is None, reason="MOONGATE_MGCTL is not set")
-@pytest.mark.parametrize("case", list(CASES))
-def test_the_csharp_converter_gives_the_same_files_report_and_warnings(tmp_path, case):
-    csharp, python = tmp_path / "csharp", tmp_path / "python"
-
-    for root in (csharp, python):
-        (root / "source").mkdir(parents=True)
-        _write_case(root, CASES[case])
-
-    reference = subprocess.run([MGCTL or "", "convert", "uox", *_arguments(csharp)], capture_output=True, text=True, check=False)
-    output, error = io.StringIO(), io.StringIO()
-
-    from moongate_convert.cli import main
-
-    code = main(["uox", *_arguments(python)], output, error)
-
-    assert code == reference.returncode
-    assert output.getvalue().replace(str(python), "<root>") == reference.stdout.replace(str(csharp), "<root>")
-    assert error.getvalue().replace(str(python), "<root>") == reference.stderr.replace(str(csharp), "<root>")
-    assert _files(python / "mobile-destination") == _files(csharp / "mobile-destination")
-    assert _files(python / "names") == _files(csharp / "names")

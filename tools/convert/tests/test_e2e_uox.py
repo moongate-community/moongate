@@ -1,8 +1,7 @@
 """End to end: the installed ``moongate-convert uox`` command, as a process, with every pass on the real data of UOX3.
 
 Opt in with ``MOONGATE_UOX3_DIR`` (a UOX3 checkout). One run does the items, the loot, the mobiles, the names, the starting items, the npc
-lists and the spawns. Every file it writes must be valid TOML. With ``MOONGATE_MGCTL`` (a built ``mgctl``) the C# converter runs the same
-command and the two trees, the reports and the exit codes must be identical.
+lists and the spawns. Every file it writes must be valid TOML.
 """
 
 from __future__ import annotations
@@ -17,7 +16,6 @@ from pathlib import Path
 import pytest
 
 SOURCE = os.environ.get("MOONGATE_UOX3_DIR")
-MGCTL = os.environ.get("MOONGATE_MGCTL")
 COMMAND = Path(sys.executable).parent / "moongate-convert"
 
 pytestmark = pytest.mark.skipif(SOURCE is None, reason="MOONGATE_UOX3_DIR is not set")
@@ -61,19 +59,6 @@ def test_every_pass_writes_valid_toml_and_the_report_counts_them(tmp_path):
 
     assert "mobile" in result.stdout.lower()
     assert re.search(r"Converted \d+ mobile", result.stdout)
-
-
-@pytest.mark.skipif(MGCTL is None, reason="MOONGATE_MGCTL is not set")
-def test_the_csharp_converter_gives_the_same_tree_report_and_exit_code(tmp_path):
-    python, csharp = tmp_path / "python", tmp_path / "csharp"
-    csharp.mkdir()
-    made = subprocess.run([str(COMMAND), "uox", *options(python)], capture_output=True, text=True, check=False)
-    reference = subprocess.run([MGCTL or "", "convert", "uox", *options(csharp)], capture_output=True, text=True, check=False)
-
-    assert made.returncode == reference.returncode == 0
-    assert made.stdout.replace(str(python), "<root>") == reference.stdout.replace(str(csharp), "<root>")
-    assert made.stderr.replace(str(python), "<root>") == reference.stderr.replace(str(csharp), "<root>")
-    assert tree(python) == tree(csharp)
 
 
 def test_a_missing_source_exits_2_and_writes_nothing(tmp_path):

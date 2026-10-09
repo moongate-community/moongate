@@ -21,7 +21,7 @@ The data converters (UOX3 and ModernUO) are not part of `mgctl` any more: they a
 `mgctl completion <shell>` prints a completion script for bash, zsh or fish. With it, TAB
 completes the commands (`mgctl mi` → `migrate`), the second word of `migrate`,
 the options of the command and what follows them: directories after `--root-directory` and
-the like, files after `--source`, `auth` or `world` after `--target`, and a directory for
+the like, `auth` or `world` after `--target`, and a directory for
 the root of `init`.
 
 The [Linux installer](installation.md) puts the scripts where the shells look for them, so

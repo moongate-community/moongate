@@ -7,8 +7,7 @@ namespace Moongate.Ctl.Internal;
 /// <summary>
 ///     Writes the completion scripts of bash, zsh and fish from the commands of <see cref="CompletionCatalog" />: the
 ///     first word, the second word of <c>migrate</c>, then the options of the command and what
-///     follows
-///     each (a directory, a file or a fixed word).
+///     follows each (a directory or a fixed word).
 /// </summary>
 internal static class CompletionScripts
 {

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ec2052147b4215484ee257a84d51cb205e6525f7faa95641e0952a84b1655819","title":"mgctl, lo strumento Moongate"} -->
+<!-- translation: {"sourceHash":"90a8db04c8a947123c7c38e6b5858d4d57ece9c08abe05825ca4b85d012c7622","title":"mgctl, lo strumento Moongate"} -->
 
 # mgctl, lo strumento Moongate
 
@@ -23,7 +23,7 @@ I convertitori di dati (UOX3 e ModernUO) non fanno più parte di `mgctl`: sono u
 `mgctl completion <shell>` stampa uno script di completamento per bash, zsh o fish. Con esso, TAB
 completa i comandi (`mgctl mi` → `migrate`), la seconda parola di `migrate`,
 le opzioni del comando e ciò che le segue: directory dopo `--root-directory` e
-simili, file dopo `--source`, `auth` o `world` dopo `--target`, e una directory per
+simili, `auth` o `world` dopo `--target`, e una directory per
 la radice di `init`.
 
 L'[installatore Linux](installation.md) colloca gli script dove le shell li cercano, quindi

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"862e87154b1a27339e2ecce77e4ab3f76bbeeee5fdd7441f94c1338cc7341f2a","title":"Eseguire con Docker"} -->
+<!-- translation: {"sourceHash":"8b0a791a2d2b1dbbbfae79f36878f18354d6c01970bc6aeb9a3460e80ada1913","title":"Eseguire con Docker"} -->
 
 # Eseguire con Docker
 
@@ -13,7 +13,7 @@ docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 L'immagine viene eseguita come utente non root con `MOONGATE_ROOT=/data`. Monta lì
 un volume persistente scrivibile e monta in sola lettura i tuoi file client Ultima
 Online; i file client non sono distribuiti con Moongate. Include [`mgctl`](mgctl.md),
-che prepara la radice, applica le migrazioni e converte contenuti UOX3 e ModernUO,
+che prepara la radice e applica le migrazioni,
 l'SQL core, i [file dei dati dello shard](data-files.md), i [template](templates.md)
 e gli [script](scripting/shipped-scripts.md) di esempio. La destinazione di build
 `sample-plugin` aggiunge il bundle del plugin di esempio.
