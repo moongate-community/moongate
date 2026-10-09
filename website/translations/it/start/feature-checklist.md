@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"807d6ea43235359825dfb223590fd84d03e5fe54b205dad453d9d7369020ece9","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"9fc53f30cfa5df17ba63f2e90c6cc5e4bfb9e5cb4dacad3d8d22987d46740c60","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 87 completati, 🟡 57 parzialmente completati, ❌ 125 non ancora realizzati.
+**270 sistemi:** ✅ 88 completati, 🟡 58 parzialmente completati, ❌ 124 non ancora realizzati.
 
-**Copertura: 32%** dei sistemi completati, **43%** contando un sistema parzialmente completato come metà.
+**Copertura: 33%** dei sistemi completati, **43%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -144,7 +144,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
 | Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, passando dalle porte chiuse che apre e aggirando quelle a chiave e i mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; un NPC che vaga non apre porte, e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
 | Animali e seguaci: comandi, lealtà, legame | ❌ | |
-| Cavalcature | ❌ | |
+| Cavalcature | 🟡 | [Cavalcature](mounts.md): un game master dà un cavallo, un lama o uno struzzo con [`tame`](commands/tame.md); il suo proprietario ci sale con un doppio clic e ne scende con un doppio clic su di sé, oppure muore, e corre il doppio più veloce. Chi è in sella non può estrarre, pescare né usare Stealth, e un teletrasporto può rifiutarlo. La [stalla](mounts.md#the-stable) degli addestratori di animali custodisce gli animali di un giocatore. Niente bola, niente animazioni in sella, niente cavalcature eteree |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
 | Raccolte di nomi | ✅ | Elenchi di nomi per tipo e genere |
 | Bisogni: cibo, pascolo, desideri | ❌ | |
@@ -280,6 +280,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | --- | --- | --- |
 | Comandi con livelli di accesso | ✅ | Dalla console (completamento di comandi e argomenti con TAB, cronologia con Su/Giù) e in gioco; vedi [Comandi](commands.md) |
 | Salvataggio del mondo | ✅ | Periodico e allo spegnimento, con `.save` |
+| Task a orario, spegnimento ed eventi stagionali | ✅ | `data/schedule.toml`: task per ora, giorno o settimana (spegnimento con avvisi, messaggio, funzione Lua), eventi per data con interruttore dello staff e hook `on_start`/`on_end`, in un fuso orario a scelta; vedi [Calendario](schedule.md) |
 | Backup del database | ✅ | Esportazioni SQL a rotazione, pianificate e con `.sql_backup`; ripristino con psql |
 | Console | ✅ | |
 | Configurazione del server | ✅ | `moongate.toml`, validato all'avvio |

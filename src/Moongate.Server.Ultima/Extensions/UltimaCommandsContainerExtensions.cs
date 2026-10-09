@@ -178,6 +178,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.Regular,
             CommandMessages.TimeDescription
         );
+        container.RegisterCommand<EventCommand>(
+            "event",
+            "Shows the seasonal events and switches one: event list, event on <id>, event off <id>, event auto <id>.",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Administrator,
+            CommandMessages.EventDescription
+        );
         container.RegisterCommand<SeasonCommand>(
             "season",
             "Shows the season where you stand and your map's or, with a season or auto, sets your map's until the restart.",

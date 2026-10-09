@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5c127543e062545c934dc43f36be694f5cc9588b80b48d220476040cc7e9877e","title":"Configurazione"} -->
+<!-- translation: {"sourceHash":"f4eb50634f57ab726fbe8aea72debab9ff860fd008ac40a6ab35e7df317e1a03","title":"Configurazione"} -->
 
 # Configurazione del server
 
@@ -151,6 +151,9 @@ stuck_cooldown_minutes = 10           # The minutes before a player can use "I a
 page_cooldown_seconds = 60           # The seconds between two requests of one player to the game masters; 0 allows it at once.
 page_history_days = 30                # The days a closed request is kept before it is deleted at startup.
 
+[ultima.schedule]
+time_zone = ""                        # The IANA time zone of the hours in data/schedule.toml, such as Europe/Rome; empty is the zone of the system.
+
 [ultima.bulletin_boards]
 expire_days = 7                       # A thread of a bulletin board goes this many days after its last reply; 0 keeps it.
 max_messages = 50                     # The messages a board holds; its oldest thread goes when it is full.
@@ -162,6 +165,10 @@ max_items = 125                       # Items a bank box holds, bags included; 0
 max_withdraw = 60000                  # Coins a banker hands out at one time.
 min_check = 5000                      # The smallest bank check a banker writes.
 max_check = 1000000                   # The largest.
+
+[ultima.stable]
+max_pets = 10                         # Pets a player may leave with the stablemasters, from 1 to 50.
+fee = 30                              # Gold a pet costs when it is stabled, from the backpack and then the bank; 0 makes it free.
 
 [persistence]
 auto_sync_schema = false
@@ -299,8 +306,10 @@ Vedi [Persistenza PostgreSQL](persistence.md).
 | `ultima.jail.fine_gold`, `ultima.jail.max_days` | Valori predefiniti 500 (da 0 a 1.000.000.000) e 30 (da 1 a 3650). Oro prelevato da un prigioniero alla fine della pena, prima dallo zaino poi dalla banca, e pena massima accettata da [`.jail`](commands/jail.md), in giorni reali; vedi [Prigione](jail.md). |
 | `ultima.help.stuck_wait_seconds`, `ultima.help.stuck_cooldown_minutes` | Valori predefiniti 5 (da 1 a 60) e 10 (da 0 a 1440). L'attesa e la pausa del pulsante «Sono bloccato» del gump di [aiuto](help.md). |
 | `ultima.help.page_cooldown_seconds`, `ultima.help.page_history_days` | Valori predefiniti 60 (da 0 a 3600) e 30 (da 1 a 3650). I secondi che un giocatore aspetta tra due richieste ai game master e i giorni per cui una richiesta chiusa viene conservata prima che l'avvio la cancelli; vedi [Aiuto](help.md). |
+| `ultima.schedule.time_zone` | Vuoto (il fuso del sistema) oppure un id IANA come `Europe/Rome`. Un id sconosciuto ferma l'avvio. Un container Docker è in UTC a meno che abbia `TZ` o questa impostazione; su Linux i fusi richiedono il pacchetto tzdata. Vedi [Calendario](schedule.md). |
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Valori predefiniti 7 (da 0 a 3650; 0 conserva per sempre le discussioni), 50 (da 1 a 200), 120 e 30 (da 0 a 86400). Durata di una discussione su una [bacheca](bulletin-boards.md) dall'ultima risposta, numero di messaggi contenuti, e attesa di un personaggio tra due nuove discussioni e tra due interventi sulla stessa bacheca. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Valori predefiniti 125 (da 0 a 10000; 0 senza limite), 60000 (da 1 a 60000), 5000 e 1.000.000 (`min_check` da 1 a `max_check`, `max_check` fino a 2.000.000.000). Oggetti contenuti in una [cassetta bancaria](bank.md), compresi quelli nelle borse; monete consegnate da un banchiere per un *prelievo*; valore degli assegni emessi dal banchiere. |
+| `ultima.stable.max_pets`, `ultima.stable.fee` | Valori predefiniti 10 (da 1 a 50) e 30 (da 0 a 100000). I animali che un giocatore può lasciare a un addestratore, e quanto costa ciascuno quando viene messo in stalla: vedi la [stalla](mounts.md#the-stable). |
 
 Le impostazioni di gioco si trovano sotto `[ultima]` come sottotabelle (`[ultima.world]`,
 `[ultima.characters]`, ...). L'oro iniziale non è un'impostazione: è un oggetto
