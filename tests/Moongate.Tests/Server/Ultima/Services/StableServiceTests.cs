@@ -28,6 +28,7 @@ public sealed class StableServiceTests
     private readonly StubBankService _bank = new();
     private readonly StubDeathService _death = new();
     private readonly StubGameLoop _loop = new();
+    private readonly Moongate.Tests.TestSupport.Ultima.Pets.StubPetService _pets = new();
     private readonly CapturingLogSink _log = new();
     private readonly StableConfig _config = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
@@ -60,7 +61,8 @@ public sealed class StableServiceTests
             _config,
             _loop,
             new Lazy<IDeathService>(() => _death),
-            new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
+            new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger(),
+            new Lazy<IPetService>(() => _pets)
         )
         {
             RetryDelay = TimeSpan.Zero
@@ -81,6 +83,17 @@ public sealed class StableServiceTests
         Assert.Equal(_horse.Id, Assert.Single(_npcs.Removals));
         Assert.Equal((30, true), (Assert.Single(_bank.Paid).Amount, Assert.Single(_bank.Paid).UseBank));
         Assert.Equal(70, _bank.Carried[_player.Id]);
+    }
+
+    [Fact]
+    public void TryStable_AndTryClaim_TellThePetServiceTheFollowersChanged()
+    {
+        _service.TryStable(_player, _horse);
+        Assert.Equal([_player.Id], _pets.ChangedFor);
+
+        _service.TryClaim(_player, 0, "horse");
+
+        Assert.Equal([_player.Id, _player.Id], _pets.ChangedFor);
     }
 
     [Fact]

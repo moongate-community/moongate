@@ -244,6 +244,20 @@ public sealed class GuardScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AMonsterThatIsTamed_IsLeftToItsOwner_ByTheGuard()
+    {
+        var zombie = Npc(0x200, 1601, 1600);
+        zombie.TemplateId = "zombie";
+        zombie.SetProp("owner", 7L);
+
+        Think(5);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Empty(_death.Killed);
+        Assert.Empty(_combat.Attacks);
+    }
+
+    [Fact]
     public void AMonsterInTheTown_IsGoneForToo_AndKilledByTheGuard_ThoughItIsNoCriminal()
     {
         var zombie = Npc(0x200, 1601, 1600);

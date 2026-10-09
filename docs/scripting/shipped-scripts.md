@@ -497,6 +497,16 @@ keeps its shop and its lessons through `scripts/common/shop.lua` and `training.l
 eight a page; a button checks the player is within 12 cells of the trainer and calls `stable.claim`; a list that
 changed since it was shown is shown again.
 
+## animal_taming.lua
+
+`scripts/skills/animal_taming.lua` is the Animal Taming skill: `on_use` says "Tame which animal?" (502789), gives a cursor
+(`target.pick`) and returns a wait of 1 second. The pick is refused with the client's text if it is no creature, a player,
+not in `taming.toml` (`pet.info`), owned, too many followers (`pet.followers` and `pet.max_followers`), above the skill
+or more than 3 tiles away. Then three or four times of 3 seconds (`timer.after`) check again the distance (7), the
+tamer alive, the line of sight (`world.line_of_sight`), the creature still wild and not hurt (`mobile.stats`), and say a
+kind line; the last rolls `skill.check(user, "animal_taming", min - 0.1, min + 49.9)` and `pet.tame`. See
+[Animal taming](../animal-taming.md).
+
 ## ankh.lua and resurrect.lua
 
 `scripts/items/ankh.lua` is the script of the `decoration_ankh` template, the two pieces of each

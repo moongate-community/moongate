@@ -16,6 +16,7 @@ using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
+using Moongate.Server.Ultima.Data.Taming;
 using Moongate.Server.Ultima.Data.Templates.Gumps;
 using Moongate.Server.Ultima.Data.Templates.Books;
 using Moongate.Server.Ultima.Data.Templates.Items;
@@ -73,6 +74,8 @@ public static class UltimaDataLoadersContainerExtensions
         // Crafts name item templates, and the resource lists load before the crafts that name them.
         container.AddUltimaDataLoader<CraftResourcesLoader, CraftResourceList>(29);
         container.AddUltimaDataLoader<CraftsLoader, CraftDefinition>(30);
+        // After the mobile templates, which the creatures name.
+        container.AddUltimaDataLoader<TamingLoader, TamingCreature>(31);
 
         return container;
     }

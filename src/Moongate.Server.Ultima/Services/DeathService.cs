@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Core.Types.Geometry;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Core.Extensions;
@@ -87,6 +88,7 @@ public sealed class DeathService : IDeathService
     private readonly INpcSenseService? _senses;
     private readonly IMurderService? _murders;
     private readonly IMountService? _mounts;
+    private readonly Lazy<IPetService>? _pets;
     private readonly ILogger _logger;
 
     // Who is between its death and its removal: it does not die twice.
@@ -115,9 +117,11 @@ public sealed class DeathService : IDeathService
         INpcSenseService? senses = null,
         IMurderService? murders = null,
         ILogger? logger = null,
-        IMountService? mounts = null
+        IMountService? mounts = null,
+        Lazy<IPetService>? pets = null
     )
     {
+        _pets = pets;
         _mounts = mounts;
         _murders = murders;
         _state = state;
@@ -541,6 +545,12 @@ public sealed class DeathService : IDeathService
     {
         _npcs.Remove(mobile.Id);
         _dying.Remove(mobile.Id);
+
+        // A pet that dies is one follower less for its owner.
+        if (mobile.GetProp(MountProps.Owner, 0L) is > 0 and var owner && owner <= uint.MaxValue)
+        {
+            _pets?.Value.Changed(new Serial((uint)owner));
+        }
     }
 
     // Null when the corpse template is missing or no serial is left: the NPC dies all the same, with what it carried.

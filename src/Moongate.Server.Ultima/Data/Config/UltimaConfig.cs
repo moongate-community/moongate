@@ -47,6 +47,8 @@ public class UltimaConfig : IConfigSection
 
     public StableConfig Stable { get; set; } = new();
 
+    public PetsConfig Pets { get; set; } = new();
+
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
     /// </summary>
@@ -182,5 +184,12 @@ public class UltimaConfig : IConfigSection
         }
 
         Stable.Validate();
+
+        if (Pets is null)
+        {
+            throw new InvalidOperationException("The ultima.pets configuration section cannot be null.");
+        }
+
+        Pets.Validate();
     }
 }
