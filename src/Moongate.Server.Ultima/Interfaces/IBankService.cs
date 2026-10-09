@@ -95,8 +95,10 @@ public interface IBankService : ISessionClosedListener
     ///     backpack and its bags first, smallest piles first, then, when <paramref name="useBank" /> is true, the coins of
     ///     the bank box and then its checks. Everything is checked before anything moves, so it is all or nothing, and
     ///     none of the limits of a withdrawal applies: the gold does not pass through the backpack. <paramref name="fromBank" />
-    ///     is how much came out of the bank box, to tell the player. <c>NotEnoughGold</c> when what the player has, in the
-    ///     places allowed, is less; <c>Busy</c> when its items are reserved by another operation; <c>BadAmount</c> under 1.
+    ///     is how much came out of the bank box, to tell the player. <c>NotEnoughGold</c> when what the player has, in
+    ///     the
+    ///     places allowed, is less; <c>Busy</c> when its items are reserved by another operation; <c>BadAmount</c>
+    ///     under 1.
     /// </summary>
     BankResultType Pay(MobileEntity player, int amount, bool useBank, out int fromBank);
 

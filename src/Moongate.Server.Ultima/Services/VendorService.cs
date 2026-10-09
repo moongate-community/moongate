@@ -600,11 +600,8 @@ public sealed class VendorService : IVendorService
             return true;
         }
 
-        refusal = result == BankResultType.Busy
-            ? ClilocOrderCannotBeFulfilled
-            : useBank
-                ? ClilocBankLacksFunds
-                : ClilocCannotAfford;
+        refusal = result == BankResultType.Busy ? ClilocOrderCannotBeFulfilled :
+            useBank ? ClilocBankLacksFunds : ClilocCannotAfford;
 
         return false;
     }

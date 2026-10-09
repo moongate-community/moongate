@@ -535,7 +535,12 @@ public sealed class BankService : IBankService
         if (left > 0)
         {
             // Its callers counted these coins as theirs to take; they were checked above, so this is a fault.
-            _logger.Error("Bank: {Left} of {Amount} coins could not be taken for a payment of {Player}", left, amount, player.Id);
+            _logger.Error(
+                "Bank: {Left} of {Amount} coins could not be taken for a payment of {Player}",
+                left,
+                amount,
+                player.Id
+            );
         }
 
         LoadChanged(player);
