@@ -33,3 +33,20 @@ function old_fisher.on_speech(serial, speaker, text)
     end
 end
 ```
+
+## vein
+
+A woodsman that tells a player what wood grows where it stands:
+
+```lua
+function woodsman.on_speech(serial, speaker, text)
+    local here = npc.location(serial)
+    local wood = harvest.vein("wood", here.map, here.x, here.y)
+
+    if wood and wood ~= "plain" then
+        npc.say(serial, "Good " .. wood .. " around here, if you know your axe.")
+    else
+        npc.say(serial, "Plain wood, nothing more.")
+    end
+end
+```

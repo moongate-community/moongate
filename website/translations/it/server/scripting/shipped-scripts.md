@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a8d2f3376e978199401b5f7497e168b181099038f9da55e4c0d874f87e8f4aaa","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"68d9a239adbdf638d11ebdd95c1e6da2d4d9715a188a84ada30673502332298c","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -208,7 +208,7 @@ statico scelto, e lo script contiene le grafiche che sono alberi. Il personaggio
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare della legna (`harvest.amount`), l'abilità
 Lumberjacking viene provata tra 0 e 100 (`skill.check`), e un taglio riuscito toglie dal luogo
 (`harvest.take`) e dà 10 tronchi (`item.give`). Le costanti in cima allo script sono la distanza, i colpi
-e i tronchi; gli alberi sono in `scripts/common/trees.lua`, condiviso con `scripts/items/blade.lua`, lo script di coltelli, pugnali e spade (`script_id = "blade"`), che stacca un legnetto da un albero. Usata sui tronchi nello zaino, l'ascia sega la pila in assi (`item.template`, `item.consume`, poi `item.give`). Chi sta tagliando è tenuto in memoria per seriale: un riavvio libera tutti.
+e i tronchi; gli alberi sono in `scripts/common/trees.lua`, condiviso con `scripts/items/blade.lua`, lo script di coltelli, pugnali e spade (`script_id = "blade"`), che stacca un legnetto da un albero. Usata sui tronchi nello zaino, l'ascia sega la pila in assi (`item.template`, `item.consume`, poi `item.give`). Un luogo è di un solo tipo di legno, la vena della sua zona (`harvest.vein`): la tabella `WOODS` contiene tronchi e assi di ogni tipo, il Lumberjacking richiesto (`mobile.skills`) e i limiti tra cui il taglio viene provato, e la tabella `FINDS` ciò che un maestro trova insieme ai tronchi. Chi sta tagliando è tenuto in memoria per seriale: un riavvio libera tutti.
 
 ## fishing_pole.lua
 
