@@ -111,7 +111,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Using a skill and gaining it | 🟡 | A [skill](skills.md) is used from the skill window (`scripts/skills/<skill>.lua`), checked by `skill.check` and gained with ModernUO's formula; only Hiding is shipped, and stats do not rise with skills yet |
-| Gathering: mining, lumberjacking, fishing | 🟡 | [Fishing](fishing.md) with a pole: water within 4 tiles, 8 seconds, a fish, old footwear or nothing by the skill; the fish of a place run out by area and come back ([`harvest.toml`](data-files/harvest.md)). [Lumberjacking](lumberjacking.md) with an axe in the hands: a tree within 2 tiles, one to three swings, 10 logs by the skill, the wood of a place running out the same way. No mining, no special catches, no wood types, no boards |
+| Gathering: mining, lumberjacking, fishing | 🟡 | [Fishing](fishing.md) with a pole: water within 4 tiles, 8 seconds, a fish, old footwear or nothing by the skill; the fish of a place run out by area and come back ([`harvest.toml`](data-files/harvest.md)). [Lumberjacking](lumberjacking.md) with an axe in the hands: a tree within 2 tiles, one to three swings, 10 logs by the skill, the wood of a place running out the same way. [Mining](mining.md) with a pickaxe or a shovel: iron ore from the rock of mountains and caves, smelted into ingots at a forge. No other metals, no special catches, no wood types, no boards |
 | Crafting engine: menus, recipes, resources, quality | ❌ | |
 | The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | ❌ | |
 | Repairing and enhancing items | ❌ | |
