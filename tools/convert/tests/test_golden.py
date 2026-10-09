@@ -119,3 +119,30 @@ def test_books(tmp_path, convert):
     assert convert("modernuo-books", Path(SOURCE or "") / "Projects", tmp_path / "books").code == 0
 
     compare(tmp_path / "books", shipped, [path.name for path in shipped.glob("*.toml")])
+
+
+def test_vendors(tmp_path):
+    shipped = ROOT / "templates" / "shops"
+    code = main(
+        [
+            "modernuo-vendors",
+            "--source", str(Path(SOURCE or "") / "Projects" / "UOContent"),
+            "--items", str(ROOT / "templates" / "items"),
+            "--mobiles", str(ROOT / "templates" / "mobiles"),
+            "--destination", str(tmp_path),
+        ],
+        io.StringIO(),
+        io.StringIO(),
+    )
+
+    assert code == 0
+
+    made = {path.name for path in tmp_path.glob("*.toml")}
+    kept = {path.name for path in shipped.glob("*.toml")}
+
+    # The thief and the ranger have mobile templates, so the converter makes a shop for each; they were never shipped.
+    assert kept <= made
+    assert made - kept == {"ranger.toml", "thief.toml"}
+
+    for name in kept:
+        assert (tmp_path / name).read_bytes() == (shipped / name).read_bytes(), name

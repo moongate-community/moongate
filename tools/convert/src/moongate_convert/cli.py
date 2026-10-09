@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TextIO
 
-from . import books, chests, locations, signs, spawn, spawns, teleporters
+from . import books, chests, locations, signs, spawn, spawns, teleporters, vendors
 
 # name -> (module run function, what --source is, what --destination is, help)
 _Run = Callable[[Path, Path, TextIO, TextIO], int]
@@ -94,9 +94,36 @@ def _spawns(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> int
     )
 
 
+def _vendors_options(command: argparse.ArgumentParser) -> None:
+    command.add_argument("--source", required=True, type=Path, help="the Projects/UOContent folder of ModernUO, or its Mobiles/Vendors folder")
+    command.add_argument(
+        "--items", required=True, type=Path, help="the item templates folder (templates/items): a line becomes the template with the graphic ModernUO gives it"
+    )
+    command.add_argument("--mobiles", required=True, type=Path, help="the mobile templates folder (templates/mobiles): a vendor class with no template there is skipped")
+    command.add_argument(
+        "--destination", required=True, type=Path, help="the shops folder (templates/shops); each vendor gets a file named after it, replacing that of a previous run"
+    )
+
+
+def _vendors(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> int:
+    return vendors.run(
+        Path(os.path.abspath(arguments.source)),
+        Path(os.path.abspath(arguments.items)),
+        Path(os.path.abspath(arguments.mobiles)),
+        Path(os.path.abspath(arguments.destination)),
+        output,
+        error,
+    )
+
+
 # Commands with options of their own: name -> (what it does, adds its options, runs it from the parsed arguments)
 _Custom = Callable[[argparse.Namespace, TextIO, TextIO], int]
 CUSTOM: dict[str, tuple[str, Callable[[argparse.ArgumentParser], None], _Custom]] = {
+    "modernuo-vendors": (
+        "Convert the shops of ModernUO's vendors (the SBInfo classes) into shop templates, one file a vendor class",
+        _vendors_options,
+        _vendors,
+    ),
     "modernuo-spawns": (
         "Convert the spawners of ModernUO into spawn regions, for the maps UOX3 has no spawns for",
         _spawns_options,
