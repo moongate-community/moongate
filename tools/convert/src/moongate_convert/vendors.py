@@ -56,6 +56,7 @@ HEADER = """# What it is for:
 # Where the name ModernUO gives a vendor class is not the one of its template.
 ALIASES = {
     "armorer": ["armourer", "m_armourer", "f_armourer"],
+    "fisherman": ["fisher", "m_fisher", "f_fisher"],
     "waiter": ["waiter", "m_waiter", "f_waitress"],
     "wanderinghealer": ["whealer"],
     "evilwanderinghealer": ["evilwhealer"],

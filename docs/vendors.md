@@ -13,8 +13,9 @@ A player opens the window in one of two ways, from as far as the vendor can be r
 - Say *vendor buy* or *vendor sell* within 4 tiles. The client turns the words into a speech keyword in any language of the client,
   so *vendor buy* works in an Italian client as well. When several vendors hear the words, one answers.
 
-A template that inherits `basevendor` runs the script, but only those with a shop sell: the others do nothing when
-*Buy* is picked. A vendor opens the window only when it has a [shop](data-files/shops.md) with goods in stock, is in the world, is no
+A template that inherits `basevendor` runs the script, but only those with a shop sell: the menu of a vendor offers
+*Buy* only when its shop sells something and *Sell* only when it buys something, as in ModernUO, and a vendor with no
+shop (an animal trainer, a shipwright, a rancher, a guildmaster) offers neither and does not answer the words. A vendor opens the window only when it has a [shop](data-files/shops.md) with goods in stock, is in the world, is no
 more than 10 tiles away, is in sight, and the player is alive. A murderer in a guarded place is refused by the vendor's
 voice (cliloc 501522).
 
@@ -94,8 +95,8 @@ its items are the player's own, with their real serials. See [Packets](packets.m
 
 ## For script authors
 
-The vendor templates that inherit `basevendor` run `scripts/mobiles/shopkeeper.lua`, which offers *Buy* in the context
-menu and listens for *vendor buy*. The script is called `shopkeeper` because `vendor` is the name of the Lua module
+The vendor templates that inherit `basevendor` run `scripts/mobiles/shopkeeper.lua`, which offers *Buy* and *Sell* in the context
+menu to the vendors that `vendor.sells(npc)` and `vendor.buys(npc)`, and listens for *vendor buy*. The script is called `shopkeeper` because `vendor` is the name of the Lua module
 that opens the window:
 
 ```lua

@@ -38,6 +38,30 @@ public sealed class VendorModule
     }
 
     /// <summary>
+    ///     Whether <paramref name="vendor" /> has a shop that sells; <c>vendor.sells(npc)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the NPC has a shop with something to sell to a player. False for an NPC with no shop, for a player and for a serial that is no mobile."
+    )]
+    public bool Sells(long vendor)
+    {
+        return TryGetVendor(vendor, out var seller) && _vendors.Sells(seller);
+    }
+
+    /// <summary>
+    ///     Whether <paramref name="vendor" /> has a shop that buys; <c>vendor.buys(npc)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the NPC has a shop that buys something from a player. False for an NPC with no shop, for a player and for a serial that is no mobile."
+    )]
+    public bool Buys(long vendor)
+    {
+        return TryGetVendor(vendor, out var buyer) && _vendors.Buys(buyer);
+    }
+
+    /// <summary>
     ///     Opens the buy window of <paramref name="vendor" /> for <paramref name="player" />;
     ///     <c>vendor.open_buy(npc, speaker)</c>.
     /// </summary>

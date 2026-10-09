@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"66d38c4f37c7e6426792e4483da153d07c69c9a64d53d0aa0541a2b8ca25c974","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"9ec847a9997c56853a589c193f557f27c7c4e3b861a095e2ab00899bffd4b00f","title":"Venditori"} -->
 
 # Venditori
 
@@ -15,8 +15,9 @@ Il giocatore apre la finestra in due modi, da dove il venditore è raggiungibile
 - Dire *vendor buy* o *vendor sell* entro 4 caselle. Il client trasforma le parole in una parola chiave del parlato in qualsiasi lingua del client,
   quindi *vendor buy* funziona anche con un client italiano. Quando più venditori sentono le parole, risponde uno solo.
 
-Un template che eredita `basevendor` esegue lo script, ma vendono solo quelli con un negozio: gli altri non fanno nulla quando
-viene scelto *Buy*. Un venditore apre la finestra solo quando ha un [negozio](data-files/shops.md) con merce disponibile, è nel mondo, dista
+Un template che eredita `basevendor` esegue lo script, ma vendono solo quelli con un negozio: il menu di un venditore offre
+*Buy* solo quando il suo negozio vende qualcosa e *Sell* solo quando compra qualcosa, come in ModernUO, e un venditore senza
+negozio (un addestratore di animali, un carpentiere navale, un allevatore, un maestro di gilda) non offre nessuno dei due e non risponde alle parole. Un venditore apre la finestra solo quando ha un [negozio](data-files/shops.md) con merce disponibile, è nel mondo, dista
 al massimo 10 caselle, è in vista e il giocatore è vivo. Un assassino in un luogo sorvegliato viene rifiutato dalla voce
 del venditore (cliloc 501522).
 
@@ -95,8 +96,8 @@ i suoi oggetti sono del giocatore, con i loro serial reali. Vedi [Pacchetti](pac
 
 ## Per chi scrive script
 
-I template dei venditori che ereditano `basevendor` eseguono `scripts/mobiles/shopkeeper.lua`, che offre *Buy* nel menu
-contestuale e ascolta *vendor buy*. Lo script si chiama `shopkeeper` perché `vendor` è il nome del modulo Lua
+I template dei venditori che ereditano `basevendor` eseguono `scripts/mobiles/shopkeeper.lua`, che offre *Buy* e *Sell* nel menu
+contestuale ai venditori per cui valgono `vendor.sells(npc)` e `vendor.buys(npc)`, e ascolta *vendor buy*. Lo script si chiama `shopkeeper` perché `vendor` è il nome del modulo Lua
 che apre la finestra:
 
 ```lua

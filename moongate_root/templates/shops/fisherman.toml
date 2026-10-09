@@ -1,0 +1,131 @@
+# What it is for:
+#   The shop of one kind of vendor: what its vendors sell to a player, with the price of a piece and
+#   how many they start with. Every vendor template listed in vendors uses it.
+#
+# Fields:
+#   [[shop]]      one shop
+#     id          the stable id of the shop
+#     vendors     the ids of the mobile templates whose vendors use the shop (a template is in one shop)
+#   [[shop.buy]]  one line the vendor sells
+#     item        the id of an item template
+#     price       gold for one piece, at least 1
+#     amount      how many pieces the vendor starts with, at least 1
+#     hue         the hue of the goods; 0 keeps the one of the item template
+#     name        the name shown in the shop window; empty: the client's name of the graphic
+#   [[shop.sell]] one line the vendor buys from a player
+#     item        the id of an item template
+#     price       gold the vendor pays for one piece, at least 1
+#     (amount, hue and name are written too and ignored on sell lines)
+[[shop]]
+id = "fisherman"
+vendors = ["fisher", "m_fisher", "f_fisher"]
+[[shop.buy]]
+item = "0x097a_raw_fish_steak"
+price = 3
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x09cc_fish"
+price = 6
+amount = 80
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x09cd_fish"
+price = 6
+amount = 80
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x09ce_fish"
+price = 6
+amount = 80
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x09cf_fish"
+price = 6
+amount = 80
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0dc0_fishing_pole"
+price = 15
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0dc8_fishing_net"
+price = 250
+amount = 20
+hue = 576
+name = ""
+
+[[shop.buy]]
+item = "0x0efc_bottle"
+price = 62
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x14f0_a_blank_deed"
+price = 250002
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x0ff2_a_book"
+price = 15
+amount = 20
+hue = 0
+name = ""
+[[shop.sell]]
+item = "0x097a_raw_fish_steak"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09cc_fish"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09cd_fish"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09ce_fish"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x09cf_fish"
+price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0dc0_fishing_pole"
+price = 7
+amount = 1
+hue = 0
+name = ""

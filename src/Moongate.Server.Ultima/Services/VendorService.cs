@@ -116,6 +116,20 @@ public sealed class VendorService : IVendorService
         _time = time ?? TimeProvider.System;
     }
 
+    public bool Sells(MobileEntity vendor)
+    {
+        ArgumentNullException.ThrowIfNull(vendor);
+
+        return vendor.IsNpc && _shops.TryGetFor(vendor, out var shop) && shop.Buy.Count > 0;
+    }
+
+    public bool Buys(MobileEntity vendor)
+    {
+        ArgumentNullException.ThrowIfNull(vendor);
+
+        return vendor.IsNpc && _shops.TryGetFor(vendor, out var shop) && shop.Sell.Count > 0;
+    }
+
     public bool OpenBuy(GameSession session, MobileEntity vendor)
     {
         ArgumentNullException.ThrowIfNull(session);
