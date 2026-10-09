@@ -408,7 +408,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Fire(0.9);
 
         Assert.Empty(_errors);
-        Assert.Empty(Caught().Where(item => item.Id != _pole.Id));
+        Assert.Empty(Caught());
         Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _water.X, _water.Y));
     }
 
