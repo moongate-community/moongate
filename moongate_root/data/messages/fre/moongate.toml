@@ -251,3 +251,6 @@
 30202 = "Je suis bloqué"
 30203 = "Commandes utiles"
 30204 = "Règles du serveur"
+30205 = "Donne la créature que vous ciblez à vous-même ou au personnage nommé : tame [nom]. Son maître peut la monter."
+30206 = "{0} appartient désormais à {1}."
+30207 = "{0} ne peut pas être apprivoisé."

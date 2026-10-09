@@ -251,3 +251,6 @@
 30202 = "Estou preso"
 30203 = "Comandos úteis"
 30204 = "Regras do servidor"
+30205 = "Entrega a criatura que você escolher a si ou ao personagem nomeado: tame [nome]. O dono dela pode montá-la."
+30206 = "{0} agora pertence a {1}."
+30207 = "{0} não pode ser domado."

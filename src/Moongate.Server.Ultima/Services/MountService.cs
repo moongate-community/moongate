@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -165,11 +166,7 @@ public sealed class MountService : IMountService
 
     private string? MountItemTemplate(MobileEntity pet)
     {
-        return pet.TemplateId is { } id &&
-               _templates.TryGet(id, out var template) &&
-               template.Tags?.GetValueOrDefault(MountProps.MountItemTag) is { Length: > 0 } item
-            ? item
-            : null;
+        return pet.TemplateId is { } id && _templates.TryGet(id, out var template) ? template.MountItem() : null;
     }
 
     private static bool WithinRange(Point3D from, Point3D to)

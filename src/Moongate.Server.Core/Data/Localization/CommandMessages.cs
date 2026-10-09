@@ -165,4 +165,7 @@ public static class CommandMessages
     public const int UnhideDescription = 30189;
     public const int UnhideDone = 30190;
     public const int AlreadyThatWay = 30191;
+    public const int TameDescription = 30205;
+    public const int Tamed = 30206;
+    public const int CannotTame = 30207;
 }

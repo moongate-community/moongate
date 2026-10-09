@@ -101,6 +101,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.AnimateDescription
         );
+        container.RegisterCommand<TameCommand>(
+            "tame",
+            "Gives the creature you target to yourself, or to the character you name: tame [name]. Its owner can ride it.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.TameDescription
+        );
         container.RegisterCommand<KillCommand>(
             "kill",
             "Kills the NPC you target: it dies where it stands and leaves its corpse.",

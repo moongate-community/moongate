@@ -251,3 +251,6 @@
 30202 = "I am stuck"
 30203 = "Useful commands"
 30204 = "Server rules"
+30205 = "Gives the creature you target to yourself, or to the character you name: tame [name]. Its owner can ride it."
+30206 = "{0} now belongs to {1}."
+30207 = "{0} cannot be tamed."

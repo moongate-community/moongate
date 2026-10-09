@@ -251,3 +251,6 @@
 30202 = "Ich stecke fest"
 30203 = "Nützliche Befehle"
 30204 = "Serverregeln"
+30205 = "Gibt die anvisierte Kreatur dir oder der genannten Figur: tame [Name]. Ihr Besitzer kann sie reiten."
+30206 = "{0} gehört jetzt {1}."
+30207 = "{0} kann nicht gezähmt werden."
