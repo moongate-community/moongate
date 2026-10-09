@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Server.Ultima.Services.Items;
 using Moongate.Server.Ultima.Handlers.Items;
@@ -61,6 +62,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     private readonly List<LuaScriptEngineService> _engines = [];
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly RecordingSpeechService _speech = new();
+    private readonly RecordingMountService _mounts = new();
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly StubClockService _clock = new();
@@ -102,6 +104,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IWorldViewService>(_view);
         _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
         _container.RegisterInstance<ISpeechService>(_speech);
+        _container.RegisterInstance<IMountService>(_mounts);
         _container.RegisterInstance<ISectorService>(_sectors);
         _container.RegisterInstance<IClockService>(_clock);
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
@@ -703,6 +706,46 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(new Point3D(5690, 569, 25), aria.Location);
         Assert.Single(_fixture.Sender.Sent.OfType<MobileUpdatePacket>());
         Assert.Equal((aria, 0x1FE), Assert.Single(_speech.Sounds));
+    }
+
+    [Theory,
+     InlineData("true", true, false),
+     InlineData(true, true, false),
+     InlineData("true", false, true),
+     InlineData(null, true, true)]
+    public async Task TheShippedTeleporterScript_RefusesARiderOnlyWhereItDeniesMounts(
+        object? deny,
+        bool mounted,
+        bool travels
+    )
+    {
+        var props = new Dictionary<string, object?>
+            { ["teleport.x"] = 5690L, ["teleport.y"] = 569L, ["teleport.z"] = 25L, ["sound_id"] = 0x1FEL };
+
+        if (deny is not null)
+        {
+            props["deny_mounted"] = deny;
+        }
+
+        var teleporter = PlaceTeleporter(props);
+        var scripts = await StartTeleporterScriptAsync();
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out var aria));
+        var start = aria.Location;
+
+        if (mounted)
+        {
+            _mounts.Mounted.Add(aria.Id);
+        }
+
+        scripts.Run(teleporter, "on_move_over", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(travels ? new Point3D(5690, 569, 25) : start, aria.Location);
+        Assert.Equal(
+            travels ? [] : new[] { 1077252 },
+            _speech.ToldClilocs.Where(told => told.Player == aria).Select(told => told.Cliloc)
+        );
+        Assert.Equal(travels ? 1 : 0, _speech.Sounds.Count);
     }
 
     [Theory]

@@ -441,6 +441,23 @@ public sealed class DecorationServiceTests
     }
 
     [Fact]
+    public async Task DecorateAsync_PlacesATeleporterThatDeniesRiders_WithItsFlagAsAProp()
+    {
+        var block = Block(
+            "Teleporter",
+            0x1BC3,
+            new Dictionary<string, object> { ["point_dest"] = new Point3D(5690, 569, 25), ["deny_mounted"] = "true" },
+            new Point3D(5827, 593, 0)
+        );
+
+        await Service(File("trammel", block)).DecorateAsync(_progress);
+
+        var teleporter = Assert.Single(_items.Items);
+        Assert.Equal("true", teleporter.GetProp<string>("deny_mounted"));
+        Assert.Equal(5690L, teleporter.GetProp<long>("teleport.x"));
+    }
+
+    [Fact]
     public async Task DecorateAsync_PlacesAKeywordTeleporter_WithItsWordItsRangeAndItsDestination()
     {
         // As the shrines' mantras: the teleporter that answers "om om om" said on its cell.
