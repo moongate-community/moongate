@@ -2,6 +2,14 @@
 
 ## [0.16.0](https://github.com/moongate-community/moongate/compare/v0.15.0...v0.16.0) (2026-10-09)
 
+### Upgrade notes
+
+- One new world migration, `0026_help_pages.sql` (the queue of the pages to the game masters): run `mgctl init <root>` and then `mgctl migrate apply --root-directory <root> --target world` before starting the server, or set `persistence.auto_apply_migrations = true`.
+- `mgctl init` adds the files a root lacks and never replaces one that is there. To get what changed in files a 0.15.0 root already has, delete the ones you did not edit and run `mgctl init` again: `templates/items`, `templates/mobiles`, `templates/shops` (new: what each vendor sells), `templates/gumps`, `templates/spawns`, `templates/npc_lists`, `scripts/`, `data/messages`, `data/skills.toml`. New data files: `data/taming.toml`, `data/pet_food.toml`, `data/schedule.toml`, `data/harvest.toml` and `data/crafts/`.
+- New configuration sections, all with defaults: `[ultima.help]`, `[ultima.schedule]`, `[ultima.stable]`, `[ultima.pets]`. The server configuration page lists every key.
+- The C# converters and `mgctl convert` are gone: the converters are now the Python ones in `tools/convert` (`moongate-convert`, run with `uv`).
+- A new character can be mounted, tame animals, stable pets, fish, chop wood, mine and craft carpentry; pets lose loyalty over time unless fed. Most of this was not tried with a real client yet; mounts slice 1, the Help menu and the Go gump were.
+
 
 ### Features
 
