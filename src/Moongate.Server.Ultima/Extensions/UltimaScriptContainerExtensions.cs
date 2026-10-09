@@ -37,6 +37,7 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<ItemModule>();
         container.AddScriptModule<WorldModule>();
         container.AddScriptModule<MobileModule>();
+        container.AddScriptModule<MountModule>();
         container.AddScriptModule<StableModule>();
         container.AddScriptModule<TargetModule>();
         container.AddScriptModule<HuePickerModule>();

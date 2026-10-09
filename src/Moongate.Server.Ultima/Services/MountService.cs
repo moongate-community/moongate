@@ -17,6 +17,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class MountService : IMountService
 {
     private const int AlreadyMountedCliloc = 1005583;
+    private const int OnYourPersonCliloc = 1010095;
     private const int TooFarCliloc = 500206;
     private const int NotYoursCliloc = 501263;
     private const int SomeoneElsesCliloc = 501264;
@@ -30,6 +31,7 @@ public sealed class MountService : IMountService
     private readonly IWorldViewService _view;
     private readonly INpcService _npcs;
     private readonly IMobileTemplateService _templates;
+    private readonly IItemTemplateService? _itemTemplates;
     private readonly ISpeechService _speech;
     private readonly Lazy<IDeathService>? _death;
     private readonly IInventoryMutationGuard? _inventory;
@@ -52,9 +54,11 @@ public sealed class MountService : IMountService
         Lazy<IDeathService>? death = null,
         IInventoryMutationGuard? inventory = null,
         IDataAccess<ItemEntity>? itemData = null,
+        IItemTemplateService? itemTemplates = null,
         ILogger? logger = null
     )
     {
+        _itemTemplates = itemTemplates;
         _death = death;
         _inventory = inventory;
         _itemData = itemData;
@@ -141,6 +145,68 @@ public sealed class MountService : IMountService
         return true;
     }
 
+    public bool TryMountEthereal(MobileEntity rider, ItemEntity statuette)
+    {
+        if (rider.IsDead ||
+            _inventory?.AllowsOwner(rider.Id) == false ||
+            statuette.TemplateId is not { } statueTemplate ||
+            _itemTemplates is null ||
+            !_itemTemplates.TryGet(statueTemplate, out var template) ||
+            template.Tags?.GetValueOrDefault(MountProps.MountItemTag) is not { Length: > 0 } mountItem)
+        {
+            return false;
+        }
+
+        if (_items.GetWornRoot(statuette) is not { Layer: LayerType.Backpack } root || root.MobileId != rider.Id)
+        {
+            _speech.TellCliloc(rider, OnYourPersonCliloc);
+
+            return false;
+        }
+
+        if (IsMounted(rider))
+        {
+            _speech.TellCliloc(rider, AlreadyMountedCliloc);
+
+            return false;
+        }
+
+        if (_handling.Make(mountItem) is not { } item)
+        {
+            _logger.Warning("Mount item {Item:l} of {Statuette:l} does not exist", mountItem, statueTemplate);
+
+            return false;
+        }
+
+        // The statuette goes last but one: it is the rider's only while the rider has the mount in exchange.
+        if (!_handling.Delete(statuette))
+        {
+            // Held on the cursor, or locked by another operation: it is not on the rider's person to use.
+            _speech.TellCliloc(rider, OnYourPersonCliloc);
+
+            return false;
+        }
+
+        item.Movable = false;
+        item.SetProp(MountProps.EtherealTemplate, statueTemplate);
+
+        if (statuette.Hue.Value != 0)
+        {
+            item.SetProp(MountProps.EtherealHue, (long)statuette.Hue.Value);
+        }
+
+        if (statuette.Name is { Length: > 0 } name)
+        {
+            item.SetProp(MountProps.EtherealName, name);
+        }
+
+        _items.Add([item]);
+        _items.Equip(item, rider.Id, LayerType.Mount);
+        _view.WornItemChanged(rider, item);
+
+        return true;
+    }
+
     public bool Dismount(MobileEntity rider)
     {
         if (MountItemOf(rider) is not { } item)
@@ -149,12 +215,21 @@ public sealed class MountService : IMountService
         }
 
         var template = item.GetProp<string?>(MountProps.PetTemplate, null);
+        var ethereal = item.GetProp<string?>(MountProps.EtherealTemplate, null);
         var owner = item.GetProp(MountProps.PetOwner, 0L);
         var mountSerial = item.Id;
 
         _view.OwnItemRemoved(rider, item);
         _view.WornItemRemoved(rider, item);
         _items.Absorb(item);
+
+        // An ethereal mount is no creature: its statuette comes back to the rider.
+        if (ethereal is not null)
+        {
+            GiveBack(rider, ethereal, item);
+
+            return true;
+        }
 
         if (template is null || !_mobiles.IsInWorld(rider.Id))
         {
@@ -171,6 +246,52 @@ public sealed class MountService : IMountService
         _ = Task.Run(() => SpawnAsync(mountSerial, template, map, location, props));
 
         return true;
+    }
+
+    // The statuette in the backpack, or on the ground where the rider stands when the backpack has no room.
+    private void GiveBack(MobileEntity rider, string statuetteTemplate, ItemEntity mount)
+    {
+        if (!_mobiles.IsInWorld(rider.Id))
+        {
+            _logger.Warning("The statuette {Template:l} of {Rider:l} is lost: the rider is not in the world", statuetteTemplate, rider.Id);
+
+            return;
+        }
+
+        // Its place in the backpack was freed when the rider mounted: the limit of items does not keep it out.
+        if (_handling.Give(rider, statuetteTemplate, ignoreCapacity: true) is { } given)
+        {
+            Restore(given, mount);
+            _handling.Refresh(given);
+
+            return;
+        }
+
+        if (_handling.Make(statuetteTemplate) is not { } statuette)
+        {
+            _logger.Warning("The statuette {Template:l} of {Rider:l} cannot be made again", statuetteTemplate, rider.Id);
+
+            return;
+        }
+
+        Restore(statuette, mount);
+        _items.Add([statuette]);
+        _items.PlaceOnGround(statuette, rider.Map, rider.Location);
+        _view.ItemAppeared(statuette);
+    }
+
+    // The hue and the name the statuette had before it was ridden.
+    private static void Restore(ItemEntity statuette, ItemEntity mount)
+    {
+        if (mount.TryGetProp<long>(MountProps.EtherealHue, out var hue) && hue is > 0 and <= ushort.MaxValue)
+        {
+            statuette.Hue = new Hue((ushort)hue);
+        }
+
+        if (mount.TryGetProp<string>(MountProps.EtherealName, out var name))
+        {
+            statuette.Name = name;
+        }
     }
 
     private async Task SpawnAsync(

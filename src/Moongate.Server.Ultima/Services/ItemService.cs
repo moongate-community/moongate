@@ -271,7 +271,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
             return null;
         }
 
-        foreach (var item in worn.Values)
+        foreach (var (_, item) in worn)
         {
             if (item.Layer == layer)
             {

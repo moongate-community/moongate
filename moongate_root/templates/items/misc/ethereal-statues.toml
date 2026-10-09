@@ -1,0 +1,94 @@
+# ==============================================================================
+# Moongate - templates/items/misc/ethereal-statues.toml
+#
+# What it is for:
+#   The statuettes of the ethereal mounts: a player double clicks one in its
+#   backpack and rides the mount item named by the tag mount_item (a template of
+#   equippable-mounts.toml). The statuette is gone while the player rides and
+#   comes back when it gets off. scripts/items/ethereal_mount.lua runs it.
+#
+# Fields:
+#   item_id           the graphic of the statuette
+#   script_id         ethereal_mount
+#   tags.mount_item   the template of the mount item that is worn
+# ==============================================================================
+
+[[item]]
+id = "ethereal_horse_statue"
+item_id = 8413
+name = "an ethereal horse statuette"
+rarity = "rare"
+loot_type = "newbied"
+script_id = "ethereal_mount"
+[item.tags]
+mount_item = "etherealhorse"
+
+[[item]]
+id = "ethereal_llama_statue"
+item_id = 8438
+name = "an ethereal llama statuette"
+rarity = "rare"
+loot_type = "newbied"
+script_id = "ethereal_mount"
+[item.tags]
+mount_item = "ethereal_llama"
+
+[[item]]
+id = "ethereal_ostard_statue"
+item_id = 8501
+name = "an ethereal ostard statuette"
+rarity = "rare"
+loot_type = "newbied"
+script_id = "ethereal_mount"
+[item.tags]
+mount_item = "etherealostard"
+
+[[item]]
+id = "ethereal_kirin_statue"
+item_id = 9632
+name = "an ethereal kirin statuette"
+rarity = "rare"
+loot_type = "newbied"
+script_id = "ethereal_mount"
+[item.tags]
+mount_item = "etherealkirin"
+
+[[item]]
+id = "ethereal_unicorn_statue"
+item_id = 9678
+name = "an ethereal unicorn statuette"
+rarity = "rare"
+loot_type = "newbied"
+script_id = "ethereal_mount"
+[item.tags]
+mount_item = "etherealunicorn"
+
+[[item]]
+id = "ethereal_ridgeback_statue"
+item_id = 9749
+name = "an ethereal ridgeback statuette"
+rarity = "rare"
+loot_type = "newbied"
+script_id = "ethereal_mount"
+[item.tags]
+mount_item = "etherealridgeback"
+
+[[item]]
+id = "ethereal_swampdragon_statue"
+item_id = 9753
+name = "an ethereal swamp dragon statuette"
+rarity = "rare"
+loot_type = "newbied"
+script_id = "ethereal_mount"
+[item.tags]
+mount_item = "etherealswampdragon"
+
+[[item]]
+id = "ethereal_beetle_statue"
+item_id = 9743
+name = "an ethereal beetle statuette"
+rarity = "rare"
+loot_type = "newbied"
+script_id = "ethereal_mount"
+[item.tags]
+mount_item = "etherealbeetle"

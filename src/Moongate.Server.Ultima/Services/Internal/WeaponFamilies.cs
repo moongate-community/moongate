@@ -48,6 +48,22 @@ internal static class WeaponFamilies
     }
 
     /// <summary>
+    ///     Gets the action of a human body on a mount that swings the weapon: the bows and the crossbows have their
+    ///     own, a weapon of two hands another, and any other the one-hand swing.
+    /// </summary>
+    public static HumanAnimationType MountedAction(WeaponType? type, bool twoHanded)
+    {
+        return type switch
+        {
+            WeaponType.Bow      => HumanAnimationType.MountedAttackBow,
+            WeaponType.Crossbow => HumanAnimationType.MountedAttackCrossbow,
+            _                   => twoHanded || type == WeaponType.PoleArm
+                ? HumanAnimationType.MountedAttack2H
+                : HumanAnimationType.MountedAttack1H
+        };
+    }
+
+    /// <summary>
     ///     Gets the action of a human body that swings the weapon.
     /// </summary>
     public static HumanAnimationType Action(WeaponType? type, bool twoHanded)
