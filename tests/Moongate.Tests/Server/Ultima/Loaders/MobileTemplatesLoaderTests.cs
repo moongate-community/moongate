@@ -74,6 +74,41 @@ public sealed class MobileTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_ReadsAndInheritsWhetherTheMobilesOpenDoors()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/mobiles/doors.toml",
+            """
+            [[mobile]]
+            id = "base_brute"
+            body = 1
+            opens_doors = false
+
+            [[mobile]]
+            id = "ogre"
+            base_id = "base_brute"
+
+            [[mobile]]
+            id = "clever_cat"
+            body = 201
+            opens_doors = true
+
+            [[mobile]]
+            id = "orc"
+            body = 17
+            """
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        Assert.Equal(
+            [false, true, null],
+            new[] { "ogre", "clever_cat", "orc" }.Select(id => templates[id].OpensDoors)
+        );
+    }
+
+    [Fact]
     public async Task LoadDataAsync_InheritsTheMovement()
     {
         using var root = new TemporaryDirectory();

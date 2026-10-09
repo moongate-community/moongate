@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6363fb13dc2a4efade13a4a1cd74fa86d55c1f9eb8e68d5025948e0aa11a9ba0","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"d63153d65a9082ea84b16f5c5d2e3eb97a09448ca95a3365a63c2c1ce19513db","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -142,7 +142,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Parole chiave del parlato e risposte | 🟡 | Le parole chiave del client raggiungono `on_speech` in qualsiasi lingua; i banchieri rispondono a *bank*, *balance*, *withdraw* e *check*, e alla parola *deposit*, che non ha una parola chiave; nessuna parola chiave dei venditori ancora |
 | Creature acquatiche e anfibie | ✅ | Compaiono sull'acqua e nuotano |
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
-| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, aggirando porte chiuse e mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; gli NPC non aprono le porte e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
+| Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, passando dalle porte chiuse che apre e aggirando quelle a chiave e i mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; un NPC che vaga non apre porte, e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
 | Animali e seguaci: comandi, lealtà, legame | ❌ | |
 | Cavalcature | ❌ | |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
@@ -183,7 +183,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Oggetti a terra e relativo decadimento | ✅ | |
 | Oggetti da script | ✅ | Script Lua per gli oggetti: uso, equipaggiamento, rimozione, raccolta, rilascio, creazione, oscurità, un giocatore che vi cammina sopra, parlato nelle vicinanze |
 | Tabelle del bottino | ✅ | Generato nello zaino di ogni NPC comparso, nei forzieri del tesoro e nei contenitori cittadini, e dagli script con `item.add_loot` |
-| Porte | ✅ | Apertura e chiusura; porte doppie collegate; una porta chiusa blocca il passaggio, lo staff la attraversa |
+| Porte | ✅ | Apertura e chiusura; porte doppie collegate; una porta chiusa blocca il passaggio, lo staff la attraversa; umani e mostri che camminano verso un luogo aprono quelle non a chiave |
 | Serrature e chiavi | ✅ | Le porte chiuse a chiave si aprono per un giocatore che porta la loro chiave |
 | Luci | ✅ | Accensione e spegnimento; i lampioni si accendono di notte |
 | Pozioni e cibo | 🟡 | Il cibo si mangia: fame, stamina, suono e gesto. Le bevande si bevono a sorsi, lasciando una brocca o un bicchiere vuoto; nessun riempimento, nessuna ubriachezza. Una pozione di esempio viene bevuta e consumata, senza ancora alcun effetto |

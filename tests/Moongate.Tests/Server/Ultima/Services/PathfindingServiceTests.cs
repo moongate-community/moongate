@@ -353,6 +353,39 @@ public sealed class PathfindingServiceTests
         Assert.Equal(Enumerable.Repeat(DirectionType.East, 4), staff.Steps);
     }
 
+    [Fact]
+    public void FindPath_OverTheRealMovement_ForWhoOpensDoors_GoesThroughAClosedDoor_AndAroundALockedOne()
+    {
+        // The same wall of crates, with a door in it and a gap at its far end.
+        var map = new FakeMapService(16, 16);
+        var tiles = new FakeTileDataService()
+            .Item(0x0E3D, TileFlagType.Impassable, 10)
+            .Item(0x0675, TileFlagType.Impassable | TileFlagType.Door, 20);
+        var sectors = TestSectors.Create();
+        uint serial = 0x40000001;
+        ItemEntity? door = null;
+
+        for (var y = 0; y <= 13; y++)
+        {
+            var item = new ItemEntity
+                { Id = new Serial(serial++), TemplateId = "thing", ItemId = y == 5 ? 0x0675 : 0x0E3D, Amount = 1 };
+            item.PlaceOnGround(MapType.Felucca, new Point3D(8, y, 0));
+            sectors.AddItem(item);
+            door = y == 5 ? item : door;
+        }
+
+        var paths = new PathfindingService(new MovementService(map, tiles, sectors), _world);
+        var opener = MovementAbilityType.Walk | MovementAbilityType.OpenDoors;
+
+        var closed = paths.FindPath(MapType.Felucca, new Point3D(6, 5, 0), new Point3D(10, 5, 0), opener);
+        door!.SetProp("locked", true);
+        var locked = paths.FindPath(MapType.Felucca, new Point3D(6, 5, 0), new Point3D(10, 5, 0), opener);
+
+        Assert.Equal(Enumerable.Repeat(DirectionType.East, 4), closed.Steps);
+        Assert.Equal(PathResultType.Found, locked.Kind);
+        Assert.True(locked.Steps.Count > 15, $"{locked.Steps.Count} steps");
+    }
+
     private PathResult Find(Point3D from, Point3D to, bool allowPartial = false)
     {
         return _paths.FindPath(MapType.Trammel, from, to, MovementAbilityType.Walk, allowPartial);

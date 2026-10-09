@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5355823f0a0818e68aaf0c3a083bbfed1b16a2610a0cb408ac3962e70426ce14","title":"Script dei mobile"} -->
+<!-- translation: {"sourceHash":"557c12ed29d58741b4f775b505b8e79a0cb8bcd07cf3be2d1766dc4a4c84f170","title":"Script dei mobile"} -->
 
 # Script dei mobile
 
@@ -131,7 +131,7 @@ Lo script dei mostri, `monster.lua`, è descritto con gli altri
 
 ## Percorrere un tragitto
 
-`npc.walk_to` permette a un NPC di raggiungere un luogo aggirando muri, acqua e dirupi. Lo script lo chiama
+`npc.walk_to` permette a un NPC di raggiungere un luogo aggirando muri, acqua e dirupi, e passando dalle porte chiuse che apre: un umano o un mostro apre una porta non chiusa a chiave, un animale o una creatura marina no, a meno che il suo template di mobile non lo dica con `opens_doors = true` o `false`. Lo script lo chiama
 a ogni tick e l'NPC compie un passo ogni volta:
 
 ```lua
@@ -148,7 +148,7 @@ end
 
 | Risposta | Significato |
 | --- | --- |
-| `"moving"` | L'NPC ha compiuto un passo |
+| `"moving"` | L'NPC ha compiuto un passo, oppure ha aperto una porta sulla sua strada e passa alla chiamata successiva |
 | `"arrived"` | Si trova entro `range` caselle dal luogo (predefinito 0), alla sua altezza; non viene controllato che non ci sia nulla tra loro |
 | `"blocked"` | Il passo è stato rifiutato oppure l'NPC attende di cercare un'altra strada |
 | `"no_path"` | L'ultima ricerca non ha raggiunto il luogo: nulla porta lì oppure porta solo nelle vicinanze |

@@ -487,6 +487,39 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheShippedDoorScript_OpensForAnNpcInItsWay_BothLeaves_AndClosesByItself()
+    {
+        var (left, right) = PlaceDoubleDoor();
+        var scripts = await StartDoorScriptAsync();
+
+        var result = scripts.Run(left, "on_npc_use", 0x100L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal((0x0676, 0x0678), (left.ItemId, right.ItemId));
+        Assert.Equal(TimeSpan.FromSeconds(20), _itemTimers.Remaining(left, "close"));
+        // Open already: an NPC closes nothing.
+        Assert.Equal(false, scripts.Run(left, "on_npc_use", 0x100L).Values[0]);
+        Assert.Equal(0x0676, left.ItemId);
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ALockedDoor_StaysClosedForAnNpc_WithoutAWord()
+    {
+        var (left, right) = PlaceDoubleDoor();
+        left.Props!["locked"] = true;
+        var scripts = await StartDoorScriptAsync();
+
+        var result = scripts.Run(left, "on_npc_use", 0x100L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(false, result.Values[0]);
+        Assert.Equal((0x0675, 0x0677), (left.ItemId, right.ItemId));
+        Assert.Empty(_fixture.Sender.Sent);
+        Assert.Empty(_speech.PlacedSounds);
+    }
+
+    [Fact]
     public async Task TheShippedDoorScript_ADoorThatCannotSwingAside_StaysClosed()
     {
         var door = PlaceDoor(new Serial(0x40000010), "MetalDoor", 0x0675, "west_cw", new Point3D(0, 1600, 0));
