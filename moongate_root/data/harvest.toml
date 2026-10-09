@@ -1,0 +1,31 @@
+# ==============================================================================
+# Moongate - harvest.toml
+#
+# What it is for:
+#   What is gathered from the world and runs out: the fish of the sea today,
+#   ore and wood later. Each map is cut in square areas; every cell of an area
+#   shares its amount. An area is full the first time someone gathers there
+#   (a number between amount_min and amount_max), a catch takes one, and the
+#   area is full again, all at once, between respawn_min_minutes and
+#   respawn_max_minutes after the first take from it. Areas are kept in
+#   memory: after a restart every place is full.
+#   Without this file nothing is gathered: the fish never bite.
+#
+# Fields:
+#   [[resource]]            one thing gathered
+#     id                    the name scripts ask for it by (harvest.take("fish", ...))
+#     area                  tiles on each side of an area, 1 to 256
+#     amount_min            the least a full area holds, at least 1
+#     amount_max            the most a full area holds
+#     respawn_min_minutes   the least minutes before the area is full again
+#     respawn_max_minutes   the most; the same as the least when left out
+# ==============================================================================
+
+# The fish: 5 to 15 in 8 by 8 tiles, back in 10 to 20 minutes.
+[[resource]]
+id = "fish"
+area = 8
+amount_min = 5
+amount_max = 15
+respawn_min_minutes = 10
+respawn_max_minutes = 20

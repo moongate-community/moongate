@@ -186,6 +186,17 @@ client's own texts as system messages (ModernUO shows them over the one examined
   skill waits 10 seconds. Traps, houses and factions
   are not there yet.
 
+## fishing_pole.lua
+
+`scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,
+`script_id = "fishing_pole"`): see [Fishing](../fishing.md). Double click the pole and pick water within 4 tiles and
+in sight (`target.pick_location`, `world.is_water`, `world.line_of_sight`). The character casts (`mobile.animate`),
+the water splashes 1.5 seconds later (`effect.at`, `world.play_sound`) and the result comes after 8 seconds
+(`timer.after`). The place must have fish left (`harvest.amount`), the Fishing skill is tried between 0 and 100
+(`skill.check`), and a catch is given into the backpack (`item.give`) and taken from the place (`harvest.take`).
+The constants at the top of the script are the range, the seconds and what comes out. Who is fishing is kept in
+memory by serial: a restart frees everyone.
+
 ## bandage.lua
 
 `scripts/items/bandage.lua` is the script of the clean bandage (`0x0e21_clean_bandage`, `script_id = "bandage"`),

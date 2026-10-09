@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 85 done, 🟡 56 partly done, ❌ 128 not built yet.
+**269 systems:** ✅ 85 done, 🟡 57 partly done, ❌ 127 not built yet.
 
 **Coverage: 32%** of the systems done, **42%** counting a partly done system as half.
 
@@ -111,7 +111,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | System | Moongate | Notes |
 | --- | --- | --- |
 | Using a skill and gaining it | 🟡 | A [skill](skills.md) is used from the skill window (`scripts/skills/<skill>.lua`), checked by `skill.check` and gained with ModernUO's formula; only Hiding is shipped, and stats do not rise with skills yet |
-| Gathering: mining, lumberjacking, fishing | ❌ | |
+| Gathering: mining, lumberjacking, fishing | 🟡 | [Fishing](fishing.md) with a pole: water within 4 tiles, 8 seconds, a fish, old footwear or nothing by the skill; the fish of a place run out by area and come back ([`harvest.toml`](data-files/harvest.md)). No mining or lumberjacking, no special catches |
 | Crafting engine: menus, recipes, resources, quality | ❌ | |
 | The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | ❌ | |
 | Repairing and enhancing items | ❌ | |

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"d63153d65a9082ea84b16f5c5d2e3eb97a09448ca95a3365a63c2c1ce19513db","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"3f055cb77335cd750a3f1e1a0fff6f4f941877a9c7e1d19fb292e2b9ce817edf","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 85 completati, 🟡 56 parzialmente completati, ❌ 128 non ancora realizzati.
+**269 sistemi:** ✅ 85 completati, 🟡 57 parzialmente completati, ❌ 127 non ancora realizzati.
 
 **Copertura: 32%** dei sistemi completati, **42%** contando un sistema parzialmente completato come metà.
 
@@ -113,7 +113,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Sistema | Moongate | Note |
 | --- | --- | --- |
 | Usare e incrementare un'abilità | 🟡 | Un'[abilità](skills.md) viene usata dalla finestra delle abilità (`scripts/skills/<skill>.lua`), verificata da `skill.check` e incrementata con la formula di ModernUO; viene fornita solo Hiding, e le statistiche non aumentano ancora con le abilità |
-| Raccolta: estrazione mineraria, taglio della legna, pesca | ❌ | |
+| Raccolta: estrazione mineraria, taglio della legna, pesca | 🟡 | [Pesca](fishing.md) con una canna: acqua entro 4 caselle, 8 secondi, un pesce, una vecchia calzatura o niente in base all'abilità; i pesci di un luogo si esauriscono per zona e ritornano ([`harvest.toml`](data-files/harvest.md)). Niente estrazione mineraria né taglio della legna, niente prese speciali |
 | Motore di creazione: menu, ricette, risorse, qualità | ❌ | |
 | Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | ❌ | |
 | Riparare e migliorare gli oggetti | ❌ | |
