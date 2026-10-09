@@ -299,6 +299,31 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
         Assert.Equal((0, 0), (other.DamageMin, other.DamageMax));
     }
 
+    [Fact]
+    public void SendStatus_OfTheOwnCharacter_HasItsFollowersAndTheLimit_ThatOfAnotherHasNone()
+    {
+        var pets = new Moongate.Tests.TestSupport.Ultima.Pets.StubPetService { FollowerCount = 3, MaxFollowers = 7 };
+        var service = new MobileStateService(
+            _fixture.Mobiles,
+            _fixture.Sessions,
+            _fixture.Sectors,
+            _fixture.Sender,
+            _view,
+            new WorldConfig(),
+            new Lazy<IWeightService>(() => _weight),
+            pets: new Lazy<IPetService>(() => pets)
+        );
+        Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Boris), out var boris));
+
+        service.SendStatus(_ariaSession, _aria);
+        service.SendStatus(_ariaSession, boris);
+
+        var own = Assert.IsType<MobileStatusPacket>(_fixture.Sender.Sent[0]).Status;
+        var other = Assert.IsType<MobileStatusPacket>(_fixture.Sender.Sent[1]).Status;
+        Assert.Equal((3, 7), (own.Followers, own.FollowersMax));
+        Assert.Equal(0, other.Followers);
+    }
+
     [Theory]
     [InlineData(StatType.Str, StatLockType.Down)]
     [InlineData(StatType.Dex, StatLockType.Locked)]

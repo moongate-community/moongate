@@ -39,6 +39,7 @@ public static class UltimaConfigContainerExtensions
         container.RegisterInstance(ultima.BulletinBoards);
         container.RegisterInstance(ultima.Bank);
         container.RegisterInstance(ultima.Stable);
+        container.RegisterInstance(ultima.Pets);
 
         return ultima;
     }
