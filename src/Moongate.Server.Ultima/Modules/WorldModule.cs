@@ -297,6 +297,19 @@ public sealed class WorldModule
     }
 
     /// <summary>
+    ///     Tells whether a cell is water, as the server counts it for what swims: its land or a static of it is water with
+    ///     room above, so not blood, a trough or the water under a dock; <c>world.is_water(MapType.Trammel, x, y)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the cell x, y of the map is water a creature could swim on: water land or a wet static with room above, not blood, a trough or the water under a dock. False outside the map."
+    )]
+    public bool IsWater(MapType map, int x, int y)
+    {
+        return _movement is not null && _sectors.IsInside(map, x, y) && _movement.TryGetSwimZ(map, x, y, out _);
+    }
+
+    /// <summary>
     ///     Gets a free tile one step from a spot, such as where to appear beside someone instead of on it;
     ///     <c>local spot = world.spot_beside(there.map, there.x, there.y, there.z)</c>.
     /// </summary>

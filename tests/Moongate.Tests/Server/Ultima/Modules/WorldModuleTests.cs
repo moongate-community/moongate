@@ -225,6 +225,18 @@ public sealed class WorldModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void IsWater_TellsACellAMobileCouldSwimOn_NotDryLandOrOutsideTheMap()
+    {
+        _movement.SwimZ = (x, _) => x == 1600 ? -5 : null;
+
+        var result = Run(
+            "return world.is_water('Trammel', 1600, 1600), world.is_water('Trammel', 1601, 1600), world.is_water('Trammel', -5, 1600)"
+        );
+
+        Assert.Equal([true, false, false], result.Select(value => value.Read<bool>()));
+    }
+
+    [Fact]
     public void SpotBeside_IsATileAStepAway_ThatCanBeSteppedOn_OrNil()
     {
         var result = Run("local spot = world.spot_beside('Trammel', 1600, 1600, 0) return spot.map, spot.x, spot.y, spot.z");
