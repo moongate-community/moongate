@@ -1,0 +1,42 @@
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
+
+namespace Moongate.Tests.TestSupport.Ultima.Mounts;
+
+/// <summary>
+///     Records the mounts and dismounts it is asked for; a rider is mounted when it is in <see cref="Mounted" />.
+/// </summary>
+public sealed class RecordingMountService : IMountService
+{
+    public HashSet<Serial> Mounted { get; } = [];
+
+    public bool Accepts { get; set; } = true;
+
+    public List<(MobileEntity Rider, MobileEntity Pet, bool Force)> Mounts { get; } = [];
+
+    public List<MobileEntity> Dismounts { get; } = [];
+
+    public List<string> Calls { get; } = [];
+
+    public bool IsMounted(MobileEntity rider)
+    {
+        return Mounted.Contains(rider.Id);
+    }
+
+    public bool TryMount(MobileEntity rider, MobileEntity pet, bool force = false)
+    {
+        Mounts.Add((rider, pet, force));
+        Calls.Add($"Mount {rider.Id.Value} {pet.Id.Value}");
+
+        return Accepts;
+    }
+
+    public bool Dismount(MobileEntity rider)
+    {
+        Dismounts.Add(rider);
+        Calls.Add($"Dismount {rider.Id.Value}");
+
+        return Mounted.Remove(rider.Id);
+    }
+}
