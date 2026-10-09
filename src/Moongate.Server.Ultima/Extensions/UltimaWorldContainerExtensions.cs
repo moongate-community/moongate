@@ -81,6 +81,7 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IItemScriptService, ItemScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.AddMoongateService<IGumpScriptService, GumpScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.AddMoongateService<IEventScriptService, EventScriptService>(LuaScriptEngineService.StartupPriority + 5);
+        container.AddMoongateService<IScheduleService, ScheduleService>(LuaScriptEngineService.StartupPriority + 6);
         container.AddMoongateService<ISkillScriptService, SkillScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.Register<ISkillService, SkillService>(Reuse.Singleton);
         container.Register<ISkillUseService, SkillUseService>(Reuse.Singleton);
