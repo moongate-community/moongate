@@ -18,6 +18,7 @@ using Moongate.Tests.TestSupport.Randomness;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Combat;
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Effects;
@@ -48,6 +49,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private readonly RecordingEffectService _effects = new();
     private readonly RecordingAmmoService _ammo = new();
     private readonly RecordingBloodService _blood = new();
+    private readonly RecordingMountService _mounts = new();
     private readonly StubCombatGearService _gear = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubSkillService _skills = new();
@@ -115,7 +117,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _murders,
             _effects,
             _ammo,
-            _blood
+            _blood,
+            _mounts
         );
     }
 
@@ -339,6 +342,48 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Equal((new Serial(2), new Serial(Orc)), (swing.Attacker, swing.Defender));
         // Punch, 7 frames.
         Assert.Contains("Animated 2 31 7 1", _view.Calls);
+    }
+
+    [Theory,
+     InlineData(WeaponType.Sword, false, 26),
+     InlineData(WeaponType.Mace, false, 26),
+     InlineData(WeaponType.Fencing, false, 26),
+     InlineData(WeaponType.Sword, true, 29),
+     InlineData(WeaponType.PoleArm, false, 29),
+     InlineData(WeaponType.Bow, true, 27),
+     InlineData(WeaponType.Crossbow, true, 28)]
+    public void ARider_SwingsWithTheActionsOfAMount(WeaponType type, bool twoHanded, int action)
+    {
+        _mounts.Mounted.Add(_aria.Id);
+        _gear.Weapon = new(SkillType.Swordsmanship, type, twoHanded, 5, 33, 35);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains($"Animated 2 {action} 7 1", _view.Calls);
+    }
+
+    [Fact]
+    public void ARiderWithBareFists_SwingsTheOneHandActionOfAMount()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains("Animated 2 26 7 1", _view.Calls);
+    }
+
+    [Fact]
+    public void AWalker_StillSwingsTheActionOfItsWeapon_WithAMountServicePresent()
+    {
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 5, 33, 35);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Contains("Animated 2 9 7 1", _view.Calls);
+        Assert.DoesNotContain("Animated 2 26 7 1", _view.Calls);
     }
 
     [Fact]
