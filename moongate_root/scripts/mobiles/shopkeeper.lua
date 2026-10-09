@@ -20,7 +20,9 @@
 --   on_speech(serial, speaker, text, keywords)  a player speaks within 15
 --                                               cells: the vendor answers
 --                                               "vendor buy" and "vendor sell"
---                                               said within 4
+--                                               said within 4, and, while the
+--                                               event halloween is on, "trick or
+--                                               treat" (common.trick_or_treat)
 --   on_context_menu(serial, player)             the entries the vendor adds to
 --                                               its context menu: Buy when it sells, Sell when it buys
 --   on_context_menu_select(serial, player, id)  the player chose it: the window
@@ -33,6 +35,7 @@
 local shop = require("common.shop")
 local training = require("common.training")
 local guild = require("common.guild")
+local trick_or_treat = require("common.trick_or_treat")
 
 shopkeeper = {}
 
@@ -44,6 +47,7 @@ function shopkeeper.on_speech(serial, speaker, text, keywords)
     guild.listen(serial, speaker, text, keywords)
 
     shop.listen(serial, speaker, keywords)
+    trick_or_treat.listen(serial, speaker, text)
 end
 
 function shopkeeper.on_context_menu(serial, player)

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"756ff2e13c1e6a33548b648294087bb48f24c1dbd511c3bdaa1477201be70a55","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"76379873b69fdc65f2d6b1583a2c677dd2897bed38265da3aeb93b7241aba9c9","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -171,7 +171,7 @@ Queste voci non dipendono dalle fasi di gioco e vengono completate quando un ope
   [`.go`](commands/go.md) e il loro gump sono completati.
 - La [prigione](jail.md), il [menu di aiuto e per personaggi bloccati](help.md) e la coda di richieste ai GM sono completati.
 - Comandi scritti in Lua.
-- Il [calendario](schedule.md) è fatto: task a orario, spegnimento con avvisi ed eventi stagionali per data. Prossimo: eventi di esempio (Halloween e Natale) sopra di esso.
+- Il [calendario](schedule.md) è fatto: task a orario, spegnimento con avvisi ed eventi stagionali per data. Il dolcetto o scherzetto di Halloween è fatto ([Feste](holidays.md)); prossimi il Natale (palle di neve e regali) e le decorazioni di entrambi.
 
 ## In seguito
 
