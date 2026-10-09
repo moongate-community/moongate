@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Lua;
 using Lua.Standard;
 using Moongate.Core.Geometry;
@@ -40,6 +41,7 @@ public sealed class NpcModuleTests
     private readonly FakeScriptEngine _engine = new() { CurrentScript = "mobiles/summoner.lua" };
     private readonly StubGameLoop _loop = new();
     private readonly StubLineOfSightService _sight = new();
+    private readonly RecordingNpcDoorService _doors = new();
     private readonly SectorService _sectors = TestSectors.Create();
 
     private readonly MobileEntity _orc = new()
@@ -401,6 +403,63 @@ public sealed class NpcModuleTests
         Assert.Equal("arrived", Run("return npc.walk_to(256, 1601, 1601, 0, 1)")[0].Read<string>());
 
         Assert.Empty(_finder.Searches);
+    }
+
+    [Theory]
+    [InlineData(false, MovementAbilityType.Walk)]
+    [InlineData(true, MovementAbilityType.Walk | MovementAbilityType.OpenDoors)]
+    public void WalkTo_OfAnNpcThatOpensDoors_PlansItsPathThroughTheClosedOnes(bool opens, MovementAbilityType ability)
+    {
+        _doors.Opens = opens;
+        _finder.Finds(DirectionType.North);
+
+        Run("npc.walk_to(256, 1600, 1598, 0)");
+
+        Assert.Equal(ability, Assert.Single(_finder.Searches).Ability);
+    }
+
+    [Fact]
+    public void WalkTo_BlockedByADoorTheNpcOpens_OpensIt_KeepsItsPath_AndPassesAtTheNextCall()
+    {
+        _doors.Opens = true;
+        _doors.DoorAhead = true;
+        _finder.Finds(DirectionType.North, DirectionType.North);
+        _movement.Allow = false;
+
+        Assert.Equal("moving", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+        Assert.Equal((_orc, DirectionType.North), Assert.Single(_doors.Tried));
+        Assert.Equal(new Point3D(1600, 1600, 0), _orc.Location);
+
+        // The door swung aside: the same path goes on, with no new search.
+        _movement.Allow = true;
+
+        Assert.Equal("moving", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+        Assert.Equal("moving", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+        Assert.Equal(new Point3D(1600, 1598, 0), _orc.Location);
+        Assert.Single(_finder.Searches);
+    }
+
+    [Fact]
+    public void WalkTo_BlockedByWhatIsNoDoor_IsBlocked_ThoughTheNpcOpensDoors()
+    {
+        _doors.Opens = true;
+        _finder.Finds(DirectionType.North);
+        _movement.Allow = false;
+
+        Assert.Equal("blocked", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+        Assert.Single(_doors.Tried);
+    }
+
+    [Fact]
+    public void StepAndWander_NeverOpenADoor()
+    {
+        _doors.Opens = true;
+        _doors.DoorAhead = true;
+        _movement.Allow = false;
+
+        Run("npc.step(256, 'North') npc.wander(256)");
+
+        Assert.Empty(_doors.Tried);
     }
 
     [Fact]
@@ -913,7 +972,8 @@ public sealed class NpcModuleTests
                 _finder,
                 _movement,
                 null,
-                _sight
+                _sight,
+                _doors
             )
         );
 
