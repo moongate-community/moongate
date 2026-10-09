@@ -169,7 +169,7 @@ These do not depend on the gameplay phases and are done when an operator needs t
   [`.go`](commands/go.md) and their gump are done.
 - The [jail](jail.md), the [help and stuck menu](help.md) and the GM page queue are done.
 - Commands written in Lua.
-- The [schedule](schedule.md) is done: timed tasks, the shutdown with warnings and seasonal events by date. Halloween's trick or treat and Christmas' snowballs and gifts are done ([Holidays](holidays.md)); next the decorations of both.
+- The [schedule](schedule.md) is done: timed tasks, the shutdown with warnings and seasonal events by date. Halloween's trick or treat and Christmas' snowballs and gifts are done, and the towns are decorated for both ([Holidays](holidays.md)).
 
 ## Later
 

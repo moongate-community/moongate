@@ -63,6 +63,33 @@ itself, or at something that carries no snow.
 | `scripts/items/snow_pile.lua` | The snowball. |
 | `scripts/events/christmas.lua` | `on_start`, `on_end` and `on_login`: the announcements and the gift. |
 
-The decorations come from `templates/items/misc/christmas.toml`. The mistletoe deed, the other
-winter 2010 pieces and the snow of the safe zones are not here, and neither are the decorations of
-the towns: they come later.
+The decorations of the gift come from `templates/items/misc/christmas.toml`. The mistletoe deed,
+the other winter 2010 pieces and the snow of the safe zones are not here.
+
+## The decorations of the towns
+
+When an event starts the towns are decorated, and when it ends or staff switches it off the
+decorations are taken away, whatever the reason the event stops: `.event off`, the end date, or a
+server that was off on that day (the hook runs at the next startup).
+
+- **Where.** Around the centre of Britain, Trinsic, Vesper, Minoc, Yew, Skara Brae and Moonglow (the
+  places of the category `Factions/Towns` of [`locations.toml`](data-files/locations.md)), on Felucca
+  and on Trammel: up to 8 spots a town and map, 3 to 6 tiles from the centre. A spot is skipped when
+  something stands there, when there is no floor, or when the floor is more than 8 levels away from the
+  centre.
+- **What.** Halloween: jack o' lanterns, pumpkins, skulls on a pike, a pumpkin scarecrow, a black cat
+  statue, a ghoul statue. Christmas: snowy trees, topiaries, festive cacti, poinsettias. The pieces
+  are the templates of `templates/items/misc/holiday_decorations.toml`, which cannot be lifted and
+  never decay.
+- **How it is remembered.** The serials are kept in the world prop `holiday.<event>.items`, so a restart
+  in the middle of the event does not place them twice, and the end removes them even after a restart.
+  The server makes only a few items at a time: a long run is finished a few seconds later. If the event
+  ends first, the work stops.
+
+| File | Content |
+| --- | --- |
+| `scripts/common/holiday_decor.lua` | `place` and `remove`. |
+| `templates/items/misc/holiday_decorations.toml` | The decoration templates. |
+
+A new event gets decorations by calling `holiday_decor.place(id, templates)` in its `on_start` and
+`holiday_decor.remove(id)` in its `on_end`.

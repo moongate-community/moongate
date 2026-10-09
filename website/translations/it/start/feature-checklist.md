@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"889347347195161ec8d99a089c7dc1859f07eb98350e7307fd5b20cb9678e7bc","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"c07554b3f1494cef6560b7a3c0c0cad473698806c186ba9b8f5705a94c723839","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -281,7 +281,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Comandi con livelli di accesso | ✅ | Dalla console (completamento di comandi e argomenti con TAB, cronologia con Su/Giù) e in gioco; vedi [Comandi](commands.md) |
 | Salvataggio del mondo | ✅ | Periodico e allo spegnimento, con `.save` |
 | Task a orario, spegnimento ed eventi stagionali | ✅ | `data/schedule.toml`: task per ora, giorno o settimana (spegnimento con avvisi, messaggio, funzione Lua), eventi per data con interruttore dello staff e hook `on_start`/`on_end`, in un fuso orario a scelta; vedi [Calendario](schedule.md) |
-| Eventi festivi | 🟡 | [Feste](holidays.md): Halloween (dal 24 ottobre al 15 novembre), dove i negozianti rispondono a "trick or treat" con una caramella o uno scherzo, e Natale (dal 24 dicembre al 1° gennaio), con palle di neve da lanciare e un regalo all'accesso una volta a stagione; niente decorazioni delle città per ora |
+| Eventi festivi | 🟡 | [Feste](holidays.md): Halloween (dal 24 ottobre al 15 novembre), dove i negozianti rispondono a "trick or treat" con una caramella o uno scherzo, e Natale (dal 24 dicembre al 1° gennaio), con palle di neve da lanciare e un regalo all'accesso una volta a stagione; entrambi decorano le città principali finché sono attivi |
 | Backup del database | ✅ | Esportazioni SQL a rotazione, pianificate e con `.sql_backup`; ripristino con psql |
 | Console | ✅ | |
 | Configurazione del server | ✅ | `moongate.toml`, validato all'avvio |

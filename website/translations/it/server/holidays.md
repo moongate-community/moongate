@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a1c1d381757273b8fb78cbb850b9ad01cac1d9bf18ce3fcfa6b3edab111b74ad","title":"Feste"} -->
+<!-- translation: {"sourceHash":"f96375cf372f5943f360f6dc329472258a695e1f40f9328947cbfd4942f7b7e8","title":"Feste"} -->
 
 # Feste
 
@@ -66,6 +66,32 @@ se stesso o contro qualcosa che non porta neve.
 | `scripts/items/snow_pile.lua` | La palla di neve. |
 | `scripts/events/christmas.lua` | `on_start`, `on_end` e `on_login`: gli annunci e il regalo. |
 
-Le decorazioni vengono da `templates/items/misc/christmas.toml`. Il deed del vischio, gli altri
-pezzi invernali del 2010 e la neve delle zone sicure non ci sono, e neppure le decorazioni delle
-città: arrivano dopo.
+Le decorazioni del regalo vengono da `templates/items/misc/christmas.toml`. Il deed del vischio,
+gli altri pezzi invernali del 2010 e la neve delle zone sicure non ci sono.
+
+## Le decorazioni delle città
+
+Quando un evento inizia le città vengono decorate, e quando finisce o lo staff lo spegne le
+decorazioni vengono tolte, qualunque sia il motivo per cui l'evento si ferma: `.event off`, la data di
+fine, o un server che era spento quel giorno (l'hook parte al prossimo avvio).
+
+- **Dove.** Attorno al centro di Britain, Trinsic, Vesper, Minoc, Yew, Skara Brae e Moonglow (i luoghi
+  della categoria `Factions/Towns` di [`locations.toml`](data-files/locations.md)), su Felucca e su
+  Trammel: fino a 8 punti per città e mappa, da 3 a 6 caselle dal centro. Un punto viene saltato quando
+  c'è qualcosa sopra, quando non c'è un pavimento, o quando il pavimento è a più di 8 livelli dal centro.
+- **Cosa.** Halloween: zucche intagliate, zucche, teschi su una picca, uno spaventapasseri di zucca, una
+  statua di gatto nero, una statua di ghoul. Natale: alberi innevati, topiari, cactus natalizi, stelle di
+  Natale. I pezzi sono i template di `templates/items/misc/holiday_decorations.toml`, che non si possono
+  sollevare e non decadono mai.
+- **Come si ricorda.** I serial sono nella proprietà del mondo `holiday.<event>.items`, quindi un
+  riavvio a metà evento non le mette due volte, e la fine le toglie anche dopo un riavvio. Il server
+  crea pochi oggetti alla volta: una serie lunga si completa qualche secondo dopo. Se l'evento finisce
+  prima, il lavoro si ferma.
+
+| File | Contenuto |
+| --- | --- |
+| `scripts/common/holiday_decor.lua` | `place` e `remove`. |
+| `templates/items/misc/holiday_decorations.toml` | I template delle decorazioni. |
+
+Un nuovo evento ottiene le decorazioni chiamando `holiday_decor.place(id, templates)` nel suo
+`on_start` e `holiday_decor.remove(id)` nel suo `on_end`.
