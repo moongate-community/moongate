@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"91f76dd0226df937f6b77388de304b6ed9f9ed50968a560b99a536c2e2724d02","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"a22e929a43e54c61b99eaec6000c418148bf357d166ac318849d6e6db6e43774","title":"Panoramica"} -->
 
 # File dei dati dello shard
 
@@ -40,6 +40,7 @@ viene eseguito dopo di esso.
 | <span id="starting-cities"></span><span id="validation-at-startup-1"></span>[`starting_cities.toml`](data-files/starting-cities.md) | `StartingCityContent` | mappe | Sì, nell'elenco dei personaggi |
 | <span id="moongates"></span>[`moongates.toml`](data-files/moongates.md) | `MoongateFacet` | mappe | Sì, da `.decorate` e dallo script moongate |
 | <span id="locations"></span>[`locations.toml`](data-files/locations.md) | `NamedLocation` | facoltativo | Sì, da `.go` e dal suo gump |
+| <span id="schedule"></span>[`schedule.toml`](data-files/schedule.md) | `ScheduleFile` | facoltativo | Sì, dal servizio del calendario e da `.event` |
 | <span id="jail"></span>[`jail.toml`](data-files/jail.md) | `JailFile` | facoltativo; prima dei template dei libri | Sì, da `.jail` e dal suo gump |
 | <span id="skills"></span><span id="validation-at-startup-2"></span>[`skills.toml`](data-files/skills.md) | `SkillContent` | città iniziali | No |
 | <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | abilità (ogni abilità iniziale deve esistere) | Sì, creazione dei personaggi |

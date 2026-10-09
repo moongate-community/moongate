@@ -54,6 +54,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Yes | GameMaster | Game |
 | [`gmtools`](commands/gmtools.md) | `gmtools` | No | Yes | GameMaster | Game |
 | [`pages`](commands/pages.md) | `pages` | No | Yes | GameMaster | Game |
+| [`event`](commands/event.md) | `event [list\|on\|off\|auto <id>]` | Yes | Yes | Administrator | Game |
 | [`hide`](commands/hide.md) | `hide` | No | Yes | GameMaster | Game |
 | [`unhide`](commands/unhide.md) | `unhide` | No | Yes | GameMaster | Game |
 | [`moongate`](commands/moongate.md) | `moongate <x>,<y>,<z> [map]` | No | Yes | GameMaster | Game |
@@ -99,7 +100,7 @@ commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
 - **Everyone:** `help`, `echo`, `time`.
 - **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `tame`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
-- **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `decorate`,
+- **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `event`, `decorate`,
   `initial_spawn`, plus everything a
   game master uses.
 - **Console only:** `console`, `script`.

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"4b2b7639948ef8a0a17e0e842f35f0d90c614d0ff5d5abb861a270ab01c7d8e4","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"ae5167cbbfe635d137eb98d8928cdb333d7112cff6efa38c4d318723b332438d","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**269 sistemi:** ✅ 87 completati, 🟡 57 parzialmente completati, ❌ 125 non ancora realizzati.
+**270 sistemi:** ✅ 88 completati, 🟡 58 parzialmente completati, ❌ 124 non ancora realizzati.
 
-**Copertura: 32%** dei sistemi completati, **43%** contando un sistema parzialmente completato come metà.
+**Copertura: 33%** dei sistemi completati, **43%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -280,6 +280,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | --- | --- | --- |
 | Comandi con livelli di accesso | ✅ | Dalla console (completamento di comandi e argomenti con TAB, cronologia con Su/Giù) e in gioco; vedi [Comandi](commands.md) |
 | Salvataggio del mondo | ✅ | Periodico e allo spegnimento, con `.save` |
+| Task a orario, spegnimento ed eventi stagionali | ✅ | `data/schedule.toml`: task per ora, giorno o settimana (spegnimento con avvisi, messaggio, funzione Lua), eventi per data con interruttore dello staff e hook `on_start`/`on_end`, in un fuso orario a scelta; vedi [Calendario](schedule.md) |
 | Backup del database | ✅ | Esportazioni SQL a rotazione, pianificate e con `.sql_backup`; ripristino con psql |
 | Console | ✅ | |
 | Configurazione del server | ✅ | `moongate.toml`, validato all'avvio |
