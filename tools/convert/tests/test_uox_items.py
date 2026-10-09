@@ -678,3 +678,20 @@ def test_a_two_handed_layer_item_with_the_light_script_leaves_the_other_hand_fre
     assert items["0x0f64_torch"]["script_id"] == "light"
     assert "two_handed_weapon" not in items["0x0f64_torch"]
     assert items["0x0f43_hatchet"]["two_handed_weapon"] is True
+
+
+def test_the_carpentry_tools_get_the_carpentry_tool_script_by_their_graphic(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[0x1034]\n{\nname=saw\nid=0x1034\n}\n"
+        "[0x10e5]\n{\nname=froe\nid=0x10e5\n}\n"
+        "[0x102e]\n{\nname=nails\nid=0x102e\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a carpenter works wood with: scripts/items/carpentry_tool.lua. Nails are no tool.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["saw"]["script_id"] == "carpentry_tool"
+    assert by_name["froe"]["script_id"] == "carpentry_tool"
+    assert "script_id" not in by_name["nails"]

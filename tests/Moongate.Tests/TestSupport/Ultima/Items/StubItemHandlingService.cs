@@ -39,11 +39,16 @@ public sealed class StubItemHandlingService : IItemHandlingService
 
     public List<ItemEntity> Deleted { get; } = [];
 
-    public ItemEntity? Give(MobileEntity owner, string template, int? amount = null, bool ignoreCapacity = false)
+    public ItemEntity? Give(MobileEntity owner, string template, int? amount = null, bool ignoreCapacity = false, Hue? hue = null)
     {
         if (NoBackpack || (BackpackFull && !ignoreCapacity) || Make(template, amount) is not { } item)
         {
             return null;
+        }
+
+        if (hue is { } colour)
+        {
+            item.Hue = colour;
         }
 
         Given.Add(item);

@@ -1,0 +1,380 @@
+# ==============================================================================
+# Moongate - data/crafts/carpentry.toml
+#
+# What it is for:
+#   The recipes of carpentry, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+# ==============================================================================
+
+id = "carpentry"
+name = "Carpentry"
+skill = "carpentry"
+sound = 0x023D
+
+[[group]]
+name = "Chairs"
+
+[[group.recipe]]
+name = "Barstool"
+item = "0x0a2a_a_stool"
+skill_min = 11.0
+skill_max = 36.0
+resources = [{ resource = "wood", amount = 9 }]
+skills = []
+
+[[group.recipe]]
+name = "Stool"
+item = "0x0a2b_a_stool"
+skill_min = 11.0
+skill_max = 36.0
+resources = [{ resource = "wood", amount = 9 }]
+skills = []
+
+[[group.recipe]]
+name = "Straw Chair"
+item = "0x0b5a_chair"
+skill_min = 21.0
+skill_max = 46.0
+resources = [{ resource = "wood", amount = 13 }]
+skills = []
+
+[[group.recipe]]
+name = "Wooden Chair"
+item = "0x0b56_chair"
+skill_min = 21.0
+skill_max = 46.0
+resources = [{ resource = "wood", amount = 13 }]
+skills = []
+
+[[group.recipe]]
+name = "Wooden Bench"
+item = "0x0b2c_wooden_bench"
+skill_min = 52.6
+skill_max = 77.6
+resources = [{ resource = "wood", amount = 17 }]
+skills = []
+
+[[group.recipe]]
+name = "Wooden Throne"
+item = "0x0b2f_wooden_chair"
+skill_min = 52.6
+skill_max = 77.6
+resources = [{ resource = "wood", amount = 17 }]
+skills = []
+
+[[group.recipe]]
+name = "Magician Throne"
+item = "0x0b33_throne"
+skill_min = 73.6
+skill_max = 98.6
+resources = [{ resource = "wood", amount = 19 }]
+skills = []
+
+[[group.recipe]]
+name = "Vesper Style"
+item = "0x0b4e_chair"
+skill_min = 42.1
+skill_max = 67.1
+resources = [{ resource = "wood", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Trinsic Style"
+item = "0x0b52_chair"
+skill_min = 42.1
+skill_max = 67.1
+resources = [{ resource = "wood", amount = 15 }]
+skills = []
+
+[[group]]
+name = "Tables"
+
+[[group.recipe]]
+name = "Small Table"
+item = "0x0b3a_table"
+skill_min = 42.1
+skill_max = 67.1
+resources = [{ resource = "wood", amount = 17 }]
+skills = []
+
+[[group.recipe]]
+name = "Writing Table"
+item = "0x0b49_writing_table"
+skill_min = 63.1
+skill_max = 88.1
+resources = [{ resource = "wood", amount = 17 }]
+skills = []
+
+[[group.recipe]]
+name = "Large Table"
+item = "0x0b7c_table"
+skill_min = 63.1
+skill_max = 88.1
+resources = [{ resource = "wood", amount = 23 }]
+skills = []
+
+[[group.recipe]]
+name = "Yew-wood Table"
+item = "0x0b7d_table"
+skill_min = 84.1
+skill_max = 109.1
+resources = [{ resource = "wood", amount = 27 }]
+skills = []
+
+[[group]]
+name = "Containers"
+
+[[group.recipe]]
+name = "Wooden Box"
+item = "0x0e7d_wooden_box"
+skill_min = 21.0
+skill_max = 46.0
+resources = [{ resource = "wood", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Small Crate"
+item = "0x0e7e_small_crate"
+skill_min = 10.0
+skill_max = 35.0
+resources = [{ resource = "wood", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Medium Crate"
+item = "0x0e3e_crate"
+skill_min = 31.5
+skill_max = 56.5
+resources = [{ resource = "wood", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Open Keg"
+item = "0x0e7f_an_open_keg"
+skill_min = 57.8
+skill_max = 82.8
+resources = [{ resource = "0x1eb1_barrel_staves", amount = 3 }, { resource = "0x1db8_barrel_lid", amount = 1 }, { resource = "0x10e1_barrel_hoops", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Large Crate"
+item = "0x0e3c_crate"
+skill_min = 47.3
+skill_max = 72.3
+resources = [{ resource = "wood", amount = 18 }]
+skills = []
+
+[[group.recipe]]
+name = "Chest"
+item = "0x0e42_wooden_chest"
+skill_min = 73.6
+skill_max = 98.6
+resources = [{ resource = "wood", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Bookshelf"
+item = "0x0a9e_wooden_shelf"
+skill_min = 31.5
+skill_max = 56.5
+resources = [{ resource = "wood", amount = 25 }]
+skills = []
+
+[[group.recipe]]
+name = "Armoire"
+item = "0x0a51_armoire"
+skill_min = 84.1
+skill_max = 109.1
+resources = [{ resource = "wood", amount = 35 }]
+skills = []
+
+[[group.recipe]]
+name = "Armoire"
+item = "0x0a53_armoire"
+skill_min = 84.1
+skill_max = 109.1
+resources = [{ resource = "wood", amount = 35 }]
+skills = []
+
+[[group]]
+name = "Other Items"
+
+[[group.recipe]]
+name = "Barrel Staves"
+item = "0x1eb1_barrel_staves"
+skill_min = 0.0
+skill_max = 25.0
+resources = [{ resource = "wood", amount = 5 }]
+skills = []
+
+[[group.recipe]]
+name = "Barrel Lid"
+item = "0x1db8_barrel_lid"
+skill_min = 11.0
+skill_max = 36.0
+resources = [{ resource = "wood", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Wooden Shield"
+item = "0x1b7a"
+skill_min = 52.6
+skill_max = 80.0
+resources = [{ resource = "wood", amount = 9 }]
+skills = []
+
+[[group.recipe]]
+name = "Easel"
+item = "0x0f66_easel_with_canvas"
+skill_min = 86.8
+skill_max = 111.8
+resources = [{ resource = "wood", amount = 20 }]
+skills = []
+
+[[group.recipe]]
+name = "Easel"
+item = "0x0f68_easel_with_canvas"
+skill_min = 86.8
+skill_max = 111.8
+resources = [{ resource = "wood", amount = 20 }]
+skills = []
+
+[[group.recipe]]
+name = "Easel"
+item = "0x0f6a_easel_with_canvas"
+skill_min = 86.8
+skill_max = 111.8
+resources = [{ resource = "wood", amount = 20 }]
+skills = []
+
+[[group]]
+name = "Staves & Poles"
+
+[[group.recipe]]
+name = "Fishing Pole"
+item = "0x0dbf_fishing_pole"
+skill_min = 68.4
+skill_max = 93.4
+resources = [{ resource = "wood", amount = 5 }, { resource = "cloth", amount = 5 }]
+skills = [{ skill = "tailoring", min = 68.4, max = 93.4 }]
+
+[[group.recipe]]
+name = "Shepard's Crook"
+item = "0x0e81"
+skill_min = 78.9
+skill_max = 103.9
+resources = [{ resource = "wood", amount = 7 }]
+skills = []
+
+[[group.recipe]]
+name = "Quarter Staff"
+item = "0x0e89"
+skill_min = 73.6
+skill_max = 100.0
+resources = [{ resource = "wood", amount = 6 }]
+skills = []
+
+[[group.recipe]]
+name = "Gnarled Staff"
+item = "0x13f8"
+skill_min = 78.9
+skill_max = 103.9
+resources = [{ resource = "wood", amount = 7 }]
+skills = []
+
+[[group]]
+name = "Musical items"
+
+[[group.recipe]]
+name = "Lap Harp"
+item = "0x0eb2_lap_harp"
+skill_min = 63.1
+skill_max = 88.1
+resources = [{ resource = "wood", amount = 20 }, { resource = "cloth", amount = 10 }]
+skills = [{ skill = "musicianship", min = 45.0, max = 70.0 }]
+
+[[group.recipe]]
+name = "Standing Harp"
+item = "0x0eb1_standing_harp"
+skill_min = 78.9
+skill_max = 103.9
+resources = [{ resource = "wood", amount = 35 }, { resource = "cloth", amount = 15 }]
+skills = [{ skill = "musicianship", min = 45.0, max = 70.0 }]
+
+[[group.recipe]]
+name = "Drum"
+item = "0x0e9c_drum"
+skill_min = 57.8
+skill_max = 82.8
+resources = [{ resource = "wood", amount = 20 }, { resource = "cloth", amount = 10 }]
+skills = [{ skill = "musicianship", min = 45.0, max = 70.0 }]
+
+[[group.recipe]]
+name = "Lute"
+item = "0x0eb3_lute"
+skill_min = 68.4
+skill_max = 93.4
+resources = [{ resource = "wood", amount = 25 }, { resource = "cloth", amount = 10 }]
+skills = [{ skill = "musicianship", min = 45.0, max = 70.0 }]
+
+[[group.recipe]]
+name = "Tambourine"
+item = "0x0e9d_tambourine"
+skill_min = 57.8
+skill_max = 82.8
+resources = [{ resource = "wood", amount = 15 }, { resource = "cloth", amount = 10 }]
+skills = [{ skill = "musicianship", min = 45.0, max = 70.0 }]
+
+[[group.recipe]]
+name = "Tambourine"
+item = "0x0e9e_tambourine"
+skill_min = 57.8
+skill_max = 82.8
+resources = [{ resource = "wood", amount = 15 }, { resource = "cloth", amount = 10 }]
+skills = [{ skill = "musicianship", min = 45.0, max = 70.0 }]
+
+[[group.recipe]]
+name = "Short Stand"
+item = "0x0eb6_music_stand"
+skill_min = 78.9
+skill_max = 104.0
+resources = [{ resource = "wood", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Short Stand"
+item = "0x0eb8_music_stand"
+skill_min = 78.9
+skill_max = 104.0
+resources = [{ resource = "wood", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Tall Stand"
+item = "0x0ebb_music_stand"
+skill_min = 81.5
+skill_max = 105.5
+resources = [{ resource = "wood", amount = 20 }]
+skills = []
+
+[[group.recipe]]
+name = "Tall Stand"
+item = "0x0ebc_music_stand"
+skill_min = 81.5
+skill_max = 105.5
+resources = [{ resource = "wood", amount = 20 }]
+skills = []

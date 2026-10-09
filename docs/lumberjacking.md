@@ -88,7 +88,7 @@ The areas are kept in memory: after a restart every place is full. The numbers a
 
 ## Change the rules
 
-The rules are in `scripts/items/axe.lua` (the range, the swings, the logs of a cut, the boards, the table of the kinds of wood and the one of the rare finds), `scripts/items/blade.lua` (kindling) and `scripts/common/trees.lua` (the graphics that count
+The rules are in `scripts/items/axe.lua` (the range, the swings, the logs of a cut, the boards and the table of the rare finds), `scripts/common/woods.lua` (the kinds of wood, shared with [carpentry](carpentry.md)), `scripts/items/blade.lua` (kindling) and `scripts/common/trees.lua` (the graphics that count
 as trees). See [Shipped scripts](scripting/shipped-scripts.md#axelua). A template chops with `script_id = "axe"`.
 
 ## Existing roots
@@ -96,11 +96,11 @@ as trees). See [Shipped scripts](scripting/shipped-scripts.md#axelua). A templat
 A root made before lumberjacking existed needs two things. Run `mgctl init`, which adds the script. Then add the
 resource `wood` to your `data/harvest.toml` and `script_id = "axe"` to the axe bases of
 `templates/items/gear/weapons/axes.toml`, or copy both files from the distribution: `mgctl init` never replaces
-a file you may have changed. For boards and kindling, copy `scripts/items/axe.lua` again if you had it already, and give `script_id = "blade"` to your knives, daggers and swords, or copy the files of `templates/items/gear/weapons` from the distribution. For the kinds of wood and the rare finds, copy `templates/items/woods.toml`, `scripts/items/axe.lua` and `scripts/common/trees.lua`, and add the `[[resource.vein]]` of the wood to your `data/harvest.toml`: without the veins every place is of plain wood, and without the templates a cut gives plain logs.
+a file you may have changed. For boards and kindling, copy `scripts/items/axe.lua` again if you had it already, and give `script_id = "blade"` to your knives, daggers and swords, or copy the files of `templates/items/gear/weapons` from the distribution. For the kinds of wood and the rare finds, copy `templates/items/woods.toml`, `scripts/items/axe.lua`, `scripts/common/trees.lua` and `scripts/common/woods.lua`, and add the `[[resource.vein]]` of the wood to your `data/harvest.toml`: without the veins every place is of plain wood, and without the templates a cut gives plain logs.
 
 ## Not yet
 
-What is made of the kinds of wood and of the rare finds: carpentry and the other crafts.
+What is made of the rare finds. Boards and the kinds of wood are worked by [carpentry](carpentry.md).
 
 ## See also
 

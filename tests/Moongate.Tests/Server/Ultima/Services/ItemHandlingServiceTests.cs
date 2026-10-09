@@ -121,6 +121,22 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Give_WithAHue_IsAnItemOfThatHue_ApartFromTheStackOfAnotherHue_AndJoinsOneOfItsOwn()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+
+        var given = _handling.Give(_owner, "gold", 30, hue: new Hue(0x7DA));
+
+        // Coloured before it looks for a stack: the 100 plain coins stay as they are.
+        Assert.NotNull(given);
+        Assert.NotSame(_gold, given);
+        Assert.Equal((30, new Hue(0x7DA)), (given.Amount, given.Hue));
+        Assert.Equal(100, _gold.Amount);
+        Assert.Same(given, _handling.Give(_owner, "gold", 5, hue: new Hue(0x7DA)));
+        Assert.Equal(35, given.Amount);
+    }
+
+    [Fact]
     public void Give_WhatDoesNotStack_IsAnItemApartEachTime()
     {
         _serials.Serials.Enqueue(new Serial(0x40000F00));
@@ -207,6 +223,22 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
     {
         Assert.True(_fixture.Sessions.TryGetByCharacterId(_owner.Id, out var session));
         await _fixture.Network.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, new HeldItem(_gold.Id)));
+
+        Assert.True(_handling.IsHeld(_gold));
+        Assert.False(_handling.Consume(_gold, 10));
+        Assert.Equal(100, _gold.Amount);
+    }
+
+    [Fact]
+    public async Task Consume_AnItemInsideABagHeldOnACursor_IsFalse()
+    {
+        // A lifted bag stays where it was until it is dropped, and so does what it holds: none of it can be taken.
+        var bag = new ItemEntity { Id = new Serial(0x40000777), TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        bag.PutInContainer(_backpack.Id, new Point2D(30, 30));
+        _items.Add([bag]);
+        _items.MoveToContainer(_gold, bag.Id, new Point2D(10, 10));
+        Assert.True(_fixture.Sessions.TryGetByCharacterId(_owner.Id, out var session));
+        await _fixture.Network.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, new HeldItem(bag.Id)));
 
         Assert.True(_handling.IsHeld(_gold));
         Assert.False(_handling.Consume(_gold, 10));

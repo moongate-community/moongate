@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/craft_menu.xml
+
+  What it is for:
+    The crafting gump every craft shares, opened by its tool through
+    scripts/common/crafting.lua: the frame is here, everything inside comes from
+    craft_menu.body in scripts/gumps/craft_menu.lua (the groups, the recipes ten a
+    page, a recipe's page, the kinds of wood, the wood picked and the last notice).
+
+  Arguments:
+    craft   the craft's id, such as "carpentry"
+    tool    the serial of the tool that opened it
+    notice  the text of what happened last, if anything
+    page    "list" (the default), "info" or "woods"
+    recipe  the recipe of the "info" page, by its index in the group shown
+-->
+<gump id="craft_menu" x="40" y="40"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="530" height="420" />
+  <slot name="body" x="15" y="15" />
+</gump>
