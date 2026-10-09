@@ -170,4 +170,10 @@ public static class CommandMessages
     public const int TameDescription = 30221;
     public const int Tamed = 30222;
     public const int CannotTame = 30223;
+    public const int ShuttingDownInMinutes = 30224;
+    public const int EventDescription = 30225;
+    public const int EventListLine = 30226;
+    public const int EventSwitched = 30227;
+    public const int EventUnknown = 30228;
+    public const int EventNone = 30229;
 }
