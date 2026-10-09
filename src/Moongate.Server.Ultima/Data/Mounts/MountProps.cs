@@ -17,11 +17,6 @@ public static class MountProps
     public const string PetTemplate = "pet_template";
 
     /// <summary>
-    ///     Prop of a mount item: the name the creature had.
-    /// </summary>
-    public const string PetName = "pet_name";
-
-    /// <summary>
     ///     Prop of a mount item: the owner the creature had, as a long serial.
     /// </summary>
     public const string PetOwner = "pet_owner";

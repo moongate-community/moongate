@@ -89,6 +89,7 @@ public sealed class MountServiceTests
         Assert.Equal(_horse.Id, Assert.Single(_npcs.Removals));
         var item = Assert.Single(_items.GetWorn(_rider.Id), worn => worn.Layer == LayerType.Mount);
         Assert.Equal(HorseMountGraphic, item.ItemId);
+        Assert.False(item.Movable);
         Assert.Equal("horse", item.GetProp<string>(MountProps.PetTemplate));
         Assert.Equal((long)_rider.Id.Value, item.GetProp<long>(MountProps.PetOwner));
         Assert.Contains($"Worn {_rider.Id.Value} {item.Id.Value}", _view.Calls);

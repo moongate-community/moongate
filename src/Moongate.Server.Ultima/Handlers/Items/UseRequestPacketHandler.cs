@@ -188,8 +188,6 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         return _bodies.Value.TryGetValue(mobile.Body, out var type) && type == BodyType.Human;
     }
 
-    // A container lying on the ground, or inside one, within reach of the character, such as a treasure chest; one too
-    // far says so.
     // A creature that is a mount is ridden, and the character itself, while it rides, gets off: no paperdoll either way.
     private bool TryRide(GameSession session, MobileEntity target)
     {
@@ -214,6 +212,8 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         return true;
     }
 
+    // A container lying on the ground, or inside one, within reach of the character, such as a treasure chest; one too
+    // far says so.
     private bool CanOpenOnTheGround(GameSession session, ItemEntity item)
     {
         if (_items.GetGroundRoot(item) is not { } root ||

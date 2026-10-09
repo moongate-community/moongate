@@ -91,6 +91,8 @@ public sealed class MountService : IMountService
             return false;
         }
 
+        // The mount is not loot nor a gift: nobody lifts it off the rider, whatever its graphic weighs.
+        item.Movable = false;
         item.SetProp(MountProps.PetTemplate, pet.TemplateId);
 
         if (owner != 0)

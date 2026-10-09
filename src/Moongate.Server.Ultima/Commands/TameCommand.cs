@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Extensions;
@@ -126,7 +127,7 @@ public sealed class TameCommand : ICommandExecutor
     }
 
     // The game master itself with no name; otherwise the player of that name, whatever its case.
-    private MobileEntity? OwnerOf(Moongate.Core.Primitives.Serial self, string name)
+    private MobileEntity? OwnerOf(Serial self, string name)
     {
         if (name.Length == 0)
         {
