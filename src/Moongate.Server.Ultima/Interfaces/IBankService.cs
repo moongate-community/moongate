@@ -91,7 +91,8 @@ public interface IBankService : ISessionClosedListener
     long CarriedGold(MobileEntity player);
 
     /// <summary>
-    ///     Tells whether <see cref="Pay" /> would succeed, moving nothing: <c>Ok</c>, or why not: <c>NotEnoughGold</c> when
+    ///     Tells whether <see cref="Pay" /> would succeed, moving nothing: <c>Ok</c>, or why not: <c>NotEnoughGold</c>
+    ///     when
     ///     what the player has, in the places allowed, is less; <c>Busy</c> when its items are reserved by another
     ///     operation; <c>BadAmount</c> under 1; <c>NoPlayer</c> for an NPC.
     /// </summary>

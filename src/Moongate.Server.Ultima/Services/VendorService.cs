@@ -303,7 +303,7 @@ public sealed class VendorService : IVendorService
             _speech.TellCliloc(player, fromBank > 0 ? ClilocPaidFromBank : ClilocPaidFromBackpack, pays.ToString());
         }
 
-                _fatigue?.LoadChanged(session, player, true);
+        _fatigue?.LoadChanged(session, player, true);
     }
 
     public bool OpenSell(GameSession session, MobileEntity vendor)

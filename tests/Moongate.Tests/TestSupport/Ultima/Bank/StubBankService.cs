@@ -98,9 +98,8 @@ public sealed class StubBankService : IBankService
 
         var bank = useBank ? Gold.GetValueOrDefault(player.Id) : 0;
 
-        return amount < 1 ? BankResultType.BadAmount
-            : Carried.GetValueOrDefault(player.Id) + bank < amount ? BankResultType.NotEnoughGold
-            : BankResultType.Ok;
+        return amount < 1 ? BankResultType.BadAmount :
+            Carried.GetValueOrDefault(player.Id) + bank < amount ? BankResultType.NotEnoughGold : BankResultType.Ok;
     }
 
     public BankResultType Pay(MobileEntity player, int amount, bool useBank, out int fromBank)

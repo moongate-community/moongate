@@ -924,11 +924,12 @@ public sealed class BankService : IBankService
 
     // What a payment would take, checked whole: the piles of the backpack, the coins and the checks of the box (only when
     // the bank may be used), and how much the backpack and the coins hold. Nothing moves.
-    private (BankResultType Result, List<ItemEntity> Pack, List<ItemEntity> Coins, List<ItemEntity> Checks, long InPack, long InCoins) Plan(
-        MobileEntity player,
-        int amount,
-        bool useBank
-    )
+    private (BankResultType Result, List<ItemEntity> Pack, List<ItemEntity> Coins, List<ItemEntity> Checks, long InPack, long
+        InCoins) Plan(
+            MobileEntity player,
+            int amount,
+            bool useBank
+        )
     {
         List<ItemEntity> none = [];
 
