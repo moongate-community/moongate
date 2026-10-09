@@ -466,15 +466,32 @@ public sealed class MovementServiceTests
     public void CheckMovement_OpenDoors_WalksThroughAClosedDoor_NotThroughALockedOne_AnOpenLeafOrAWall()
     {
         var opener = MovementAbilityType.Walk | MovementAbilityType.OpenDoors;
-        Ground(Door, 6, 5, 0);
-        Ground(Door, 4, 5, 0).SetProp("locked", true);
-        Ground(Door, 5, 4, 0).SetProp("door.open", true);
+        Ground(Door, 6, 5, 0, "decoration_door");
+        Ground(Door, 4, 5, 0, "decoration_door").SetProp("locked", true);
+        Ground(Door, 5, 4, 0, "decoration_door").SetProp("door.open", true);
         Ground(Crate, 5, 6, 0);
+        var service = DoorService();
 
-        Assert.True(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.East, opener, out _));
-        Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.West, opener, out _));
+        Assert.True(service.CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.East, opener, out _));
+        Assert.False(service.CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.West, opener, out _));
+        Assert.False(service.CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.North, opener, out _));
+        Assert.False(service.CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.South, opener, out _));
+    }
+
+    [Fact]
+    public void CheckMovement_OpenDoors_ADoorWithNoScriptToOpenIt_Blocks()
+    {
+        var opener = MovementAbilityType.Walk | MovementAbilityType.OpenDoors;
+        // A door graphic nothing opens: no template, and a template with no script.
+        Ground(Door, 6, 5, 0);
+        Ground(Door, 4, 5, 0, "painted_door");
+        var service = DoorService();
+
+        Assert.False(service.CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.East, opener, out _));
+        Assert.False(service.CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.West, opener, out _));
+        // And with no templates at all, nothing is known to open.
+        Ground(Door, 5, 4, 0, "decoration_door");
         Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.North, opener, out _));
-        Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.South, opener, out _));
     }
 
     [Fact]
@@ -665,6 +682,23 @@ public sealed class MovementServiceTests
         _sectors.AddItem(item);
 
         return item;
+    }
+
+    private MovementService DoorService()
+    {
+        CreateService();
+
+        return new(
+            _map,
+            _tiles,
+            _sectors,
+            new ItemTemplateService(
+                new StubDataLoaderService().With(
+                    new ItemTemplate { Id = "decoration_door", ItemId = new Serial(Door), ScriptId = "door" },
+                    new ItemTemplate { Id = "painted_door", ItemId = new Serial(Door) }
+                )
+            )
+        );
     }
 
     private MovementService CreateService()

@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Core.Geometry;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Config;
@@ -368,13 +370,21 @@ public sealed class PathfindingServiceTests
         for (var y = 0; y <= 13; y++)
         {
             var item = new ItemEntity
-                { Id = new Serial(serial++), TemplateId = "thing", ItemId = y == 5 ? 0x0675 : 0x0E3D, Amount = 1 };
+            {
+                Id = new Serial(serial++), TemplateId = y == 5 ? "decoration_door" : "thing",
+                ItemId = y == 5 ? 0x0675 : 0x0E3D, Amount = 1
+            };
             item.PlaceOnGround(MapType.Felucca, new Point3D(8, y, 0));
             sectors.AddItem(item);
             door = y == 5 ? item : door;
         }
 
-        var paths = new PathfindingService(new MovementService(map, tiles, sectors), _world);
+        var templates = new ItemTemplateService(
+            new StubDataLoaderService().With(
+                new ItemTemplate { Id = "decoration_door", ItemId = new Serial(0x0675), ScriptId = "door" }
+            )
+        );
+        var paths = new PathfindingService(new MovementService(map, tiles, sectors, templates), _world);
         var opener = MovementAbilityType.Walk | MovementAbilityType.OpenDoors;
 
         var closed = paths.FindPath(MapType.Felucca, new Point3D(6, 5, 0), new Point3D(10, 5, 0), opener);

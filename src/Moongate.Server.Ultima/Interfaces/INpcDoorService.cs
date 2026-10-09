@@ -18,12 +18,22 @@ public interface INpcDoorService
     bool OpensDoors(MobileEntity npc);
 
     /// <summary>
-    ///     Opens the door standing on the cell <paramref name="npc" /> faces in <paramref name="direction" />, when it
-    ///     opens doors and the door is closed, not locked, at its height and scripted. The door's script runs
+    ///     Opens the door standing on the cell <paramref name="npc" /> faces in <paramref name="direction" />, or beside
+    ///     a diagonal step, when it opens doors and the door is closed, not locked, at its height and of a template with
+    ///     a script. The door's script runs
     ///     <c>on_npc_use(serial, npc)</c> on a later turn of the loop, so the door is open by the NPC's next step.
     /// </summary>
+    /// <remarks>
+    ///     An NPC asks three times in a row at most: a door that stays shut, as one whose script does not open for an
+    ///     NPC, is then refused until <see cref="Moved" /> says the NPC took a step, so its step ends as any refused one.
+    /// </remarks>
     /// <returns>
     ///     True when a door was asked to open.
     /// </returns>
     bool TryOpen(MobileEntity npc, DirectionType direction);
+
+    /// <summary>
+    ///     Notes that <paramref name="npc" /> took a step: a door in its way may be asked to open again.
+    /// </summary>
+    void Moved(MobileEntity npc);
 }

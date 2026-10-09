@@ -15,6 +15,13 @@ public sealed class RecordingNpcDoorService : INpcDoorService
 
     public List<(MobileEntity Npc, DirectionType Direction)> Tried { get; } = [];
 
+    public List<MobileEntity> Steps { get; } = [];
+
+    public void Moved(MobileEntity npc)
+    {
+        Steps.Add(npc);
+    }
+
     public bool OpensDoors(MobileEntity npc)
     {
         return Opens;

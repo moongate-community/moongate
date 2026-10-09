@@ -520,6 +520,19 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheShippedDoorScript_ADoubleDoorWithItsOtherLeafLocked_StaysClosedForAnNpc()
+    {
+        var (left, right) = PlaceDoubleDoor();
+        right.Props!["locked"] = true;
+        var scripts = await StartDoorScriptAsync();
+
+        Assert.Equal(false, scripts.Run(left, "on_npc_use", 0x100L).Values[0]);
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x0675, 0x0677), (left.ItemId, right.ItemId));
+    }
+
+    [Fact]
     public async Task TheShippedDoorScript_ADoorThatCannotSwingAside_StaysClosed()
     {
         var door = PlaceDoor(new Serial(0x40000010), "MetalDoor", 0x0675, "west_cw", new Point3D(0, 1600, 0));

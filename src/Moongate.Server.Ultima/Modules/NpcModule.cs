@@ -217,9 +217,13 @@ public sealed class NpcModule
 
         var moved = Take(npc, step.Direction, running);
 
-        // A door in the way is asked to open and the path is kept: the NPC passes at its next step.
-        if (!moved && opens && _doors!.TryOpen(npc, step.Direction))
+        if (moved)
         {
+            _doors?.Moved(npc);
+        }
+        else if (opens && _doors!.TryOpen(npc, step.Direction))
+        {
+            // A door in the way is asked to open and the path is kept: the NPC passes at its next step.
             return "moving";
         }
 

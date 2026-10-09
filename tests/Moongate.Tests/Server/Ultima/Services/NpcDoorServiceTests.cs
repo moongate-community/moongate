@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
@@ -32,12 +33,19 @@ public sealed class NpcDoorServiceTests
     {
         _items = TestItems.Create(_sectors);
         _scripts.Scripted.Add("decoration_door");
+        _scripts.Scripted.Add("plain_door");
         _doors = new(
             _sectors,
             new FakeTileDataService()
                 .Item(Door, TileFlagType.Impassable | TileFlagType.Door, 20)
                 .Item(Crate, TileFlagType.Impassable, 3),
             _scripts,
+            new ItemTemplateService(
+                new StubDataLoaderService().With(
+                    new ItemTemplate { Id = "decoration_door", ItemId = new Serial(Door), ScriptId = "door" },
+                    new ItemTemplate { Id = "plain_door", ItemId = new Serial(Door) }
+                )
+            ),
             new MobileTemplateService(
                 new StubDataLoaderService().With(
                     new MobileTemplate { Id = "guard" },
@@ -111,6 +119,43 @@ public sealed class NpcDoorServiceTests
         Assert.False(_doors.TryOpen(_guard, DirectionType.SouthEast));
 
         Assert.Empty(_scripts.Queued);
+    }
+
+    // A step along a diagonal is refused by a door on either cell beside it, as by one ahead.
+    [Theory]
+    [InlineData(1601, 1600)]
+    [InlineData(1600, 1601)]
+    [InlineData(1601, 1601)]
+    public void TryOpen_ADoorBesideADiagonalStep_IsOpenedToo(int x, int y)
+    {
+        Ground(0x40000010, Door, x, y, 0);
+
+        Assert.True(_doors.TryOpen(_guard, DirectionType.SouthEast));
+        Assert.Equal("0x40000010 on_npc_use 256", Assert.Single(_scripts.Queued));
+    }
+
+    [Fact]
+    public void TryOpen_ADoorBesideAStraightStep_IsLeftAlone()
+    {
+        Ground(0x40000010, Door, 1601, 1601, 0);
+
+        Assert.False(_doors.TryOpen(_guard, DirectionType.East));
+    }
+
+    [Fact]
+    public void TryOpen_AtADoorThatStaysShut_AsksThreeTimes_ThenRefuses_UntilTheNpcMoved()
+    {
+        Ground(0x40000010, Door, 1601, 1600, 0);
+
+        var answers = Enumerable.Range(0, 5).Select(_ => _doors.TryOpen(_guard, DirectionType.East)).ToArray();
+
+        // A caller that gives up on a refused step still does: the door is not asked for ever.
+        Assert.Equal([true, true, true, false, false], answers);
+        Assert.Equal(3, _scripts.Queued.Count);
+
+        _doors.Moved(_guard);
+
+        Assert.True(_doors.TryOpen(_guard, DirectionType.East));
     }
 
     [Fact]

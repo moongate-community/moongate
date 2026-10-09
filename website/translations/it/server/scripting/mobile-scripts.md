@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"557c12ed29d58741b4f775b505b8e79a0cb8bcd07cf3be2d1766dc4a4c84f170","title":"Script dei mobile"} -->
+<!-- translation: {"sourceHash":"ce403ec99cd7abded3a2267701c2592e10193843771ce62bb2927b4311cec741","title":"Script dei mobile"} -->
 
 # Script dei mobile
 
@@ -148,7 +148,7 @@ end
 
 | Risposta | Significato |
 | --- | --- |
-| `"moving"` | L'NPC ha compiuto un passo, oppure ha aperto una porta sulla sua strada e passa alla chiamata successiva |
+| `"moving"` | L'NPC ha compiuto un passo, oppure ha chiesto a una porta sulla sua strada di aprirsi: passa a una chiamata successiva, e dopo tre chiamate davanti a una porta che resta chiusa la risposta è `"blocked"` |
 | `"arrived"` | Si trova entro `range` caselle dal luogo (predefinito 0), alla sua altezza; non viene controllato che non ci sia nulla tra loro |
 | `"blocked"` | Il passo è stato rifiutato oppure l'NPC attende di cercare un'altra strada |
 | `"no_path"` | L'ultima ricerca non ha raggiunto il luogo: nulla porta lì oppure porta solo nelle vicinanze |

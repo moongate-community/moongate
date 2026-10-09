@@ -440,6 +440,24 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void WalkTo_AtADoorThatIsNoLongerOpenedForIt_IsBlocked_AndAStepTellsTheDoorsTheNpcMoved()
+    {
+        _doors.Opens = true;
+        _finder.Finds(DirectionType.North, DirectionType.North);
+        _movement.Allow = false;
+
+        // The door service refuses after its tries: the step ends as any refused one, so a caller can give up.
+        Assert.Equal("blocked", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+        Assert.Empty(_doors.Steps);
+
+        _time.Advance(TimeSpan.FromSeconds(10));
+        _movement.Allow = true;
+
+        Assert.Equal("moving", Run("return npc.walk_to(256, 1600, 1598, 0)")[0].Read<string>());
+        Assert.Equal([_orc], _doors.Steps);
+    }
+
+    [Fact]
     public void WalkTo_BlockedByWhatIsNoDoor_IsBlocked_ThoughTheNpcOpensDoors()
     {
         _doors.Opens = true;

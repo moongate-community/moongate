@@ -515,7 +515,7 @@ public class MovementService : IMovementService
 
             if (item.GroundLocation is { } spot && _tileDataService.TryGetItem(item.ItemId, out var data))
             {
-                _cell.Add(new(data, spot.Z, true, IsFixed(item, data), Doors.IsDoor(data) && Doors.CanBeOpened(item)));
+                _cell.Add(new(data, spot.Z, true, IsFixed(item, data), Doors.IsDoor(data) && Doors.CanBeOpened(item, _templates)));
             }
         }
 

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"079b91ef1b0f5795619b1e19837ca0126be8b07d3908e545c35cf16be4da2664","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"fe56887ce8c9293afbced90a1a8537067fc51454b97a6dca0fa09b8b935c448a","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -121,7 +121,7 @@ successiva, la porta si sposta di lato secondo la prop `facing` e riproduce il s
 `decoration_type` (metallo, legno, cancello o segreta). Un doppio clic su una porta aperta chiude entrambe
 quando nessuno si trova in uno dei due vani. Una porta aperta si chiude da sola dopo 20 secondi, poi
 riprova ogni 10 secondi mentre il vano è occupato. Una porta che non può spostarsi di lato, come
-una al bordo della mappa, resta chiusa. Un NPC che cammina verso un luogo e trova una porta chiusa sulla sua strada la apre tramite `on_npc_use(serial, opener)`: la porta e quella collegata si aprono e si richiudono da sole come per un giocatore, e una porta chiusa a chiave resta chiusa senza una parola. Lo stato aperto è la prop `door.open`, con la
+una al bordo della mappa, resta chiusa. Un NPC che cammina verso un luogo e trova una porta chiusa sulla sua strada la apre tramite `on_npc_use(serial, opener)`: la porta e quella collegata si aprono e si richiudono da sole come per un giocatore, e una porta chiusa a chiave, o una porta doppia con una delle due ante a chiave, resta chiusa senza una parola. Lo stato aperto è la prop `door.open`, con la
 posizione chiusa in `door.x`, `door.y` e `door.z`, salvata con la porta, così come il timer di chiusura automatica (il timer `close` della porta, avviato con
 `item.start_timer`): una porta lasciata aperta quando il server si arresta si chiude quando torna attivo. Una porta salvata
 aperta da una versione precedente non ha timer e resta aperta finché qualcuno la usa. Una porta chiusa con la prop `locked` non

@@ -271,8 +271,15 @@ end
 -- locked opens, with its linked door, and closes by itself as for a player. An NPC carries no key and closes
 -- nothing.
 function door.on_npc_use(serial, opener)
-    if is_open(serial) or item.get_prop(serial, "locked") then
+    if is_open(serial) then
         return false
+    end
+
+    -- Neither leaf of a double door may be locked: opening one opens both.
+    for _, each in ipairs(doors_of(serial)) do
+        if item.get_prop(each, "locked") then
+            return false
+        end
     end
 
     return open(serial)

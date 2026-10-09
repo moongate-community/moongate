@@ -120,7 +120,7 @@ one, the door swings aside by its `facing` prop and plays the sound of its
 `decoration_type` (metal, wood, gate or secret). Double clicking an open door closes both
 when nobody stands in either doorway. An open door closes by itself after 20 seconds, then
 tries again every 10 seconds while the doorway is taken. A door that cannot swing aside, such
-as one at the edge of the map, stays closed. An NPC that walks to a place and finds a closed door in its way opens it through `on_npc_use(serial, opener)`: the door and its linked door open and close by themselves as for a player, and a locked door stays shut without a word. The open state is the prop `door.open`, with the
+as one at the edge of the map, stays closed. An NPC that walks to a place and finds a closed door in its way opens it through `on_npc_use(serial, opener)`: the door and its linked door open and close by themselves as for a player, and a locked door, or a double door with either leaf locked, stays shut without a word. The open state is the prop `door.open`, with the
 closed spot in `door.x`, `door.y` and `door.z`, saved with the door, and so is the auto-close timer (the door's `close` timer, started with
 `item.start_timer`): a door left open when the server stops closes once the server is back. A door saved
 open by an older version has no timer and stays open until someone uses it. A closed door with the prop `locked` does not
