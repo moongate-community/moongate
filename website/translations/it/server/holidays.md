@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ffcc1e3de1c70bb721bda1d75257c394a36ee7fa2ee8714cfe2c753cd2b1f588","title":"Feste"} -->
+<!-- translation: {"sourceHash":"a1c1d381757273b8fb78cbb850b9ad01cac1d9bf18ce3fcfa6b3edab111b74ad","title":"Feste"} -->
 
 # Feste
 
@@ -46,7 +46,7 @@ birichino, il campo di zucche, gli zombie dei giocatori e le maschere.
 ## Natale: palle di neve e regali
 
 **Il regalo.** Un personaggio che entra nel mondo mentre `christmas` è attivo trova nello zaino un
-mucchio di neve, un mucchio di neve glaciale, la luce del solstizio d'inverno e una decorazione (un
+mucchio di neve, un mucchio di neve glaciale, una candela natalizia e una decorazione (un
 topiario decorativo 60 volte su 100, un cactus natalizio 24, un albero innevato 16), e legge
 `Happy Holidays! Gift items have been placed in your backpack.` Il regalo arriva una volta a stagione: un
 personaggio che ne ha ricevuto uno meno di 200 giorni fa non ne riceve, e neppure uno il cui zaino non

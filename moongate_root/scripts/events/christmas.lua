@@ -5,7 +5,7 @@
 --   The hooks of the event christmas (data/schedule.toml), as ModernUO's Winter
 --   2004 gift giver: the season is announced when it starts and ends, and each
 --   character that logs in during it gets a gift once, two piles of snow for
---   scripts/items/snow_pile.lua, the light of the winter solstice and one
+--   scripts/items/snow_pile.lua, a holiday candle and one
 --   decoration, in its backpack.
 --
 -- Functions:

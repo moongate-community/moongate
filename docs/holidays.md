@@ -44,7 +44,7 @@ patch, the player zombies and the masks.
 ## Christmas: snowballs and gifts
 
 **The gift.** A character that logs in while `christmas` is on finds in its backpack a pile of snow,
-a pile of glacial snow, the light of the winter solstice and one decoration (a decorative topiary 60
+a pile of glacial snow, a holiday candle and one decoration (a decorative topiary 60
 times out of 100, a festive cactus 24, a snowy tree 16), and reads
 `Happy Holidays! Gift items have been placed in your backpack.` The gift comes once a season: a character that got one less than 200
 days ago gets none, and so does one whose backpack cannot take the piles (it is asked again at the
