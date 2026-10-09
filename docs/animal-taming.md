@@ -69,7 +69,7 @@ It will not fight you, another pet of yours, or what is dead. Sending your pets 
 A pet is loyal to you from 0 to 100, and starts at 100. Time wears it down: every hour
 (`[ultima.pets] loyalty_drain_minutes`) each pet in the world loses 10 (`loyalty_drain`), as long as you are in the world too: a pet whose owner is away keeps what it has. Below
 10 it looks around desperately; at 0 it has decided it is better off without a master: it is wild again, as if you had
-released it. A pet in a stable or under you is not in the world, so it loses nothing, and it comes back at 100.
+released it. A pet in a stable or under you is not in the world, so it loses nothing; it keeps its loyalty there and comes back with it.
 
 Feed it: drag food on it, from two tiles or closer. It eats the whole stack when its creature eats that kind of food, and
 gains 10 loyalty for each item (`food_gain`), up to 100. A horse eats fruit, vegetables and bread; a dog or a cat, meat and
@@ -106,5 +106,5 @@ item)`; the skill script is `scripts/skills/animal_taming.lua`.
 ## Not built yet
 
 Animal Lore as a skill to learn and to read a pet's loyalty (the chance to be obeyed already counts the Animal Lore a character has); bonding; gold, metal and
-leather as food; loyalty kept through a stable or a mount; friend, transfer, drop and patrol; bringing the pets along when the owner
+leather as food; friend, transfer, drop and patrol; bringing the pets along when the owner
 travels by gate or spell; and the pets of a player who is offline stay where they were.

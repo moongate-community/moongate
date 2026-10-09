@@ -135,6 +135,11 @@ public sealed class MountService : IMountService
         item.SetProp(MountProps.PetTemplate, pet.TemplateId);
         item.SetProp(MountProps.PetOwner, owner);
 
+        if (pet.TryGetProp<int>(MountProps.PetLoyalty, out var loyalty))
+        {
+            item.SetProp(MountProps.PetKeptLoyalty, loyalty);
+        }
+
         // Last: the creature goes only when the rider has its mount.
         if (!_npcs.Remove(pet.Id))
         {
@@ -246,6 +251,11 @@ public sealed class MountService : IMountService
         var props = owner == 0
             ? null
             : new Dictionary<string, object?> { [MountProps.Owner] = owner };
+
+        if (props is not null && item.TryGetProp<int>(MountProps.PetKeptLoyalty, out var kept))
+        {
+            props[MountProps.PetLoyalty] = kept;
+        }
 
         // Off the loop: a new creature is saved first, to get its serial.
         _ = Task.Run(() => SpawnAsync(mountSerial, template, map, location, props));

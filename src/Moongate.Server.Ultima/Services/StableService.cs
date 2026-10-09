@@ -129,8 +129,10 @@ public sealed class StableService : IStableService
             return StableResultType.Failed;
         }
 
+        var loyalties = Loyalties(player, stabled.Count);
         stabled.Add(templateId);
-        player.SetProp(MountProps.Stabled, string.Join(Separator, stabled));
+        loyalties.Add(pet.GetProp(MountProps.PetLoyalty, PetService.MaxLoyalty));
+        Keep(player, stabled, loyalties);
         _pets?.Value.Changed(player.Id);
 
         return StableResultType.Ok;
@@ -153,8 +155,11 @@ public sealed class StableService : IStableService
             return StableResultType.BadIndex;
         }
 
+        var loyalties = Loyalties(player, stabled.Count);
+        var loyalty = loyalties[index];
         stabled.RemoveAt(index);
-        Keep(player, stabled);
+        loyalties.RemoveAt(index);
+        Keep(player, stabled, loyalties);
 
         if (!_templates.TryGet(template, out _))
         {
@@ -165,10 +170,13 @@ public sealed class StableService : IStableService
 
         var map = player.Map;
         var location = player.Location;
-        var props = new Dictionary<string, object?> { [MountProps.Owner] = (long)player.Id.Value };
+        var props = new Dictionary<string, object?>
+        {
+            [MountProps.Owner] = (long)player.Id.Value, [MountProps.PetLoyalty] = loyalty
+        };
 
         // Off the loop: a new creature is saved first, to get its serial.
-        _ = Task.Run(() => SpawnAsync(player.Id, template, map, location, props));
+        _ = Task.Run(() => SpawnAsync(player.Id, template, map, location, props, loyalty));
         _pets?.Value.Changed(player.Id);
 
         return StableResultType.Ok;
@@ -180,16 +188,35 @@ public sealed class StableService : IStableService
                _bank.Pay(player, _config.Fee, true, out _) == BankResultType.Ok;
     }
 
-    private static void Keep(MobileEntity player, List<string> stabled)
+    // The loyalty of each stabled pet, one for each of the count, 100 where none is kept.
+    private static List<int> Loyalties(MobileEntity player, int count)
+    {
+        var kept = player.GetProp(MountProps.StabledLoyalty, "")
+            .Split(Separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(text => int.TryParse(text, out var value) ? Math.Clamp(value, 0, PetService.MaxLoyalty) : PetService.MaxLoyalty)
+            .Take(count)
+            .ToList();
+
+        while (kept.Count < count)
+        {
+            kept.Add(PetService.MaxLoyalty);
+        }
+
+        return kept;
+    }
+
+    private static void Keep(MobileEntity player, List<string> stabled, List<int> loyalties)
     {
         if (stabled.Count == 0)
         {
             player.RemoveProp(MountProps.Stabled);
+            player.RemoveProp(MountProps.StabledLoyalty);
 
             return;
         }
 
         player.SetProp(MountProps.Stabled, string.Join(Separator, stabled));
+        player.SetProp(MountProps.StabledLoyalty, string.Join(Separator, loyalties));
     }
 
     private async Task SpawnAsync(
@@ -197,7 +224,8 @@ public sealed class StableService : IStableService
         string template,
         MapType map,
         Point3D location,
-        IReadOnlyDictionary<string, object?> props
+        IReadOnlyDictionary<string, object?> props,
+        int loyalty
     )
     {
         for (var attempt = 1; attempt <= SpawnAttempts; attempt++)
@@ -227,11 +255,11 @@ public sealed class StableService : IStableService
         }
 
         // The pet goes back to the stable, where the player can claim it again.
-        await _loop.PostAsync(new LoopActionWorkItem(() => Restore(player, template)));
+        await _loop.PostAsync(new LoopActionWorkItem(() => Restore(player, template, loyalty)));
     }
 
     // On the game loop: a pet that could not be made is put back at the end of the list, when its player is still here.
-    private void Restore(Serial player, string template)
+    private void Restore(Serial player, string template, int loyalty)
     {
         if (!_mobiles.TryGet(player, out var owner))
         {
@@ -241,8 +269,10 @@ public sealed class StableService : IStableService
         }
 
         var stabled = Stabled(owner).ToList();
+        var loyalties = Loyalties(owner, stabled.Count);
         stabled.Add(template);
-        Keep(owner, stabled);
+        loyalties.Add(loyalty);
+        Keep(owner, stabled, loyalties);
         _logger.Warning("The stabled {Template:l} of {Player:l} is back in the stable", template, player);
     }
 }

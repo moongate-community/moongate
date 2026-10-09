@@ -86,22 +86,55 @@ def number(node) -> float | None:
     return value
 
 
-def favorite_food(cls) -> list[str]:
-    """The kinds of food of a class: its ``FavoriteFood`` property, meat when it has none."""
+def favorite_food(cls) -> list[str] | None:
+    """The kinds of food a class declares in its ``FavoriteFood`` property; None when it has none of its own."""
     for member in csharp.members(cls, "property_declaration"):
         if csharp.name_of(member) == "FavoriteFood":
             kinds = {FOODS[name] for name in _FOOD_TYPE.findall(csharp.text(member)) if name in FOODS}
 
             return [kind for kind in KIND_ORDER if kind in kinds]
 
+    return None
+
+
+def base_of(cls) -> str | None:
+    """The name of the class a class derives from, the first of its base list."""
+    bases = next((child for child in cls.children if child.type == "base_list"), None)
+    first = csharp.named_children(bases)[0] if bases is not None and csharp.named_children(bases) else None
+
+    return None if first is None else csharp.text(first).split("<")[0].split(".")[-1]
+
+
+def hierarchy(source: str, path: Path) -> dict[str, tuple[str | None, list[str] | None]]:
+    """Every class of a file as name -> (base class, declared food)."""
+    root = csharp.parse(source)
+    csharp.check(root, str(path))
+
+    return {csharp.name_of(cls): (base_of(cls), favorite_food(cls)) for cls in csharp.descendants(root, "class_declaration")}
+
+
+def inherited_food(name: str, classes: dict[str, tuple[str | None, list[str] | None]]) -> list[str]:
+    """The food of a class: its own, else the nearest base class that declares one, else meat."""
+    seen: set[str] = set()
+    current: str | None = name
+
+    while current is not None and current in classes and current not in seen:
+        seen.add(current)
+        base, food = classes[current]
+
+        if food is not None:
+            return food
+
+        current = base
+
     return list(DEFAULT_FOOD)
 
 
-def read(source: str, path: Path, report: ConversionReport) -> list[tuple[str, float | None, int, bool, list[str]]]:
-    """The classes of a file as (name, MinTameSkill, ControlSlots, Tamable, food) for each that sets ``Tamable``."""
+def read(source: str, path: Path, report: ConversionReport) -> list[tuple[str, float | None, int, bool]]:
+    """The classes of a file as (name, MinTameSkill, ControlSlots, Tamable) for each that sets ``Tamable``."""
     root = csharp.parse(source)
     csharp.check(root, str(path))
-    found: list[tuple[str, float | None, int, bool, list[str]]] = []
+    found: list[tuple[str, float | None, int, bool]] = []
 
     for cls in csharp.descendants(root, "class_declaration"):
         tamable = False
@@ -136,7 +169,7 @@ def read(source: str, path: Path, report: ConversionReport) -> list[tuple[str, f
                 slots = value if value is not None else 1
 
         if sets_tamable:
-            found.append((csharp.name_of(cls), skill, slots, tamable, favorite_food(cls)))
+            found.append((csharp.name_of(cls), skill, slots, tamable))
 
     return found
 
@@ -159,9 +192,15 @@ def run(source: Path, templates: Path, destination: Path, output: TextIO, error:
         report = ConversionReport()
         ids = template_ids(templates)
         creatures: dict[str, Creature] = {}
+        files = sorted((path for path in root.rglob("*.cs") if path.is_file()), key=str)
+        classes: dict[str, tuple[str | None, list[str] | None]] = {}
 
-        for path in sorted((path for path in root.rglob("*.cs") if path.is_file()), key=str):
-            for name, skill, slots, tamable, food in read(csharp.read_source(path), path, report):
+        for path in files:
+            classes.update(hierarchy(csharp.read_source(path), path))
+
+        for path in files:
+            for name, skill, slots, tamable in read(csharp.read_source(path), path, report):
+                food = inherited_food(name, classes)
                 template = name.lower()
                 # A creature that does not name its skill asks none, as ModernUO's default.
                 skill = 0.0 if skill is None else skill

@@ -86,9 +86,12 @@ public sealed class StubPetService : IPetService
         return ObeyResult;
     }
 
+    public Action? OnFeed { get; set; }
+
     public PetFeedResultType Feed(MobileEntity player, MobileEntity creature, string? itemTemplate, int amount)
     {
         Feeds.Add((itemTemplate, amount));
+        OnFeed?.Invoke();
 
         return FeedResult;
     }

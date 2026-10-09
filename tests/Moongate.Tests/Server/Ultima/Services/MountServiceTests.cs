@@ -327,6 +327,18 @@ public sealed class MountServiceTests
     }
 
     [Fact]
+    public async Task ThePetsLoyalty_RidesWithTheMount_AndIsGivenBackOnDismount()
+    {
+        _horse.SetProp(MountProps.PetLoyalty, 37);
+        _service.TryMount(_rider, _horse);
+
+        Assert.True(_service.Dismount(_rider));
+        await _npcs.FirstSpawn.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Equal(37, _npcs.Spawned.GetProp<int>(MountProps.PetLoyalty));
+    }
+
+    [Fact]
     public void Dismount_NotMounted_ReturnsFalse()
     {
         Assert.False(_service.Dismount(_rider));

@@ -214,6 +214,12 @@ public sealed class PetModule
             return PetFeedResultType.NotYours;
         }
 
+        // Food in someone else's hands or worn is not the player's to give.
+        if (_items.GetOwner(food) is { } holder && holder != owner.Id || _handling.IsHeld(food))
+        {
+            return PetFeedResultType.NotYours;
+        }
+
         var before = _pets.Loyalty(pet);
         var result = _pets.Feed(owner, pet, food.TemplateId, food.Amount);
 

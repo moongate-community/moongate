@@ -222,6 +222,40 @@ public sealed class PetModuleTests : IAsyncLifetime
         Assert.Empty(handling.Deleted);
     }
 
+    [Fact]
+    public void Feed_WhenTheFoodCannotBeTaken_TheLoyaltyItGaveGoesBack()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        items.Add([new ItemEntity { Id = new Serial(0x40000700), TemplateId = "apple", Amount = 1 }]);
+        var handling = new Moongate.Tests.TestSupport.Ultima.Items.StubItemHandlingService { DeleteFails = true };
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items, handling);
+        _pets.LoyaltyOf = 50;
+        _pets.FeedResult = PetFeedResultType.Fed;
+        _pets.OnFeed = () => _pets.LoyaltyOf = 90;
+
+        var result = Run("return pet.feed(2, 0x100, 0x40000700)");
+
+        Assert.Equal((double)PetFeedResultType.WrongFood, result[0].Read<double>());
+        Assert.Equal(50, _pets.LoyaltyOf);
+    }
+
+    [Fact]
+    public void Feed_FoodInSomeoneElsesPack_IsNotTheirsToGive()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        var pack = new ItemEntity { Id = new Serial(0x40000800), TemplateId = "backpack", MobileId = _orc.Id };
+        var food = new ItemEntity { Id = new Serial(0x40000700), TemplateId = "apple", Amount = 1, ContainerId = pack.Id };
+        items.Add([pack, food]);
+        var handling = new Moongate.Tests.TestSupport.Ultima.Items.StubItemHandlingService();
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items, handling);
+
+        var result = Run("return pet.feed(2, 0x100, 0x40000700)");
+
+        Assert.Equal((double)PetFeedResultType.NotYours, result[0].Read<double>());
+        Assert.Empty(_pets.Feeds);
+        Assert.Empty(handling.Deleted);
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();

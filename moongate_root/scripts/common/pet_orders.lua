@@ -249,13 +249,9 @@ local function is_crime(speaker, target)
     return (mobile.is_player(target) or mobile.notoriety(target) == "innocent") and combat.target(target) ~= speaker
 end
 
--- What a pet fights because its owner said so: not the owner, not one of its own, not itself.
-local function attack(pet, speaker, target)
-    if target ~= speaker and target ~= pet and owner_of(target) ~= speaker and not mobile.is_dead(target) then
-        return combat.attack(pet, target)
-    end
-
-    return false
+-- Whether a pet may be sent against the target: not the owner, not one of its own, not itself, not dead.
+local function can_attack(pet, speaker, target)
+    return target ~= speaker and target ~= pet and owner_of(target) ~= speaker and not mobile.is_dead(target)
 end
 
 -- Whether a pet obeys its owner now: the roll of its loyalty. One that does not shows it.
@@ -292,7 +288,8 @@ local function carry_out(command, speaker, pets)
 
             for _, pet in ipairs(pets) do
                 -- A pet let go, or dead, since the words, does not obey them.
-                if owner_of(pet) == speaker and obeys(pet, speaker) and attack(pet, speaker, picked.serial) then
+                if owner_of(pet) == speaker and can_attack(pet, speaker, picked.serial) and obeys(pet, speaker)
+                    and combat.attack(pet, picked.serial) then
                     npc.play_sound(pet, "attack")
                 end
             end

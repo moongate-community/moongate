@@ -202,17 +202,25 @@ public partial class Dog : BaseCreature
 
 
 def test_favorite_food_is_read_in_the_order_of_the_kinds_and_leaves_out_what_a_pet_does_not_eat(tmp_path):
-    from pathlib import Path
-
-    source = tmp_path / "Mobiles"
-    source.mkdir()
-    (source / "Dog.cs").write_text(FED, encoding="utf-8")
-    (source / "Horse.cs").write_text(HORSE, encoding="utf-8")
-
     from moongate_convert import csharp
 
-    found = {name: food for name, _, _, _, food in taming.read(csharp.read_source(source / "Dog.cs"), source / "Dog.cs", taming.ConversionReport())}
-    assert found == {"Dog": ["grain", "fish"]}
+    path = tmp_path / "Dog.cs"
+    path.write_text(FED, encoding="utf-8")
+    classes = taming.hierarchy(csharp.read_source(path), path)
 
-    horse = taming.read(HORSE, Path("Horse.cs"), taming.ConversionReport())
-    assert horse[0][4] == ["meat"]
+    assert taming.inherited_food("Dog", classes) == ["grain", "fish"]
+
+
+def test_food_is_inherited_from_the_nearest_base_class_and_is_meat_when_nobody_declares_it(tmp_path):
+    from moongate_convert import csharp
+
+    path = tmp_path / "Pets.cs"
+    path.write_text(
+        FED.replace("Dog", "BaseDog").replace("BaseCreature", "BaseMount")
+        + "public partial class Puppy : BaseDog { }\npublic partial class Stray : Wanderer { }\n",
+        encoding="utf-8",
+    )
+    classes = taming.hierarchy(csharp.read_source(path), path)
+
+    assert taming.inherited_food("Puppy", classes) == ["grain", "fish"]
+    assert taming.inherited_food("Stray", classes) == ["meat"]
