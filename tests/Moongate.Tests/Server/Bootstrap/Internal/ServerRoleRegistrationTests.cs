@@ -158,6 +158,35 @@ public sealed class ServerRoleRegistrationTests
         Assert.IsType<Moongate.Server.Ultima.Services.NpcDoorService>(field!.GetValue(module));
     }
 
+    // What gives items takes the templates and the tile data as optional services: without them nothing given would
+    // join a stack, and nothing would say why.
+    [Fact]
+    public void Register_WhatGivesItems_KnowsWhatStacks()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+        container.RegisterMoongateEventBus();
+        container.Register<IEventBusService, Moongate.Server.Services.Events.EventBusService>(Reuse.Singleton);
+        container.Register<ICommandSystemService, Moongate.Server.Services.Commands.CommandSystemService>(Reuse.Singleton);
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        var handling = container.Resolve<Moongate.Server.Ultima.Interfaces.IItemHandlingService>();
+        var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+
+        Assert.NotNull(handling.GetType().GetField("_templates", flags)!.GetValue(handling));
+        Assert.NotNull(handling.GetType().GetField("_tiles", flags)!.GetValue(handling));
+    }
+
     [Fact]
     public void Register_EveryCommand_HasATranslatedDescription()
     {
