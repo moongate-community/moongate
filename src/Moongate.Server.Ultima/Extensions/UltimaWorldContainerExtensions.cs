@@ -151,7 +151,9 @@ public static class UltimaWorldContainerExtensions
         container.Register<INpcDoorService, NpcDoorService>(Reuse.Singleton);
         container.Register<IHarvestService, HarvestService>(Reuse.Singleton);
         container.Register<ITamingService, TamingService>(Reuse.Singleton);
+        container.Register<IPetFoodService, PetFoodService>(Reuse.Singleton);
         container.Register<IPetService, PetService>(Reuse.Singleton);
+        container.AddMoongateService<IPetLoyaltyService, PetLoyaltyService>(12);
         container.Register<ICraftService, CraftService>(Reuse.Singleton);
         container.AddUltimaScriptModules();
 

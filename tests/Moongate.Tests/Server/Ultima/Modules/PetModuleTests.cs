@@ -151,6 +151,77 @@ public sealed class PetModuleTests : IAsyncLifetime
         Assert.Empty(_pets.Tames);
     }
 
+    [Fact]
+    public void Loyalty_OfAnOwnedCreature_IsWhatThePetServiceSays_AndNilForAWildOne()
+    {
+        _horse.SetProp(MountProps.Owner, 2L);
+        _pets.LoyaltyOf = 64;
+
+        var result = Run("return pet.loyalty(0x100), pet.loyalty(0x101), pet.loyalty(2)");
+
+        Assert.Equal(64.0, result[0].Read<double>());
+        Assert.Equal(LuaValue.Nil, result[1]);
+        Assert.Equal(LuaValue.Nil, result[2]);
+    }
+
+    [Fact]
+    public void ControlChance_IsThatOfThePetService_AndZeroForNobody()
+    {
+        _pets.Chance = 0.42;
+
+        var result = Run("return pet.control_chance(2, 0x100), pet.control_chance(0x999, 0x100), pet.control_chance(2, 0x999)");
+
+        Assert.Equal([0.42, 0, 0], result.Select(value => value.Read<double>()));
+    }
+
+    [Fact]
+    public void Obey_AsksThePetService_AndAnswersItsResult()
+    {
+        _pets.ObeyResult = PetObeyResultType.Disobeyed;
+
+        var result = Run("return pet.obey(2, 0x100), pet.obey(0x999, 0x100)");
+
+        Assert.Equal(
+            [(double)PetObeyResultType.Disobeyed, (double)PetObeyResultType.NotYours],
+            result.Select(value => value.Read<double>())
+        );
+        Assert.Equal((_aria, _horse), Assert.Single(_pets.Obeys));
+    }
+
+    [Fact]
+    public void Feed_GivesTheWholeStackAsFood_AndTakesItAway()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        var food = new ItemEntity { Id = new Serial(0x40000700), TemplateId = "apple", Amount = 4 };
+        items.Add([food]);
+        var handling = new Moongate.Tests.TestSupport.Ultima.Items.StubItemHandlingService();
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items, handling);
+
+        var result = Run("return pet.feed(2, 0x100, 0x40000700)");
+
+        Assert.Equal((double)PetFeedResultType.Fed, result[0].Read<double>());
+        Assert.Equal(("apple", 4), Assert.Single(_pets.Feeds));
+        Assert.Equal(food, Assert.Single(handling.Deleted));
+    }
+
+    [Fact]
+    public void Feed_WhatThePetRefuses_IsNotTakenAway()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        items.Add([new ItemEntity { Id = new Serial(0x40000700), TemplateId = "sword", Amount = 1 }]);
+        var handling = new Moongate.Tests.TestSupport.Ultima.Items.StubItemHandlingService();
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items, handling);
+        _pets.FeedResult = PetFeedResultType.WrongFood;
+
+        var result = Run("return pet.feed(2, 0x100, 0x40000700), pet.feed(2, 0x100, 0x999)");
+
+        Assert.Equal(
+            [(double)PetFeedResultType.WrongFood, (double)PetFeedResultType.NotYours],
+            result.Select(value => value.Read<double>())
+        );
+        Assert.Empty(handling.Deleted);
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();
@@ -158,6 +229,16 @@ public sealed class PetModuleTests : IAsyncLifetime
         state.Environment["PetResultType"] = new LuaTable
         {
             ["Ok"] = (double)PetResultType.Ok, ["TooManyFollowers"] = (double)PetResultType.TooManyFollowers
+        };
+        state.Environment["PetObeyResultType"] = new LuaTable
+        {
+            ["Obeyed"] = (double)PetObeyResultType.Obeyed, ["Disobeyed"] = (double)PetObeyResultType.Disobeyed,
+            ["NotYours"] = (double)PetObeyResultType.NotYours
+        };
+        state.Environment["PetFeedResultType"] = new LuaTable
+        {
+            ["Fed"] = (double)PetFeedResultType.Fed, ["WrongFood"] = (double)PetFeedResultType.WrongFood,
+            ["NotYours"] = (double)PetFeedResultType.NotYours
         };
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(
             state,

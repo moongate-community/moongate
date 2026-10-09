@@ -45,6 +45,32 @@ public sealed class TamingLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_FoodLeftOut_IsMeat_AndFoodIsRead()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "data/taming.toml",
+            Horse + "[[creature]]\ntemplate = \"llama\"\nmin_skill = 80\nfood = [\"fruit\", \"grain\"]\n"
+        );
+
+        var creatures = (await CreateLoader(root).LoadDataAsync()).Entities.ToArray();
+
+        Assert.Equal(["meat"], creatures[0].Food);
+        Assert.Equal(["fruit", "grain"], creatures[1].Food);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_AnUnknownFood_StopsTheServerNamingIt()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/taming.toml", "[[creature]]\ntemplate = \"horse\"\nmin_skill = 10\nfood = [\"cheese\"]\n");
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+
+        Assert.Contains("cheese", error.Message);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_NoFile_LoadsNothing()
     {
         using var root = new TemporaryDirectory();

@@ -1,5 +1,6 @@
 using Moongate.Core.Directories;
 using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Data.Pets;
 using Moongate.Server.Ultima.Data.Taming;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Loaders;
@@ -38,6 +39,29 @@ public sealed class ShippedTamingTests
 
         Assert.True(mobiles[template].Tags!.ContainsKey(MountProps.MountItemTag));
         Assert.True(creatures.ContainsKey(template));
+    }
+
+    [Fact]
+    public async Task TheFoodOfTheCreatures_IsTheModernUOsOne_AndEveryKindHasItems()
+    {
+        var (creatures, _) = await LoadAsync();
+
+        Assert.Equal(["fruit", "grain"], creatures["horse"].Food);
+        Assert.Equal(["meat", "fish"], creatures["alligator"].Food);
+        Assert.Empty(creatures["lavalizard"].Food);
+    }
+
+    [Fact]
+    public async Task ThePetFoodFile_Loads_AndFeedsEveryKindAHorseOrADogEats()
+    {
+        var directories = new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data", "templates"]);
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var foods = (await new PetFoodLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToDictionary(food => food.Kind);
+
+        Assert.Equal(["eggs", "fish", "fruit", "grain", "meat"], foods.Keys.Order());
+        Assert.Contains("0x09d0_apple", foods["fruit"].Items);
+        Assert.Contains("0x09c9_ham", foods["meat"].Items);
     }
 
     [Fact]

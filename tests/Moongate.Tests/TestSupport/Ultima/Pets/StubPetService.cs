@@ -41,6 +41,58 @@ public sealed class StubPetService : IPetService
         return Releases;
     }
 
+    public int LoyaltyOf { get; set; } = 100;
+
+    public double Chance { get; set; } = 1;
+
+    public PetObeyResultType ObeyResult { get; set; } = PetObeyResultType.Obeyed;
+
+    public PetFeedResultType FeedResult { get; set; } = PetFeedResultType.Fed;
+
+    public List<(MobileEntity Player, MobileEntity Creature)> Obeys { get; } = [];
+
+    public List<(string? Template, int Amount)> Feeds { get; } = [];
+
+    public int Loyalty(MobileEntity creature)
+    {
+        return LoyaltyOf;
+    }
+
+    public int AdjustLoyalty(MobileEntity creature, int delta)
+    {
+        LoyaltyOf = Math.Clamp(LoyaltyOf + delta, 0, 100);
+
+        return LoyaltyOf;
+    }
+
+    public List<MobileEntity> LetGoOf { get; } = [];
+
+    public bool LetGo(MobileEntity creature)
+    {
+        LetGoOf.Add(creature);
+
+        return true;
+    }
+
+    public double ControlChance(MobileEntity player, MobileEntity creature)
+    {
+        return Chance;
+    }
+
+    public PetObeyResultType Obey(MobileEntity player, MobileEntity creature)
+    {
+        Obeys.Add((player, creature));
+
+        return ObeyResult;
+    }
+
+    public PetFeedResultType Feed(MobileEntity player, MobileEntity creature, string? itemTemplate, int amount)
+    {
+        Feeds.Add((itemTemplate, amount));
+
+        return FeedResult;
+    }
+
     public int SlotsOf(string? templateId)
     {
         return 1;

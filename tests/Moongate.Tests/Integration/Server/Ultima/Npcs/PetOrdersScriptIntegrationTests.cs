@@ -2,6 +2,7 @@ using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Types.Targeting;
 using Moongate.Tests.TestSupport.Ultima.Targeting;
+using Moongate.Server.Ultima.Types.Pets;
 using Moongate.Tests.TestSupport.Ultima.Pets;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
 using Moongate.Core.Directories;
@@ -137,7 +138,10 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IPathfindingService>(_finder);
         _container.RegisterInstance<INpcPathService>(new NpcPathService(_finder, time));
         _container.RegisterInstance<IMovementService>(new StubMovementService());
-        _container.RegisterInstance<IItemService>(TestItems.Create(_fixture.Sectors));
+        var items = TestItems.Create(_fixture.Sectors);
+        items.Add([new ItemEntity { Id = new Serial(0x40000700), TemplateId = "apple", Amount = 3 }]);
+        _container.RegisterInstance<IItemService>(items);
+        _container.RegisterInstance<IItemHandlingService>(new StubItemHandlingService());
         _container.RegisterInstance<IClockService>(new StubClockService());
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<TimeProvider>(time);
@@ -165,6 +169,8 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
         _container.RegisterScriptEnum<MonsterAnimationType>();
         _container.RegisterScriptEnum<BodyType>();
         _container.RegisterScriptEnum<SpeechKeywordType>();
+        _container.RegisterScriptEnum<PetObeyResultType>();
+        _container.RegisterScriptEnum<PetFeedResultType>();
         _container.RegisterInstance<IDataLoaderService>(
             new StubDataLoaderService().With(
                 new BodyContent { Body = new(0xE2), Type = BodyType.Animal },
@@ -587,6 +593,92 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
 
         Assert.DoesNotContain(_combat.Attacks, attack => attack.Attacker == wolf);
         Assert.Equal(new Point3D(1602, 1601, 0), wolf.Location);
+    }
+
+    [Fact]
+    public void APetThatDisobeys_DoesNotTakeTheOrder_AndIsNotRolledAgainForTheNextWord()
+    {
+        _pets.ObeyResult = PetObeyResultType.Disobeyed;
+
+        Say("all stay", SpeechKeywordType.AllStay);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.False(_horse.TryGetProp<string>("pet.order", out _));
+        Assert.Equal((_aria, _horse), Assert.Single(_pets.Obeys));
+    }
+
+    [Fact]
+    public void APetThatObeys_TakesTheOrder_AfterOneRoll()
+    {
+        Say("all stay", SpeechKeywordType.AllStay);
+
+        Assert.Equal("stay", _horse.GetProp<string>("pet.order"));
+        Assert.Equal((_aria, _horse), Assert.Single(_pets.Obeys));
+    }
+
+    [Fact]
+    public void APetThatDisobeysAKill_DoesNotAttack()
+    {
+        _pets.ObeyResult = PetObeyResultType.Disobeyed;
+        _targets.Result = TargetResult.ForObject(_orc.Id);
+
+        Say("all kill", SpeechKeywordType.AllKill);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.DoesNotContain(_combat.Attacks, attack => attack.Attacker == _horse);
+    }
+
+    [Fact]
+    public void TheKillIsRolledAfterTheTargetIsChosen_NotBefore()
+    {
+        _targets.Result = TargetResult.Canceled(TargetCancelType.Canceled);
+
+        Say("all kill", SpeechKeywordType.AllKill);
+
+        Assert.Empty(_pets.Obeys);
+    }
+
+    [Fact]
+    public void Release_IsNeverRolled()
+    {
+        _pets.ObeyResult = PetObeyResultType.Disobeyed;
+
+        Say("a horse release", SpeechKeywordType.PetRelease);
+
+        Assert.Empty(_pets.Obeys);
+        Assert.Single(_gumps.Opened);
+    }
+
+    [Fact]
+    public void FoodDroppedOnItsPet_ByItsOwner_IsEaten()
+    {
+        var result = _npcs.Run(_horse, "on_drag_drop", (long)_aria.Id.Value, 0x40000700L);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(true, result.Values[0]);
+        Assert.Single(_pets.Feeds);
+    }
+
+    [Theory,
+     InlineData(PetFeedResultType.WrongFood),
+     InlineData(PetFeedResultType.NotYours)]
+    public void FoodThePetRefuses_IsGivenBack(PetFeedResultType refusal)
+    {
+        _pets.FeedResult = refusal;
+
+        var result = _npcs.Run(_horse, "on_drag_drop", (long)_aria.Id.Value, 0x40000700L);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.NotEqual(true, result.Values[0]);
+    }
+
+    [Fact]
+    public void FoodDroppedByAnotherPlayer_IsNotEatenAndNotOffered()
+    {
+        var result = _npcs.Run(_horse, "on_drag_drop", 0x999L, 0x40000700L);
+
+        Assert.NotEqual(true, result.Values[0]);
+        Assert.Empty(_pets.Feeds);
     }
 
     // --- helpers ---

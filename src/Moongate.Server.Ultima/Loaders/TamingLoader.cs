@@ -1,6 +1,7 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
+using Moongate.Server.Ultima.Data.Pets;
 using Moongate.Server.Ultima.Data.Taming;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -72,6 +73,11 @@ public class TamingLoader : IDataLoader<TamingCreature>
             if (creature.Slots is < 1 or > MaxSlots)
             {
                 throw Invalid($"the slots of {creature.Template} must be 1 to {MaxSlots}");
+            }
+
+            if (creature.Food.Find(kind => !PetFoodKinds.All.Contains(kind)) is { } unknown)
+            {
+                throw Invalid($"the food '{unknown}' of {creature.Template} is not one of {string.Join(", ", PetFoodKinds.All)}");
             }
         }
 

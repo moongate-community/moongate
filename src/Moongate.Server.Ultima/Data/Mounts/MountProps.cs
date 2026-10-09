@@ -46,6 +46,11 @@ public static class MountProps
     public const string PetOrder = "pet.order";
 
     /// <summary>
+    ///     Prop of a creature: how loyal it is to its owner, 0 to 100; 100 when it has none.
+    /// </summary>
+    public const string PetLoyalty = "pet.loyalty";
+
+    /// <summary>
     ///     Prop of a creature: the spawn region it was taken out of when it was tamed, put back when it is let go.
     /// </summary>
     public const string PetRegion = "pet.region";

@@ -14,6 +14,10 @@
 --   stay    it stands still.
 --   guard   it stays within 3 tiles of its owner and fights whoever fights the owner or the pet.
 --
+--   Every order but release can be refused: the pet obeys with the chance pet.control_chance gives (its owner's Animal
+--   Taming and Animal Lore against the skill it asks, and its loyalty). One that obeys gains a point of loyalty; one that
+--   does not shows its anger, loses three, and goes wild when it has none left.
+--
 --   The words, said by the owner within 14 tiles: come, follow, follow me, stay, stop, guard, kill, attack and release,
 --   with "all" before them for every pet that hears, or with the name of the pet first for that pet. Kill and attack ask
 --   for a target (one pet asks for all, and the owner is a criminal when it sends them against an innocent); release asks
@@ -22,6 +26,7 @@
 -- Functions:
 --   think(serial, mind, here)                 one think of an owned pet that is not fighting
 --   listen(serial, speaker, text, keywords)   what a pet hears
+--   feed(serial, giver, given)                food dropped on a pet: its owner's gives it loyalty; true when eaten
 -- ==============================================================================
 
 local pet_orders = {}
@@ -47,6 +52,14 @@ local GUARD_EVERY = 2
 local HEARING = 14
 
 local ORDER = "pet.order"
+
+-- The pet eats and shows it, a happier pet says so, one that does not like the food shies away.
+local EAT = MonsterAnimationType.Fidget1
+local HAPPIER = 502060
+local SHIES_AWAY = 1043257
+
+-- What a pet that does not obey does: it growls and fidgets, angry.
+local ANGER = MonsterAnimationType.Fidget2
 
 -- The words of the client by name, one pet, and "all", every pet.
 local NAMED = {
@@ -244,6 +257,22 @@ local function attack(pet, speaker, target)
     return false
 end
 
+-- Whether a pet obeys its owner now: the roll of its loyalty. One that does not shows it.
+local function obeys(pet_serial, speaker)
+    local result = pet.obey(speaker, pet_serial)
+
+    if result == PetObeyResultType.Obeyed then
+        return true
+    end
+
+    if result == PetObeyResultType.Disobeyed or result == PetObeyResultType.Wild then
+        npc.play_sound(pet_serial, "attack")
+        mobile.animate(pet_serial, ANGER)
+    end
+
+    return false
+end
+
 local function carry_out(command, speaker, pets)
     if command == "kill" then
         target.pick(speaker, function(picked)
@@ -258,7 +287,7 @@ local function carry_out(command, speaker, pets)
 
             for _, pet in ipairs(pets) do
                 -- A pet let go, or dead, since the words, does not obey them.
-                if owner_of(pet) == speaker and attack(pet, speaker, picked.serial) then
+                if owner_of(pet) == speaker and obeys(pet, speaker) and attack(pet, speaker, picked.serial) then
                     npc.play_sound(pet, "attack")
                 end
             end
@@ -274,14 +303,16 @@ local function carry_out(command, speaker, pets)
     end
 
     for _, pet in ipairs(pets) do
-        if command == "stop" then
-            npc.set_prop(pet, ORDER, "stay")
-            combat.stop(pet)
-        else
-            npc.set_prop(pet, ORDER, command)
-        end
+        if obeys(pet, speaker) then
+            if command == "stop" then
+                npc.set_prop(pet, ORDER, "stay")
+                combat.stop(pet)
+            else
+                npc.set_prop(pet, ORDER, command)
+            end
 
-        npc.play_sound(pet, "idle")
+            npc.play_sound(pet, "idle")
+        end
     end
 end
 
@@ -317,6 +348,34 @@ function pet_orders.listen(serial, speaker, text, keywords)
     if named ~= nil and starts_with(text, npc.name(serial)) then
         carry_out(named, speaker, { serial })
     end
+end
+
+-- Food an owner dropped on its pet. True tells the server the item was taken, anything else gives it back. Only the
+-- food the creature eats (data/pet_food.toml against its food in data/taming.toml) is taken, whole stack.
+function pet_orders.feed(serial, giver, given)
+    if owner_of(serial) ~= giver then
+        return false
+    end
+
+    local before = pet.loyalty(serial) or 0
+    local result = pet.feed(giver, serial, given)
+
+    if result == PetFeedResultType.Fed or result == PetFeedResultType.AlreadyHappy then
+        mobile.animate(serial, EAT)
+        npc.play_sound(serial, "idle")
+
+        if (pet.loyalty(serial) or 0) > before then
+            npc.say_cliloc(serial, HAPPIER)
+        end
+
+        return true
+    end
+
+    if result == PetFeedResultType.WrongFood then
+        npc.say_cliloc(serial, SHIES_AWAY)
+    end
+
+    return false
 end
 
 return pet_orders

@@ -410,6 +410,11 @@ function creature.new(options)
         end
     end
 
+    -- What its owner gives it to eat.
+    function script.on_drag_drop(serial, giver, given)
+        return is_owned(serial) and pet_orders.feed(serial, giver, given)
+    end
+
     -- It dies, or is raised again: what it was doing is forgotten with it.
     function script.on_death(serial)
         npc.set_prop(serial, "combat.passive", nil)

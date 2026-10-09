@@ -1,0 +1,127 @@
+# ==============================================================================
+# Moongate - pet_food.toml
+#
+# What it is for:
+#   The items a pet eats, by kind of food. A player feeds a pet by dragging one of these on it; the pet eats the whole
+#   stack when its creature eats that kind (the food of each creature is in taming.toml) and its loyalty rises. Without
+#   this file no pet eats.
+#
+# Fields:
+#   [[food]]   one kind of food
+#     kind     meat, fruit (fruit and vegetables), grain, fish or eggs
+#     items    the ids of the item templates that are food of this kind
+# ==============================================================================
+
+[[food]]
+kind = "meat"
+items = [
+    "0x1e1f_sliced_ham",
+    "0x0976_slab_of_bacon",
+    "0x0977_slab_of_bacon",
+    "0x0978_slice_of_bacon",
+    "0x0979_slice_of_bacon",
+    "0x09b7_cooked_bird",
+    "0x09b8_cooked_bird",
+    "0x09bb_roast_pig",
+    "0x09bc_roast_pig",
+    "0x09c0_sausage",
+    "0x09c1_sausage",
+    "0x09c9_ham",
+    "0x09d3_ham",
+    "0x09f2_cooked_ribs",
+    "0x1608_chicken_leg",
+    "0x160a_leg_of_lamb",
+]
+
+[[food]]
+kind = "fruit"
+items = [
+    "0x09d0_apple",
+    "0x09d1_grape_bunch",
+    "0x0d1a_grape_bunch",
+    "0x09d2_peach",
+    "0x172c_peach",
+    "0x0994_pear",
+    "0x172d_pear",
+    "0x172b_lemons",
+    "0x172a_lemon",
+    "0x1729_limes",
+    "0x1728_lime",
+    "0x1727_bunch_of_dates",
+    "0x1726_coconut",
+    "0x1725_coconut",
+    "0x1724_coconut",
+    "0x1723_coconut",
+    "0x1722_bananas",
+    "0x1721_bananas",
+    "0x1720_banana",
+    "0x171f_banana",
+    "0x171e_banana",
+    "0x171d_banana",
+    "0x0c5c_watermelon",
+    "0x0c5d_watermelon",
+    "0x0993_fruit_basket",
+    "tribalberry",
+    "0x0d39_turnip",
+    "0x0d3a_turnip",
+    "0x0c61_turnip",
+    "0x0c62_turnip",
+    "0x0c63_turnip",
+    "0x0c64_gourd",
+    "0x0c65_gourd",
+    "0x0c66_gourd",
+    "0x0c67_gourd",
+    "0x0c6a_pumpkin",
+    "0x0c6b_pumpkin",
+    "0x0c6c_pumpkin",
+    "0x0c6d_onion",
+    "0x0c6e_onion",
+    "0x0c70_head_of_lettuce",
+    "0x0c71_head_of_lettuce",
+    "0x0c72_squash",
+    "0x0c73_squash",
+    "0x0c74_honeydew_melon",
+    "0x0c75_honeydew_melon",
+    "0x0c77_carrot",
+    "0x0c78_carrot",
+    "0x0c79_canteloupe",
+    "0x0c7a_canteloupe",
+    "0x0c7b_head_of_cabbage",
+    "0x0c7c_head_of_cabbage",
+    "0x0c7f_ear_of_corn",
+    "0x0c81_ear_of_corn",
+    "0x0c82_ear_of_corn",
+    "0x15f9_bowl_of_carrots",
+    "0x15fa_bowl_of_corn",
+    "0x15fb_bowl_of_lettuce",
+    "0x15fc_bowl_of_peas",
+    "0x15fe_bowl_of_carrots",
+    "0x15ff_bowl_of_corn",
+    "0x1600_bowl_of_lettuce",
+    "0x1601_bowl_of_peas",
+    "0x1602_bowl_of_patatoes",
+    "0x1604_bowl_of_stew",
+]
+
+[[food]]
+kind = "grain"
+items = [
+    "0x098c_french_bread",
+    "0x103b_bread_loaf",
+    "0x103c_bread_loaf",
+]
+
+[[food]]
+kind = "fish"
+items = [
+    "0x1e1c_cooked_fish",
+    "0x1e1d_cooked_fish",
+    "0x1e1e_cooked_fish",
+    "0x097b_fish_steak",
+]
+
+[[food]]
+kind = "eggs"
+items = [
+    "0x09b6_fried_eggs",
+]
