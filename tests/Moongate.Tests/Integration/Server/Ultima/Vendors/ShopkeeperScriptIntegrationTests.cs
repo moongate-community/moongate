@@ -109,6 +109,7 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         _scripts.Write("common/training.lua", File.ReadAllText(ShippedScript("common/training.lua")));
         _scripts.Write("common/shop.lua", File.ReadAllText(ShippedScript("common/shop.lua")));
         _scripts.Write("common/guild.lua", File.ReadAllText(ShippedScript("common/guild.lua")));
+        _scripts.Write("common/trick_or_treat.lua", File.ReadAllText(ShippedScript("common/trick_or_treat.lua")));
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path,

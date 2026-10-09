@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"aa5c450cb10719cc94bc6f05fb7422cb4f8e78247da93d59126e89015516138e","title":"Localizzazione"} -->
+<!-- translation: {"sourceHash":"f0967b874902e4a8595f8ff25597a01d85f1e6e3258e172a3dcc6f0cc9ebac62","title":"Localizzazione"} -->
 
 # Localizzazione
 
@@ -220,6 +220,7 @@ Risiedono in `data/messages/<language>/moongate.toml`, separati dai testi standa
 | 30192 a 30204 | You cannot ask to be moved while you are in jail., You cannot ask to be moved while you are fighting., You already asked to be moved: stand still., You can ask to be moved again in {0} minutes., Stand still for {0} seconds and you will be taken to {1}., You moved: you stay where you are., You have been taken to {0}., There is no city to take you to., le regole del server e le quattro etichette del gump (Help, I am stuck, Useful commands, Server rules) | Cosa legge un giocatore dal gump di [aiuto](help.md): perché «Sono bloccato» viene rifiutato, l'attesa, lo spostamento, il testo delle regole e le etichette del menu |
 | 30205 a 30220 | Call a game master, What is it about?, Question, Bug, Suggestion, Harassment, il prompt di scrittura, le risposte a una richiesta, l'avviso allo staff, la riga della risposta, il conteggio delle richieste in attesa e la descrizione del comando `pages` | Cosa leggono un giocatore e un game master dalla coda di [aiuto](help.md) |
 | 30224 a 30229 | The server will shut down in {0} minutes., la descrizione del comando `event` e le sue risposte | Cosa leggono un giocatore e un amministratore dal [calendario](schedule.md) |
+| 30230 a 30237 | Oooooh, aren't you cute!, TRICK!, You receive some candy., gli annunci della stagione | Cosa dice un negoziante e cosa legge un giocatore in [dolcetto o scherzetto](holidays.md#halloween-trick-or-treat) |
 | 30185, 30186 | Apre il gump degli strumenti del game master…, Il gump gmtools manca: templates/gumps/gmtools.xml. | Il comando `gmtools` |
 
 L'intestazione dei testi dei comandi in `eng/moongate.toml` elenca gli ID di entrambi gli insiemi.
