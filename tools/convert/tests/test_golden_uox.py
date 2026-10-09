@@ -1,10 +1,8 @@
 """The ``uox`` command against the real data of UOX3.
 
 Opt in with ``MOONGATE_UOX3_DIR`` set to a checkout of UOX3 (the folder that holds ``data``). The loot tables are those shipped in
-``moongate_root/templates/loots``, byte for byte (the folder holds hand-written tables too). The items are too, apart from the files that were shipped before the converter learned the
-combat fields and the kind of weapon (and the ones a script id was added to by hand): ``STALE`` names them, and the test fails when that list
-is not what differs, so a refreshed file must leave it.
-
+``moongate_root/templates/loots``, byte for byte (the folder holds hand-written tables too). The items are too, apart from the files a script id was added to by hand: ``STALE`` names
+them, and the test fails when that list is not what differs.
 """
 
 from __future__ import annotations
@@ -23,31 +21,13 @@ SOURCE = os.environ.get("MOONGATE_UOX3_DIR")
 
 pytestmark = pytest.mark.skipif(SOURCE is None, reason="MOONGATE_UOX3_DIR is not set")
 
-# Shipped before the combat fields (damage, speed, armor, hits, kind of weapon) were converted, or with a script id added by hand.
+# Hand edits in the shipped files: a script id of Moongate (bulletin board, training dummy, archery butte, clock, bandage, lockpick) and the
+# use range of the butte, which UOX3 has no data for.
 STALE = {
-    "building/decs/dungeon_traps.toml",
     "building/decs/misc.toml",
-    "building/lighting.toml",
-    "gear/clothing/aos_clothing.toml",
-    "gear/clothing/clothing.toml",
-    "gear/clothing/footwear.toml",
-    "gear/clothing/headwear.toml",
-    "gear/clothing/se_headwear.toml",
-    "gear/clothing/td_clothing.toml",
-    "gear/clothing/td_footwear.toml",
-    "gear/clothing/td_headwear.toml",
-    "gear/magic_items.toml",
-    "gmmenu/gm_skins.toml",
     "houseaddons/house_addons.toml",
-    "magic/potions.toml",
-    "misc/bod_rewards_blacksmith.toml",
-    "misc/christmas.toml",
-    "misc/halloween.toml",
-    "misc/plantgrowing.toml",
     "skills/resources/tinkering.toml",
-    "skills/tools/alchemy.toml",
     "skills/tools/healing.toml",
-    "skills/tools/mining.toml",
     "skills/tools/thieving.toml",
 }
 

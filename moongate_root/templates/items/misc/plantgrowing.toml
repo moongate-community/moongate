@@ -16,6 +16,7 @@ item_id = 5634
 name = "a bowl of dirt"
 rarity = "common"
 weight = 0.1
+max_hits = 100
 decays = true
 
 [[item]]

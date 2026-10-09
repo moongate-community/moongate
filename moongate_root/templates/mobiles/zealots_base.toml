@@ -1,8 +1,8 @@
 [[mobile]]
 id = "base_zealot"
-script_id = "monster"
 name = "Zealot of Khaldun"
 notoriety = "murderer"
+script_id = "monster"
 
 [[mobile]]
 id = "zealot_knight_male"

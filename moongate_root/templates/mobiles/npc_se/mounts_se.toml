@@ -1,6 +1,5 @@
 [[mobile]]
 id = "hiryu_se"
-script_id = "monster"
 base_id = "base_hiryu"
 strength = "1d211+1199"
 dexterity = "1d101+169"
@@ -12,6 +11,7 @@ karma = -15000
 fame = 15000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl5loot"]
 gold = "1d401+1499"
+script_id = "monster"
 [mobile.resistances]
 fire = "1d21+69"
 cold = "1d11+14"
@@ -25,7 +25,6 @@ wrestling = "1d21+99"
 
 [[mobile]]
 id = "lesser_hiryu_se"
-script_id = "monster"
 base_id = "base_hiryu"
 strength = "1d111+299"
 dexterity = "1d101+169"
@@ -37,6 +36,7 @@ karma = -10000
 fame = 10000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl3loot"]
 gold = "1d201+999"
+script_id = "monster"
 [mobile.resistances]
 fire = "1d21+59"
 cold = "1d11+4"

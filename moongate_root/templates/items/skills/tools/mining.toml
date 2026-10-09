@@ -24,6 +24,12 @@ rarity = "common"
 weight = 11.0
 layer = "two_handed"
 two_handed_weapon = true
+weapon_type = "axe"
+damage_min = 1
+damage_max = 15
+speed = 35
+strength_required = 25
+max_hits = 60
 buy_price = 34
 sell_price = 17
 decays = true
@@ -33,6 +39,7 @@ id = "0x0e86"
 base_id = "0x0e85_pickaxe"
 item_id = 3718
 rarity = "common"
+weapon_type = "axe"
 
 [[item]]
 id = "0x0fb1_forge"

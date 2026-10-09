@@ -1,6 +1,5 @@
 [[mobile]]
 id = "jukawarrior"
-script_id = "monster"
 name = "a juka warrior"
 body = 764
 strength = "1d100+250"
@@ -12,6 +11,7 @@ notoriety = "murderer"
 karma = -10000
 fame = 10000
 gold = "1d51+249"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d11+79"
 fencing = "1d11+79"
@@ -32,7 +32,6 @@ items = ["0x143e", "0x0f62", "0x0df1"]
 
 [[mobile]]
 id = "jukalord"
-script_id = "monster"
 name = "a juka lord"
 body = 766
 strength = "1d100+400"
@@ -44,6 +43,7 @@ notoriety = "murderer"
 karma = -15000
 fame = 15000
 gold = "1d201+199"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d11+89"
 archery = "1d6+94"
@@ -64,7 +64,6 @@ items = ["0x13b1"]
 
 [[mobile]]
 id = "jukamage"
-script_id = "monster"
 name = "a juka mage"
 body = 765
 strength = "1d100+200"
@@ -77,6 +76,7 @@ karma = -15000
 fame = 15000
 loot = ["randomgems", "midlevelscrolls", "midlevelscrolls"]
 gold = "1d51+199"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d11+79"
 evaluating_intelligence = "1d21+79"
@@ -95,7 +95,6 @@ death = 652
 
 [[mobile]]
 id = "meereternal"
-flee_at = -1
 name = "a meer eternal"
 body = 772
 strength = "1d90+415"
@@ -108,6 +107,7 @@ karma = 18000
 fame = 18000
 loot = ["midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
 gold = 1300
+flee_at = -1
 [mobile.skills]
 evaluating_intelligence = "1d31+29"
 magery = "1d11+89"
@@ -168,7 +168,6 @@ death = 788
 
 [[mobile]]
 id = "meermage"
-flee_at = -1
 name = "a meer mage"
 body = 770
 strength = "1d31+169"
@@ -181,6 +180,7 @@ karma = 8000
 fame = 8000
 loot = ["daemonbonearmor", "midlevelscrolls", "midlevelscrolls"]
 gold = 700
+flee_at = -1
 [mobile.skills]
 evaluating_intelligence = 100
 magery = "1d11+69"
@@ -196,7 +196,6 @@ death = 788
 
 [[mobile]]
 id = "blackthornjuggernaut"
-script_id = "monster"
 name = "a blackthorn juggernaut"
 body = 768
 strength = "1d100+300"
@@ -209,6 +208,7 @@ karma = -12000
 fame = 12000
 loot = ["randomgems", "randomgems", "randomtinkerparts", "juggernaut_loot"]
 gold = "1d301+399"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d11+89"
 resisting_spells = 120
@@ -223,7 +223,6 @@ death = 348
 
 [[mobile]]
 id = "betrayer"
-script_id = "monster"
 name = "a betrayer"
 body = 767
 strength = "1d100+400"
@@ -236,6 +235,7 @@ karma = -15000
 fame = 15000
 loot = ["randomgems", "randomgems", "betrayer_loot"]
 gold = "1d101+199"
+script_id = "monster"
 [mobile.skills]
 anatomy = "1d11+89"
 evaluating_intelligence = "1d11+89"

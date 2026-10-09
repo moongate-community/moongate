@@ -208,6 +208,10 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
         # UOX3 types the tub by its graphic, in itemtypes.dfn, not in its block: scripts/items/dye_tub.lua.
         template.script_id = "dye_tub"
 
+    # A torch has the layer of a two handed weapon and no dir=: the light script is what says it is a light.
+    if template.script_id == "light":
+        template.two_handed_weapon = None
+
     # dyeable= and dye= are the same tag in UOX3; 0 takes it away from what a base gave.
     dyeable = _number(fields.get("dyeable") if "dyeable" in fields else fields.get("dye"))
 

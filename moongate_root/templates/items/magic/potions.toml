@@ -13,6 +13,9 @@ base_id = "base_potion"
 item_id = 3853
 name = "purple potion"
 rarity = "common"
+damage_min = 1
+damage_max = 5
+speed = 3
 buy_price = 20
 sell_price = 35
 
@@ -28,6 +31,9 @@ base_id = "base_potion"
 item_id = 3853
 name = "purple potion"
 rarity = "common"
+damage_min = 6
+damage_max = 10
+speed = 3
 buy_price = 25
 sell_price = 50
 
@@ -43,6 +49,9 @@ base_id = "base_potion"
 item_id = 3853
 name = "purple potion"
 rarity = "common"
+damage_min = 11
+damage_max = 20
+speed = 3
 buy_price = 55
 sell_price = 105
 

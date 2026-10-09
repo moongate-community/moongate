@@ -1,6 +1,5 @@
 [[mobile]]
 id = "energyvortex_summon"
-script_id = "monster"
 name = "an energy vortex"
 body = 164
 skin_hue = 117
@@ -11,6 +10,7 @@ hits = 1900
 mana = 0
 stamina = 250
 damage = "1d19+7"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 99
 tactics = 90
@@ -112,7 +112,6 @@ death = 282
 
 [[mobile]]
 id = "bladespirit_summon"
-script_id = "monster"
 name = "a blade spirit"
 body = 574
 strength = 150
@@ -122,6 +121,7 @@ hits = 1200
 mana = 0
 stamina = 250
 damage = "1d9+9"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 70
 tactics = 90

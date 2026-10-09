@@ -114,8 +114,6 @@ death = 185
 
 [[mobile]]
 id = "frenziedostard"
-script_id = "monster"
-flee_at = -1
 base_id = "horse"
 name = "a frenzied ostard"
 body = 219
@@ -129,6 +127,8 @@ armor = 15
 notoriety = "attackable"
 karma = -1500
 fame = 1500
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d6+74"
 parrying = "1d11+74"
@@ -206,7 +206,6 @@ death = 628
 
 [[mobile]]
 id = "nightmare"
-script_id = "monster"
 base_id = "horse"
 name = "a nightmare"
 body = 116
@@ -220,6 +219,7 @@ karma = -14000
 fame = 14000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "randompotions", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
 gold = "1d51+249"
+script_id = "monster"
 [mobile.skills]
 magery = "1d41+9"
 resisting_spells = "1d16+84"
@@ -400,7 +400,6 @@ death = 172
 
 [[mobile]]
 id = "darksteed"
-script_id = "monster"
 base_id = "horse"
 name = "a dark steed"
 body = 114
@@ -412,6 +411,7 @@ armor = 30
 notoriety = "attackable"
 karma = -14000
 fame = 14000
+script_id = "monster"
 [mobile.skills]
 magery = "1d41+9"
 resisting_spells = "1d16+84"
@@ -454,7 +454,6 @@ death = 172
 [[mobile]]
 id = "skeletalmount"
 blood_hue = -1
-script_id = "monster"
 base_id = "horse"
 name = "a skeletal steed"
 body = 793
@@ -466,6 +465,7 @@ armor = 30
 notoriety = "attackable"
 karma = -10000
 fame = 10000
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+84"
 parrying = "1d41+54"
@@ -480,7 +480,6 @@ death = 172
 
 [[mobile]]
 id = "giantbeetle"
-script_id = "monster"
 base_id = "horse"
 name = "a giant beetle"
 body = 791
@@ -492,6 +491,7 @@ armor = 30
 notoriety = "attackable"
 karma = -4000
 fame = 4000
+script_id = "monster"
 [mobile.skills]
 wrestling = 100
 tactics = 100
