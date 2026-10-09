@@ -38,3 +38,12 @@ amount_min = 2
 amount_max = 4
 respawn_min_minutes = 20
 respawn_max_minutes = 30
+
+# The ore of the mountains and the caves: 10 to 34 in 8 by 8 tiles, back in 10 to 20 minutes.
+[[resource]]
+id = "ore"
+area = 8
+amount_min = 10
+amount_max = 34
+respawn_min_minutes = 10
+respawn_max_minutes = 20

@@ -79,7 +79,7 @@ DATA_FIXES: dict[tuple[str, str], str] = {
 }
 
 # UOX3 script (in the file associations) -> the Moongate item script doing the same.
-SCRIPT_IDS: dict[str, str] = {"item/lights.js": "light"}
+SCRIPT_IDS: dict[str, str] = {"item/lights.js": "light", "skill/mining.js": "pickaxe"}
 
 
 def apply_fixes(block: dfn.DfnBlock) -> None:

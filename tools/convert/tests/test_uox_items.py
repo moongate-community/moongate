@@ -65,6 +65,29 @@ def test_what_uox3_calls_an_axe_gets_the_axe_script(uox_workspace):
     assert "script_id" not in by_name["war axe"]
 
 
+def test_the_mining_tools_and_the_piles_of_ore_get_their_scripts(uox_workspace):
+    uox_workspace.write_source(
+        "mining.dfn",
+        "[0x0e85]\n{\nname=pickaxe\nid=0x0e85\nscript=4050\n}\n"
+        "[0x0f39]\n{\nname=a shovel\nid=0x0f39\nscript=4050\n}\n"
+        "[0x19b9]\n{\nname=iron ore\nid=0x19b9\n}\n"
+        "[shadow_iron_ore]\n{\nname=shadow iron ore\nid=0x19b9\ncolor=0x0966\n}\n"
+        "[0x1bf2]\n{\nname=iron ingot\nid=0x1bf2\n}\n",
+    )
+    uox_workspace.write_scripts("jse_fileassociations.scp", "[SCRIPT_LIST]\n{\n4050=skill/mining.js\n}\n")
+    uox_workspace.write_scripts("jse_objectassociations.scp", "[ENVOKE]\n{\n}\n")
+
+    assert uox_workspace.run(scripts=True) == 0, uox_workspace.combined
+
+    # UOX3 gives its mining script to the tools in their block, and types the piles of ore by their graphic.
+    by_name = {item.get("name"): item for item in uox_workspace.items("mining.toml").values()}
+    assert by_name["pickaxe"]["script_id"] == "pickaxe"
+    assert by_name["a shovel"]["script_id"] == "pickaxe"
+    assert by_name["iron ore"]["script_id"] == "ore"
+    assert "script_id" not in by_name["shadow iron ore"]
+    assert "script_id" not in by_name["iron ingot"]
+
+
 def test_what_uox3_calls_a_drink_gets_the_drink_script_but_the_jar_of_honey(uox_workspace):
     uox_workspace.write_source(
         "items.dfn",
