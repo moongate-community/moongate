@@ -10,6 +10,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
@@ -29,6 +30,7 @@ public sealed class MobileModuleTests
 {
     private readonly RecordingCrimeService _crimes = new();
     private readonly StubDeathService _death = new();
+    private readonly RecordingMountService _mounts = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingTeleportService _teleports = new();
     private readonly RecordingMobileStateService _state = new();
@@ -440,6 +442,17 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void IsMounted_ARiderIsTrue_AFootWalkerAndAnUnknownSerialAreFalse()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+
+        var result = Run("return mobile.is_mounted(2), mobile.is_mounted(999)");
+
+        Assert.Equal([true, false], result.Select(value => value.Read<bool>()));
+        Assert.False(Run("return mobile.is_mounted(256)")[0].Read<bool>());
+    }
+
+    [Fact]
     public void Resurrect_ADeadPlayer_RaisesItAtOnce_AndIsDeadSaysWhoIs()
     {
         _aria.AccountId = new Serial(0x42);
@@ -741,7 +754,8 @@ public sealed class MobileModuleTests
                 ),
                 new StubWeightService { CarriedStones = 37, MaximumStones = 215 },
                 _crimes,
-                _death
+                _death,
+                mounts: _mounts
             )
         );
 

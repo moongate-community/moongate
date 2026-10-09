@@ -59,6 +59,7 @@ local NOT_BITING = 503172     -- The fish don't seem to be biting here.
 local NOTHING = 503171        -- You fish a while, but fail to catch anything.
 local NO_ROOM = 503176        -- You do not have room in your backpack for a fish.
 local PULLED = 1008124        -- You pull out an item : (and its name)
+local RIDING = 500971         -- You can't fish while riding!
 local NO_WATER = "You need water to fish in!"
 
 local FISH = {
@@ -208,6 +209,12 @@ end
 
 -- Called when a player double clicks the pole.
 function fishing_pole.on_use(serial, user)
+    if mobile.is_mounted(user) then
+        mobile.message_cliloc(user, RIDING)
+
+        return true
+    end
+
     if fishing[user] then
         mobile.message_cliloc(user, ALREADY)
 

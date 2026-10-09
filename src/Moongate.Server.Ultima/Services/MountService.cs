@@ -238,7 +238,7 @@ public sealed class MountService : IMountService
         return pet.TemplateId is { } id && _templates.TryGet(id, out var template) ? template.MountItem() : null;
     }
 
-    private static bool WithinReach(Point3D from, Point3D to)
+    internal static bool WithinReach(Point3D from, Point3D to)
     {
         return Math.Max(Math.Abs(from.X - to.X), Math.Abs(from.Y - to.Y)) <= MountRange &&
                Math.Abs(from.Z - to.Z) <= MountHeightReach;

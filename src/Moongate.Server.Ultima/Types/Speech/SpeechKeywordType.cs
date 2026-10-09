@@ -27,6 +27,16 @@ public enum SpeechKeywordType
     Resign = 0x0005,
 
     /// <summary>
+    ///     "stable", said to an animal trainer to leave a pet with it.
+    /// </summary>
+    Stable = 0x0008,
+
+    /// <summary>
+    ///     "claim", said to an animal trainer to take a pet back.
+    /// </summary>
+    Claim = 0x0009,
+
+    /// <summary>
     ///     "train", as ModernUO's trainers read it.
     /// </summary>
     Train = 0x006C,
