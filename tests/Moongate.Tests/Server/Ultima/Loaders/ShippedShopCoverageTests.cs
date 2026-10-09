@@ -6,13 +6,19 @@ using Moongate.Tests.TestSupport.Ultima.Loaders;
 namespace Moongate.Tests.Server.Ultima.Loaders;
 
 /// <summary>
-///     Every shipped vendor template that runs <c>shopkeeper.lua</c> (which offers Buy and Sell) must be in a shipped
-///     shop, else Buy, Sell and "vendor buy" do nothing, silently.
+///     A shipped vendor template that runs <c>shopkeeper.lua</c> and is in no shipped shop offers neither Buy nor Sell and
+///     answers no "vendor buy". The kinds known to be so are listed here; any other is a shop that went missing.
 /// </summary>
 public sealed class ShippedShopCoverageTests
 {
+    // What these sell has no item template yet (pets, boats), or ModernUO gives them no shop either.
+    private static readonly string[] WithoutAShop =
+    [
+        "animaltrainer", "gypsyanimaltrainer", "gypsyfortuneteller", "rancher", "shipwright", "spinner"
+    ];
+
     [Fact]
-    public async Task EveryShippedShopkeeper_HasAShop()
+    public async Task EveryShippedShopkeeper_HasAShop_ButTheKindsKnownToSellNothing()
     {
         var directories = new DirectoriesConfig(Path.Combine(RepositoryRoot(), "moongate_root"), ["templates"]);
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
@@ -33,6 +39,7 @@ public sealed class ShippedShopCoverageTests
             .Where(template => template.ScriptId == "shopkeeper" && template.Id != "basevendor")
             .Where(template => !service.TryGetFor(template.Id, out _))
             .Select(template => template.Id)
+            .Where(id => !IsKnownToSellNothing(id))
             .Order(StringComparer.Ordinal)
             .ToArray();
 
@@ -40,6 +47,15 @@ public sealed class ShippedShopCoverageTests
             orphans.Length == 0,
             $"{orphans.Length} shipped templates run shopkeeper.lua but are in no shop: {string.Join(", ", orphans)}"
         );
+    }
+
+    private static bool IsKnownToSellNothing(string id)
+    {
+        var kind = id.StartsWith("m_", StringComparison.Ordinal) || id.StartsWith("f_", StringComparison.Ordinal)
+            ? id[2..]
+            : id;
+
+        return kind.EndsWith("_guildmaster", StringComparison.Ordinal) || WithoutAShop.Contains(kind);
     }
 
     private static string RepositoryRoot()

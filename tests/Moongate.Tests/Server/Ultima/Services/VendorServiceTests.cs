@@ -192,6 +192,20 @@ public sealed class VendorServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SellsAndBuys_AreTrueForAVendorWhoseShopHasSuchLines_AndFalseForOneWithNoShop()
+    {
+        var fisher = new MobileEntity { Id = new Serial(0x900), Name = "a fisher", TemplateId = "fisher" };
+        var nobody = new MobileEntity { Id = new Serial(0x901), Name = "a stray" };
+
+        Assert.True(_vendors.Sells(_vendor));
+        Assert.True(_vendors.Buys(_vendor));
+        Assert.False(_vendors.Sells(fisher));
+        Assert.False(_vendors.Buys(fisher));
+        Assert.False(_vendors.Sells(nobody));
+        Assert.False(_vendors.Sells(_player));
+    }
+
+    [Fact]
     public async Task OpenBuy_LooksFromTheEyesOfTheVendorToTheEyesOfThePlayer_NotAlongTheFloor()
     {
         Assert.True(await OnLoopAsync(() => _vendors.OpenBuy(_session, _vendor)));

@@ -22,7 +22,7 @@
 --                                               "vendor buy" and "vendor sell"
 --                                               said within 4
 --   on_context_menu(serial, player)             the entries the vendor adds to
---                                               its context menu: Buy and Sell
+--                                               its context menu: Buy when it sells, Sell when it buys
 --   on_context_menu_select(serial, player, id)  the player chose it: the window
 --                                               opens, or the price of a lesson
 --                                               is quoted
@@ -96,10 +96,16 @@ function shopkeeper.on_context_menu(serial, player)
         return {}
     end
 
-    local entries = {
-        { id = "buy", cliloc = buy_entry, range = menu_range },
-        { id = "sell", cliloc = sell_entry, range = menu_range },
-    }
+    -- Only what the vendor does, as in ModernUO: one with no shop offers neither.
+    local entries = {}
+
+    if vendor.sells(serial) then
+        entries[#entries + 1] = { id = "buy", cliloc = buy_entry, range = menu_range }
+    end
+
+    if vendor.buys(serial) then
+        entries[#entries + 1] = { id = "sell", cliloc = sell_entry, range = menu_range }
+    end
 
     for _, entry in ipairs(training.entries(serial, player, menu_range)) do
         entries[#entries + 1] = entry

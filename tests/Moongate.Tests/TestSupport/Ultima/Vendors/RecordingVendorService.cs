@@ -12,6 +12,10 @@ public sealed class RecordingVendorService : IVendorService
 {
     public bool Answer { get; set; } = true;
 
+    public bool HasGoods { get; set; } = true;
+
+    public bool WantsGoods { get; set; } = true;
+
     public List<(GameSession Session, MobileEntity Vendor)> Opened { get; } = [];
 
     public List<(GameSession Session, VendorBuyReplyPacket Packet)> Replies { get; } = [];
@@ -19,6 +23,16 @@ public sealed class RecordingVendorService : IVendorService
     public List<(GameSession Session, MobileEntity Vendor)> OpenedSell { get; } = [];
 
     public List<(GameSession Session, VendorSellReplyPacket Packet)> SellReplies { get; } = [];
+
+    public bool Sells(MobileEntity vendor)
+    {
+        return HasGoods;
+    }
+
+    public bool Buys(MobileEntity vendor)
+    {
+        return WantsGoods;
+    }
 
     public bool OpenBuy(GameSession session, MobileEntity vendor)
     {

@@ -145,6 +145,29 @@ public sealed class ShopkeeperScriptIntegrationTests : IAsyncLifetime
         );
     }
 
+    [Theory]
+    [InlineData(true, false, "buy")]
+    [InlineData(false, true, "sell")]
+    [InlineData(false, false, "")]
+    public async Task TheContextMenu_OffersBuyOnlyWhenTheVendorSells_AndSellOnlyWhenItBuys(
+        bool sells,
+        bool buys,
+        string expected
+    )
+    {
+        _vendors.HasGoods = sells;
+        _vendors.WantsGoods = buys;
+
+        var result = await RunAsync("on_context_menu", (long)_aria.Id.Value);
+
+        Assert.Empty(_errors);
+        var entries = Assert.IsType<LuaTable>(Assert.Single(result.Values));
+        Assert.Equal(
+            expected,
+            string.Join(',', Enumerable.Range(1, entries.ArrayLength).Select(index => entries[index].Read<LuaTable>()["id"].Read<string>()))
+        );
+    }
+
     [Fact]
     public async Task TheContextMenu_OffersNothingToAGhost()
     {

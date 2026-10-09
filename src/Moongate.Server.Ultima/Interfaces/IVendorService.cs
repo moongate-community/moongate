@@ -12,6 +12,22 @@ namespace Moongate.Server.Ultima.Interfaces;
 public interface IVendorService : ISessionClosedListener
 {
     /// <summary>
+    ///     Gets whether <paramref name="vendor" /> is an NPC whose shop has something to sell to a player.
+    /// </summary>
+    /// <returns>
+    ///     True when its shop has a line to sell; false for a mobile with no shop.
+    /// </returns>
+    bool Sells(MobileEntity vendor);
+
+    /// <summary>
+    ///     Gets whether <paramref name="vendor" /> is an NPC whose shop buys something from a player.
+    /// </summary>
+    /// <returns>
+    ///     True when its shop has a line to buy; false for a mobile with no shop.
+    /// </returns>
+    bool Buys(MobileEntity vendor);
+
+    /// <summary>
     ///     Opens the buy window of <paramref name="vendor" /> for the player of <paramref name="session" />, replacing the
     ///     one it had. Refused, with nothing sent, when the vendor has no shop or nothing in stock, is not in the world, is
     ///     more than 10 tiles away or out of sight, or when the player is dead; a murderer in a guarded region is
