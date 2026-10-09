@@ -85,8 +85,8 @@
         "description": "Item or mobile selected by the client; the high bit (0x80000000) asks for the own paperdoll."
       }
     ],
-    "notes": "A double click opens a carried container when its graphic has the Container flag, or the paperdoll of a human-bodied mobile in view range.",
-    "handler": "UseRequestPacketHandler: opens a container the character carries, or a paperdoll"
+    "notes": "A double click opens a carried container when its graphic has the Container flag, or the paperdoll of a human-bodied mobile in view range. On a creature that is a mount it rides it; on the character itself, while it rides, it gets off.",
+    "handler": "UseRequestPacketHandler: opens a container the character carries, or a paperdoll; rides a creature that is a mount, and gets off when the character double clicks itself"
   },
   "0x07:incoming": {
     "category": "Items",
