@@ -552,6 +552,30 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedAxes_UseTheAxeScript_AndItsLogsAndWoodAreThere()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        // The hatchet and the axe of every era take the script from their base; a war axe chops nothing.
+        Assert.All(
+            new[] { "0x0f43", "0x0f43_lbr", "0x0f43_t2a", "0x0f49", "0x0f49_aos", "0x13fb", "0x0f4b" },
+            id => Assert.Equal("axe", items[id].ScriptId)
+        );
+        Assert.NotEqual("axe", items["0x13b0"].ScriptId);
+
+        var script = await File.ReadAllTextAsync(
+            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "axe.lua")
+        );
+        var logs = System.Text.RegularExpressions.Regex.Match(script, "local LOGS = \"([^\"]+)\"").Groups[1].Value;
+
+        Assert.True(items[logs].Stackable);
+
+        var wood = Assert.Single((await new HarvestLoader(directories).LoadDataAsync()).Entities, r => r.Id == "wood");
+        Assert.Equal((4, 2, 4, 20, 30), (wood.Area, wood.AmountMin, wood.AmountMax, wood.RespawnMinMinutes, wood.RespawnMaxMinutes));
+    }
+
+    [Fact]
     public async Task ShippedHarvest_HasTheFishOfTheFishingPoles()
     {
         var resources = (await new HarvestLoader(Directories()).LoadDataAsync()).Entities.ToArray();

@@ -263,6 +263,19 @@ public sealed class ItemModule
     }
 
     /// <summary>
+    ///     Gets the serial of the mobile wearing or holding the item itself, such as an axe in its hands;
+    ///     <c>item.worn_by(serial) == user</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The serial of the mobile that wears the item or holds it in its hands; nil for an item in a backpack or another container, on the ground or unknown."
+    )]
+    public long? WornBy(long serial)
+    {
+        return TryGetItem(serial, out var item) && item.MobileId is { } wearer ? wearer.Value : null;
+    }
+
+    /// <summary>
     ///     Takes <paramref name="amount" /> units off the item, deleting it at 0; <c>item.consume(serial, 1)</c>.
     /// </summary>
     [ScriptFunction(

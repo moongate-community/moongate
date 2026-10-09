@@ -46,6 +46,25 @@ def test_what_uox3_calls_food_gets_the_food_script(uox_workspace):
     assert by_name["pitcher of water"]["script_id"] == "drink"
 
 
+def test_what_uox3_calls_an_axe_gets_the_axe_script(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[base_hatchet]\n{\ntype=216\nid=0x0f43\n}\n"
+        "[0x0f44]\n{\nget=base_hatchet\nname=hatchet\nid=0x0f44\n}\n"
+        "[0x13af]\n{\nname=war axe\nid=0x13af\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # UOX3's item type 216 is what chops a tree: scripts/items/axe.lua. A war axe is no such thing.
+    items = uox_workspace.items()
+    by_name = {item.get("name"): item for item in items.values()}
+    # The hatchet takes it from its base, as every field it does not set itself.
+    assert items["base_hatchet"]["script_id"] == "axe"
+    assert by_name["hatchet"]["base_id"] == "base_hatchet"
+    assert "script_id" not in by_name["war axe"]
+
+
 def test_what_uox3_calls_a_drink_gets_the_drink_script_but_the_jar_of_honey(uox_workspace):
     uox_workspace.write_source(
         "items.dfn",
