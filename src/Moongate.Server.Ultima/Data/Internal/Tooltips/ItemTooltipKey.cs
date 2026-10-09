@@ -15,5 +15,8 @@ internal readonly record struct ItemTooltipKey(
     LootType? LootType,
     bool? Movable,
     int? LabelNumber,
-    long? Worth
+    long? Worth,
+    bool Exceptional,
+    string? CrafterName,
+    int? UsesRemaining
 );

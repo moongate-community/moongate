@@ -203,7 +203,12 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         }
 
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
-        _scripts.Write("items/carpentry_tool.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "carpentry_tool.lua")));
+        // No exceptional item and the most uses unless a test says otherwise: the rolls are the test's.
+        _scripts.Write(
+            "items/carpentry_tool.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "carpentry_tool.lua")) +
+            "\nrequire(\"common.crafting\").roll = function() return 0.999 end\n"
+        );
         _scripts.Write("gumps/craft_menu.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "craft_menu.lua")));
         var gumpTemplates =
             (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
@@ -403,6 +408,28 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Contains("You create the item.", Last().Strings);
+    }
+
+    [Fact]
+    public void MakeLast_MakesTheLastRecipeAgain_OrSaysThereIsNoneYet()
+    {
+        var boards = Carry("0x1bd7_board", 0x1BD7, 18);
+        var built = Use();
+
+        Click(built, "Make last");
+
+        Assert.Contains(1044165, Told());
+        Assert.Empty(_timers.Timers);
+
+        Click(Last(), "Stool");
+        Fire(1.25);
+        Click(Last(), "Make last");
+        Fire(1.25);
+
+        // Two stools: 18 boards less 9 twice.
+        Assert.Empty(_errors);
+        Assert.Equal(0, _items.TryGet(boards.Id, out var left) ? left.Amount : 0);
+        Assert.Equal(2, Told().Count(cliloc => cliloc == 1044154));
     }
 
     [Fact]

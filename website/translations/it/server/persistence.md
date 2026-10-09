@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"f40bbd5919229e05d54b27488b31aa7037090e7a777700910d8261f97276ebc8","title":"Entità e accesso ai dati"} -->
+<!-- translation: {"sourceHash":"a28717d126226b5066ed19f06b09a8eed010dc708a8164f76dcae6340a77a15d","title":"Entità e accesso ai dati"} -->
 
 # Persistenza PostgreSQL: entità e accesso ai dati
 
@@ -320,7 +320,7 @@ item.RemoveProp(ItemPropKeys.Charges);
 ```
 
 `ItemPropKeys` definisce i nomi delle chiavi lette dal server (`loot_type`, `charges`,
-`durability`, `max_durability`, `quality`, `crafter_id`); gli script possono usare
+`durability`, `max_durability`, `quality`, `crafter_id`, `crafter_name`, `uses_remaining`); gli script possono usare
 qualsiasi altra chiave. `quality` contiene un `ItemQualityType` (`Low`, `Regular`,
 `Exceptional`, come ModernUO); un oggetto senza questa proprietà è `Regular`.
 Una proprietà contiene una stringa, un numero, un bool o un enum; qualsiasi altro

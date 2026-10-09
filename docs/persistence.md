@@ -308,7 +308,7 @@ item.RemoveProp(ItemPropKeys.Charges);
 ```
 
 `ItemPropKeys` names the keys the server reads (`loot_type`, `charges`, `durability`,
-`max_durability`, `quality`, `crafter_id`); scripts may use any other key. `quality` holds
+`max_durability`, `quality`, `crafter_id`, `crafter_name`, `uses_remaining`); scripts may use any other key. `quality` holds
 an `ItemQualityType` (`Low`, `Regular`, `Exceptional`, as ModernUO); an item without it is
 `Regular`. A prop holds a
 string, a number, a bool or an enum; anything else is rejected when set. The column gives
