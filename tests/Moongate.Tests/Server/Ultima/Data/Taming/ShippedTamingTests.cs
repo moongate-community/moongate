@@ -40,6 +40,19 @@ public sealed class ShippedTamingTests
         Assert.True(creatures.ContainsKey(template));
     }
 
+    [Fact]
+    public async Task EveryTamableCreature_HasACreatureScript_ToFollowItsOwnerWith()
+    {
+        var (creatures, mobiles) = await LoadAsync();
+
+        var without = creatures.Keys
+            .Where(template => mobiles[template].ScriptId is not ("animal" or "scared_animal" or "monster"))
+            .Order()
+            .ToList();
+
+        Assert.True(without.Count == 0, "No creature script: " + string.Join(", ", without));
+    }
+
     private static async Task<(Dictionary<string, TamingCreature> Creatures, Dictionary<string, MobileTemplate> Mobiles)> LoadAsync()
     {
         var directories = new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data", "templates"]);

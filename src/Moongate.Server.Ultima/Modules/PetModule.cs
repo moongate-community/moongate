@@ -5,6 +5,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Server.Ultima.Types.Pets;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -20,16 +21,21 @@ public sealed class PetModule
     private readonly IMobileService _mobiles;
     private readonly IMobileStateService _state;
     private readonly ISessionService _sessions;
+    private readonly TimeProvider _time;
+    // Several pets hear the same words in the same moment: the first to ask answers for them all.
+    private readonly Attendance _attendance = new();
 
     public PetModule(
         IPetService pets,
         ITamingService taming,
         IMobileService mobiles,
         IMobileStateService state,
-        ISessionService sessions
+        ISessionService sessions,
+        TimeProvider? time = null
     )
     {
         _pets = pets;
+        _time = time ?? TimeProvider.System;
         _taming = taming;
         _mobiles = mobiles;
         _state = state;
@@ -109,6 +115,36 @@ public sealed class PetModule
         }
 
         return result;
+    }
+
+    /// <summary>
+    ///     Gets whether the caller is the pet that answers the "all" words of <paramref name="player" /> now;
+    ///     <c>if pet.attend(owner) then ... end</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the caller is the one that answers the player now: true for the first that asks, false for whoever asks again within half a second. Every pet within hearing hears the same words of its owner in the same moment: each asks, one answers for all. False for an NPC or a player not in the world."
+    )]
+    public bool Attend(long player)
+    {
+        if (!TryGet(player, out var mobile) || mobile.IsNpc)
+        {
+            return false;
+        }
+
+        return _attendance.TryAttend(mobile.Id, _time.GetUtcNow());
+    }
+
+    /// <summary>
+    ///     Lets a creature of the player go; <c>pet.release(who, creature)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Lets the creature go: it is no one's any more and wild again, and the player has one follower less. True when the creature is a creature of the world that is the player's own; false otherwise."
+    )]
+    public bool Release(long player, long creature)
+    {
+        return TryGet(player, out var owner) && TryGet(creature, out var pet) && _pets.Release(owner, pet);
     }
 
     private bool TryGet(long serial, out MobileEntity mobile)

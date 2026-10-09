@@ -107,6 +107,7 @@ death = 451
 
 [[mobile]]
 id = "walrus"
+script_id = "animal"
 name = "a walrus"
 body = 221
 strength = "1d9+20"

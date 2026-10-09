@@ -497,6 +497,16 @@ keeps its shop and its lessons through `scripts/common/shop.lua` and `training.l
 eight a page; a button checks the player is within 12 cells of the trainer and calls `stable.claim`; a list that
 changed since it was shown is shown again.
 
+## pet_orders.lua and pet_release.lua
+
+`scripts/common/pet_orders.lua` is what `common/creature.lua` runs for a creature that has an `owner`: `think` follows the
+order in the prop `pet.order` (`follow`, `come`, `stay` or `guard`; `follow` when it has none), and `listen`, from the
+`on_speech` of the creature scripts, reads the words of the owner (`SpeechKeywordType.PetCome`, `AllStay` and the others)
+within 14 tiles. The "all" words are carried out by the first pet that asks `pet.attend(owner)`, for every pet of the owner
+within reach; `kill` asks for a target with `target.pick`; `release` opens the gump `pet_release`
+(`templates/gumps/pet_release.xml`), whose Release button calls `pet.release` after checking the pet is still the player's and
+within 14 tiles. See [Animal taming](../animal-taming.md#what-you-can-tell-it).
+
 ## animal_taming.lua
 
 `scripts/skills/animal_taming.lua` is the Animal Taming skill: `on_use` says "Tame which animal?" (502789), gives a cursor

@@ -86,6 +86,34 @@ public sealed class PetService : IPetService
         }
     }
 
+    public bool Release(MobileEntity player, MobileEntity creature)
+    {
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(creature);
+
+        if (player.IsNpc ||
+            !creature.IsNpc ||
+            !_mobiles.IsInWorld(creature.Id) ||
+            creature.GetProp(MountProps.Owner, 0L) != player.Id.Value)
+        {
+            return false;
+        }
+
+        creature.RemoveProp(MountProps.Owner);
+        creature.RemoveProp(MountProps.PetOrder);
+
+        // Wild again, it belongs to the region it came from, which counts it once more.
+        if (creature.TryGetProp<string>(MountProps.PetRegion, out var region))
+        {
+            creature.SetProp(SpawnRegionService.RegionProp, region);
+            creature.RemoveProp(MountProps.PetRegion);
+        }
+
+        Changed(player.Id);
+
+        return true;
+    }
+
     public int SlotsOf(string? templateId)
     {
         return templateId is not null && _taming.TryGet(templateId, out var creature) ? creature.Slots : 1;
@@ -125,7 +153,12 @@ public sealed class PetService : IPetService
         }
 
         creature.SetProp(MountProps.Owner, (long)player.Id.Value);
-        // It is the player's now, not its spawn's: the region brings another in its place.
+        // It is the player's now, not its spawn's: the region brings another in its place, and gets it back if it is let go.
+        if (creature.TryGetProp<string>(SpawnRegionService.RegionProp, out var region))
+        {
+            creature.SetProp(MountProps.PetRegion, region);
+        }
+
         creature.RemoveProp(SpawnRegionService.RegionProp);
         _counted.Remove(player.Id);
 

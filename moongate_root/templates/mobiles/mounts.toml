@@ -4,6 +4,7 @@ notoriety = "attackable"
 
 [[mobile]]
 id = "horse"
+script_id = "animal"
 name = "a horse"
 body = 228
 strength = "1d77+21"
