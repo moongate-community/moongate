@@ -160,6 +160,19 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
+    public void Build_AQualityOrUsesThatIsNoNumber_IsLeftOut_AndTheRestIsShown()
+    {
+        var odd = Item("unknown", 0x0B56);
+        odd.SetProp("quality", "exceptional");
+        odd.SetProp("uses_remaining", 9_999_999_999L);
+
+        var lines = _tooltips.Build(odd).Entries;
+
+        Assert.NotEmpty(lines);
+        Assert.DoesNotContain(lines, line => line.Cliloc is 1060636 or 1060584);
+    }
+
+    [Fact]
     public void Build_TwoToolsWithDifferentUsesLeft_OrARegularAndAnExceptionalItem_DoNotShareATooltip()
     {
         var first = Item("unknown", 0x1034);

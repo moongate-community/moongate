@@ -136,10 +136,9 @@ public sealed class TooltipService : ITooltipService
         var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own : (LootType?)null;
         var labelNumber = item.TryGetProp<int>(ItemPropKeys.LabelNumber, out var label) ? label : (int?)null;
         var worth = BankService.CheckWorth(item);
-        var exceptional = item.TryGetProp<long>(ItemPropKeys.Quality, out var quality) &&
-                          quality == (long)ItemQualityType.Exceptional;
+        var exceptional = Prop<long>(item, ItemPropKeys.Quality) == (long)ItemQualityType.Exceptional;
         var crafter = item.TryGetProp<string>(ItemPropKeys.CrafterName, out var maker) ? maker : null;
-        var uses = item.TryGetProp<int>(ItemPropKeys.UsesRemaining, out var left) ? left : (int?)null;
+        var uses = Prop<int>(item, ItemPropKeys.UsesRemaining);
         var key = new ItemTooltipKey(
             item.TemplateId,
             item.ItemId,
@@ -310,6 +309,19 @@ public sealed class TooltipService : ITooltipService
         return viewer.Map == map &&
                Math.Abs(viewer.Location.X - location.X) <= _world.ViewRange &&
                Math.Abs(viewer.Location.Y - location.Y) <= _world.ViewRange;
+    }
+
+    // A prop a script may have written as anything: a value that is not a number is no line, not a broken tooltip.
+    private static T? Prop<T>(ItemEntity item, string key) where T : struct
+    {
+        try
+        {
+            return item.TryGetProp<T>(key, out var value) ? value : null;
+        }
+        catch (Exception exception) when (exception is InvalidCastException or OverflowException or FormatException)
+        {
+            return null;
+        }
     }
 
     private static void AddName(PropertyList list, ItemEntity item, string? name)

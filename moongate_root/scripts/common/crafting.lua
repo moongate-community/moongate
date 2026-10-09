@@ -30,8 +30,9 @@
 --   props crafter_id and crafter_name, which its tooltip shows.
 --
 --   A tool lasts 25 to 75 uses, drawn the first time it is used (its prop
---   uses_remaining); every attempt that reaches its second stroke takes one,
---   and the last one breaks it. Make last starts again the last recipe the
+--   uses_remaining); every attempt whose skill is tried takes one, and the
+--   last one breaks it. An item that joins a stack the player carries is
+--   never exceptional: the stack is not. Make last starts again the last recipe the
 --   player started with that craft.
 --
 -- Functions:
@@ -91,6 +92,7 @@ local NOTICES = {
     [CREATED] = "You create the item.",
     [EXCEPTIONAL] = "You create an exceptional quality item.",
     [MARKED] = "You create an exceptional quality item and affix your maker's mark.",
+    [NOTHING_YET] = "You haven't made anything yet.",
     [FAILED] = "You failed to create the item, and some of your materials are lost.",
     [NO_SKILL] = "You don't have the required skills to attempt this item.",
     [NO_WOOD] = "You do not have sufficient wood to make that.",
@@ -108,13 +110,15 @@ local NOT_MADE = "The item could not be made."
 local busy = {}
 local kinds = {}
 local groups = {}
+-- The last recipe each player started, by craft.
 local last = {}
 
 -- A number from 0 up to 1.
 crafting.roll = math.random
 
 function crafting.uses(tool)
-    local left = item.get_prop(tool, "uses_remaining")
+    -- A prop a script wrote as anything but a number is drawn again.
+    local left = tonumber(item.get_prop(tool, "uses_remaining"))
 
     if left == nil then
         left = math.min(USES_MAX, USES_MIN + math.floor(crafting.roll() * (USES_MAX - USES_MIN + 1)))
@@ -330,6 +334,10 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
     mobile.play_sound(user, craft.sound)
 
+    -- The chance and the mark as they were before this try could raise the skill.
+    local chance = crafting.chance(user, craft, recipe)
+    local marks = points(user, craft.skill) >= MARK_SKILL
+
     for _, other in ipairs(recipe.skills) do
         skill.check(user, other.skill, other.min, other.max)
     end
@@ -364,21 +372,41 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
         end
     end
 
+    -- The stacks of the item already carried: one the new item joins is never made exceptional.
+    local carried = {}
+
+    for _, serial in ipairs(item.find(user, recipe.item)) do
+        carried[serial] = true
+    end
+
     -- The item first, then the resources: what cannot be made takes nothing, and what cannot be paid is not kept.
     local made, at_feet = make_item(user, recipe.item, hue, here)
+    local joined = made and carried[made]
 
     if not made then
         mobile.message(user, NOT_MADE)
-        crafting.open(user, tool, craft_id, NOT_MADE)
+
+        if wear(user, tool) then
+            crafting.open(user, tool, craft_id, NOT_MADE)
+        end
 
         return
     end
 
     for _, resource in ipairs(recipe.resources) do
         if take(user, crafting.templates(resource.resource, kind), resource.amount) > 0 then
-            item.delete(made)
+            -- Only the unit just made goes: never a stack the player had.
+            if joined then
+                item.consume(made, 1)
+            else
+                item.delete(made)
+            end
+
             mobile.message(user, NOT_MADE)
-            crafting.open(user, tool, craft_id, NOT_MADE)
+
+            if wear(user, tool) then
+                crafting.open(user, tool, craft_id, NOT_MADE)
+            end
 
             return
         end
@@ -390,11 +418,11 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
     local outcome = CREATED
 
-    if crafting.roll() < crafting.chance(user, craft, recipe) - EXCEPTIONAL_MARGIN then
+    if not joined and crafting.roll() < chance - EXCEPTIONAL_MARGIN then
         item.set_prop(made, "quality", EXCEPTIONAL_QUALITY)
         outcome = EXCEPTIONAL
 
-        if points(user, craft.skill) >= MARK_SKILL then
+        if marks then
             item.set_prop(made, "crafter_id", user)
             item.set_prop(made, "crafter_name", mobile.name(user))
             outcome = MARKED
@@ -450,7 +478,8 @@ function crafting.make(user, tool, craft_id, group, index)
     end
 
     busy[user] = world.now() + GIVE_UP
-    last[user] = { craft = craft_id, group = group, index = index }
+    last[user] = last[user] or {}
+    last[user][craft_id] = { group = group, index = index }
     crafting.uses(tool)
     mobile.play_sound(user, craft.sound)
 
@@ -460,10 +489,14 @@ function crafting.make(user, tool, craft_id, group, index)
 end
 
 function crafting.make_last(user, tool, craft_id)
-    local recipe = last[user]
+    local recipe = (last[user] or {})[craft_id]
+    local data = recipe and _G.craft.get(craft_id)
+    local group = data and data.groups[recipe.group]
 
-    if not recipe or recipe.craft ~= craft_id then
+    -- Nothing made yet with this craft, or a recipe the data no longer has.
+    if not (group and group.recipes[recipe.index]) then
         mobile.message_cliloc(user, NOTHING_YET)
+        crafting.open(user, tool, craft_id, NOTICES[NOTHING_YET])
 
         return
     end
