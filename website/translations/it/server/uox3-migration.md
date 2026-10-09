@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"d4d0a08cdfa462997cea3fa7503630d2e72e07927f18d95b4ae43566c20bb6cf","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"beebff07a7453315ee9f05a22d670d64b38a4134bcd84e68bf28688579c3bb46","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
