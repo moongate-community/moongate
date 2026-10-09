@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"7ad66814190fd5fae871ab87d9e00a2c0d431c209f5f29c12b2fb42e95fa1bcb","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"41eeacad8ef597bfcc048bbc6c9214a29456475226272d3d2bb649da1c4c6865","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -136,7 +136,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
-| 5.1 | 🟡 | **Raccolta**: estrazione mineraria, taglio della legna, pesca, con regioni di risorse che si esauriscono e rigenerano. Fatto: la pesca con la canna, il taglio della legna con l'ascia e le zone che si esauriscono e ritornano. Resta: estrazione mineraria, le prese speciali della pesca, i tipi di legno e le assi | Alimenta la creazione | |
+| 5.1 | 🟡 | **Raccolta**: estrazione mineraria, taglio della legna, pesca, con regioni di risorse che si esauriscono e rigenerano. Fatto: la pesca con la canna, il taglio della legna con l'ascia, l'estrazione del minerale di ferro e la sua fusione, e le zone che si esauriscono e ritornano. Resta: gli altri metalli, le prese speciali della pesca, i tipi di legno e le assi | Alimenta la creazione | |
 | 5.2 | ❌ | **Motore di creazione**, poi ogni mestiere come dati; riparazione | Lo stile di gioco pacifico e l'economia dei giocatori | UOX3 `create/` (618 ricette) |
 | 5.3 | ❌ | **Addomesticamento, comandi degli animali, stalle, cavalcature** | Richiede IA (3.2), notorietà (3.4) e venditori (4.1) | Tag UOX3 `TOTAME`, `CONTROLSLOTS`, `FOOD` |
 | 5.4 | 🟡 | **Le abilità attive rimanenti**: nascondersi, furtività, furto, frugare, abilità di conoscenza, abilità del bardo, inseguimento. Completato: nascondersi, [furtività](scripting/shipped-scripts.md#stealthlua), [frugare](scripting/shipped-scripts.md#snoopinglua), individuazione dei nascosti, anatomia, valutazione dell'intelligenza e medicina legale ([le abilità di osservazione](scripting/shipped-scripts.md#the-lore-skills)). Restano: furto, inseguimento, conoscenza delle armi, identificazione degli oggetti e dei sapori, le abilità del bardo | Ciascuna è piccola quando esiste 1.2 | |

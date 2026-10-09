@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e63cea36ea98f1d562382c60cd952b12faac60d5f28c265afecc1f9886408b81","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"8085db30c53669242fcd4bfbdd28abddba462c9b9dd44f21ef1cdb1b9c72dba5","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -186,6 +186,18 @@ di `data/skills.toml`.
   cercatore più un tiro da -10 a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff
   viene trovato solo da altro staff; l'abilità aspetta 10 secondi.
   Trappole, case e fazioni non ci sono ancora.
+
+## pickaxe.lua e ore.lua
+
+`scripts/items/pickaxe.lua` è lo script dei picconi e delle pale (`script_id = "pickaxe"`) e
+`scripts/items/ore.lua` quello dei quattro mucchi di minerale di ferro (`script_id = "ore"`): vedi [Estrazione e fusione](../mining.md).
+Uno scavo sceglie un luogo (`target.pick_location`), che dà il `land` della casella e la `graphic` di uno statico scelto
+lì: lo script contiene i terreni che sono roccia e gli statici che sono il pavimento di una grotta. Il personaggio colpisce
+(`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare del minerale (`harvest.amount`), l'abilità
+Mining viene provata tra 0 e 100 (`skill.check`), e uno scavo riuscito toglie dal luogo (`harvest.take`) e dà
+un mucchio (`item.give`). Una fusione sceglie una forgia, un oggetto (`item.item_id`, `item.in_range`) o uno statico, prova l'abilità
+tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, poi `item.give`) oppure ne brucia metà; un singolo minerale
+che fallisce rimpicciolisce. Un mucchio su un cursore viene rifiutato (`item.is_held`). Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
 
 ## axe.lua
 

@@ -576,6 +576,37 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedMiningToolsAndOre_UseTheirScripts_AndWhatTheyGiveIsThere()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.All(
+            new[] { "0x0e85_pickaxe", "0x0e86", "0x0f39_a_shovel", "0x0f3a" },
+            id => Assert.Equal("pickaxe", items[id].ScriptId)
+        );
+
+        var scripts = Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items");
+        var piles = System.Text.RegularExpressions.Regex
+            .Matches(await File.ReadAllTextAsync(Path.Combine(scripts, "pickaxe.lua")), "template = \"([^\"]+)\"")
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+
+        // The four piles a dig gives are ore, stack, and are smelted by the ore script.
+        Assert.Equal(4, piles.Length);
+        Assert.All(piles, pile => Assert.Equal(("ore", true), (items[pile].ScriptId, items[pile].Stackable)));
+
+        var ingot = System.Text.RegularExpressions.Regex
+            .Match(await File.ReadAllTextAsync(Path.Combine(scripts, "ore.lua")), "local INGOT = \"([^\"]+)\"")
+            .Groups[1]
+            .Value;
+        Assert.True(items[ingot].Stackable);
+
+        var ore = Assert.Single((await new HarvestLoader(directories).LoadDataAsync()).Entities, r => r.Id == "ore");
+        Assert.Equal((8, 10, 34, 10, 20), (ore.Area, ore.AmountMin, ore.AmountMax, ore.RespawnMinMinutes, ore.RespawnMaxMinutes));
+    }
+
+    [Fact]
     public async Task ShippedHarvest_HasTheFishOfTheFishingPoles()
     {
         var resources = (await new HarvestLoader(Directories()).LoadDataAsync()).Entities.ToArray();

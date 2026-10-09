@@ -22,14 +22,19 @@ public sealed record TargetResult(
     /// </summary>
     public int Graphic { get; init; }
 
+    /// <summary>
+    ///     Gets the land tile of the cell that was picked, under a static too; 0 for an object or a cancel.
+    /// </summary>
+    public int Land { get; init; }
+
     public static TargetResult ForObject(Serial serial)
     {
         return new(TargetResultType.Object, serial, default, default, default);
     }
 
-    public static TargetResult ForLocation(MapType map, Point3D location, int graphic = 0)
+    public static TargetResult ForLocation(MapType map, Point3D location, int graphic = 0, int land = 0)
     {
-        return new(TargetResultType.Location, Serial.Zero, map, location, default) { Graphic = graphic };
+        return new(TargetResultType.Location, Serial.Zero, map, location, default) { Graphic = graphic, Land = land };
     }
 
     public static TargetResult Canceled(TargetCancelType reason)

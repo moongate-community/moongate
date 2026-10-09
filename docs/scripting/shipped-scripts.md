@@ -186,6 +186,18 @@ client's own texts as system messages (ModernUO shows them over the one examined
   skill waits 10 seconds. Traps, houses and factions
   are not there yet.
 
+## pickaxe.lua and ore.lua
+
+`scripts/items/pickaxe.lua` is the script of the pickaxes and the shovels (`script_id = "pickaxe"`) and
+`scripts/items/ore.lua` that of the four piles of iron ore (`script_id = "ore"`): see [Mining and smelting](../mining.md).
+A dig picks a place (`target.pick_location`), which gives the `land` of the cell and the `graphic` of a static picked
+there: the script holds the lands that are rock and the statics that are a cave floor. The character swings
+(`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have ore left (`harvest.amount`), the Mining
+skill is tried between 0 and 100 (`skill.check`), and a dig that works takes from the place (`harvest.take`) and gives
+a pile (`item.give`). A smelt picks a forge, an item (`item.item_id`, `item.in_range`) or a static, tries the skill
+between 25 and 75, and turns the pile into ingots (`item.consume`, then `item.give`) or burns half of it away; a single ore
+that fails gets smaller. A pile on a cursor is refused (`item.is_held`). The constants at the top of each script are its numbers and its lists.
+
 ## axe.lua
 
 `scripts/items/axe.lua` is the script of the axes (`script_id = "axe"` on nine axe bases, which their axes take from
