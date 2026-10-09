@@ -334,6 +334,7 @@ public sealed class ServerRoleRegistrationTests
         Assert.NotNull(container.Resolve<ISkillService>());
         Assert.NotNull(container.Resolve<ISkillUseService>());
         Assert.NotNull(container.Resolve<ICombatService>());
+        Assert.NotNull(container.Resolve<ICraftService>());
         Assert.NotNull(container.Resolve<MobileModule>());
         Assert.NotNull(container.Resolve<KillCommand>());
         Assert.NotNull(container.Resolve<ResurrectCommand>());

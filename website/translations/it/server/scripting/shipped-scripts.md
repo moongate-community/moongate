@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"68d9a239adbdf638d11ebdd95c1e6da2d4d9715a188a84ada30673502332298c","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"2fbaedfbdef1cbebd59b7cb41ea9ca0bc1c22df1befe37c8772f537546e463b2","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -208,7 +208,19 @@ statico scelto, e lo script contiene le grafiche che sono alberi. Il personaggio
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare della legna (`harvest.amount`), l'abilità
 Lumberjacking viene provata tra 0 e 100 (`skill.check`), e un taglio riuscito toglie dal luogo
 (`harvest.take`) e dà 10 tronchi (`item.give`). Le costanti in cima allo script sono la distanza, i colpi
-e i tronchi; gli alberi sono in `scripts/common/trees.lua`, condiviso con `scripts/items/blade.lua`, lo script di coltelli, pugnali e spade (`script_id = "blade"`), che stacca un legnetto da un albero. Usata sui tronchi nello zaino, l'ascia sega la pila in assi (`item.template`, `item.consume`, poi `item.give`). Un luogo è di un solo tipo di legno, la vena della sua zona (`harvest.vein`): la tabella `WOODS` contiene tronchi e assi di ogni tipo, il Lumberjacking richiesto (`mobile.skills`) e i limiti tra cui il taglio viene provato, e la tabella `FINDS` ciò che un maestro trova insieme ai tronchi. Chi sta tagliando è tenuto in memoria per seriale: un riavvio libera tutti.
+e i tronchi; gli alberi sono in `scripts/common/trees.lua`, condiviso con `scripts/items/blade.lua`, lo script di coltelli, pugnali e spade (`script_id = "blade"`), che stacca un legnetto da un albero. Usata sui tronchi nello zaino, l'ascia sega la pila in assi (`item.template`, `item.consume`, poi `item.give`). Un luogo è di un solo tipo di legno, la vena della sua zona (`harvest.vein`): `scripts/common/woods.lua` contiene tronchi e assi di ogni tipo, il Lumberjacking richiesto (`mobile.skills`) e i limiti tra cui il taglio viene provato, condiviso con la falegnameria, e la tabella `FINDS` ciò che un maestro trova insieme ai tronchi. Chi sta tagliando è tenuto in memoria per seriale: un riavvio libera tutti.
+
+## crafting.lua e carpentry_tool.lua
+
+`scripts/common/crafting.lua` contiene le regole condivise da tutti i mestieri: vedi [Falegnameria](../carpentry.md). Legge le
+ricette con `craft.get` e gli elenchi di materiali con `craft.resource`, conta e toglie i materiali dalle pile
+che il giocatore porta (`item.find`, `item.amount`, `item.consume`; una pila sul cursore è esclusa con `item.is_held`),
+esegue i due colpi (`mobile.play_sound`, `timer.after`), prova le altre abilità della ricetta e poi quella principale
+tra il doppio del minimo meno il massimo e il massimo (`skill.check`), così la probabilità al minimo è una su due, e
+crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), con il colore del tipo di legno
+(`item.hue`, `item.set_hue`). Chi sta creando, e il gruppo e il legno scelti da ogni giocatore, sono tenuti in memoria.
+`scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` sugli attrezzi da falegname) apre il gump di creazione
+dallo zaino; il gump è `templates/gumps/craft_menu.xml` con `scripts/gumps/craft_menu.lua`, uno per tutti i mestieri.
 
 ## fishing_pole.lua
 
@@ -468,6 +480,24 @@ il gump `resurrect` con l'argomento `healer`, come il `BaseHealer` di ModernUO. 
 tra due offerte, e un fantasma incontrato durante l'attesa riceve l'offerta quando finisce. Un criminale viene rifiutato con il
 testo del client 501222, e un assassino (rosso) con 501223, e un giocatore con karma negativo si sente dire 501224 e riceve comunque l'offerta. Un guaritore malvagio, il cui id di template inizia con `evil` (`evilhealer`, `evilwhealer`), non rifiuta nessuno e non dice nulla. Un guaritore di un
 template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think. Un guaritore con un negozio vende e compra come un venditore, tramite `scripts/common/shop.lua`: bende, pozioni, ginseng e aglio.
+
+## ethereal_mount.lua
+
+`scripts/items/ethereal_mount.lua` è lo script delle statuette eteree (`script_id = "ethereal_mount"`): il suo
+`on_use` chiama `mount.ride_ethereal(user, serial)`, che dice con le parole del client perché rifiuta, e restituisce true
+così il doppio clic non apre nient'altro. Vedi [Cavalcature](../mounts.md#ethereal-mounts).
+## stablemaster.lua e stable_claim.lua
+
+`scripts/mobiles/stablemaster.lua` è lo script degli addestratori di animali (`script_id = "stablemaster"`). Le parole
+*stable* e *claim*, dette entro 12 celle, e le voci *Stable* e *Claim All* del menu contestuale guidano il modulo
+`stable`: *stable* dà un cursore (`target.pick`) e chiama `stable.stable` sull'animale scelto, rispondendo con
+il testo del client per ogni `StableResultType`; *claim* dice l'introduzione dell'elenco e apre il gump `stable_claim`
+(`templates/gumps/stable_claim.xml`), oppure dice che non ci sono animali; *Claim All* chiama `stable.claim` sul primo posto
+finché l'elenco non è vuoto. Più addestratori sentono le stesse parole e `stable.attend` ne fa rispondere uno. Un addestratore di animali
+mantiene il suo negozio e le sue lezioni tramite `scripts/common/shop.lua` e `training.lua`.
+`scripts/gumps/stable_claim.lua` riempie il gump con un pulsante e il nome dell'animale per ogni animale di `stable.pets`,
+otto per pagina; un pulsante controlla che il giocatore sia entro 12 celle dall'addestratore e chiama `stable.claim`; un elenco
+cambiato da quando è stato mostrato viene mostrato di nuovo.
 
 ## ankh.lua e resurrect.lua
 

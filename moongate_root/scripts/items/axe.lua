@@ -21,7 +21,7 @@
 --
 --   A place is of one kind of wood, a vein of the resource, drawn again each
 --   time its wood is back: plain, oak, ash, yew, heartwood, bloodwood or
---   frostwood. A kind asks for a Lumberjacking skill (the table WOODS); one
+--   frostwood. A kind asks for a Lumberjacking skill (scripts/common/woods.lua); one
 --   who has it gets the logs of the kind one cut in two, tried between the
 --   bounds of the kind, and plain logs the other. One who lacks it gets plain
 --   logs.
@@ -41,6 +41,7 @@
 -- ==============================================================================
 
 local trees = require("common.trees")
+local woods = require("common.woods")
 
 axe = {}
 
@@ -60,21 +61,6 @@ local CHOP_SOUND = 0x13E
 
 local LOGS_PER_CUT = 10
 
--- Plain wood: its logs and boards, the bounds its cut is tried between and the text of its logs.
-local PLAIN = { logs = "0x1be0_log", boards = "0x1bd7_board", skill = 0, min = 0, max = 100, chopped = 500498 }
--- The other shape of a plain log, which shops sell: it is sawn too.
-local LOGS_OTHER = "0x1bdd_log"
-
--- The other kinds, by the vein of the place: skill is the Lumberjacking the kind asks for, to chop it and to saw it.
-local WOODS = {
-    oak = { logs = "oak_log", boards = "oak_board", skill = 65, min = 25, max = 105, chopped = 1072541 },
-    ash = { logs = "ash_log", boards = "ash_board", skill = 80, min = 40, max = 120, chopped = 1072542 },
-    yew = { logs = "yew_log", boards = "yew_board", skill = 95, min = 55, max = 135, chopped = 1072543 },
-    heartwood = { logs = "heartwood_log", boards = "heartwood_board", skill = 100, min = 60, max = 140, chopped = 1072544 },
-    bloodwood = { logs = "bloodwood_log", boards = "bloodwood_board", skill = 100, min = 60, max = 140, chopped = 1072545 },
-    frostwood = { logs = "frostwood_log", boards = "frostwood_board", skill = 100, min = 60, max = 140, chopped = 1072546 },
-}
-
 -- How often a place of a kind gives plain logs all the same.
 local PLAIN_INSTEAD = 0.5
 
@@ -87,13 +73,6 @@ local FINDS = {
     { template = "parasitic_plant", chance = 1, found = 1072549 },
     { template = "brilliant_amber", chance = 0.1, found = 1072551 },
 }
-
--- The kind each template of logs is of.
-local KIND_OF = { [PLAIN.logs] = PLAIN, [LOGS_OTHER] = PLAIN }
-
-for _, wood in pairs(WOODS) do
-    KIND_OF[wood.logs] = wood
-end
 
 -- Client texts.
 local USE_ON_WHAT = 1010018   -- What do you want to use this item on?
@@ -122,10 +101,10 @@ end
 
 -- The wood a cut of the place gives the player: its kind for one who has the skill of it, one cut in two; else plain.
 local function wood_for(user, map, x, y)
-    local wood = WOODS[trees.wood(map, x, y)]
+    local wood = woods.by_id(trees.wood(map, x, y))
 
-    if not wood or lumberjacking(user) < wood.skill or axe.roll() < PLAIN_INSTEAD then
-        return PLAIN
+    if not wood or wood == woods.plain or lumberjacking(user) < wood.lumberjacking or axe.roll() < PLAIN_INSTEAD then
+        return woods.plain
     end
 
     return wood
@@ -186,7 +165,7 @@ local function finish(tool, user, map, x, y)
 
     -- A root without the logs of the kind (templates/items/woods.toml) gets plain ones, as a full backpack tries to.
     if not item.give(user, wood.logs, LOGS_PER_CUT) then
-        wood = PLAIN
+        wood = woods.plain
 
         if not item.give(user, wood.logs, LOGS_PER_CUT) then
             mobile.message_cliloc(user, NO_ROOM)
@@ -219,7 +198,7 @@ end
 -- tree.
 local function saw(user, picked)
     local template = item.template(picked)
-    local wood = KIND_OF[template]
+    local wood = woods.of_logs(template)
 
     if not wood then
         mobile.message_cliloc(user, NOT_A_TREE)
@@ -234,7 +213,7 @@ local function saw(user, picked)
         return
     end
 
-    if lumberjacking(user) < wood.skill then
+    if lumberjacking(user) < wood.lumberjacking then
         mobile.message_cliloc(user, STRANGE_WOOD)
 
         return

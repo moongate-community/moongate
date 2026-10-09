@@ -565,9 +565,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.NotEqual("axe", items["0x13b0"].ScriptId);
 
         var script = await File.ReadAllTextAsync(
-            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "axe.lua")
+            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "common", "woods.lua")
         );
-        var logs = System.Text.RegularExpressions.Regex.Match(script, "local PLAIN = { logs = \"([^\"]+)\"").Groups[1].Value;
+        var logs = System.Text.RegularExpressions.Regex.Match(script, "id = \"plain\", name = \"plain\", logs = \"([^\"]+)\"").Groups[1].Value;
 
         Assert.True(items[logs].Stackable);
 
@@ -598,7 +598,9 @@ public sealed class RepositoryTemplateFilesTests
     {
         var directories = Directories();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
-        var axe = await File.ReadAllTextAsync(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "axe.lua"));
+        var scripts = Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts");
+        var axe = await File.ReadAllTextAsync(Path.Combine(scripts, "items", "axe.lua")) +
+                  await File.ReadAllTextAsync(Path.Combine(scripts, "common", "woods.lua"));
         var hues = new Dictionary<string, int>
         {
             ["oak"] = 0x7DA, ["ash"] = 0x4A7, ["yew"] = 0x4A8, ["heartwood"] = 0x4A9, ["bloodwood"] = 0x4AA,
@@ -614,11 +616,11 @@ public sealed class RepositoryTemplateFilesTests
             Assert.Equal(((bool?)true, (bool?)true), (logs.Stackable, boards.Stackable));
         }
 
-        // Every template the script gives is shipped.
-        var given = System.Text.RegularExpressions.Regex.Matches(axe, "(?:logs|boards|template) = \"([^\"]+)\"")
+        // Every template the scripts give is shipped: the logs and boards of the kinds, and the finds.
+        var given = System.Text.RegularExpressions.Regex.Matches(axe, "(?:logs|boards|other_logs|other_boards|template) = \"([^\"]+)\"")
             .Select(match => match.Groups[1].Value)
             .ToArray();
-        Assert.Equal(19, given.Length);
+        Assert.Equal(21, given.Length);
         Assert.All(given, id => Assert.True(items.ContainsKey(id), id));
         Assert.All(new[] { "bark_fragment", "brilliant_amber" }, id => Assert.True(items[id].Stackable));
 
@@ -626,7 +628,30 @@ public sealed class RepositoryTemplateFilesTests
         var wood = (await new HarvestLoader(directories).LoadDataAsync()).Entities.Single(resource => resource.Id == "wood");
         Assert.Equal(["plain", "oak", "ash", "yew", "heartwood", "bloodwood", "frostwood"], wood.Vein.Select(vein => vein.Id));
         Assert.Equal(1000, wood.Vein.Sum(vein => vein.Weight));
-        Assert.All(wood.Vein.Skip(1), vein => Assert.Contains($"    {vein.Id} = {{ logs = ", axe));
+        Assert.All(wood.Vein.Skip(1), vein => Assert.Contains($"{{ id = \"{vein.Id}\", name = ", axe));
+    }
+
+    [Fact]
+    public async Task ShippedCrafts_Load_WithTheFortyTwoRecipesOfCarpentry_AndItsToolsCarryTheScript()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var data = new StubDataLoaderService().With(items);
+        var lists = (await new CraftResourcesLoader(directories, data).LoadDataAsync()).Entities.ToArray();
+        data.With(lists);
+        var craft = Assert.Single((await new CraftsLoader(directories, data).LoadDataAsync()).Entities);
+
+        Assert.Equal(("carpentry", "carpentry", 0x023D), (craft.Id, craft.Skill, craft.Sound));
+        Assert.Equal(
+            ["Chairs", "Tables", "Containers", "Other Items", "Staves & Poles", "Musical items"],
+            craft.Group.Select(group => group.Name)
+        );
+        Assert.Equal(42, craft.Group.Sum(group => group.Recipe.Count));
+        Assert.Equal(["0x1bd7_board", "0x1bda_board"], lists.Single(list => list.Id == "wood").Templates);
+
+        var byId = items.ToDictionary(item => item.Id);
+        Assert.All(new[] { "0x1034_saw", "0x1028_dovetail_saw", "0x10e5_froe" }, id => Assert.Equal("carpentry_tool", byId[id].ScriptId));
+        Assert.NotEqual("carpentry_tool", byId["0x102e_nails"].ScriptId);
     }
 
     [Fact]

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"9067784ad6673393fa1a8e392f3a400d7e4b144506dd520174e5dd2bcc6dea90","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"00bcdb35f6ae47d66ea1189960df6baa2e29073636545cfa63c8f8fc323007d7","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**271 sistemi:** ✅ 88 completati, 🟡 59 parzialmente completati, ❌ 124 non ancora realizzati.
+**271 sistemi:** ✅ 88 completati, 🟡 61 parzialmente completati, ❌ 122 non ancora realizzati.
 
-**Copertura: 32%** dei sistemi completati, **43%** contando un sistema parzialmente completato come metà.
+**Copertura: 32%** dei sistemi completati, **44%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -114,8 +114,8 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | --- | --- | --- |
 | Usare e incrementare un'abilità | 🟡 | Un'[abilità](skills.md) viene usata dalla finestra delle abilità (`scripts/skills/<skill>.lua`), verificata da `skill.check` e incrementata con la formula di ModernUO; viene fornita solo Hiding, e le statistiche non aumentano ancora con le abilità |
 | Raccolta: estrazione mineraria, taglio della legna, pesca | 🟡 | [Pesca](fishing.md) con una canna: acqua entro 4 caselle, 8 secondi, un pesce, una vecchia calzatura o niente in base all'abilità; i pesci di un luogo si esauriscono per zona e ritornano ([`harvest.toml`](data-files/harvest.md)). [Taglio della legna](lumberjacking.md) con un'ascia in mano: un albero entro 2 caselle, da uno a tre colpi, 10 tronchi in base all'abilità, la legna di un luogo che si esaurisce allo stesso modo. [Estrazione](mining.md) con un piccone o una pala: minerale di ferro dalla roccia di montagne e grotte, fuso in lingotti a una forgia. I tronchi si segano in assi con l'ascia, e una lama stacca legnetti da un albero. Un luogo è di uno fra sette tipi di legno, ognuno con la sua abilità richiesta, un maestro trova cose rare insieme ai tronchi, e un'ascia colpisce più forte con il Lumberjacking. Niente altri metalli, niente prese speciali |
-| Motore di creazione: menu, ricette, risorse, qualità | ❌ | |
-| Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | ❌ | |
+| Motore di creazione: menu, ricette, risorse, qualità | 🟡 | Il gump di creazione, le ricette in [`data/crafts`](data-files/crafts.md), i materiali contati nello zaino e nelle sue borse, la probabilità e i tipi di legno, condivisi da tutti i mestieri; vedi [Falegnameria](carpentry.md). Ancora niente qualità (oggetti eccezionali) né marchio del creatore |
+| Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | 🟡 | [Falegnameria](carpentry.md): un attrezzo nello zaino apre il gump di creazione, 42 ricette da UOX3 in [`data/crafts`](data-files/crafts.md), create da assi comuni o da un tipo di legno che colora l'oggetto; una probabilità su due al minimo dell'abilità, certezza al massimo, metà dei materiali persa in un fallimento. Il motore è condiviso dai mestieri che verranno. Ancora niente oggetti eccezionali, marchio del creatore, usura degli attrezzi o ricrea l'ultimo; nessun altro mestiere |
 | Riparare e migliorare gli oggetti | ❌ | |
 | Addomesticamento e conoscenza degli animali | ❌ | |
 | Guarigione e veterinaria | 🟡 | La [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura (Healing e Anatomy, Veterinary e Animal Lore) e resuscita un fantasma; niente veleno, niente sanguinamento, niente animali |

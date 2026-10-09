@@ -77,13 +77,18 @@ public sealed class ItemHandlingService : IItemHandlingService
         return item;
     }
 
-    public ItemEntity? Give(MobileEntity owner, string template, int? amount = null, bool ignoreCapacity = false)
+    public ItemEntity? Give(MobileEntity owner, string template, int? amount = null, bool ignoreCapacity = false, Hue? hue = null)
     {
         if (_inventory?.AllowsOwner(owner.Id) == false ||
             _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
             Create(template, amount) is not { } item)
         {
             return null;
+        }
+
+        if (hue is { } colour)
+        {
+            item.Hue = colour;
         }
 
         // What stacks joins the stack of its kind lying in the backpack: no new item, no slot and no serial taken.
@@ -172,11 +177,31 @@ public sealed class ItemHandlingService : IItemHandlingService
         }
     }
 
-    // Lifted onto a player's cursor: it keeps the place it was taken from until it is dropped, so it must not be
-    // drawn there again.
+    // Lifted onto a player's cursor, or inside a container that is: it keeps the place it was taken from until it is
+    // dropped, so it must not be drawn there again nor taken from.
     public bool IsHeld(ItemEntity item)
     {
-        return _sessions.GetAll().Any(session => session.Get(ItemSessionKeys.Held)?.Item == item.Id);
+        var held = _sessions.GetAll()
+            .Select(session => session.Get(ItemSessionKeys.Held)?.Item)
+            .OfType<Serial>()
+            .ToHashSet();
+
+        if (held.Count == 0)
+        {
+            return false;
+        }
+
+        for (ItemEntity? current = item; current is not null;)
+        {
+            if (held.Contains(current.Id))
+            {
+                return true;
+            }
+
+            current = current.ContainerId is { } container && _items.TryGet(container, out var parent) ? parent : null;
+        }
+
+        return false;
     }
 
     // A new item of the template with no serial yet; null when it cannot be made.
