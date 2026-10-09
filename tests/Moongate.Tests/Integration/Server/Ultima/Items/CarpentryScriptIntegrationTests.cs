@@ -78,6 +78,10 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
     private const int StrangeWood = 1072652;
     private const int Busy = 500119;
     private const int Sound = 0x023D;
+    private const int Exceptional = 1044155;
+    private const int Marked = 1044156;
+    private const int WornOut = 1044038;
+    private const int NothingYet = 1044165;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -151,6 +155,26 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
                         }
                     ]
                 }
+,
+                new CraftDefinition
+                {
+                    Id = "woodwork", Name = "Woodwork", Skill = "carpentry", Sound = Sound,
+                    Group =
+                    [
+                        new()
+                        {
+                            Name = "Small",
+                            Recipe =
+                            [
+                                new()
+                                {
+                                    Name = "Peg", Item = "0x14f0_peg", SkillMin = 0, SkillMax = 10,
+                                    Resources = [new() { Resource = "wood", Amount = 1 }]
+                                }
+                            ]
+                        }
+                    ]
+                }
             )
             .With(
                 new CraftResourceList { Id = "wood", Templates = ["0x1bd7_board", "0x1bda_board"] },
@@ -192,6 +216,8 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
         _backpack.Equip(new Serial((uint)Aria), LayerType.Backpack);
         _bank.Equip(new Serial((uint)Aria), LayerType.Bank);
         _saw.PutInContainer(_backpack.Id, new Point2D(10, 10));
+        // A saw that has been used already: no draw of its uses in the tests that are not about it.
+        _saw.SetProp("uses_remaining", 50L);
         _items.Add([_backpack, _bank, _saw]);
 
         for (uint serial = 0x40000100; serial < 0x40000110; serial++)
@@ -218,6 +244,22 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
 
             function carpentry_tool.pick(serial, user, kind)
                 crafting_for_tests.set_kind(user, kind)
+            end
+
+            function carpentry_tool.last(serial, user)
+                crafting_for_tests.make_last(user, serial, "carpentry")
+            end
+
+            function carpentry_tool.make_in(serial, user, craft_id, group, recipe)
+                crafting_for_tests.make(user, serial, craft_id, group, recipe)
+            end
+
+            -- The rolls of the script are the test's: the ones queued, then a high one, which is no exceptional item.
+            crafting_for_tests.roll = function() return 0.999 end
+
+            function carpentry_tool.set_rolls(serial, ...)
+                local rolls = { ... }
+                crafting_for_tests.roll = function() return table.remove(rolls, 1) or 0.999 end
             end
             """
         );
@@ -662,6 +704,195 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
         Assert.Single(Made("0x0a2b"));
     }
 
+    [Theory]
+    // At the most of the stool the chance is sure, so an exceptional one comes four times in ten.
+    [InlineData(0.39, true)]
+    [InlineData(0.41, false)]
+    public void ASuccess_IsExceptional_AsOftenAsTheChanceMinusSixTenths(double roll, bool exceptional)
+    {
+        Carry("0x1bd7_board", 0x1BD7, 9);
+        Rolls(roll);
+
+        Make(Stool);
+        Fire(1.25);
+
+        var stool = Assert.Single(Made("0x0a2b"));
+        Assert.Empty(_errors);
+        Assert.Equal([exceptional ? Exceptional : Created], Told());
+        Assert.Equal(exceptional, stool.TryGetProp<int>("quality", out var quality) && quality == 2);
+        // Below 100 no maker's mark.
+        Assert.False(stool.TryGetProp<string>("crafter_name", out _));
+    }
+
+    [Fact]
+    public void AnExceptionalItem_MadeAtOneHundred_BearsTheMakersMark()
+    {
+        Skill(1000);
+        Carry("0x1bd7_board", 0x1BD7, 9);
+        Rolls(0.0);
+
+        Make(Stool);
+        Fire(1.25);
+
+        var stool = Assert.Single(Made("0x0a2b"));
+        Assert.Empty(_errors);
+        Assert.Equal([Marked], Told());
+        Assert.True(stool.TryGetProp<long>("crafter_id", out var crafter));
+        Assert.Equal(Aria, crafter);
+        Assert.True(stool.TryGetProp<string>("crafter_name", out var name));
+        Assert.Equal(_aria.Name, name);
+    }
+
+    [Fact]
+    public void EveryAttempt_UsesTheToolOnce_AndTheLastUseBreaksIt()
+    {
+        _saw.SetProp("uses_remaining", 2L);
+        Carry("0x1bd7_board", 0x1BD7, 30);
+        Skill(110);
+
+        // A failure uses it too.
+        _random.Doubles(0.9);
+        Make(Stool);
+        Fire(1.25);
+
+        Assert.True(_saw.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(1, left);
+
+        _random.Doubles(0.0);
+        Make(Stool);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([FailedAndLost, Created, WornOut], Told());
+        Assert.False(_items.TryGet(_saw.Id, out _));
+    }
+
+    [Fact]
+    public void ARefusedAttempt_DoesNotUseTheTool()
+    {
+        Skill(100);
+        Carry("0x1bd7_board", 0x1BD7, 9);
+
+        Make(Stool);
+
+        Assert.True(_saw.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(50, left);
+    }
+
+    [Theory]
+    [InlineData(0.0, 25)]
+    [InlineData(0.999, 75)]
+    public void ANewTool_DrawsItsUses_TheFirstTimeItIsUsed(double roll, int uses)
+    {
+        _saw.RemoveProp("uses_remaining");
+        Rolls(roll);
+
+        Run(_saw);
+
+        Assert.Empty(_errors);
+        Assert.True(_saw.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(uses, left);
+    }
+
+    [Fact]
+    public void MakeLast_SaysThereIsNothingYet_ThenMakesTheLastRecipeAgain()
+    {
+        Carry("0x1bd7_board", 0x1BD7, 18);
+
+        Call("last", Aria);
+
+        Assert.Equal([NothingYet], Told());
+        Assert.Empty(_timers.Timers);
+
+        Make(Stool);
+        Fire(1.25);
+        Call("last", Aria);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal(2, Made("0x0a2b").Count);
+    }
+
+    [Fact]
+    public void AnExceptionalRoll_NeverUpgradesAStackTheItemJoins()
+    {
+        Skill(250);
+        var staves = Carry("0x1eb1_barrel_staves", 0x1EB1, 3);
+        Carry("0x1bd7_board", 0x1BD7, 5);
+        Rolls(0.0);
+
+        Make(Staves);
+        Fire(1.25);
+
+        // The staff joins the three already carried; none of them is exceptional for it.
+        Assert.Empty(_errors);
+        Assert.Equal(4, staves.Amount);
+        Assert.False(staves.TryGetProp<long>("quality", out _));
+        Assert.Equal([Created], Told());
+    }
+
+    [Fact]
+    public void AToolWhoseUsesAreNoNumber_DrawsThemAgain()
+    {
+        _saw.SetProp("uses_remaining", "many");
+        Carry("0x1bd7_board", 0x1BD7, 9);
+
+        Make(Stool);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.True(_saw.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(74, left);
+    }
+
+    [Fact]
+    public void AnAttemptWhoseItemCannotBeMade_StillUsesTheTool()
+    {
+        Carry("0x1bd7_board", 0x1BD7, 9);
+        _capacity.HasRoomResult = false;
+        _serials.Serials.Clear();
+
+        Make(Stool);
+        Fire(1.25);
+
+        // The skill was tried: the tool was used.
+        Assert.True(_saw.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(49, left);
+    }
+
+    [Fact]
+    public void AToolThatBreaksOnAFailure_OpensNoGump()
+    {
+        _saw.SetProp("uses_remaining", 1L);
+        Skill(110);
+        Carry("0x1bd7_board", 0x1BD7, 9);
+        _random.Doubles(0.9);
+
+        Make(Stool);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([FailedAndLost, WornOut], Told());
+        Assert.False(_items.TryGet(_saw.Id, out _));
+        Assert.Empty(Opened());
+    }
+
+    [Fact]
+    public void MakeLast_RemembersEachCraftApart()
+    {
+        Carry("0x1bd7_board", 0x1BD7, 30);
+
+        Make(Stool);
+        Fire(1.25);
+        Call("make_in", Aria, "woodwork", 1, 1);
+        Fire(1.25);
+        Call("last", Aria);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal(2, Made("0x0a2b").Count);
+    }
+
     public async Task DisposeAsync()
     {
         _engine.Dispose();
@@ -694,6 +925,11 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
     private void Make(int recipe)
     {
         Call("make", Aria, 1, recipe);
+    }
+
+    private void Rolls(params double[] rolls)
+    {
+        Call("set_rolls", rolls.Cast<object?>().ToArray());
     }
 
     private void Pick(string kind)

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"46dc0a4f5f1684894070e64145a978c540e1de182d7d600f0b54f274bc4e9faf","title":"Falegnameria"} -->
+<!-- translation: {"sourceHash":"598a650eaa4b31fc1b9fb8686b31f1d9b28f55c5e3955bf1c48e81cf673f9607","title":"Falegnameria"} -->
 
 # Falegnameria
 
@@ -40,6 +40,24 @@ alla certezza al massimo. Uno sgabello chiede da 11 a 36: a 23,5 la probabilità
   spazio li toglie comunque e mette l'oggetto ai tuoi piedi. Un oggetto che non si può creare affatto non toglie nulla.
 - **Fallimento**: toglie metà di ogni materiale, arrotondata per difetto, e almeno un'unità del primo, "You failed to create the item, and some of your materials
   are lost."
+
+## Oggetti eccezionali e marchio del creatore
+
+Una riuscita è eccezionale tanto spesso quanto la sua probabilità meno sei decimi: al massimo di una ricetta quattro volte su dieci, mai
+con una probabilità di sei decimi o meno. Un oggetto che si unisce a una pila che porti non è mai eccezionale. Leggi "You create an exceptional quality item." e il suo tooltip dice exceptional.
+Creato con 100 di Carpentry, un oggetto eccezionale porta anche il tuo marchio: "You create an exceptional quality item and affix
+your maker's mark.", e il suo tooltip dice crafted by con il tuo nome.
+
+## Gli attrezzi si consumano
+
+Un attrezzo dura da 25 a 75 usi, estratti la prima volta che lo usi; il suo tooltip mostra gli usi rimasti. Ogni tentativo la cui
+abilità viene provata, riuscito o fallito, ne toglie uno; un tentativo rifiutato no. L'ultimo uso lo rompe:
+"You have worn out your tool!".
+
+## Crea l'ultimo
+
+Il pulsante Make last riavvia l'ultima ricetta che hai iniziato con quel mestiere, con il legno scelto ora; ogni mestiere ricorda la sua. Prima della tua
+prima risponde "You haven't made anything yet.". Resta fino a un riavvio.
 
 ## Tipi di legno
 
@@ -92,8 +110,7 @@ e `templates/items/skills/tools/carpenty.toml`, oppure dai `script_id = "carpent
 
 ## Non ancora
 
-Oggetti eccezionali e marchio del creatore, attrezzi che si consumano, ricreare l'ultimo oggetto, le aggiunte, la
-riparazione e gli altri mestieri.
+Cosa cambia in un oggetto eccezionale oltre al tooltip, le aggiunte, la riparazione e gli altri mestieri.
 
 ## Vedi anche
 

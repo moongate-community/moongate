@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2fbaedfbdef1cbebd59b7cb41ea9ca0bc1c22df1befe37c8772f537546e463b2","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"bdb4d7f42b42a112f0c09f86c06eea1215f1a0b30efb42880b673b4b73385744","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -218,7 +218,7 @@ che il giocatore porta (`item.find`, `item.amount`, `item.consume`; una pila sul
 esegue i due colpi (`mobile.play_sound`, `timer.after`), prova le altre abilità della ricetta e poi quella principale
 tra il doppio del minimo meno il massimo e il massimo (`skill.check`), così la probabilità al minimo è una su due, e
 crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), con il colore del tipo di legno
-(`item.hue`, `item.set_hue`). Chi sta creando, e il gruppo e il legno scelti da ogni giocatore, sono tenuti in memoria.
+(passando il colore del tipo di legno a `item.give`, oppure `item.set_hue` ai piedi). Una riuscita può essere eccezionale (`crafting.roll`, le proprietà `quality`, `crafter_id`, `crafter_name`), e ogni tentativo la cui abilità viene provata toglie un uso all'attrezzo (la proprietà `uses_remaining`, estratta tra 25 e 75, `item.delete` all'ultimo). Chi sta creando, il gruppo e il legno scelti da ogni giocatore e l'ultima ricetta iniziata da ciascuno (`crafting.make_last`) sono tenuti in memoria.
 `scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` sugli attrezzi da falegname) apre il gump di creazione
 dallo zaino; il gump è `templates/gumps/craft_menu.xml` con `scripts/gumps/craft_menu.lua`, uno per tutti i mestieri.
 
@@ -498,6 +498,16 @@ mantiene il suo negozio e le sue lezioni tramite `scripts/common/shop.lua` e `tr
 `scripts/gumps/stable_claim.lua` riempie il gump con un pulsante e il nome dell'animale per ogni animale di `stable.pets`,
 otto per pagina; un pulsante controlla che il giocatore sia entro 12 celle dall'addestratore e chiama `stable.claim`; un elenco
 cambiato da quando è stato mostrato viene mostrato di nuovo.
+
+## animal_taming.lua
+
+`scripts/skills/animal_taming.lua` è l'abilità Animal Taming: `on_use` dice "Tame which animal?" (502789), dà un cursore
+(`target.pick`) e restituisce un'attesa di 1 secondo. La scelta viene rifiutata con il testo del client se non è una creatura, è un giocatore,
+non è in `taming.toml` (`pet.info`), ha un padrone, ci sono troppi seguaci (`pet.followers` e `pet.max_followers`), supera l'abilità
+o è a più di 3 caselle. Poi tre o quattro volte ogni 3 secondi (`timer.after`) ricontrolla la distanza (7), che il domatore sia
+vivo, la linea di vista (`world.line_of_sight`), che la creatura sia ancora selvatica e non ferita (`mobile.stats`), e dice una
+frase gentile; l'ultima tira `skill.check(user, "animal_taming", min - 0.1, min + 49.9)` e `pet.tame`. Vedi
+[Domatura degli animali](../animal-taming.md).
 
 ## ankh.lua e resurrect.lua
 

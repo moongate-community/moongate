@@ -496,6 +496,15 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetProp_OnACarriedItem_SendsItsOwnerTheNewTooltip()
+    {
+        // A tool's uses left are a prop its tooltip shows: the client asks for a new tooltip only when told.
+        Run($"item.set_prop({_potions.Id.Value}, 'uses_remaining', 12)");
+
+        Assert.Contains(_fixture.Sender.Sent.OfType<PropertyListInfoPacket>(), packet => packet.Serial == _potions.Id);
+    }
+
+    [Fact]
     public void SetName_WithNil_GivesBackTheTemplatesName()
     {
         Run("item.set_name(0x40000002)");

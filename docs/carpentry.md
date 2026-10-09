@@ -39,6 +39,24 @@ the most. A stool asks for 11 to 36: at 23.5 the chance is three in four. Every 
 - **Failure** takes half of each resource, rounded down, and at least one unit of the first, "You failed to create the item, and some of your materials
   are lost."
 
+## Exceptional items and the maker's mark
+
+A success is exceptional as often as its chance minus six tenths: at the most of a recipe four times in ten, never
+with a chance of six tenths or less. An item that joins a stack you carry is never exceptional. You read "You create an exceptional quality item." and its tooltip says exceptional.
+Made at 100 Carpentry, an exceptional item also bears your mark: "You create an exceptional quality item and affix
+your maker's mark.", and its tooltip says crafted by your name.
+
+## Tools wear out
+
+A tool lasts 25 to 75 uses, drawn the first time you use it; its tooltip shows the uses left. Every attempt whose
+skill is tried, a success or a failure, takes one; a refused attempt takes none. The last use breaks it:
+"You have worn out your tool!".
+
+## Make last
+
+The Make last button starts again the last recipe you started with that craft, with the wood picked now; each craft remembers its own. Before your
+first one it answers "You haven't made anything yet.". It is kept until a restart.
+
 ## Kinds of wood
 
 Plain boards are the default. A board of another kind, cut by a [lumberjack](lumberjacking.md) and sawn with an axe,
@@ -90,8 +108,7 @@ and `templates/items/skills/tools/carpenty.toml`, or give `script_id = "carpentr
 
 ## Not yet
 
-Exceptional items and the maker's mark, tools that wear out, making the last item again, the add-ons, repair, and the
-other crafts.
+What being exceptional changes in an item beyond its tooltip, the add-ons, repair, and the other crafts.
 
 ## See also
 

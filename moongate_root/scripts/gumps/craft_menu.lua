@@ -7,8 +7,9 @@
 --   the craft; on the right the recipes of the group picked, ten a page, each
 --   with a button that makes it and one that shows its page (the item, what it
 --   takes, the skills and the player's chance). Below, the wood picked and how
---   many boards of it the player carries, with a button to change it, and the
---   text of what happened last. A button of a tool that is no longer in the
+--   many boards of it the player carries, with a button to change it, a
+--   button that makes the last recipe again, and the text of what happened
+--   last. A button of a tool that is no longer in the
 --   backpack does nothing.
 --
 -- Functions:
@@ -61,6 +62,11 @@ end
 local function wood_line(g, player, args)
     local kind = crafting.kind(player)
     local count = crafting.count(player, crafting.templates("wood", kind))
+
+    button(g, 0, BOTTOM - 30, 4005, 4007, args, function(who)
+        crafting.make_last(who, args.tool, args.craft)
+    end)
+    label(g, 35, BOTTOM - 30, 120, "Make last")
 
     label(g, 0, BOTTOM, 200, "Wood: " .. kind .. " (" .. count .. ")")
     button(g, 210, BOTTOM, 4005, 4007, args, function(who)

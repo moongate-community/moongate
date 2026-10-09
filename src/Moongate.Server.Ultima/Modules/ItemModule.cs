@@ -405,6 +405,8 @@ public sealed class ItemModule
         if (value is null)
         {
             item.RemoveProp(key);
+            // A prop may be what its tooltip shows, such as the uses left of a tool.
+            Refresh(item);
 
             return true;
         }
@@ -415,6 +417,7 @@ public sealed class ItemModule
         }
 
         item.SetProp(key, prop);
+        Refresh(item);
 
         return true;
     }
