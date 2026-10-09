@@ -24,6 +24,16 @@
 --   rounded down, and at least one unit of the first. The gump opens again
 --   with what happened.
 --
+--   A success is exceptional as often as its chance minus six tenths (at the
+--   most of a recipe, four times in ten): the item's prop quality is 2. Made
+--   at 100 of the main skill, an exceptional item bears its maker's mark, the
+--   props crafter_id and crafter_name, which its tooltip shows.
+--
+--   A tool lasts 25 to 75 uses, drawn the first time it is used (its prop
+--   uses_remaining); every attempt that reaches its second stroke takes one,
+--   and the last one breaks it. Make last starts again the last recipe the
+--   player started with that craft.
+--
 -- Functions:
 --   crafting.open(user, tool, craft_id, notice)   opens the crafting gump
 --   crafting.make(user, tool, craft_id, group, recipe)   one attempt
@@ -32,12 +42,16 @@
 --   crafting.templates(resource, kind)   the templates that count
 --   crafting.count(user, templates)   how many units the player carries
 --   crafting.chance(user, craft, recipe)   the chance, 0 to 1
+--   crafting.make_last(user, tool, craft_id)   the last recipe again
+--   crafting.uses(tool)   the uses left of a tool, drawn the first time
+--   crafting.roll()   a number from 0 up to 1, drawn for the exceptional items and the uses
 --   crafting.notice(cliloc)   the text the gump shows for a client text
 --   crafting.carries(user, tool)   whether the tool is in the backpack or a bag of it
 --
 -- What it keeps:
---   Who is making something, and the group and wood each player picked, in
---   memory by serial, not saved: a restart goes back to plain wood.
+--   Who is making something, the group and wood each player picked and the
+--   last recipe each started, in memory by serial, not saved: a restart goes
+--   back to plain wood. The uses of a tool are a prop of the tool, saved.
 -- ==============================================================================
 
 local woods = require("common.woods")
@@ -59,9 +73,24 @@ local NO_CLOTH = 1044287      -- You don't have enough cloth to make that.
 local NO_COMPONENTS = 1044253 -- You don't have the components needed to make that.
 local STRANGE_WOOD = 1072652  -- You cannot work this strange and unusual wood.
 local BUSY = 500119           -- You must wait to perform another action.
+local EXCEPTIONAL = 1044155   -- You create an exceptional quality item.
+local MARKED = 1044156        -- You create an exceptional quality item and affix your maker's mark.
+local WORN_OUT = 1044038      -- You have worn out your tool!
+local NOTHING_YET = 1044165   -- You haven't made anything yet.
+
+-- How much better than sure a success must be to be exceptional, and the skill that marks it.
+local EXCEPTIONAL_MARGIN = 0.6
+local MARK_SKILL = 100
+local EXCEPTIONAL_QUALITY = 2
+
+-- The uses of a tool, drawn the first time it is used.
+local USES_MIN = 25
+local USES_MAX = 75
 
 local NOTICES = {
     [CREATED] = "You create the item.",
+    [EXCEPTIONAL] = "You create an exceptional quality item.",
+    [MARKED] = "You create an exceptional quality item and affix your maker's mark.",
     [FAILED] = "You failed to create the item, and some of your materials are lost.",
     [NO_SKILL] = "You don't have the required skills to attempt this item.",
     [NO_WOOD] = "You do not have sufficient wood to make that.",
@@ -79,6 +108,37 @@ local NOT_MADE = "The item could not be made."
 local busy = {}
 local kinds = {}
 local groups = {}
+local last = {}
+
+-- A number from 0 up to 1.
+crafting.roll = math.random
+
+function crafting.uses(tool)
+    local left = item.get_prop(tool, "uses_remaining")
+
+    if left == nil then
+        left = math.min(USES_MAX, USES_MIN + math.floor(crafting.roll() * (USES_MAX - USES_MIN + 1)))
+        item.set_prop(tool, "uses_remaining", left)
+    end
+
+    return left
+end
+
+-- Takes one use of the tool; false, with the client's text, when that was its last and it broke.
+local function wear(user, tool)
+    local left = crafting.uses(tool) - 1
+
+    if left > 0 then
+        item.set_prop(tool, "uses_remaining", left)
+
+        return true
+    end
+
+    item.delete(tool)
+    mobile.message_cliloc(user, WORN_OUT)
+
+    return false
+end
 
 function crafting.notice(cliloc)
     return NOTICES[cliloc]
@@ -286,7 +346,10 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
         end
 
         mobile.message_cliloc(user, FAILED)
-        crafting.open(user, tool, craft_id, NOTICES[FAILED])
+
+        if wear(user, tool) then
+            crafting.open(user, tool, craft_id, NOTICES[FAILED])
+        end
 
         return
     end
@@ -325,8 +388,24 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
         mobile.message(user, AT_YOUR_FEET)
     end
 
-    mobile.message_cliloc(user, CREATED)
-    crafting.open(user, tool, craft_id, NOTICES[CREATED])
+    local outcome = CREATED
+
+    if crafting.roll() < crafting.chance(user, craft, recipe) - EXCEPTIONAL_MARGIN then
+        item.set_prop(made, "quality", EXCEPTIONAL_QUALITY)
+        outcome = EXCEPTIONAL
+
+        if points(user, craft.skill) >= MARK_SKILL then
+            item.set_prop(made, "crafter_id", user)
+            item.set_prop(made, "crafter_name", mobile.name(user))
+            outcome = MARKED
+        end
+    end
+
+    mobile.message_cliloc(user, outcome)
+
+    if wear(user, tool) then
+        crafting.open(user, tool, craft_id, NOTICES[outcome])
+    end
 end
 
 function crafting.make(user, tool, craft_id, group, index)
@@ -371,11 +450,25 @@ function crafting.make(user, tool, craft_id, group, index)
     end
 
     busy[user] = world.now() + GIVE_UP
+    last[user] = { craft = craft_id, group = group, index = index }
+    crafting.uses(tool)
     mobile.play_sound(user, craft.sound)
 
     timer.after(STROKE, function()
         finish(user, tool, craft_id, craft, recipe, kind)
     end)
+end
+
+function crafting.make_last(user, tool, craft_id)
+    local recipe = last[user]
+
+    if not recipe or recipe.craft ~= craft_id then
+        mobile.message_cliloc(user, NOTHING_YET)
+
+        return
+    end
+
+    crafting.make(user, tool, craft_id, recipe.group, recipe.index)
 end
 
 return crafting
