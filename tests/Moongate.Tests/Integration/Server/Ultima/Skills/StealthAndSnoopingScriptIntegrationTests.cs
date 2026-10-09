@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using DryIoc;
 using Moongate.Server.Ultima.Types.Combat;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -68,6 +69,7 @@ public sealed class StealthAndSnoopingScriptIntegrationTests : IAsyncLifetime
     private readonly StubGameLoop _loop = new();
     private readonly RecordingTimerService _timers = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+    private readonly RecordingMountService _mounts = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
     private readonly RecordingMobileStateService _state = new() { Apply = true };
@@ -134,6 +136,7 @@ public sealed class StealthAndSnoopingScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
         _container.RegisterInstance<IMobileStateService>(_state);
         _container.RegisterInstance<ISpeechService>(_speech);
+        _container.RegisterInstance<IMountService>(_mounts);
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
         _container.RegisterInstance<ITooltipService>(tooltips);
         _container.RegisterInstance<ITileDataService>(_tiles);
@@ -197,6 +200,20 @@ public sealed class StealthAndSnoopingScriptIntegrationTests : IAsyncLifetime
         _skillScripts = new SkillScriptService(_engine, _loop, options);
         await _skillScripts.StartAsync();
         _use = new(_fixture.Mobiles, _skillScripts, _speech, _time, data);
+    }
+
+    [Fact]
+    public void Stealth_OnAMount_IsRefused_AndKeepsThePlayerHidden()
+    {
+        Skills((SkillType.Hiding, 1000), (SkillType.Stealth, 1000));
+        _aria.Hidden = true;
+        _mounts.Mounted.Add(_aria.Id);
+
+        _use.Use(_session, SkillType.Stealth);
+
+        Assert.Empty(_errors);
+        Assert.Equal([500837], Told(_aria));
+        Assert.True(_aria.Hidden);
     }
 
     [Fact]

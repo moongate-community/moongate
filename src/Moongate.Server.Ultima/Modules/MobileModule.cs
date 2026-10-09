@@ -49,6 +49,7 @@ public sealed class MobileModule
     private readonly IWeightService? _weight;
     private readonly ICrimeService? _crimes;
     private readonly IDeathService? _death;
+    private readonly IMountService? _mounts;
 
     private readonly ISessionService? _sessions;
     private readonly IPacketSendService? _sender;
@@ -68,9 +69,11 @@ public sealed class MobileModule
         ICrimeService? crimes = null,
         IDeathService? death = null,
         ISessionService? sessions = null,
-        IPacketSendService? sender = null
+        IPacketSendService? sender = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
         _sessions = sessions;
         _sender = sender;
         _death = death;
@@ -895,6 +898,18 @@ public sealed class MobileModule
     public bool IsDead(long serial)
     {
         return TryGetMobile(serial, out var mobile) && mobile.IsDead;
+    }
+
+    /// <summary>
+    ///     Gets whether the mobile sits on a mount; <c>mobile.is_mounted(who)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "True when the mobile rides a mount, such as a horse; false for a mobile on foot or a serial that is not a mobile in the world."
+    )]
+    public bool IsMounted(long serial)
+    {
+        return _mounts is not null && TryGetMobile(serial, out var mobile) && _mounts.IsMounted(mobile);
     }
 
     /// <summary>

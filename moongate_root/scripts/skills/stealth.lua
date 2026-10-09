@@ -27,6 +27,7 @@ local NOT_HIDDEN_WELL = 502726 -- You are not hidden well enough.  Become better
 local TOO_MUCH_ARMOR = 502727 -- You could not hope to move quietly wearing this much armor.
 local BEGIN = 502730          -- You begin to move quietly.
 local FAILED = 502731         -- You fail in your attempt to move unnoticed.
+local MOUNTED = 500837        -- You cannot stealth while mounted.
 
 -- The Hiding it takes, the armor rating that is too much, and what the armor does to the try.
 local HIDING_REQUIRED = 80
@@ -47,6 +48,13 @@ end
 
 -- Called when a player uses the skill.
 function stealth.on_use(user)
+    -- A rider makes too much noise: it sneaks on foot only.
+    if mobile.is_mounted(user) then
+        mobile.message_cliloc(user, MOUNTED)
+
+        return
+    end
+
     local flags = mobile.flags(user)
 
     if flags == nil or not flags.hidden then

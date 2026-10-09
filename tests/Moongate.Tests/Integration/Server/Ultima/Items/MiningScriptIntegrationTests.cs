@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using DryIoc;
 using Moongate.Server.Ultima.Data.Regions;
@@ -88,6 +89,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     private readonly StubGameLoop _loop = new();
     private readonly RecordingTimerService _timers = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+    private readonly RecordingMountService _mounts = new();
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
@@ -200,6 +202,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
         _container.RegisterInstance<IMobileStateService>(_state);
         _container.RegisterInstance<ISpeechService>(_speech);
+        _container.RegisterInstance<IMountService>(_mounts);
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.RegisterInstance<ITargetService>(_targets);
@@ -255,6 +258,19 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
         await _itemScripts.StartAsync();
         // Until a test queues its own, every roll of the pickaxe is high: the second sound, a large pile.
         Rolls();
+    }
+
+    [Fact]
+    public void Digging_OnAMount_IsRefused_WithNoSwingAndNoTimer()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+
+        Dig(_rock);
+
+        Assert.Empty(_errors);
+        Assert.Equal([501864], Told());
+        Assert.Empty(_view.Calls.Where(call => call.StartsWith("Animated", StringComparison.Ordinal)));
+        Assert.Empty(_timers.Timers);
     }
 
     [Fact]

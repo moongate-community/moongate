@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using DryIoc;
 using Moongate.Server.Ultima.Data.Regions;
@@ -75,6 +76,7 @@ public sealed class FishingPoleScriptIntegrationTests : IAsyncLifetime
     private readonly StubGameLoop _loop = new();
     private readonly RecordingTimerService _timers = new();
     private readonly List<ScriptErrorEvent> _errors = [];
+    private readonly RecordingMountService _mounts = new();
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingWorldViewService _view = new();
@@ -183,6 +185,7 @@ public sealed class FishingPoleScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IMobileService>(_fixture.Mobiles);
         _container.RegisterInstance<IMobileStateService>(_state);
         _container.RegisterInstance<ISpeechService>(_speech);
+        _container.RegisterInstance<IMountService>(_mounts);
         _container.RegisterInstance<ISectorService>(_fixture.Sectors);
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.RegisterInstance<ITargetService>(_targets);
@@ -235,6 +238,19 @@ public sealed class FishingPoleScriptIntegrationTests : IAsyncLifetime
         await _engine.StartAsync();
         _itemScripts = new(_engine, _templates, _loop, options);
         await _itemScripts.StartAsync();
+    }
+
+    [Fact]
+    public void Fishing_OnAMount_IsRefused_WithNoCastAndNoTimer()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+
+        Use(_water);
+
+        Assert.Empty(_errors);
+        Assert.Equal([500971], Told());
+        Assert.Empty(_view.Calls.Where(call => call.StartsWith("Animated", StringComparison.Ordinal)));
+        Assert.Empty(_timers.Timers);
     }
 
     [Fact]
