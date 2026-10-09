@@ -69,6 +69,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
     private readonly StubPathfindingService _finder = new();
     private readonly StubTargetService _targets = new();
     private readonly StubPetService _pets = new();
+    private readonly RecordingCrimeService _crimes = new();
     private readonly List<ScriptErrorEvent> _errors = [];
 
     private readonly MobileTemplateService _templates = new(
@@ -140,6 +141,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<TimeProvider>(time);
         _container.RegisterInstance<ICombatService>(_combat);
+        _container.RegisterInstance<ICrimeService>(_crimes);
         _container.RegisterInstance<ITargetService>(_targets);
         _container.RegisterInstance<IPetService>(_pets);
         _container.RegisterInstance<ITamingService>(
@@ -221,6 +223,28 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
         Think(5);
         Assert.Empty(_errors.Select(error => error.ToString()));
         Assert.Equal(new Point3D(1603, 1600, 0), _horse.Location);
+    }
+
+    [Fact]
+    public void AHorseFarBehindARunningOwner_TakesThreeStepsInAThink_ToKeepUp()
+    {
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1610, 1600, 0)));
+        _finder.Finds(DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East, DirectionType.East);
+
+        Think(1);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(new Point3D(1603, 1600, 0), _horse.Location);
+    }
+
+    [Fact]
+    public void AHorseMoreThanSixteenTilesBehind_IsMovedBesideItsOwner_AtOnce()
+    {
+        Assert.True(_fixture.Mobiles.MoveTo(_aria, MapType.Trammel, new Point3D(1620, 1600, 0)));
+
+        Think(1);
+
+        Assert.Equal((_horse, MapType.Trammel, new Point3D(1620, 1600, 0)), Assert.Single(_teleports.Teleports));
     }
 
     [Fact]
@@ -353,6 +377,18 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
         Assert.Equal("stay", _horse.GetProp<string>("pet.order"));
     }
 
+    [Fact]
+    public void TwoAllWordsInARow_AreBothObeyed_AndPetsSpreadAroundTheOwnerAllHear()
+    {
+        var west = Pet(0x301, "west", 1592);
+        var east = Pet(0x302, "east", 1618);
+
+        Say("all stay", SpeechKeywordType.AllStay);
+        Say("all come", SpeechKeywordType.AllCome);
+
+        Assert.Equal(["come", "come", "come"], new[] { _horse, west, east }.Select(pet => pet.GetProp("pet.order", "follow")));
+    }
+
     [Theory,
      InlineData(SpeechKeywordType.PetStay, "stay"),
      InlineData(SpeechKeywordType.PetCome, "come"),
@@ -420,6 +456,47 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors.Select(error => error.ToString()));
         Assert.Contains((_horse, _orc), _combat.Attacks);
         Assert.Contains((_llama, _orc), _combat.Attacks);
+    }
+
+    [Fact]
+    public void AllKill_OfAnInnocent_MakesTheOwnerACriminal_ButNotOfWhoFightsIt()
+    {
+        var townsman = new MobileEntity
+        {
+            Id = new Serial(0x400), Name = "a townsman", TemplateId = "townsman", Notoriety = NotorietyType.Innocent,
+            Map = MapType.Trammel, Location = new Point3D(1606, 1602, 0), Hits = 20, HitsMax = 20
+        };
+        _fixture.Mobiles.EnterWorld(townsman);
+        _targets.Result = TargetResult.ForObject(townsman.Id);
+
+        Say("all kill", SpeechKeywordType.AllKill);
+
+        Assert.Equal(["criminal 2"], _crimes.Calls);
+        Assert.Contains((_horse, townsman), _combat.Attacks);
+    }
+
+    [Fact]
+    public void AllKill_OfWhatFightsTheOwner_OrOfAMonster_IsNoCrime()
+    {
+        _combat.Attacks.Add((_orc, _aria));
+        _targets.Result = TargetResult.ForObject(_orc.Id);
+
+        Say("all kill", SpeechKeywordType.AllKill);
+
+        Assert.Empty(_crimes.Calls);
+        Assert.Contains((_horse, _orc), _combat.Attacks);
+    }
+
+    [Fact]
+    public void AllKill_APetLetGoBeforeTheTargetIsPicked_DoesNotFight()
+    {
+        _targets.Result = TargetResult.ForObject(_orc.Id);
+        _hearing.Heard(_aria, "all kill", [(int)SpeechKeywordType.AllKill]);
+        _horse.RemoveProp("owner");
+
+        _loop.RunDeferred();
+
+        Assert.DoesNotContain(_combat.Attacks, attack => attack.Attacker == _horse);
     }
 
     [Theory, InlineData("owner"), InlineData("pet"), InlineData("cancel")]
@@ -493,6 +570,19 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
     }
 
     // --- helpers ---
+
+    private MobileEntity Pet(uint serial, string name, int x)
+    {
+        var pet = new MobileEntity
+        {
+            Id = new Serial(serial), Name = name, TemplateId = "horse", Body = 0xE2, Map = MapType.Trammel,
+            Location = new Point3D(x, 1600, 0), Hits = 20, HitsMax = 20
+        };
+        pet.SetProp("owner", Owner);
+        _fixture.Mobiles.EnterWorld(pet);
+
+        return pet;
+    }
 
     private void Say(string text, SpeechKeywordType word)
     {

@@ -39,8 +39,8 @@ tamed dragon is not a monster to them. It still defends itself when it is hit.
 
 ## What a pet does
 
-A tamed creature follows its owner: it walks when it is more than 2 tiles away and runs from 7, and when it cannot get
-there in ten steps it is moved beside the owner. Farther than 24 tiles, on another map, or with the owner not in the
+A tamed creature follows its owner: it walks when it is more than 2 tiles away and runs from 7, it takes three steps a think when it runs to keep up, and when it cannot get
+there in ten steps, or falls more than 16 tiles behind, it is moved beside the owner, through walls too. Farther than 24 tiles, on another map, or with the owner not in the
 world, it stays where it is. A creature that sleeps because no player is near does not follow: a pet left far behind is
 met again where it stood. A pet that is hit defends itself.
 
@@ -62,7 +62,7 @@ the name of the pet first (`a horse stay`) they are for that pet only.
 | `kill`, `attack`, `all kill`, `all attack` | Asks for a target; the pets fight it, then go back to what they did |
 | `release` (with its name) | Asks if you are sure; yes lets it go: it is wild again and you have one follower less |
 
-It will not fight you, another pet of yours, or what is dead. Friend, transfer, drop and patrol are not built.
+It will not fight you, another pet of yours, or what is dead. Sending your pets against an innocent makes you a criminal, as if you had struck it yourself, unless that one is fighting you. Friend, transfer, drop and patrol are not built.
 
 ## Followers
 

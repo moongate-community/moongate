@@ -20,9 +20,7 @@ local reach = 14
 local too_far_cliloc = 500446
 
 function pet_release.yes(player, response, args)
-    local info = pet.info(args.pet)
-
-    if info == nil or info.owner ~= player then
+    if mobile.is_dead(player) or npc.get_prop(args.pet, "owner") ~= player then
         return
     end
 

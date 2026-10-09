@@ -5,16 +5,18 @@
 --   What the creatures that belong to a player do, and what their owner says to them. The order of a pet is the prop
 --   pet.order of the creature: follow (also when it has none), stay, come or guard. Used by common/creature.lua.
 --
---   follow  the pet stays near its owner: it walks when it is farther than 2 tiles and runs from 7, and when it
---           cannot get there in 10 steps it is moved beside the owner. Beyond 24 tiles, on another map, or when its owner
---           is not in the world, it stands still.
+--   follow  the pet stays near its owner: it walks when it is farther than 2 tiles and runs from 7, taking three steps a
+--           think from then on to keep up; when it cannot get there in 10 steps, or falls more than 16 tiles behind, it is
+--           moved beside the owner, wherever that is: a wall or a house too. Beyond 24 tiles, on another map, or when its
+--           owner is not in the world, it stands still.
 --   come    as follow, and when it is beside the owner it stays.
 --   stay    it stands still.
 --   guard   it stays within 3 tiles of its owner and fights whoever fights the owner or the pet.
 --
 --   The words, said by the owner within 14 tiles: come, follow, follow me, stay, stop, guard, kill, attack and release,
---   with "all" before them for every pet within reach (one pet answers for them all), or with the name of the pet first
---   for that pet. Kill and attack ask for a target; release asks for a yes.
+--   with "all" before them for every pet that hears, or with the name of the pet first for that pet. Kill and attack ask
+--   for a target (one pet asks for all, and the owner is a criminal when it sends them against an innocent); release asks
+--   for a yes.
 --
 -- Functions:
 --   think(serial, mind, here)                 one think of an owned pet that is not fighting
@@ -28,13 +30,16 @@ local FOLLOW_CLOSE = 2
 local RUN_FROM = 7
 local FOLLOW_LIMIT = 24
 
--- Failed steps in a row after which a pet is moved beside its owner.
+-- Failed steps in a row after which a pet is moved beside its owner, how far behind it is moved, and how many steps a
+-- running pet takes in a think (the owner moves faster than one step in half a second).
 local STUCK_STEPS = 10
+local LAGGING = 16
+local RUN_STEPS = 3
 
 -- How near a guard stays to its owner, how far it sees an enemy, how many it looks at, and how often.
 local GUARD_CLOSE = 3
 local GUARD_SIGHT = 16
-local GUARD_SEEN = 6
+local GUARD_SEEN = 16
 local GUARD_EVERY = 2
 
 -- How far the owner may be to be heard, in tiles.
@@ -103,7 +108,23 @@ local function follow(serial, mind, here, there, close)
         return
     end
 
-    local result = npc.walk_to(serial, there.x, there.y, there.z, 1, far >= RUN_FROM)
+    -- Far behind: it is where its owner is.
+    if far > LAGGING then
+        mobile.teleport(serial, there.x, there.y, there.z, there.map)
+        mind.stuck = 0
+
+        return
+    end
+
+    local result
+
+    for _ = 1, far >= RUN_FROM and RUN_STEPS or 1 do
+        result = npc.walk_to(serial, there.x, there.y, there.z, 1, far >= RUN_FROM)
+
+        if result ~= "moving" then
+            break
+        end
+    end
 
     if result == "blocked" or result == "no_path" then
         mind.stuck = (mind.stuck or 0) + 1
@@ -185,11 +206,12 @@ local function starts_with(text, name)
     return name ~= nil and #name > 0 and text:lower():sub(1, #name) == name:lower()
 end
 
--- The pets of the speaker within reach of the one that heard: it, and those near it.
-local function pets_near(serial, speaker)
-    local pets = { serial }
+-- The pets of the speaker within hearing of it.
+local function pets_near(speaker)
+    local pets = {}
+    local there = mobile.location(speaker)
 
-    for _, other in ipairs(npc.nearby(serial, HEARING, "npcs")) do
+    for _, other in ipairs(world.mobiles_in_range(there.map, there.x, there.y, HEARING)) do
         if owner_of(other) == speaker then
             pets[#pets + 1] = other
         end
@@ -198,11 +220,18 @@ local function pets_near(serial, speaker)
     return pets
 end
 
+-- Whether sending a pet against the target is a crime of the owner: the target is innocent and has not gone for the owner.
+local function is_crime(speaker, target)
+    return (mobile.is_player(target) or mobile.notoriety(target) == "innocent") and combat.target(target) ~= speaker
+end
+
 -- What a pet fights because its owner said so: not the owner, not one of its own, not itself.
 local function attack(pet, speaker, target)
     if target ~= speaker and target ~= pet and owner_of(target) ~= speaker and not mobile.is_dead(target) then
-        combat.attack(pet, target)
+        return combat.attack(pet, target)
     end
+
+    return false
 end
 
 local function carry_out(command, speaker, pets)
@@ -212,9 +241,16 @@ local function carry_out(command, speaker, pets)
                 return
             end
 
+            -- The owner sends them: a crime against an innocent, as if it had struck it.
+            if picked.serial ~= speaker and is_crime(speaker, picked.serial) then
+                mobile.set_criminal(speaker, true)
+            end
+
             for _, pet in ipairs(pets) do
-                attack(pet, speaker, picked.serial)
-                npc.play_sound(pet, "attack")
+                -- A pet let go, or dead, since the words, does not obey them.
+                if owner_of(pet) == speaker and attack(pet, speaker, picked.serial) then
+                    npc.play_sound(pet, "attack")
+                end
             end
         end)
 
@@ -250,11 +286,18 @@ function pet_orders.listen(serial, speaker, text, keywords)
 
     local all = command_of(keywords, ALL)
 
-    if all ~= nil then
-        -- Every pet hears the words: one of them answers for all.
+    if all == "kill" then
+        -- Every pet hears the words and there is one cursor: the first that asks gives it, and it is for all the pets.
         if pet.attend(speaker) then
-            carry_out(all, speaker, pets_near(serial, speaker))
+            carry_out(all, speaker, pets_near(speaker))
         end
+
+        return
+    end
+
+    -- Each pet that hears obeys for itself.
+    if all ~= nil then
+        carry_out(all, speaker, { serial })
 
         return
     end

@@ -17,16 +17,15 @@ public sealed class PetModule
 {
     private const int AttendedLimit = 256;
 
+    // Several pets hear the same words in the same moment: the first to ask answers for them all.
+    private static readonly TimeSpan AttendedFor = TimeSpan.FromMilliseconds(500);
+
     private readonly IPetService _pets;
     private readonly ITamingService _taming;
     private readonly IMobileService _mobiles;
     private readonly IMobileStateService _state;
     private readonly ISessionService _sessions;
     private readonly TimeProvider _time;
-
-    // Several pets hear the same words in the same moment: the first to ask answers for them all.
-    private static readonly TimeSpan AttendedFor = TimeSpan.FromMilliseconds(500);
-
     private readonly Dictionary<Serial, DateTimeOffset> _attended = new();
 
     public PetModule(
@@ -38,8 +37,8 @@ public sealed class PetModule
         TimeProvider? time = null
     )
     {
-        _time = time ?? TimeProvider.System;
         _pets = pets;
+        _time = time ?? TimeProvider.System;
         _taming = taming;
         _mobiles = mobiles;
         _state = state;
