@@ -58,6 +58,37 @@ public sealed class PetServiceTests
     }
 
     [Fact]
+    public void Release_ACreatureOfThePlayer_LosesItsOwnerAndItsOrder_AndIsOneFollowerLess()
+    {
+        var horse = Creature(0x100, "horse");
+        _service.TryTame(_player, horse);
+        horse.SetProp(MountProps.PetOrder, "stay");
+        Assert.Equal(1, _service.Followers(_player));
+
+        Assert.True(_service.Release(_player, horse));
+
+        Assert.False(horse.TryGetProp<long>(MountProps.Owner, out _));
+        Assert.False(horse.TryGetProp<string>(MountProps.PetOrder, out _));
+        Assert.Equal(0, _service.Followers(_player));
+    }
+
+    [Fact]
+    public void Release_SomeoneElsesCreatureAWildOneAPlayerOrOneNotInTheWorld_IsRefused()
+    {
+        var horse = Creature(0x100, "horse");
+        var gone = new MobileEntity { Id = new(0x101), TemplateId = "horse", Map = MapType.Felucca };
+        gone.SetProp(MountProps.Owner, (long)_player.Id.Value);
+
+        Assert.False(_service.Release(_player, horse));
+        horse.SetProp(MountProps.Owner, 77L);
+        Assert.False(_service.Release(_player, horse));
+        Assert.False(_service.Release(_player, _player));
+        Assert.False(_service.Release(_player, gone));
+        Assert.False(_service.Release(horse, horse));
+        Assert.Equal(77L, horse.GetProp<long>(MountProps.Owner));
+    }
+
+    [Fact]
     public void TryTame_ACreatureWithNoEntry_IsNotTamable()
     {
         Assert.Equal(PetResultType.NotTamable, _service.TryTame(_player, Creature(0x100, "orc")));
@@ -155,6 +186,20 @@ public sealed class PetServiceTests
         _service.TryTame(_player, horse);
 
         Assert.False(horse.TryGetProp<string>(SpawnRegionService.RegionProp, out _));
+    }
+
+    [Fact]
+    public void Release_PutsTheCreatureBackInItsSpawnRegion()
+    {
+        var horse = Creature(0x100, "horse");
+        horse.SetProp(SpawnRegionService.RegionProp, "britain");
+        _service.TryTame(_player, horse);
+        Assert.False(horse.TryGetProp<string>(SpawnRegionService.RegionProp, out _));
+
+        _service.Release(_player, horse);
+
+        Assert.Equal("britain", horse.GetProp<string>(SpawnRegionService.RegionProp));
+        Assert.False(horse.TryGetProp<string>(MountProps.PetRegion, out _));
     }
 
     [Fact]

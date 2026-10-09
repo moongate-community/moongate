@@ -32,6 +32,12 @@ public interface IPetService
     void Changed(Serial player);
 
     /// <summary>
+    ///     Lets <paramref name="creature" /> go: when it is a creature of the world that is the player's own, it has no owner and
+    ///     no order any more, and the player's followers are one less. False for anything else.
+    /// </summary>
+    bool Release(MobileEntity player, MobileEntity creature);
+
+    /// <summary>
     ///     Gets the slots a creature of that mobile template counts for; 1 for one with no entry.
     /// </summary>
     int SlotsOf(string? templateId);

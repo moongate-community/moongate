@@ -30,6 +30,17 @@ public sealed class StubPetService : IPetService
         ChangedFor.Add(player);
     }
 
+    public bool Releases { get; set; } = true;
+
+    public List<(MobileEntity Player, MobileEntity Creature)> Released { get; } = [];
+
+    public bool Release(MobileEntity player, MobileEntity creature)
+    {
+        Released.Add((player, creature));
+
+        return Releases;
+    }
+
     public int SlotsOf(string? templateId)
     {
         return 1;

@@ -20,13 +20,17 @@
 --           seconds, as ModernUO's; a template with flee_at -1 never does
 --
 -- Functions:
---   creature.new(options)  gives a table with on_think(serial), the function a
---                          mobile script defines
+--   creature.new(options)  gives a table with on_think(serial) and on_speech(serial, speaker, text, keywords), the
+--                          functions a mobile script defines
+--
+-- A creature a player tamed follows and obeys its owner (common/pet_orders.lua) and goes for nobody.
 --
 -- What a creature keeps:
 --   Its state in memory by serial, not saved: after a restart, or once no player
 --   is near, it starts again from wandering.
 -- ==============================================================================
+
+local pet_orders = require("common.pet_orders")
 
 local creature = {}
 
@@ -372,7 +376,8 @@ function creature.new(options)
         local fought = combat.target(serial)
 
         if fought ~= nil and (mind.state ~= "chase" or mind.target ~= fought) and (mind.state ~= "flee" or mind.target ~= fought) then
-            if flees then
+            -- A pet that flees by nature fights when its owner sends it, and when it is hit: it is no longer alone.
+            if flees and not is_owned(serial) then
                 start_flee(serial, mind, fought)
             else
                 retaliate(serial, mind, fought)
@@ -389,10 +394,19 @@ function creature.new(options)
             flee(serial, mind, here)
         elseif mind.state == "chase" then
             chase(serial, mind, here)
+        elseif is_owned(serial) then
+            pet_orders.think(serial, mind, here)
         elseif mind.state == "guard" then
             guard(serial, mind, here, hunts)
         else
             wander(serial, mind, hunts)
+        end
+    end
+
+    -- What its owner says to it: the words of a pet.
+    function script.on_speech(serial, speaker, text, keywords)
+        if is_owned(serial) then
+            pet_orders.listen(serial, speaker, text, keywords)
         end
     end
 

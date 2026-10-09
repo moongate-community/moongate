@@ -4,6 +4,7 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Server.Ultima.Types.Stable;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -14,19 +15,14 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("stable", "Leaves a player's pets in the stable and takes them back, as a stablemaster does.")]
 public sealed class StableModule
 {
-    private const int AttendedLimit = 256;
-
-    // Long enough for every stablemaster that heard the same words in one turn of the loop, short for a player's next ones.
-    private static readonly TimeSpan AttendedFor = TimeSpan.FromMilliseconds(500);
-
     private readonly IStableService _stable;
     private readonly IMobileService _mobiles;
     private readonly IMobileTemplateService _templates;
     private readonly StableConfig _config;
     private readonly TimeProvider _time;
 
-    // When each player was last attended to: several stablemasters hear the same words, one serves.
-    private readonly Dictionary<Serial, DateTimeOffset> _attended = new();
+    // Several stablemasters hear the same words, one serves.
+    private readonly Attendance _attendance = new();
 
     public StableModule(
         IStableService stable,
@@ -58,27 +54,7 @@ public sealed class StableModule
             return false;
         }
 
-        var now = _time.GetUtcNow();
-
-        if (_attended.TryGetValue(mobile.Id, out var last) && now - last < AttendedFor && now >= last)
-        {
-            return false;
-        }
-
-        // The players who left are forgotten as the list is used.
-        if (_attended.Count > AttendedLimit)
-        {
-            foreach (var gone in _attended.Where(entry => now - entry.Value >= AttendedFor)
-                         .Select(entry => entry.Key)
-                         .ToArray())
-            {
-                _attended.Remove(gone);
-            }
-        }
-
-        _attended[mobile.Id] = now;
-
-        return true;
+        return _attendance.TryAttend(mobile.Id, _time.GetUtcNow());
     }
 
     /// <summary>
