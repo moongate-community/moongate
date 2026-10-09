@@ -19,6 +19,11 @@ public sealed class RecordingMountService : IMountService
 
     public List<string> Calls { get; } = [];
 
+    /// <summary>
+    ///     Gets or sets what runs first when a dismount is asked for, so a test can look at the state at that moment.
+    /// </summary>
+    public Action? OnDismount { get; set; }
+
     public bool IsMounted(MobileEntity rider)
     {
         return Mounted.Contains(rider.Id);
@@ -34,6 +39,7 @@ public sealed class RecordingMountService : IMountService
 
     public bool Dismount(MobileEntity rider)
     {
+        OnDismount?.Invoke();
         Dismounts.Add(rider);
         Calls.Add($"Dismount {rider.Id.Value}");
 
