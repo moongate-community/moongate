@@ -24,6 +24,12 @@ public interface IDeathService
     bool Kill(MobileEntity mobile, MobileEntity? killer = null);
 
     /// <summary>
+    ///     Gets whether the mobile has died and is still in the world, between its death and its removal, such as an NPC
+    ///     whose removal waits for the next turn of the game loop.
+    /// </summary>
+    bool IsDying(Serial mobile);
+
+    /// <summary>
     ///     Raises a dead player: its living body is back with 10 hit points, full stamina and no mana, the death shroud
     ///     is replaced by a death robe. False for a player that is not dead or not in the world.
     /// </summary>

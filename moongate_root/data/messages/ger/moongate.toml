@@ -267,3 +267,6 @@
 30218 = "Wartende Hilfeanfragen: {0}. Tippe .pages."
 30219 = "Öffnet das Gump der Hilfeanfragen: die offenen und übernommenen, um zum Spieler zu gehen, sie zu übernehmen, zu beantworten oder zu schließen."
 30220 = "Das Gump pages fehlt: templates/gumps/pages.xml."
+30221 = "Gibt die anvisierte Kreatur dir oder der genannten Figur: tame [Name]. Ihr Besitzer kann sie reiten."
+30222 = "{0} gehört jetzt {1}."
+30223 = "{0} kann nicht gezähmt werden."

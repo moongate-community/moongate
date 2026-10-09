@@ -264,6 +264,24 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         return _worn.TryGetValue(mobile, out var worn) ? worn.Values.ToList() : [];
     }
 
+    public ItemEntity? GetWornAt(Serial mobile, LayerType layer)
+    {
+        if (!_worn.TryGetValue(mobile, out var worn))
+        {
+            return null;
+        }
+
+        foreach (var item in worn.Values)
+        {
+            if (item.Layer == layer)
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
+
     public IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile)
     {
         // What the mobile wears and, level by level, what lies inside it.

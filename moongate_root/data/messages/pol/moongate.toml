@@ -267,3 +267,6 @@
 30218 = "Zgłoszeń o pomoc czeka: {0}. Wpisz .pages."
 30219 = "Otwiera gump zgłoszeń o pomoc: otwarte i przejęte, aby pójść do gracza, przejąć je, odpowiedzieć lub zamknąć."
 30220 = "Brakuje gumpa pages: templates/gumps/pages.xml."
+30221 = "Oddaje wskazane stworzenie tobie lub wymienionej postaci: tame [imię]. Jego właściciel może na nim jeździć."
+30222 = "{0} należy teraz do {1}."
+30223 = "{0} nie da się oswoić."

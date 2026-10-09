@@ -167,4 +167,7 @@ public static class CommandMessages
     public const int AlreadyThatWay = 30191;
     public const int PagesDescription = 30219;
     public const int PagesGumpMissing = 30220;
+    public const int TameDescription = 30221;
+    public const int Tamed = 30222;
+    public const int CannotTame = 30223;
 }
