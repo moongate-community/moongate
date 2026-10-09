@@ -54,6 +54,7 @@ it.
 | [`titles.toml`](data-files/titles.md) | `FameKarmaTitle` | after MOTD | Shown in the paperdoll title |
 | [`templates/books/<name>.toml`](data-files/books.md) | `BookTemplate` | after item templates | Personalized scrolls and native books; parchment gumps, book covers/pages and writable books |
 | [`templates/shops/<name>.toml`](data-files/shops.md) | `ShopDefinition` | after item and mobile templates | Yes, through `IShopService`: what each vendor sells in its [shop window](vendors.md) |
+| [`taming.toml`](data-files/taming.md) | `TamingCreature` | optional; after the mobile templates | Yes, through `ITamingService`: the creatures of [animal taming](animal-taming.md) |
 | [`harvest.toml`](data-files/harvest.md) | `HarvestResource` | optional; after the shops | Yes, through `IHarvestService`: the fish of [fishing](fishing.md), by area |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | after item templates and book templates (every referenced id must exist) | Yes, through `IStartingItemsService` |
 

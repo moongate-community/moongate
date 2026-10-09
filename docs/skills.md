@@ -173,6 +173,7 @@ The template field `npc_guild` (`blacksmiths`, `thieves`...) makes an NPC a guil
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)
 - [`bandage.lua`](scripting/shipped-scripts.md#bandagelua): Healing, with the bandages
+- [Animal Taming](animal-taming.md): the skill that makes a wild creature the player's own
 - [The lore skills](scripting/shipped-scripts.md#the-lore-skills): Anatomy, Evaluating Intelligence, Forensic Evaluation and Detecting Hidden
 - [Server configuration](server-configuration.md): `[ultima.skills]`
 - [Roadmap](roadmap.md): 1.2
