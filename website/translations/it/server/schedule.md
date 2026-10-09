@@ -1,11 +1,11 @@
-<!-- translation: {"sourceHash":"b2c06877b28b54e27ac437bdb8b59a7d0f2115fdd99d8a29714139b7df664b9f","title":"Calendario"} -->
+<!-- translation: {"sourceHash":"3a63f39989f8ed01cc04cecea1368a3c9f50248654401f9b02d1ecc7fe9486b4","title":"Calendario"} -->
 
 # Calendario
 
 `data/schedule.toml` è il calendario del server. Contiene due cose: i **task**, che girano a un'ora
 del giorno o della settimana, come uno spegnimento con avvisi, e gli **eventi stagionali**, attivi
 tra due date, come Halloween. Nessun task gira finché l'operatore non ne scrive uno: il file
-fornito ha i task come esempi nei commenti, e l'evento `halloween` acceso (vedi [Feste](holidays.md)).
+fornito ha i task come esempi nei commenti, e gli eventi `halloween` e `christmas` accesi (vedi [Feste](holidays.md)).
 
 ```toml
 [[task]]
@@ -117,6 +117,10 @@ halloween = {}
 function halloween.on_start(id, name) end
 function halloween.on_end(id, name) end
 ```
+
+Finché un evento è attivo, una terza funzione viene chiamata ogni volta che un personaggio entra nel
+mondo: `on_login(id, name, player)`, con il serial del personaggio. Uno shard che non la definisce
+non perde nulla. Il [Natale](holidays.md#christmas-snowballs-and-gifts) dà lì il suo regalo.
 
 Uno script o una funzione mancante va bene. L'ultimo stato comunicato si salva con il mondo, quindi
 un evento iniziato o finito mentre il server era spento chiama la sua funzione una volta al

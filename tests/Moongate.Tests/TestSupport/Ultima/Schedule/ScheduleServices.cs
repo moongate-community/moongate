@@ -1,3 +1,5 @@
+using DryIoc;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Ultima.Data.Schedule;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
@@ -31,6 +33,9 @@ public sealed class ScheduleServices
     {
         var clock = new SettableClock { Now = new(2026, 10, 25, 12, 0, 0, TimeSpan.Zero) };
         var scripts = new RecordingEventScriptService();
+        var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<Moongate.Server.Core.Interfaces.Events.IMoongateEventBus>();
         var props = new WorldPropsService(new RecordingDataAccess<WorldStateEntity>());
         await props.StartAsync();
         var file = new ScheduleFile
@@ -59,7 +64,7 @@ public sealed class ScheduleServices
             clock,
             TimeZoneInfo.Utc
         );
-        var events = new SeasonalEventService(data, props, timers, new StubGameLoop(), scripts, clock, TimeZoneInfo.Utc);
+        var events = new SeasonalEventService(data, props, timers, new StubGameLoop(), bus, scripts, clock, TimeZoneInfo.Utc);
         await schedule.StartAsync();
         await events.StartAsync();
 

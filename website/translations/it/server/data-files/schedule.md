@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b6316e2f23137352880d0a175716c2a359392ab4f9cbc233448a64429996bf35","title":"Calendario"} -->
+<!-- translation: {"sourceHash":"57968c80ecb89522aeebad5211daff0319d54ff78314c925bc298e25888208f1","title":"Calendario"} -->
 
 # Calendario
 
@@ -26,7 +26,7 @@ to = "11-02"
 | `[[event]]` | Uno per ogni evento stagionale: `id`, `name`, `from` e `to` come `MM-dd`, entrambi inclusi. |
 
 Il file fornito ha i task come esempi nei commenti, quindi nessuno gira finché l'operatore non ne
-attiva uno, e l'evento `halloween` acceso ([Feste](../holidays.md)). Il file può mancare: il
+attiva uno, e gli eventi `halloween` e `christmas` accesi ([Feste](../holidays.md)). Il file può mancare: il
 calendario è allora vuoto.
 
 ## Validazione all'avvio

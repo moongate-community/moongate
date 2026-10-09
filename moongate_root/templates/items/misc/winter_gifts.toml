@@ -1,0 +1,25 @@
+# ==============================================================================
+# Moongate - templates/items/misc/winter_gifts.toml
+#
+# What it is for:
+#   The snow of the Christmas event: the two piles of the gift box
+#   (scripts/events/christmas.lua). Double clicking one packs a snowball and asks
+#   for a target (scripts/items/snow_pile.lua). They derive from the converted
+#   snowpile of christmas.toml, which has no script.
+#
+# Fields:
+#   as every item template; script_id = "snow_pile"; hue 1153 is the white of
+#   snow_pile, 1152 the glacial one.
+# ==============================================================================
+
+[[item]]
+id = "snow_pile"
+base_id = "snowpile"
+script_id = "snow_pile"
+
+[[item]]
+id = "glacial_snow"
+base_id = "snowpile"
+name = "a pile of glacial snow"
+hue = 1152
+script_id = "snow_pile"
