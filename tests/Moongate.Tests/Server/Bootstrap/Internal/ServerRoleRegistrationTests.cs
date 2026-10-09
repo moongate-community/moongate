@@ -338,6 +338,7 @@ public sealed class ServerRoleRegistrationTests
         Assert.NotNull(container.Resolve<KillCommand>());
         Assert.NotNull(container.Resolve<ResurrectCommand>());
         Assert.NotNull(container.Resolve<IMountService>());
+        Assert.NotNull(container.Resolve<MountModule>());
         Assert.NotNull(container.Resolve<TameCommand>());
         Assert.NotNull(container.Resolve<UseRequestPacketHandler>());
         Assert.NotNull(container.Resolve<MoveRequestPacketHandler>());

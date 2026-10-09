@@ -48,6 +48,23 @@ public sealed class MountTemplatesTests
     }
 
     [Fact]
+    public async Task EveryEtherealStatuette_NamesAnExistingMountItemOnTheMountLayer_AndUsesTheScript()
+    {
+        var (_, items) = await LoadAsync();
+        var statuettes = items.Values.Where(item => item.ScriptId == "ethereal_mount").ToList();
+
+        Assert.Equal(8, statuettes.Count);
+        Assert.All(
+            statuettes,
+            statuette =>
+            {
+                Assert.True(items.TryGetValue(statuette.Tags![MountProps.MountItemTag], out var mount), statuette.Id);
+                Assert.Equal(LayerType.Mount, mount!.Layer);
+            }
+        );
+    }
+
+    [Fact]
     public async Task EveryMountItemTag_PointsToAnItemOnTheMountLayer()
     {
         var (mobiles, items) = await LoadAsync();
