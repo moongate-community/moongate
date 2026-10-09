@@ -39,6 +39,8 @@ public class UltimaConfig : IConfigSection
 
     public HelpConfig Help { get; set; } = new();
 
+    public ScheduleConfig Schedule { get; set; } = new();
+
     public BulletinBoardsConfig BulletinBoards { get; set; } = new();
 
     public BankConfig Bank { get; set; } = new();
@@ -152,6 +154,13 @@ public class UltimaConfig : IConfigSection
         }
 
         Help.Validate();
+
+        if (Schedule is null)
+        {
+            throw new InvalidOperationException("The ultima.schedule configuration section cannot be null.");
+        }
+
+        Schedule.Validate();
 
         if (BulletinBoards is null)
         {
