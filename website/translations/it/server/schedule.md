@@ -1,11 +1,11 @@
-<!-- translation: {"sourceHash":"a9a1242335ef0da0dd23d12bfd3725b751191fa7c1d2cb4c908bb33918837b40","title":"Calendario"} -->
+<!-- translation: {"sourceHash":"b2c06877b28b54e27ac437bdb8b59a7d0f2115fdd99d8a29714139b7df664b9f","title":"Calendario"} -->
 
 # Calendario
 
 `data/schedule.toml` è il calendario del server. Contiene due cose: i **task**, che girano a un'ora
 del giorno o della settimana, come uno spegnimento con avvisi, e gli **eventi stagionali**, attivi
-tra due date, come Halloween. Non gira niente finché l'operatore non scrive una voce: il file
-fornito ha solo esempi nei commenti.
+tra due date, come Halloween. Nessun task gira finché l'operatore non ne scrive uno: il file
+fornito ha i task come esempi nei commenti, e l'evento `halloween` acceso (vedi [Feste](holidays.md)).
 
 ```toml
 [[task]]

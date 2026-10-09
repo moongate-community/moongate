@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**270 systems:** ✅ 88 done, 🟡 58 partly done, ❌ 124 not built yet.
+**271 systems:** ✅ 88 done, 🟡 59 partly done, ❌ 124 not built yet.
 
-**Coverage: 33%** of the systems done, **43%** counting a partly done system as half.
+**Coverage: 32%** of the systems done, **43%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -279,6 +279,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Commands with access levels | ✅ | From the console (TAB completion of commands and arguments, Up/Down history) and in game; see [Commands](commands.md) |
 | World save | ✅ | Periodic and on shutdown, with `.save` |
 | Scheduled tasks, shutdown and seasonal events | ✅ | `data/schedule.toml`: tasks by hour, day or week (shutdown with warnings, message, Lua function), events by date with a staff switch and `on_start`/`on_end` hooks, in a chosen time zone; see [Schedule](schedule.md) |
+| Holiday events | 🟡 | [Holidays](holidays.md): Halloween is on from October 24 to November 15, and shopkeepers answer "trick or treat" with a candy or a trick; no Christmas, no decorations yet |
 | Database backup | ✅ | Rotating SQL exports on a schedule and with `.sql_backup`; restore with psql |
 | Console | ✅ | |
 | Server configuration | ✅ | `moongate.toml`, validated at startup |
