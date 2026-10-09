@@ -11,8 +11,8 @@ uv run moongate-convert modernuo-signs \
 ```
 
 Ported so far: `modernuo-signs`, `modernuo-teleporters`, `modernuo-locations`, `modernuo-chests`, `modernuo-books`, `modernuo-vendors`,
-`modernuo-guildmasters` and `modernuo-spawns`, and of UOX3 `uox` for the items and the loot lists (`--mobile-source` and the NPC, name, starting
-item, npc list and spawn passes it hands over to are not ported yet). The options are those of the `mgctl convert`
+`modernuo-guildmasters` and `modernuo-spawns`, and of UOX3 `uox` with every pass (items, loot lists, mobiles, name lists, starting items, npc lists
+and spawns). The options are those of the `mgctl convert`
 command of the same name (`mgctl convert uox` for `uox`), and so are the exit codes: 0 done, 2 a source that is missing or is not what it should be
 (nothing is written); `uox` exits 1 when reading what it wrote back finds an id twice or a reference that does not resolve.
 

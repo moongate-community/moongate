@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"1e1888a3b5110007454faff295084b31e6718b5cc1c91b2bf5cb5ee565ed4108","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"3a4510af8f053ac7191abd1cdf2e61032a6c4b86012e77fbd2cfed48d7a90ee8","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
@@ -276,8 +276,8 @@ pagnotte e infine una brocca d'acqua (vedi il [file distribuito](data-files/star
 ## Convertitori in Python
 
 I convertitori passano da `mgctl convert` a un pacchetto Python, `tools/convert`, una parte alla volta. Quelli di ModernUO ci sono già tutti (insegne, teletrasporti,
-luoghi nominati, forzieri del tesoro, libri, venditori, maestri di gilda e spawn), con le stesse opzioni e lo stesso output, byte per byte (unica eccezione: il convertitore dei luoghi corregge anche la Cella 7 del carcere, che ModernUO mette sul posto della Cella 6); quelli di UOX3 restano in `mgctl`
-finché non vengono portati. Due differenze: `modernuo-books` non controlla che un libro stia nei pacchetti del client (quel controllo resta ai test C# del catalogo distribuito) e `modernuo-vendors` crea anche un negozio per il ladro e il ranger. Nelle sezioni sotto, `mgctl convert modernuo-signs` si può sostituire con:
+luoghi nominati, forzieri del tesoro, libri, venditori, maestri di gilda e spawn), con le stesse opzioni e lo stesso output, byte per byte (unica eccezione: il convertitore dei luoghi corregge anche la Cella 7 del carcere, che ModernUO mette sul posto della Cella 6); e così quello di UOX3, `uox`, con tutti i
+suoi passi (`uv run moongate-convert uox` prende le opzioni di `mgctl convert uox`). Tre differenze: quando un sorgente non è come dovrebbe (un intervallo di bottino invertito, due intestazioni che diventano lo stesso id, un colore fuori intervallo, un file illeggibile) il comando Python esce con codice 2 e un messaggio dove il C# si fermava con un'eccezione non gestita; `modernuo-books` non controlla che un libro stia nei pacchetti del client (quel controllo resta ai test C# del catalogo distribuito) e `modernuo-vendors` crea anche un negozio per il ladro e il ranger. Nelle sezioni sotto, `mgctl convert modernuo-signs` si può sostituire con:
 
 ```sh
 cd tools/convert
