@@ -1,4 +1,9 @@
+using DryIoc;
+using Moongate.Core.Primitives;
 using Moongate.Scripting.Data.Scripts;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Events;
+using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Schedule;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
@@ -17,6 +22,7 @@ public sealed class SeasonalEventServiceTests
     private readonly RecordingEventScriptService _scripts = new();
     private readonly RecordingDataAccess<WorldStateEntity> _data = new();
     private readonly StubGameLoop _loop = new();
+    private readonly Container _container = new();
     private WorldPropsService _props = null!;
 
     [Fact]
@@ -241,6 +247,43 @@ public sealed class SeasonalEventServiceTests
         Assert.Null(exception);
     }
 
+    [Fact]
+    public async Task ALogin_CallsOnLoginOfTheActiveEventsOnly()
+    {
+        _clock.Now = Local(2026, 10, 25, 12);
+        await Start();
+        _scripts.Calls.Clear();
+
+        await Bus().PublishAsync(new CharacterEnteredWorldEvent(new() { Id = new Serial(2) }));
+
+        var call = Assert.Single(_scripts.Calls);
+        Assert.Equal(("halloween", "on_login"), (call.Script, call.Function));
+        Assert.Equal(["halloween", "Halloween", 2L], call.Args);
+    }
+
+    [Fact]
+    public async Task AfterStopAsync_ALoginCallsNothing()
+    {
+        _clock.Now = Local(2026, 10, 25, 12);
+        var service = await Start();
+        _scripts.Calls.Clear();
+        await service.StopAsync();
+
+        await Bus().PublishAsync(new CharacterEnteredWorldEvent(new() { Id = new Serial(2) }));
+
+        Assert.Empty(_scripts.Calls);
+    }
+
+    private IMoongateEventBus Bus()
+    {
+        if (!_container.IsRegistered<IMoongateEventBus>())
+        {
+            _container.RegisterMoongateEventBus();
+        }
+
+        return _container.Resolve<IMoongateEventBus>();
+    }
+
     private static DateTimeOffset Local(int year, int month, int day, int hour = 0, int minute = 0)
     {
         var local = new DateTime(year, month, day, hour, minute, 0, DateTimeKind.Unspecified);
@@ -271,6 +314,7 @@ public sealed class SeasonalEventServiceTests
             _props,
             _timers,
             _loop,
+            Bus(),
             _scripts,
             _clock,
             zone ?? TestZones.Europe

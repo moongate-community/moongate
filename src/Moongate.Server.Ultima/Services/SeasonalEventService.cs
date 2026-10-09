@@ -1,5 +1,7 @@
 using Moongate.Scripting.Types.Scripts;
+using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Schedule;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -27,6 +29,7 @@ public sealed class SeasonalEventService : ISeasonalEventService
     private readonly IWorldPropsService _props;
     private readonly ITimerService _timers;
     private readonly IGameLoopService _loop;
+    private readonly IMoongateEventBus _bus;
     private readonly IEventScriptService _scripts;
     private readonly TimeProvider _time;
     private readonly TimeZoneInfo _zone;
@@ -34,16 +37,18 @@ public sealed class SeasonalEventService : ISeasonalEventService
 
     private List<ScheduleEvent> _events = [];
     private string? _timerId;
+    private IDisposable? _logins;
 
     public SeasonalEventService(
         IDataLoaderService data,
         IWorldPropsService props,
         ITimerService timers,
         IGameLoopService loop,
+        IMoongateEventBus events,
         IEventScriptService scripts,
         TimeProvider time,
         Data.Config.ScheduleConfig config
-    ) : this(data, props, timers, loop, scripts, time, config.Resolve())
+    ) : this(data, props, timers, loop, events, scripts, time, config.Resolve())
     {
     }
 
@@ -52,12 +57,14 @@ public sealed class SeasonalEventService : ISeasonalEventService
         IWorldPropsService props,
         ITimerService timers,
         IGameLoopService loop,
+        IMoongateEventBus events,
         IEventScriptService scripts,
         TimeProvider time,
         TimeZoneInfo zone
     )
     {
         _loop = loop;
+        _bus = events;
         _data = data;
         _props = props;
         _timers = timers;
@@ -84,11 +91,22 @@ public sealed class SeasonalEventService : ISeasonalEventService
         );
         await _loop.PostAsync(start);
         await start.Completion;
+        _logins = _bus.Subscribe<CharacterEnteredWorldEvent>(async (evt, cancellationToken) =>
+            {
+                // The login comes from the handler's thread; the hooks belong to the game loop.
+                var work = new LoopActionWorkItem(() => LoggedIn(evt.Character.Id.Value));
+                await _loop.PostAsync(work, cancellationToken);
+                await work.Completion;
+            }
+        );
         _logger.Information("Loaded {Count} seasonal events", _events.Count);
     }
 
     public Task StopAsync()
     {
+        _logins?.Dispose();
+        _logins = null;
+
         if (_timerId is not null)
         {
             _timers.UnregisterTimer(_timerId);
@@ -208,11 +226,19 @@ public sealed class SeasonalEventService : ISeasonalEventService
         }
     }
 
-    private void RunHook(ScheduleEvent item, string function)
+    private void LoggedIn(long player)
+    {
+        foreach (var item in _events.Where(Computed))
+        {
+            RunHook(item, "on_login", player);
+        }
+    }
+
+    private void RunHook(ScheduleEvent item, string function, params object[] extra)
     {
         try
         {
-            var result = _scripts.Call(item.Id, function, item.Id, item.Name);
+            var result = _scripts.Call(item.Id, function, [item.Id, item.Name, .. extra]);
 
             if (result.Kind == ScriptResultKind.Failed && _warned.Add($"{item.Id}.{function}"))
             {
