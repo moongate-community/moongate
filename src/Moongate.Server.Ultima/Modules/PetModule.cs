@@ -5,6 +5,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Server.Ultima.Types.Pets;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -15,18 +16,14 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("pet", "Asks about the creatures a player has tamed and tames a wild one, as the Animal Taming skill does.")]
 public sealed class PetModule
 {
-    private const int AttendedLimit = 256;
-
-    // Several pets hear the same words in the same moment: the first to ask answers for them all.
-    private static readonly TimeSpan AttendedFor = TimeSpan.FromMilliseconds(500);
-
     private readonly IPetService _pets;
     private readonly ITamingService _taming;
     private readonly IMobileService _mobiles;
     private readonly IMobileStateService _state;
     private readonly ISessionService _sessions;
     private readonly TimeProvider _time;
-    private readonly Dictionary<Serial, DateTimeOffset> _attended = new();
+    // Several pets hear the same words in the same moment: the first to ask answers for them all.
+    private readonly Attendance _attendance = new();
 
     public PetModule(
         IPetService pets,
@@ -135,25 +132,7 @@ public sealed class PetModule
             return false;
         }
 
-        var now = _time.GetUtcNow();
-
-        if (_attended.TryGetValue(mobile.Id, out var last) && now - last < AttendedFor && now >= last)
-        {
-            return false;
-        }
-
-        // The players who left are forgotten as the list is used.
-        if (_attended.Count > AttendedLimit)
-        {
-            foreach (var gone in _attended.Where(entry => now - entry.Value >= AttendedFor).Select(entry => entry.Key).ToArray())
-            {
-                _attended.Remove(gone);
-            }
-        }
-
-        _attended[mobile.Id] = now;
-
-        return true;
+        return _attendance.TryAttend(mobile.Id, _time.GetUtcNow());
     }
 
     /// <summary>

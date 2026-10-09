@@ -189,6 +189,20 @@ public sealed class PetServiceTests
     }
 
     [Fact]
+    public void Release_PutsTheCreatureBackInItsSpawnRegion()
+    {
+        var horse = Creature(0x100, "horse");
+        horse.SetProp(SpawnRegionService.RegionProp, "britain");
+        _service.TryTame(_player, horse);
+        Assert.False(horse.TryGetProp<string>(SpawnRegionService.RegionProp, out _));
+
+        _service.Release(_player, horse);
+
+        Assert.Equal("britain", horse.GetProp<string>(SpawnRegionService.RegionProp));
+        Assert.False(horse.TryGetProp<string>(MountProps.PetRegion, out _));
+    }
+
+    [Fact]
     public void Changed_MakesTheNextCountFresh_WithoutWaitingForTheMemory()
     {
         var horse = Creature(0x100, "horse");

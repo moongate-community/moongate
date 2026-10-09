@@ -376,7 +376,8 @@ function creature.new(options)
         local fought = combat.target(serial)
 
         if fought ~= nil and (mind.state ~= "chase" or mind.target ~= fought) and (mind.state ~= "flee" or mind.target ~= fought) then
-            if flees then
+            -- A pet that flees by nature fights when its owner sends it, and when it is hit: it is no longer alone.
+            if flees and not is_owned(serial) then
                 start_flee(serial, mind, fought)
             else
                 retaliate(serial, mind, fought)

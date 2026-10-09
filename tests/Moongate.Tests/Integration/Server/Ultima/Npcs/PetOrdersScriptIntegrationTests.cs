@@ -75,7 +75,8 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
     private readonly MobileTemplateService _templates = new(
         new StubDataLoaderService().With(
             new MobileTemplate { Id = "horse", ScriptId = "animal" },
-            new MobileTemplate { Id = "orc", ScriptId = "monster" }
+            new MobileTemplate { Id = "orc", ScriptId = "monster" },
+            new MobileTemplate { Id = "rabbit", ScriptId = "scared_animal" }
         )
     );
 
@@ -168,6 +169,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
             new StubDataLoaderService().With(
                 new BodyContent { Body = new(0xE2), Type = BodyType.Animal },
                 new BodyContent { Body = new(0xDC), Type = BodyType.Animal },
+                new BodyContent { Body = new(0xCD), Type = BodyType.Animal },
                 new BodyContent { Body = new(0x11), Type = BodyType.Monster },
                 new BodyContent { Body = new(0x190), Type = BodyType.Human }
             )
@@ -182,7 +184,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
             );
 
         foreach (var script in new[]
-                     { "common/creature.lua", "common/pet_orders.lua", "mobiles/animal.lua", "mobiles/monster.lua", "gumps/pet_release.lua" })
+                     { "common/creature.lua", "common/pet_orders.lua", "mobiles/animal.lua", "mobiles/monster.lua", "mobiles/scared_animal.lua", "gumps/pet_release.lua" })
         {
             _scripts.Write(script, File.ReadAllText(ShippedScript(script)));
         }
@@ -244,7 +246,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
 
         Think(1);
 
-        Assert.Equal((_horse, MapType.Trammel, new Point3D(1620, 1600, 0)), Assert.Single(_teleports.Teleports));
+        AssertBesideTheOwner(1620, 1600);
     }
 
     [Fact]
@@ -267,10 +269,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
         Think(1);
 
         Assert.Empty(_errors.Select(error => error.ToString()));
-        Assert.Equal(
-            (_horse, MapType.Trammel, new Point3D(1605, 1600, 0)),
-            Assert.Single(_teleports.Teleports)
-        );
+        AssertBesideTheOwner(1605, 1600);
     }
 
     [Theory, InlineData(30), InlineData(25)]
@@ -551,6 +550,27 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void ATamedRabbit_ThatFleesByNature_FightsWhenItsOwnerSendsIt_InsteadOfRunning()
+    {
+        var rabbit = new MobileEntity
+        {
+            Id = new Serial(0x310), Name = "a rabbit", TemplateId = "rabbit", Body = 0xCD, Map = MapType.Trammel,
+            Location = new Point3D(1601, 1601, 0), Hits = 20, HitsMax = 20
+        };
+        rabbit.SetProp("owner", Owner);
+        _fixture.Mobiles.EnterWorld(rabbit);
+        _targets.Result = TargetResult.ForObject(_orc.Id);
+
+        Say("all kill", SpeechKeywordType.AllKill);
+        _npcs.Think(rabbit);
+        _npcs.Think(rabbit);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Contains((rabbit, _orc), _combat.Attacks);
+        Assert.DoesNotContain(rabbit, _combat.Stopped);
+    }
+
+    [Fact]
     public void ATamedWolfLikeMonster_StillFollowsItsOwner_AndDoesNotHuntIt()
     {
         var wolf = new MobileEntity
@@ -570,6 +590,15 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
     }
 
     // --- helpers ---
+
+    // One tile from the owner, on a free tile beside it, never on the owner's own.
+    private void AssertBesideTheOwner(int x, int y)
+    {
+        var (mobile, map, location) = Assert.Single(_teleports.Teleports);
+
+        Assert.Equal((_horse, MapType.Trammel), (mobile, map));
+        Assert.Equal(1, Math.Max(Math.Abs(location.X - x), Math.Abs(location.Y - y)));
+    }
 
     private MobileEntity Pet(uint serial, string name, int x)
     {

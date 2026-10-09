@@ -46,6 +46,11 @@ public static class MountProps
     public const string PetOrder = "pet.order";
 
     /// <summary>
+    ///     Prop of a creature: the spawn region it was taken out of when it was tamed, put back when it is let go.
+    /// </summary>
+    public const string PetRegion = "pet.region";
+
+    /// <summary>
     ///     Tag of a mobile template: the id of the item template, on the mount layer, that the creature turns into when it
     ///     is ridden. An empty value, or no tag, makes the creature no mount.
     /// </summary>

@@ -7,8 +7,9 @@
 --
 --   follow  the pet stays near its owner: it walks when it is farther than 2 tiles and runs from 7, taking three steps a
 --           think from then on to keep up; when it cannot get there in 10 steps, or falls more than 16 tiles behind, it is
---           moved beside the owner, wherever that is: a wall or a house too. Beyond 24 tiles, on another map, or when its
---           owner is not in the world, it stands still.
+--           moved to a free tile beside the owner, one a walking mobile could step onto (world.spot_beside), so not
+--           behind a wall; if there is none it stays. Beyond 24 tiles, on another map, or when its owner is not in the
+--           world, it stands still.
 --   come    as follow, and when it is beside the owner it stays.
 --   stay    it stands still.
 --   guard   it stays within 3 tiles of its owner and fights whoever fights the owner or the pet.
@@ -16,7 +17,7 @@
 --   The words, said by the owner within 14 tiles: come, follow, follow me, stay, stop, guard, kill, attack and release,
 --   with "all" before them for every pet that hears, or with the name of the pet first for that pet. Kill and attack ask
 --   for a target (one pet asks for all, and the owner is a criminal when it sends them against an innocent); release asks
---   for a yes.
+--   for a yes. A pet that flees by nature fights when it is told to.
 --
 -- Functions:
 --   think(serial, mind, here)                 one think of an owned pet that is not fighting
@@ -94,6 +95,17 @@ local function distance(a, b)
     return math.max(math.abs(a.x - b.x), math.abs(a.y - b.y))
 end
 
+-- Moves the pet to a free tile beside its owner, when there is one.
+local function rescue(serial, mind, there)
+    local spot = world.spot_beside(there.map, there.x, there.y, there.z)
+
+    if spot ~= nil then
+        mobile.teleport(serial, spot.x, spot.y, spot.z, spot.map)
+    end
+
+    mind.stuck = 0
+end
+
 -- Walks the pet to its owner, or moves it beside when it cannot get there.
 local function follow(serial, mind, here, there, close)
     local far = distance(here, there)
@@ -110,8 +122,7 @@ local function follow(serial, mind, here, there, close)
 
     -- Far behind: it is where its owner is.
     if far > LAGGING then
-        mobile.teleport(serial, there.x, there.y, there.z, there.map)
-        mind.stuck = 0
+        rescue(serial, mind, there)
 
         return
     end
@@ -130,8 +141,7 @@ local function follow(serial, mind, here, there, close)
         mind.stuck = (mind.stuck or 0) + 1
 
         if mind.stuck >= STUCK_STEPS then
-            mobile.teleport(serial, there.x, there.y, there.z, there.map)
-            mind.stuck = 0
+            rescue(serial, mind, there)
         end
     else
         mind.stuck = 0
