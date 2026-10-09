@@ -101,14 +101,14 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     private readonly ItemEntity _backpack = new()
         { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
 
-    private readonly ItemEntity _pole = new()
+    private readonly ItemEntity _axe = new()
         { Id = new Serial(0x40000002), TemplateId = "hatchet", ItemId = 0x0F43, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
     private LuaScriptEngineService _engine = null!;
     private ItemScriptService _itemScripts = null!;
     private MobileEntity _aria = null!;
-    private Point3D _water;
+    private Point3D _tree;
     private readonly HashSet<string> _fired = [];
 
     public AxeScriptIntegrationTests()
@@ -136,11 +136,11 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
 
         // A master lumberjack, so the try always passes; the tree is two tiles east, and the axe in the hands.
         Skill(1000);
-        _water = new Point3D(_aria.Location.X + 2, _aria.Location.Y, 20);
+        _tree = new Point3D(_aria.Location.X + 2, _aria.Location.Y, 20);
 
         _backpack.Equip(new Serial((uint)Aria), LayerType.Backpack);
-        _pole.Equip(new Serial((uint)Aria), LayerType.TwoHanded);
-        _items.Add([_backpack, _pole]);
+        _axe.Equip(new Serial((uint)Aria), LayerType.TwoHanded);
+        _items.Add([_backpack, _axe]);
 
         for (uint serial = 0x40000100; serial < 0x40000110; serial++)
         {
@@ -239,7 +239,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         // The middle of the five: two swings.
         Rolls(0.5);
 
-        Use(_water);
+        Use(_tree);
 
         Assert.Empty(_errors);
         Assert.Equal([UseOnWhat], Told());
@@ -259,7 +259,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Assert.Equal([UseOnWhat, Chopped], Told());
         var logs = Assert.Single(Caught());
         Assert.Equal((0x1BE0, 10), (logs.ItemId, logs.Amount));
-        Assert.Equal(1, _harvest.Amount("wood", MapType.Trammel, _water.X, _water.Y));
+        Assert.Equal(1, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
     }
 
     [Theory]
@@ -270,9 +270,105 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     {
         Rolls(roll);
 
-        Use(_water);
+        Use(_tree);
 
         Assert.Equal(seconds, _timers.Timers.Max(timer => timer.Interval.TotalSeconds), 3);
+    }
+
+    [Theory]
+    // The five rolls of the swings: one, two, two, two, three.
+    [InlineData(0.1, 1)]
+    [InlineData(0.3, 2)]
+    [InlineData(0.5, 2)]
+    [InlineData(0.7, 2)]
+    [InlineData(0.9, 3)]
+    public void Chopping_SwingsOnceTwiceOrThrice_TwiceMoreOftenThanNot(double roll, int swings)
+    {
+        Rolls(roll);
+
+        Use(_tree);
+
+        // A sound for each swing, and a timer for each swing after the first, 1.6 seconds apart.
+        var seconds = _timers.Timers.Select(timer => Math.Round(timer.Interval.TotalSeconds, 1)).Order().ToArray();
+        var expected = Enumerable.Range(0, swings).Select(swing => Math.Round(swing * 1.6 + 0.9, 1))
+            .Concat(Enumerable.Range(1, swings - 1).Select(swing => Math.Round(swing * 1.6, 1)))
+            .Order()
+            .ToArray();
+        Assert.Equal(expected, seconds);
+    }
+
+    [Theory]
+    // The first and the last graphic of each range of trees, and what lies just outside them.
+    [InlineData(0x0CCA, true)]
+    [InlineData(0x0CE8, true)]
+    [InlineData(0x0CE9, false)]
+    [InlineData(0x0CF8, true)]
+    [InlineData(0x0D03, true)]
+    [InlineData(0x0D41, true)]
+    [InlineData(0x0D53, true)]
+    [InlineData(0x0D57, true)]
+    [InlineData(0x0D69, true)]
+    [InlineData(0x0D6E, true)]
+    [InlineData(0x0D7F, true)]
+    [InlineData(0x0D80, false)]
+    [InlineData(0x0D84, true)]
+    [InlineData(0x0D90, true)]
+    [InlineData(0x0D95, true)]
+    [InlineData(0x0D98, false)]
+    [InlineData(0x0D9B, true)]
+    [InlineData(0x0D9F, true)]
+    [InlineData(0x0DA3, true)]
+    [InlineData(0x0DA7, true)]
+    [InlineData(0x0DAB, true)]
+    [InlineData(0x0DAC, false)]
+    [InlineData(0x12B5, true)]
+    [InlineData(0x12C7, true)]
+    [InlineData(0x12C8, false)]
+    public void Chopping_KnowsATreeByItsGraphic(int graphic, bool tree)
+    {
+        Use(_tree, graphic);
+
+        Assert.Empty(_errors);
+        Assert.Equal(tree ? [UseOnWhat] : new[] { UseOnWhat, NotATree }, Told());
+    }
+
+    [Fact]
+    public void Chopping_TheLastCutTakenMeanwhile_GivesNoWood_AtTheLastSwing()
+    {
+        Rolls(0.0);
+        Use(_tree);
+        _harvest.TryTake("wood", MapType.Trammel, _tree.X, _tree.Y);
+        _harvest.TryTake("wood", MapType.Trammel, _tree.X, _tree.Y);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([UseOnWhat, NoWood], Told());
+        Assert.Empty(Caught());
+    }
+
+    [Fact]
+    public void Chopping_ThePlayerDiesAtTheFirstSwing_SwingsNoMore_AndGetsNothing()
+    {
+        Rolls(0.9);
+        Use(_tree);
+        _aria.Body = 0x0192;
+        Fire(0.9);
+        Fire(1.6);
+        Fire(2.5);
+        Fire(3.2);
+        Fire(4.1);
+
+        Assert.Empty(_errors);
+        // The swing played at once is the only one, and the axe is not heard.
+        Assert.Single(_view.Calls, call => call.StartsWith("Animated", StringComparison.Ordinal));
+        Assert.Empty(_speech.Sounds);
+        Assert.Equal([UseOnWhat], Told());
+        Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
+
+        // And free to chop again once alive.
+        _aria.Body = 0x0190;
+        Use(_tree);
+        Assert.Equal(UseOnWhat, Told()[^1]);
     }
 
     [Fact]
@@ -280,22 +376,22 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     {
         Rolls(0.0, 0.0);
 
-        Use(_water);
+        Use(_tree);
         Fire(0.9);
-        Use(_water);
+        Use(_tree);
         Fire(0.9);
 
         Assert.Empty(_errors);
         Assert.Equal(20, Assert.Single(Caught()).Amount);
-        Assert.Equal(0, _harvest.Amount("wood", MapType.Trammel, _water.X, _water.Y));
+        Assert.Equal(0, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
     }
 
     [Fact]
     public void Chopping_WithTheAxeInTheBackpack_NeedsItEquipped()
     {
-        _items.MoveToContainer(_pole, _backpack.Id, new Point2D(44, 65));
+        _items.MoveToContainer(_axe, _backpack.Id, new Point2D(44, 65));
 
-        Use(_water);
+        Use(_tree);
 
         Assert.Empty(_errors);
         Assert.Equal([NotEquipped], Told());
@@ -306,8 +402,8 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     public void Chopping_WhatIsNoTree_CannotUseAnAxeOnThat()
     {
         // A rock, the bare land, and a mobile.
-        Use(_water, 0x1773);
-        Use(_water, 0);
+        Use(_tree, 0x1773);
+        Use(_tree, 0);
         Use(_aria.Id);
 
         Assert.Empty(_errors);
@@ -323,7 +419,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Assert.Equal([UseOnWhat, TooFar], Told());
         Assert.Empty(_timers.Timers);
 
-        Use(_water);
+        Use(_tree);
 
         Assert.NotEmpty(_timers.Timers);
     }
@@ -332,14 +428,14 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     public void Chopping_WhileChopping_DoesNothing_AndIsFreeAgainAfterTheResult()
     {
         Rolls(0.0, 0.0);
-        Use(_water);
-        Use(_water);
+        Use(_tree);
+        Use(_tree);
 
         Assert.Equal([UseOnWhat], Told());
         Assert.Single(_timers.Timers);
 
         Fire(0.9);
-        Use(_water);
+        Use(_tree);
 
         Assert.Empty(_errors);
         Assert.Equal(UseOnWhat, Told()[^1]);
@@ -348,17 +444,17 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     [Fact]
     public void Chopping_WhereNoWoodIsLeft_SaysSoAtOnce_AndItComesBack()
     {
-        _harvest.TryTake("wood", MapType.Trammel, _water.X, _water.Y);
-        _harvest.TryTake("wood", MapType.Trammel, _water.X, _water.Y);
+        _harvest.TryTake("wood", MapType.Trammel, _tree.X, _tree.Y);
+        _harvest.TryTake("wood", MapType.Trammel, _tree.X, _tree.Y);
 
-        Use(_water);
+        Use(_tree);
 
         Assert.Empty(_errors);
         Assert.Equal([UseOnWhat, NoWood], Told());
         Assert.Empty(_timers.Timers);
 
         _time.Advance(TimeSpan.FromMinutes(20));
-        Use(_water);
+        Use(_tree);
 
         Assert.NotEmpty(_timers.Timers);
     }
@@ -369,13 +465,13 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Skill(0);
         Rolls(0.0);
 
-        Use(_water);
+        Use(_tree);
         Fire(0.9);
 
         Assert.Empty(_errors);
         Assert.Equal([UseOnWhat, Failed], Told());
         Assert.Empty(Caught());
-        Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _water.X, _water.Y));
+        Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
     }
 
     [Fact]
@@ -384,39 +480,39 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         Rolls(0.0);
         _serials.Serials.Clear();
 
-        Use(_water);
+        Use(_tree);
         Fire(0.9);
 
         Assert.Empty(_errors);
         Assert.Equal([UseOnWhat, NoRoom], Told());
-        Assert.Equal(1, _harvest.Amount("wood", MapType.Trammel, _water.X, _water.Y));
+        Assert.Equal(1, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
     }
 
     [Fact]
     public void Chopping_ThePlayerWalksAway_OrPutsTheAxeAway_GetsNothing()
     {
         Rolls(0.0, 0.0);
-        Use(_water);
-        _aria.Location = new Point3D(_water.X - 5, _aria.Location.Y, _aria.Location.Z);
+        Use(_tree);
+        _aria.Location = new Point3D(_tree.X - 5, _aria.Location.Y, _aria.Location.Z);
         Fire(0.9);
 
         Assert.Equal([UseOnWhat, TooFar], Told());
 
-        _aria.Location = new Point3D(_water.X - 2, _aria.Location.Y, _aria.Location.Z);
-        Use(_water);
-        _items.MoveToContainer(_pole, _backpack.Id, new Point2D(44, 65));
+        _aria.Location = new Point3D(_tree.X - 2, _aria.Location.Y, _aria.Location.Z);
+        Use(_tree);
+        _items.MoveToContainer(_axe, _backpack.Id, new Point2D(44, 65));
         Fire(0.9);
 
         Assert.Empty(_errors);
         Assert.Empty(Caught());
-        Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _water.X, _water.Y));
+        Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
     }
 
     [Fact]
     public void Chopping_ThePlayerLeavesTheWorldMeanwhile_GetsNothing_WithoutAnError()
     {
         Rolls(0.5);
-        Use(_water);
+        Use(_tree);
         _fixture.Mobiles.LeaveWorld(_aria.Id);
         Fire(0.9);
         Fire(1.6);
@@ -424,7 +520,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal([UseOnWhat], Told());
-        Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _water.X, _water.Y));
+        Assert.Equal(2, _harvest.Amount("wood", MapType.Trammel, _tree.X, _tree.Y));
     }
 
     public async Task DisposeAsync()
@@ -445,7 +541,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
 
     private void Rolls(params double[] rolls)
     {
-        _itemScripts.Run(_pole, "set_rolls", rolls.Cast<object?>().ToArray());
+        _itemScripts.Run(_axe, "set_rolls", rolls.Cast<object?>().ToArray());
     }
 
     private void Use(Point3D place, int graphic = Tree)
@@ -463,7 +559,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
     private void Run()
     {
         _loop.DeferTryPost = true;
-        _itemScripts.Run(_pole, "on_use", Aria);
+        _itemScripts.Run(_axe, "on_use", Aria);
 
         while (_loop.Deferred.Count > 0)
         {
@@ -488,10 +584,10 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         return _speech.ToldClilocs.Where(told => told.Player == _aria).Select(told => told.Cliloc).ToList();
     }
 
-    // What lies in the backpack beside the pole.
+    // What lies in the backpack.
     private List<ItemEntity> Caught()
     {
-        return _items.GetContents(_backpack.Id).Where(item => item.Id != _pole.Id).ToList();
+        return _items.GetContents(_backpack.Id).Where(item => item.Id != _axe.Id).ToList();
     }
 
     private static string RepositoryRoot()

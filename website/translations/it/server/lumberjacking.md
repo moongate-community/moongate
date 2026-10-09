@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ca1930b8b1afb63b6cbc37050f515ae164120e269d2080dd00179902fa4833ea","title":"Taglio della legna"} -->
+<!-- translation: {"sourceHash":"62cb9b08b88ac110a7960dd47083e7c830edba5d7f805ae333ca12c2c7a56334","title":"Taglio della legna"} -->
 
 # Taglio della legna
 
@@ -31,8 +31,8 @@ La prova viene tirata sull'abilità Lumberjacking tra 0 e 100, quindi la probabi
 stessa, e l'abilità può crescere a ogni prova. Un taglio riuscito dà 10 tronchi, che si uniscono a quelli già nello
 zaino. L'ascia non si consuma.
 
-Ogni ascia taglia: l'accetta, l'ascia, l'ascia da battaglia, l'ascia doppia, l'ascia del boia, la grande ascia da
-battaglia, l'ascia a due mani, l'ascia ornata e l'ascia da battaglia gargish. Un'ascia da guerra è una mazza e non taglia nulla.
+Queste asce tagliano: l'accetta, l'ascia, l'ascia da battaglia, l'ascia doppia, l'ascia del boia, la grande ascia da
+battaglia, l'ascia a due mani, l'ascia ornata e l'ascia da battaglia gargish. L'ascia gargish, le doppie asce corte e le asce da allenamento no, e un'ascia da guerra è una mazza.
 
 ## La legna di un luogo
 

@@ -29,8 +29,8 @@ The try is rolled on the Lumberjacking skill between 0 and 100, so the chance of
 itself, and the skill may rise at every try. A cut that works gives 10 logs, which join the logs already in the
 backpack. The axe does not wear out.
 
-Every axe chops: the hatchet, the axe, the battle axe, the double axe, the executioner's axe, the large battle
-axe, the two handed axe, the ornate axe and the gargish battle axe. A war axe is a mace and chops nothing.
+These axes chop: the hatchet, the axe, the battle axe, the double axe, the executioner's axe, the large battle
+axe, the two handed axe, the ornate axe and the gargish battle axe. The gargish axe, the dual short axes and the practice axes do not, and a war axe is a mace.
 
 ## The wood of a place
 

@@ -268,11 +268,12 @@ public sealed class ItemModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "The serial of the mobile that wears the item or holds it in its hands; nil for an item in a backpack or another container, on the ground or unknown."
+        "The serial of the mobile that wears the item or holds it in its hands (a backpack is worn too); nil for an item inside a backpack or another container, on the ground, lifted onto a player's cursor or unknown."
     )]
     public long? WornBy(long serial)
     {
-        return TryGetItem(serial, out var item) && item.MobileId is { } wearer ? wearer.Value : null;
+        // An item lifted off the paperdoll is still its wearer's until it is dropped: it is in nobody's hands.
+        return TryGetItem(serial, out var item) && item.MobileId is { } wearer && !IsHeld(item) ? wearer.Value : null;
     }
 
     /// <summary>

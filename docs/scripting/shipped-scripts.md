@@ -188,8 +188,8 @@ client's own texts as system messages (ModernUO shows them over the one examined
 
 ## axe.lua
 
-`scripts/items/axe.lua` is the script of the axes (`script_id = "axe"` on the axe bases, which every axe takes from
-its base): see [Lumberjacking](../lumberjacking.md). The axe must be in the hands of who double clicks it
+`scripts/items/axe.lua` is the script of the axes (`script_id = "axe"` on nine axe bases, which their axes take from
+their base): see [Lumberjacking](../lumberjacking.md). The axe must be in the hands of who double clicks it
 (`item.worn_by`). The place picked must be a tree within 2 tiles: `target.pick_location` gives the `graphic` of the
 static that was picked, and the script holds the graphics that are trees. The character swings one to three times
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have wood left (`harvest.amount`), the

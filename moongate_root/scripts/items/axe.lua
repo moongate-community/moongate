@@ -164,6 +164,11 @@ local function chop(tool, user, picked)
 
     local swings = SWINGS[math.min(math.floor(axe.roll() * #SWINGS) + 1, #SWINGS)]
 
+    -- Whether the player is still at it: alive, with the axe in its hands. One who is not swings no more.
+    local function still_chopping()
+        return not mobile.is_dead(user) and item.worn_by(tool) == user
+    end
+
     for swing = 1, swings do
         local at = (swing - 1) * BETWEEN_SWINGS
 
@@ -171,12 +176,16 @@ local function chop(tool, user, picked)
             mobile.animate(user, CHOP)
         else
             timer.after(at, function()
-                mobile.animate(user, CHOP)
+                if still_chopping() then
+                    mobile.animate(user, CHOP)
+                end
             end)
         end
 
         timer.after(at + SOUND_AFTER, function()
-            mobile.play_sound(user, CHOP_SOUND)
+            if still_chopping() then
+                mobile.play_sound(user, CHOP_SOUND)
+            end
 
             if swing == swings then
                 finish(tool, user, map, x, y)

@@ -17,15 +17,15 @@ public sealed record TargetResult(
     TargetCancelType CancelReason
 )
 {
-    public static TargetResult ForObject(Serial serial)
-    {
-        return new(TargetResultType.Object, serial, default, default, default);
-    }
-
     /// <summary>
     ///     Gets the graphic of the static that was picked; 0 for the land, an object or a cancel.
     /// </summary>
     public int Graphic { get; init; }
+
+    public static TargetResult ForObject(Serial serial)
+    {
+        return new(TargetResultType.Object, serial, default, default, default);
+    }
 
     public static TargetResult ForLocation(MapType map, Point3D location, int graphic = 0)
     {

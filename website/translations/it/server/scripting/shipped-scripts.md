@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a3bcbbfa1b9b1bc89bd24ddfb29a6f4ca5a79e408105a6eff2aa9114e12fde4d","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"0fc6e18945333b2decfa06a95f3756105cd62960da59dad56f5d5b4a42f520e3","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -189,7 +189,7 @@ di `data/skills.toml`.
 
 ## axe.lua
 
-`scripts/items/axe.lua` è lo script delle asce (`script_id = "axe"` sulle asce base, da cui ogni ascia lo prende):
+`scripts/items/axe.lua` è lo script delle asce (`script_id = "axe"` su nove asce base, da cui le loro asce lo prendono):
 vedi [Taglio della legna](../lumberjacking.md). L'ascia deve essere in mano a chi vi fa doppio clic
 (`item.worn_by`). Il punto scelto deve essere un albero entro 2 caselle: `target.pick_location` dà la `graphic` dello
 statico scelto, e lo script contiene le grafiche che sono alberi. Il personaggio colpisce da una a tre volte

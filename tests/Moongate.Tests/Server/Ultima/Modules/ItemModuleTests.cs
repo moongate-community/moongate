@@ -100,6 +100,15 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task WornBy_AnItemLiftedOntoTheCursor_IsInNobodysHands()
+    {
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == new Serial(2));
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(_sword.Id)));
+
+        Assert.Equal(LuaValue.Nil, Run($"return item.worn_by({_sword.Id.Value})")[0]);
+    }
+
+    [Fact]
     public void NameAmountAndOwner_DescribeTheItem()
     {
         var result = Run(
