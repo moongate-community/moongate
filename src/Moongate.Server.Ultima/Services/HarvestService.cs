@@ -7,8 +7,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Keeps the areas of each harvest resource in memory, as ModernUO's harvest banks: drawn full at first use, and
-///     full again all at once some time after the first take.
+///     Keeps the areas of each harvest resource in memory: drawn full at first use, and full again all at once some
+///     time after the first take.
 /// </summary>
 public sealed class HarvestService : IHarvestService
 {
@@ -45,7 +45,7 @@ public sealed class HarvestService : IHarvestService
 
         area.Amount--;
 
-        // Counted from the first take from a full area, as ModernUO: fishing on does not push the refill away.
+        // Counted from the first take from a full area: fishing on does not push the refill away.
         area.RefillAt ??= _time.GetTimestamp() + MinutesToTimestamp(
             definition!.RespawnMinMinutes + _random.Next(definition.RespawnMaxMinutes - definition.RespawnMinMinutes + 1)
         );

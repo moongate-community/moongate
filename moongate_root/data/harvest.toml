@@ -21,7 +21,7 @@
 #     respawn_max_minutes   the most; the same as the least when left out
 # ==============================================================================
 
-# The fish, as ModernUO's: 5 to 15 in 8 by 8 tiles, back in 10 to 20 minutes.
+# The fish: 5 to 15 in 8 by 8 tiles, back in 10 to 20 minutes.
 [[resource]]
 id = "fish"
 area = 8

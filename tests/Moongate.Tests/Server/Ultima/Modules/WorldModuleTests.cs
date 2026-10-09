@@ -55,6 +55,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
     private readonly StubSeasonService _seasons = new();
     private readonly RecordingLightService _light = new();
     private readonly ControlledBroadcastService _broadcast = new();
+    private readonly RecordingSpeechService _speech = new();
     private BroadcastFixture _fixture = null!;
 
     public WorldModuleTests()
@@ -222,6 +223,17 @@ public sealed class WorldModuleTests : IAsyncLifetime
 
         Assert.Equal(7, result[0].Read<int>());
         Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[1], result[2]));
+    }
+
+    [Fact]
+    public void PlaySound_PlaysASoundAtAPlace_NotOutsideTheMapOrOutOfRange()
+    {
+        var result = Run(
+            "return world.play_sound('Trammel', 1600, 1601, -5, 0x364), world.play_sound('Trammel', -5, 1600, 0, 0x364), world.play_sound('Trammel', 1600, 1600, 0, 70000), world.play_sound('Trammel', 1600, 1600, 300, 1)"
+        );
+
+        Assert.Equal([true, false, false, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal((MapType.Trammel, new Point3D(1600, 1601, -5), 0x364), Assert.Single(_speech.PlacedSounds));
     }
 
     [Fact]
@@ -505,7 +517,8 @@ public sealed class WorldModuleTests : IAsyncLifetime
                 _fixture.Mobiles,
                 _time,
                 _props,
-                _light
+                _light,
+                _speech
             )
         );
         binder.BindEnum(state, typeof(MapType));

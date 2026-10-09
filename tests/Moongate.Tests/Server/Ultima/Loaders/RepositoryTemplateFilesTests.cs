@@ -532,6 +532,35 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedFishingPoles_UseTheFishingPoleScript_AndWhatItPullsOutIsThere()
+    {
+        var items = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.Equal("fishing_pole", items["0x0dbf_fishing_pole"].ScriptId);
+        Assert.Equal("fishing_pole", items["0x0dc0_fishing_pole"].ScriptId);
+
+        var script = await File.ReadAllTextAsync(
+            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "fishing_pole.lua")
+        );
+        var caught = System.Text.RegularExpressions.Regex.Matches(script, "template = \"([^\"]+)\"")
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+
+        // Four fish and four pieces of footwear, each an item template of the distribution.
+        Assert.Equal(8, caught.Length);
+        Assert.All(caught, template => Assert.Contains(template, items.Keys));
+    }
+
+    [Fact]
+    public async Task ShippedHarvest_HasTheFishOfTheFishingPoles()
+    {
+        var resources = (await new HarvestLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+
+        var fish = Assert.Single(resources, resource => resource.Id == "fish");
+        Assert.Equal((8, 5, 15, 10, 20), (fish.Area, fish.AmountMin, fish.AmountMax, fish.RespawnMinMinutes, fish.RespawnMaxMinutes));
+    }
+
+    [Fact]
     public async Task ShippedHealers_UseTheHealerScript()
     {
         var directories = Directories();

@@ -42,6 +42,7 @@ public sealed class WorldModule
     private readonly IBroadcastService? _broadcast;
     private readonly IMobileService? _mobiles;
     private readonly ILightService? _light;
+    private readonly ISpeechService? _speech;
     private readonly ILogger _logger = Log.ForContext<WorldModule>();
 
     public WorldModule(
@@ -58,9 +59,11 @@ public sealed class WorldModule
         IMobileService? mobiles = null,
         TimeProvider? time = null,
         IWorldPropsService? props = null,
-        ILightService? light = null
+        ILightService? light = null,
+        ISpeechService? speech = null
     )
     {
+        _speech = speech;
         _light = light;
         _props = props;
         _time = time ?? TimeProvider.System;
@@ -294,6 +297,29 @@ public sealed class WorldModule
         return _movement is not null && _sectors.IsInside(map, x, y) && _movement.TryGetSpawnZ(map, x, y, z, out var found)
             ? found
             : null;
+    }
+
+    /// <summary>
+    ///     Plays a sound at a place, for the players within hearing of it, such as a splash on the water;
+    ///     <c>world.play_sound(MapType.Trammel, x, y, z, 0x364)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Plays a sound id (0 to 65535) at x, y, z of the map, for the players within 15 cells of the place; false outside the map, for a z outside -128 to 127 or a sound out of range."
+    )]
+    public bool PlaySound(MapType map, int x, int y, int z, int sound)
+    {
+        if (_speech is null ||
+            sound is < 0 or > ushort.MaxValue ||
+            z is < sbyte.MinValue or > sbyte.MaxValue ||
+            !_sectors.IsInside(map, x, y))
+        {
+            return false;
+        }
+
+        _speech.PlaySound(map, new Point3D(x, y, z), sound);
+
+        return true;
     }
 
     /// <summary>
