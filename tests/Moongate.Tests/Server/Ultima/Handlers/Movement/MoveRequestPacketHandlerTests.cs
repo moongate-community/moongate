@@ -17,6 +17,7 @@ using Moongate.Tests.Support.Timing;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -32,6 +33,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     private readonly RecordingFatigueService _fatigue = new();
     private readonly RecordingMobileStateService _state = new();
     private readonly RecordingSpeechService _speech = new();
+    private readonly RecordingMountService _mounts = new();
     private readonly StubMovementService _movement = new() { LandingZ = 10 };
     private readonly StubPacketSendService _sender = new();
     private readonly RecordingWorldViewService _view = new();
@@ -253,6 +255,66 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 
         Assert.All(_sender.Sent, packet => Assert.IsType<MovementAckPacket>(packet));
         Assert.Equal(new Point3D(1501, 1628, 10), _aria.Location);
+    }
+
+    [Fact]
+    public async Task Handle_MountedWalking_AllowsAStepEvery200Milliseconds()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+        await EnterAsync();
+
+        for (byte sequence = 0; sequence < 5; sequence++)
+        {
+            await StepAsync(DirectionType.East, sequence);
+            _time.Advance(TimeSpan.FromMilliseconds(200));
+        }
+
+        Assert.All(_sender.Sent, packet => Assert.IsType<MovementAckPacket>(packet));
+        Assert.Equal(new Point3D(1501, 1628, 10), _aria.Location);
+    }
+
+    [Fact]
+    public async Task Handle_MountedWalking_EveryHundredMilliseconds_RunsOutOfCredit()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+        await EnterAsync();
+
+        for (byte sequence = 0; sequence < 4; sequence++)
+        {
+            await StepAsync(DirectionType.East, sequence);
+            _time.Advance(TimeSpan.FromMilliseconds(100));
+        }
+
+        Assert.IsType<MovementAckPacket>(_sender.Sent[2]);
+        Assert.IsType<MovementRejectPacket>(_sender.Sent[3]);
+    }
+
+    [Fact]
+    public async Task Handle_MountedRunning_AllowsAStepEvery100Milliseconds()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+        await EnterAsync();
+
+        for (byte sequence = 0; sequence < 5; sequence++)
+        {
+            await StepAsync(DirectionType.East, sequence, true);
+            _time.Advance(TimeSpan.FromMilliseconds(100));
+        }
+
+        Assert.All(_sender.Sent, packet => Assert.IsType<MovementAckPacket>(packet));
+        Assert.Equal(new Point3D(1501, 1628, 10), _aria.Location);
+    }
+
+    [Fact]
+    public async Task Handle_OnFootWithAMountService_StillWalksEvery400Milliseconds()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0);
+        _time.Advance(TimeSpan.FromMilliseconds(199));
+        await StepAsync(DirectionType.East, 1);
+
+        Assert.IsType<MovementRejectPacket>(_sender.Sent[1]);
     }
 
     [Fact]
@@ -500,7 +562,8 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
             _moveOver,
             _fatigue,
             _state,
-            _speech
+            _speech,
+            _mounts
         );
         var packet = new MoveRequestPacket
             { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };

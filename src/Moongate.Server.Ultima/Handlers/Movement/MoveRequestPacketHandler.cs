@@ -22,13 +22,15 @@ namespace Moongate.Server.Ultima.Handlers.Movement;
 ///     <see cref="IMoveOverService" />.
 /// </summary>
 /// <remarks>
-///     Each step books the next one 400 ms later walking, 200 ms running; a step may come up to 200 ms early, which
-///     absorbs normal network jitter. A turn uses no time.
+///     Each step books the next one 400 ms later walking, 200 ms running, or 200 and 100 ms for a rider on a mount; a
+///     step may come up to 200 ms early, which absorbs normal network jitter. A turn uses no time.
 /// </remarks>
 public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 {
     private const long WalkDelayMs = 400;
     private const long RunDelayMs = 200;
+    private const long MountedWalkDelayMs = 200;
+    private const long MountedRunDelayMs = 100;
     private const long CreditMs = 200;
     private const byte LastSequence = 255;
 
@@ -47,6 +49,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private readonly IFatigueService? _fatigue;
     private readonly IMobileStateService? _state;
     private readonly ISpeechService? _speech;
+    private readonly IMountService? _mounts;
 
     public MoveRequestPacketHandler(
         IMobileService mobiles,
@@ -57,9 +60,11 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         IMoveOverService? moveOver = null,
         IFatigueService? fatigue = null,
         IMobileStateService? state = null,
-        ISpeechService? speech = null
+        ISpeechService? speech = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
         _state = state;
         _speech = speech;
         _fatigue = fatigue;
@@ -126,7 +131,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         }
 
         mobile.LastMovedAt = _time.GetUtcNow();
-        state.NextStepAt = Math.Max(now, state.NextStepAt) + (packet.Running ? RunDelayMs : WalkDelayMs);
+        state.NextStepAt = Math.Max(now, state.NextStepAt) + DelayOf(mobile, packet.Running);
         _fatigue?.Stepped(session, mobile, packet.Running);
         // As ModernUO, a step closes the bank box.
         _bank?.Close(mobile);
@@ -164,6 +169,20 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     {
         state.ExpectedSequence = 0;
         _sender.TrySend(session.SessionId, new MovementRejectPacket(sequence, mobile.Location, mobile.Direction));
+    }
+
+    // A rider covers the ground twice as fast: 200 ms a step walking and 100 ms running, 400 and 200 on foot.
+    private long DelayOf(MobileEntity mobile, bool running)
+    {
+        var mounted = _mounts?.IsMounted(mobile) == true;
+
+        return (running, mounted) switch
+        {
+            (true, true)  => MountedRunDelayMs,
+            (true, false) => RunDelayMs,
+            (false, true) => MountedWalkDelayMs,
+            _             => WalkDelayMs
+        };
     }
 
     private long NowMs()
