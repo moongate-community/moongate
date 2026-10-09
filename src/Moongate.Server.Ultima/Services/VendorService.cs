@@ -1,3 +1,4 @@
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -29,6 +30,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class VendorService : IVendorService
 {
     private const int ViewRange = 10;
+    private const int EyeHeight = 14;
     private const int VendorGump = 0x30;
     private const int MaxReplyLines = 100;
     private const int MaxWindowLines = 250;
@@ -492,12 +494,21 @@ public sealed class VendorService : IVendorService
 
         try
         {
-            return _sight.HasLineOfSight(vendor.Map, vendor.Location, player.Location);
+            return _sight.HasLineOfSight(vendor.Map, EyeOf(vendor), EyeOf(player));
         }
         catch (KeyNotFoundException)
         {
             return false;
         }
+    }
+
+    // Where a mobile sees from, as combat and the scripts' sight: the eyes, not the feet, so the floor between a
+    // vendor and its customer does not stand in the way.
+    private static Point3D EyeOf(MobileEntity mobile)
+    {
+        var spot = mobile.Location;
+
+        return new(spot.X, spot.Y, Math.Min(spot.Z + EyeHeight, sbyte.MaxValue));
     }
 
     // The lines of the reply as the lines of the window, a line sent twice added up, none above its stock.
