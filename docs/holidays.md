@@ -6,6 +6,7 @@ The seasonal events of the [schedule](schedule.md) that come with content. Staff
 | Event | Dates | What it does |
 | --- | --- | --- |
 | `halloween` | October 24 to November 15 | [Trick or treat](#halloween-trick-or-treat) |
+| `christmas` | December 24 to January 1 | [Snowballs and gifts](#christmas-snowballs-and-gifts) |
 
 ## Halloween: trick or treat
 
@@ -38,4 +39,30 @@ The words are English whatever the language of the server; the lines and message
 ### Ideas from ModernUO that are not here
 
 The special treats for a begging master, the solid colour and the naughty twin tricks, the pumpkin
-patch, the player zombies and the masks. Christmas and the decorations of both come later.
+patch, the player zombies and the masks.
+
+## Christmas: snowballs and gifts
+
+**The gift.** A character that logs in while `christmas` is on finds in its backpack a pile of snow,
+a pile of glacial snow, a holiday candle and one decoration (a decorative topiary 60
+times out of 100, a festive cactus 24, a snowy tree 16), and reads
+`Happy Holidays! Gift items have been placed in your backpack.` The gift comes once a season: a character that got one less than 200
+days ago gets none, and so does one whose backpack cannot take the piles (it is asked again at the
+next login). The start and the end of the season are announced to everybody.
+
+**The snowball.** Double clicking a pile that is in the backpack packs a snowball and opens a
+cursor. The target must be a mobile within 10 tiles that carries a pile of snow too (it can throw
+one back). The snowball flies to it with the sound and the gesture of the throw; both read the
+client's own text, `You have just been hit by a snowball!` and
+`You throw the snowball and hit the target!`. A player waits 5 seconds between two snowballs and cannot throw one while mounted, at
+itself, or at something that carries no snow.
+
+| File | Content |
+| --- | --- |
+| `templates/items/misc/winter_gifts.toml` | `snow_pile` and `glacial_snow`, the two piles with the snow script. |
+| `scripts/items/snow_pile.lua` | The snowball. |
+| `scripts/events/christmas.lua` | `on_start`, `on_end` and `on_login`: the announcements and the gift. |
+
+The decorations come from `templates/items/misc/christmas.toml`. The mistletoe deed, the other
+winter 2010 pieces and the snow of the safe zones are not here, and neither are the decorations of
+the towns: they come later.

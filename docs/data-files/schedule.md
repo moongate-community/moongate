@@ -24,7 +24,7 @@ to = "11-02"
 | `[[event]]` | One per seasonal event: `id`, `name`, `from` and `to` as `MM-dd`, both inclusive. |
 
 The shipped file has the tasks as examples in comments, so none runs until the operator enables
-one, and the event `halloween` on ([Holidays](../holidays.md)). The file may be missing: the
+one, and the events `halloween` and `christmas` on ([Holidays](../holidays.md)). The file may be missing: the
 calendar is then empty.
 
 ## Validation at startup

@@ -3,7 +3,7 @@
 `data/schedule.toml` is the calendar of the server. It holds two things: **tasks** that run at a
 time of the day or week, such as a shutdown with warnings, and **seasonal events** that are on
 between two dates, such as Halloween. No task runs until the operator writes one: the shipped
-file has the tasks as examples in comments, and the event `halloween` on (see [Holidays](holidays.md)).
+file has the tasks as examples in comments, and the events `halloween` and `christmas` on (see [Holidays](holidays.md)).
 
 ```toml
 [[task]]
@@ -113,6 +113,10 @@ halloween = {}
 function halloween.on_start(id, name) end
 function halloween.on_end(id, name) end
 ```
+
+While an event is on, a third function is called whenever a character enters the world:
+`on_login(id, name, player)`, with the serial of the character. A shard that does not define it
+loses nothing. [Christmas](holidays.md#christmas-snowballs-and-gifts) gives its gift there.
 
 A missing script or function is fine. The last state told is kept with the world, so an event that
 started or ended while the server was off calls its function once at the next startup; a shard that

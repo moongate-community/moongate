@@ -6,7 +6,7 @@
 #   week (a shutdown with warnings, a message to everybody, a call to a Lua
 #   function) and seasonal events with a window of dates. The tasks below are
 #   commented out: remove the # of one to turn it on, then restart the
-#   server. The event halloween is on. The hours are read in
+#   server. The events halloween and christmas are on. The hours are read in
 #   ultima.schedule.time_zone (config/moongate.toml); empty is the time zone of
 #   the system, which in a Docker container is UTC.
 #
@@ -52,3 +52,9 @@ id = "halloween"
 name = "Halloween"
 from = "10-24"
 to = "11-15"
+
+[[event]]
+id = "christmas"
+name = "Christmas"
+from = "12-24"
+to = "01-01"

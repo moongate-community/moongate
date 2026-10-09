@@ -279,7 +279,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Commands with access levels | ✅ | From the console (TAB completion of commands and arguments, Up/Down history) and in game; see [Commands](commands.md) |
 | World save | ✅ | Periodic and on shutdown, with `.save` |
 | Scheduled tasks, shutdown and seasonal events | ✅ | `data/schedule.toml`: tasks by hour, day or week (shutdown with warnings, message, Lua function), events by date with a staff switch and `on_start`/`on_end` hooks, in a chosen time zone; see [Schedule](schedule.md) |
-| Holiday events | 🟡 | [Holidays](holidays.md): Halloween is on from October 24 to November 15, and shopkeepers answer "trick or treat" with a candy or a trick; no Christmas, no decorations yet |
+| Holiday events | 🟡 | [Holidays](holidays.md): Halloween (October 24 to November 15), where shopkeepers answer "trick or treat" with a candy or a trick, and Christmas (December 24 to January 1), with snowballs to throw and a gift at login once a season; no decorations of the towns yet |
 | Database backup | ✅ | Rotating SQL exports on a schedule and with `.sql_backup`; restore with psql |
 | Console | ✅ | |
 | Server configuration | ✅ | `moongate.toml`, validated at startup |
