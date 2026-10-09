@@ -118,6 +118,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ICombatService>(_combat);
         _container.RegisterScriptEnum<MonsterAnimationType>();
         _container.RegisterScriptEnum<BodyType>();
+        _container.RegisterScriptEnum<Moongate.Server.Ultima.Types.Speech.SpeechKeywordType>();
         _container.RegisterInstance<IDataLoaderService>(
             new StubDataLoaderService().With(
                 new BodyContent { Body = new(0x32), Type = BodyType.Monster },
@@ -133,6 +134,7 @@ public sealed class MonsterScriptIntegrationTests : IAsyncLifetime
                 }
             );
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
+        _scripts.Write("common/pet_orders.lua", File.ReadAllText(ShippedScript("common/pet_orders.lua")));
         _scripts.Write("mobiles/monster.lua", File.ReadAllText(ShippedScript("mobiles/monster.lua")));
         var options = new ScriptEngineOptions
         {

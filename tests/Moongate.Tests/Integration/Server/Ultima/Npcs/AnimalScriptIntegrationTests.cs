@@ -115,6 +115,7 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ICombatService>(_combat);
         _container.RegisterScriptEnum<MonsterAnimationType>();
         _container.RegisterScriptEnum<BodyType>();
+        _container.RegisterScriptEnum<Moongate.Server.Ultima.Types.Speech.SpeechKeywordType>();
         _container.RegisterInstance<IDataLoaderService>(
             new StubDataLoaderService().With(new BodyContent { Body = new(0xD3), Type = BodyType.Animal })
         );
@@ -127,6 +128,7 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
                 }
             );
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
+        _scripts.Write("common/pet_orders.lua", File.ReadAllText(ShippedScript("common/pet_orders.lua")));
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
         _scripts.Write("mobiles/animal.lua", File.ReadAllText(ShippedScript("mobiles/animal.lua")));
         _scripts.Write("mobiles/scared_animal.lua", File.ReadAllText(ShippedScript("mobiles/scared_animal.lua")));

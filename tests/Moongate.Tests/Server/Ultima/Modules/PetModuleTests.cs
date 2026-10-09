@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Pets;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Pets;
@@ -29,6 +30,8 @@ public sealed class PetModuleTests : IAsyncLifetime
         new StubDataLoaderService().With(new TamingCreature { Template = "horse", MinSkill = 29.1, Slots = 2 })
     );
 
+    private readonly SettableClock _clock = new();
+    private PetModule? _module;
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
     private MobileEntity _aria = null!;
@@ -91,6 +94,31 @@ public sealed class PetModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Release_AsksThePetService()
+    {
+        Assert.True(Run("return pet.release(2, 0x100)")[0].Read<bool>());
+        Assert.Equal((_aria, _horse), Assert.Single(_pets.Released));
+
+        _pets.Releases = false;
+
+        Assert.False(Run("return pet.release(2, 0x100)")[0].Read<bool>());
+        Assert.False(Run("return pet.release(0x999, 0x100)")[0].Read<bool>());
+        Assert.False(Run("return pet.release(2, 0x999)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void Attend_TheFirstPetThatAsksAnswersForAll_UntilAMomentHasPassed_AndAnNpcIsNeverServed()
+    {
+        var result = Run("return pet.attend(2), pet.attend(2), pet.attend(0x100), pet.attend(0x999)");
+
+        Assert.Equal([true, false, false, false], result.Select(value => value.Read<bool>()));
+
+        _clock.Advance(TimeSpan.FromSeconds(1));
+
+        Assert.True(Run("return pet.attend(2)")[0].Read<bool>());
+    }
+
+    [Fact]
     public void Tame_AsksThePetService_AndOnSuccessShowsThePlayerItsStatus()
     {
         var result = Run("return pet.tame(2, 0x100), PetResultType.Ok");
@@ -133,7 +161,7 @@ public sealed class PetModuleTests : IAsyncLifetime
         };
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(
             state,
-            new PetModule(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions)
+            _module ??= new PetModule(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock)
         );
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));
