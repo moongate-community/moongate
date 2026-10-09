@@ -16,7 +16,7 @@ public sealed class TrickOrTreatScriptTests
 {
     // Records what the script does in the globals log, said and given; math.random answers from the queue.
     private const string Prelude = """
-                                   log = { said = {}, given = {}, told = {}, created = {}, props = {} }
+                                   log = { said = {}, given = {}, told = {}, created = {}, props = {}, mprops = {} }
                                    active = true
                                    now = 1000
                                    dead = false
@@ -39,6 +39,8 @@ public sealed class TrickOrTreatScriptTests
                                        location = function(s) return { map = 1, x = far and 150 or 102, y = 100, z = 0 } end,
                                        is_dead = function(s) return dead end,
                                        message = function(s, t) log.told[#log.told + 1] = t end,
+                                       get_prop = function(s, k) return log.mprops[k] end,
+                                       set_prop = function(s, k, v) log.mprops[k] = v end,
                                    }
                                    item = {
                                        give = function(s, t) log.given[#log.given + 1] = t return 1 end,
@@ -53,7 +55,7 @@ public sealed class TrickOrTreatScriptTests
 
         Assert.True(result[0].Read<bool>());
         Assert.Equal("msg30232", result[1].Read<string>());
-        Assert.Equal("0x4690_nougat_swirl", result[2].Read<string>());
+        Assert.Equal("nougatswirl", result[2].Read<string>());
         Assert.Equal("msg30234", result[3].Read<string>());
     }
 
@@ -89,7 +91,7 @@ public sealed class TrickOrTreatScriptTests
     {
         var result = Run(
             "queue = { 400 } m.listen(1, 2, 'trick or treat') local first = #log.given "
-            + "local again = m.listen(1, 2, 'trick or treat') local rested = #log.given "
+            + "now = 1001 local again = m.listen(1, 2, 'trick or treat') local rested = #log.given "
             + "now = 1000 + 401 m.listen(1, 2, 'trick or treat') "
             + "return first, rested, log.told[2], #log.given"
         );
@@ -98,6 +100,18 @@ public sealed class TrickOrTreatScriptTests
         Assert.Equal(1, result[1].Read<int>());
         Assert.Equal("msg30235", result[2].Read<string>());
         Assert.Equal(2, result[3].Read<int>());
+    }
+
+    [Fact]
+    public void TwoShopkeepersHearingOneSaying_OnlyTheFirstAnswers()
+    {
+        var result = Run(
+            "m.listen(1, 2, 'trick or treat') local second = m.listen(3, 2, 'trick or treat') "
+            + "return second, #log.given"
+        );
+
+        Assert.False(result[0].Read<bool>());
+        Assert.Equal(1, result[1].Read<int>());
     }
 
     [Fact]

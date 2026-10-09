@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0c26cc01f5b8f5d36ba6ae4e95c119b9ba9e468d9d66b09668ae5bafc70cf271","title":"Feste"} -->
+<!-- translation: {"sourceHash":"5923d139ee01c33e6d1e4f77d9966e7b2ce9f0df3fb23bb9e271028302edc11e","title":"Feste"} -->
 
 # Feste
 
@@ -18,6 +18,7 @@ negoziante riceve una risposta:
   (una tra `lollipops`, `wrapped candy`, `jelly beans`, `taffy`, `nougat swirl`) e il giocatore
   legge `You receive some candy.`
 - Una volta su dieci grida `TRICK!` e del sangue schizza attorno al giocatore.
+- Quando più negozianti sentono la stessa frase, risponde solo il primo.
 - Dopo aver risposto, un negoziante riposa da 5 a 10 minuti. Se glielo si chiede prima non risponde, e
   il giocatore legge `That doesn't appear to have any more candy.` Ogni negoziante riposa per conto suo.
 
@@ -31,7 +32,7 @@ Le parole sono in inglese qualunque sia la lingua del server; le battute e i mes
 
 | File | Contenuto |
 | --- | --- |
-| `templates/items/food/halloween.toml` | I sette template delle caramelle. |
+| `templates/items/misc/halloween.toml` | I template delle caramelle (`lollipop1` a `lollipop3`, `wrappedcandy`, `jellybeans`, `taffy`, `nougatswirl`), convertiti da UOX3. |
 | `scripts/common/trick_or_treat.lua` | Il gioco; `shopkeeper.lua` lo chiama da `on_speech`. |
 | `scripts/events/halloween.lua` | Gli hook `on_start` e `on_end`: gli annunci. |
 | `data/schedule.toml` | L'`[[event]]` con le date; cambia `from` e `to` per spostare la stagione. |

@@ -14,6 +14,10 @@
 --
 -- Props it keeps on the shopkeeper:
 --   trick_or_treat.next   the world.now() second at which it has candy again
+--
+-- Props it keeps on the player:
+--   trick_or_treat.asked  the world.now() second of the last answer: several
+--                         shopkeepers hear one saying, and only the first answers
 -- ==============================================================================
 
 local trick_or_treat = {}
@@ -36,11 +40,8 @@ local TRICK = 30233
 local GOT_CANDY = 30234
 local NO_CANDY = 30235
 
--- The templates of templates/items/food/halloween.toml.
-local TREATS = {
-    "0x468d_lollipops", "0x468e_lollipops", "0x468f_lollipops", "0x469e_wrapped_candy",
-    "0x468c_jelly_beans", "0x469d_taffy", "0x4690_nougat_swirl"
-}
+-- The candy templates of templates/items/misc/halloween.toml.
+local TREATS = { "lollipop1", "lollipop2", "lollipop3", "wrappedcandy", "jellybeans", "taffy", "nougatswirl" }
 
 -- The blood a trick leaves around the player, as ModernUO's Bleeding: 3 to 7 splashes.
 local BLOOD = { "blood_splash_0x122a", "blood_splash_0x122b", "blood_splash_0x122c", "blood_splash_0x122d" }
@@ -78,6 +79,11 @@ function trick_or_treat.listen(serial, speaker, text)
 
     local now = world.now()
 
+    -- One saying, one answer: the shopkeepers that hear it after the first stay quiet.
+    if mobile.get_prop(speaker, "trick_or_treat.asked") == now then
+        return false
+    end
+
     if now < (npc.get_prop(serial, "trick_or_treat.next") or 0) then
         mobile.message(speaker, localization.get(NO_CANDY))
 
@@ -85,6 +91,7 @@ function trick_or_treat.listen(serial, speaker, text)
     end
 
     npc.set_prop(serial, "trick_or_treat.next", now + math.random(REST_MIN, REST_MAX))
+    mobile.set_prop(speaker, "trick_or_treat.asked", now)
     npc.look_at(serial, speaker)
 
     if math.random(TRICK_ONE_IN) == 1 then

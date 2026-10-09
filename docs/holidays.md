@@ -16,6 +16,7 @@ answer from it:
   `lollipops`, `wrapped candy`, `jelly beans`, `taffy`, `nougat swirl`) and the player reads
   `You receive some candy.`
 - One time out of ten it shouts `TRICK!` and blood splashes around the player.
+- When several shopkeepers hear the same saying, only the first answers.
 - After answering, a shopkeeper rests for 5 to 10 minutes. Asked sooner, it does not answer, and
   the player reads `That doesn't appear to have any more candy.` Each shopkeeper rests on its own.
 
@@ -29,7 +30,7 @@ The words are English whatever the language of the server; the lines and message
 
 | File | Content |
 | --- | --- |
-| `templates/items/food/halloween.toml` | The seven candy templates. |
+| `templates/items/misc/halloween.toml` | The candy templates (`lollipop1` to `lollipop3`, `wrappedcandy`, `jellybeans`, `taffy`, `nougatswirl`), converted from UOX3. |
 | `scripts/common/trick_or_treat.lua` | The game; `shopkeeper.lua` calls it from `on_speech`. |
 | `scripts/events/halloween.lua` | The `on_start` and `on_end` hooks: the announcements. |
 | `data/schedule.toml` | The `[[event]]` with the dates; change `from` and `to` to move the season. |
