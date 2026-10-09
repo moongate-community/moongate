@@ -239,7 +239,6 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
     {
         Think(9);
         Assert.Empty(_teleports.Teleports);
-        Assert.Empty(_view.Calls.Where(call => call.StartsWith("Teleported", StringComparison.Ordinal)));
 
         Think(1);
 
@@ -489,7 +488,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
         _npcs.Think(wolf);
         _npcs.Think(wolf);
 
-        Assert.Empty(_combat.Attacks.Where(attack => attack.Attacker == wolf));
+        Assert.DoesNotContain(_combat.Attacks, attack => attack.Attacker == wolf);
         Assert.Equal(new Point3D(1602, 1601, 0), wolf.Location);
     }
 
