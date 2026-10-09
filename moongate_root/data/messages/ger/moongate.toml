@@ -264,6 +264,6 @@
 30215 = "Es wurde nichts gesendet."
 30216 = "{0} bittet um Hilfe ({1}): {2}"
 30217 = "Game Master {0} antwortet: {1}"
-30218 = "{0} Hilfeanfragen warten. Tippe .pages."
+30218 = "Wartende Hilfeanfragen: {0}. Tippe .pages."
 30219 = "Öffnet das Gump der Hilfeanfragen: die offenen und übernommenen, um zum Spieler zu gehen, sie zu übernehmen, zu beantworten oder zu schließen."
 30220 = "Das Gump pages fehlt: templates/gumps/pages.xml."

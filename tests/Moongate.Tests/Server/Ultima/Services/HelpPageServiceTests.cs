@@ -201,6 +201,56 @@ public sealed class HelpPageServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Create_TheCutNeverSplitsACharacterOfTwoCodeUnits()
+    {
+        var text = new string('a', 127) + "\U0001F600";
+
+        var page = _service.Create(Mobile(Player), HelpPageKindType.Question, text).Page!;
+
+        Assert.Equal(127, page.Text.Length);
+        Assert.False(char.IsHighSurrogate(page.Text[^1]));
+    }
+
+    [Fact]
+    public void Create_ControlCharactersAreDropped_SoALineBreakCannotReachTheStaff()
+    {
+        var page = _service.Create(Mobile(Player), HelpPageKindType.Question, "a\nb\tc").Page!;
+
+        Assert.Equal("abc", page.Text);
+        Assert.Equal(["Player asks for help (Question): abc"], Told(Staff));
+    }
+
+    [Fact]
+    public void Answer_TheCutNeverSplitsACharacterOfTwoCodeUnits_AndControlCharactersAreDropped()
+    {
+        var page = _service.Create(Mobile(Player), HelpPageKindType.Question, "x").Page!;
+
+        _service.Answer(page.Id, "Gino", "a\nb" + new string('b', 124) + "\U0001F600");
+
+        Assert.False(char.IsHighSurrogate(page.Answer[^1]));
+        Assert.DoesNotContain('\n', page.Answer);
+        Assert.True(page.Answer.Length <= 128);
+    }
+
+    [Fact]
+    public async Task Answer_WhenTheTellFails_IsNotMarkedDelivered_AndIsToldAtTheLogin()
+    {
+        var page = _service.Create(Mobile(Player), HelpPageKindType.Question, "x").Page!;
+        _services.Speech.TellResult = false;
+
+        _service.Answer(page.Id, "Gino", "Go north");
+
+        Assert.False(page.AnswerDelivered);
+
+        _services.Speech.TellResult = true;
+        _services.Speech.Told.Clear();
+        await LoginAsync(Mobile(Player));
+
+        Assert.Equal(["Game master Gino answers: Go north"], Told(Player));
+        Assert.True(page.AnswerDelivered);
+    }
+
+    [Fact]
     public void Answer_IsCutAt128Characters()
     {
         var page = _service.Create(Mobile(Player), HelpPageKindType.Question, "x").Page!;
@@ -249,7 +299,7 @@ public sealed class HelpPageServiceTests : IAsyncLifetime
         _services.Speech.Told.Clear();
         await LoginAsync(Mobile(Staff));
 
-        Assert.Equal(["1 help requests are waiting. Type .pages."], Told(Staff));
+        Assert.Equal(["Help requests waiting: 1. Type .pages."], Told(Staff));
     }
 
     [Fact]
@@ -286,18 +336,23 @@ public sealed class HelpPageServiceTests : IAsyncLifetime
         table.Upserted.Add(Row(5, Player, HelpPageStatusType.Open, now - 2 * day, 0));
         table.Upserted.Add(Row(6, OtherPlayer, HelpPageStatusType.Closed, now - 50 * day, now - 40 * day));
         table.Upserted.Add(Row(7, OtherPlayer, HelpPageStatusType.Closed, now - 2 * day, now - day));
+        var unread = Row(9, Player, HelpPageStatusType.Closed, now - 60 * day, now - 50 * day);
+        unread.Answer = "Go north";
+        unread.AnswerDelivered = false;
+        table.Upserted.Add(unread);
 
         var restarted = _services.Build(_fixture);
         await restarted.StartAsync();
 
-        Assert.Equal([5u, 7u], restarted.Pages.Select(page => page.Id.Value).Order());
+        // An answer nobody has read is kept, however old the page is.
+        Assert.Equal([5u, 7u, 9u], restarted.Pages.Select(page => page.Id.Value).Order());
         Assert.Equal([new Serial(6)], restarted.Capture());
         restarted.Committed([new Serial(6)]);
         Assert.Empty(restarted.Capture());
 
         var fresh = restarted.Create(Mobile(OtherPlayer), HelpPageKindType.Bug, "later");
         Assert.Equal(HelpPageCreateResultType.Ok, fresh.Type);
-        Assert.Equal(8u, fresh.Page!.Id.Value);
+        Assert.Equal(10u, fresh.Page!.Id.Value);
     }
 
     [Fact]

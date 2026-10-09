@@ -155,7 +155,7 @@ public sealed class HelpModuleTests : IAsyncLifetime
         Run(module, "help.create_page(2, 0, 'a')");
         var second = Run(module, "local c = help.can_page(2) return c.ok, c.reason");
 
-        Assert.Equal(true, first[0].Read<bool>());
+        Assert.True(first[0].Read<bool>());
         Assert.Equal((false, "open"), (second[0].Read<bool>(), second[1].Read<string>()));
         Assert.Equal(1, Run(module, "return #help.pages()")[0].Read<int>());
     }
@@ -190,9 +190,9 @@ public sealed class HelpModuleTests : IAsyncLifetime
             "local id = help.create_page(2, 0, 'x').id return help.take(id, 3), help.page(id).taken_by, help.answer(id, 3, 'Go north'), help.page(id).status, help.page(id).answer, help.answer(id, 3, 'again'), help.close(id, 3), help.waiting()"
         );
 
-        Assert.Equal(true, result[0].Read<bool>());
+        Assert.True(result[0].Read<bool>());
         Assert.Equal("Gino", result[1].Read<string>());
-        Assert.Equal(true, result[2].Read<bool>());
+        Assert.True(result[2].Read<bool>());
         Assert.Equal((int)HelpPageStatusType.Closed, result[3].Read<int>());
         Assert.Equal("Go north", result[4].Read<string>());
         Assert.Equal([false, false], result[5..7].Select(value => value.Read<bool>()));

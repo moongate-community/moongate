@@ -264,6 +264,6 @@
 30215 = "No se envió nada."
 30216 = "{0} pide ayuda ({1}): {2}"
 30217 = "El game master {0} responde: {1}"
-30218 = "{0} solicitudes de ayuda esperan. Escribe .pages."
+30218 = "Solicitudes de ayuda en espera: {0}. Escribe .pages."
 30219 = "Abre el gump de las solicitudes de ayuda: las abiertas y las asumidas, para ir con el jugador, asumirlas, responderlas o cerrarlas."
 30220 = "Falta el gump pages: templates/gumps/pages.xml."

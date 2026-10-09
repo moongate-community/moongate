@@ -66,7 +66,7 @@ What is it about?
    Every game master and administrator in the world reads `Gino asks for help (Bug): The door is stuck.`
 
 A player has one request at a time: while one is open or taken it reads `You already asked for help: wait
-for an answer.` and, after it was closed, it waits [`page_cooldown_seconds`](#settings) before the next:
+for an answer.` and it waits [`page_cooldown_seconds`](#settings) after asking before the next:
 `Wait 60 seconds before asking again.` Both are told before the line is typed, and again after it when
 something changed meanwhile. A player in [jail](jail.md) can call a game master too.
 
@@ -92,8 +92,8 @@ A row opens the request: who asked, what about, where, how long ago, and the tex
 - **Back** returns to the queue.
 
 A request that another game master closed meanwhile says `Request 1 is already closed.` and nothing
-changes. Game masters and administrators that enter the world are told how many requests wait: `2 help
-requests are waiting. Type .pages.`
+changes. Game masters and administrators that enter the world are told how many requests wait: `Help requests waiting: 2.
+Type .pages.`
 
 ## The answer
 

@@ -89,6 +89,11 @@ public sealed class RecordingSpeechService : ISpeechService
         Told.Add((player, text));
         ToldHues.Add(hue);
 
-        return true;
+        return TellResult;
     }
+
+    /// <summary>
+    ///     Gets or sets what <see cref="Tell" /> answers: false is a player with no session to read it.
+    /// </summary>
+    public bool TellResult { get; set; } = true;
 }

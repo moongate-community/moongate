@@ -71,7 +71,7 @@ public sealed class HelpPageServices : IDisposable
                 (30210, "Harassment"),
                 (30216, "{0} asks for help ({1}): {2}"),
                 (30217, "Game master {0} answers: {1}"),
-                (30218, "{0} help requests are waiting. Type .pages.")
+                (30218, "Help requests waiting: {0}. Type .pages.")
             )
         );
     }

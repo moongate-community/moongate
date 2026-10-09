@@ -56,7 +56,7 @@ function pages_detail.go(player, response, args)
     local where = page.online and mobile.location(page.player) or { x = page.x, y = page.y, z = page.z, map = page.map }
 
     if not mobile.teleport(player, where.x, where.y, where.z, where.map) then
-        tell(player, "You cannot go to " .. page.name .. ": its map is not loaded.")
+        tell(player, "You cannot go to " .. page.name .. ": the place is not reachable.")
     end
 
     show(player, page)

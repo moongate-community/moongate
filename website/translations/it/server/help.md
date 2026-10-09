@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"37841a649c258da8a774f6fcdce96951e6810009877dc4e861e510529398b4af","title":"Aiuto"} -->
+<!-- translation: {"sourceHash":"705fd0c2cb0f05e4884148b6bc4a434ae2e48e32a35db9409869602ed99bdd51","title":"Aiuto"} -->
 
 # Aiuto
 
@@ -70,7 +70,7 @@ What is it about?
    Ogni game master e amministratore nel mondo legge `Gino asks for help (Bug): The door is stuck.`
 
 Un giocatore ha una richiesta alla volta: finché ce n'è una aperta o in carico legge `You already asked for help: wait
-for an answer.` e, dopo che è stata chiusa, aspetta [`page_cooldown_seconds`](#settings) prima
+for an answer.` e aspetta [`page_cooldown_seconds`](#settings) dopo aver chiesto prima
 della successiva: `Wait 60 seconds before asking again.` Entrambi i casi vengono detti prima di scrivere la
 riga, e di nuovo dopo se nel frattempo è cambiato qualcosa. Anche un giocatore in [prigione](jail.md) può
 chiamare un game master.
@@ -97,8 +97,8 @@ Una riga apre la richiesta: chi l'ha fatta, di cosa tratta, dove, quanto tempo f
 
 Una richiesta che un altro game master ha chiuso nel frattempo dice `Request 1 is already closed.` e
 non cambia nulla. I game master e gli amministratori che entrano nel mondo sanno quante richieste
-aspettano: `2 help
-requests are waiting. Type .pages.`
+aspettano: `Help requests waiting: 2.
+Type .pages.`
 
 ## La risposta
 

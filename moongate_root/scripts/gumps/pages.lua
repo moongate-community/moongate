@@ -36,7 +36,8 @@ function pages.rows(g, player, args)
                 return
             end
 
-            gump.open(who, "pages_detail", help_pages.detail_args(page))
+            -- The request as it is now: it may have been taken or closed since the list was built.
+            gump.open(who, "pages_detail", help_pages.detail_args(help.page(page.id) or page))
         end }
         g:label_cropped{ x = 35, y = y, width = row_width, height = text_height, text = help_pages.row_text(page) }
     end

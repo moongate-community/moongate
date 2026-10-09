@@ -85,7 +85,8 @@ public sealed class HelpPageService : IHelpPageService
 
         foreach (var page in await _table.GetAllAsync())
         {
-            if (!page.IsActive && page.ClosedAt < cutoff)
+            // An answer nobody has read is kept, however old the page is.
+            if (!page.IsActive && page.AnswerDelivered && page.ClosedAt < cutoff)
             {
                 _removed[page.Id] = 0;
 
@@ -245,11 +246,20 @@ public sealed class HelpPageService : IHelpPageService
         }
     }
 
-    private static string Clean(string text)
+    // The line without control characters, cut at MaxText without splitting a character of two code units: a lone
+    // surrogate cannot be written to the database.
+    private static string Clean(string? text)
     {
-        var trimmed = (text ?? "").Trim();
+        var line = new string((text ?? "").Where(letter => !char.IsControl(letter)).ToArray()).Trim();
 
-        return trimmed.Length > MaxText ? trimmed[..MaxText] : trimmed;
+        if (line.Length <= MaxText)
+        {
+            return line;
+        }
+
+        var length = char.IsHighSurrogate(line[MaxText - 1]) ? MaxText - 1 : MaxText;
+
+        return line[..length].TrimEnd();
     }
 
     private long Now()
@@ -290,8 +300,11 @@ public sealed class HelpPageService : IHelpPageService
             return;
         }
 
-        _speech.Tell(player, _localization.Text(AnswerMessage, "Game master {0} answers: {1}", page.TakenBy, page.Answer));
-        page.AnswerDelivered = true;
+        // A player with no session to read it is not told: the answer waits for its next login.
+        page.AnswerDelivered = _speech.Tell(
+            player,
+            _localization.Text(AnswerMessage, "Game master {0} answers: {1}", page.TakenBy, page.Answer)
+        );
     }
 
     private void LoggedIn(MobileEntity character)
@@ -309,7 +322,7 @@ public sealed class HelpPageService : IHelpPageService
         {
             _speech.Tell(
                 character,
-                _localization.Text(WaitingMessage, "{0} help requests are waiting. Type .pages.", WaitingCount)
+                _localization.Text(WaitingMessage, "Help requests waiting: {0}. Type .pages.", WaitingCount)
             );
         }
     }
