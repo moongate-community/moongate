@@ -20,7 +20,7 @@ public sealed class HelpPageServices : IDisposable
 
     public RecordingDataAccess<HelpPageEntity> Table { get; } = new();
 
-    public RecordingSpeechService Speech { get; } = new();
+    public RecordingSpeechService Speech { get; private set; } = new();
 
     public SettableClock Clock { get; } = new();
 
@@ -36,9 +36,15 @@ public sealed class HelpPageServices : IDisposable
         Events = _container.Resolve<IMoongateEventBus>();
     }
 
-    public static HelpPageServices Create(BroadcastFixture fixture)
+    public static HelpPageServices Create(BroadcastFixture fixture, RecordingSpeechService? speech = null)
     {
         var services = new HelpPageServices();
+
+        if (speech is not null)
+        {
+            services.Speech = speech;
+        }
+
         services.Service = services.Build(fixture);
 
         return services;
