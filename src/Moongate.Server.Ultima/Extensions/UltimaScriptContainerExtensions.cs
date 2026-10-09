@@ -49,6 +49,7 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<MoongatesModule>();
         container.AddScriptModule<LocationsModule>();
         container.AddScriptModule<JailModule>();
+        container.AddScriptModule<HelpModule>();
         container.AddScriptModule<BookModule>();
         container.AddScriptModule<CommandsModule>();
         container.AddScriptModule<HarvestModule>();
