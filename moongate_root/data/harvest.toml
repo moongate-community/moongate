@@ -29,3 +29,12 @@ amount_min = 5
 amount_max = 15
 respawn_min_minutes = 10
 respawn_max_minutes = 20
+
+# The wood of the trees: 2 to 4 cuts in 4 by 4 tiles, back in 20 to 30 minutes.
+[[resource]]
+id = "wood"
+area = 4
+amount_min = 2
+amount_max = 4
+respawn_min_minutes = 20
+respawn_max_minutes = 30

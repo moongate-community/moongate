@@ -95,7 +95,7 @@ public sealed class TargetResponsePacketHandler : IPacketHandler<TargetResponseP
 
             if (tile.Z == packet.Z || tile.Z + item.Height == packet.Z)
             {
-                return TargetResult.ForLocation(map, new Point3D(packet.X, packet.Y, tile.Z + item.StandHeight));
+                return TargetResult.ForLocation(map, new Point3D(packet.X, packet.Y, tile.Z + item.StandHeight), tile.Id);
             }
         }
 
