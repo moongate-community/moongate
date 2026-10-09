@@ -110,6 +110,19 @@ public sealed class TargetResponsePacketHandlerTests : IAsyncDisposable
         Assert.Equal([0x0CDD, 0], _results.Select(result => result.Graphic));
     }
 
+    [Fact]
+    public async Task Handle_APlace_TellsTheLandOfItsCell_UnderAStaticToo()
+    {
+        _tiles.Item(0x053B, TileFlagType.Surface, 0);
+        _map.SetLand(7, 7, 0x00E4, 0).SetLand(6, 6, 0x0245, 0).AddStatic(6, 6, 0x053B, 0);
+        await PendingAsync();
+        await RespondAsync(1, 0, 7, 7, 0, 0);
+        await PendingAsync();
+        await RespondAsync(1, 0, 6, 6, 0, 0x053B);
+
+        Assert.Equal([(0, 0x00E4), (0x053B, 0x0245)], _results.Select(result => (result.Graphic, result.Land)));
+    }
+
     [Theory]
     [InlineData(20, 26)]
     [InlineData(26, 26)]

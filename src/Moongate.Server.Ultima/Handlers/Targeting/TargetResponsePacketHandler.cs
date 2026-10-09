@@ -16,6 +16,9 @@ namespace Moongate.Server.Ultima.Handlers.Targeting;
 /// </summary>
 public sealed class TargetResponsePacketHandler : IPacketHandler<TargetResponsePacket>
 {
+    // The land id of a map tile, without the bits some maps keep above it.
+    private const int LandIdMask = 0x3FFF;
+
     private readonly ILogger _logger = Log.ForContext<TargetResponsePacketHandler>();
     private readonly ITargetService _targets;
     private readonly IMobileService _mobiles;
@@ -74,12 +77,15 @@ public sealed class TargetResponsePacketHandler : IPacketHandler<TargetResponseP
             return TargetResult.Canceled(TargetCancelType.Canceled);
         }
 
+        // The land of the cell, read from the map and never from the client: what tells rock from grass.
+        var land = _maps.GetLand(map, packet.X, packet.Y).Id & LandIdMask;
+
         if (packet.Graphic == 0)
         {
             // As ModernUO's LandTarget: the client's height is not trusted.
             var z = _movement.GetAverageZ(map, packet.X, packet.Y);
 
-            return TargetResult.ForLocation(map, new Point3D(packet.X, packet.Y, z));
+            return TargetResult.ForLocation(map, new Point3D(packet.X, packet.Y, z), 0, land);
         }
 
         // As ModernUO's StaticTarget: the static clicked must be there, at the height clicked (its base, or its top
@@ -95,7 +101,12 @@ public sealed class TargetResponsePacketHandler : IPacketHandler<TargetResponseP
 
             if (tile.Z == packet.Z || tile.Z + item.Height == packet.Z)
             {
-                return TargetResult.ForLocation(map, new Point3D(packet.X, packet.Y, tile.Z + item.StandHeight), tile.Id);
+                return TargetResult.ForLocation(
+                    map,
+                    new Point3D(packet.X, packet.Y, tile.Z + item.StandHeight),
+                    tile.Id,
+                    land
+                );
             }
         }
 

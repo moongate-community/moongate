@@ -1,6 +1,7 @@
 [[item]]
 id = "0x19b7_iron_ore"
 base_id = "base_item"
+script_id = "ore"
 item_id = 6583
 name = "iron ore"
 rarity = "common"
@@ -12,6 +13,7 @@ decays = true
 [[item]]
 id = "0x19b8_iron_ore"
 base_id = "base_item"
+script_id = "ore"
 item_id = 6584
 name = "iron ore"
 rarity = "common"
@@ -23,6 +25,7 @@ decays = true
 [[item]]
 id = "0x19b9_iron_ore"
 base_id = "base_item"
+script_id = "ore"
 item_id = 6585
 name = "iron ore"
 rarity = "common"
@@ -34,6 +37,7 @@ decays = true
 [[item]]
 id = "0x19ba_iron_ore"
 base_id = "base_item"
+script_id = "ore"
 item_id = 6586
 name = "iron ore"
 rarity = "common"

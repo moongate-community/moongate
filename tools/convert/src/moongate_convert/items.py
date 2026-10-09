@@ -23,6 +23,8 @@ DYES_TYPE = 208
 AXE_TYPE = 216
 SHIELD_TYPE = 107
 DYE_TUB_GRAPHIC = 0x0FAB
+# The four piles of ore: UOX3 types them by their graphic, in itemtypes.dfn, not in their block.
+ORE_GRAPHICS = (0x19B7, 0x19B8, 0x19B9, 0x19BA)
 TWO_HANDED = 2
 MAX_LAYER = 29
 
@@ -208,6 +210,9 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     elif kind == DYES_TYPE:
         # UOX3's dyes are hard-coded: scripts/items/dyes.lua.
         template.script_id = "dyes"
+    elif is_bare_hex(block.header) and graphic in ORE_GRAPHICS:
+        # What UOX3 smelts at a forge: scripts/items/ore.lua. A named pile of another metal has no rule yet.
+        template.script_id = "ore"
     elif is_bare_hex(block.header) and graphic == DYE_TUB_GRAPHIC:
         # UOX3 types the tub by its graphic, in itemtypes.dfn, not in its block: scripts/items/dye_tub.lua.
         template.script_id = "dye_tub"

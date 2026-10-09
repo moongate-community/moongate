@@ -1,7 +1,6 @@
 # Harvest
 
-`harvest.toml` lists what is gathered from the world and runs out: the fish of [fishing](../fishing.md) and the wood of [lumberjacking](../lumberjacking.md) today,
-ore later.
+`harvest.toml` lists what is gathered from the world and runs out: the fish of [fishing](../fishing.md), the wood of [lumberjacking](../lumberjacking.md) and the ore of [mining](../mining.md).
 
 ```toml
 [[resource]]

@@ -69,6 +69,17 @@ public sealed class TargetModuleTests : IAsyncLifetime
         Assert.Equal(0x0CDD, picked["graphic"].Read<int>());
     }
 
+    [Fact]
+    public void PickLocation_GivesTheLandOfTheCell_SoAScriptCanTellRock()
+    {
+        _targets.Result = TargetResult.ForLocation(MapType.Felucca, new Point3D(1500, 1600, 20), 0, 0x00E4);
+
+        Run("target.pick_location(2, function(picked) end)");
+
+        var picked = Assert.IsType<LuaTable>(Assert.Single(Assert.Single(_engine.FunctionCalls).Args));
+        Assert.Equal((0, 0x00E4), (picked["graphic"].Read<int>(), picked["land"].Read<int>()));
+    }
+
     [Theory,
      InlineData(TargetCancelType.Canceled, "canceled"),
      InlineData(TargetCancelType.Overridden, "overridden"),
