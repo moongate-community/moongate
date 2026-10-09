@@ -140,6 +140,42 @@ public sealed class TooltipServiceTests
         Assert.Contains((1060738, "1,250,000"), lines.Select(line => (line.Cliloc, line.Arguments)));
     }
 
+    // A crafted item: "exceptional", "crafted by Aria", and a tool's "uses remaining: 42".
+    [Fact]
+    public void Build_ACraftedItem_SaysItIsExceptional_WhoMadeIt_AndATool_ItsUsesLeft()
+    {
+        var chair = Item("unknown", 0x0B56);
+        chair.SetProp("quality", 2L);
+        chair.SetProp("crafter_name", "Aria");
+        var saw = Item("unknown", 0x1034);
+        saw.SetProp("uses_remaining", 42L);
+
+        var chairLines = _tooltips.Build(chair).Entries.Select(line => (line.Cliloc, line.Arguments)).ToList();
+        var sawLines = _tooltips.Build(saw).Entries.Select(line => (line.Cliloc, line.Arguments)).ToList();
+
+        Assert.Contains((1060636, ""), chairLines);
+        Assert.Contains((1050043, "Aria"), chairLines);
+        Assert.Contains((1060584, "42"), sawLines);
+        Assert.DoesNotContain(sawLines, line => line.Cliloc is 1060636 or 1050043);
+    }
+
+    [Fact]
+    public void Build_TwoToolsWithDifferentUsesLeft_OrARegularAndAnExceptionalItem_DoNotShareATooltip()
+    {
+        var first = Item("unknown", 0x1034);
+        first.SetProp("uses_remaining", 10L);
+        var second = Item("unknown", 0x1034);
+        second.SetProp("uses_remaining", 11L);
+        var plain = Item("unknown", 0x0B56);
+        var fine = Item("unknown", 0x0B56);
+        fine.SetProp("quality", 2L);
+
+        Assert.Contains(_tooltips.Build(first).Entries, line => line.Arguments == "10");
+        Assert.Contains(_tooltips.Build(second).Entries, line => line.Arguments == "11");
+        Assert.DoesNotContain(_tooltips.Build(plain).Entries, line => line.Cliloc == 1060636);
+        Assert.Contains(_tooltips.Build(fine).Entries, line => line.Cliloc == 1060636);
+    }
+
     [Fact]
     public void Build_TwoChecksOfDifferentWorth_DoNotShareATooltip()
     {

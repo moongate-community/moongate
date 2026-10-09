@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Ultima.Types;
 
@@ -43,6 +44,9 @@ public sealed class TooltipService : ITooltipService
     private const int AmountAndNameCliloc = 1050039; // ~1_NUMBER~ ~2_ITEMNAME~
     private const int ValueCliloc = 1060738;         // value: ~1_val~
     private const int MobileNameCliloc = 1050045;    // ~1_PREFIX~~2_NAME~~3_SUFFIX~
+    private const int ExceptionalCliloc = 1060636;   // exceptional
+    private const int CraftedByCliloc = 1050043;     // crafted by ~1_NAME~
+    private const int UsesRemainingCliloc = 1060584; // uses remaining: ~1_val~
 
     private const byte CannotLiftWeight = 255;
 
@@ -132,6 +136,10 @@ public sealed class TooltipService : ITooltipService
         var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own : (LootType?)null;
         var labelNumber = item.TryGetProp<int>(ItemPropKeys.LabelNumber, out var label) ? label : (int?)null;
         var worth = BankService.CheckWorth(item);
+        var exceptional = item.TryGetProp<long>(ItemPropKeys.Quality, out var quality) &&
+                          quality == (long)ItemQualityType.Exceptional;
+        var crafter = item.TryGetProp<string>(ItemPropKeys.CrafterName, out var maker) ? maker : null;
+        var uses = item.TryGetProp<int>(ItemPropKeys.UsesRemaining, out var left) ? left : (int?)null;
         var key = new ItemTooltipKey(
             item.TemplateId,
             item.ItemId,
@@ -141,10 +149,13 @@ public sealed class TooltipService : ITooltipService
             lootType,
             item.Movable,
             labelNumber,
-            worth
+            worth,
+            exceptional,
+            crafter,
+            uses
         );
 
-        return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber, worth));
+        return Cached(_itemTooltips, key, () => BuildItem(item, lootType, labelNumber, worth, exceptional, crafter, uses));
     }
 
     public PropertyList Build(MobileEntity mobile)
@@ -154,7 +165,15 @@ public sealed class TooltipService : ITooltipService
         return Cached(_mobileTooltips, new MobileTooltipKey(mobile.Name, mobile.Title), () => BuildMobile(mobile));
     }
 
-    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType, int? labelNumber, long? worth)
+    private PropertyList BuildItem(
+        ItemEntity item,
+        LootType? ownLootType,
+        int? labelNumber,
+        long? worth,
+        bool exceptional,
+        string? crafter,
+        int? uses
+    )
     {
         var list = new PropertyList();
         _templates.TryGet(item.TemplateId, out var template);
@@ -167,6 +186,22 @@ public sealed class TooltipService : ITooltipService
         else
         {
             AddName(list, item, Argument(item.Name ?? template?.Name));
+        }
+
+        // What a crafter made: its quality and its maker's mark; a tool: how long it lasts.
+        if (exceptional)
+        {
+            list.Add(ExceptionalCliloc);
+        }
+
+        if (Argument(crafter) is { Length: > 0 } name)
+        {
+            list.Add(CraftedByCliloc, name);
+        }
+
+        if (uses is { } remaining)
+        {
+            list.Add(UsesRemainingCliloc, remaining.ToString(CultureInfo.InvariantCulture));
         }
 
         var lootType = ownLootType ?? template?.EffectiveLootType() ?? LootType.Regular;
