@@ -565,9 +565,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.NotEqual("axe", items["0x13b0"].ScriptId);
 
         var script = await File.ReadAllTextAsync(
-            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "axe.lua")
+            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "common", "woods.lua")
         );
-        var logs = System.Text.RegularExpressions.Regex.Match(script, "local PLAIN = { logs = \"([^\"]+)\"").Groups[1].Value;
+        var logs = System.Text.RegularExpressions.Regex.Match(script, "id = \"plain\", name = \"plain\", logs = \"([^\"]+)\"").Groups[1].Value;
 
         Assert.True(items[logs].Stackable);
 
@@ -598,7 +598,9 @@ public sealed class RepositoryTemplateFilesTests
     {
         var directories = Directories();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
-        var axe = await File.ReadAllTextAsync(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "axe.lua"));
+        var scripts = Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts");
+        var axe = await File.ReadAllTextAsync(Path.Combine(scripts, "items", "axe.lua")) +
+                  await File.ReadAllTextAsync(Path.Combine(scripts, "common", "woods.lua"));
         var hues = new Dictionary<string, int>
         {
             ["oak"] = 0x7DA, ["ash"] = 0x4A7, ["yew"] = 0x4A8, ["heartwood"] = 0x4A9, ["bloodwood"] = 0x4AA,
@@ -614,11 +616,11 @@ public sealed class RepositoryTemplateFilesTests
             Assert.Equal(((bool?)true, (bool?)true), (logs.Stackable, boards.Stackable));
         }
 
-        // Every template the script gives is shipped.
-        var given = System.Text.RegularExpressions.Regex.Matches(axe, "(?:logs|boards|template) = \"([^\"]+)\"")
+        // Every template the scripts give is shipped: the logs and boards of the kinds, and the finds.
+        var given = System.Text.RegularExpressions.Regex.Matches(axe, "(?:logs|boards|other_logs|other_boards|template) = \"([^\"]+)\"")
             .Select(match => match.Groups[1].Value)
             .ToArray();
-        Assert.Equal(19, given.Length);
+        Assert.Equal(21, given.Length);
         Assert.All(given, id => Assert.True(items.ContainsKey(id), id));
         Assert.All(new[] { "bark_fragment", "brilliant_amber" }, id => Assert.True(items[id].Stackable));
 
@@ -626,7 +628,7 @@ public sealed class RepositoryTemplateFilesTests
         var wood = (await new HarvestLoader(directories).LoadDataAsync()).Entities.Single(resource => resource.Id == "wood");
         Assert.Equal(["plain", "oak", "ash", "yew", "heartwood", "bloodwood", "frostwood"], wood.Vein.Select(vein => vein.Id));
         Assert.Equal(1000, wood.Vein.Sum(vein => vein.Weight));
-        Assert.All(wood.Vein.Skip(1), vein => Assert.Contains($"    {vein.Id} = {{ logs = ", axe));
+        Assert.All(wood.Vein.Skip(1), vein => Assert.Contains($"{{ id = \"{vein.Id}\", name = ", axe));
     }
 
     [Fact]
