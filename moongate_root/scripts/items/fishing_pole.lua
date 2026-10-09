@@ -13,13 +13,15 @@
 --
 --   The fish of a place run out: the resource "fish" of data/harvest.toml
 --   (areas of 8 by 8 tiles with 5 to 15 fish, back some minutes after the first
---   catch). Only a catch takes one. A place with none left says so at once.
+--   catch). Only a catch takes one, also when the backpack has no room for it.
+--   A place with none left says so at once.
 --
 --   What comes out, once the Fishing skill is tried between 0 and 100 (so the
 --   chance is the skill, and it may rise):
 --     footwear   boots, sandals, shoes or thigh boots, with a chance of
 --                (105 - skill) / 525: 20% at 0, about 1% at 100
---     nothing    with a chance of (200 - skill) / 400: 50% at 0, 25% at 100
+--     nothing    when no footwear came, with a chance of (200 - skill) / 400:
+--                40% of the tries at 0, about 25% at 100
 --     a fish     the rest, one of the four at random
 --   The pole does not wear out. There is no riding yet, so no rule for it.
 --
@@ -142,25 +144,32 @@ local function finish(user, map, x, y)
 
     local caught = one_of(list)
 
+    -- The fish leaves the water whether or not the backpack takes it: a full backpack is no way to fish for ever.
+    harvest.take(RESOURCE, map, x, y)
+
     if not item.give(user, caught.template) then
         mobile.message_cliloc(user, NO_ROOM)
 
         return
     end
 
-    harvest.take(RESOURCE, map, x, y)
     mobile.message_cliloc(user, PULLED, caught.name)
 end
 
+-- Whether the player still has the pole: carried, or lying within reach.
+local function has_pole(pole, user)
+    return item.owner(pole) == user or item.in_range(pole, user, 2)
+end
+
 -- The player picked where to fish.
-local function cast(user, picked)
+local function cast(pole, user, picked)
     if picked.kind == "canceled" or fishing[user] then
         return
     end
 
     local here = mobile.location(user)
 
-    if not here or mobile.is_dead(user) then
+    if not here or mobile.is_dead(user) or not has_pole(pole, user) then
         return
     end
 
@@ -208,7 +217,7 @@ function fishing_pole.on_use(serial, user)
     mobile.message_cliloc(user, WHAT_WATER)
 
     target.pick_location(user, function(picked)
-        cast(user, picked)
+        cast(serial, user, picked)
     end)
 
     return true

@@ -21,7 +21,7 @@ respawn_max_minutes = 20
 | `amount_min` | The least a full area holds, at least 1. |
 | `amount_max` | The most a full area holds. |
 | `respawn_min_minutes` | The least minutes before an area is full again. 0 when left out: it is full at once. |
-| `respawn_max_minutes` | The most. The same as the least when left out. |
+| `respawn_max_minutes` | The most, up to 10080 (a week). The same as the least when left out. |
 
 ## How an area lives
 
@@ -32,12 +32,12 @@ drawn, between the two respawn times; when it comes the area is drawn full again
 Areas are kept in memory and not saved: after a restart every place is full.
 
 A resource with a bad `id` or one used twice, an area outside 1 to 256, an amount below 1, a least above the
-most, or a negative time stops the server at startup, naming the file.
+most, or a time that is negative or above a week stops the server at startup, naming the file. A file with no `[[resource]]` loads with a warning.
 
 ## Without the file
 
 A root made before this file existed has none: nothing is gathered, and the fishing poles say the fish are not
-biting. Copy `data/harvest.toml` from the distribution to turn fishing on.
+biting. Run `mgctl init`, or copy `data/harvest.toml` from the distribution, and see [Existing roots](../fishing.md#existing-roots) for the poles.
 
 ## From scripts
 

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"51fc17e58037e767de691315d4f3674421fbbbc516c6b3e6d2e02bd7da04ae7e","title":"Raccolta"} -->
+<!-- translation: {"sourceHash":"1637ad3be1267d90b0a492af349b21d23e0dadb1214e09ae7abf7da845701ea4","title":"Raccolta"} -->
 
 # Raccolta
 
@@ -23,7 +23,7 @@ respawn_max_minutes = 20
 | `amount_min` | Il minimo che contiene una zona piena, almeno 1. |
 | `amount_max` | Il massimo che contiene una zona piena. |
 | `respawn_min_minutes` | I minuti minimi prima che una zona torni piena. 0 se omesso: torna piena subito. |
-| `respawn_max_minutes` | I minuti massimi. Uguale al minimo se omesso. |
+| `respawn_max_minutes` | I minuti massimi, fino a 10080 (una settimana). Uguale al minimo se omesso. |
 
 ## Come vive una zona
 
@@ -34,12 +34,12 @@ riempimento, tra i due tempi di ricomparsa; quando arriva, la zona viene estratt
 Le zone sono tenute in memoria e non salvate: dopo un riavvio ogni luogo è pieno.
 
 Una risorsa con un `id` non valido o usato due volte, un'area fuori da 1 a 256, una quantità sotto 1, un minimo sopra il
-massimo o un tempo negativo ferma il server all'avvio, indicando il file.
+massimo o un tempo negativo o superiore a una settimana ferma il server all'avvio, indicando il file. Un file senza `[[resource]]` viene caricato con un avviso.
 
 ## Senza il file
 
 Una root creata prima che questo file esistesse non ce l'ha: non si raccoglie nulla, e le canne da pesca dicono che i pesci non
-abboccano. Copia `data/harvest.toml` dalla distribuzione per attivare la pesca.
+abboccano. Esegui `mgctl init`, oppure copia `data/harvest.toml` dalla distribuzione, e vedi [Root esistenti](../fishing.md#existing-roots) per le canne.
 
 ## Dagli script
 

@@ -11,11 +11,14 @@ namespace Moongate.Server.Ultima.Loaders;
 /// <summary>
 ///     Loads the resources of <c>data/harvest.toml</c>. The file may be missing: nothing is gathered then. A resource
 ///     with a bad id or an id used twice, an area outside 1 to 256, an amount below 1 or a least above the most, or a
-///     negative or inverted time stops the server at startup.
+///     negative or inverted time, or one above a week, stops the server at startup.
 /// </summary>
 public class HarvestLoader : IDataLoader<HarvestResource>
 {
     private const int MaxArea = 256;
+
+    // A week: more is a resource that never comes back, and a number the service could not add up.
+    private const int MaxRespawnMinutes = 10_080;
 
     private readonly ILogger _logger = Log.ForContext<HarvestLoader>();
 
@@ -74,10 +77,19 @@ public class HarvestLoader : IDataLoader<HarvestResource>
                 resource.RespawnMaxMinutes = resource.RespawnMinMinutes;
             }
 
-            if (resource.RespawnMinMinutes < 0 || resource.RespawnMaxMinutes < resource.RespawnMinMinutes)
+            if (resource.RespawnMinMinutes < 0 ||
+                resource.RespawnMaxMinutes < resource.RespawnMinMinutes ||
+                resource.RespawnMaxMinutes > MaxRespawnMinutes)
             {
-                throw Invalid($"the respawn minutes of {resource.Id} must not be negative, the least not above the most");
+                throw Invalid(
+                    $"the respawn minutes of {resource.Id} must be 0 to {MaxRespawnMinutes}, the least not above the most"
+                );
             }
+        }
+
+        if (file.Resource.Count == 0)
+        {
+            _logger.Warning("{Path} has no [[resource]]: nothing is gathered from the world", harvestFilePath);
         }
 
         _logger.Information("Found {Count} harvest resources", file.Resource.Count);

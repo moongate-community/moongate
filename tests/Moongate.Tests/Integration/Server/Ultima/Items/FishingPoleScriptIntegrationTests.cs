@@ -400,7 +400,7 @@ public sealed class FishingPoleScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Fishing_ACatchTheBackpackCannotTake_SaysThereIsNoRoom_AndLeavesTheFishInThePlace()
+    public void Fishing_ACatchTheBackpackCannotTake_SaysThereIsNoRoom_AndTheFishIsGoneFromThePlace()
     {
         Rolls();
         // Nothing can be made: as a backpack that takes no more.
@@ -412,7 +412,67 @@ public sealed class FishingPoleScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal([WhatWater, NoRoom], Told());
         Assert.Empty(Caught());
+        // Taken all the same: a full backpack is no way to try the skill for ever on the same fish.
+        Assert.Equal(4, _harvest.Amount("fish", MapType.Trammel, _water.X, _water.Y));
+    }
+
+    [Fact]
+    public void Fishing_WaterExactlyFourTilesAway_IsCloseEnough()
+    {
+        _aria.Location = new Point3D(_water.X - 4, _aria.Location.Y, _aria.Location.Z);
+
+        Use(_water);
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhatWater], Told());
+        Assert.Equal(2, _timers.Timers.Count);
+    }
+
+    [Fact]
+    public void Fishing_ThePoleGivenAwayBeforeTheWaterIsPicked_CastsNothing()
+    {
+        // The pole leaves the backpack while the cursor is up: it lies far away when the water is picked.
+        _items.PlaceOnGround(_pole, MapType.Trammel, new Point3D(_aria.Location.X + 9, _aria.Location.Y, 0));
+
+        Use(_water);
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhatWater], Told());
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void Fishing_ThePlayerLeavesTheWorldMeanwhile_GetsNothing_WithoutAnError()
+    {
+        Rolls();
+        Use(_water);
+        _fixture.Mobiles.LeaveWorld(_aria.Id);
+        Fire(1.5);
+        Fire(8);
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhatWater], Told());
         Assert.Equal(5, _harvest.Amount("fish", MapType.Trammel, _water.X, _water.Y));
+    }
+
+    [Theory]
+    // At skill 50 the footwear comes under 55/525, about 0.105, and nothing under 150/400 = 0.375.
+    [InlineData(0.10, 0.0, 0x170B)]
+    [InlineData(0.11, 0.37, 0)]
+    [InlineData(0.11, 0.38, 0x09CC)]
+    public void Fishing_AtHalfTheSkill_TheChancesFollowTheSkill(double first, double second, int expected)
+    {
+        Skill(500);
+        // The try itself passes: the skill service rolls under one half.
+        _random.Doubles(0.1);
+        // The last roll picks the first of the list.
+        Rolls(first, second, 0.0);
+
+        Use(_water);
+        Fire(8);
+
+        Assert.Empty(_errors);
+        Assert.Equal(expected == 0 ? [] : new[] { expected }, Caught().Select(item => item.ItemId));
     }
 
     [Fact]
@@ -454,8 +514,11 @@ public sealed class FishingPoleScriptIntegrationTests : IAsyncLifetime
 
     private void Skill(int tenths)
     {
+        // The skill service reads the mobile, the mobile module the state service: both hold the same.
         _aria.Skills.Clear();
         _aria.Skills.Add(new MobileSkill { Skill = SkillType.Fishing, Base = tenths });
+        _state.Skills.Clear();
+        _state.Skills.Add(new MobileSkill { Skill = SkillType.Fishing, Base = tenths });
     }
 
     private void Rolls(params double[] rolls)

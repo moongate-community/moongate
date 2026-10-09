@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"03c07852b823cdcddd9f84fc775d22dca1cb9a35dd80dfd9f1123dd0cee357ce","title":"Pesca"} -->
+<!-- translation: {"sourceHash":"8cbafc45281669a1bfa62d39ea1fde68633e4276b05764364eb1d03433a23ce9","title":"Pesca"} -->
 
 # Pesca
 
@@ -7,7 +7,7 @@ con l'uso; i pesci di un luogo si esauriscono e ritornano con il tempo.
 
 ## Come si pesca
 
-1. Fai doppio clic su una canna da pesca che porti con te. Leggi "What water do you want to fish in?" e ricevi un cursore.
+1. Fai doppio clic su una canna da pesca, portata con te o a terra a portata di mano. Leggi "What water do you want to fish in?" e ricevi un cursore.
 2. Scegli dell'acqua entro 4 caselle, in vista.
 3. Il tuo personaggio lancia, l'acqua schizza un momento dopo, e 8 secondi dopo il lancio arriva il risultato.
 
@@ -20,7 +20,7 @@ secondo doppio clic nel frattempo risponde "You are already fishing."
 | `You need to be closer to the water to fish!` | L'acqua è a più di 4 caselle o non è in vista, oppure ti sei allontanato prima del risultato |
 | `The fish don't seem to be biting here.` | Nel luogo non restano pesci: prova altrove, o torna più tardi |
 | `You fish a while, but fail to catch anything.` | La prova è fallita, oppure non è uscito nulla |
-| `You do not have room in your backpack for a fish.` | Il tuo zaino non può prendere la presa, che resta in acqua |
+| `You do not have room in your backpack for a fish.` | Il tuo zaino non può prendere la presa, che va persa: il pesce sparisce comunque dal luogo |
 
 ## Che cosa esce
 
@@ -30,7 +30,7 @@ e l'abilità può crescere a ogni prova. Quando la prova riesce:
 | Cosa | Probabilità | Ad abilità 0 | Ad abilità 100 |
 | --- | --- | --- | --- |
 | Una calzatura: stivali, sandali, scarpe o stivali alti | (105 − abilità) / 525 | 20% | circa 1% |
-| Niente | (200 − abilità) / 400 | 50% | 25% |
+| Niente, quando non è uscita una calzatura | (200 − abilità) / 400 | 40% delle prove | circa 25% |
 | Un pesce, uno dei quattro | il resto | | |
 
 La presa finisce nello zaino. La canna non si consuma.
@@ -38,7 +38,7 @@ La presa finisce nello zaino. La canna non si consuma.
 ## I pesci di un luogo
 
 Ogni mappa è divisa in zone di 8 caselle per 8. Una zona contiene da 5 a 15 pesci, estratti la prima volta che qualcuno vi pesca.
-Una presa ne toglie uno; una prova fallita e "niente" non ne tolgono. La zona torna piena, tutta in una volta, da 10 a 20 minuti
+Una presa ne toglie uno, anche quando lo zaino non ha posto; una prova fallita e "niente" non ne tolgono. La zona torna piena, tutta in una volta, da 10 a 20 minuti
 dopo la prima presa.
 
 Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno. I numeri sono in
@@ -49,6 +49,10 @@ Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno. I numeri so
 Le regole sono in `scripts/items/fishing_pole.lua`: la distanza, i secondi, che cosa esce e quanto spesso. Vedi
 [Script forniti](scripting/shipped-scripts.md#fishing_polelua). Un template pesca con
 `script_id = "fishing_pole"`.
+
+## Root esistenti
+
+Una root creata prima che la pesca esistesse ha bisogno di due cose. Esegui `mgctl init`, che aggiunge `data/harvest.toml` e lo script; senza il file le canne dicono che i pesci non abboccano. Poi dai lo script alle due canne da pesca: `mgctl init` non sostituisce mai un file di template che potresti aver modificato, quindi aggiungi `script_id = "fishing_pole"` a `0x0dbf_fishing_pole` e `0x0dc0_fishing_pole` in `templates/items/skills/tools/fishing.toml`, oppure copia quel file dalla distribuzione.
 
 ## Non ancora
 

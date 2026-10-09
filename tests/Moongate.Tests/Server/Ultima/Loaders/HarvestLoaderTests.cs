@@ -52,6 +52,7 @@ public sealed class HarvestLoaderTests
     [InlineData("id = \"fish\"\narea = 8\namount_min = 5\namount_max = 4")]
     [InlineData("id = \"fish\"\narea = 8\namount_min = 1\namount_max = 2\nrespawn_min_minutes = -1")]
     [InlineData("id = \"fish\"\narea = 8\namount_min = 1\namount_max = 2\nrespawn_min_minutes = 9\nrespawn_max_minutes = 3")]
+    [InlineData("id = \"fish\"\narea = 8\namount_min = 1\namount_max = 2\nrespawn_max_minutes = 2147483647")]
     public async Task LoadDataAsync_ABadResource_StopsTheServer(string resource)
     {
         using var root = new TemporaryDirectory();
