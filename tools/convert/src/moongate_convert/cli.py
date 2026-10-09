@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TextIO
 
-from . import chests, locations, signs, spawn, spawns, teleporters
+from . import books, chests, locations, signs, spawn, spawns, teleporters
 
 # name -> (module run function, what --source is, what --destination is, help)
 _Run = Callable[[Path, Path, TextIO, TextIO], int]
@@ -31,6 +31,12 @@ COMMANDS: dict[str, tuple[_Run, str, str, str]] = {
         "ModernUO's Distribution/Data/Locations folder",
         "the locations file to write (data/locations.toml), replacing that of a previous run",
         "Convert the named places of ModernUO into the locations data file",
+    ),
+    "modernuo-books": (
+        books.run,
+        "the Projects/UOContent folder of ModernUO, or a folder containing static book C# definitions",
+        "the book templates folder: one TOML file a book, named after its class; existing generated names are replaced",
+        "Convert ModernUO's static BookContent definitions into readable document templates",
     ),
     "modernuo-chests": (
         chests.run,

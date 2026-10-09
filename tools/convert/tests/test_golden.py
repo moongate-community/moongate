@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import io
 import os
+import shutil
 from pathlib import Path
 
 import pytest
@@ -108,3 +109,13 @@ def test_spawns_of_the_guildmasters(tmp_path):
 
     for name in made:
         assert (tmp_path / name).read_bytes() == (shipped / name).read_bytes(), name
+
+
+def test_books(tmp_path, convert):
+    # A refresh keeps the translations of the files it finds, so it starts from the shipped ones.
+    shipped = ROOT / "templates" / "books" / "modernuo"
+    shutil.copytree(shipped, tmp_path / "books")
+
+    assert convert("modernuo-books", Path(SOURCE or "") / "Projects", tmp_path / "books").code == 0
+
+    compare(tmp_path / "books", shipped, [path.name for path in shipped.glob("*.toml")])
