@@ -467,6 +467,19 @@ the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `e
 nobody and says nothing. A healer of a
 template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think. A healer with a shop sells and buys as a vendor does, through `scripts/common/shop.lua`: bandages, potions, ginseng and garlic.
 
+## stablemaster.lua and stable_claim.lua
+
+`scripts/mobiles/stablemaster.lua` is the script of the animal trainers (`script_id = "stablemaster"`). The words
+*stable* and *claim*, said within 12 cells, and the entries *Stable* and *Claim All* of the context menu drive the
+`stable` module: *stable* gives a cursor (`target.pick`) and calls `stable.stable` on the pet picked, answering with
+the client's text for each `StableResultType`; *claim* says the list intro and opens the gump `stable_claim`
+(`templates/gumps/stable_claim.xml`), or says there are no pets; *Claim All* calls `stable.claim` on the first place
+until the list is empty. Several trainers hear the same words and `stable.attend` lets one answer. An animal trainer
+keeps its shop and its lessons through `scripts/common/shop.lua` and `training.lua`.
+`scripts/gumps/stable_claim.lua` fills the gump with one button and the name of the pet for each pet of `stable.pets`,
+eight a page; a button checks the player is within 12 cells of the trainer and calls `stable.claim`; a list that
+changed since it was shown is shown again.
+
 ## ankh.lua and resurrect.lua
 
 `scripts/items/ankh.lua` is the script of the `decoration_ankh` template, the two pieces of each

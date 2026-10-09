@@ -48,7 +48,43 @@ mount_item = "horse4"
 Children of a template inherit the tag. An empty value, `mount_item = ""`, makes a child no mount, as the ethereal
 mounts, the nightmares and the other creatures of `templates/mobiles/mounts.toml` are for now.
 
+## What a rider cannot do
+
+A rider cannot mine with a pickaxe, fish with a pole or use the Stealth skill: each is refused with the client's own
+text and nothing starts. The axe and the Hiding skill are left alone. A script asks `mobile.is_mounted(serial)`.
+
+## Teleporters that refuse a rider
+
+A teleporter item with the prop `deny_mounted` set to `true` (as text in a decoration file: `deny_mounted = "true"`)
+tells a rider to dismount first and leaves it where it is; no smoke and no sound play. A walker on foot goes through.
+No shipped teleporter carries the flag yet.
+
+```toml
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5690, 569, 25], deny_mounted = "true" }
+locations = [[5827, 593, 0]]
+```
+
+## The stable
+
+The animal trainers of the towns (`script_id = "stablemaster"`) keep a stable. They are vendors as before: the shop
+and the lessons stay.
+
+1. Stand within 12 tiles and say *stable*, or pick *Stable* in the trainer's context menu. You read the prompt and
+   get a cursor: pick a pet of yours, within a tile of you.
+2. The pet leaves the world and its template joins your stable; the fee is taken from your backpack and then your bank
+   (30 gold by default). The trainer answers with the client's text: your pet is stabled, or you cannot stable that,
+   it is not yours, you have too many pets in the stable, or you cannot pay.
+3. Say *claim* to see the list of your stabled pets, one button each; a button makes that pet again beside you.
+   *Claim All* in the menu takes them all back.
+
+Only a pet that can be ridden and is yours can be stabled, not one that is dying. A claimed pet is made again from its
+template, with you as its owner, and keeps neither its hit points, hue nor what it carried; the spawn is tried three
+times. The stable is the prop `stabled` of your character (the template ids, joined by `;`), saved with it. The limit
+and the fee are in [`[ultima.stable]`](server-configuration.md).
+
 ## Not built yet
 
-Stabling, the bola and the dismount ability of weapons, the stop of harvesting while mounted, teleporters that deny
-mounts, mounted animations and stamina, and the ethereal mounts.
+The bola and the dismount ability of weapons, mounted animations and stamina, and the ethereal mounts.
