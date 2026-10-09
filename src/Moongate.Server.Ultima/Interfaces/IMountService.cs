@@ -26,6 +26,15 @@ public interface IMountService
     bool TryMount(MobileEntity rider, MobileEntity pet, bool force = false);
 
     /// <summary>
+    ///     Puts <paramref name="rider" /> on the ethereal mount of <paramref name="statuette" />, a statuette in its
+    ///     backpack whose template names the mount item in its <c>mount_item</c> tag: the statuette is gone and the mount
+    ///     item is worn on the mount layer; getting off gives the statuette back. Refused, with the reason told to the
+    ///     rider, when the statuette is not in the rider's backpack or the rider is mounted already; false and silent when
+    ///     the rider is dead or the item is no ethereal statuette.
+    /// </summary>
+    bool TryMountEthereal(MobileEntity rider, ItemEntity statuette);
+
+    /// <summary>
     ///     Takes the mount item off <paramref name="rider" /> at once and makes the creature again on the rider's tile, with
     ///     its owner, off the game loop. False when the rider is not mounted.
     /// </summary>

@@ -85,6 +85,22 @@ template, with you as its owner, and keeps neither its hit points, hue nor what 
 times, and a pet that cannot be made goes back to your stable. The stable is the prop `stabled` of your character (the template ids, joined by `;`), saved with it. The limit
 and the fee are in [`[ultima.stable]`](server-configuration.md).
 
+## Ethereal mounts
+
+A statuette of an ethereal mount (a horse, a llama, an ostard, a kirin, a unicorn, a ridgeback, a swamp dragon or a
+beetle, `templates/items/misc/ethereal-statues.toml`) lets its owner ride with no creature. Double click it while it
+lies in your backpack: it is gone and you sit on the ethereal mount. You read the client's text when it is not in
+your backpack, or when you ride already. Getting off, or dying, gives the statuette back in your backpack, past its limit of items
+(its place was freed when you rode), or on the ground where you stand when you have no backpack. It comes back with its
+hue and its name but a new serial. There is no wait to cast it and no follower slot. A game master
+makes one with `.add ethereal_horse_statue`. The statuette is a template with `script_id = "ethereal_mount"` and the tag
+`mount_item`, the template of the mount item that is worn.
+
+## Fighting from the saddle
+
+A rider who attacks plays the actions of a mount: one hand, two hands, bow or crossbow. The animation that tells a
+blow was taken is the usual one. The ids are those of the client's animation table; they were not tried with a client.
+
 ## Not built yet
 
-The bola and the dismount ability of weapons, mounted animations and stamina, and the ethereal mounts.
+The bola and the dismount ability of weapons.

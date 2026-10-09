@@ -88,6 +88,7 @@ public sealed class CombatService : ICombatService
     private readonly IEffectService? _effects;
     private readonly IAmmoService? _ammo;
     private readonly IBloodService? _blood;
+    private readonly IMountService? _mounts;
     private string? _timerId;
 
     public CombatService(
@@ -112,9 +113,11 @@ public sealed class CombatService : ICombatService
         IMurderService? murders = null,
         IEffectService? effects = null,
         IAmmoService? ammo = null,
-        IBloodService? blood = null
+        IBloodService? blood = null,
+        IMountService? mounts = null
     )
     {
+        _mounts = mounts;
         _ammo = ammo;
         _blood = blood;
         _effects = effects;
@@ -708,11 +711,19 @@ public sealed class CombatService : ICombatService
         return _bodies.Value.GetValueOrDefault(mobile.Body, BodyType.Monster);
     }
 
+    // A rider swings with the actions of a mount; a walker with the ones of its weapon.
+    private HumanAnimationType HumanSwing(MobileEntity attacker, WeaponInfo? weapon)
+    {
+        return _mounts?.IsMounted(attacker) == true
+            ? WeaponFamilies.MountedAction(weapon?.Type, weapon?.TwoHanded == true)
+            : WeaponFamilies.Action(weapon?.Type, weapon?.TwoHanded == true);
+    }
+
     private (int Action, int Frames) SwingAnimation(MobileEntity attacker, WeaponInfo? weapon)
     {
         return BodyOf(attacker) switch
         {
-            BodyType.Human  => ((int)WeaponFamilies.Action(weapon?.Type, weapon?.TwoHanded == true), SwingFrames),
+            BodyType.Human  => ((int)HumanSwing(attacker, weapon), SwingFrames),
             BodyType.Animal => ((int)AnimalAnimationType.Attack1, OtherSwingFrames),
             _               => ((int)MonsterAnimationType.Attack1, OtherSwingFrames)
         };

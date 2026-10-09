@@ -156,6 +156,19 @@ public sealed class ItemHandlingServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Give_IgnoringTheCapacity_PutsItInABackpackWithNoRoom()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000F00));
+        var handling = Handling(capacity: new StubContainerCapacityService { HasRoomResult = false });
+
+        var given = handling.Give(_owner, "sword", ignoreCapacity: true);
+
+        Assert.NotNull(given);
+        Assert.Equal(_backpack.Id, given.ContainerId);
+        Assert.Equal(2, _items.GetContents(_backpack.Id).Count);
+    }
+
+    [Fact]
     public void Give_AnUnknownTemplateOrWithNoSerialLeft_IsNull()
     {
         Assert.Null(_handling.Give(_owner, "sword"));

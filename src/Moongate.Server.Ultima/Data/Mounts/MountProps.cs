@@ -22,6 +22,20 @@ public static class MountProps
     public const string PetOwner = "pet_owner";
 
     /// <summary>
+    ///     Prop of a mount item: the id of the statuette template an ethereal mount was made from, which is given back
+    ///     when the rider gets off.
+    /// </summary>
+    public const string EtherealTemplate = "ethereal_template";
+
+    /// <summary>
+    ///     Prop of a mount item: the hue the statuette of an ethereal mount had, as a long.
+    /// </summary>
+    public const string EtherealHue = "ethereal_hue";
+
+    /// <summary>
+    ///     Prop of a mount item: the name the statuette of an ethereal mount had, when it was renamed.
+    /// </summary>
+    public const string EtherealName = "ethereal_name";
     ///     Prop of a player: the template ids of the pets it left in a stable, joined by semicolons.
     /// </summary>
     public const string Stabled = "stabled";
