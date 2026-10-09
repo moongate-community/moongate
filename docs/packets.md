@@ -82,7 +82,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x95` | `HuePickerPacket` | Outgoing | Fixed 9 | — |
 | `0x95` | `HuePickerResponsePacket` | Incoming | Fixed 9 | `HuePickerResponsePacketHandler`: gives the hue picked to the player's open picker |
 | `0x05` | `AttackRequestPacket` | Incoming | Fixed 5 | `AttackRequestPacketHandler`: the character [fights](combat.md) the mobile; a refused request is answered with `0xAA` and zero |
-| `0x22`, `0xB5`, `0xFB` | `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x22`, `0x9B`, `0xB5`, `0xFB` | `ResynchronizeRequestPacket`, `HelpRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 3, 258, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xAA` | `CombatantPacket` | Outgoing | Fixed 5 | — |
 | `0x2F` | `SwingPacket` | Outgoing | Fixed 10 | — |
 | `0x0B` | `DamagePacket` | Outgoing | Fixed 7 | — |

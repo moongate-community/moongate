@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"865d07f543a685dfd6203d90ff95dbc98c10d8b8c3d777a29a0b96cdd586febd","title":"Pacchetti e handler"} -->
+<!-- translation: {"sourceHash":"741cc862449bb3f8f0ff26297da44fa82263c73c61400790216a7ba929464bf0","title":"Pacchetti e handler"} -->
 
 # Pacchetti e handler
 
@@ -84,7 +84,7 @@ modalità, perché l'Enhanced Client lo invia anche al server di accesso:
 | `0x95` | `HuePickerPacket` | In uscita | Fissa 9 | — |
 | `0x95` | `HuePickerResponsePacket` | In ingresso | Fissa 9 | `HuePickerResponsePacketHandler`: fornisce la tinta scelta al selettore aperto del giocatore |
 | `0x05` | `AttackRequestPacket` | In ingresso | Fissa 5 | `AttackRequestPacketHandler`: il personaggio [combatte](combat.md) il mobile; una richiesta rifiutata riceve `0xAA` e zero |
-| `0x22`, `0xB5`, `0xFB` | `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | In ingresso | Fissa 3, 64, 2 | `IgnoredPacketHandler<T>`: riconosciuto e ignorato per ora (log Debug) |
+| `0x22`, `0x9B`, `0xB5`, `0xFB` | `ResynchronizeRequestPacket`, `HelpRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | In ingresso | Fissa 3, 258, 64, 2 | `IgnoredPacketHandler<T>`: riconosciuto e ignorato per ora (log Debug) |
 | `0xAA` | `CombatantPacket` | In uscita | Fissa 5 | — |
 | `0x2F` | `SwingPacket` | In uscita | Fissa 10 | — |
 | `0x0B` | `DamagePacket` | In uscita | Fissa 7 | — |
