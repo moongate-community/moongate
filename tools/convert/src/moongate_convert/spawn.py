@@ -163,11 +163,12 @@ def serialize(spawns: list[Spawn]) -> str:
 
         lines.append(f"only_outside = {'true' if spawn.only_outside else 'false'}")
 
-        for area in spawn.areas:
-            lines.extend(["[[spawn.areas]]", f"x1 = {area.x1}", f"y1 = {area.y1}", f"x2 = {area.x2}", f"y2 = {area.y2}"])
+        # A blank line comes before every table of an array after its first.
+        for table, areas in (("spawn.areas", spawn.areas), ("spawn.exclude", spawn.exclude)):
+            for index, area in enumerate(areas):
+                lines.extend(["" if index > 0 else None, f"[[{table}]]", f"x1 = {area.x1}", f"y1 = {area.y1}", f"x2 = {area.x2}", f"y2 = {area.y2}"])
 
-        for area in spawn.exclude:
-            lines.extend(["[[spawn.exclude]]", f"x1 = {area.x1}", f"y1 = {area.y1}", f"x2 = {area.x2}", f"y2 = {area.y2}"])
+        lines = [line for line in lines if line is not None]
 
         blocks.append("\n".join(lines) + "\n")
 

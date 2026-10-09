@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TextIO
 
-from . import books, chests, guildmasters, locations, signs, spawn, spawns, teleporters, vendors
+from . import books, chests, guildmasters, locations, signs, spawn, spawns, teleporters, uox, vendors
 
 # name -> (module run function, what --source is, what --destination is, help)
 _Run = Callable[[Path, Path, TextIO, TextIO], int]
@@ -140,9 +140,58 @@ def _guildmasters(arguments: argparse.Namespace, output: TextIO, error: TextIO) 
     )
 
 
+def _uox_options(command: argparse.ArgumentParser) -> None:
+    command.add_argument("--source", required=True, type=Path, help="a UOX3 .dfn file, or a folder scanned for every .dfn under it")
+    command.add_argument("--destination", required=True, type=Path, help="the item templates folder: one .toml per source file, at the same relative path")
+    command.add_argument(
+        "--loot-destination", type=Path, help="the loot templates folder: one .toml per [LOOTLIST] block; without it the loot lists are skipped"
+    )
+    command.add_argument(
+        "--mobile-source", type=Path, help="UOX3's dfndata folder, holding npc/, colors/, creatures/ and newbie/; goes with --mobile-destination and --names-destination"
+    )
+    command.add_argument("--mobile-destination", type=Path, help="the mobile templates folder: one .toml per source file")
+    command.add_argument("--names-destination", type=Path, help="the file to write the name lists of npc/namelists.dfn to (names.toml)")
+    command.add_argument(
+        "--starting-items-destination", type=Path, help="the file to write the starting items of newbie/newbie.dfn to (starting_items.toml); needs --mobile-source"
+    )
+    command.add_argument(
+        "--scripts-source",
+        type=Path,
+        help="UOX3's js folder, holding jse_fileassociations.scp and jse_objectassociations.scp: an item whose UOX3 script has a Moongate script gets its script_id",
+    )
+    command.add_argument(
+        "--npc-lists-destination", type=Path, help="the npc lists folder (templates/npc_lists) for UOX3's [NPCLIST] blocks; needs --mobile-source and --spawns-destination"
+    )
+    command.add_argument(
+        "--spawns-destination", type=Path, help="the spawns folder (templates/spawns), one folder a map, for UOX3's [REGIONSPAWN] blocks; needs --mobile-source and --npc-lists-destination"
+    )
+
+
+def _uox(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> int:
+    return uox.run(
+        arguments.source,
+        arguments.destination,
+        arguments.loot_destination,
+        output,
+        error,
+        arguments.mobile_source,
+        arguments.mobile_destination,
+        arguments.names_destination,
+        arguments.starting_items_destination,
+        arguments.scripts_source,
+        arguments.npc_lists_destination,
+        arguments.spawns_destination,
+    )
+
+
 # Commands with options of their own: name -> (what it does, adds its options, runs it from the parsed arguments)
 _Custom = Callable[[argparse.Namespace, TextIO, TextIO], int]
 CUSTOM: dict[str, tuple[str, Callable[[argparse.ArgumentParser], None], _Custom]] = {
+    "uox": (
+        "Convert UOX3's .dfn item blocks and loot lists into item and loot templates, and with --mobile-source its NPCs, names, starting items, npc lists and spawns",
+        _uox_options,
+        _uox,
+    ),
     "modernuo-guildmasters": (
         "Convert the guildmasters of ModernUO into mobile templates (a man and a woman for each trade) and npc lists",
         _guildmasters_options,

@@ -257,8 +257,8 @@ pitcher of water last (see the [shipped file](data-files/starting-items.md)).
 ## Converters in Python
 
 The converters are moving from `mgctl convert` to a Python package, `tools/convert`, a part at a time. All the ones of ModernUO are there already (signs, teleporters,
-named places, treasure chests, books, vendors, guildmasters and spawns), with the same options and the same output, byte for byte (the one exception: the places converter also fixes Cell 7 of the jail, which ModernUO puts on the spot of Cell 6); the ones of UOX3 stay in `mgctl`
-until they are ported. Two things differ: `modernuo-books` does not check that a book fits the client's packets (that check stays with the C# tests of the shipped catalog), and `modernuo-vendors` also makes a shop for the thief and the ranger. In the sections below, `mgctl convert modernuo-signs` can be replaced by:
+named places, treasure chests, books, vendors, guildmasters and spawns), with the same options and the same output, byte for byte (the one exception: the places converter also fixes Cell 7 of the jail, which ModernUO puts on the spot of Cell 6); and so is the one of UOX3, `uox`, with all its
+passes (`uv run moongate-convert uox` takes the options of `mgctl convert uox`). Three things differ: when a source is not what it should be (an inverted loot range, two headers that become the same id, a hue out of range, an unreadable file) the Python command exits 2 with a message where the C# one stopped with an unhandled exception; `modernuo-books` does not check that a book fits the client's packets (that check stays with the C# tests of the shipped catalog), and `modernuo-vendors` also makes a shop for the thief and the ranger. In the sections below, `mgctl convert modernuo-signs` can be replaced by:
 
 ```sh
 cd tools/convert

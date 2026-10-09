@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 from pathlib import Path
 
@@ -11,6 +12,15 @@ _SPACE = "[ \\t\\n\\v\\f\\r]*"
 _INT = re.compile(rf"{_SPACE}[+-]?[0-9]+{_SPACE}", re.ASCII)
 INT32_MIN = -(2**31)
 INT32_MAX = 2**31 - 1
+
+
+# What .NET's ``char.IsWhiteSpace`` (so ``Trim``) takes for a space: Python's ``str.strip`` also takes \x1c to \x1f.
+WHITESPACE = " \t\n\v\f\r\x85\xa0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000"
+
+
+def trim(text: str) -> str:
+    """As .NET's ``string.Trim()``."""
+    return text.strip(WHITESPACE)
 
 
 def snake_case(text: str) -> str:
@@ -129,3 +139,19 @@ def _drop_trailing_commas(text: str) -> str:
             i += 1
 
     return "".join(out)
+
+
+def walk_files(root: Path, suffix: str) -> list[Path]:
+    """Every file under a folder whose name ends with the suffix, in path order, as ``Directory.EnumerateFiles`` finds them: directory
+    links are followed and a folder that cannot be read is an error, not a silent gap."""
+    def fail(exception: OSError) -> None:
+        raise exception
+
+    found = [
+        Path(folder) / name
+        for folder, _, names in os.walk(root, onerror=fail, followlinks=True)
+        for name in names
+        if name.endswith(suffix)
+    ]
+
+    return sorted((path for path in found if path.is_file()), key=str)
