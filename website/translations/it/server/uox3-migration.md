@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"00062329a7e787b59ca691d9c78a18ae6f9b76fa50aa136cebb9af6167e096f3","title":"Migrare da UOX3"} -->
+<!-- translation: {"sourceHash":"beebff07a7453315ee9f05a22d670d64b38a4134bcd84e68bf28688579c3bb46","title":"Migrare da UOX3"} -->
 
 # Migrare da UOX3
 
@@ -272,6 +272,17 @@ Imposta `ultima.starting_items.best_skills` nella configurazione del server. Il
 convertitore aggiunge all'insieme comune le voci proprie di Moongate per gli oggetti
 presenti nella sorgente: prima 1000 monete d'oro al posto di `STARTGOLD`, poi tre
 pagnotte e infine una brocca d'acqua (vedi il [file distribuito](data-files/starting-items.md)).
+
+## Convertitori in Python
+
+I convertitori passano da `mgctl convert` a un pacchetto Python, `tools/convert`, una parte alla volta. Quelli di insegne, teletrasporti,
+luoghi nominati e forzieri del tesoro di ModernUO ci sono già, con le stesse opzioni e lo stesso output, byte per byte (unica eccezione: il convertitore dei luoghi corregge anche la Cella 7 del carcere, che ModernUO mette sul posto della Cella 6); gli altri restano in `mgctl`
+finché non vengono portati. Nelle sezioni sotto, `mgctl convert modernuo-signs` si può sostituire con:
+
+```sh
+cd tools/convert
+uv run moongate-convert modernuo-signs --source <ModernUO>/Distribution/Data/signs.cfg --destination ../../moongate_root/templates/decorations
+```
 
 ## Insegne di ModernUO
 

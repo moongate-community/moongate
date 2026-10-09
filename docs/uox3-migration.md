@@ -254,6 +254,17 @@ configuration. The converter adds Moongate's own entries to the common set, for 
 source has: 1000 gold coins first, in place of `STARTGOLD`, then three loaves of bread and a
 pitcher of water last (see the [shipped file](data-files/starting-items.md)).
 
+## Converters in Python
+
+The converters are moving from `mgctl convert` to a Python package, `tools/convert`, a part at a time. The ones of ModernUO's signs, teleporters,
+named places and treasure chests are there already, with the same options and the same output, byte for byte (the one exception: the places converter also fixes Cell 7 of the jail, which ModernUO puts on the spot of Cell 6); the others stay in `mgctl`
+until they are ported. In the sections below, `mgctl convert modernuo-signs` can be replaced by:
+
+```sh
+cd tools/convert
+uv run moongate-convert modernuo-signs --source <ModernUO>/Distribution/Data/signs.cfg --destination ../../moongate_root/templates/decorations
+```
+
 ## Signs of ModernUO
 
 The shop and world signs come from ModernUO's `signs.cfg`, the file its `[SignGen` places:
