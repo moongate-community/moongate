@@ -176,8 +176,8 @@ See all of them in [Commands](commands.md).
   or character operations yet.
 - Plugins under `plugins/` register services, commands, Lua modules, metrics, entities, SQL and
   their own config section. See [Writing a plugin](plugins.md).
-- Tools: [`mgctl`](mgctl.md) prepares the server root, applies the database migrations and converts
-  UOX3 and ModernUO content. A [Docker example](docker-login-realms.md) runs one login and
+- Tools: [`mgctl`](mgctl.md) prepares the server root, applies the database migrations; the Python
+  [`moongate-convert`](uox3-migration.md#run-it) converts UOX3 and ModernUO content. A [Docker example](docker-login-realms.md) runs one login and
   two game servers.
 
 ## Settings with no effect yet

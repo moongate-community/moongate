@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b900f77cee7eef15fd320f9db060dec40021995a5e086d79651e1428d3a298a6","title":"Eseguire con Docker"} -->
+<!-- translation: {"sourceHash":"862e87154b1a27339e2ecce77e4ab3f76bbeeee5fdd7441f94c1338cc7341f2a","title":"Eseguire con Docker"} -->
 
 # Eseguire con Docker
 
@@ -162,16 +162,13 @@ da un rilascio provengono comunque da `mgctl init`.
 
 ## Conversione dei contenuti UOX3
 
-`/app/mgctl` dell'immagine converte file UOX3 `.dfn` in TOML con `convert uox`.
-Monta la sorgente in sola lettura e una directory di output scrivibile dall'utente chiamante:
+L'immagine non converte contenuti: i convertitori sono uno strumento Python, `moongate-convert`, che si lancia da un checkout del repository (servono [uv](https://docs.astral.sh/uv/) e Python 3.13 o successivo, non serve .NET). Eseguilo sull'host, con i dati UOX3 in una cartella leggibile, e scrivi l'output dove il volume `/data` del container è montato, oppure copialo dopo:
 
 ```sh
-docker run --rm --entrypoint /app/mgctl \
-  --user "$(id -u):$(id -g)" \
-  -v /path/to/uox3/dfndata/items:/uox-source:ro \
-  -v /path/to/templates:/uox-out \
-  moongate:local \
-  convert uox --source /uox-source --destination /uox-out/items --loot-destination /uox-out/loots
+cd tools/convert
+uv run moongate-convert uox \
+  --source /path/to/uox3/data/dfndata/items \
+  --destination /path/to/templates/items --loot-destination /path/to/templates/loots
 ```
 
 Vedi [Migrare da UOX3](uox3-migration.md) per comportamento e limiti attuali del convertitore.

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"f52758456d36a99fbb50ebfbcec23956e83de7f19352bb9647f0736f84679e89","title":"Tipi di valore TOML"} -->
+<!-- translation: {"sourceHash":"bf4fcd6fe849f61cb2cc5e3d96e6a7a0c4244e3f297832b95a6fef68926e056c","title":"Tipi di valore TOML"} -->
 
 # Tipi di valore TOML
 
@@ -42,7 +42,6 @@ Queste classi registrano convertitori:
 | Chi | Convertitori |
 | --- | --- |
 | `MoongateUltimaPlugin.Register` | `Serial`, `Point2D`, `Point3D`, `HueSpec`, `Rectangle2D`, e le factory `EnumValueSpec` e `RangeValueSpec` |
-| `mgctl convert` (`Moongate.UoxItemConverter`) | gli stessi, tranne `Rectangle2D` |
 | Test | nessuno globalmente; ogni test passa le proprie opzioni con il convertitore che verifica |
 
 Un convertitore registrato copre anche la forma nullable del proprio tipo: `go_location` in

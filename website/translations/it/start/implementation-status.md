@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"d13f003169e16f4c5a55d27c53c3295e6a87abbca993de00c078b9532fe4002f","title":"Stato dell'implementazione"} -->
+<!-- translation: {"sourceHash":"b7fa18310f62a2119de9046cc58b9fd28a0d7f70b66dda5e43f6f3be005311be","title":"Stato dell'implementazione"} -->
 
 # Stato dell'implementazione
 
@@ -178,8 +178,8 @@ Vedi tutti i comandi in [Comandi](commands.md).
   o operazione sui personaggi ancora.
 - I plugin in `plugins/` registrano servizi, comandi, moduli Lua, metriche, entità, SQL e
   la propria sezione di configurazione. Vedi [Scrivere un plugin](plugins.md).
-- Strumenti: [`mgctl`](mgctl.md) prepara la root del server, applica le migrazioni del database e converte
-  contenuti UOX3 e ModernUO. Un [esempio Docker](docker-login-realms.md) esegue un server di login e
+- Strumenti: [`mgctl`](mgctl.md) prepara la root del server, applica le migrazioni del database; il
+  [`moongate-convert`](uox3-migration.md#run-it) Python converte contenuti UOX3 e ModernUO. Un [esempio Docker](docker-login-realms.md) esegue un server di login e
   due server di gioco.
 
 ## Impostazioni ancora senza effetto

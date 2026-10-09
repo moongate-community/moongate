@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5e7788f45853f1411ec62f59e0eb155f674037dba07eac04cfa58a9f876af3de","title":"Pacchetti NuGet"} -->
+<!-- translation: {"sourceHash":"0e88eeedc1680e55cd260df711e1644a9a3d9413967e603e21b661982842ab67","title":"Pacchetti NuGet"} -->
 
 # Librerie NuGet e verifica dei pacchetti
 
@@ -31,8 +31,8 @@ README inglese, il logo Moongate originale, documentazione XML e un pacchetto di
 | [Moongate.Server.Core](../src/Moongate.Server.Core/README.md) | Contratti di server e plugin, eventi e registrazioni | Core, Network, Network.Packets |
 | [Moongate.Ultima](../src/Moongate.Ultima/README.md) | Lettori dei dati client UO e utilità di rendering | Nessuna |
 
-`Moongate.Server`, `Moongate.Ctl` e le due librerie che esegue, `Moongate.MigrationRunner`
-e `Moongate.UoxItemConverter`, sono eseguibili distribuiti tramite artefatti di rilascio
+`Moongate.Server`, `Moongate.Ctl` e la libreria che esegue, `Moongate.MigrationRunner`,
+sono eseguibili distribuiti tramite artefatti di rilascio
 e immagini container. Non producono pacchetti libreria. `Moongate.Server.Admin` e
 `Moongate.Server.Ultima` sono moduli incorporati distribuiti con il server, anch'essi
 non impacchettabili. Test e fixture dei plugin sono esclusi dal packaging.
