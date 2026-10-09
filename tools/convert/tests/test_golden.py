@@ -146,3 +146,21 @@ def test_vendors(tmp_path):
 
     for name in kept:
         assert (tmp_path / name).read_bytes() == (shipped / name).read_bytes(), name
+
+
+def test_guildmasters(tmp_path):
+    code = main(
+        [
+            "modernuo-guildmasters",
+            "--source", str(Path(SOURCE or "") / "Projects" / "UOContent"),
+            "--items", str(ROOT / "templates" / "items"),
+            "--mobiles", str(tmp_path / "mobiles"),
+            "--npc-lists", str(tmp_path / "npc_lists"),
+        ],
+        io.StringIO(),
+        io.StringIO(),
+    )
+
+    assert code == 0
+    assert (tmp_path / "mobiles" / "guildmasters.toml").read_bytes() == (ROOT / "templates" / "mobiles" / "guildmasters.toml").read_bytes()
+    assert (tmp_path / "npc_lists" / "npclists_guildmasters.toml").read_bytes() == (ROOT / "templates" / "npc_lists" / "npclists_guildmasters.toml").read_bytes()
