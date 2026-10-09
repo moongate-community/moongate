@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e7492ccaf8ed77e4478616bbe903343916a63c009720453995723f94dec09986","title":"Configurazione"} -->
+<!-- translation: {"sourceHash":"f4eb50634f57ab726fbe8aea72debab9ff860fd008ac40a6ab35e7df317e1a03","title":"Configurazione"} -->
 
 # Configurazione del server
 
@@ -166,6 +166,10 @@ max_withdraw = 60000                  # Coins a banker hands out at one time.
 min_check = 5000                      # The smallest bank check a banker writes.
 max_check = 1000000                   # The largest.
 
+[ultima.stable]
+max_pets = 10                         # Pets a player may leave with the stablemasters, from 1 to 50.
+fee = 30                              # Gold a pet costs when it is stabled, from the backpack and then the bank; 0 makes it free.
+
 [persistence]
 auto_sync_schema = false
 auto_apply_migrations = false         # true: a start adds the bundled core SQL and applies what is pending.
@@ -305,6 +309,7 @@ Vedi [Persistenza PostgreSQL](persistence.md).
 | `ultima.schedule.time_zone` | Vuoto (il fuso del sistema) oppure un id IANA come `Europe/Rome`. Un id sconosciuto ferma l'avvio. Un container Docker è in UTC a meno che abbia `TZ` o questa impostazione; su Linux i fusi richiedono il pacchetto tzdata. Vedi [Calendario](schedule.md). |
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Valori predefiniti 7 (da 0 a 3650; 0 conserva per sempre le discussioni), 50 (da 1 a 200), 120 e 30 (da 0 a 86400). Durata di una discussione su una [bacheca](bulletin-boards.md) dall'ultima risposta, numero di messaggi contenuti, e attesa di un personaggio tra due nuove discussioni e tra due interventi sulla stessa bacheca. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Valori predefiniti 125 (da 0 a 10000; 0 senza limite), 60000 (da 1 a 60000), 5000 e 1.000.000 (`min_check` da 1 a `max_check`, `max_check` fino a 2.000.000.000). Oggetti contenuti in una [cassetta bancaria](bank.md), compresi quelli nelle borse; monete consegnate da un banchiere per un *prelievo*; valore degli assegni emessi dal banchiere. |
+| `ultima.stable.max_pets`, `ultima.stable.fee` | Valori predefiniti 10 (da 1 a 50) e 30 (da 0 a 100000). I animali che un giocatore può lasciare a un addestratore, e quanto costa ciascuno quando viene messo in stalla: vedi la [stalla](mounts.md#the-stable). |
 
 Le impostazioni di gioco si trovano sotto `[ultima]` come sottotabelle (`[ultima.world]`,
 `[ultima.characters]`, ...). L'oro iniziale non è un'impostazione: è un oggetto

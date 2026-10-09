@@ -14,4 +14,9 @@ internal sealed class HarvestArea
     ///     The timestamp at which the area refills, set at the first take from a full area; null while it is full.
     /// </summary>
     public long? RefillAt { get; set; }
+
+    /// <summary>
+    ///     The vein drawn when the area filled; null for a resource without veins.
+    /// </summary>
+    public string? Vein { get; set; }
 }

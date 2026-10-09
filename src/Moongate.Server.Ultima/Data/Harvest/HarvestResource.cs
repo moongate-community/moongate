@@ -35,4 +35,9 @@ public class HarvestResource
     ///     The most minutes before it is full again; the same as the least when it is not set.
     /// </summary>
     public int RespawnMaxMinutes { get; set; }
+
+    /// <summary>
+    ///     The kinds an area may be of, one drawn by weight each time the area fills; none for a resource of one kind.
+    /// </summary>
+    public List<HarvestVein> Vein { get; set; } = [];
 }

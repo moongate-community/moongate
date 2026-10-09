@@ -40,6 +40,18 @@ public sealed class HarvestModule
     }
 
     /// <summary>
+    ///     The vein of the area of a cell; <c>harvest.vein("wood", map, x, y)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The vein of the area of the cell x, y of the map: the kind of the resource the area is of, such as 'oak' among the wood, one of the [[resource.vein]] of data/harvest.toml, drawn by weight each time the area fills. Nil for a resource without veins, an unknown resource or a cell below zero."
+    )]
+    public string? Vein(string resource, MapType map, int x, int y)
+    {
+        return _harvest.Vein(resource, map, x, y);
+    }
+
+    /// <summary>
     ///     Takes one of the resource from the area of a cell; <c>if harvest.take("fish", map, x, y) then ... end</c>.
     /// </summary>
     [ScriptFunction(

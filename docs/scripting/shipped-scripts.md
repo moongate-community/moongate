@@ -207,7 +207,7 @@ static that was picked, and the script holds the graphics that are trees. The ch
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have wood left (`harvest.amount`), the
 Lumberjacking skill is tried between 0 and 100 (`skill.check`), and a cut that works takes from the place
 (`harvest.take`) and gives 10 logs (`item.give`). The constants at the top of the script are the range, the swings
-and the logs; the trees are in `scripts/common/trees.lua`, shared with `scripts/items/blade.lua`, the script of the knives, daggers and swords (`script_id = "blade"`), which hacks one kindling off a tree. Picked onto logs in the backpack, the axe saws the stack into boards (`item.template`, `item.consume`, then `item.give`). Who is chopping is kept in memory by serial: a restart frees everyone.
+and the logs; the trees are in `scripts/common/trees.lua`, shared with `scripts/items/blade.lua`, the script of the knives, daggers and swords (`script_id = "blade"`), which hacks one kindling off a tree. Picked onto logs in the backpack, the axe saws the stack into boards (`item.template`, `item.consume`, then `item.give`). A place is of one kind of wood, the vein of its area (`harvest.vein`): the table `WOODS` holds the logs and boards of each kind, the Lumberjacking it asks for (`mobile.skills`) and the bounds its cut is tried between, and the table `FINDS` what a master finds with the logs. Who is chopping is kept in memory by serial: a restart frees everyone.
 
 ## fishing_pole.lua
 
@@ -466,6 +466,19 @@ client text 501222 and a murderer (red) with 501223, and a player of negative ka
 the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `evilwhealer`), refuses
 nobody and says nothing. A healer of a
 template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think. A healer with a shop sells and buys as a vendor does, through `scripts/common/shop.lua`: bandages, potions, ginseng and garlic.
+
+## stablemaster.lua and stable_claim.lua
+
+`scripts/mobiles/stablemaster.lua` is the script of the animal trainers (`script_id = "stablemaster"`). The words
+*stable* and *claim*, said within 12 cells, and the entries *Stable* and *Claim All* of the context menu drive the
+`stable` module: *stable* gives a cursor (`target.pick`) and calls `stable.stable` on the pet picked, answering with
+the client's text for each `StableResultType`; *claim* says the list intro and opens the gump `stable_claim`
+(`templates/gumps/stable_claim.xml`), or says there are no pets; *Claim All* calls `stable.claim` on the first place
+until the list is empty. Several trainers hear the same words and `stable.attend` lets one answer. An animal trainer
+keeps its shop and its lessons through `scripts/common/shop.lua` and `training.lua`.
+`scripts/gumps/stable_claim.lua` fills the gump with one button and the name of the pet for each pet of `stable.pets`,
+eight a page; a button checks the player is within 12 cells of the trainer and calls `stable.claim`; a list that
+changed since it was shown is shown again.
 
 ## ankh.lua and resurrect.lua
 

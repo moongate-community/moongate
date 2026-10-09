@@ -52,7 +52,8 @@ so 2.5 seconds at 100 stamina. A swing:
 - The base is the weapon a player holds (a number from its `damage_min` to its `damage_max`), the dice of the template of
   an NPC (`damage`), or 1 to 8 for fists.
 - Raised by the attacker's tactics (`+ (tactics - 50)%`), strength and anatomy (`strength/5%`, `anatomy/5%`, and
-  10% more at anatomy 100). Tactics and anatomy are tried at every hit and teach a player.
+  10% more at anatomy 100). Tactics and anatomy are tried at every hit and teach a player. An axe is raised the same
+  way by Lumberjacking (`lumberjacking/5%`, and 10% more at 100), which a blow does not try.
 - Halved when the target is a player or the attacker is an NPC; a player hitting an NPC does all of it.
   `npc_damage_rate` divides what an NPC does to a player.
 - The armor takes its share off. A **player** is hit on a part of the body, chosen as ModernUO chooses it (neck 7%,
@@ -70,7 +71,7 @@ so 2.5 seconds at 100 stamina. A swing:
   reserved item serials runs short, so the loot and the split stacks keep theirs, and a piece never lies off the map.
 
 The status window of a player shows the damage of its fists, `1` to `8` with the same bonuses of tactics, strength and
-anatomy (the least is never under 1); the status of an NPC shows none.
+anatomy (the least is never under 1), and of Lumberjacking for an axe; the status of an NPC shows none.
 
 A mobile with no hit points left dies as when a game master [kills it](death.md), with the attacker as its killer
 and its corpse: an NPC leaves the world, a [player](death.md#death-of-a-player) stays as a ghost. A ghost does not fight,
@@ -144,7 +145,7 @@ the status window shows), and with these differences, as ModernUO and UOX3 have 
 ## Not yet
 
 Parry (a shield counts for nothing yet), a quiver (ammunition is taken from the backpack), special moves, durability (`max_hits` is kept, not used), the
-strength a weapon or armor asks for (`strength_required` is kept, not used), the lumberjacking bonus of axes, aggressor
+strength a weapon or armor asks for (`strength_required` is kept, not used), aggressor
 lists beyond the target, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
 `get_hit`).
 

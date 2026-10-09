@@ -24,6 +24,14 @@ public interface IHarvestService
     int? Amount(string resource, MapType map, int x, int y);
 
     /// <summary>
+    ///     Gets the vein of the area of a cell: the kind of <paramref name="resource" /> the area is of, drawn each time it fills.
+    /// </summary>
+    /// <returns>
+    ///     The id of the vein; null for a resource without veins, an unknown resource or a cell below zero.
+    /// </returns>
+    string? Vein(string resource, MapType map, int x, int y);
+
+    /// <summary>
     ///     Takes one of <paramref name="resource" /> from the area of a cell.
     /// </summary>
     /// <returns>

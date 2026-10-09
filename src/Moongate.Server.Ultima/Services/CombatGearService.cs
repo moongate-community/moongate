@@ -97,11 +97,12 @@ public sealed class CombatGearService : ICombatGearService
             : (weapon.DamageMin, weapon.DamageMax);
         var tactics = Points(mobile, SkillType.Tactics);
         var anatomy = Points(mobile, SkillType.Anatomy);
+        var lumberjacking = weapon?.Type == WeaponType.Axe ? Points(mobile, SkillType.Lumberjacking) : 0;
 
         return status with
         {
-            DamageMin = Math.Max(CombatFormulas.ScaleDamage(min, tactics, mobile.Strength, anatomy), 1),
-            DamageMax = Math.Max(CombatFormulas.ScaleDamage(max, tactics, mobile.Strength, anatomy), 1),
+            DamageMin = Math.Max(CombatFormulas.ScaleDamage(min, tactics, mobile.Strength, anatomy, lumberjacking), 1),
+            DamageMax = Math.Max(CombatFormulas.ScaleDamage(max, tactics, mobile.Strength, anatomy, lumberjacking), 1),
             // Before AOS the client shows the armor rating where the physical resistance goes.
             PhysicalResistance = ArmorRatingOf(mobile)
         };

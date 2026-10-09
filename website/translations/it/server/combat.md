@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"9f6f3033f8ec00a1c8acb91c5adae6fa3555bd7768e09fa4256eefb902e8330d","title":"Combattimento"} -->
+<!-- translation: {"sourceHash":"42bcd08e37c416e9e300ab7af7891fcf554f5b3220fcdfe3892fcf929a95ef90","title":"Combattimento"} -->
 
 # Combattimento
 
@@ -54,7 +54,8 @@ quindi 2,5 secondi a 100 di stamina. Un colpo:
 - La base è l'arma che un giocatore impugna (un numero dal suo `damage_min` al suo `damage_max`), i dadi del template di
   un NPC (`damage`), oppure da 1 a 8 per i pugni.
 - Aumentata dalla tattica dell'attaccante (`+ (tactics - 50)%`), dalla forza e dall'anatomia (`strength/5%`, `anatomy/5%`, e
-  un altro 10% con anatomia a 100). Tattica e anatomia vengono provate a ogni colpo a segno e fanno crescere un giocatore.
+  un altro 10% con anatomia a 100). Tattica e anatomia vengono provate a ogni colpo a segno e fanno crescere un giocatore. Un'ascia viene aumentata allo stesso
+  modo dal Lumberjacking (`lumberjacking/5%`, e un altro 10% a 100), che un colpo non prova.
 - Dimezzato quando il bersaglio è un giocatore o l'attaccante è un NPC; un giocatore che colpisce un NPC lo infligge tutto.
   `npc_damage_rate` divide ciò che un NPC fa a un giocatore.
 - L'armatura ne toglie la sua parte. Un **giocatore** viene colpito in una parte del corpo, scelta come la sceglie ModernUO (collo 7%,
@@ -73,7 +74,7 @@ quindi 2,5 secondi a 100 di stamina. Un colpo:
   bottino e le pile divise hanno i loro, e un pezzo non finisce mai fuori mappa.
 
 La finestra di stato di un giocatore mostra il danno dei suoi pugni, da `1` a `8` con gli stessi bonus di tattica, forza e
-anatomia (il minimo non scende mai sotto 1); lo stato di un NPC non ne mostra.
+anatomia (il minimo non scende mai sotto 1), e di Lumberjacking per un'ascia; lo stato di un NPC non ne mostra.
 
 Un mobile senza più punti ferita muore come quando un game master [lo uccide](death.md), con l'attaccante come uccisore
 e il suo cadavere: un NPC lascia il mondo, un [giocatore](death.md#death-of-a-player) resta come fantasma. Un fantasma non combatte,
@@ -147,7 +148,7 @@ la finestra di stato mostra), e con queste differenze, come in ModernUO e UOX3:
 ## Non ancora
 
 Parata (uno scudo non conta ancora nulla), una faretra (le munizioni si prendono dallo zaino), mosse speciali, durabilità (`max_hits` è conservato, non usato), la
-forza richiesta da un'arma o da un'armatura (`strength_required` è conservato, non usato), il bonus di lumberjacking delle asce, liste
+forza richiesta da un'arma o da un'armatura (`strength_required` è conservato, non usato), liste
 di aggressori oltre il bersaglio, bende ed eventi di combattimento di Lua (`attack`, `hit`, `miss`,
 `get_hit`).
 

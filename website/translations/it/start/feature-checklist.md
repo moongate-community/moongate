@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ae5167cbbfe635d137eb98d8928cdb333d7112cff6efa38c4d318723b332438d","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"9fc53f30cfa5df17ba63f2e90c6cc5e4bfb9e5cb4dacad3d8d22987d46740c60","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -113,7 +113,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Sistema | Moongate | Note |
 | --- | --- | --- |
 | Usare e incrementare un'abilità | 🟡 | Un'[abilità](skills.md) viene usata dalla finestra delle abilità (`scripts/skills/<skill>.lua`), verificata da `skill.check` e incrementata con la formula di ModernUO; viene fornita solo Hiding, e le statistiche non aumentano ancora con le abilità |
-| Raccolta: estrazione mineraria, taglio della legna, pesca | 🟡 | [Pesca](fishing.md) con una canna: acqua entro 4 caselle, 8 secondi, un pesce, una vecchia calzatura o niente in base all'abilità; i pesci di un luogo si esauriscono per zona e ritornano ([`harvest.toml`](data-files/harvest.md)). [Taglio della legna](lumberjacking.md) con un'ascia in mano: un albero entro 2 caselle, da uno a tre colpi, 10 tronchi in base all'abilità, la legna di un luogo che si esaurisce allo stesso modo. [Estrazione](mining.md) con un piccone o una pala: minerale di ferro dalla roccia di montagne e grotte, fuso in lingotti a una forgia. I tronchi si segano in assi con l'ascia, e una lama stacca legnetti da un albero. Niente altri metalli, niente prese speciali, niente tipi di legno |
+| Raccolta: estrazione mineraria, taglio della legna, pesca | 🟡 | [Pesca](fishing.md) con una canna: acqua entro 4 caselle, 8 secondi, un pesce, una vecchia calzatura o niente in base all'abilità; i pesci di un luogo si esauriscono per zona e ritornano ([`harvest.toml`](data-files/harvest.md)). [Taglio della legna](lumberjacking.md) con un'ascia in mano: un albero entro 2 caselle, da uno a tre colpi, 10 tronchi in base all'abilità, la legna di un luogo che si esaurisce allo stesso modo. [Estrazione](mining.md) con un piccone o una pala: minerale di ferro dalla roccia di montagne e grotte, fuso in lingotti a una forgia. I tronchi si segano in assi con l'ascia, e una lama stacca legnetti da un albero. Un luogo è di uno fra sette tipi di legno, ognuno con la sua abilità richiesta, un maestro trova cose rare insieme ai tronchi, e un'ascia colpisce più forte con il Lumberjacking. Niente altri metalli, niente prese speciali |
 | Motore di creazione: menu, ricette, risorse, qualità | ❌ | |
 | Mestieri: forgiatura, sartoria, carpenteria, meccanica, alchimia, cucina, iscrizione, fabbricazione di archi e frecce, cartografia | ❌ | |
 | Riparare e migliorare gli oggetti | ❌ | |
@@ -144,7 +144,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
 | Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, passando dalle porte chiuse che apre e aggirando quelle a chiave e i mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; un NPC che vaga non apre porte, e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
 | Animali e seguaci: comandi, lealtà, legame | ❌ | |
-| Cavalcature | ❌ | |
+| Cavalcature | 🟡 | [Cavalcature](mounts.md): un game master dà un cavallo, un lama o uno struzzo con [`tame`](commands/tame.md); il suo proprietario ci sale con un doppio clic e ne scende con un doppio clic su di sé, oppure muore, e corre il doppio più veloce. Chi è in sella non può estrarre, pescare né usare Stealth, e un teletrasporto può rifiutarlo. La [stalla](mounts.md#the-stable) degli addestratori di animali custodisce gli animali di un giocatore. Niente bola, niente animazioni in sella, niente cavalcature eteree |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
 | Raccolte di nomi | ✅ | Elenchi di nomi per tipo e genere |
 | Bisogni: cibo, pascolo, desideri | ❌ | |
