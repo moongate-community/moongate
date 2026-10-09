@@ -725,6 +725,26 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void GetWornAt_GivesTheItemOnThatLayerOnly()
+    {
+        var items = TestItems.Create();
+        var shirt = Item(0x40000050);
+        var mount = Item(0x40000051);
+        shirt.Equip(Aria, LayerType.Shirt);
+        mount.Equip(Aria, LayerType.Mount);
+        items.Add([shirt, mount]);
+
+        Assert.Same(mount, items.GetWornAt(Aria, LayerType.Mount));
+        Assert.Same(shirt, items.GetWornAt(Aria, LayerType.Shirt));
+        Assert.Null(items.GetWornAt(Aria, LayerType.Backpack));
+        Assert.Null(items.GetWornAt(new Serial(0x999), LayerType.Mount));
+
+        items.Remove([mount.Id]);
+
+        Assert.Null(items.GetWornAt(Aria, LayerType.Mount));
+    }
+
+    [Fact]
     public void IsLyingOnGround_IsFalseWhileHeld()
     {
         var items = TestItems.Create();

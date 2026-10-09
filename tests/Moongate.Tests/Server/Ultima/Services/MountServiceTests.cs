@@ -1,11 +1,15 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -28,6 +32,9 @@ public sealed class MountServiceTests
     private readonly StubNpcService _npcs = new();
     private readonly StubItemHandlingService _handling = new();
     private readonly CapturingLogSink _log = new();
+    private readonly StubDeathService _death = new();
+    private readonly RecordingDataAccess<ItemEntity> _itemData = new();
+    private readonly ReservedInventory _inventory = new();
     private readonly MobileService _mobiles;
     private readonly Moongate.Server.Ultima.Services.ItemService _items;
     private readonly MountService _service;
@@ -72,8 +79,14 @@ public sealed class MountServiceTests
                 )
             ),
             _speech,
+            new Lazy<IDeathService>(() => _death),
+            _inventory,
+            _itemData,
             new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
-        );
+        )
+        {
+            RetryDelay = TimeSpan.Zero
+        };
         _mobiles.EnterWorld(_rider);
         _mobiles.EnterWorld(_horse);
         _horse.SetProp(MountProps.Owner, (long)_rider.Id.Value);
@@ -118,13 +131,58 @@ public sealed class MountServiceTests
     }
 
     [Fact]
-    public void TryMount_AWildHorseByAGameMaster_Mounts()
+    public void TryMount_AWildHorseByAGameMaster_IsRefusedToo()
     {
         _horse.RemoveProp(MountProps.Owner);
 
+        Assert.False(_service.TryMount(_rider, _horse, force: true));
+
+        Assert.Equal(501263, Assert.Single(_speech.ToldClilocs).Cliloc);
+        Assert.Empty(_npcs.Removals);
+    }
+
+    [Fact]
+    public void TryMount_AnotherPlayersHorseByAGameMaster_Mounts()
+    {
+        _horse.SetProp(MountProps.Owner, 77L);
+
         Assert.True(_service.TryMount(_rider, _horse, force: true));
 
-        Assert.True(_service.IsMounted(_rider));
+        var item = Assert.Single(_items.GetWorn(_rider.Id), worn => worn.Layer == LayerType.Mount);
+        Assert.Equal(77L, item.GetProp<long>(MountProps.PetOwner));
+    }
+
+    [Fact]
+    public void TryMount_AHorseOnAnotherLevel_IsRefusedWithTooFar()
+    {
+        _horse.Location = new Point3D(1001, 1001, 20);
+
+        Assert.False(_service.TryMount(_rider, _horse));
+
+        Assert.Equal(500206, Assert.Single(_speech.ToldClilocs).Cliloc);
+        Assert.Empty(_npcs.Removals);
+    }
+
+    [Fact]
+    public void TryMount_ADyingCreature_IsRefusedInSilence()
+    {
+        _death.Dying.Add(_horse.Id);
+
+        Assert.False(_service.TryMount(_rider, _horse));
+
+        Assert.Empty(_speech.ToldClilocs);
+        Assert.Empty(_npcs.Removals);
+    }
+
+    [Fact]
+    public void TryMount_ARiderWhoseInventoryIsReserved_KeepsTheHorse()
+    {
+        _inventory.Reserved = true;
+
+        Assert.False(_service.TryMount(_rider, _horse));
+
+        Assert.False(_service.IsMounted(_rider));
+        Assert.Empty(_npcs.Removals);
     }
 
     [Fact]
@@ -263,15 +321,45 @@ public sealed class MountServiceTests
     }
 
     [Fact]
-    public void Dismount_TheSpawnFails_LogsAndTheItemIsGone()
+    public void Dismount_TheSpawnFails_TriesThreeTimesLogsEachAndTheItemIsGone()
     {
         _npcs.SpawnFailure = new InvalidOperationException("no room");
         _service.TryMount(_rider, _horse);
 
         Assert.True(_service.Dismount(_rider));
-        SpinWait.SpinUntil(() => _log.Events.Count > 0, TimeSpan.FromSeconds(5));
+        SpinWait.SpinUntil(() => _log.Events.Count >= 3, TimeSpan.FromSeconds(5));
 
         Assert.False(_service.IsMounted(_rider));
-        Assert.Contains("could not be made again", Assert.Single(_log.Events).RenderMessage());
+        Assert.Equal(3, _npcs.Spawns.Count);
+        Assert.All(_log.Events, line => Assert.Contains("could not be made again", line.RenderMessage()));
+    }
+
+    [Fact]
+    public async Task Dismount_DeletesTheRowOfTheMountBeforeTheHorseComes()
+    {
+        _service.TryMount(_rider, _horse);
+        _itemData.Upserted.Add(Assert.Single(_items.GetWorn(_rider.Id), worn => worn.Layer == LayerType.Mount));
+        _npcs.Gate = new TaskCompletionSource();
+
+        Assert.True(_service.Dismount(_rider));
+        await _npcs.FirstSpawn.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Empty(_itemData.Upserted);
+        _npcs.Gate.SetResult();
+    }
+
+    private sealed class ReservedInventory : IInventoryMutationGuard
+    {
+        public bool Reserved { get; set; }
+
+        public bool Allows(ItemEntity item, Serial? destination = null)
+        {
+            return !Reserved;
+        }
+
+        public bool AllowsOwner(Serial mobileId)
+        {
+            return !Reserved;
+        }
     }
 }

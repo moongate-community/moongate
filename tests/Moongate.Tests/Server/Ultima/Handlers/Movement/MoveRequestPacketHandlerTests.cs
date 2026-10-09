@@ -306,6 +306,28 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_ARunningRider_PaysNoRunningStamina_ButIsStillAskedIfItMayStep()
+    {
+        _mounts.Mounted.Add(_aria.Id);
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0, true);
+
+        Assert.Equal([true], _fatigue.Asked);
+        Assert.Equal([false], _fatigue.Taken);
+    }
+
+    [Fact]
+    public async Task Handle_ARunningWalker_PaysTheRunningStamina()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0, true);
+
+        Assert.Equal([true], _fatigue.Taken);
+    }
+
+    [Fact]
     public async Task Handle_OnFootWithAMountService_StillWalksEvery400Milliseconds()
     {
         await EnterAsync();

@@ -130,9 +130,12 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
             return;
         }
 
+        var mounted = _mounts?.IsMounted(mobile) == true;
+
         mobile.LastMovedAt = _time.GetUtcNow();
-        state.NextStepAt = Math.Max(now, state.NextStepAt) + DelayOf(mobile, packet.Running);
-        _fatigue?.Stepped(session, mobile, packet.Running);
+        state.NextStepAt = Math.Max(now, state.NextStepAt) + DelayOf(mounted, packet.Running);
+        // The horse runs, not the rider: a rider pays no stamina to run, and an overloaded one tires as if it walked.
+        _fatigue?.Stepped(session, mobile, packet.Running && !mounted);
         // As ModernUO, a step closes the bank box.
         _bank?.Close(mobile);
 
@@ -172,10 +175,8 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     }
 
     // A rider covers the ground twice as fast: 200 ms a step walking and 100 ms running, 400 and 200 on foot.
-    private long DelayOf(MobileEntity mobile, bool running)
+    private static long DelayOf(bool mounted, bool running)
     {
-        var mounted = _mounts?.IsMounted(mobile) == true;
-
         return (running, mounted) switch
         {
             (true, true)  => MountedRunDelayMs,

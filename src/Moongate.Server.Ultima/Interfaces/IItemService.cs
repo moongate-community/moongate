@@ -83,6 +83,12 @@ public interface IItemService : IPersistenceDeletionSource
     IReadOnlyList<ItemEntity> GetWorn(Serial mobile);
 
     /// <summary>
+    ///     Gets the live item the mobile wears on <paramref name="layer" />, or null; it builds no list, for the code that
+    ///     asks at every step.
+    /// </summary>
+    ItemEntity? GetWornAt(Serial mobile, LayerType layer);
+
+    /// <summary>
     ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump, in the
     ///     grid slot <paramref name="gridIndex" /> when it is free and otherwise in the next free one.
     /// </summary>

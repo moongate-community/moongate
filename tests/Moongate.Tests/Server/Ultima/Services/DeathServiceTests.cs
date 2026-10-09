@@ -406,6 +406,23 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void IsDying_FromTheDeathOfAnNpcToItsRemoval_IsTrue()
+    {
+        _engine.IsRunningScript = true;
+        _loop.DeferTryPost = true;
+
+        Assert.False(_death.IsDying(_orc.Id));
+
+        _death.Kill(_orc, _aria);
+
+        Assert.True(_death.IsDying(_orc.Id));
+
+        _loop.RunDeferred();
+
+        Assert.False(_death.IsDying(_orc.Id));
+    }
+
+    [Fact]
     public void Kill_AnNpcThatIsAlreadyDying_IsRefused_AndMakesNoSecondCorpse()
     {
         _engine.IsRunningScript = true;

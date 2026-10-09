@@ -193,6 +193,11 @@ public sealed class DeathService : IDeathService
         return true;
     }
 
+    public bool IsDying(Serial mobile)
+    {
+        return _dying.Contains(mobile);
+    }
+
     public bool Resurrect(MobileEntity player)
     {
         if (_state is null || !player.IsDead || !_mobiles.IsInWorld(player.Id))

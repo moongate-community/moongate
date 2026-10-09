@@ -12,8 +12,8 @@ Gives the creature you target to yourself, or to a character you name. The owner
 ```
 
 In game only. Target a creature that can be ridden (see [Mounts](../mounts.md#making-a-creature-rideable)). With no
-name you become its owner and read `a horse now belongs to Giachi.`; with the name of a character in the world, in any
-case, the character does.
+name you become its owner and read `a horse now belongs to Giachi.`; with the name of a character who is online, in
+any case, that character does.
 
 - A creature with no mount item, or a player: `an orc cannot be tamed.`
 - A name nobody has: `No character is named Nobody.`
