@@ -20,6 +20,13 @@
 id = "tanner"
 vendors = ["tanner", "m_tanner", "f_tanner"]
 [[shop.buy]]
+item = "0x13c5_lbr"
+price = 80
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x13cc_lbr"
 price = 101
 amount = 20
@@ -231,6 +238,34 @@ name = ""
 [[shop.sell]]
 item = "0x0ec4_tol"
 price = 7
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c5_aos"
+price = 40
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c5_lbr"
+price = 40
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c5_t2a"
+price = 40
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c5_tol"
+price = 40
 amount = 1
 hue = 0
 name = ""

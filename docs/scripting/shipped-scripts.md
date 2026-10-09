@@ -431,7 +431,7 @@ between two offers, and a ghost met during the wait is offered when it is over. 
 client text 501222 and a murderer (red) with 501223, and a player of negative karma is told 501224 and offered all
 the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `evilwhealer`), refuses
 nobody and says nothing. A healer of a
-template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think.
+template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think. A healer with a shop sells and buys as a vendor does, through `scripts/common/shop.lua`: bandages, potions, ginseng and garlic.
 
 ## ankh.lua and resurrect.lua
 

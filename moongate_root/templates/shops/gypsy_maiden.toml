@@ -69,8 +69,22 @@ hue = 0
 name = ""
 
 [[shop.buy]]
+item = "0x0f64_torch"
+price = 8
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x0a25_lantern"
 price = 2
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1c19_oil_flask"
+price = 9
 amount = 20
 hue = 0
 name = ""
@@ -141,6 +155,20 @@ name = ""
 [[shop.buy]]
 item = "0x171b_tricorne_hat"
 price = 8
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x153f_bandana"
+price = 6
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1543_skullcap"
+price = 7
 amount = 20
 hue = 0
 name = ""
@@ -279,6 +307,13 @@ hue = 0
 name = ""
 
 [[shop.buy]]
+item = "0x0a58_a_bedroll"
+price = 5
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x0de1_kindling"
 price = 2
 amount = 20
@@ -350,27 +385,6 @@ name = ""
 [[shop.sell]]
 item = "0x0a28_candle"
 price = 3
-amount = 1
-hue = 0
-name = ""
-
-[[shop.sell]]
-item = "0x0a12_torch"
-price = 4
-amount = 1
-hue = 0
-name = ""
-
-[[shop.sell]]
-item = "0x0a13_torch"
-price = 4
-amount = 1
-hue = 0
-name = ""
-
-[[shop.sell]]
-item = "0x0a14_torch"
-price = 4
 amount = 1
 hue = 0
 name = ""
@@ -489,6 +503,13 @@ name = ""
 
 [[shop.sell]]
 item = "0x153f_bandana"
+price = 3
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1543_skullcap"
 price = 3
 amount = 1
 hue = 0

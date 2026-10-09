@@ -323,3 +323,100 @@ def test_a_syntax_error_in_a_source_exits_with_an_error(workspace):
 
     assert workspace.run() == 2
     assert "Broken.cs" in workspace.error
+
+
+BOWYER_SHOP = """
+namespace Server.Mobiles
+{
+    public class SBBowyer : SBInfo
+    {
+        public class InternalBuyInfo : List<GenericBuyInfo>
+        {
+            public InternalBuyInfo()
+            {
+                Add(new GenericBuyInfo(typeof(Bow), 40, 20, 0x13B2, 0));
+                Add(new GenericBuyInfo(typeof(Torch), 8, 20, 0xF6B, 0));
+                Add(new GenericBuyInfo(typeof(Club), 16, 20, 0x13B4, 0));
+                Add(new GenericBuyInfo(typeof(Ghost), 9, 5, 0x7777, 0));
+            }
+        }
+
+        public class InternalSellInfo : GenericSellInfo
+        {
+            public InternalSellInfo()
+            {
+                Add(typeof(Bow), 17);
+            }
+        }
+    }
+}
+"""
+
+BOWYER_VENDOR = BAKER_VENDOR.replace("Baker", "Bowyer").replace("SBBowyer());\n            if", "SBBowyer());\n            if")
+
+
+def _prepare_bowyer(workspace, items):
+    workspace.source = workspace.root / "UOContent"
+    workspace.write("UOContent/Mobiles/Vendors/SBInfo/SBBowyer.cs", BOWYER_SHOP)
+    workspace.write("UOContent/Mobiles/Vendors/NPC/Bowyer.cs", BOWYER_VENDOR)
+    workspace.write(
+        "UOContent/Items/Weapons/Bow.cs",
+        "namespace Server.Items\n{\n    [Flippable(0x13B2, 0x13B1)]\n    public partial class Bow : BaseRanged\n    {\n    }\n}\n",
+    )
+    workspace.write("items/items.toml", items)
+    workspace.write("mobiles/vendors.toml", '[[mobile]]\nid = "bowyer"\n')
+
+
+def test_a_graphic_with_no_template_is_found_under_the_other_graphic_of_its_flippable_pair(workspace):
+    _prepare_bowyer(workspace, '[[item]]\nid = "0x13b1_t2a"\n[[item]]\nid = "0x0f64_torch"\n[[item]]\nid = "0x0a12_torch"\n')
+
+    assert workspace.run() == 0, workspace.error
+
+    [shop] = workspace.shop("bowyer")
+    # The torch has no flippable pair in ModernUO: its other graphic is one the converter knows.
+    assert [(line["item"], line["price"]) for line in shop["buy"]] == [("0x13b1_t2a", 40), ("0x0f64_torch", 8)]
+    assert [line["item"] for line in shop["sell"]] == ["0x13b1_t2a"]
+    assert "no item template for graphic 0x13b2" not in workspace.output
+
+
+def test_a_graphic_with_no_template_and_no_pair_is_found_by_the_only_template_named_like_its_type(workspace):
+    _prepare_bowyer(
+        workspace,
+        '[[item]]\nid = "0x0a12_torch"\n[[item]]\nid = "0x13b3_club"\n[[item]]\nid = "0x13b5_club"\n',
+    )
+
+    assert workspace.run() == 0, workspace.error
+
+    [shop] = workspace.shop("bowyer")
+    assert [line["item"] for line in shop["buy"]] == ["0x0a12_torch"]
+    assert "graphic 0x0f6b (Torch) has no item template, took 0x0a12_torch by its name" in workspace.output
+    # Two templates are named club: none is taken for the club, and the ghost has neither a pair nor a name.
+    assert "no item template for graphic 0x13b4 (Club)" in workspace.output
+    assert "no item template for graphic 0x7777 (Ghost)" in workspace.output
+
+
+def test_the_healers_beside_the_vendors_folder_get_their_shop_too(workspace):
+    _prepare_bowyer(workspace, '[[item]]\nid = "0x13b1_t2a"\n')
+    workspace.write("UOContent/Mobiles/Healers/Healer.cs", BOWYER_VENDOR.replace("Bowyer : BaseVendor", "Healer : BaseHealer"))
+    workspace.write("mobiles/vendors.toml", '[[mobile]]\nid = "bowyer"\n[[mobile]]\nid = "healer"\n[[mobile]]\nid = "m_healer"\n')
+
+    assert workspace.run() == 0, workspace.error
+
+    # The healer adds the same SBInfo in this source: one shop cannot be told from the other but by its vendors.
+    assert workspace.shop("healer")[0]["vendors"] == ["healer", "m_healer"]
+    assert [line["item"] for line in workspace.shop("healer")[0]["buy"]] == ["0x13b1_t2a"]
+
+
+def test_the_spinners_use_the_shop_of_the_weavers_and_the_gypsy_fortune_teller_the_fortune_tellers(workspace):
+    _prepare_bowyer(workspace, '[[item]]\nid = "0x13b1_t2a"\n')
+    workspace.write("UOContent/Mobiles/Vendors/NPC/Weaver.cs", BOWYER_VENDOR.replace("Bowyer : BaseVendor", "Weaver : BaseVendor"))
+    workspace.write("UOContent/Mobiles/Healers/FortuneTeller.cs", BOWYER_VENDOR.replace("Bowyer : BaseVendor", "FortuneTeller : BaseHealer"))
+    workspace.write(
+        "mobiles/vendors.toml",
+        '[[mobile]]\nid = "weaver"\n[[mobile]]\nid = "m_spinner"\n[[mobile]]\nid = "f_spinner"\n[[mobile]]\nid = "f_gypsyfortuneteller"\n',
+    )
+
+    assert workspace.run() == 0, workspace.error
+
+    assert workspace.shop("weaver")[0]["vendors"] == ["weaver", "m_spinner", "f_spinner"]
+    assert workspace.shop("fortune_teller")[0]["vendors"] == ["f_gypsyfortuneteller"]

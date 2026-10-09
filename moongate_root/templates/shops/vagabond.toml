@@ -251,6 +251,13 @@ hue = 0
 name = ""
 
 [[shop.buy]]
+item = "0x0e85_pickaxe"
+price = 25
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x0e9c_drum"
 price = 21
 amount = 20

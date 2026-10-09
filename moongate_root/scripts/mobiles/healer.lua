@@ -22,12 +22,14 @@
 --                      wait()
 --   on_speech, on_context_menu, on_context_menu_select, on_drag_drop
 --                      the lessons of common/training.lua: a healer teaches the
---                      skills it has at 60.0 or more for gold
+--                      skills it has at 60.0 or more for gold; and the shop of
+--                      common/shop.lua: a healer sells bandages and potions
 --
 -- What it keeps:
 --   Who is near and when it last offered, in memory by serial, not saved.
 -- ==============================================================================
 
+local shop = require("common.shop")
 local training = require("common.training")
 
 healer = {}
@@ -128,14 +130,24 @@ local menu_range = 8
 
 function healer.on_speech(serial, speaker, text, keywords)
     training.listen(serial, speaker, keywords)
+    shop.listen(serial, speaker, keywords)
 end
 
+-- A healer keeps a shop too, as ModernUO's (common/shop.lua).
 function healer.on_context_menu(serial, player)
-    return training.entries(serial, player, menu_range)
+    local entries = shop.entries(serial, player, menu_range)
+
+    for _, entry in ipairs(training.entries(serial, player, menu_range)) do
+        entries[#entries + 1] = entry
+    end
+
+    return entries
 end
 
 function healer.on_context_menu_select(serial, player, id)
-    training.select(serial, player, id)
+    if not shop.select(serial, player, id) then
+        training.select(serial, player, id)
+    end
 end
 
 function healer.on_drag_drop(serial, giver, item)

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"12c68a60621e85f0576876dacf0c944bc0e98415506a657a313e0ac440f12e44","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"14dd6b21f43d2c61f39841127c4e865221bd76184b0f2661223b99aebfd381e0","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -433,7 +433,7 @@ al think precedente viene guardato (`npc.look_at`), riceve il suono `0x1F2` e le
 il gump `resurrect` con l'argomento `healer`, come il `BaseHealer` di ModernUO. Un guaritore aspetta 2 secondi (4 think)
 tra due offerte, e un fantasma incontrato durante l'attesa riceve l'offerta quando finisce. Un criminale viene rifiutato con il
 testo del client 501222, e un assassino (rosso) con 501223, e un giocatore con karma negativo si sente dire 501224 e riceve comunque l'offerta. Un guaritore malvagio, il cui id di template inizia con `evil` (`evilhealer`, `evilwhealer`), non rifiuta nessuno e non dice nulla. Un guaritore di un
-template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think.
+template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think. Un guaritore con un negozio vende e compra come un venditore, tramite `scripts/common/shop.lua`: bende, pozioni, ginseng e aglio.
 
 ## ankh.lua e resurrect.lua
 

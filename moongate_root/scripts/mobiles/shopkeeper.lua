@@ -30,6 +30,7 @@
 --                                               for the lesson it quoted
 -- ==============================================================================
 
+local shop = require("common.shop")
 local training = require("common.training")
 local guild = require("common.guild")
 
@@ -38,57 +39,11 @@ shopkeeper = {}
 -- How far a player may be to pick an entry of the context menu, in tiles.
 local menu_range = 8
 
--- How far a vendor hears "vendor buy", in tiles.
-local speech_range = 4
-
--- The client's texts.
-local buy_entry = 3006103   -- Buy
-local sell_entry = 3006104  -- Sell
-
-local function has_keyword(keywords, wanted)
-    for _, keyword in ipairs(keywords or {}) do
-        if keyword == wanted then
-            return true
-        end
-    end
-
-    return false
-end
-
-local function near(serial, speaker, range)
-    local here = npc.location(serial)
-    local there = mobile.location(speaker)
-
-    return here and there and here.map == there.map
-        and math.abs(here.x - there.x) <= range and math.abs(here.y - there.y) <= range
-end
-
 function shopkeeper.on_speech(serial, speaker, text, keywords)
     training.listen(serial, speaker, keywords)
     guild.listen(serial, speaker, text, keywords)
 
-    local buying = has_keyword(keywords, SpeechKeywordType.VendorBuy)
-    local selling = has_keyword(keywords, SpeechKeywordType.VendorSell)
-
-    if not buying and not selling then
-        return
-    end
-
-    -- Every vendor in range hears the words: the first one that can serve does.
-    if not near(serial, speaker, speech_range) then
-        return
-    end
-
-    local opened
-    if buying then
-        opened = vendor.open_buy_once(serial, speaker)
-    else
-        opened = vendor.open_sell_once(serial, speaker)
-    end
-
-    if opened then
-        npc.look_at(serial, speaker)
-    end
+    shop.listen(serial, speaker, keywords)
 end
 
 function shopkeeper.on_context_menu(serial, player)
@@ -96,16 +51,7 @@ function shopkeeper.on_context_menu(serial, player)
         return {}
     end
 
-    -- Only what the vendor does, as in ModernUO: one with no shop offers neither.
-    local entries = {}
-
-    if vendor.sells(serial) then
-        entries[#entries + 1] = { id = "buy", cliloc = buy_entry, range = menu_range }
-    end
-
-    if vendor.buys(serial) then
-        entries[#entries + 1] = { id = "sell", cliloc = sell_entry, range = menu_range }
-    end
+    local entries = shop.entries(serial, player, menu_range)
 
     for _, entry in ipairs(training.entries(serial, player, menu_range)) do
         entries[#entries + 1] = entry
@@ -115,13 +61,7 @@ function shopkeeper.on_context_menu(serial, player)
 end
 
 function shopkeeper.on_context_menu_select(serial, player, id)
-    if id == "buy" then
-        npc.look_at(serial, player)
-        vendor.open_buy(serial, player)
-    elseif id == "sell" then
-        npc.look_at(serial, player)
-        vendor.open_sell(serial, player)
-    else
+    if not shop.select(serial, player, id) then
         training.select(serial, player, id)
     end
 end

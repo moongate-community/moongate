@@ -54,7 +54,7 @@ mgctl convert modernuo-vendors --source ~/projects/others/ModernUO/Projects/UOCo
 The converter reads the C# as syntax and runs nothing. It takes the lines of the `SBInfo` classes that each vendor
 class adds, and writes one file for each vendor class, named after it. A line becomes the item template with the
 graphic ModernUO gives it; when several templates share a graphic, the one named like the C# type wins, else the plain
-piece of the first era the graphic has (`lbr`, then `aos`, `t2a`, `tol`), else the first one, and the report says so. A
+piece of the first era the graphic has (`lbr`, then `aos`, `t2a`, `tol`), else the first one, and the report says so. A weapon or a tool has two graphics, one for each way it faces: when no template has the graphic ModernUO sells it under, the converter takes the templates of the other graphic of the pair (the `Flippable` of the item class, and a few pairs it knows), else the one template named like the type. A
 graphic that has only material variants (agapite, bronze and so on) and no plain piece is left out of the buy lines. A
 vendor buys a piece whatever it is made of, so the sell lines of an armor or weapon graphic list every era and material
 template. The report counts what it left out: types with no item template, pets, lines
