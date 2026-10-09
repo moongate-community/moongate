@@ -18,8 +18,11 @@ public interface IItemHandlingService
     ItemEntity? Make(string template, int? amount = null);
 
     /// <summary>
-    ///     Makes an item from a template in the backpack of <paramref name="owner" /> and shows it to it. Null, with
-    ///     no serial used, for a mobile without a backpack, and as <see cref="Make" />.
+    ///     Makes an item from a template in the backpack of <paramref name="owner" /> and shows it to it. What stacks
+    ///     joins the stack of its kind already lying in the backpack, as a player's drop onto it would (same template,
+    ///     graphic, hue, name and rarity, no prop on either, 60000 at most): that stack is what is returned, and no
+    ///     slot or serial is used. Null, with no serial used, for a mobile without a backpack, a backpack with no room
+    ///     for another item, and as <see cref="Make" />.
     /// </summary>
     ItemEntity? Give(MobileEntity owner, string template, int? amount = null);
 

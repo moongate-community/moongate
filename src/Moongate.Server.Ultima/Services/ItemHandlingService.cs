@@ -19,6 +19,9 @@ namespace Moongate.Server.Ultima.Services;
 /// </summary>
 public sealed class ItemHandlingService : IItemHandlingService
 {
+    // The most a stack holds, as a player's drop onto a stack counts it.
+    private const int MaxStack = 60_000;
+
     private readonly IItemService _items;
     private readonly ISessionService _sessions;
     private readonly IPacketSendService _sender;
@@ -29,6 +32,8 @@ public sealed class ItemHandlingService : IItemHandlingService
     private readonly IContainerLayoutService? _layouts;
     private readonly IInventoryMutationGuard? _inventory;
     private readonly IContainerCapacityService? _capacity;
+    private readonly IItemTemplateService? _templates;
+    private readonly ITileDataService? _tiles;
 
     public ItemHandlingService(
         IItemService items,
@@ -40,9 +45,13 @@ public sealed class ItemHandlingService : IItemHandlingService
         IItemSerialPool? serials = null,
         IContainerLayoutService? layouts = null,
         IContainerCapacityService? capacity = null,
-        IInventoryMutationGuard? inventory = null
+        IInventoryMutationGuard? inventory = null,
+        IItemTemplateService? templates = null,
+        ITileDataService? tiles = null
     )
     {
+        _templates = templates;
+        _tiles = tiles;
         _inventory = inventory;
         _capacity = capacity;
         _items = items;
@@ -57,24 +66,8 @@ public sealed class ItemHandlingService : IItemHandlingService
 
     public ItemEntity? Make(string template, int? amount = null)
     {
-        if (_factory is null || _serials is null || string.IsNullOrWhiteSpace(template))
-        {
-            return null;
-        }
-
-        ItemEntity item;
-
-        try
-        {
-            item = _factory.Create(template, amount);
-        }
-        catch (Exception exception) when (exception is KeyNotFoundException or ArgumentException)
-        {
-            return null;
-        }
-
         // Taken last: an item that cannot be made must not use up a serial.
-        if (!_serials.TryTake(out var serial))
+        if (_serials is null || Create(template, amount) is not { } item || !_serials.TryTake(out var serial))
         {
             return null;
         }
@@ -88,11 +81,27 @@ public sealed class ItemHandlingService : IItemHandlingService
     {
         if (_inventory?.AllowsOwner(owner.Id) == false ||
             _items.GetWorn(owner.Id).FirstOrDefault(worn => worn.Layer == LayerType.Backpack) is not { } backpack ||
-            _capacity?.HasRoomFor(backpack, 1) == false ||
-            Make(template, amount) is not { } item)
+            Create(template, amount) is not { } item)
         {
             return null;
         }
+
+        // What stacks joins the stack of its kind lying in the backpack: no new item, no slot and no serial taken.
+        if (StackFor(backpack, item) is { } stack)
+        {
+            stack.Amount += item.Amount;
+            Refresh(stack);
+
+            return stack;
+        }
+
+        // The serial is taken last: an item that finds no room must not use one up.
+        if (_capacity?.HasRoomFor(backpack, 1) == false || _serials is null || !_serials.TryTake(out var serial))
+        {
+            return null;
+        }
+
+        item.Id = serial;
 
         var position = _layouts?.RandomGridPosition(backpack.ItemId) ?? new Point2D(44, 65);
         item.PutInContainer(backpack.Id, position, ContainerSlotUtils.FirstFree(_items.GetContents(backpack.Id)));
@@ -166,6 +175,48 @@ public sealed class ItemHandlingService : IItemHandlingService
     public bool IsHeld(ItemEntity item)
     {
         return _sessions.GetAll().Any(session => session.Get(ItemSessionKeys.Held)?.Item == item.Id);
+    }
+
+    // A new item of the template with no serial yet; null when it cannot be made.
+    private ItemEntity? Create(string template, int? amount)
+    {
+        if (_factory is null || string.IsNullOrWhiteSpace(template))
+        {
+            return null;
+        }
+
+        try
+        {
+            return _factory.Create(template, amount);
+        }
+        catch (Exception exception) when (exception is KeyNotFoundException or ArgumentException)
+        {
+            return null;
+        }
+    }
+
+    // The stack lying in the backpack that a new item of the same kind joins, as a player's drop onto it would: same
+    // template, graphic, hue, name and rarity, no prop on either, and not above the most a stack holds.
+    private ItemEntity? StackFor(ItemEntity backpack, ItemEntity item)
+    {
+        if (_templates is null ||
+            _tiles is null ||
+            item.Props is { Count: > 0 } ||
+            !_templates.TryGet(item.TemplateId, out var template) ||
+            !template.EffectiveStackable(_tiles))
+        {
+            return null;
+        }
+
+        return _items.GetContents(backpack.Id)
+            .FirstOrDefault(stack => stack.TemplateId == item.TemplateId &&
+                                     stack.ItemId == item.ItemId &&
+                                     stack.Hue == item.Hue &&
+                                     stack.Name == item.Name &&
+                                     stack.Rarity == item.Rarity &&
+                                     stack.Props is not { Count: > 0 } &&
+                                     (long)stack.Amount + item.Amount <= MaxStack
+            );
     }
 
     private GameSession? OwnerSession(ItemEntity item)
