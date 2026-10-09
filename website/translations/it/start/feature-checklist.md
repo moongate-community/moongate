@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"00bcdb35f6ae47d66ea1189960df6baa2e29073636545cfa63c8f8fc323007d7","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"afe4461caed284dec94dd0827c5a6c8dfaae1ef288a47ca0bd3d6499b029fd9c","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**271 sistemi:** ✅ 88 completati, 🟡 61 parzialmente completati, ❌ 122 non ancora realizzati.
+**271 sistemi:** ✅ 88 completati, 🟡 62 parzialmente completati, ❌ 121 non ancora realizzati.
 
 **Copertura: 32%** dei sistemi completati, **44%** contando un sistema parzialmente completato come metà.
 
@@ -143,7 +143,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Creature acquatiche e anfibie | ✅ | Compaiono sull'acqua e nuotano |
 | Tipi di IA (venditore, guardia, guaritore, animale, mostro, incantatore) | ❌ | |
 | Ricerca del percorso, inseguimento e fuga | 🟡 | Ricerca del percorso A*; uno script porta un NPC in un luogo o dietro qualcuno con `npc.walk_to`, passando dalle porte chiuse che apre e aggirando quelle a chiave e i mobili. Le creature ferite scappano da uno scontro (20% dei loro punti vita, 10% gli animali) e gli animali paurosi da un colpo; un NPC che vaga non apre porte, e i mobile non bloccano il percorso. Uno script fa camminare il client di un giocatore verso un punto con `mobile.pathfind_to` (pacchetto 0x38) |
-| Animali e seguaci: comandi, lealtà, legame | ❌ | |
+| Animali e seguaci: comandi, lealtà, legame | 🟡 | La abilità [Animal Taming](animal-taming.md) doma circa 75 creature dei dati, con un limite di 5 seguaci mostrato nella finestra di stato. La creatura non segue né obbedisce ancora, e non ci sono lealtà né legame |
 | Cavalcature | 🟡 | [Cavalcature](mounts.md): un game master dà un cavallo, un lama o uno struzzo con [`tame`](commands/tame.md); il suo proprietario ci sale con un doppio clic e ne scende con un doppio clic su di sé, oppure muore, e corre il doppio più veloce. Chi è in sella non può estrarre, pescare né usare Stealth, e un teletrasporto può rifiutarlo. La [stalla](mounts.md#the-stable) degli addestratori di animali custodisce gli animali di un giocatore, e le [statuette eteree](mounts.md#ethereal-mounts) danno una cavalcatura senza creatura. Chi è in sella colpisce con le animazioni dell'attacco in sella. Niente bola |
 | Eventi di script per gli NPC (parlato, portata, danno) | 🟡 | Parlato e portata; nessun evento di combattimento |
 | Raccolte di nomi | ✅ | Elenchi di nomi per tipo e genere |

@@ -111,10 +111,17 @@ local function is_prey(who)
     return mobile.is_player(who) or mobile.notoriety(who) == "innocent"
 end
 
+-- Whether a player tamed the creature: it has an owner, and goes for nobody.
+local function is_owned(serial)
+    local owner = npc.get_prop(serial, "owner")
+
+    return owner ~= nil and owner ~= 0
+end
+
 -- The nearest player or NPC the creature goes for and sees, or nil. One it could not reach is left alone until it
 -- moves, so the first few are asked for, and the first one that is prey and not given up is taken.
 local function look_for_prey(serial, mind, hunts)
-    if not hunts then
+    if not hunts or is_owned(serial) then
         return nil
     end
 
@@ -354,6 +361,11 @@ function creature.new(options)
 
         local mind = mind_of(serial)
         mind.thinks = mind.thinks + 1
+
+        -- One that was tamed while it hunted lets go of what it hunted, unless it fights someone who hit it.
+        if is_owned(serial) and mind.state ~= "wander" and combat.target(serial) == nil then
+            start_wander(serial, mind)
+        end
 
         -- Whoever it fights is the one it chases, even if it has not seen it: a creature that is hit does not go on
         -- strolling. One that runs does not fight: the combat service made it answer the blow, and it is told to stop.

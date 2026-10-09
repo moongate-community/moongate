@@ -11,7 +11,7 @@ uv run moongate-convert modernuo-signs \
 ```
 
 The converters: `modernuo-signs`, `modernuo-teleporters`, `modernuo-locations`, `modernuo-chests`, `modernuo-books`, `modernuo-vendors`,
-`modernuo-guildmasters` and `modernuo-spawns`, and of UOX3 `uox` with every pass (items, loot lists, mobiles, name lists, starting items, npc lists
+`modernuo-guildmasters`, `modernuo-spawns` and `modernuo-taming` (the creatures that can be tamed, into `data/taming.toml`), and of UOX3 `uox` with every pass (items, loot lists, mobiles, name lists, starting items, npc lists
 and spawns). The exit codes are: 0 done, 2 a source that is missing or is not what it should be
 (nothing is written); `uox` exits 1 when reading what it wrote back finds an id twice or a reference that does not resolve.
 

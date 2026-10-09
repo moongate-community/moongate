@@ -36,6 +36,7 @@ public sealed class MobileStateService : IMobileStateService
 
     // Lazy as the weights: the gear reads the items.
     private readonly Lazy<ICombatGearService>? _gear;
+    private readonly Lazy<IPetService>? _pets;
 
     public MobileStateService(
         IMobileService mobiles,
@@ -45,9 +46,11 @@ public sealed class MobileStateService : IMobileStateService
         IWorldViewService view,
         WorldConfig world,
         Lazy<IWeightService>? weight = null,
-        Lazy<ICombatGearService>? gear = null
+        Lazy<ICombatGearService>? gear = null,
+        Lazy<IPetService>? pets = null
     )
     {
+        _pets = pets;
         _gear = gear;
         _weight = weight;
         _mobiles = mobiles;
@@ -401,6 +404,12 @@ public sealed class MobileStateService : IMobileStateService
 
         var own = session.CharacterId == target.Id;
         var status = _mobiles.GetStatus(target);
+
+        // The followers are those of the character itself; the status of another's shows none.
+        if (own && _pets?.Value is { } pets)
+        {
+            status = status with { Followers = pets.Followers(target), FollowersMax = pets.MaxFollowers };
+        }
 
         // Only the whole status, the one of the player's own character, has the weights.
         if (own && _weight?.Value is { } weight)
