@@ -69,7 +69,7 @@ locations = [[5827, 593, 0]]
 
 ## The stable
 
-The animal trainers of the towns (`script_id = "stablemaster"`) keep a stable. They are vendors as before: the shop
+The animal trainers of the towns, the gypsy ones included (`script_id = "stablemaster"`), keep a stable. They are vendors as before: the shop
 and the lessons stay.
 
 1. Stand within 12 tiles and say *stable*, or pick *Stable* in the trainer's context menu. You read the prompt and
@@ -82,7 +82,7 @@ and the lessons stay.
 
 Only a pet that can be ridden and is yours can be stabled, not one that is dying. A claimed pet is made again from its
 template, with you as its owner, and keeps neither its hit points, hue nor what it carried; the spawn is tried three
-times. The stable is the prop `stabled` of your character (the template ids, joined by `;`), saved with it. The limit
+times, and a pet that cannot be made goes back to your stable. The stable is the prop `stabled` of your character (the template ids, joined by `;`), saved with it. The limit
 and the fee are in [`[ultima.stable]`](server-configuration.md).
 
 ## Not built yet

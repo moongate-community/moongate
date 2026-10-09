@@ -78,6 +78,11 @@ end
 
 -- The player picks the pet to leave.
 local function begin_stable(serial, player)
+    -- A ghost leaves nothing: the menu may have been opened before it died.
+    if mobile.is_dead(player) then
+        return
+    end
+
     npc.look_at(serial, player)
     mobile.message_cliloc(player, PROMPT)
 
@@ -103,6 +108,10 @@ end
 
 -- The list of the pets in the stable, one button each.
 local function begin_claim(serial, player)
+    if mobile.is_dead(player) then
+        return
+    end
+
     npc.look_at(serial, player)
 
     local pets = stable.pets(player)
@@ -119,6 +128,10 @@ end
 
 -- Every pet, from the first place: the list is one shorter at each claim.
 local function claim_all(serial, player)
+    if mobile.is_dead(player) then
+        return
+    end
+
     npc.look_at(serial, player)
 
     local pets = stable.pets(player)

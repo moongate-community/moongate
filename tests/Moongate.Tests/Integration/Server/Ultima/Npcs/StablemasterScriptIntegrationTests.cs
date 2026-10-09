@@ -339,6 +339,23 @@ public sealed class StablemasterScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AGhost_ClaimsNothingAndStablesNothing_FromTheMenu()
+    {
+        _stable.Pets.Add("horse");
+        _aria.Body = 0x0192;
+        _targets.Result = Moongate.Server.Ultima.Data.Targeting.TargetResult.ForObject(_horse.Id);
+
+        _npcs.Run(_trainer, "on_context_menu_select", (long)_aria.Id.Value, "claim_all");
+        _npcs.Run(_trainer, "on_context_menu_select", (long)_aria.Id.Value, "stable");
+        _loop.RunDeferred();
+
+        Assert.Empty(_errors);
+        Assert.Empty(_stable.Claims);
+        Assert.Empty(_stable.Stables);
+        Assert.Empty(_speech.SaidClilocs);
+    }
+
+    [Fact]
     public void ClaimAll_WithNoPets_SaysThereAreNone()
     {
         _npcs.Run(_trainer, "on_context_menu_select", (long)_aria.Id.Value, "claim_all");

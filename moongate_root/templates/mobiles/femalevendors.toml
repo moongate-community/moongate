@@ -1348,6 +1348,7 @@ items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 [[mobile]]
 id = "f_gypsyanimaltrainer"
 base_id = "basevendor"
+script_id = "stablemaster"
 name_list = "female"
 title = "the Gypsy Animal Trainer"
 gender = "female"

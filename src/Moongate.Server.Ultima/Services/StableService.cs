@@ -1,9 +1,12 @@
 using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Bank;
 using Moongate.Server.Ultima.Types.Stable;
 using Moongate.Ultima.Types;
@@ -24,6 +27,7 @@ public sealed class StableService : IStableService
     private readonly IMobileTemplateService _templates;
     private readonly IBankService _bank;
     private readonly StableConfig _config;
+    private readonly IGameLoopService _loop;
     private readonly Lazy<IDeathService>? _death;
     private readonly ILogger _logger;
 
@@ -38,27 +42,34 @@ public sealed class StableService : IStableService
         IMobileTemplateService templates,
         IBankService bank,
         StableConfig config,
+        IGameLoopService loop,
         Lazy<IDeathService>? death = null,
         ILogger? logger = null
     )
     {
-        _death = death;
         _mobiles = mobiles;
         _npcs = npcs;
         _templates = templates;
         _bank = bank;
         _config = config;
+        _loop = loop;
+        _death = death;
         _logger = logger ?? Log.ForContext<StableService>();
     }
 
     public IReadOnlyList<string> Stabled(MobileEntity player)
     {
+        ArgumentNullException.ThrowIfNull(player);
+
         return player.GetProp(MountProps.Stabled, "")
             .Split(Separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
     }
 
     public StableResultType TryStable(MobileEntity player, MobileEntity pet)
     {
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(pet);
+
         if (player.IsNpc || !_mobiles.IsInWorld(player.Id))
         {
             return StableResultType.NoPlayer;
@@ -103,9 +114,13 @@ public sealed class StableService : IStableService
         // The creature goes last: when it cannot, the fee is given back.
         if (!_npcs.Remove(pet.Id))
         {
-            if (_config.Fee > 0)
+            if (_config.Fee > 0 && _bank.GiveGold(player, _config.Fee) != BankResultType.Ok)
             {
-                _bank.GiveGold(player, _config.Fee);
+                _logger.Error(
+                    "The fee of {Fee} gold could not be given back to {Player:l} after the pet could not be stabled",
+                    _config.Fee,
+                    player.Id
+                );
             }
 
             return StableResultType.Failed;
@@ -119,6 +134,9 @@ public sealed class StableService : IStableService
 
     public StableResultType TryClaim(MobileEntity player, int index, string template)
     {
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(template);
+
         if (player.IsNpc || !_mobiles.IsInWorld(player.Id))
         {
             return StableResultType.NoPlayer;
@@ -146,7 +164,7 @@ public sealed class StableService : IStableService
         var props = new Dictionary<string, object?> { [MountProps.Owner] = (long)player.Id.Value };
 
         // Off the loop: a new creature is saved first, to get its serial.
-        _ = Task.Run(() => SpawnAsync(template, map, location, props));
+        _ = Task.Run(() => SpawnAsync(player.Id, template, map, location, props));
 
         return StableResultType.Ok;
     }
@@ -170,6 +188,7 @@ public sealed class StableService : IStableService
     }
 
     private async Task SpawnAsync(
+        Serial player,
         string template,
         MapType map,
         Point3D location,
@@ -201,5 +220,24 @@ public sealed class StableService : IStableService
                 }
             }
         }
+
+        // The pet goes back to the stable, where the player can claim it again.
+        await _loop.PostAsync(new LoopActionWorkItem(() => Restore(player, template)));
+    }
+
+    // On the game loop: a pet that could not be made is put back at the end of the list, when its player is still here.
+    private void Restore(Serial player, string template)
+    {
+        if (!_mobiles.TryGet(player, out var owner))
+        {
+            _logger.Error("The stabled {Template:l} of {Player:l} is lost: the player left before it was put back", template, player);
+
+            return;
+        }
+
+        var stabled = Stabled(owner).ToList();
+        stabled.Add(template);
+        Keep(owner, stabled);
+        _logger.Warning("The stabled {Template:l} of {Player:l} is back in the stable", template, player);
     }
 }

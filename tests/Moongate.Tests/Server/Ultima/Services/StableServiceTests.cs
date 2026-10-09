@@ -27,6 +27,7 @@ public sealed class StableServiceTests
     private readonly StubNpcService _npcs = new();
     private readonly StubBankService _bank = new();
     private readonly StubDeathService _death = new();
+    private readonly StubGameLoop _loop = new();
     private readonly CapturingLogSink _log = new();
     private readonly StableConfig _config = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
@@ -57,6 +58,7 @@ public sealed class StableServiceTests
             ),
             _bank,
             _config,
+            _loop,
             new Lazy<IDeathService>(() => _death),
             new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         )
@@ -281,10 +283,53 @@ public sealed class StableServiceTests
         _service.TryStable(_player, _horse);
 
         Assert.Equal(StableResultType.Ok, _service.TryClaim(_player, 0, "horse"));
-        SpinWait.SpinUntil(() => _log.Events.Count >= 3, TimeSpan.FromSeconds(5));
+        SpinWait.SpinUntil(() => _log.Events.Count >= 4, TimeSpan.FromSeconds(5));
 
         Assert.Equal(3, _npcs.Spawns.Count);
-        Assert.All(_log.Events, line => Assert.Contains("could not be made again", line.RenderMessage()));
+        Assert.Equal(3, _log.Events.Count(line => line.RenderMessage().Contains("could not be made again")));
+    }
+
+    [Fact]
+    public void TryClaim_TheSpawnFailsThreeTimes_PutsThePetBackInTheStable()
+    {
+        _npcs.SpawnFailure = new InvalidOperationException("no room");
+        _service.TryStable(_player, _horse);
+
+        _service.TryClaim(_player, 0, "horse");
+        SpinWait.SpinUntil(() => _service.Stabled(_player).Count == 1, TimeSpan.FromSeconds(5));
+
+        Assert.Equal(["horse"], _service.Stabled(_player));
+        Assert.Equal(3, _npcs.Spawns.Count);
+    }
+
+    [Fact]
+    public void TryClaim_TheSpawnFailsAndThePlayerHasLeft_LogsThePetAsLost()
+    {
+        _npcs.SpawnFailure = new InvalidOperationException("no room");
+        _service.TryStable(_player, _horse);
+        _npcs.Gate = new TaskCompletionSource();
+
+        _service.TryClaim(_player, 0, "horse");
+        _mobiles.LeaveWorld(_player.Id);
+        _npcs.Gate.SetResult();
+        SpinWait.SpinUntil(() => _log.Events.Any(line => line.RenderMessage().Contains("is lost")), TimeSpan.FromSeconds(5));
+
+        Assert.Contains(_log.Events, line => line.RenderMessage().Contains("is lost"));
+        Assert.Empty(_service.Stabled(_player));
+    }
+
+    [Fact]
+    public void TryClaim_NeverSpawnsOnTheGameLoopThread()
+    {
+        var loopThread = Environment.CurrentManagedThreadId;
+        _npcs.OnLoopThread = () => Environment.CurrentManagedThreadId == loopThread;
+        _service.TryStable(_player, _horse);
+
+        _service.TryClaim(_player, 0, "horse");
+        SpinWait.SpinUntil(() => _npcs.Spawns.Count == 1, TimeSpan.FromSeconds(5));
+
+        Assert.Single(_npcs.Spawns);
+        Assert.Empty(_log.Events);
     }
 
     [Fact]

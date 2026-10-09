@@ -1373,6 +1373,7 @@ hue = "0x0835-0x0852"
 [[mobile]]
 id = "m_gypsyanimaltrainer"
 base_id = "basevendor"
+script_id = "stablemaster"
 name_list = "male"
 title = "the Gypsy Animal Trainer"
 gender = "male"
