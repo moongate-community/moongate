@@ -1,0 +1,81 @@
+# ==============================================================================
+# Moongate - data/crafts/resources.toml
+#
+# What it is for:
+#   The lists of item templates a resource of a recipe may name: "wood" is
+#   any of the plain boards. A recipe takes from the stacks of these templates
+#   in the backpack and its bags.
+#
+# Fields:
+#   [[resource]]   one list
+#     id           the name recipes give it (resources = [{ resource = "wood", ... }])
+#     templates    the item templates that count for it
+# ==============================================================================
+
+[[resource]]
+id = "wood"
+templates = ["0x1bd7_board", "0x1bda_board"]
+
+[[resource]]
+id = "logs"
+templates = ["0x1bdd_log", "0x1be0_log"]
+
+[[resource]]
+id = "metal"
+templates = ["0x1bef_iron_ingot", "0x1bf2_iron_ingot"]
+
+[[resource]]
+id = "cloth"
+templates = ["0x175d_folded_cloth", "0x175e_folded_cloth", "0x175f_folded_cloth", "0x1760_folded_cloth", "0x1761_folded_cloth", "0x1762_folded_cloth", "0x1763_folded_cloth", "0x1764_folded_cloth", "0x1765_cloth", "0x1766_cut_cloth", "0x1767_cloth", "0x1768_cut_cloth"]
+
+[[resource]]
+id = "leather"
+templates = ["0x1067_cut_up_leather", "0x1068_cut_up_leather", "0x1078_pile_of_hides", "0x1079_pile_of_hides", "0x1081_cut_up_leather", "0x1082_cut_up_leather"]
+
+[[resource]]
+id = "bone"
+templates = ["0x0f7e_10_bone", "0x0f7e_bone"]
+
+[[resource]]
+id = "gems"
+templates = ["0x0f0f_star_sapphire", "0x0f10_emerald", "0x0f11_sapphire", "0x0f12_sapphire", "0x0f13_#", "0x0f14_#", "0x0f15_citrine", "0x0f16_amethyst", "0x0f17_amethyst", "0x0f18_tourmaline", "0x0f19_sapphire", "0x0f1a_#", "0x0f1b_star_sapphire", "0x0f1c_#", "0x0f1d_#", "0x0f1e_tourmaline", "0x0f1f_sapphire", "0x0f20_tourmaline", "0x0f21_star_sapphire", "0x0f22_amethyst", "0x0f23_citrine", "0x0f24_citrine", "0x0f25_#", "0x0f26_diamond", "0x0f27_diamond", "0x0f28_diamond", "0x0f29_diamond", "0x0f2a_#", "0x0f2b_#", "0x0f2c_citrine", "0x0f2d_tourmaline", "0x0f2e_amethyst", "0x0f2f_emerald", "0x0f30_diamond"]
+
+[[resource]]
+id = "diamonds"
+templates = ["0x0f26_diamond", "0x0f27_diamond", "0x0f28_diamond", "0x0f29_diamond"]
+
+[[resource]]
+id = "woodenbox"
+templates = ["0x09aa_wooden_box", "0x0e7d_wooden_box"]
+
+[[resource]]
+id = "woodenchest"
+templates = ["0x0e42_wooden_chest", "0x0e43_wooden_chest"]
+
+[[resource]]
+id = "flour"
+templates = ["0x0a1e_bowl_of_flour", "0x103a_open_sack_of_flour", "0x1046_open_sack_of_flour"]
+
+[[resource]]
+id = "water"
+templates = ["0x0ff8_pitcher_of_water", "0x0ff9_pitcher_of_water", "0x1f9d_pitcher_of_water", "0x1f9e_pitcher_of_water"]
+
+[[resource]]
+id = "rawmeat"
+templates = ["0x09f1_cut_of_raw_ribs", "0x1607_raw_chicken_leg", "0x1609_raw_leg_of_lamb"]
+
+[[resource]]
+id = "sausages"
+templates = ["0x09c0_sausage", "0x09c1_sausage"]
+
+[[resource]]
+id = "pumpkins"
+templates = ["0x0c6a_pumpkin", "0x0c6b_pumpkin", "0x0c6c_pumpkin"]
+
+[[resource]]
+id = "rawbirds"
+templates = ["0x09b9_raw_bird", "0x09ba_raw_bird"]
+
+[[resource]]
+id = "maps"
+templates = ["0x0e34_a_blank_scroll", "0x14eb_map"]
