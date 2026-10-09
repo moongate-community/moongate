@@ -209,6 +209,20 @@ hue = 0
 name = ""
 
 [[shop.buy]]
+item = "0x153f_bandana"
+price = 6
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
+item = "0x1543_skullcap"
+price = 7
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x0f95_bolt_of_cloth"
 price = 100
 amount = 20
@@ -448,6 +462,13 @@ name = ""
 [[shop.sell]]
 item = "0x1715_cap"
 price = 5
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x1543_skullcap"
+price = 3
 amount = 1
 hue = 0
 name = ""

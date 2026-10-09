@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"9ec847a9997c56853a589c193f557f27c7c4e3b861a095e2ab00899bffd4b00f","title":"Venditori"} -->
+<!-- translation: {"sourceHash":"490576c600d0046ff9734ebfb47d69b59b54b9df37895e1d736bba269775d58d","title":"Venditori"} -->
 
 # Venditori
 
@@ -104,7 +104,7 @@ che apre la finestra:
 vendor.open_buy(npc, player)
 ```
 
-Lo script di un venditore che ne ha uno proprio, come `banker.lua` o `healer.lua`, può chiamarla a sua volta. Vedi
+Lo script di un venditore che ne ha uno proprio, come `banker.lua` o `healer.lua`, può chiamarla a sua volta: i guaritori tengono un negozio in questo modo, tramite `scripts/common/shop.lua`, che contiene le voci *Buy* e *Sell* e le parole per qualsiasi script. Vedi
 [Moduli Lua](lua-modules.md).
 
 ## Insegnare

@@ -20,6 +20,13 @@
 id = "carpenter"
 vendors = ["carpenter", "m_carpenter", "f_carpenter"]
 [[shop.buy]]
+item = "0x0df0_lbr"
+price = 22
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x13f8_lbr"
 price = 16
 amount = 20
@@ -165,6 +172,34 @@ price = 30
 amount = 20
 hue = 0
 name = ""
+[[shop.sell]]
+item = "0x0df0_aos"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df0_lbr"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df0_t2a"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x0df0_tol"
+price = 11
+amount = 1
+hue = 0
+name = ""
+
 [[shop.sell]]
 item = "0x13f8_aos"
 price = 8
@@ -455,6 +490,34 @@ name = ""
 [[shop.sell]]
 item = "0x105b_axle"
 price = 1
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b3_aos"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b3_lbr"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b3_t2a"
+price = 13
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13b3_tol"
+price = 13
 amount = 1
 hue = 0
 name = ""

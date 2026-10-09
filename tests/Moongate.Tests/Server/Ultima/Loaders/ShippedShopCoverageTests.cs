@@ -14,7 +14,7 @@ public sealed class ShippedShopCoverageTests
     // What these sell has no item template yet (pets, boats), or ModernUO gives them no shop either.
     private static readonly string[] WithoutAShop =
     [
-        "animaltrainer", "gypsyanimaltrainer", "gypsyfortuneteller", "rancher", "shipwright", "spinner"
+        "animaltrainer", "gypsyanimaltrainer", "rancher", "shipwright"
     ];
 
     [Fact]

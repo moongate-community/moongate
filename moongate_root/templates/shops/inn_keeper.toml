@@ -251,6 +251,13 @@ hue = 0
 name = ""
 
 [[shop.buy]]
+item = "0x0f64_torch"
+price = 7
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x0a28_candle"
 price = 6
 amount = 20
@@ -434,27 +441,6 @@ name = ""
 [[shop.sell]]
 item = "0x171f_banana"
 price = 1
-amount = 1
-hue = 0
-name = ""
-
-[[shop.sell]]
-item = "0x0a12_torch"
-price = 3
-amount = 1
-hue = 0
-name = ""
-
-[[shop.sell]]
-item = "0x0a13_torch"
-price = 3
-amount = 1
-hue = 0
-name = ""
-
-[[shop.sell]]
-item = "0x0a14_torch"
-price = 3
 amount = 1
 hue = 0
 name = ""

@@ -18,7 +18,7 @@
 #     (amount, hue and name are written too and ignored on sell lines)
 [[shop]]
 id = "weaver"
-vendors = ["weaver", "m_weaver", "f_weaver"]
+vendors = ["weaver", "m_weaver", "f_weaver", "spinner", "m_spinner", "f_spinner"]
 [[shop.buy]]
 item = "0x0fa9_dyes"
 price = 8

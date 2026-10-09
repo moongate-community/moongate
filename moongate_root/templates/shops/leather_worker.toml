@@ -20,6 +20,13 @@
 id = "leather_worker"
 vendors = ["leatherworker", "m_leatherworker", "f_leatherworker"]
 [[shop.buy]]
+item = "0x13c5_lbr"
+price = 80
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x13cc_lbr"
 price = 101
 amount = 20
@@ -144,6 +151,34 @@ price = 56
 amount = 10
 hue = 0
 name = ""
+[[shop.sell]]
+item = "0x13c5_aos"
+price = 40
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c5_lbr"
+price = 40
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c5_t2a"
+price = 40
+amount = 1
+hue = 0
+name = ""
+
+[[shop.sell]]
+item = "0x13c5_tol"
+price = 40
+amount = 1
+hue = 0
+name = ""
+
 [[shop.sell]]
 item = "0x13cc_aos"
 price = 52

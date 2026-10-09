@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3d44cc199a92d8a05ac1aa82d4c4a912b8f4cffa4dfddad36a3a6514372b3105","title":"Negozi"} -->
+<!-- translation: {"sourceHash":"2f3ebaa5e6e466c4559cc9fe20bdc1d81c197895700ae856b5c8adecfe728576","title":"Negozi"} -->
 
 # Negozi
 
@@ -55,7 +55,7 @@ mgctl convert modernuo-vendors --source ~/projects/others/ModernUO/Projects/UOCo
 Il convertitore legge il C# come sintassi e non esegue nulla. Prende le righe delle classi `SBInfo` che ogni classe di
 venditore aggiunge e scrive un file per ogni classe di venditore, con il suo nome. Una riga diventa il template oggetto con il
 grafico che ModernUO le dà; quando più template condividono un grafico, vince quello chiamato come il tipo C#, altrimenti il pezzo
-semplice della prima epoca che il grafico ha (`lbr`, poi `aos`, `t2a`, `tol`), altrimenti il primo, e il rapporto lo segnala. Un
+semplice della prima epoca che il grafico ha (`lbr`, poi `aos`, `t2a`, `tol`), altrimenti il primo, e il rapporto lo segnala. Un'arma o un attrezzo ha due grafici, uno per ogni verso in cui è girato: quando nessun template ha il grafico con cui ModernUO lo vende, il convertitore prende i template dell'altro grafico della coppia (il `Flippable` della classe dell'oggetto, e alcune coppie che conosce), altrimenti l'unico template chiamato come il tipo. Un
 grafico che ha solo varianti di materiale (agapite, bronzo e così via) e nessun pezzo semplice viene escluso dalle righe di acquisto. Un
 venditore compra un pezzo di qualunque materiale, quindi le righe di vendita di un grafico di armature o armi elencano ogni template
 di epoca e di materiale. Il rapporto conta ciò che ha lasciato fuori: tipi senza template oggetto, animali, righe

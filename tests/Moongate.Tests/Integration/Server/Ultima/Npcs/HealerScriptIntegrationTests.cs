@@ -1,3 +1,6 @@
+using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Tests.TestSupport.Ultima.Vendors;
+using Lua;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Geometry;
@@ -77,6 +80,7 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
     };
 
+    private readonly RecordingVendorService _vendors = new();
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
     private MobileEntity _aria = null!;
@@ -128,6 +132,11 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<MobileModule>();
         _container.AddScriptModule<EffectModule>();
         _container.AddScriptModule<GumpModule>();
+        _container.RegisterInstance<IVendorService>(_vendors);
+        _container.RegisterInstance<ITrainingService>(new RecordingTrainingService());
+        _container.AddScriptModule<VendorModule>();
+        _container.AddScriptModule<TrainerModule>();
+        _container.RegisterScriptEnum<SpeechKeywordType>();
         _container.RegisterScriptEnum<EffectGraphicType>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -140,6 +149,10 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         _scripts.Write(
             "mobiles/healer.lua",
             await File.ReadAllTextAsync(Path.Combine(root, "scripts", "mobiles", "healer.lua"))
+        );
+        _scripts.Write(
+            "common/shop.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "shop.lua"))
         );
         _scripts.Write(
             "common/training.lua",
@@ -167,6 +180,38 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         await gumpScripts.StartAsync();
         _npcs = new(_engine, _templates, _loop, new ScriptEngineOptions { ScriptsDirectory = _scripts.Path });
         await _npcs.StartAsync();
+    }
+
+    [Fact]
+    public void AHealer_KeepsAShop_BuyAndSellInItsMenu_AndTheWindowOpensWhenOneIsPicked()
+    {
+        _aria.Body = 0x0190;
+        _aria.Hidden = false;
+
+        var menu = _npcs.Run(_healer, "on_context_menu", (long)_aria.Id.Value);
+        _npcs.Run(_healer, "on_context_menu_select", (long)_aria.Id.Value, "buy");
+        _npcs.Run(_healer, "on_context_menu_select", (long)_aria.Id.Value, "sell");
+
+        Assert.Empty(_errors);
+        var entries = Assert.IsType<LuaTable>(Assert.Single(menu.Values));
+        Assert.Equal(
+            ["buy", "sell"],
+            Enumerable.Range(1, entries.ArrayLength).Select(index => entries[index].Read<LuaTable>()["id"].Read<string>())
+        );
+        Assert.Equal((_session, _healer), Assert.Single(_vendors.Opened));
+        Assert.Equal((_session, _healer), Assert.Single(_vendors.OpenedSell));
+    }
+
+    [Fact]
+    public void AHealer_OpensItsShopAtTheWordsVendorBuy()
+    {
+        _aria.Body = 0x0190;
+        _aria.Hidden = false;
+
+        new NpcHearingService(_npcs, _fixture.Sectors).Heard(_aria, "vendor buy", [(int)SpeechKeywordType.VendorBuy]);
+
+        Assert.Empty(_errors);
+        Assert.Equal((_session, _healer), Assert.Single(_vendors.Opened));
     }
 
     [Fact]

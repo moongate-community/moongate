@@ -103,7 +103,7 @@ that opens the window:
 vendor.open_buy(npc, player)
 ```
 
-A script of a vendor that has its own, such as `banker.lua` or `healer.lua`, can call it too. See
+A script of a vendor that has its own, such as `banker.lua` or `healer.lua`, can call it too: the healers keep a shop this way, through `scripts/common/shop.lua`, which holds the *Buy* and *Sell* entries and the words for any script. See
 [Lua modules](lua-modules.md).
 
 ## Teaching

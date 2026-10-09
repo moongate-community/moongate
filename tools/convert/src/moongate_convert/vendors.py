@@ -18,6 +18,15 @@ from .textutil import snake_case, write_text
 
 VENDORS_FOLDER = "Vendors"
 MOBILES_FOLDER = "Mobiles"
+ITEMS_FOLDER = "Items"
+HEALERS_FOLDER = "Healers"
+
+# Pairs of graphics of one item that ModernUO does not declare as flippable: the one it sells, the one the templates have.
+KNOWN_TWINS = {
+    0x0F6B: [0x0F64],  # torch
+    0x1544: [0x1543],  # skull cap
+    0x0EF3: [0x0E34],  # blank scroll
+}
 SB_INFO_BASE = "SBInfo"
 BUY_INFO_CLASS = "InternalBuyInfo"
 SELL_INFO_CLASS = "InternalSellInfo"
@@ -57,11 +66,16 @@ HEADER = """# What it is for:
 ALIASES = {
     "armorer": ["armourer", "m_armourer", "f_armourer"],
     "fisherman": ["fisher", "m_fisher", "f_fisher"],
+    "fortuneteller": ["f_gypsyfortuneteller"],
+    # ModernUO has no spinner: UOX3, whose templates these are, gives it the list of the weaver.
+    "weaver": ["weaver", "m_weaver", "f_weaver", "spinner", "m_spinner", "f_spinner"],
     "waiter": ["waiter", "m_waiter", "f_waitress"],
     "wanderinghealer": ["whealer"],
     "evilwanderinghealer": ["evilwhealer"],
 }
 
+# The two graphics of one item, one for each way it faces: ModernUO sells it under one, a template may be named by the other.
+_FLIPPABLE = re.compile(r"\[Flippable\(([^)\]]*)\)\]")
 _ID_LINE = re.compile(r'^id\s*=\s*"([^"]+)"', re.MULTILINE)
 _GRAPHIC = re.compile(r"^0x([0-9a-f]{4})_(.*)$")
 T = TypeVar("T")
@@ -118,6 +132,7 @@ class ShopIndex:
     by_graphic: dict[int, list[str]]
     graphics_of_type: dict[str, list[int]]
     by_name: dict[str, list[str]]
+    twins: dict[int, list[int]] = field(default_factory=dict)
 
 
 # --- reading the C# ---
@@ -352,16 +367,55 @@ def _graphics_of_type(infos) -> dict[str, list[int]]:
     return graphics
 
 
-def _item_of(line: BuyLine, by_graphic: dict[int, list[str]], report: ConversionReport) -> str | None:
+def twins_of(folder: Path) -> dict[int, list[int]]:
+    """The other graphics of each graphic: the known pairs and those ModernUO's items declare as flippable."""
+    twins: dict[int, list[int]] = {graphic: list(others) for graphic, others in KNOWN_TWINS.items()}
+
+    if not folder.is_dir():
+        return twins
+
+    for path in sorted(folder.rglob("*.cs")):
+        for arguments in _FLIPPABLE.findall(path.read_bytes().decode("utf-8-sig", errors="replace")):
+            try:
+                graphics = [int(argument.strip(), 0) for argument in arguments.split(",") if argument.strip()]
+            except ValueError:
+                continue
+
+            for graphic in graphics:
+                others = twins.setdefault(graphic, [])
+                others.extend(other for other in graphics if other != graphic and other not in others)
+
+    return twins
+
+
+def _family_of(graphic: int, index: ShopIndex) -> list[str] | None:
+    """The templates of a graphic, else those of the other graphic of its flippable pair."""
+    family = index.by_graphic.get(graphic)
+
+    if family is not None:
+        return family
+
+    return next((index.by_graphic[twin] for twin in index.twins.get(graphic, []) if twin in index.by_graphic), None)
+
+
+def _item_of(line: BuyLine, index: ShopIndex, report: ConversionReport) -> str | None:
     """The template of a graphic: the one named like the type, else the only one, else the first (and the report says so)."""
-    candidates = by_graphic.get(line.graphic)
+    candidates = _family_of(line.graphic, index)
+    wanted = snake_case(line.type_name)
 
     if candidates is None:
+        named_so = index.by_name.get(wanted, [])
+
+        # A template of another graphic is the item only when it is the one template of that name.
+        if len(named_so) == 1:
+            report.count(f"graphic 0x{line.graphic:04x} ({line.type_name}) has no item template, took {named_so[0]} by its name")
+
+            return named_so[0]
+
         report.count(f"no item template for graphic 0x{line.graphic:04x} ({line.type_name})")
 
         return None
 
-    wanted = snake_case(line.type_name)
     named = next((candidate for candidate in candidates if _id_name(candidate) == wanted), None)
 
     if named is not None:
@@ -418,7 +472,7 @@ def _build(vendor: Vendor, sb_infos: dict[str, SbInfo], index: ShopIndex, mobile
             continue
 
         for line in info.lines:
-            item = _item_of(line, index.by_graphic, report)
+            item = _item_of(line, index, report)
 
             if item is None:
                 continue
@@ -461,12 +515,12 @@ def _sell_lines(vendor: Vendor, sb_infos: dict[str, SbInfo], index: ShopIndex, r
 
             # A vendor buys a piece whatever it is made of, so an armor or weapon graphic sells every template of it.
             for graphic in index.graphics_of_type.get(sell.type_name, []):
-                family = index.by_graphic.get(graphic)
+                family = _family_of(graphic, index)
 
                 if family is not None and (era_base(family) is not None or _is_material_family(family)):
                     items.extend(family)
                 else:
-                    one = _item_of(BuyLine(sell.type_name, 0, 0, graphic, 0), index.by_graphic, report)
+                    one = _item_of(BuyLine(sell.type_name, 0, 0, graphic, 0), index, report)
 
                     if one is not None:
                         items.append(one)
@@ -568,8 +622,13 @@ def run(source: Path, items: Path, mobiles: Path, destination: Path, output: Tex
                 sb_infos[info.name] = info
 
         vendors = _read_all(root / "NPC", lambda text, path: read_vendors(text, path, report))
+
+        # The healers sell too, and are not among the vendors: they stand in a folder beside them.
+        if (root.parent / HEALERS_FOLDER).is_dir():
+            vendors += _read_all(root.parent / HEALERS_FOLDER, lambda text, path: read_vendors(text, path, report))
+
         by_graphic = items_by_graphic(items)
-        index = ShopIndex(by_graphic, _graphics_of_type(sb_infos.values()), _items_by_name(by_graphic))
+        index = ShopIndex(by_graphic, _graphics_of_type(sb_infos.values()), _items_by_name(by_graphic), twins_of(source / ITEMS_FOLDER))
         mobile_ids = ids_of(mobiles)
         claimed: dict[str, str] = {}
         files: list[tuple[Path, Shop]] = []
