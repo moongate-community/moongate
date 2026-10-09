@@ -420,3 +420,20 @@ def test_the_spinners_use_the_shop_of_the_weavers_and_the_gypsy_fortune_teller_t
 
     assert workspace.shop("weaver")[0]["vendors"] == ["weaver", "m_spinner", "f_spinner"]
     assert workspace.shop("fortune_teller")[0]["vendors"] == ["f_gypsyfortuneteller"]
+
+
+def test_a_graphic_of_materials_only_is_bought_as_the_plain_piece_of_the_other_graphic_of_its_pair(workspace):
+    _prepare_bowyer(
+        workspace,
+        '[[item]]\nid = "0x1409_b"\n[[item]]\nid = "0x1409_g"\n[[item]]\nid = "0x1408_lbr"\n[[item]]\nid = "0x1408_b"\n',
+    )
+    workspace.write(
+        "UOContent/Mobiles/Vendors/SBInfo/SBBowyer.cs",
+        BOWYER_SHOP.replace("typeof(Bow), 40, 20, 0x13B2", "typeof(CloseHelm), 18, 20, 0x1409"),
+    )
+
+    assert workspace.run() == 0, workspace.error
+
+    [shop] = workspace.shop("bowyer")
+    assert [(line["item"], line["price"]) for line in shop["buy"]] == [("0x1408_lbr", 18)]
+    assert "only material templates" not in workspace.output

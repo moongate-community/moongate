@@ -26,6 +26,10 @@ KNOWN_TWINS = {
     0x0F6B: [0x0F64],  # torch
     0x1544: [0x1543],  # skull cap
     0x0EF3: [0x0E34],  # blank scroll
+    0x1409: [0x1408],  # close helm
+    0x140B: [0x140A],  # helmet
+    0x140F: [0x140E],  # norse helm
+    0x1419: [0x1412],  # plate helm
 }
 SB_INFO_BASE = "SBInfo"
 BUY_INFO_CLASS = "InternalBuyInfo"
@@ -427,6 +431,13 @@ def _item_of(line: BuyLine, index: ShopIndex, report: ConversionReport) -> str |
         return plain
 
     if _is_material_family(candidates):
+        # The plain piece may be a template of the other graphic of the pair, which the materials are made from.
+        for twin in index.twins.get(line.graphic, []):
+            plain = era_base(index.by_graphic.get(twin, []))
+
+            if plain is not None:
+                return plain
+
         report.count(f"graphic 0x{line.graphic:04x} ({line.type_name}) has only material templates, no plain piece: left out")
 
         return None

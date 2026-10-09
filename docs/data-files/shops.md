@@ -56,7 +56,7 @@ The converter reads the C# as syntax and runs nothing. It takes the lines of the
 class adds, and writes one file for each vendor class, named after it. A line becomes the item template with the
 graphic ModernUO gives it; when several templates share a graphic, the one named like the C# type wins, else the plain
 piece of the first era the graphic has (`lbr`, then `aos`, `t2a`, `tol`), else the first one, and the report says so. A weapon or a tool has two graphics, one for each way it faces: when no template has the graphic ModernUO sells it under, the converter takes the templates of the other graphic of the pair (the `Flippable` of the item class, and a few pairs it knows), else the one template named like the type. A
-graphic that has only material variants (agapite, bronze and so on) and no plain piece is left out of the buy lines. A
+graphic that has only material variants (agapite, bronze and so on) and no plain piece is sold as the plain piece of the other graphic of its pair (the metal helmets), and left out of the buy lines when that has none either. A
 vendor buys a piece whatever it is made of, so the sell lines of an armor or weapon graphic list every era and material
 template. The report counts what it left out: types with no item template, pets, lines
 and `SBInfo` classes that depend on the era or the vendor, and vendor classes with no mobile template. A `switch`
