@@ -31,6 +31,7 @@
 --   crafting.count(user, templates)   how many units the player carries
 --   crafting.chance(user, craft, recipe)   the chance, 0 to 1
 --   crafting.notice(cliloc)   the text the gump shows for a client text
+--   crafting.carries(user, tool)   whether the tool is in the backpack or a bag of it
 --
 -- What it keeps:
 --   Who is making something, and the group and wood each player picked, in
@@ -78,7 +79,7 @@ function crafting.notice(cliloc)
 end
 
 function crafting.open(user, tool, craft_id, notice)
-    gump.open(user, "craft", { craft = craft_id, tool = tool, notice = notice })
+    gump.open(user, "craft_menu", { craft = craft_id, tool = tool, notice = notice })
 end
 
 function crafting.kind(user)
@@ -214,7 +215,7 @@ local function take(user, templates, amount)
     return hue
 end
 
-local function carries(user, tool)
+function crafting.carries(user, tool)
     for _, serial in ipairs(item.find(user, item.template(tool) or "")) do
         if serial == tool then
             return true
@@ -230,7 +231,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
     local here = mobile.location(user)
 
-    if not here or mobile.is_dead(user) or not carries(user, tool) then
+    if not here or mobile.is_dead(user) or not crafting.carries(user, tool) then
         return
     end
 
