@@ -207,7 +207,19 @@ static that was picked, and the script holds the graphics that are trees. The ch
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have wood left (`harvest.amount`), the
 Lumberjacking skill is tried between 0 and 100 (`skill.check`), and a cut that works takes from the place
 (`harvest.take`) and gives 10 logs (`item.give`). The constants at the top of the script are the range, the swings
-and the logs; the trees are in `scripts/common/trees.lua`, shared with `scripts/items/blade.lua`, the script of the knives, daggers and swords (`script_id = "blade"`), which hacks one kindling off a tree. Picked onto logs in the backpack, the axe saws the stack into boards (`item.template`, `item.consume`, then `item.give`). A place is of one kind of wood, the vein of its area (`harvest.vein`): the table `WOODS` holds the logs and boards of each kind, the Lumberjacking it asks for (`mobile.skills`) and the bounds its cut is tried between, and the table `FINDS` what a master finds with the logs. Who is chopping is kept in memory by serial: a restart frees everyone.
+and the logs; the trees are in `scripts/common/trees.lua`, shared with `scripts/items/blade.lua`, the script of the knives, daggers and swords (`script_id = "blade"`), which hacks one kindling off a tree. Picked onto logs in the backpack, the axe saws the stack into boards (`item.template`, `item.consume`, then `item.give`). A place is of one kind of wood, the vein of its area (`harvest.vein`): `scripts/common/woods.lua` holds the logs and boards of each kind, the Lumberjacking it asks for (`mobile.skills`) and the bounds its cut is tried between, shared with carpentry, and the table `FINDS` what a master finds with the logs. Who is chopping is kept in memory by serial: a restart frees everyone.
+
+## crafting.lua and carpentry_tool.lua
+
+`scripts/common/crafting.lua` holds the rules every craft shares: see [Carpentry](../carpentry.md). It reads the
+recipes with `craft.get` and the resource lists with `craft.resource`, counts and takes the resources across the stacks
+the player carries (`item.find`, `item.amount`, `item.consume`; a pile on the cursor is left out with `item.is_held`),
+plays the two strokes (`mobile.play_sound`, `timer.after`), tries the other skills of the recipe and then the main one
+between twice its least minus its most and its most (`skill.check`), so the chance is one in two at the least, and
+makes the item (`item.give`, else `item.create` at the player's feet), with the hue of the kind of wood
+(`item.hue`, `item.set_hue`). Who is making something, and the group and wood each player picked, are kept in memory.
+`scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` on the carpentry tools) opens the crafting gump
+from the backpack; the gump is `templates/gumps/craft_menu.xml` with `scripts/gumps/craft_menu.lua`, one for every craft.
 
 ## fishing_pole.lua
 

@@ -25,6 +25,10 @@ SHIELD_TYPE = 107
 DYE_TUB_GRAPHIC = 0x0FAB
 # The four piles of ore: UOX3 types them by their graphic, in itemtypes.dfn, not in their block.
 ORE_GRAPHICS = (0x19B7, 0x19B8, 0x19B9, 0x19BA)
+# What a carpenter works wood with: the chisels, dovetail saws, planes, saws, draw knife, froe and inshave, not the nails.
+CARPENTRY_TOOL_GRAPHICS = frozenset(
+    {0x1026, 0x1027, 0x1028, 0x1029, 0x102C, 0x102D, 0x1030, 0x1031, 0x1032, 0x1033, 0x1034, 0x1035, 0x10E4, 0x10E5, 0x10E6}
+)
 TWO_HANDED = 2
 MAX_LAYER = 29
 
@@ -211,6 +215,9 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     elif kind == AXE_TYPE:
         # What UOX3 chops a tree with: scripts/items/axe.lua.
         template.script_id = "axe"
+    elif graphic in CARPENTRY_TOOL_GRAPHICS:
+        # What UOX3's crafting tool script opens carpentry with: scripts/items/carpentry_tool.lua.
+        template.script_id = "carpentry_tool"
     elif kind == DYES_TYPE:
         # UOX3's dyes are hard-coded: scripts/items/dyes.lua.
         template.script_id = "dyes"

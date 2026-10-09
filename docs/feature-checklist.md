@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**270 systems:** ✅ 88 done, 🟡 59 partly done, ❌ 123 not built yet.
+**270 systems:** ✅ 88 done, 🟡 61 partly done, ❌ 121 not built yet.
 
 **Coverage: 33%** of the systems done, **44%** counting a partly done system as half.
 
@@ -112,8 +112,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | --- | --- | --- |
 | Using a skill and gaining it | 🟡 | A [skill](skills.md) is used from the skill window (`scripts/skills/<skill>.lua`), checked by `skill.check` and gained with ModernUO's formula; only Hiding is shipped, and stats do not rise with skills yet |
 | Gathering: mining, lumberjacking, fishing | 🟡 | [Fishing](fishing.md) with a pole: water within 4 tiles, 8 seconds, a fish, old footwear or nothing by the skill; the fish of a place run out by area and come back ([`harvest.toml`](data-files/harvest.md)). [Lumberjacking](lumberjacking.md) with an axe in the hands: a tree within 2 tiles, one to three swings, 10 logs by the skill, the wood of a place running out the same way. [Mining](mining.md) with a pickaxe or a shovel: iron ore from the rock of mountains and caves, smelted into ingots at a forge. Logs are sawn into boards with the axe, and a blade hacks kindling off a tree. A place is of one of seven kinds of wood, each asking for its skill, a master finds rare things with the logs, and an axe hits harder with Lumberjacking. No other metals, no special catches |
-| Crafting engine: menus, recipes, resources, quality | ❌ | |
-| The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | ❌ | |
+| Crafting engine: menus, recipes, resources, quality | 🟡 | The crafting gump, recipes in [`data/crafts`](data-files/crafts.md), resources counted across the backpack and its bags, the chance and the kinds of wood, shared by every craft; see [Carpentry](carpentry.md). No quality (exceptional items) or maker's mark yet |
+| The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | 🟡 | [Carpentry](carpentry.md): a tool in the backpack opens the crafting gump, 42 recipes from UOX3 in [`data/crafts`](data-files/crafts.md), made from plain boards or a kind of wood that colours the item; one chance in two at the least skill, sure at the most, half of the materials lost on a failure. The engine is shared by the crafts to come. No exceptional items, maker's mark, tool wear or make last yet; no other craft |
 | Repairing and enhancing items | ❌ | |
 | Taming and animal lore | ❌ | |
 | Healing and veterinary | 🟡 | The clean [bandage](scripting/shipped-scripts.md#bandagelua) heals a player or a creature (Healing and Anatomy, Veterinary and Animal Lore) and raises a ghost; no poison, no bleeding, no pets |

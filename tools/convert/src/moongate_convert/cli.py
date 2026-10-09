@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TextIO
 
-from . import books, chests, guildmasters, locations, signs, spawn, spawns, taming, teleporters, uox, vendors
+from . import books, chests, crafts, guildmasters, locations, signs, spawn, spawns, taming, teleporters, uox, vendors
 
 # name -> (module run function, what --source is, what --destination is, help)
 _Run = Callable[[Path, Path, TextIO, TextIO], int]
@@ -158,6 +158,18 @@ def _guildmasters(arguments: argparse.Namespace, output: TextIO, error: TextIO) 
     )
 
 
+def _crafts_options(command: argparse.ArgumentParser) -> None:
+    command.add_argument("--source", required=True, type=Path, help="UOX3's dfndata/create folder, holding resources.dfn and a .dfn a craft")
+    command.add_argument("--items", required=True, type=Path, help="the item templates folder (templates/items): what a recipe makes and takes is found there")
+    command.add_argument(
+        "--destination", required=True, type=Path, help="the crafts folder (data/crafts): resources.toml and a .toml a craft, replacing those of a previous run"
+    )
+
+
+def _crafts(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> int:
+    return crafts.run(arguments.source, arguments.items, arguments.destination, output, error)
+
+
 def _uox_options(command: argparse.ArgumentParser) -> None:
     command.add_argument("--source", required=True, type=Path, help="a UOX3 .dfn file, or a folder scanned for every .dfn under it")
     command.add_argument("--destination", required=True, type=Path, help="the item templates folder: one .toml per source file, at the same relative path")
@@ -209,6 +221,11 @@ CUSTOM: dict[str, tuple[str, Callable[[argparse.ArgumentParser], None], _Custom]
         "Convert UOX3's .dfn item blocks and loot lists into item and loot templates, and with --mobile-source its NPCs, names, starting items, npc lists and spawns",
         _uox_options,
         _uox,
+    ),
+    "uox-crafts": (
+        "Convert UOX3's create menus into the crafts of data/crafts and their resource lists",
+        _crafts_options,
+        _crafts,
     ),
     "modernuo-guildmasters": (
         "Convert the guildmasters of ModernUO into mobile templates (a man and a woman for each trade) and npc lists",

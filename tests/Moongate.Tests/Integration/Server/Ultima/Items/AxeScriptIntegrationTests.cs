@@ -200,6 +200,7 @@ public sealed class AxeScriptIntegrationTests : IAsyncLifetime
         );
         _scripts.Write("items/blade.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "blade.lua")));
         _scripts.Write("common/trees.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "trees.lua")));
+        _scripts.Write("common/woods.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "woods.lua")));
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,

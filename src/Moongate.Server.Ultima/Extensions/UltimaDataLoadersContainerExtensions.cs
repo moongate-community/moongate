@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Crafts;
 using Moongate.Server.Ultima.Data.Harvest;
 using Moongate.Server.Ultima.Data.Jail;
 using Moongate.Server.Ultima.Data.Schedule;
@@ -70,8 +71,11 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<ShopsLoader, ShopDefinition>(26);
         container.AddUltimaDataLoader<HarvestLoader, HarvestResource>(27);
         container.AddUltimaDataLoader<ScheduleLoader, ScheduleFile>(28);
+        // Crafts name item templates, and the resource lists load before the crafts that name them.
+        container.AddUltimaDataLoader<CraftResourcesLoader, CraftResourceList>(29);
+        container.AddUltimaDataLoader<CraftsLoader, CraftDefinition>(30);
         // After the mobile templates, which the creatures name.
-        container.AddUltimaDataLoader<TamingLoader, TamingCreature>(29);
+        container.AddUltimaDataLoader<TamingLoader, TamingCreature>(31);
 
         return container;
     }

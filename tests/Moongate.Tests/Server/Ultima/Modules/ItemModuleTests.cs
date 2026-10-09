@@ -417,6 +417,17 @@ public sealed class ItemModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Give_WithAHue_MakesTheItemOfThatHue()
+    {
+        _serials.Serials.Enqueue(new Serial(0x40000100));
+
+        var result = Run("return item.give(2, 'gold', 10, 0x7DA)");
+
+        Assert.True(_items.TryGet(new Serial((uint)result[0].Read<long>()), out var gold));
+        Assert.Equal((10, new Hue(0x7DA)), (gold.Amount, gold.Hue));
+    }
+
+    [Fact]
     public void Give_WithNoSerialLeft_IsNil()
     {
         Assert.Equal(LuaValue.Nil, Run("return item.give(2, 'gold')")[0]);

@@ -106,13 +106,14 @@ public sealed class ItemModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Makes an item from a template in the mobile's backpack and gives its serial; what stacks joins the stack of its kind already lying in the backpack (same template, hue and name, no prop of its own, 60000 at most) and the serial is that stack's. The owner sees it at once and its next save keeps it. Nil for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack), or when no serial is ready: the server keeps 64 in reserve and refills them in the background, so making more in one go gives nil for the rest; try again later."
+        "Makes an item from a template in the mobile's backpack and gives its serial; what stacks joins the stack of its kind already lying in the backpack (same template, hue and name, no prop of its own, 60000 at most) and the serial is that stack's. The owner sees it at once and its next save keeps it. Nil for an unknown mobile or template, a mobile without a backpack, an amount the template cannot have (more than 1 of what does not stack), a hue outside 0 to 65535, or when no serial is ready: the server keeps 64 in reserve and refills them in the background, so making more in one go gives nil for the rest; try again later. hue, when given, colours the item before it looks for a stack, so it joins only a stack of that colour."
     )]
-    public long? Give(long mobile, string template, int? amount = null)
+    public long? Give(long mobile, string template, int? amount = null, int? hue = null)
     {
         return mobile is > 0 and <= uint.MaxValue &&
+               hue is null or (>= 0 and <= ushort.MaxValue) &&
                _mobiles.TryGet(new Serial((uint)mobile), out var owner) &&
-               _handling.Give(owner, template, amount) is { } item
+               _handling.Give(owner, template, amount, hue: hue is { } colour ? new Hue((ushort)colour) : null) is { } item
             ? item.Id.Value
             : null;
     }

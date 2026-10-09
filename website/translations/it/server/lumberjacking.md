@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"117d865c26aadf7f63a5fd4329a7b86eb8327389e7d7fa4145d0563ef7650730","title":"Taglio della legna"} -->
+<!-- translation: {"sourceHash":"181957d6bebf16802ac9fe6822982b3a069a3e812bef7d06e05b5e1448df4bb7","title":"Taglio della legna"} -->
 
 # Taglio della legna
 
@@ -90,7 +90,7 @@ Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno. I numeri so
 
 ## Cambiare le regole
 
-Le regole sono in `scripts/items/axe.lua` (la distanza, i colpi, i tronchi di un taglio, le assi, la tabella dei tipi di legno e quella dei ritrovamenti rari), `scripts/items/blade.lua` (i legnetti) e `scripts/common/trees.lua` (le grafiche che contano
+Le regole sono in `scripts/items/axe.lua` (la distanza, i colpi, i tronchi di un taglio, le assi e la tabella dei ritrovamenti rari), `scripts/common/woods.lua` (i tipi di legno, condiviso con la [falegnameria](carpentry.md)), `scripts/items/blade.lua` (i legnetti) e `scripts/common/trees.lua` (le grafiche che contano
 come alberi). Vedi [Script forniti](scripting/shipped-scripts.md#axelua). Un template taglia con `script_id = "axe"`.
 
 ## Root esistenti
@@ -98,11 +98,11 @@ come alberi). Vedi [Script forniti](scripting/shipped-scripts.md#axelua). Un tem
 Una root creata prima che il taglio della legna esistesse ha bisogno di due cose. Esegui `mgctl init`, che aggiunge lo script. Poi aggiungi la
 risorsa `wood` al tuo `data/harvest.toml` e `script_id = "axe"` alle asce base di
 `templates/items/gear/weapons/axes.toml`, oppure copia entrambi i file dalla distribuzione: `mgctl init` non sostituisce mai
-un file che potresti aver modificato. Per assi e legnetti, copia di nuovo `scripts/items/axe.lua` se lo avevi già, e dai `script_id = "blade"` ai tuoi coltelli, pugnali e spade, oppure copia i file di `templates/items/gear/weapons` dalla distribuzione. Per i tipi di legno e i ritrovamenti rari, copia `templates/items/woods.toml`, `scripts/items/axe.lua` e `scripts/common/trees.lua`, e aggiungi le `[[resource.vein]]` della legna al tuo `data/harvest.toml`: senza le vene ogni luogo è di legno comune, e senza i template un taglio dà tronchi comuni.
+un file che potresti aver modificato. Per assi e legnetti, copia di nuovo `scripts/items/axe.lua` se lo avevi già, e dai `script_id = "blade"` ai tuoi coltelli, pugnali e spade, oppure copia i file di `templates/items/gear/weapons` dalla distribuzione. Per i tipi di legno e i ritrovamenti rari, copia `templates/items/woods.toml`, `scripts/items/axe.lua`, `scripts/common/trees.lua` e `scripts/common/woods.lua`, e aggiungi le `[[resource.vein]]` della legna al tuo `data/harvest.toml`: senza le vene ogni luogo è di legno comune, e senza i template un taglio dà tronchi comuni.
 
 ## Non ancora
 
-Ciò che si costruisce con i tipi di legno e con i ritrovamenti rari: la falegnameria e gli altri mestieri.
+Ciò che si costruisce con i ritrovamenti rari. Le assi e i tipi di legno si lavorano con la [falegnameria](carpentry.md).
 
 ## Vedi anche
 
