@@ -21,4 +21,10 @@ public class TamingCreature
     ///     How many followers the creature counts for once it is tamed. 1 to 10.
     /// </summary>
     public int Slots { get; set; } = 1;
+
+    /// <summary>
+    ///     The kinds of food it eats once tamed: <c>meat</c>, <c>fruit</c>, <c>grain</c>, <c>fish</c> or <c>eggs</c>.
+    ///     Meat when left out.
+    /// </summary>
+    public List<string> Food { get; set; } = ["meat"];
 }

@@ -505,7 +505,11 @@ order in the prop `pet.order` (`follow`, `come`, `stay` or `guard`; `follow` whe
 within 14 tiles. The "all" words are carried out by the first pet that asks `pet.attend(owner)`, for every pet of the owner
 within reach; `kill` asks for a target with `target.pick`; `release` opens the gump `pet_release`
 (`templates/gumps/pet_release.xml`), whose Release button calls `pet.release` after checking the pet is still the player's and
-within 14 tiles. See [Animal taming](../animal-taming.md#what-you-can-tell-it).
+within 14 tiles. Every order but `release` first rolls `pet.obey(owner, pet)` (the chance is `pet.control_chance`): a pet that
+refuses growls and fidgets and does not take the order. `feed(serial, giver, given)` is what the creature scripts return from
+`on_drag_drop`: the owner's food goes to `pet.feed`, which takes the stack and raises the loyalty (`pet.loyalty`); food the
+creature does not eat is given back. See [Animal taming](../animal-taming.md#what-you-can-tell-it) and
+[loyalty, food and obedience](../animal-taming.md#loyalty-food-and-obedience).
 
 ## animal_taming.lua
 

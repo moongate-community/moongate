@@ -38,9 +38,17 @@ HEADER = """# ==================================================================
 #     min_skill    the Animal Taming it takes, in points, -50 to 120 (the small animals ask less than none); a try has a
 #                  chance from 0.1 under it to 49.9 above
 #     slots        how many followers it counts for, 1 to 10
+#     food         the kinds of food it eats once tamed, from meat, fruit, grain, fish and eggs (data/pet_food.toml
+#                  says which items are which); none for a creature that eats nothing of those
 # ==============================================================================
 """
 
+# The foods of ModernUO a pet of this server eats; gold, metal and leather are left out.
+FOODS = {"Meat": "meat", "FruitsAndVeggies": "fruit", "GrainsAndHay": "grain", "Fish": "fish", "Eggs": "eggs"}
+KIND_ORDER = ["meat", "fruit", "grain", "fish", "eggs"]
+DEFAULT_FOOD = ["meat"]
+
+_FOOD_TYPE = re.compile(r"FoodType\.(\w+)")
 _TEMPLATE_ID = re.compile(r'^id\s*=\s*"([^"]+)"', re.MULTILINE)
 
 
@@ -49,6 +57,7 @@ class Creature:
     template: str
     min_skill: float
     slots: int
+    food: list[str]
 
 
 def template_ids(templates: Path) -> set[str]:
@@ -75,6 +84,50 @@ def number(node) -> float | None:
         value = None if integer is None else float(integer)
 
     return value
+
+
+def favorite_food(cls) -> list[str] | None:
+    """The kinds of food a class declares in its ``FavoriteFood`` property; None when it has none of its own."""
+    for member in csharp.members(cls, "property_declaration"):
+        if csharp.name_of(member) == "FavoriteFood":
+            kinds = {FOODS[name] for name in _FOOD_TYPE.findall(csharp.text(member)) if name in FOODS}
+
+            return [kind for kind in KIND_ORDER if kind in kinds]
+
+    return None
+
+
+def base_of(cls) -> str | None:
+    """The name of the class a class derives from, the first of its base list."""
+    bases = next((child for child in cls.children if child.type == "base_list"), None)
+    first = csharp.named_children(bases)[0] if bases is not None and csharp.named_children(bases) else None
+
+    return None if first is None else csharp.text(first).split("<")[0].split(".")[-1]
+
+
+def hierarchy(source: str, path: Path) -> dict[str, tuple[str | None, list[str] | None]]:
+    """Every class of a file as name -> (base class, declared food)."""
+    root = csharp.parse(source)
+    csharp.check(root, str(path))
+
+    return {csharp.name_of(cls): (base_of(cls), favorite_food(cls)) for cls in csharp.descendants(root, "class_declaration")}
+
+
+def inherited_food(name: str, classes: dict[str, tuple[str | None, list[str] | None]]) -> list[str]:
+    """The food of a class: its own, else the nearest base class that declares one, else meat."""
+    seen: set[str] = set()
+    current: str | None = name
+
+    while current is not None and current in classes and current not in seen:
+        seen.add(current)
+        base, food = classes[current]
+
+        if food is not None:
+            return food
+
+        current = base
+
+    return list(DEFAULT_FOOD)
 
 
 def read(source: str, path: Path, report: ConversionReport) -> list[tuple[str, float | None, int, bool]]:
@@ -139,9 +192,15 @@ def run(source: Path, templates: Path, destination: Path, output: TextIO, error:
         report = ConversionReport()
         ids = template_ids(templates)
         creatures: dict[str, Creature] = {}
+        files = sorted((path for path in root.rglob("*.cs") if path.is_file()), key=str)
+        classes: dict[str, tuple[str | None, list[str] | None]] = {}
 
-        for path in sorted((path for path in root.rglob("*.cs") if path.is_file()), key=str):
+        for path in files:
+            classes.update(hierarchy(csharp.read_source(path), path))
+
+        for path in files:
             for name, skill, slots, tamable in read(csharp.read_source(path), path, report):
+                food = inherited_food(name, classes)
                 template = name.lower()
                 # A creature that does not name its skill asks none, as ModernUO's default.
                 skill = 0.0 if skill is None else skill
@@ -155,11 +214,11 @@ def run(source: Path, templates: Path, destination: Path, output: TextIO, error:
                 elif not MIN_SKILL <= skill <= 120 or not 1 <= slots <= 10:
                     report.count("tamable class with a skill or slots out of range")
                 else:
-                    creatures[template] = Creature(template, skill, slots)
+                    creatures[template] = Creature(template, skill, slots, food)
 
         for alias, original in ALIASES.items():
             if alias in ids and original in creatures and alias not in creatures:
-                creatures[alias] = Creature(alias, creatures[original].min_skill, creatures[original].slots)
+                creatures[alias] = Creature(alias, creatures[original].min_skill, creatures[original].slots, creatures[original].food)
 
         if not creatures:
             error.write(f"{root}: no tamable creature found.\n")
@@ -181,6 +240,6 @@ def serialize(creatures: list[Creature]) -> str:
     blocks = []
 
     for creature in sorted(creatures, key=lambda item: item.template):
-        blocks.append(f'[[creature]]\ntemplate = "{creature.template}"\nmin_skill = {creature.min_skill!r}\nslots = {creature.slots}\n')
+        blocks.append(f'[[creature]]\ntemplate = "{creature.template}"\nmin_skill = {creature.min_skill!r}\nslots = {creature.slots}\nfood = [{", ".join(f'"{kind}"' for kind in creature.food)}]\n')
 
     return "\n" + "\n".join(blocks)

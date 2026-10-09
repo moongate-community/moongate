@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Entities.World;
@@ -14,7 +15,12 @@ namespace Moongate.Server.Ultima.Services;
 /// </summary>
 public sealed class PetService : IPetService
 {
+    public const int MaxLoyalty = 100;
+
     private const int MemoryLimit = 256;
+
+    // The creatures that ask this much Animal Taming or less always obey.
+    private const double EasiestSkill = 29.1;
 
     // The status of a player is sent at every change of its stats: the pets are counted once in a while, not at each.
     private static readonly TimeSpan MemoryOf = TimeSpan.FromSeconds(2);
@@ -23,6 +29,8 @@ public sealed class PetService : IPetService
     private readonly IItemService _items;
     private readonly ITamingService _taming;
     private readonly PetsConfig _config;
+    private readonly IPetFoodService? _food;
+    private readonly Func<double> _roll;
     private readonly TimeProvider _time;
     private readonly Lazy<IMobileStateService>? _state;
     private readonly ISessionService? _sessions;
@@ -37,13 +45,17 @@ public sealed class PetService : IPetService
         PetsConfig config,
         TimeProvider? time = null,
         Lazy<IMobileStateService>? state = null,
-        ISessionService? sessions = null
+        ISessionService? sessions = null,
+        IPetFoodService? food = null,
+        Func<double>? roll = null
     )
     {
         _mobiles = mobiles;
         _items = items;
         _taming = taming;
         _config = config;
+        _food = food;
+        _roll = roll ?? Random.Shared.NextDouble;
         _time = time ?? TimeProvider.System;
         _state = state;
         _sessions = sessions;
@@ -99,8 +111,23 @@ public sealed class PetService : IPetService
             return false;
         }
 
+        return LetGo(creature);
+    }
+
+    public bool LetGo(MobileEntity creature)
+    {
+        ArgumentNullException.ThrowIfNull(creature);
+
+        var owner = creature.GetProp(MountProps.Owner, 0L);
+
+        if (!creature.IsNpc || !_mobiles.IsInWorld(creature.Id) || owner == 0)
+        {
+            return false;
+        }
+
         creature.RemoveProp(MountProps.Owner);
         creature.RemoveProp(MountProps.PetOrder);
+        creature.RemoveProp(MountProps.PetLoyalty);
 
         // Wild again, it belongs to the region it came from, which counts it once more.
         if (creature.TryGetProp<string>(MountProps.PetRegion, out var region))
@@ -109,9 +136,105 @@ public sealed class PetService : IPetService
             creature.RemoveProp(MountProps.PetRegion);
         }
 
-        Changed(player.Id);
+        if (owner is > 0 and <= uint.MaxValue)
+        {
+            Changed(new Serial((uint)owner));
+        }
 
         return true;
+    }
+
+    public int Loyalty(MobileEntity creature)
+    {
+        ArgumentNullException.ThrowIfNull(creature);
+
+        return Math.Clamp(creature.GetProp(MountProps.PetLoyalty, MaxLoyalty), 0, MaxLoyalty);
+    }
+
+    public int AdjustLoyalty(MobileEntity creature, int delta)
+    {
+        var loyalty = Math.Clamp(Loyalty(creature) + delta, 0, MaxLoyalty);
+        creature.SetProp(MountProps.PetLoyalty, loyalty);
+
+        return loyalty;
+    }
+
+    public double ControlChance(MobileEntity player, MobileEntity creature)
+    {
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(creature);
+
+        if (IsStaff(player) ||
+            creature.TemplateId is not { } template ||
+            !_taming.TryGet(template, out var entry) ||
+            entry.MinSkill <= EasiestSkill)
+        {
+            return 1;
+        }
+
+        // ModernUO's rule, in tenths of a point: a creature above the skill of the player weighs much more than one below.
+        var minimum = (int)Math.Round(entry.MinSkill * 10);
+        var taming = Skill(player, SkillType.AnimalTaming) - minimum;
+        var lore = Skill(player, SkillType.AnimalLore) - minimum;
+        var bonus = (taming * (taming >= 0 ? 6 : 28) + lore * (lore >= 0 ? 6 : 14)) / 2;
+        var chance = Math.Clamp(700 + bonus, 220, 990) - (MaxLoyalty - Loyalty(creature)) * 10;
+
+        return Math.Clamp(chance / 1000.0, 0, 1);
+    }
+
+    public PetObeyResultType Obey(MobileEntity player, MobileEntity creature)
+    {
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(creature);
+
+        if (player.IsNpc ||
+            !creature.IsNpc ||
+            !_mobiles.IsInWorld(creature.Id) ||
+            creature.GetProp(MountProps.Owner, 0L) != player.Id.Value)
+        {
+            return PetObeyResultType.NotYours;
+        }
+
+        var chance = ControlChance(player, creature);
+
+        if (chance >= 1 || _roll() < chance)
+        {
+            AdjustLoyalty(creature, _config.ObeyGain);
+
+            return PetObeyResultType.Obeyed;
+        }
+
+        return AdjustLoyalty(creature, -_config.DisobeyLoss) <= 0 && LetGo(creature)
+                   ? PetObeyResultType.Wild
+                   : PetObeyResultType.Disobeyed;
+    }
+
+    public PetFeedResultType Feed(MobileEntity player, MobileEntity creature, string? itemTemplate, int amount)
+    {
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(creature);
+
+        if (player.IsNpc ||
+            !creature.IsNpc ||
+            !_mobiles.IsInWorld(creature.Id) ||
+            creature.GetProp(MountProps.Owner, 0L) != player.Id.Value)
+        {
+            return PetFeedResultType.NotYours;
+        }
+
+        if (amount < 1 || _food?.Accepts(creature.TemplateId, itemTemplate) != true)
+        {
+            return PetFeedResultType.WrongFood;
+        }
+
+        if (Loyalty(creature) >= MaxLoyalty)
+        {
+            return PetFeedResultType.AlreadyHappy;
+        }
+
+        AdjustLoyalty(creature, (int)Math.Min((long)amount * _config.FoodGain, MaxLoyalty));
+
+        return PetFeedResultType.Fed;
     }
 
     public int SlotsOf(string? templateId)
@@ -163,6 +286,19 @@ public sealed class PetService : IPetService
         _counted.Remove(player.Id);
 
         return PetResultType.Ok;
+    }
+
+    // The skill of a player in tenths of a point, 0 for one it has not.
+    private int Skill(MobileEntity player, SkillType type)
+    {
+        return _state?.Value.GetSkills(player).FirstOrDefault(skill => skill.Skill == type)?.Base ?? 0;
+    }
+
+    private bool IsStaff(MobileEntity player)
+    {
+        return _sessions is not null &&
+               _sessions.TryGetByCharacterId(player.Id, out var session) &&
+               session.AccountType >= AccountType.GameMaster;
     }
 
     // What a mobile of the world counts for the player: a creature of its own, or the creature of its own that a rider

@@ -247,6 +247,32 @@ public sealed class StableServiceTests
         Assert.Equal((long)_player.Id.Value, _npcs.Spawned.GetProp<long>(MountProps.Owner));
     }
 
+    [Fact]
+    public async Task ThePetsLoyalty_GoesToTheStable_AndComesBackWithTheClaim()
+    {
+        _horse.SetProp(MountProps.PetLoyalty, 42);
+        _service.TryStable(_player, _horse);
+
+        Assert.Equal("42", _player.GetProp<string>(MountProps.StabledLoyalty));
+
+        _service.TryClaim(_player, 0, "horse");
+        await _npcs.FirstSpawn.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Equal(42, _npcs.Spawned.GetProp<int>(MountProps.PetLoyalty));
+        Assert.False(_player.TryGetProp<string>(MountProps.StabledLoyalty, out _));
+    }
+
+    [Fact]
+    public void AStableWithNoLoyaltiesKept_GivesEveryPetFullLoyalty()
+    {
+        _player.SetProp(MountProps.Stabled, "horse;grayhorse");
+        _player.SetProp(MountProps.StabledLoyalty, "30");
+
+        _service.TryClaim(_player, 1, "grayhorse");
+
+        Assert.Equal("30", _player.GetProp<string>(MountProps.StabledLoyalty));
+    }
+
     [Theory, InlineData(-1, "horse"), InlineData(1, "horse"), InlineData(0, "grayhorse")]
     public void TryClaim_APlaceOrATemplateThatIsNotThere_IsABadIndex(int index, string template)
     {

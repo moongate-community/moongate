@@ -95,8 +95,8 @@ def test_a_tamable_creature_becomes_an_entry_with_its_skill_and_slots(tmp_path):
     data = tomllib.loads((destination / "taming.toml").read_text(encoding="utf-8"))
     assert code == 0
     assert data["creature"] == [
-        {"template": "drake", "min_skill": 84.3, "slots": 3},
-        {"template": "horse", "min_skill": 29.1, "slots": 1},
+        {"template": "drake", "min_skill": 84.3, "slots": 3, "food": ["meat"]},
+        {"template": "horse", "min_skill": 29.1, "slots": 1, "food": ["meat"]},
     ]
     assert "taming.toml (2 creatures)" in output
 
@@ -107,7 +107,7 @@ def test_a_negative_skill_and_a_missing_one_are_kept_as_they_are_or_as_zero(tmp_
     _, _, _, destination = convert(tmp_path, {"Cat.cs": cat, "Bird.cs": bird})
 
     data = tomllib.loads((destination / "taming.toml").read_text(encoding="utf-8"))
-    assert data["creature"] == [{"template": "cat", "min_skill": 0.0, "slots": 1}]
+    assert data["creature"] == [{"template": "cat", "min_skill": 0.0, "slots": 1, "food": ["meat"]}]
 
 
 def test_the_coats_of_the_horse_take_its_skill(tmp_path):
@@ -185,3 +185,42 @@ def test_template_ids_reads_every_toml_under_the_folder(tmp_path):
     (tmp_path / "a" / "x.toml").write_text('[[mobile]]\nid = "horse"\nbase_id = "x"\n', encoding="utf-8")
 
     assert taming.template_ids(tmp_path) == {"horse"}
+
+
+FED = """
+public partial class Dog : BaseCreature
+{
+    public Dog() : base(AIType.AI_Animal, FightMode.Closest, 10, 1, 0.2, 0.4)
+    {
+        Tamable = true;
+        MinTameSkill = 10.0;
+    }
+
+    public override FoodType FavoriteFood => FoodType.Fish | FoodType.Metal | FoodType.GrainsAndHay;
+}
+"""
+
+
+def test_favorite_food_is_read_in_the_order_of_the_kinds_and_leaves_out_what_a_pet_does_not_eat(tmp_path):
+    from moongate_convert import csharp
+
+    path = tmp_path / "Dog.cs"
+    path.write_text(FED, encoding="utf-8")
+    classes = taming.hierarchy(csharp.read_source(path), path)
+
+    assert taming.inherited_food("Dog", classes) == ["grain", "fish"]
+
+
+def test_food_is_inherited_from_the_nearest_base_class_and_is_meat_when_nobody_declares_it(tmp_path):
+    from moongate_convert import csharp
+
+    path = tmp_path / "Pets.cs"
+    path.write_text(
+        FED.replace("Dog", "BaseDog").replace("BaseCreature", "BaseMount")
+        + "public partial class Puppy : BaseDog { }\npublic partial class Stray : Wanderer { }\n",
+        encoding="utf-8",
+    )
+    classes = taming.hierarchy(csharp.read_source(path), path)
+
+    assert taming.inherited_food("Puppy", classes) == ["grain", "fish"]
+    assert taming.inherited_food("Stray", classes) == ["meat"]

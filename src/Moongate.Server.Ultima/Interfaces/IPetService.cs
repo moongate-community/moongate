@@ -38,6 +38,42 @@ public interface IPetService
     bool Release(MobileEntity player, MobileEntity creature);
 
     /// <summary>
+    ///     Gets how loyal a creature is to its owner, 0 to 100; 100 for one that has no loyalty set yet.
+    /// </summary>
+    int Loyalty(MobileEntity creature);
+
+    /// <summary>
+    ///     Adds <paramref name="delta" /> to the loyalty of a creature, kept from 0 to 100, and gives the new loyalty.
+    /// </summary>
+    int AdjustLoyalty(MobileEntity creature, int delta);
+
+    /// <summary>
+    ///     Makes a creature wild again by itself, as <see cref="Release" /> does for its owner: no owner, no order, no loyalty,
+    ///     and the owner has its followers recounted. False for one that is not an owned creature of the world.
+    /// </summary>
+    bool LetGo(MobileEntity creature);
+
+    /// <summary>
+    ///     Gets the chance, 0 to 1, that <paramref name="creature" /> obeys <paramref name="player" />: always for a creature
+    ///     that asks 29.1 of Animal Taming or less and for the staff; else from the Animal Taming and Animal Lore of the
+    ///     player against the skill the creature asks, less 1% for each point of loyalty it lacks (a tenth of a point less
+    ///     for each point lacking, ModernUO's rule).
+    /// </summary>
+    double ControlChance(MobileEntity player, MobileEntity creature);
+
+    /// <summary>
+    ///     Rolls <see cref="ControlChance" />: an obeying pet gains loyalty; one that does not loses loyalty, and is wild again
+    ///     when none is left. Not for the orders that cannot be refused, release.
+    /// </summary>
+    PetObeyResultType Obey(MobileEntity player, MobileEntity creature);
+
+    /// <summary>
+    ///     Gives food to a pet: when it is the player's own and eats that item template, its loyalty rises by the food gain
+    ///     for each of <paramref name="amount" /> items. The caller takes the food away.
+    /// </summary>
+    PetFeedResultType Feed(MobileEntity player, MobileEntity creature, string? itemTemplate, int amount);
+
+    /// <summary>
     ///     Gets the slots a creature of that mobile template counts for; 1 for one with no entry.
     /// </summary>
     int SlotsOf(string? templateId);

@@ -64,6 +64,25 @@ the name of the pet first (`a horse stay`) they are for that pet only.
 
 It will not fight you, another pet of yours, or what is dead. Sending your pets against an innocent makes you a criminal, as if you had struck it yourself, unless that one is fighting you. A pet that flees by nature, such as a rabbit, fights when you send it, and when it is hit. Friend, transfer, drop and patrol are not built.
 
+## Loyalty, food and obedience
+
+A pet is loyal to you from 0 to 100, and starts at 100. Time wears it down: every hour
+(`[ultima.pets] loyalty_drain_minutes`) each pet in the world loses 10 (`loyalty_drain`), as long as you are in the world too: a pet whose owner is away keeps what it has. Below
+10 it looks around desperately; at 0 it has decided it is better off without a master: it is wild again, as if you had
+released it. A pet in a stable or under you is not in the world, so it loses nothing; it keeps its loyalty there and comes back with it.
+
+Feed it: drag food on it, from two tiles or closer. It eats the whole stack when its creature eats that kind of food, and
+gains 10 loyalty for each item (`food_gain`), up to 100. A horse eats fruit, vegetables and bread; a dog or a cat, meat and
+fish. Food it does not eat is given back, and the pet shies away. The kinds each creature eats are the `food` of
+[`taming.toml`](data-files/taming.md), the items of each kind are in [`pet_food.toml`](data-files/pet-food.md).
+
+Orders can be refused. Every order but *release* rolls a chance, from your Animal Taming and Animal Lore against the skill
+the creature asks, less one hundredth for each point of loyalty it lacks (ModernUO's rule): a creature that asks 29.1 or
+less, or a game master, always gets obeyed. With the creature asking 70, Taming 100 and no Animal Lore the chance is 22%;
+with both at 120 it is 99% at full loyalty. A pet that obeys gains 1 loyalty (`obey_gain`), even when it could not have refused; one that does not growls,
+loses 3 (`disobey_loss`) and does not do what you said; if that was its last loyalty it goes wild. A kill order rolls once
+you have chosen the target.
+
 ## Followers
 
 A player may have 5 followers (`[ultima.pets] max_followers`, 1 to 50). Each creature counts for its slots, usually 1: the
@@ -80,10 +99,12 @@ and ignores the limit.
 
 ## For scripts
 
-The Lua module `pet`: `pet.info(creature)`, `pet.followers(player)`, `pet.max_followers()` and `pet.tame(player,
-creature)`; the skill script is `scripts/skills/animal_taming.lua`.
+The Lua module `pet`: `pet.info(creature)`, `pet.followers(player)`, `pet.max_followers()`, `pet.tame(player,
+creature)`, `pet.loyalty(creature)`, `pet.control_chance(player, creature)`, `pet.obey(player, creature)` and `pet.feed(player, creature,
+item)`; the skill script is `scripts/skills/animal_taming.lua`.
 
 ## Not built yet
 
-Loyalty and hunger, so a pet always obeys; friend, transfer, drop and patrol; bringing the pets along when the owner
+Animal Lore as a skill to learn and to read a pet's loyalty (the chance to be obeyed already counts the Animal Lore a character has); bonding; gold, metal and
+leather as food; friend, transfer, drop and patrol; bringing the pets along when the owner
 travels by gate or spell; and the pets of a player who is offline stay where they were.

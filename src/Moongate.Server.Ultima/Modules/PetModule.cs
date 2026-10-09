@@ -22,6 +22,8 @@ public sealed class PetModule
     private readonly IMobileStateService _state;
     private readonly ISessionService _sessions;
     private readonly TimeProvider _time;
+    private readonly IItemService? _items;
+    private readonly IItemHandlingService? _handling;
     // Several pets hear the same words in the same moment: the first to ask answers for them all.
     private readonly Attendance _attendance = new();
 
@@ -31,7 +33,9 @@ public sealed class PetModule
         IMobileService mobiles,
         IMobileStateService state,
         ISessionService sessions,
-        TimeProvider? time = null
+        TimeProvider? time = null,
+        IItemService? items = null,
+        IItemHandlingService? handling = null
     )
     {
         _pets = pets;
@@ -40,6 +44,8 @@ public sealed class PetModule
         _mobiles = mobiles;
         _state = state;
         _sessions = sessions;
+        _items = items;
+        _handling = handling;
     }
 
     /// <summary>
@@ -145,6 +151,87 @@ public sealed class PetModule
     public bool Release(long player, long creature)
     {
         return TryGet(player, out var owner) && TryGet(creature, out var pet) && _pets.Release(owner, pet);
+    }
+
+    /// <summary>
+    ///     Gets how loyal a creature is; <c>pet.loyalty(creature)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "How loyal the creature is to its owner, 0 to 100; 100 for one that has not lost any. nil for a creature that has no owner, a player, or a serial that is not a mobile in the world."
+    )]
+    public int? Loyalty(long creature)
+    {
+        return TryGet(creature, out var pet) && pet.IsNpc && pet.GetProp(MountProps.Owner, 0L) != 0
+                   ? _pets.Loyalty(pet)
+                   : null;
+    }
+
+    /// <summary>
+    ///     Gets the chance a pet obeys its owner; <c>pet.control_chance(owner, creature)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The chance, 0 to 1, that the creature obeys the player: 1 for a creature that asks 29.1 of Animal Taming or less and for the staff; else from the player's Animal Taming and Animal Lore against what the creature asks, less 0.01 for each point of loyalty it lacks. 0 for a player or a creature that is not in the world."
+    )]
+    public double ControlChance(long player, long creature)
+    {
+        return TryGet(player, out var owner) && TryGet(creature, out var pet) && !owner.IsNpc && pet.IsNpc
+                   ? _pets.ControlChance(owner, pet)
+                   : 0;
+    }
+
+    /// <summary>
+    ///     Rolls whether a pet obeys; <c>pet.obey(owner, creature)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Rolls the control chance of the creature for the player. Gives a PetObeyResultType: Obeyed, Disobeyed (the pet loses loyalty: the script shows it angry and does not carry the order out), Wild (it had none left and is no one's any more) or NotYours. Release is never rolled."
+    )]
+    public PetObeyResultType Obey(long player, long creature)
+    {
+        return TryGet(player, out var owner) && TryGet(creature, out var pet)
+                   ? _pets.Obey(owner, pet)
+                   : PetObeyResultType.NotYours;
+    }
+
+    /// <summary>
+    ///     Feeds a pet with an item a player dropped on it; <c>pet.feed(owner, creature, item)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Gives the item, with all the units of its stack, as food to the creature of the player: when it eats that item its loyalty rises by ultima.pets.food_gain for each unit and the item is gone. Gives a PetFeedResultType: Fed, AlreadyHappy (eaten all the same), WrongFood (the item is kept) or NotYours."
+    )]
+    public PetFeedResultType Feed(long player, long creature, long item)
+    {
+        if (!TryGet(player, out var owner) ||
+            !TryGet(creature, out var pet) ||
+            _items is null ||
+            _handling is null ||
+            item is <= 0 or > uint.MaxValue ||
+            !_items.TryGet(new Serial((uint)item), out var food))
+        {
+            return PetFeedResultType.NotYours;
+        }
+
+        // Food in someone else's hands or worn is not the player's to give.
+        if (_items.GetOwner(food) is { } holder && holder != owner.Id || _handling.IsHeld(food))
+        {
+            return PetFeedResultType.NotYours;
+        }
+
+        var before = _pets.Loyalty(pet);
+        var result = _pets.Feed(owner, pet, food.TemplateId, food.Amount);
+
+        if (result is PetFeedResultType.Fed or PetFeedResultType.AlreadyHappy && !_handling.Delete(food))
+        {
+            // The food could not be taken: the pet does not eat twice, so the loyalty it gained goes back.
+            _pets.AdjustLoyalty(pet, before - _pets.Loyalty(pet));
+
+            return PetFeedResultType.WrongFood;
+        }
+
+        return result;
     }
 
     private bool TryGet(long serial, out MobileEntity mobile)

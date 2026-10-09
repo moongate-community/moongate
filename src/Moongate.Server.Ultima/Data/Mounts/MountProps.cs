@@ -46,6 +46,22 @@ public static class MountProps
     public const string PetOrder = "pet.order";
 
     /// <summary>
+    ///     Prop of a creature: how loyal it is to its owner, 0 to 100; 100 when it has none.
+    /// </summary>
+    public const string PetLoyalty = "pet.loyalty";
+
+    /// <summary>
+    ///     Prop of a player: the loyalty of each pet in its stable, in the order of <see cref="Stabled" />, joined by semicolons;
+    ///     a pet with none listed is back at 100.
+    /// </summary>
+    public const string StabledLoyalty = "stabled_loyalty";
+
+    /// <summary>
+    ///     Prop of a mount item: the loyalty its creature had when it was mounted, given back when it is dismounted.
+    /// </summary>
+    public const string PetKeptLoyalty = "pet_loyalty";
+
+    /// <summary>
     ///     Prop of a creature: the spawn region it was taken out of when it was tamed, put back when it is let go.
     /// </summary>
     public const string PetRegion = "pet.region";
