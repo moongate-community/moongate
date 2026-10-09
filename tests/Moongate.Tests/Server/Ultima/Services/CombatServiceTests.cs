@@ -416,6 +416,23 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Assert.Equal(30 - 14, _orc.Hits);
     }
 
+    [Theory]
+    // 14 from the roll; an axe at lumberjacking 100 hits three tenths harder: 18
+    [InlineData(WeaponType.Axe, 18)]
+    [InlineData(WeaponType.Sword, 14)]
+    public void AnAxe_HitsHarderWithLumberjacking_AnotherWeaponDoesNot_AndTheSkillIsNotTried(WeaponType type, int damage)
+    {
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Lumberjacking, Base = 1000 });
+        _gear.Weapon = new(SkillType.Swordsmanship, type, false, 10, 20, 35);
+        _random.Integers(4);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Equal(30 - damage, _orc.Hits);
+        Assert.DoesNotContain(_skills.Checks, check => check.Item2 == SkillType.Lumberjacking);
+    }
+
     [Fact]
     public void ANpcIsNotGivenTheWeaponsItWears_ItKeepsItsTemplateDice()
     {
@@ -425,6 +442,19 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Tick();
 
         // 8 of the template, halved on a player: 4.
+        Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
+    public void AnNpc_GetsNothingFromLumberjacking_WhateverItHolds()
+    {
+        _orc.Skills.Add(new MobileSkill { Skill = SkillType.Lumberjacking, Base = 1000 });
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Axe, true, 100, 200, 35);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        // 8 of the template, halved on a player: 4, as without the skill.
         Assert.Equal(26, _aria.Hits);
     }
 

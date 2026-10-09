@@ -36,6 +36,41 @@ public sealed class HarvestLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_AResourceWithVeins_ReadsThemInOrder()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "data/harvest.toml",
+            Fish +
+            "[[resource]]\nid = \"wood\"\narea = 4\namount_min = 2\namount_max = 4\n" +
+            "[[resource.vein]]\nid = \"plain\"\nweight = 490\n[[resource.vein]]\nid = \"oak\"\nweight = 300\n"
+        );
+
+        var resources = (await CreateLoader(root).LoadDataAsync()).Entities.ToArray();
+
+        Assert.Empty(resources[0].Vein);
+        Assert.Equal([("plain", 490), ("oak", 300)], resources[1].Vein.Select(vein => (vein.Id, vein.Weight)));
+    }
+
+    [Theory]
+    [InlineData("id = \"Oak Tree\"\nweight = 1")]
+    [InlineData("id = \"oak\"\nweight = 0")]
+    [InlineData("id = \"oak\"\nweight = -3")]
+    [InlineData("id = \"oak\"\nweight = 2000000")]
+    [InlineData("id = \"plain\"\nweight = 5")]
+    public async Task LoadDataAsync_ABadVein_StopsTheServer(string vein)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "data/harvest.toml",
+            "[[resource]]\nid = \"wood\"\narea = 4\namount_min = 2\namount_max = 4\n" +
+            "[[resource.vein]]\nid = \"plain\"\nweight = 490\n[[resource.vein]]\n" + vein + "\n"
+        );
+
+        await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+    }
+
+    [Fact]
     public async Task LoadDataAsync_WithoutTheFile_HasNoResource()
     {
         using var root = new TemporaryDirectory();

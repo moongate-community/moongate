@@ -40,6 +40,20 @@ public sealed class CombatFormulasTests
     }
 
     [Theory]
+    // an axe with lumberjacking 50: a tenth more
+    [InlineData(10, 50, 0, 0, 50, 11)]
+    // at 100 a fifth, and a tenth on top
+    [InlineData(10, 50, 0, 0, 100, 13)]
+    // it adds to strength and anatomy: 100 * (1 + 0.1 + 0.1 + 0.18)
+    [InlineData(100, 50, 50, 50, 90, 138)]
+    public void ScaleDamage_OfAnAxe_FollowsLumberjackingToo(
+        int damage, double tactics, double strength, double anatomy, double lumberjacking, int expected
+    )
+    {
+        Assert.Equal(expected, CombatFormulas.ScaleDamage(damage, tactics, strength, anatomy, lumberjacking));
+    }
+
+    [Theory]
     // base 10, tactics 100 (+50%), strength 50 (+10%), anatomy 50 (+10%): 10 * 1.5 * 1.2
     [InlineData(10, 100, 50, 50, 18)]
     // tactics 50 changes nothing, no strength or anatomy

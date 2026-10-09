@@ -8,7 +8,7 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Keeps the areas of each harvest resource in memory: drawn full at first use, and full again all at once some
-///     time after the first take.
+///     time after the first take. An area of a resource with veins is of one of them, drawn each time it fills.
 /// </summary>
 public sealed class HarvestService : IHarvestService
 {
@@ -34,6 +34,11 @@ public sealed class HarvestService : IHarvestService
     public int? Amount(string resource, MapType map, int x, int y)
     {
         return AreaOf(resource, map, x, y, out _)?.Amount;
+    }
+
+    public string? Vein(string resource, MapType map, int x, int y)
+    {
+        return AreaOf(resource, map, x, y, out _)?.Vein;
     }
 
     public bool TryTake(string resource, MapType map, int x, int y)
@@ -67,20 +72,46 @@ public sealed class HarvestService : IHarvestService
 
         if (!_areas.TryGetValue(key, out var area))
         {
-            area = _areas[key] = new() { Amount = Full(definition) };
+            area = _areas[key] = new();
+            Fill(area, definition);
         }
         else if (area.RefillAt is { } due && _time.GetTimestamp() >= due)
         {
-            area.Amount = Full(definition);
-            area.RefillAt = null;
+            Fill(area, definition);
         }
 
         return area;
     }
 
-    private int Full(HarvestResource definition)
+    // A full area: its amount, then its vein.
+    private void Fill(HarvestArea area, HarvestResource definition)
     {
-        return definition.AmountMin + _random.Next(definition.AmountMax - definition.AmountMin + 1);
+        area.Amount = definition.AmountMin + _random.Next(definition.AmountMax - definition.AmountMin + 1);
+        area.RefillAt = null;
+        area.Vein = VeinOf(definition);
+    }
+
+    // One of the veins of the resource, each as likely as its weight; none for a resource without veins.
+    private string? VeinOf(HarvestResource definition)
+    {
+        if (definition.Vein.Count == 0)
+        {
+            return null;
+        }
+
+        var draw = _random.Next(definition.Vein.Sum(vein => vein.Weight));
+
+        foreach (var vein in definition.Vein)
+        {
+            if (draw < vein.Weight)
+            {
+                return vein.Id;
+            }
+
+            draw -= vein.Weight;
+        }
+
+        return definition.Vein[^1].Id;
     }
 
     private long MinutesToTimestamp(int minutes)

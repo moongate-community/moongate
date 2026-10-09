@@ -10,6 +10,7 @@
 --   trees.is_tree(graphic)        whether a static of that graphic is a tree
 --   trees.has_wood(map, x, y)     whether the place has wood left
 --   trees.take_wood(map, x, y)    takes one cut from the place
+--   trees.wood(map, x, y)         the kind of wood of the place, such as "oak"
 -- ==============================================================================
 
 local trees = {}
@@ -39,6 +40,11 @@ end
 
 function trees.take_wood(map, x, y)
     return harvest.take(RESOURCE, map, x, y)
+end
+
+-- The vein of the place: one of the [[resource.vein]] of the wood, drawn again each time the wood is back.
+function trees.wood(map, x, y)
+    return harvest.vein(RESOURCE, map, x, y)
 end
 
 return trees

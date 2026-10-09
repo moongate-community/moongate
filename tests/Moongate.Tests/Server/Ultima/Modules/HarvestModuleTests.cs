@@ -16,7 +16,8 @@ public sealed class HarvestModuleTests
 {
     private readonly HarvestService _harvest = new(
         new StubDataLoaderService().With(new HarvestResource
-            { Id = "fish", Area = 8, AmountMin = 2, AmountMax = 2, RespawnMinMinutes = 10, RespawnMaxMinutes = 10 }),
+            { Id = "fish", Area = 8, AmountMin = 2, AmountMax = 2, RespawnMinMinutes = 10, RespawnMaxMinutes = 10 },
+            new HarvestResource { Id = "wood", Area = 4, AmountMin = 2, AmountMax = 2, Vein = [new() { Id = "oak", Weight = 1 }] }),
         new ManualTimeProvider(),
         new ScriptedRandom()
     );
@@ -37,6 +38,18 @@ public sealed class HarvestModuleTests
         Assert.Equal(2, result[0].Read<int>());
         Assert.Equal([true, true, false], result[1..4].Select(value => value.Read<bool>()));
         Assert.Equal(0, result[4].Read<int>());
+    }
+
+    [Fact]
+    public void Vein_TellsTheVeinOfTheArea_AndNothingForAResourceWithout()
+    {
+        var result = Run(
+            """return harvest.vein("wood", "Trammel", 1600, 1600), harvest.vein("fish", "Trammel", 1600, 1600), harvest.vein("gold", "Trammel", 1, 1)"""
+        );
+
+        Assert.Equal("oak", result[0].Read<string>());
+        Assert.Equal(LuaValue.Nil, result[1]);
+        Assert.Equal(LuaValue.Nil, result[2]);
     }
 
     [Fact]

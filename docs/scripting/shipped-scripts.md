@@ -207,7 +207,7 @@ static that was picked, and the script holds the graphics that are trees. The ch
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have wood left (`harvest.amount`), the
 Lumberjacking skill is tried between 0 and 100 (`skill.check`), and a cut that works takes from the place
 (`harvest.take`) and gives 10 logs (`item.give`). The constants at the top of the script are the range, the swings
-and the logs; the trees are in `scripts/common/trees.lua`, shared with `scripts/items/blade.lua`, the script of the knives, daggers and swords (`script_id = "blade"`), which hacks one kindling off a tree. Picked onto logs in the backpack, the axe saws the stack into boards (`item.template`, `item.consume`, then `item.give`). Who is chopping is kept in memory by serial: a restart frees everyone.
+and the logs; the trees are in `scripts/common/trees.lua`, shared with `scripts/items/blade.lua`, the script of the knives, daggers and swords (`script_id = "blade"`), which hacks one kindling off a tree. Picked onto logs in the backpack, the axe saws the stack into boards (`item.template`, `item.consume`, then `item.give`). A place is of one kind of wood, the vein of its area (`harvest.vein`): the table `WOODS` holds the logs and boards of each kind, the Lumberjacking it asks for (`mobile.skills`) and the bounds its cut is tried between, and the table `FINDS` what a master finds with the logs. Who is chopping is kept in memory by serial: a restart frees everyone.
 
 ## fishing_pole.lua
 
