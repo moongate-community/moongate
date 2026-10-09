@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types.Pets;
@@ -20,6 +21,13 @@ public sealed class StubPetService : IPetService
     public int Followers(MobileEntity player)
     {
         return FollowerCount;
+    }
+
+    public List<Serial> ChangedFor { get; } = [];
+
+    public void Changed(Serial player)
+    {
+        ChangedFor.Add(player);
     }
 
     public int SlotsOf(string? templateId)

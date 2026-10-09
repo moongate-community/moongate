@@ -44,6 +44,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly RecordingNpcSenseService _senses = new();
     private readonly RecordingMurderService _murders = new();
     private readonly RecordingMountService _mounts = new();
+    private readonly Moongate.Tests.TestSupport.Ultima.Pets.StubPetService _pets = new();
 
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
         .Item(0x0EED, TileFlagType.Generic, 0)
@@ -124,6 +125,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
             senses: _senses,
             murders: _murders,
             mounts: _mounts,
+            pets: new Lazy<Moongate.Server.Ultima.Interfaces.IPetService>(() => _pets),
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -762,6 +764,24 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.Contains($"OwnItemRemoved {_aria.Id.Value} {robe.Id.Value}", _view.Calls);
         Assert.Contains(_items.GetWorn(_aria.Id), item => item.TemplateId == "death_shroud");
         Assert.DoesNotContain(_items.GetWorn(_aria.Id), item => item.TemplateId == "death_robe");
+    }
+
+    [Fact]
+    public void Kill_AnNpcWithAnOwner_TellsThePetServiceItsOwnerLostAFollower()
+    {
+        _orc.SetProp("owner", 77L);
+
+        Assert.True(_death.Kill(_orc));
+
+        Assert.Equal([new Serial(77)], _pets.ChangedFor);
+    }
+
+    [Fact]
+    public void Kill_AnNpcWithNoOwner_TellsNobody()
+    {
+        Assert.True(_death.Kill(_orc));
+
+        Assert.Empty(_pets.ChangedFor);
     }
 
     [Fact]

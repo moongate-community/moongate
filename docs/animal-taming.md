@@ -6,6 +6,9 @@ yet.
 
 ## How to tame
 
+Using the skill again while you tame says you must wait; an error in a time of the script ends the taming, is logged, and
+locks nobody.
+
 1. Use the skill (the skill list, then *Use*, or the *Animal Taming* button of the client). You read "Tame which
    animal?" and get a cursor.
 2. Pick a creature within 3 tiles. If it can be tamed, you read "You start to tame the creature."
@@ -28,18 +31,19 @@ refused at the pick: "You have no chance of taming this creature."
 | `That is too far away.` | The creature is more than 3 tiles away at the pick |
 | `Someone else is already taming this creature.` | Another player is taming it |
 | `You are too far away to continue taming.` | You went more than 7 tiles away |
-| `You are dead and cannot continue taming.` | You died |
+| `You are dead and cannot continue taming.` | You died, also while the cursor was out |
 | `You can no longer see the creature.` | There is something between you |
-| `The animal is too angry to continue taming.` | It was hurt since you began |
+| `The animal is too angry to continue taming.` | It was hurt since the last time, or it is fighting |
 
-A creature that is tamed goes for nobody any more, whatever it hunted before, and the guards of a town leave it alone: a
+A creature that is tamed leaves its spawn region, which brings another in its place, and goes for nobody any more, whatever it hunted before, and the guards of a town leave it alone: a
 tamed dragon is not a monster to them. It still defends itself when it is hit.
 
 ## Followers
 
 A player may have 5 followers (`[ultima.pets] max_followers`, 1 to 50). Each creature counts for its slots, usually 1: the
-creatures of yours that are in the world, and the one you ride. A creature in a stable counts for nothing. The count is
-in the status window of your character (`followers 2/5`). The stable does not look at the limit when you take a pet out,
+creatures of yours that are in the world, and the one you ride. A creature in a stable counts for nothing. A creature of yours that a game master rides counts for you, not for the rider. The count is
+in the status window of your character (`followers 2/5`), shown again when you tame, stable, claim, mount or dismount, and
+when one of your creatures dies. The stable does not look at the limit when you take a pet out,
 so a player can hold more than the limit by stabling and claiming.
 
 ## What can be tamed

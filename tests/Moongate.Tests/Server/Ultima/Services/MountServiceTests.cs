@@ -34,6 +34,7 @@ public sealed class MountServiceTests
     private readonly StubItemHandlingService _handling = new();
     private readonly CapturingLogSink _log = new();
     private readonly StubDeathService _death = new();
+    private readonly Moongate.Tests.TestSupport.Ultima.Pets.StubPetService _pets = new();
     private readonly RecordingDataAccess<ItemEntity> _itemData = new();
     private readonly ReservedInventory _inventory = new();
     private readonly MobileService _mobiles;
@@ -95,7 +96,8 @@ public sealed class MountServiceTests
                     new ItemTemplate { Id = "plain_statue", ItemId = new Serial(0x1224) }
                 )
             ),
-            new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
+            new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger(),
+            new Lazy<IPetService>(() => _pets)
         )
         {
             RetryDelay = TimeSpan.Zero
@@ -119,6 +121,17 @@ public sealed class MountServiceTests
         Assert.Equal("horse", item.GetProp<string>(MountProps.PetTemplate));
         Assert.Equal((long)_rider.Id.Value, item.GetProp<long>(MountProps.PetOwner));
         Assert.Contains($"Worn {_rider.Id.Value} {item.Id.Value}", _view.Calls);
+    }
+
+    [Fact]
+    public void TryMount_AndDismount_TellThePetServiceTheFollowersChanged()
+    {
+        _service.TryMount(_rider, _horse);
+        Assert.Equal([_rider.Id], _pets.ChangedFor);
+
+        _service.Dismount(_rider);
+
+        Assert.Equal([_rider.Id, _rider.Id], _pets.ChangedFor);
     }
 
     [Fact]

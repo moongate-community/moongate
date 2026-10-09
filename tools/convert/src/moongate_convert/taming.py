@@ -109,6 +109,10 @@ def read(source: str, path: Path, report: ConversionReport) -> list[tuple[str, f
                 skill = number(right)
             elif name == "ControlSlots":
                 value = csharp.int_value(right)
+
+                if value is None:
+                    report.count("ControlSlots that is no literal, taken as 1")
+
                 slots = value if value is not None else 1
 
         if sets_tamable:

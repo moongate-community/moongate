@@ -141,6 +141,16 @@ def test_what_is_not_tamable_or_has_no_template_or_no_skill_is_left_out_and_coun
     assert "1 x tamable class with no mobile template of this server" in output
 
 
+def test_a_slots_value_that_is_no_literal_is_reported_and_taken_as_one(tmp_path):
+    drake = DRAKE.replace("ControlSlots = 3;", "ControlSlots = Math.Max(1, 3);")
+
+    _, output, _, destination = convert(tmp_path, {"Drake.cs": drake})
+
+    data = tomllib.loads((destination / "taming.toml").read_text(encoding="utf-8"))
+    assert data["creature"][0]["slots"] == 1
+    assert "1 x ControlSlots that is no literal, taken as 1" in output
+
+
 def test_an_integer_skill_is_read_as_a_number(tmp_path):
     drake = DRAKE.replace("84.3", "90")
 

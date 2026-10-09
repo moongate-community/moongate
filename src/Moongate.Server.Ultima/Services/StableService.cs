@@ -29,6 +29,7 @@ public sealed class StableService : IStableService
     private readonly StableConfig _config;
     private readonly IGameLoopService _loop;
     private readonly Lazy<IDeathService>? _death;
+    private readonly Lazy<IPetService>? _pets;
     private readonly ILogger _logger;
 
     /// <summary>
@@ -44,9 +45,11 @@ public sealed class StableService : IStableService
         StableConfig config,
         IGameLoopService loop,
         Lazy<IDeathService>? death = null,
-        ILogger? logger = null
+        ILogger? logger = null,
+        Lazy<IPetService>? pets = null
     )
     {
+        _pets = pets;
         _mobiles = mobiles;
         _npcs = npcs;
         _templates = templates;
@@ -128,6 +131,7 @@ public sealed class StableService : IStableService
 
         stabled.Add(templateId);
         player.SetProp(MountProps.Stabled, string.Join(Separator, stabled));
+        _pets?.Value.Changed(player.Id);
 
         return StableResultType.Ok;
     }
@@ -165,6 +169,7 @@ public sealed class StableService : IStableService
 
         // Off the loop: a new creature is saved first, to get its serial.
         _ = Task.Run(() => SpawnAsync(player.Id, template, map, location, props));
+        _pets?.Value.Changed(player.Id);
 
         return StableResultType.Ok;
     }

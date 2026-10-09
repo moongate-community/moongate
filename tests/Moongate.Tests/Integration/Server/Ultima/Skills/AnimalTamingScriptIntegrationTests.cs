@@ -14,6 +14,7 @@ using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Events;
 using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Scripting.Interfaces;
+using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
@@ -164,6 +165,7 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<TargetModule>();
         _container.AddScriptModule<PetModule>();
         _container.AddScriptModule<CombatModule>();
+        _container.AddScriptModule<LogModule>();
         _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -177,7 +179,11 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
         _scripts.Write(
             "skills/animal_taming.lua",
             File.ReadAllText(ShippedScript("skills/animal_taming.lua"))
-                .Replace("animal_taming.roll = math.random", "animal_taming.roll = function() return 0.1 end")
+                .Replace(
+                    "animal_taming.roll = math.random",
+                    "local coin = 0.1\nanimal_taming.roll = function() return coin end\n" +
+                    "function animal_taming.set_coin(value) coin = value end"
+                )
         );
         var options = new ScriptEngineOptions
         {
@@ -320,19 +326,6 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
         Assert.Equal([Which, TooMany], Told());
     }
 
-    [Fact]
-    public void UsingTheSkillAgainWhileTaming_DoesNothingButWait()
-    {
-        Use();
-        _speech.ToldClilocs.Clear();
-
-        // A second use by the same tamer while it tames does nothing but wait.
-        Use();
-
-        Assert.Empty(_speech.ToldClilocs);
-        Assert.Single(_timers.Timers);
-    }
-
     [Theory,
      InlineData("far", Wandered),
      InlineData("dead", Dead),
@@ -377,6 +370,130 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void ACoinThatComesUpHigh_MakesItFourTimes()
+    {
+        Coin(0.9);
+
+        Use();
+        Fire();
+        Fire();
+        Fire();
+
+        Assert.Single(_timers.Timers);
+        Assert.False(_horse.TryGetProp<long>(MountProps.Owner, out _));
+
+        Fire();
+
+        Assert.Empty(_errors);
+        Assert.Equal(Accept, Told()[^1]);
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void ATamerWhoDiesWhileTheCursorIsOut_CannotBegin()
+    {
+        _use.Use(_session, SkillType.AnimalTaming);
+        _aria.Body = 0x0192;
+        _loop.RunDeferred();
+
+        Assert.Equal([Which, Dead], Told());
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void ACreatureThatFightsAnother_IsTooAngry_AndCannotBeTamed()
+    {
+        var orc = Creature(0x300, "orc", 2);
+        Use();
+        _combat.Attacks.Add((_horse, orc));
+
+        Fire();
+
+        Assert.Equal(Hurt, Told()[^1]);
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void ACreatureThatLeavesTheWorldBetweenTheTimes_StopsTheTaming_AndTheTamerMayTryAgain()
+    {
+        Use();
+        Fire();
+        _fixture.Mobiles.LeaveWorld(_horse.Id);
+
+        Fire();
+
+        Assert.Empty(_errors);
+        Assert.Equal(Wandered, Told()[^1]);
+        Assert.Empty(_timers.Timers);
+
+        var cat = Creature(0x101, "cat", 1);
+        _targets.Result = TargetResult.ForObject(cat.Id);
+        _speech.ToldClilocs.Clear();
+
+        Use();
+
+        Assert.Equal([Which, Start], Told());
+    }
+
+    [Fact]
+    public async Task ASecondTamer_FindsTheCreatureBusy_AndTheFirstOneStillTamesIt()
+    {
+        var bruno = await _fixture.AddAsync(3);
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(3), out var brunoMobile));
+        brunoMobile.AccountId = new Serial(0x43);
+        brunoMobile.Location = new Point3D(_aria.Location.X, _aria.Location.Y + 1, _aria.Location.Z);
+        brunoMobile.Map = _aria.Map;
+        _state.Skills.Add(new MobileSkill { Skill = SkillType.AnimalTaming, Base = 1000 });
+        brunoMobile.Skills = [new MobileSkill { Skill = SkillType.AnimalTaming, Base = 1000 }];
+        Use();
+
+        _use.Use(bruno, SkillType.AnimalTaming);
+        _loop.RunDeferred();
+
+        Assert.Equal(
+            [Which, Busy],
+            _speech.ToldClilocs.Where(told => told.Player == brunoMobile).Select(told => told.Cliloc)
+        );
+
+        Fire();
+        Fire();
+        Fire();
+
+        Assert.Equal((long)_aria.Id.Value, _horse.GetProp<long>(MountProps.Owner));
+    }
+
+    [Fact]
+    public void UsingTheSkillAgainWhileTaming_IsToldToWait()
+    {
+        Use();
+        _speech.ToldClilocs.Clear();
+        _time.Advance(TimeSpan.FromSeconds(2));
+
+        Use();
+
+        Assert.Equal([500118], Told());
+    }
+
+    [Fact]
+    public void AnErrorInATime_EndsTheTaming_IsLogged_AndLocksNobody()
+    {
+        Use();
+        Coin("broken");
+
+        Fire();
+
+        Assert.Empty(_errors);
+        Assert.Empty(_timers.Timers);
+        Assert.False(_horse.TryGetProp<long>(MountProps.Owner, out _));
+
+        Coin(0.1);
+        _speech.ToldClilocs.Clear();
+        Use();
+
+        Assert.Equal([Which, Start], Told());
+    }
+
+    [Fact]
     public void AfterAnInterruption_TheTamerMayTryAgain()
     {
         Use();
@@ -402,6 +519,11 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
         _fixture.Mobiles.EnterWorld(creature);
 
         return creature;
+    }
+
+    private void Coin(object value)
+    {
+        _skillScripts.Call(SkillType.AnimalTaming, "set_coin", value);
     }
 
     private void Skill(double points)

@@ -120,10 +120,54 @@ public sealed class PetServiceTests
         other.SetProp(MountProps.Owner, 77L);
         var mount = new ItemEntity { Id = new(0x40000500), TemplateId = "horse4", ItemId = 0x3EA1, Amount = 1 };
         mount.SetProp(MountProps.PetTemplate, "drake");
+        mount.SetProp(MountProps.PetOwner, (long)_player.Id.Value);
         _items.Add([mount]);
         _items.Equip(mount, _player.Id, LayerType.Mount);
 
         Assert.Equal(3, _service.Followers(_player));
+    }
+
+    [Fact]
+    public void Followers_ACreatureOfThePlayerRiddenByAGameMaster_CountsForTheOwner_NotForTheRider()
+    {
+        var master = new MobileEntity
+        {
+            Id = new(3), Name = "Giachi", AccountId = new Serial(1003), Body = 400, Map = MapType.Felucca,
+            Location = new Point3D(1001, 1000, 0)
+        };
+        _mobiles.EnterWorld(master);
+        var mount = new ItemEntity { Id = new(0x40000500), TemplateId = "horse4", ItemId = 0x3EA1, Amount = 1 };
+        mount.SetProp(MountProps.PetTemplate, "drake");
+        mount.SetProp(MountProps.PetOwner, (long)_player.Id.Value);
+        _items.Add([mount]);
+        _items.Equip(mount, master.Id, LayerType.Mount);
+
+        Assert.Equal(3, _service.Followers(_player));
+        Assert.Equal(0, _service.Followers(master));
+    }
+
+    [Fact]
+    public void TryTame_TakesTheCreatureOutOfItsSpawnRegion()
+    {
+        var horse = Creature(0x100, "horse");
+        horse.SetProp(SpawnRegionService.RegionProp, "britain");
+
+        _service.TryTame(_player, horse);
+
+        Assert.False(horse.TryGetProp<string>(SpawnRegionService.RegionProp, out _));
+    }
+
+    [Fact]
+    public void Changed_MakesTheNextCountFresh_WithoutWaitingForTheMemory()
+    {
+        var horse = Creature(0x100, "horse");
+        horse.SetProp(MountProps.Owner, (long)_player.Id.Value);
+        Assert.Equal(1, _service.Followers(_player));
+        _mobiles.LeaveWorld(horse.Id);
+
+        _service.Changed(_player.Id);
+
+        Assert.Equal(0, _service.Followers(_player));
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Entities.World;
@@ -13,6 +14,8 @@ namespace Moongate.Server.Ultima.Services;
 /// </summary>
 public sealed class PetService : IPetService
 {
+    private const int MemoryLimit = 256;
+
     // The status of a player is sent at every change of its stats: the pets are counted once in a while, not at each.
     private static readonly TimeSpan MemoryOf = TimeSpan.FromSeconds(2);
 
@@ -21,6 +24,8 @@ public sealed class PetService : IPetService
     private readonly ITamingService _taming;
     private readonly PetsConfig _config;
     private readonly TimeProvider _time;
+    private readonly Lazy<IMobileStateService>? _state;
+    private readonly ISessionService? _sessions;
     private readonly Dictionary<Serial, (int Count, DateTimeOffset At)> _counted = [];
 
     public int MaxFollowers => _config.MaxFollowers;
@@ -30,7 +35,9 @@ public sealed class PetService : IPetService
         IItemService items,
         ITamingService taming,
         PetsConfig config,
-        TimeProvider? time = null
+        TimeProvider? time = null,
+        Lazy<IMobileStateService>? state = null,
+        ISessionService? sessions = null
     )
     {
         _mobiles = mobiles;
@@ -38,6 +45,8 @@ public sealed class PetService : IPetService
         _taming = taming;
         _config = config;
         _time = time ?? TimeProvider.System;
+        _state = state;
+        _sessions = sessions;
     }
 
     public int Followers(MobileEntity player)
@@ -55,22 +64,26 @@ public sealed class PetService : IPetService
 
         foreach (var mobile in _mobiles.Mobiles)
         {
-            if (mobile.IsNpc && mobile.GetProp(MountProps.Owner, 0L) == player.Id.Value)
-            {
-                total += SlotsOf(mobile.TemplateId);
-            }
+            total += SlotsFor(player, mobile);
         }
 
-        // The creature it rides is out of the world, kept on the mount item, but it is still a follower.
-        if (_items.GetWornAt(player.Id, LayerType.Mount) is { } mount &&
-            mount.TryGetProp<string>(MountProps.PetTemplate, out var ridden))
-        {
-            total += SlotsOf(ridden);
-        }
-
-        _counted[player.Id] = (total, now);
+        Remember(player.Id, total, now);
 
         return total;
+    }
+
+    public void Changed(Serial player)
+    {
+        _counted.Remove(player);
+
+        if (_state is not null &&
+            _sessions is not null &&
+            _mobiles.TryGet(player, out var mobile) &&
+            !mobile.IsNpc &&
+            _sessions.TryGetByCharacterId(player, out var session))
+        {
+            _state.Value.SendStatus(session, mobile);
+        }
     }
 
     public int SlotsOf(string? templateId)
@@ -112,8 +125,40 @@ public sealed class PetService : IPetService
         }
 
         creature.SetProp(MountProps.Owner, (long)player.Id.Value);
+        // It is the player's now, not its spawn's: the region brings another in its place.
+        creature.RemoveProp(SpawnRegionService.RegionProp);
         _counted.Remove(player.Id);
 
         return PetResultType.Ok;
+    }
+
+    // What a mobile of the world counts for the player: a creature of its own, or the creature of its own that a rider
+    // sits on, whoever the rider is.
+    private int SlotsFor(MobileEntity player, MobileEntity mobile)
+    {
+        if (mobile.IsNpc)
+        {
+            return mobile.GetProp(MountProps.Owner, 0L) == player.Id.Value ? SlotsOf(mobile.TemplateId) : 0;
+        }
+
+        return _items.GetWornAt(mobile.Id, LayerType.Mount) is { } mount &&
+               mount.GetProp(MountProps.PetOwner, 0L) == player.Id.Value &&
+               mount.TryGetProp<string>(MountProps.PetTemplate, out var ridden)
+            ? SlotsOf(ridden)
+            : 0;
+    }
+
+    // The players who left are forgotten as the memory grows.
+    private void Remember(Serial player, int count, DateTimeOffset now)
+    {
+        if (_counted.Count > MemoryLimit)
+        {
+            foreach (var old in _counted.Where(entry => now - entry.Value.At >= MemoryOf).Select(entry => entry.Key).ToArray())
+            {
+                _counted.Remove(old);
+            }
+        }
+
+        _counted[player] = (count, now);
     }
 }

@@ -1,8 +1,8 @@
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
-using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Data.Taming;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 
 namespace Moongate.Server.Ultima.Services;
 

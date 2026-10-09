@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Types.Pets;
 
@@ -18,11 +19,17 @@ public interface IPetService
     int MaxFollowers { get; }
 
     /// <summary>
-    ///     Gets how many followers the player has: the slots of the creatures in the world that are its own, and of the one it
-    ///     rides; a creature with no entry in the taming data counts for 1. A pet in a stable counts for nothing. The number
+    ///     Gets how many followers the player has: the slots of the creatures in the world that are its own, and of those that
+    ///     are its own and ridden, by it or by a game master; a creature with no entry in the taming data counts for 1. A pet in a stable counts for nothing. The number
     ///     is read from a short memory, so a creature that died a moment ago may count for a moment longer.
     /// </summary>
     int Followers(MobileEntity player);
+
+    /// <summary>
+    ///     Tells the service the followers of a player may have changed, a pet stabled, claimed, mounted or dead: the count is
+    ///     made again at the next ask, and the player is shown its status at once.
+    /// </summary>
+    void Changed(Serial player);
 
     /// <summary>
     ///     Gets the slots a creature of that mobile template counts for; 1 for one with no entry.

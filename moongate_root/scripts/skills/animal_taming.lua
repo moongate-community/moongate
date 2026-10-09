@@ -8,10 +8,10 @@
 --   creature asks to 49.9 above it, and a success makes the creature the player's own (the pet module), so it can be
 --   ridden, stabled and so on. A failure costs nothing but the time.
 --
--- The checks, at the pick (the client's own texts): the target is a creature, not a player; it can be tamed; it has no
---   owner; its followers fit in the player's; the player has the skill it asks; it is within 3 tiles; nobody else is
---   taming it. At each time: within 7 tiles, the player alive, in line of sight, the creature still wild and not hurt
---   since the start.
+-- The checks, at the pick (the client's own texts): the player is alive; the target is a creature, not a player; it can
+--   be tamed; it has no owner; its followers fit in the player's; the player has the skill it asks; it is within 3
+--   tiles; nobody else is taming it. At each time: within 7 tiles, the player alive, in line of sight, the creature still
+--   wild, not hurt since the last time and not fighting. An error in a time ends the taming and is logged.
 --
 -- Functions:
 --   on_use(user)   the skill was used; returns the seconds before the next skill, 1
@@ -39,6 +39,7 @@ local ABOVE = 49.9
 local DELAY = 1
 
 -- The client's texts.
+local WAIT = 500118           -- You must wait a few moments to use another skill.
 local WHICH = 502789          -- Tame which animal?
 local NOT_A_CREATURE = 502801 -- You can't tame that!
 local NOT_A_ANIMAL = 502469   -- That being cannot be tamed.
@@ -86,6 +87,10 @@ end
 
 -- Why the pick is refused: the cliloc, or nil when it is fine.
 local function refusal(user, creature)
+    if mobile.is_dead(user) then
+        return DEAD
+    end
+
     local there = mobile.location(creature)
 
     if there == nil then
@@ -125,8 +130,9 @@ local function refusal(user, creature)
     return nil
 end
 
--- Why the taming stops at a time: the cliloc, or nil when it goes on.
-local function interruption(user, creature, hits)
+-- Why the taming stops at a time: the cliloc, or nil when it goes on. The watch keeps the hit points the creature had at
+-- the last time: one that lost some was hurt, and one that fights, whoever it fights, is too angry.
+local function interruption(user, creature, watch)
     local here, there = mobile.location(user), mobile.location(creature)
 
     if there == nil or distance(here, there) > TAMING_RANGE then
@@ -147,9 +153,13 @@ local function interruption(user, creature, hits)
         return ALREADY_TAMED
     end
 
-    if mobile.stats(creature).hits < hits then
+    local hits = mobile.stats(creature).hits
+
+    if hits < watch.hits or combat.target(creature) ~= nil then
         return HURT
     end
+
+    watch.hits = hits
 
     return nil
 end
@@ -182,8 +192,10 @@ local function roll(user, creature)
     end
 end
 
-local function step(user, creature, hits, time, times)
-    local stop = interruption(user, creature, hits)
+local safely
+
+local function step(user, creature, watch, time, times)
+    local stop = interruption(user, creature, watch)
 
     if stop ~= nil then
         mobile.message_cliloc(user, stop)
@@ -195,7 +207,7 @@ local function step(user, creature, hits, time, times)
     if time < times then
         mobile.message_cliloc(user, pick_one(pick_one(LINES)))
         timer.after(TICK, function()
-            step(user, creature, hits, time + 1, times)
+            safely(user, creature, watch, time + 1, times)
         end)
 
         return
@@ -203,6 +215,16 @@ local function step(user, creature, hits, time, times)
 
     finish(user, creature)
     roll(user, creature)
+end
+
+-- A time that fails ends the taming, so neither the tamer nor the creature stays locked.
+safely = function(user, creature, watch, time, times)
+    local ok, why = pcall(step, user, creature, watch, time, times)
+
+    if not ok then
+        finish(user, creature)
+        log.error("The taming of {Creature} by {Tamer} ended by an error: {Error}", creature, user, tostring(why))
+    end
 end
 
 local function begin(user, creature)
@@ -214,20 +236,23 @@ local function begin(user, creature)
         return
     end
 
+    -- Read before anything is held, so an error here locks nobody.
+    local watch = { hits = mobile.stats(creature).hits }
+    local times = TICKS + (animal_taming.roll() < EXTRA_TICK_CHANCE and 0 or 1)
+
     taming[user] = true
     being_tamed[creature] = user
     mobile.message_cliloc(user, START)
 
-    local times = TICKS + (animal_taming.roll() < EXTRA_TICK_CHANCE and 0 or 1)
-    local hits = mobile.stats(creature).hits
-
     timer.after(TICK, function()
-        step(user, creature, hits, 1, times)
+        safely(user, creature, watch, 1, times)
     end)
 end
 
 function animal_taming.on_use(user)
     if taming[user] then
+        mobile.message_cliloc(user, WAIT)
+
         return DELAY
     end
 

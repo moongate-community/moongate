@@ -32,6 +32,7 @@ public sealed class MountService : IMountService
     private readonly INpcService _npcs;
     private readonly IMobileTemplateService _templates;
     private readonly IItemTemplateService? _itemTemplates;
+    private readonly Lazy<IPetService>? _pets;
     private readonly ISpeechService _speech;
     private readonly Lazy<IDeathService>? _death;
     private readonly IInventoryMutationGuard? _inventory;
@@ -55,9 +56,11 @@ public sealed class MountService : IMountService
         IInventoryMutationGuard? inventory = null,
         IDataAccess<ItemEntity>? itemData = null,
         IItemTemplateService? itemTemplates = null,
-        ILogger? logger = null
+        ILogger? logger = null,
+        Lazy<IPetService>? pets = null
     )
     {
+        _pets = pets;
         _itemTemplates = itemTemplates;
         _death = death;
         _inventory = inventory;
@@ -141,6 +144,7 @@ public sealed class MountService : IMountService
         _items.Add([item]);
         _items.Equip(item, rider.Id, LayerType.Mount);
         _view.WornItemChanged(rider, item);
+        _pets?.Value.Changed(rider.Id);
 
         return true;
     }
@@ -222,6 +226,7 @@ public sealed class MountService : IMountService
         _view.OwnItemRemoved(rider, item);
         _view.WornItemRemoved(rider, item);
         _items.Absorb(item);
+        _pets?.Value.Changed(rider.Id);
 
         // An ethereal mount is no creature: its statuette comes back to the rider.
         if (ethereal is not null)
