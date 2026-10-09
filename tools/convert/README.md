@@ -11,18 +11,24 @@ uv run moongate-convert modernuo-signs \
 ```
 
 Ported so far: `modernuo-signs`, `modernuo-teleporters`, `modernuo-locations`, `modernuo-chests`, `modernuo-books`, `modernuo-vendors`,
-`modernuo-guildmasters` and `modernuo-spawns`. The options are those of the `mgctl convert`
-command of the same name, and so are the exit codes: 0 done, 2 a source that is missing or is not what it should be (nothing is written).
+`modernuo-guildmasters` and `modernuo-spawns`, and of UOX3 `uox` for the items and the loot lists (`--mobile-source` and the NPC, name, starting
+item, npc list and spawn passes it hands over to are not ported yet). The options are those of the `mgctl convert`
+command of the same name (`mgctl convert uox` for `uox`), and so are the exit codes: 0 done, 2 a source that is missing or is not what it should be
+(nothing is written); `uox` exits 1 when reading what it wrote back finds an id twice or a reference that does not resolve.
 
 ## Tests
 
 ```sh
 uv run pytest                                              # the unit tests
 MOONGATE_MODERNUO_DIR=<ModernUO checkout> uv run pytest    # and the golden tests
+MOONGATE_UOX3_DIR=<UOX3 checkout> uv run pytest            # and the golden tests of UOX3
+MOONGATE_MGCTL=<built mgctl> MOONGATE_UOX3_DIR=... uv run pytest   # and the same run as the C# converter
 ```
 
 The golden tests convert the real sources and compare, byte for byte, with the files shipped in `moongate_root`. When ModernUO changes a
 file the shipped one is stale: run the converter and ship its output.
+
+`tests/test_golden_uox.py` converts the items and loot lists of UOX3 and compares them with the shipped `templates/items` and `templates/loots`; 24 of the shipped item files were made before the converter read the combat fields, or had a script id added by hand, and the test lists them. With `MOONGATE_MGCTL` it also runs the C# converter on the same source and requires the same files, report and warnings.
 
 `tests/test_e2e.py` is the end to end proof: it copies the shipped `templates` and `data/locations.toml`, runs the installed `moongate-convert` command (a real process) for every converter, in the order an operator would, and requires the copy to come out as the shipped tree, file for file and byte for byte (the thief and ranger shops aside). It needs `MOONGATE_MODERNUO_DIR` too.
 
