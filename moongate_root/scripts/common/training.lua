@@ -26,7 +26,7 @@ local training = {}
 local speech_range = 4
 
 -- The client's texts.
-local entry_base = 6000       -- + the skill: the name of the skill, in the context menu
+local entry_base = 3006000    -- + the skill: the name of the skill, in the context menu
 local list_intro = 1043058    -- I can train the following:
 local list_base = 1043059     -- + the skill: the name of the skill
 local list_last = 1043107

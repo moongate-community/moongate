@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"644dedb4d5fdbae95a85a40ce43f19c524de62bc7e1da419efdc84e0b659aeaa","title":"Menu contestuali"} -->
+<!-- translation: {"sourceHash":"44e3744cf83eb49349b2af43f8b0dc4e6446cb4993d3afb6fe0947eff0a8daa7","title":"Menu contestuali"} -->
 
 # Menu contestuali
 
@@ -46,7 +46,7 @@ end
 | Campo di una voce | |
 | --- | --- |
 | `id` | Il nome della voce nello script, restituito alla scelta. Obbligatorio |
-| `cliloc` | Il numero del testo del client che la voce mostra, come 3006105 `Open Bank Box`. Obbligatorio |
+| `cliloc` | Il numero del testo del client che la voce mostra, come 3006105 `Open Bank Box`. È il numero intero: ModernUO e ServUO scrivono questi testi senza il 3000000 (6105), e un numero scritto così mostra `MegaCliloc missing` nel client. Obbligatorio |
 | `range` | Da quante caselle si può scegliere, da 0 a 18; 18 se non impostato |
 | `enabled` | `false` mostra la voce in grigio; `true` se non impostato |
 

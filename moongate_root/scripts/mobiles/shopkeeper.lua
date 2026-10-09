@@ -42,8 +42,8 @@ local menu_range = 8
 local speech_range = 4
 
 -- The client's texts.
-local buy_entry = 6103   -- Buy
-local sell_entry = 6104  -- Sell
+local buy_entry = 3006103   -- Buy
+local sell_entry = 3006104  -- Sell
 
 local function has_keyword(keywords, wanted)
     for _, keyword in ipairs(keywords or {}) do
