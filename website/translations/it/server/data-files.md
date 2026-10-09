@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"caa16c48ee17832e0945eef7eb7d539b439973c12e0ddba9101def25291c9572","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"91f76dd0226df937f6b77388de304b6ed9f9ed50968a560b99a536c2e2724d02","title":"Panoramica"} -->
 
 # File dei dati dello shard
 
@@ -55,6 +55,7 @@ viene eseguito dopo di esso.
 | [`titles.toml`](data-files/titles.md) | `FameKarmaTitle` | dopo MOTD | Mostrato nel titolo del paperdoll |
 | [`templates/books/<name>.toml`](data-files/books.md) | `BookTemplate` | dopo i template oggetto | Pergamene personalizzate e libri nativi; gump delle pergamene, copertine/pagine dei libri e libri scrivibili |
 | [`templates/shops/<name>.toml`](data-files/shops.md) | `ShopDefinition` | dopo i template oggetto e mobile | Sì, tramite `IShopService`: cosa vende ogni venditore nella sua [finestra del negozio](vendors.md) |
+| [`harvest.toml`](data-files/harvest.md) | `HarvestResource` | facoltativo; dopo i negozi | Sì, tramite `IHarvestService`: i pesci della [pesca](fishing.md), per zona |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | dopo template oggetto e template dei libri (ogni id referenziato deve esistere) | Sì, tramite `IStartingItemsService` |
 
 "No" significa che il file viene caricato e validato, ma nessun sistema di gioco lo

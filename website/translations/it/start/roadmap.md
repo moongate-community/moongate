@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ccceecbf09533f98aa3d96f822673b0a77f9a224e00baf8fc8ecbc490c10e0b8","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"81ef554f8de78b0c591c8cd7b2899f75c48fd4bf10e0680bd6025a591848298c","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -136,7 +136,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 
 | Passaggio | Stato | Cosa | Perché viene qui | Dati pronti da importare |
 | --- | --- | --- | --- | --- |
-| 5.1 | ❌ | **Raccolta**: estrazione mineraria, taglio della legna, pesca, con regioni di risorse che si esauriscono e rigenerano | Alimenta la creazione | |
+| 5.1 | 🟡 | **Raccolta**: estrazione mineraria, taglio della legna, pesca, con regioni di risorse che si esauriscono e rigenerano. Fatto: la pesca con la canna e le zone che si esauriscono e ritornano. Resta: estrazione mineraria, taglio della legna, le prese speciali della pesca | Alimenta la creazione | |
 | 5.2 | ❌ | **Motore di creazione**, poi ogni mestiere come dati; riparazione | Lo stile di gioco pacifico e l'economia dei giocatori | UOX3 `create/` (618 ricette) |
 | 5.3 | ❌ | **Addomesticamento, comandi degli animali, stalle, cavalcature** | Richiede IA (3.2), notorietà (3.4) e venditori (4.1) | Tag UOX3 `TOTAME`, `CONTROLSLOTS`, `FOOD` |
 | 5.4 | 🟡 | **Le abilità attive rimanenti**: nascondersi, furtività, furto, frugare, abilità di conoscenza, abilità del bardo, inseguimento. Completato: nascondersi, [furtività](scripting/shipped-scripts.md#stealthlua), [frugare](scripting/shipped-scripts.md#snoopinglua), individuazione dei nascosti, anatomia, valutazione dell'intelligenza e medicina legale ([le abilità di osservazione](scripting/shipped-scripts.md#the-lore-skills)). Restano: furto, inseguimento, conoscenza delle armi, identificazione degli oggetti e dei sapori, le abilità del bardo | Ciascuna è piccola quando esiste 1.2 | |

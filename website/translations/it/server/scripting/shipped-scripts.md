@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"fe56887ce8c9293afbced90a1a8537067fc51454b97a6dca0fa09b8b935c448a","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"e5761697e31a4494091d020608c11cff466c396683432b1e8b243fc8bd412f05","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -186,6 +186,17 @@ di `data/skills.toml`.
   cercatore più un tiro da -10 a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff
   viene trovato solo da altro staff; l'abilità aspetta 10 secondi.
   Trappole, case e fazioni non ci sono ancora.
+
+## fishing_pole.lua
+
+`scripts/items/fishing_pole.lua` è lo script delle canne da pesca (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,
+`script_id = "fishing_pole"`): vedi [Pesca](../fishing.md). Fai doppio clic sulla canna e scegli dell'acqua entro 4 caselle e
+in vista (`target.pick_location`, `world.is_water`, `world.line_of_sight`). Il personaggio lancia (`mobile.animate`),
+l'acqua schizza 1,5 secondi dopo (`effect.at`, `world.play_sound`) e il risultato arriva dopo 8 secondi
+(`timer.after`). Nel luogo devono restare dei pesci (`harvest.amount`), l'abilità Fishing viene provata tra 0 e 100
+(`skill.check`), e la presa viene messa nello zaino (`item.give`) e tolta dal luogo (`harvest.take`).
+Le costanti in cima allo script sono la distanza, i secondi e ciò che esce. Chi sta pescando è tenuto in
+memoria per seriale: un riavvio libera tutti.
 
 ## bandage.lua
 
