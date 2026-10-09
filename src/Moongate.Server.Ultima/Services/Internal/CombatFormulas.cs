@@ -60,15 +60,21 @@ internal static class CombatFormulas
     }
 
     /// <summary>
-    ///     Raises or lowers the damage by the tactics, the strength and the anatomy of the attacker.
+    ///     Raises or lowers the damage by the tactics, the strength and the anatomy of the attacker, and by its
+    ///     lumberjacking when it hits with an axe: a fifth more at 100, and a tenth on top.
     /// </summary>
-    public static int ScaleDamage(int damage, double tactics, double strength, double anatomy)
+    public static int ScaleDamage(int damage, double tactics, double strength, double anatomy, double lumberjacking = 0)
     {
         double scaled = damage;
         scaled += scaled * (tactics - Base) / 100;
-        var mods = strength / 5 / 100 + anatomy / 5 / 100;
+        var mods = strength / 5 / 100 + anatomy / 5 / 100 + lumberjacking / 5 / 100;
 
         if (anatomy >= 100)
+        {
+            mods += 0.1;
+        }
+
+        if (lumberjacking >= 100)
         {
             mods += 0.1;
         }

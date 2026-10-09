@@ -11,7 +11,8 @@ namespace Moongate.Server.Ultima.Loaders;
 /// <summary>
 ///     Loads the resources of <c>data/harvest.toml</c>. The file may be missing: nothing is gathered then. A resource
 ///     with a bad id or an id used twice, an area outside 1 to 256, an amount below 1 or a least above the most, or a
-///     negative or inverted time, or one above a week, stops the server at startup.
+///     negative or inverted time, or one above a week, or a vein with a bad id, an id used twice in its resource or a
+///     weight outside 1 to 1000000, stops the server at startup.
 /// </summary>
 public class HarvestLoader : IDataLoader<HarvestResource>
 {
@@ -19,6 +20,9 @@ public class HarvestLoader : IDataLoader<HarvestResource>
 
     // A week: more is a resource that never comes back, and a number the service could not add up.
     private const int MaxRespawnMinutes = 10_080;
+
+    // Low enough that the weights of every vein of a resource add up in an int.
+    private const int MaxVeinWeight = 1_000_000;
 
     private readonly ILogger _logger = Log.ForContext<HarvestLoader>();
 
@@ -84,6 +88,26 @@ public class HarvestLoader : IDataLoader<HarvestResource>
                 throw Invalid(
                     $"the respawn minutes of {resource.Id} must be 0 to {MaxRespawnMinutes}, the least not above the most"
                 );
+            }
+
+            var veins = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (var vein in resource.Vein)
+            {
+                if (!ScriptIdUtils.IsValid(vein.Id))
+                {
+                    throw Invalid($"the vein id '{vein.Id}' of {resource.Id} {ScriptIdUtils.Rule}");
+                }
+
+                if (!veins.Add(vein.Id))
+                {
+                    throw Invalid($"the vein {vein.Id} of {resource.Id} is there twice");
+                }
+
+                if (vein.Weight is < 1 or > MaxVeinWeight)
+                {
+                    throw Invalid($"the weight of the vein {vein.Id} of {resource.Id} must be 1 to {MaxVeinWeight}");
+                }
             }
         }
 

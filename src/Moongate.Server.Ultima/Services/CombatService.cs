@@ -3,19 +3,20 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Effects;
-using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Data.Internal.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
-using Moongate.Server.Ultima.Data.Bodies;
-using Moongate.Server.Ultima.Data.Combat;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.Combat;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -626,7 +627,9 @@ public sealed class CombatService : ICombatService
             damage,
             Points(attacker, SkillType.Tactics),
             attacker.Strength,
-            Points(attacker, SkillType.Anatomy)
+            Points(attacker, SkillType.Anatomy),
+            // One who fells trees hits harder with an axe; the skill is not tried, it grows on trees.
+            weapon?.Type == WeaponType.Axe ? Points(attacker, SkillType.Lumberjacking) : 0
         );
         // As ModernUO's classic: a player hit, or a hit by an NPC, does half; a player hitting an NPC does all.
         var halved = !target.IsNpc || attacker.IsNpc;
