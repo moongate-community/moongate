@@ -42,6 +42,9 @@ name = "Santa Gloves"
 rarity = "common"
 weight = 2.0
 layer = "gloves"
+strength_required = 30
+armor_rating = 2
+max_hits = 20
 decays = true
 hue = 4112
 
@@ -514,6 +517,8 @@ name = "krampus minion earrings"
 rarity = "common"
 weight = 1.0
 layer = "earrings"
+armor_rating = 1
+max_hits = 50
 buy_price = 26
 sell_price = 13
 decays = true
@@ -525,6 +530,7 @@ item_id = 41615
 name = "krampus minion hat"
 rarity = "common"
 weight = 3.0
+max_hits = 30
 buy_price = 14
 sell_price = 6
 

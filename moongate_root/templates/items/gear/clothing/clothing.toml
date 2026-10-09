@@ -15,6 +15,8 @@ name = "body sash"
 rarity = "common"
 weight = 1.0
 layer = "middle_torso"
+armor_rating = 1
+max_hits = 50
 buy_price = 15
 sell_price = 7
 
@@ -32,6 +34,8 @@ name = "cloak"
 rarity = "common"
 weight = 5.0
 layer = "cloak"
+armor_rating = 5
+max_hits = 50
 buy_price = 43
 sell_price = 21
 
@@ -49,6 +53,7 @@ name = "doublet"
 rarity = "common"
 weight = 2.0
 layer = "middle_torso"
+max_hits = 50
 buy_price = 25
 sell_price = 12
 
@@ -66,6 +71,8 @@ name = "fancy dress"
 rarity = "common"
 weight = 3.0
 layer = "middle_torso"
+armor_rating = 6
+max_hits = 50
 buy_price = 25
 sell_price = 12
 
@@ -83,6 +90,8 @@ name = "fancy shirt"
 rarity = "common"
 weight = 2.0
 layer = "shirt"
+armor_rating = 4
+max_hits = 50
 buy_price = 55
 sell_price = 27
 
@@ -100,6 +109,8 @@ name = "full apron"
 rarity = "common"
 weight = 4.0
 layer = "middle_torso"
+armor_rating = 4
+max_hits = 50
 buy_price = 25
 sell_price = 13
 
@@ -117,6 +128,7 @@ name = "half apron"
 rarity = "common"
 weight = 2.0
 layer = "waist"
+max_hits = 50
 buy_price = 26
 sell_price = 13
 
@@ -134,6 +146,8 @@ name = "jester suit"
 rarity = "common"
 weight = 4.0
 layer = "middle_torso"
+armor_rating = 7
+max_hits = 50
 buy_price = 51
 sell_price = 25
 
@@ -151,6 +165,8 @@ name = "kilt"
 rarity = "common"
 weight = 2.0
 layer = "outer_legs"
+armor_rating = 3
+max_hits = 50
 buy_price = 31
 sell_price = 15
 
@@ -168,6 +184,8 @@ name = "long pants"
 rarity = "common"
 weight = 2.0
 layer = "pants"
+armor_rating = 4
+max_hits = 50
 buy_price = 34
 sell_price = 17
 
@@ -185,6 +203,8 @@ name = "plain dress"
 rarity = "common"
 weight = 2.0
 layer = "middle_torso"
+armor_rating = 4
+max_hits = 50
 buy_price = 56
 sell_price = 28
 
@@ -202,6 +222,8 @@ name = "robe"
 rarity = "common"
 weight = 3.0
 layer = "outer_torso"
+armor_rating = 7
+max_hits = 50
 buy_price = 68
 sell_price = 34
 
@@ -219,6 +241,8 @@ name = "resurrection robe"
 rarity = "common"
 weight = 3.0
 layer = "outer_torso"
+armor_rating = 7
+max_hits = 1
 dyeable = false
 buy_price = 0
 sell_price = 0
@@ -232,6 +256,8 @@ name = "shirt"
 rarity = "common"
 weight = 2.0
 layer = "shirt"
+armor_rating = 3
+max_hits = 50
 buy_price = 37
 sell_price = 18
 
@@ -249,6 +275,8 @@ name = "short pants"
 rarity = "common"
 weight = 2.0
 layer = "pants"
+armor_rating = 3
+max_hits = 50
 buy_price = 24
 sell_price = 12
 
@@ -266,6 +294,8 @@ name = "skirt"
 rarity = "common"
 weight = 4.0
 layer = "outer_legs"
+armor_rating = 4
+max_hits = 50
 buy_price = 33
 sell_price = 16
 
@@ -283,6 +313,7 @@ name = "tunic"
 rarity = "common"
 weight = 5.0
 layer = "middle_torso"
+max_hits = 50
 buy_price = 33
 sell_price = 16
 
@@ -300,6 +331,7 @@ name = "gold belt"
 rarity = "common"
 weight = 1.0
 layer = "middle_torso"
+max_hits = 100
 buy_price = 50
 sell_price = 25
 

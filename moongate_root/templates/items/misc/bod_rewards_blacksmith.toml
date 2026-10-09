@@ -3,6 +3,7 @@ id = "sturdy_pickaxe"
 item_id = 3718
 name = "sturdy pickaxe"
 rarity = "common"
+weapon_type = "axe"
 hue = 2419
 
 [[item]]
@@ -17,6 +18,7 @@ id = "gargoyles_pickaxe"
 item_id = 3718
 name = "gargoyle's pickaxe"
 rarity = "common"
+weapon_type = "axe"
 hue = 2419
 
 [[item]]
@@ -24,6 +26,7 @@ id = "prospectors_tool"
 item_id = 4020
 name = "prospector's tool"
 rarity = "common"
+weapon_type = "mace"
 
 [[item]]
 id = "mining_gloves_1"
@@ -56,6 +59,7 @@ skillBonusVal = "50"
 id = "base_runic_hammer"
 item_id = 5091
 rarity = "common"
+weapon_type = "mace"
 [item.tags]
 runicHammer = "1"
 
@@ -185,6 +189,7 @@ id = "ancient_smithy_hammer_10"
 item_id = 5092
 name = "ancient smithy hammer +10"
 rarity = "common"
+weapon_type = "mace"
 hue = 1154
 [item.tags]
 skillBonusID = "7"
@@ -195,6 +200,7 @@ id = "ancient_smithy_hammer_15"
 item_id = 5092
 name = "ancient smithy hammer +15"
 rarity = "common"
+weapon_type = "mace"
 hue = 1154
 [item.tags]
 skillBonusID = "7"
@@ -205,6 +211,7 @@ id = "ancient_smithy_hammer_30"
 item_id = 5092
 name = "ancient smithy hammer +30"
 rarity = "common"
+weapon_type = "mace"
 hue = 1154
 [item.tags]
 skillBonusID = "7"
@@ -215,6 +222,7 @@ id = "ancient_smithy_hammer_60"
 item_id = 5092
 name = "ancient smithy hammer +60"
 rarity = "common"
+weapon_type = "mace"
 hue = 1154
 [item.tags]
 skillBonusID = "7"

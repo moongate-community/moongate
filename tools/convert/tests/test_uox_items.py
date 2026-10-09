@@ -603,3 +603,17 @@ def test_a_scripts_source_without_the_associations_fails(uox_workspace):
 
     assert uox_workspace.run(scripts=True) == 2
     assert "jse_fileassociations.scp" in uox_workspace.error.getvalue()
+
+
+def test_a_two_handed_layer_item_with_the_light_script_leaves_the_other_hand_free(uox_workspace):
+    # A UOX3 torch has the layer of a two handed weapon and no dir=, but it is a light by its script.
+    uox_workspace.write_source("lighting.dfn", "[0x0f64]\n{\nname=torch\nid=0x0f64\nlayer=2\n}\n\n[0x0f43]\n{\nname=hatchet\nid=0x0f43\nlayer=2\n}\n")
+    uox_workspace.write_scripts("jse_fileassociations.scp", "[SCRIPT_LIST]\n{\n500=item/lights.js\n}\n")
+    uox_workspace.write_scripts("jse_objectassociations.scp", "[ENVOKE]\n{\n//Lights\n0x0f64=500\n}\n")
+
+    assert uox_workspace.run(scripts=True) == 0, uox_workspace.combined
+
+    items = uox_workspace.items("lighting.toml")
+    assert items["0x0f64_torch"]["script_id"] == "light"
+    assert "two_handed_weapon" not in items["0x0f64_torch"]
+    assert items["0x0f43_hatchet"]["two_handed_weapon"] is True

@@ -6,7 +6,6 @@ skin_hue = 2498
 
 [[mobile]]
 id = "krampus"
-script_id = "monster"
 name = "Krampus"
 body = 1484
 strength = "1d51+699"
@@ -20,6 +19,7 @@ karma = -30000
 fame = 30000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
 gold = "1d201+1199"
+script_id = "monster"
 [mobile.resistances]
 fire = "1d11+79"
 cold = "1d11+79"
@@ -41,7 +41,6 @@ death = 1587
 
 [[mobile]]
 id = "krampus_minion"
-script_id = "monster"
 name = "Minion"
 body = 1485
 strength = "1d30+475"
@@ -55,6 +54,7 @@ karma = -3000
 fame = 3000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls"]
 gold = "1d101+99"
+script_id = "monster"
 [mobile.resistances]
 fire = "1d11+59"
 cold = "1d11+59"

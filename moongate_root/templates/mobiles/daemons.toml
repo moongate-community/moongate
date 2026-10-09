@@ -1,12 +1,10 @@
 [[mobile]]
 id = "base_daemons"
-script_id = "monster"
 notoriety = "attackable"
+script_id = "monster"
 
 [[mobile]]
 id = "balron"
-script_id = "monster"
-flee_at = -1
 name = "a balron"
 name_list = "balron"
 body = 40
@@ -21,6 +19,8 @@ karma = -13000
 fame = 13000
 loot = ["midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "treasure_map_lvl5loot"]
 gold = "1d401+799"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 anatomy = "1d26+24"
 evaluating_intelligence = "1d31+69"
@@ -39,8 +39,6 @@ death = 361
 
 [[mobile]]
 id = "daemon"
-script_id = "monster"
-flee_at = -1
 name = "a daemon"
 name_list = "daemon"
 body = 9
@@ -55,6 +53,8 @@ karma = -9000
 fame = 9000
 loot = ["midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl4loot"]
 gold = "1d401+399"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 magery = "1d11+69"
 resisting_spells = "1d11+84"
@@ -95,8 +95,6 @@ death = 772
 
 [[mobile]]
 id = "icefiend"
-script_id = "monster"
-flee_at = -1
 name = "an ice fiend"
 body = 43
 skin_hue = 1152
@@ -110,6 +108,8 @@ karma = -7000
 fame = 7000
 loot = ["midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl4loot"]
 gold = "1d201+699"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 evaluating_intelligence = "1d25+15"
 magery = "1d11+79"
@@ -126,7 +126,6 @@ death = 361
 
 [[mobile]]
 id = "imp"
-script_id = "monster"
 name = "an imp"
 name_list = "daemon"
 body = 74
@@ -141,6 +140,7 @@ karma = -1500
 fame = 1500
 loot = ["lowlevelscrolls", "random_useless_junk"]
 gold = "1d51-1"
+script_id = "monster"
 [mobile.skills]
 anatomy = 90
 magery = "1d21+39"
@@ -157,7 +157,6 @@ death = 426
 
 [[mobile]]
 id = "mongbat"
-script_id = "monster"
 name = "a mongbat"
 body = 39
 strength = "1d5+5"
@@ -170,6 +169,7 @@ notoriety = "attackable"
 karma = -150
 fame = 150
 loot = ["random_useless_junk"]
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d10+4"
 parrying = "1d14+24"
@@ -207,7 +207,6 @@ death = 426
 
 [[mobile]]
 id = "arcanedaemon"
-script_id = "monster"
 name = "an arcane daemon"
 body = 784
 strength = "1d20+130"
@@ -220,6 +219,7 @@ karma = -10000
 fame = 7000
 loot = ["randompotions", "randompotions", "randompotions", "lowlevelscrolls", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
 gold = "1d51+249"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d11+69"
 magery = "1d11+79"
@@ -236,7 +236,6 @@ death = 1153
 
 [[mobile]]
 id = "moloch"
-script_id = "monster"
 name = "a moloch"
 body = 785
 strength = "1d30+330"
@@ -249,6 +248,7 @@ karma = -7500
 fame = 7500
 loot = ["randompotions", "randompotions", "randompotions", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
 gold = "1d51+299"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d6+64"
 tactics = "1d16+74"
@@ -262,7 +262,6 @@ death = 772
 
 [[mobile]]
 id = "chaosdaemon"
-script_id = "monster"
 name = "a chaos daemon"
 body = 792
 strength = "1d25+105"
@@ -276,6 +275,7 @@ karma = -4000
 fame = 3000
 loot = ["randompotions", "randompotions", "lowlevelscrolls", "midlevelscrolls"]
 gold = "1d51+174"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d11+84"
 tactics = "1d11+69"
@@ -289,7 +289,6 @@ death = 1005
 
 [[mobile]]
 id = "shadowfiend"
-script_id = "monster"
 base_id = "base_daemons"
 name = "a shadow fiend"
 body = 168
@@ -302,6 +301,7 @@ notoriety = "attackable"
 karma = -1000
 fame = 1000
 gold = "1d51-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d11+19"
 tactics = "1d11+19"

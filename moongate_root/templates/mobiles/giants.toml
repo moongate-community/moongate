@@ -1,6 +1,5 @@
 [[mobile]]
 id = "ettin"
-script_id = "monster"
 name = "an ettin"
 body = 2
 strength = "1d30+135"
@@ -13,6 +12,7 @@ karma = -3000
 fame = 3000
 loot = ["randomgems", "randompotions", "randompotions", "random_useless_junk", "treasure_map_lvl1loot"]
 gold = "1d101+49"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+39"
 parrying = "1d11+49"
@@ -38,7 +38,6 @@ death = 371
 
 [[mobile]]
 id = "ogre"
-script_id = "monster"
 name = "an ogre"
 body = 1
 strength = "1d30+165"
@@ -52,6 +51,7 @@ karma = -3000
 fame = 3000
 loot = ["randomgems", "randomgems", "randompotions", "random_useless_junk", "treasure_map_lvl1loot"]
 gold = "1d101+49"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+54"
 parrying = "1d11+44"
@@ -66,7 +66,6 @@ death = 431
 
 [[mobile]]
 id = "ogrelord"
-script_id = "monster"
 name = "an ogre lord"
 body = 84
 strength = "1d179+766"
@@ -79,6 +78,7 @@ karma = -15000
 fame = 15000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "random_useless_junk", "treasure_map_lvl3loot"]
 gold = "1d101+649"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 parrying = "1d11+74"
@@ -93,7 +93,6 @@ death = 431
 
 [[mobile]]
 id = "arcticogrelord"
-script_id = "monster"
 name = "an arctic ogre lord"
 body = 135
 strength = "1d179+766"
@@ -106,6 +105,7 @@ karma = -15000
 fame = 15000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "random_useless_junk", "treasure_map_lvl3loot"]
 gold = "1d201+499"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 120
 parrying = "1d11+74"
@@ -120,7 +120,6 @@ death = 643
 
 [[mobile]]
 id = "troll"
-script_id = "monster"
 name = "a troll"
 body = 54
 strength = "1d30+175"
@@ -133,6 +132,7 @@ karma = -3500
 fame = 3500
 loot = ["randompotions", "randompotions", "randomgems", "random_useless_junk", "treasure_map_lvl1loot"]
 gold = "1d151+49"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+44"
 parrying = "1d16+44"
@@ -158,7 +158,6 @@ death = 465
 
 [[mobile]]
 id = "frosttroll"
-script_id = "monster"
 name = "a frost troll"
 body = 55
 strength = "1d39+226"
@@ -171,6 +170,7 @@ karma = -4000
 fame = 4000
 loot = ["randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "randommidlevelweapons", "treasure_map_lvl2loot"]
 gold = "1d101+49"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+64"
 parrying = "1d16+64"
@@ -185,7 +185,6 @@ death = 465
 
 [[mobile]]
 id = "cyclops"
-script_id = "monster"
 name = "a cyclopean warrior"
 body = 75
 strength = "1d50+335"
@@ -199,6 +198,7 @@ karma = -4500
 fame = 4500
 loot = ["randompotions", "randompotions", "randomgems", "treasure_map_lvl3loot"]
 gold = "1d201+449"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d46+59"
 parrying = "1d11+69"
@@ -213,7 +213,6 @@ death = 608
 
 [[mobile]]
 id = "titan"
-script_id = "monster"
 name = "a titan"
 body = 76
 strength = "1d50+535"
@@ -226,6 +225,7 @@ karma = -11500
 fame = 11500
 loot = ["midlevelscrolls", "treasure_map_lvl5loot"]
 gold = "1d301+499"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d11+64"
 magery = "1d16+84"

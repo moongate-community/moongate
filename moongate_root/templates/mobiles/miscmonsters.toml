@@ -1,6 +1,5 @@
 [[mobile]]
 id = "succubus"
-script_id = "monster"
 name = "a succubus"
 name_list = "pixie"
 body = 149
@@ -14,6 +13,7 @@ karma = -24000
 fame = 24000
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
 gold = "1d801+1199"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d11+89"
 magery = "1d2+98"
@@ -118,7 +118,6 @@ death = 759
 
 [[mobile]]
 id = "efreet"
-script_id = "monster"
 name = "an efreet"
 body = 131
 skin_hue = 2125
@@ -132,6 +131,7 @@ karma = -10000
 fame = 10000
 loot = ["randompotions", "randompotions", "randompotions", "randompotions", "randompotions", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "daemonbonearmor", "treasure_map_lvl3loot"]
 gold = "1d251+249"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d16+59"
 magery = "1d16+59"
@@ -148,7 +148,6 @@ death = 886
 
 [[mobile]]
 id = "hellcat"
-script_id = "monster"
 name = "a hellcat"
 body = 201
 skin_hue = "0x0641-0x0676"
@@ -161,6 +160,7 @@ notoriety = "attackable"
 karma = -1000
 fame = 1000
 gold = "1d51-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+44"
 parrying = "1d46+22"
@@ -175,7 +175,6 @@ death = 109
 
 [[mobile]]
 id = "largehellcat"
-script_id = "monster"
 name = "a predator hellcat"
 body = 127
 skin_hue = "0x0641-0x0676"
@@ -188,6 +187,7 @@ notoriety = "attackable"
 karma = -2500
 fame = 2500
 gold = "1d51+49"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+74"
 parrying = "1d11+54"
@@ -202,8 +202,6 @@ death = 109
 
 [[mobile]]
 id = "hellhound"
-script_id = "monster"
-flee_at = -1
 name = "a hell hound"
 body = 98
 skin_hue = 1153
@@ -216,6 +214,8 @@ notoriety = "attackable"
 karma = -3400
 fame = 3400
 gold = "1d151-1"
+script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d18+57"
 parrying = "1d13+62"
@@ -230,7 +230,6 @@ death = 233
 
 [[mobile]]
 id = "stoneharpy"
-script_id = "monster"
 name = "a stone harpy"
 body = 73
 skin_hue = 902
@@ -244,6 +243,7 @@ karma = -4500
 fame = 4500
 loot = ["randomgems", "randomgems", "randomgems"]
 gold = "1d101+399"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+49"
 parrying = "1d16+74"
@@ -258,7 +258,6 @@ death = 917
 
 [[mobile]]
 id = "gazer"
-script_id = "monster"
 name = "a gazer"
 body = 22
 strength = "1d30+95"
@@ -271,6 +270,7 @@ karma = -3500
 fame = 3500
 loot = ["lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "randompotions", "randompotions", "treasure_map_lvl1loot"]
 gold = "1d101+49"
+script_id = "monster"
 [mobile.skills]
 magery = "1d16+49"
 resisting_spells = "1d16+59"
@@ -286,7 +286,6 @@ death = 381
 
 [[mobile]]
 id = "gazerlarva"
-script_id = "monster"
 name = "a gazer larva"
 body = 778
 strength = "1d25+75"
@@ -298,6 +297,7 @@ notoriety = "attackable"
 karma = -900
 fame = 900
 gold = "1d26-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = 70
 tactics = 70
@@ -311,7 +311,6 @@ death = 381
 
 [[mobile]]
 id = "eldergazer"
-script_id = "monster"
 name = "an elder gazer"
 body = 68
 strength = "1d30+295"
@@ -324,6 +323,7 @@ karma = -12500
 fame = 12500
 loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
 gold = "1d401+849"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d11+24"
 magery = "1d11+89"
@@ -340,7 +340,6 @@ death = 381
 
 [[mobile]]
 id = "harpy"
-script_id = "monster"
 name = "a harpy"
 body = 30
 strength = "1d25+95"
@@ -352,6 +351,7 @@ notoriety = "attackable"
 karma = -2500
 fame = 2500
 gold = "1d101+49"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d16+49"
 parrying = "1d16+74"
@@ -366,7 +366,6 @@ death = 917
 
 [[mobile]]
 id = "headless"
-flee_at = -1
 name = "a headless one"
 body = 31
 strength = "1d25+25"
@@ -379,6 +378,7 @@ karma = -450
 fame = 450
 gold = "1d51-1"
 script_id = "monster"
+flee_at = -1
 [mobile.skills]
 resisting_spells = "1d6+14"
 parrying = "1d11+34"
@@ -393,7 +393,6 @@ death = 411
 
 [[mobile]]
 id = "slime"
-script_id = "monster"
 name = "a slime"
 body = 51
 strength = "1d13+21"
@@ -406,6 +405,7 @@ karma = -300
 fame = 300
 loot = ["randomgems", "randomgems"]
 gold = "1d26-1"
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d6+14"
 tactics = "1d16+18"
@@ -426,7 +426,6 @@ name = "a jwilson"
 
 [[mobile]]
 id = "frostooze"
-script_id = "monster"
 name = "a frost ooze"
 body = 94
 skin_hue = 1153
@@ -439,6 +438,7 @@ notoriety = "attackable"
 karma = -450
 fame = 450
 loot = ["randomgems", "randomgems"]
+script_id = "monster"
 [mobile.skills]
 resisting_spells = "1d6+4"
 parrying = "1d7+14"
@@ -535,7 +535,6 @@ items = ["wispglow"]
 
 [[mobile]]
 id = "evilmage"
-script_id = "monster"
 name = "an evil mage"
 body = 124
 strength = "1d25+80"
@@ -548,6 +547,7 @@ karma = -2500
 fame = 2500
 loot = ["lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents"]
 gold = "1d51-1"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d21+4"
 magery = "1d26+74"
@@ -560,7 +560,6 @@ death = 1059
 
 [[mobile]]
 id = "evilmagelord"
-script_id = "monster"
 name = "an evil mage lord"
 body = 125
 strength = "1d25+80"
@@ -573,6 +572,7 @@ karma = -10500
 fame = 10500
 loot = ["randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents"]
 gold = "1d51+199"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = "1d70+30"
 magery = "1d6+94"
@@ -586,7 +586,6 @@ death = 1059
 
 [[mobile]]
 id = "tentacles_of_the_harrower"
-script_id = "monster"
 name = "tentacles of the harrower"
 body = 129
 strength = "1d101+899"
@@ -599,6 +598,7 @@ karma = -15000
 fame = 15000
 loot = ["reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "highlevelscrolls", "highlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
 gold = "1d551+749"
+script_id = "monster"
 [mobile.skills]
 evaluating_intelligence = 100
 magery = "1d11+99"

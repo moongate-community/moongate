@@ -1,8 +1,8 @@
 [[mobile]]
 id = "base_cursed"
-script_id = "monster"
 skin_hue = 34872
 notoriety = "murderer"
+script_id = "monster"
 
 [[mobile]]
 id = "lysander_gathenwale"
