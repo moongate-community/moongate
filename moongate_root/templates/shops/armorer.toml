@@ -237,6 +237,13 @@ hue = 0
 name = ""
 
 [[shop.buy]]
+item = "0x140a_lbr"
+price = 18
+amount = 20
+hue = 0
+name = ""
+
+[[shop.buy]]
 item = "0x140e_lbr"
 price = 18
 amount = 20
