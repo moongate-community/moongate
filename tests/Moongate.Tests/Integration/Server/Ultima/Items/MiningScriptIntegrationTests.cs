@@ -269,7 +269,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal([501864], Told());
-        Assert.Empty(_view.Calls.Where(call => call.StartsWith("Animated", StringComparison.Ordinal)));
+        Assert.DoesNotContain(_view.Calls, call => call.StartsWith("Animated", StringComparison.Ordinal));
         Assert.Empty(_timers.Timers);
     }
 

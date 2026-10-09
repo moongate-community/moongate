@@ -249,7 +249,7 @@ public sealed class FishingPoleScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal([500971], Told());
-        Assert.Empty(_view.Calls.Where(call => call.StartsWith("Animated", StringComparison.Ordinal)));
+        Assert.DoesNotContain(_view.Calls, call => call.StartsWith("Animated", StringComparison.Ordinal));
         Assert.Empty(_timers.Timers);
     }
 
