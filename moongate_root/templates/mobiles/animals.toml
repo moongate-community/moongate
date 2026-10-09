@@ -43,6 +43,7 @@ death = 99
 
 [[mobile]]
 id = "boar"
+script_id = "animal"
 name = "a boar"
 body = 290
 strength = 25
@@ -66,6 +67,7 @@ death = 200
 
 [[mobile]]
 id = "bull"
+script_id = "animal"
 name = "a bull"
 body = 232
 skin_hue = "0x08FD-0x090E"
@@ -90,6 +92,7 @@ death = 104
 
 [[mobile]]
 id = "bullfrog"
+script_id = "animal"
 name = "a bullfrog"
 body = 81
 skin_hue = 0
@@ -164,6 +167,7 @@ death = 119
 
 [[mobile]]
 id = "cow"
+script_id = "animal"
 name = "a cow"
 body = 216
 strength = 30
@@ -212,6 +216,7 @@ death = 137
 
 [[mobile]]
 id = "goat"
+script_id = "animal"
 name = "a goat"
 body = 209
 strength = 19
@@ -235,6 +240,7 @@ death = 157
 
 [[mobile]]
 id = "gorilla"
+script_id = "animal"
 name = "a gorilla"
 body = 29
 strength = "1d43+52"
@@ -375,6 +381,7 @@ hiding = "1d16+44"
 [[mobile]]
 id = "mountaingoat"
 base_id = "goat"
+script_id = "animal"
 name = "a mountain goat"
 body = 88
 strength = "1d43+21"
@@ -398,6 +405,7 @@ death = 157
 
 [[mobile]]
 id = "packhorse"
+script_id = "animal"
 name = "a pack horse"
 body = 291
 strength = "1d77+43"
@@ -422,6 +430,7 @@ death = 172
 
 [[mobile]]
 id = "packllama"
+script_id = "animal"
 name = "a pack llama"
 body = 292
 strength = "1d29+51"
@@ -471,6 +480,7 @@ death = 190
 
 [[mobile]]
 id = "pig"
+script_id = "animal"
 name = "a pig"
 body = 203
 strength = 20
@@ -542,6 +552,7 @@ death = 203
 
 [[mobile]]
 id = "rat"
+script_id = "animal"
 name = "a rat"
 body = 238
 strength = 9
@@ -566,6 +577,7 @@ death = 208
 
 [[mobile]]
 id = "sheep"
+script_id = "animal"
 name = "a sheep"
 body = 207
 strength = 19
@@ -763,3 +775,4 @@ death = 1269
 [[mobile]]
 id = "gaman"
 base_id = "gaman_se"
+script_id = "animal"

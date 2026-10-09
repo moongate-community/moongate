@@ -15,20 +15,30 @@ namespace Moongate.Server.Ultima.Modules;
 [ScriptModule("pet", "Asks about the creatures a player has tamed and tames a wild one, as the Animal Taming skill does.")]
 public sealed class PetModule
 {
+    private const int AttendedLimit = 256;
+
     private readonly IPetService _pets;
     private readonly ITamingService _taming;
     private readonly IMobileService _mobiles;
     private readonly IMobileStateService _state;
     private readonly ISessionService _sessions;
+    private readonly TimeProvider _time;
+
+    // Several pets hear the same words in the same moment: the first to ask answers for them all.
+    private static readonly TimeSpan AttendedFor = TimeSpan.FromMilliseconds(500);
+
+    private readonly Dictionary<Serial, DateTimeOffset> _attended = new();
 
     public PetModule(
         IPetService pets,
         ITamingService taming,
         IMobileService mobiles,
         IMobileStateService state,
-        ISessionService sessions
+        ISessionService sessions,
+        TimeProvider? time = null
     )
     {
+        _time = time ?? TimeProvider.System;
         _pets = pets;
         _taming = taming;
         _mobiles = mobiles;
@@ -109,6 +119,54 @@ public sealed class PetModule
         }
 
         return result;
+    }
+
+    /// <summary>
+    ///     Gets whether the caller is the pet that answers the "all" words of <paramref name="player" /> now;
+    ///     <c>if pet.attend(owner) then ... end</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the caller is the one that answers the player now: true for the first that asks, false for whoever asks again within half a second. Every pet within hearing hears the same words of its owner in the same moment: each asks, one answers for all. False for an NPC or a player not in the world."
+    )]
+    public bool Attend(long player)
+    {
+        if (!TryGet(player, out var mobile) || mobile.IsNpc)
+        {
+            return false;
+        }
+
+        var now = _time.GetUtcNow();
+
+        if (_attended.TryGetValue(mobile.Id, out var last) && now - last < AttendedFor && now >= last)
+        {
+            return false;
+        }
+
+        // The players who left are forgotten as the list is used.
+        if (_attended.Count > AttendedLimit)
+        {
+            foreach (var gone in _attended.Where(entry => now - entry.Value >= AttendedFor).Select(entry => entry.Key).ToArray())
+            {
+                _attended.Remove(gone);
+            }
+        }
+
+        _attended[mobile.Id] = now;
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Lets a creature of the player go; <c>pet.release(who, creature)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Lets the creature go: it is no one's any more and wild again, and the player has one follower less. True when the creature is a creature of the world that is the player's own; false otherwise."
+    )]
+    public bool Release(long player, long creature)
+    {
+        return TryGet(player, out var owner) && TryGet(creature, out var pet) && _pets.Release(owner, pet);
     }
 
     private bool TryGet(long serial, out MobileEntity mobile)

@@ -86,6 +86,26 @@ public sealed class PetService : IPetService
         }
     }
 
+    public bool Release(MobileEntity player, MobileEntity creature)
+    {
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(creature);
+
+        if (player.IsNpc ||
+            !creature.IsNpc ||
+            !_mobiles.IsInWorld(creature.Id) ||
+            creature.GetProp(MountProps.Owner, 0L) != player.Id.Value)
+        {
+            return false;
+        }
+
+        creature.RemoveProp(MountProps.Owner);
+        creature.RemoveProp(MountProps.PetOrder);
+        Changed(player.Id);
+
+        return true;
+    }
+
     public int SlotsOf(string? templateId)
     {
         return templateId is not null && _taming.TryGet(templateId, out var creature) ? creature.Slots : 1;

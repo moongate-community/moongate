@@ -41,6 +41,11 @@ public static class MountProps
     public const string Stabled = "stabled";
 
     /// <summary>
+    ///     Prop of a creature: what its owner told it to do (follow, stay, come or guard); follow when it has none.
+    /// </summary>
+    public const string PetOrder = "pet.order";
+
+    /// <summary>
     ///     Tag of a mobile template: the id of the item template, on the mount layer, that the creature turns into when it
     ///     is ridden. An empty value, or no tag, makes the creature no mount.
     /// </summary>

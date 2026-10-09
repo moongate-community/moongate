@@ -70,6 +70,7 @@ death = 114
 
 [[mobile]]
 id = "eagle"
+script_id = "animal"
 name = "an eagle"
 body = 5
 skin_hue = 0
