@@ -69,6 +69,7 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IJailService, JailService>(12);
         // Its messages are read from the world database.
         container.AddMoongateService<IBulletinBoardService, BulletinBoardService>(12);
+        container.AddMoongateService<IHelpPageService, HelpPageService>(12);
         // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.
         container.AddMoongateService<NpcScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
@@ -152,6 +153,7 @@ public static class UltimaWorldContainerExtensions
         container.AddLiveWorldState();
         container.AddLiveJailSentences();
         container.AddLiveBulletinMessages();
+        container.AddLiveHelpPages();
         container.AddBookAttachments();
 
         container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);

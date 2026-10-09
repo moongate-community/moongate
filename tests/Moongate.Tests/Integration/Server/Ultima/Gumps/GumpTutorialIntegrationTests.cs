@@ -52,6 +52,15 @@ public sealed class GumpTutorialIntegrationTests : IAsyncLifetime
             _scripts.Write($"gumps/{Path.GetFileName(file)}", await File.ReadAllTextAsync(file));
         }
 
+        // The gump scripts take the modules they share when they load.
+        foreach (var file in Directory.GetFiles(
+                     Path.Combine(RepositoryRoot(), "moongate_root", "scripts", "common"),
+                     "*.lua"
+                 ))
+        {
+            _scripts.Write($"common/{Path.GetFileName(file)}", await File.ReadAllTextAsync(file));
+        }
+
         _scripts.Write(
             "gumps/probe.lua",
             """

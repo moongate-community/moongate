@@ -234,6 +234,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.GmToolsDescription
         );
+        container.RegisterCommand<PagesCommand>(
+            "pages",
+            "Opens the gump of the help requests: the open and taken ones, to go to the player, take them, answer or close them.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.PagesDescription
+        );
         container.RegisterCommand<JailCommand>(
             "jail",
             "Opens the gump of the jail: it lists the cells, takes you into one, and jails or releases a character; jail <name> opens it on the player of that name, online or not.",

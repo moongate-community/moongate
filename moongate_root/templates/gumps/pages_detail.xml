@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/pages_detail.xml
+
+  What it is for:
+    One request for a game master, opened from pages: who asked, what about, where and how
+    long ago. Send the answer sends what is typed in the field to the player and closes the
+    request, Go takes the game master to the player, Take marks the request as taken, Close
+    closes it with no answer, Back returns to the queue. The functions are in
+    scripts/gumps/pages_detail.lua.
+
+  Arguments:
+    page    the number of the request
+    name    the name of the player
+    kind    what it is about, as a word
+    status  open, or taken by whom
+    age     how long ago it was asked, such as 3 min
+    where   the place, such as Trammel 1434, 1699, 2
+    text    what the player typed
+    answer  the text shown in the answer field; empty until one is typed
+-->
+<gump id="pages_detail" x="80" y="60"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="460" height="330" />
+  <text x="20" y="15" hue="1152">Request ${page}: ${name}</text>
+  <text x="20" y="42">${kind}, ${age}, ${status}</text>
+  <text x="20" y="62">${where}</text>
+  <html x="20" y="88" width="420" height="60">${text}</html>
+  <text x="20" y="165">Answer:</text>
+  <image_tiled x="20" y="185" width="420" height="24" gump="2624" />
+  <text_entry x="25" y="187" width="410" height="20" hue="1152" entry="1" max_length="128" bind="answer">${answer}</text_entry>
+  <button x="20" y="230" up="4005" down="4007" on_click="answer" />
+  <text x="55" y="231">Send the answer</text>
+  <button x="20" y="262" up="4005" down="4007" on_click="go" />
+  <text x="55" y="263">Go to the player</text>
+  <button x="240" y="230" up="4005" down="4007" on_click="take" />
+  <text x="275" y="231">Take</text>
+  <button x="240" y="262" up="4017" down="4019" on_click="close" />
+  <text x="275" y="263">Close without an answer</text>
+  <button x="20" y="296" up="4014" down="4015" open="pages" />
+  <text x="55" y="297">Back</text>
+</gump>

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"bc0d73b0e47a06b4c9b3daf663386177256b9d807d63b35caf36d04a5ad7cccb","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"8085db30c53669242fcd4bfbdd28abddba462c9b9dd44f21ef1cdb1b9c72dba5","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -564,7 +564,37 @@ uno che sta già aspettando e uno la cui pausa (la proprietà `help.stuck_until`
 `world.now`) non è finita, escluso lo staff; prende la città di partenza più vicina da `help.nearest_city`,
 dice l'attesa da `help.settings` e, dopo `timer.after` di quei secondi, sposta il personaggio con
 `mobile.teleport` se è dove era e se ha ancora il permesso. `commands` esegue `help` con
-`commands.execute_as` e `rules` dice il messaggio 30200.
+`commands.execute_as`, `rules` dice il messaggio 30200 e `call` apre `help_page_kind`.
+
+## help_page_kind.lua
+
+`scripts/gumps/help_page_kind.lua` è lo script del secondo passo di *Call a game master*
+(`templates/gumps/help_page_kind.xml`). `question`, `bug`, `suggestion` e `harassment` interrogano `help.can_page`;
+a un giocatore che non può viene detto perché (messaggi 30213 e 30214) prima che scriva qualcosa. Altrimenti
+gli viene detto di scrivere una riga (30211), `prompt.ask` la aspetta e `help.create_page` manda la richiesta
+con l'`HelpPageKindType` del pulsante; Esc o una riga vuota dice 30215, un rifiuto alla fine ripete il suo
+motivo e una richiesta inviata dice 30212. Può chiamare anche un giocatore in prigione.
+
+## pages.lua
+
+`scripts/gumps/pages.lua` è lo script della coda dello staff (`templates/gumps/pages.xml`, aperta da
+[`.pages`](../commands/pages.md)). `rows` riempie lo slot con `help.pages()`, dalla più vecchia, dieci per pagina,
+un pulsante e una riga per richiesta (`#1 Gino, Bug, 3 min, open`); una riga apre `pages_detail` su quella
+richiesta. Solo per lo staff: lo slot resta vuoto per chiunque altro, e ogni pulsante ricontrolla `world.is_staff`.
+
+## pages_detail.lua
+
+`scripts/gumps/pages_detail.lua` è lo script di una richiesta (`templates/gumps/pages_detail.xml`). `go` porta il
+game master dal giocatore (`mobile.location`) o, se è offline, dove ha chiesto; `take` chiama `help.take`;
+`answer` prende il testo del campo (`response.text[1]`), rifiuta un campo vuoto e altrimenti chiama
+`help.answer` e torna alla coda; `close` chiama `help.close`. Una richiesta chiusa nel frattempo lo dice e non
+cambia nulla.
+
+## common/help_pages.lua
+
+`scripts/common/help_pages.lua` è il modulo Lua che i due gump dello staff condividono, preso con
+`require("common.help_pages")`: le parole per un genere, una mappa, un'età e uno stato, la riga di una richiesta
+e gli argomenti del suo gump di dettaglio.
 
 ## jail_sentence.lua
 

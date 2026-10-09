@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**269 systems:** ✅ 86 done, 🟡 57 partly done, ❌ 126 not built yet.
+**269 systems:** ✅ 87 done, 🟡 57 partly done, ❌ 125 not built yet.
 
 **Coverage: 32%** of the systems done, **43%** counting a partly done system as half.
 
@@ -287,7 +287,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Remote administration | 🟡 | gRPC API with TLS; no web panel |
 | Metrics and diagnostics | ✅ | Process and plugin metrics |
 | Hot reload | 🟡 | Lua scripts; not the data or templates |
-| GM help queue (pages) | ❌ | |
+| GM help queue (pages) | ✅ | A player calls a game master from the Help menu (kind and a line, one request at a time, a pause); the staff works through the queue from the [`.pages`](commands/pages.md) gump: go to the player, take, answer, close; the answer reaches the player online or at the next login; see [Help](help.md) |
 | Help menu and stuck menu | ✅ | The Help button opens a menu: "I am stuck" takes a character to the nearest starting city after a wait, with a pause; useful commands; server rules; see [Help](help.md) |
 | Jails | ✅ | A gump lists the cells and who is in them; sentences in real days, a gold fine and a release note at the end, a chest of bread and water in every cell; a player who is offline is jailed by name and serves from its next login; see [Jail](jail.md) |
 | Who list | ❌ | |
