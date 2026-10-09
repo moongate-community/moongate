@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 from typing import TextIO
 
+from .report import ConversionReport
 from .textutil import is_json_int, load_loose_json, toml_escaped, write_text
 
 CATEGORY_SEPARATOR = "/"
@@ -19,6 +20,12 @@ MAPS = ["felucca", "trammel", "ilshenar", "malas", "tokuno", "termur"]
 
 _Place = tuple[str, str, str, int, int, int]
 
+# Places that ModernUO's data gets wrong and the server needs right: (category, name, wrong spot) -> right spot. Cell 7 of the jail
+# stands on the spot of Cell 6 in ModernUO, and the jail wants ten cells of its own (data/jail.toml).
+CORRECTIONS: dict[tuple[str, str, tuple[int, int, int]], tuple[int, int, int]] = {
+    ("Internal/Jail Cells", "Cell 7", (5286, 1174, 0)): (5296, 1174, 0),
+}
+
 
 def run(source: Path, destination: Path, output: TextIO, error: TextIO) -> int:
     if not source.is_dir():
@@ -27,6 +34,7 @@ def run(source: Path, destination: Path, output: TextIO, error: TextIO) -> int:
         return 2
 
     places: list[_Place] = []
+    report = ConversionReport()
     maps = 0
 
     for map_name in MAPS:
@@ -45,6 +53,7 @@ def run(source: Path, destination: Path, output: TextIO, error: TextIO) -> int:
             return 2
 
         problem = _read(document, map_name, "", places)
+        places[:] = [_corrected(place, report) for place in places]
 
         if problem is not None:
             error.write(f"{path}: {problem}\n")
@@ -58,8 +67,21 @@ def run(source: Path, destination: Path, output: TextIO, error: TextIO) -> int:
 
     write_text(destination, _write(places))
     output.write(f"{destination.name}: {len(places)} places on {maps} maps\n")
+    report.write(output)
 
     return 0
+
+
+def _corrected(place: _Place, report: ConversionReport) -> _Place:
+    map_name, category, name, x, y, z = place
+    right = CORRECTIONS.get((category, name, (x, y, z)))
+
+    if right is None:
+        return place
+
+    report.count(f"{name} of '{category}' moved to {right}, as the server needs it")
+
+    return map_name, category, name, *right
 
 
 def _read(node: object, map_name: str, category: str, places: list[_Place]) -> str | None:

@@ -124,3 +124,20 @@ def test_a_missing_folder_fails(tmp_path, convert):
 
     assert result.code == 2
     assert "does not exist" in result.error
+
+
+def test_cell_seven_of_the_jail_is_moved_off_the_spot_of_cell_six(tmp_path, convert):
+    source, destination = tmp_path / "Locations", tmp_path / "locations.toml"
+    write(
+        source,
+        "felucca",
+        '{ "name": "F", "categories": [ { "name": "Internal", "categories": [ { "name": "Jail Cells", "locations": ['
+        ' { "name": "Cell 6", "location": [5276, 1174, 0] }, { "name": "Cell 7", "location": [5286, 1174, 0] },'
+        ' { "name": "Cell 8", "location": [5306, 1174, 0] } ] } ] } ] }',
+    )
+
+    result = convert("modernuo-locations", source, destination)
+
+    assert result.code == 0
+    assert [place["location"] for place in places(destination)] == ["(5276, 1174, 0)", "(5296, 1174, 0)", "(5306, 1174, 0)"]
+    assert "Cell 7" in result.output
