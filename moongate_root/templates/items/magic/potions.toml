@@ -75,6 +75,7 @@ id = "refreshmentpotion"
 base_id = "0x0f0b_red_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f0b_b_red_potion"
@@ -90,6 +91,7 @@ id = "totalrefreshmentpotion"
 base_id = "0x0f0b_b_red_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f06_black_potion"
@@ -105,6 +107,7 @@ id = "nightsightpotion"
 base_id = "0x0f06_black_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f07_orange_potion"
@@ -165,6 +168,7 @@ id = "agilitypotion"
 base_id = "0x0f08_blue_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f08_b_blue_potion"
@@ -180,6 +184,7 @@ id = "greateragilitypotion"
 base_id = "0x0f08_b_blue_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f09_white_potion"
@@ -195,6 +200,7 @@ id = "strengthpotion"
 base_id = "0x0f09_white_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f09_b_white_potion"
@@ -210,6 +216,7 @@ id = "greaterstrengthpotion"
 base_id = "0x0f09_b_white_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f0a_green_potion"
@@ -285,6 +292,7 @@ id = "lesserhealpotion"
 base_id = "0x0f0c_yellow_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f0c_b_yellow_potion"
@@ -300,6 +308,7 @@ id = "healpotion"
 base_id = "0x0f0c_b_yellow_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f0c_c_yellow_potion"
@@ -315,6 +324,7 @@ id = "greaterhealpotion"
 base_id = "0x0f0c_c_yellow_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x1940_keg_specially_lined_for_potions"

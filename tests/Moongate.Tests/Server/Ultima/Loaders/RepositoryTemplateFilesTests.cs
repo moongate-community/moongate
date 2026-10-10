@@ -1092,6 +1092,24 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedPotions_TheOnesAPlayerDrinksCarryThePotionScript()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+
+        Assert.All(
+            new[]
+            {
+                "lesserhealpotion", "healpotion", "greaterhealpotion", "refreshmentpotion", "totalrefreshmentpotion",
+                "strengthpotion", "greaterstrengthpotion", "agilitypotion", "greateragilitypotion", "nightsightpotion"
+            },
+            id => Assert.Equal("potion", templates[id].ScriptId)
+        );
+        // Poison, cure and explosion come with their own systems; a drunk potion leaves this bottle.
+        Assert.True(string.IsNullOrEmpty(templates["poisonpotion"].ScriptId));
+        Assert.True(templates.ContainsKey("0x0f0e_empty_bottle"));
+    }
+
+    [Fact]
     public async Task ShippedJailChestsAndNote_AreWhatTheJailNeeds()
     {
         TomlUtils.AddTomlConverter(new Point3DTomlConverter());
