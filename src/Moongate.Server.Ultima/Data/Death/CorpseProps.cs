@@ -49,6 +49,17 @@ public static class CorpseProps
     public const string SpawnProps = "spawn.";
 
     /// <summary>
+    ///     The serial of the owner of a bonded pet that died, a whole number: who is raised from the corpse is its pet again.
+    ///     The props of the pet that go with it (<c>pet.loyalty</c> and the others) are kept as <c>corpse.pet.loyalty</c>.
+    /// </summary>
+    public const string PetOwner = "corpse.pet_owner";
+
+    /// <summary>
+    ///     What comes before the name of each prop of a pet that its corpse keeps.
+    /// </summary>
+    public const string PetProps = "pet.";
+
+    /// <summary>
     ///     The serial of who killed it, when someone did.
     /// </summary>
     public const string Killer = "corpse.killer";

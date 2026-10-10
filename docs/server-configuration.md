@@ -171,6 +171,7 @@ loyalty_drain = 10                    # Loyalty a pet loses at each drain, from 
 food_gain = 10                        # Loyalty a pet gains for each item of food it eats, from 1 to 100.
 obey_gain = 1                         # Loyalty a pet gains when it obeys an order it could have refused, from 0 to 100.
 disobey_loss = 3                      # Loyalty a pet loses when it refuses one, from 0 to 100.
+bonding_days = 7                      # Days between the first food of its owner and the food that bonds a pet, from 0 to 365.
 
 [ultima.stable]
 max_pets = 10                         # Pets a player may leave with the stablemasters, from 1 to 50.
@@ -315,7 +316,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Defaults 125 (from 0 to 10000; 0 for no limit), 60000 (from 1 to 60000), 5000 and 1,000,000 (`min_check` from 1 to `max_check`, `max_check` up to 2,000,000,000). The items a [bank box](bank.md) holds, counted with what is inside its bags; the coins a banker hands out for one *withdraw*; the worth of the checks a banker writes. |
 | `ultima.stable.max_pets`, `ultima.stable.fee` | Defaults 10 (from 1 to 50) and 30 (from 0 to 100000). The pets a player may leave with an animal trainer, and what each costs when it is stabled: see the [stable](mounts.md#the-stable). |
 | `ultima.pets.max_followers` | Default 5 (from 1 to 50). The followers a player may have: see [animal taming](animal-taming.md#followers). |
-| `ultima.pets.loyalty_drain_minutes`, `loyalty_drain`, `food_gain`, `obey_gain`, `disobey_loss` | Defaults 60 (from 1 to 1440), 10 (1 to 100), 10 (1 to 100), 1 (0 to 100) and 3 (0 to 100). How often and how much a pet's loyalty falls, what a piece of food and an obeyed order give back, and what a refusal costs: see [animal taming](animal-taming.md#loyalty-food-and-obedience). |
+| `ultima.pets.loyalty_drain_minutes`, `loyalty_drain`, `food_gain`, `obey_gain`, `disobey_loss`, `bonding_days` | Defaults 60 (from 1 to 1440), 10 (1 to 100), 10 (1 to 100), 1 (0 to 100), 3 (0 to 100) and 7 (0 to 365). How often and how much a pet's loyalty falls, what a piece of food and an obeyed order give back, and what a refusal costs, and the days of feeding that bond a pet: see [animal taming](animal-taming.md#loyalty-food-and-obedience) and [bonding](animal-taming.md#bonding-and-raising-a-pet). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the

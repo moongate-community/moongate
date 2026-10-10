@@ -240,6 +240,42 @@ public sealed class PetModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Feed_WhenTheFoodCannotBeTaken_TheBondItStartedGoesBackToo()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        items.Add([new ItemEntity { Id = new Serial(0x40000700), TemplateId = "apple", Amount = 1 }]);
+        var handling = new Moongate.Tests.TestSupport.Ultima.Items.StubItemHandlingService { DeleteFails = true };
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items, handling);
+        _pets.OnFeed = () =>
+        {
+            _horse.SetProp(MountProps.PetBonded, true);
+            _horse.SetProp(MountProps.PetBondBegin, 99L);
+        };
+
+        Run("return pet.feed(2, 0x100, 0x40000700)");
+
+        Assert.False(_horse.TryGetProp<bool>(MountProps.PetBonded, out _));
+        Assert.False(_horse.TryGetProp<long>(MountProps.PetBondBegin, out _));
+    }
+
+    [Fact]
+    public void Corpse_OfAnItemThatIsNoCorpseOrHoldsASpoiledOwner_IsNil()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        var sword = new ItemEntity { Id = new Serial(0x40000810), TemplateId = "sword", ItemId = 0x0F5E };
+        sword.SetProp("corpse.pet_owner", 2L);
+        var spoiled = new ItemEntity { Id = new Serial(0x40000811), TemplateId = "corpse", ItemId = 0x2006 };
+        spoiled.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        spoiled.SetProp("corpse.pet_owner", "two");
+        items.Add([sword, spoiled]);
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items);
+
+        var result = Run("return pet.corpse(0x40000810), pet.corpse(0x40000811)");
+
+        Assert.All(result, value => Assert.Equal(LuaValue.Nil, value));
+    }
+
+    [Fact]
     public void Feed_FoodInSomeoneElsesPack_IsNotTheirsToGive()
     {
         var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
@@ -296,6 +332,60 @@ public sealed class PetModuleTests : IAsyncLifetime
         var result = Run("return pet.lore(2), pet.lore(0x999)");
 
         Assert.All(result, value => Assert.Equal(LuaValue.Nil, value));
+    }
+
+    [Fact]
+    public void Feed_ThatBondsThePet_TakesTheFoodAway()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        var food = new ItemEntity { Id = new Serial(0x40000700), TemplateId = "apple", Amount = 2 };
+        items.Add([food]);
+        var handling = new Moongate.Tests.TestSupport.Ultima.Items.StubItemHandlingService();
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items, handling);
+        _pets.FeedResult = PetFeedResultType.Bonded;
+
+        var result = Run("return pet.feed(2, 0x100, 0x40000700)");
+
+        Assert.Equal((double)PetFeedResultType.Bonded, result[0].Read<double>());
+        Assert.Equal(food, Assert.Single(handling.Deleted));
+    }
+
+    [Fact]
+    public void Lore_SaysWhetherTheOwnedCreatureIsBonded()
+    {
+        _horse.SetProp(MountProps.Owner, 2L);
+        _pets.Bonded = true;
+
+        var result = Run("return pet.lore(0x100).bonded, pet.lore(0x101).bonded");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.False(result[1].Read<bool>());
+    }
+
+    [Fact]
+    public void Corpse_OfABondedPet_GivesItsOwnerAndWhetherItFits()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        var corpse = new ItemEntity { Id = new Serial(0x40000800), TemplateId = "corpse", ItemId = 0x2006 };
+        corpse.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        corpse.SetProp("corpse.pet_owner", 2L);
+        corpse.SetProp("corpse.template", "horse");
+        var plain = new ItemEntity { Id = new Serial(0x40000801), TemplateId = "corpse", ItemId = 0x2006 };
+        plain.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        items.Add([corpse, plain]);
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items);
+        _pets.FollowerCount = 3;
+
+        var fits = Run("local c = pet.corpse(0x40000800) return c.owner, c.fits, pet.corpse(0x40000801), pet.corpse(0x999)");
+
+        Assert.Equal(2.0, fits[0].Read<double>());
+        Assert.True(fits[1].Read<bool>());
+        Assert.Equal(LuaValue.Nil, fits[2]);
+        Assert.Equal(LuaValue.Nil, fits[3]);
+
+        _pets.FollowerCount = 5;
+
+        Assert.False(Run("return pet.corpse(0x40000800).fits")[0].Read<bool>());
     }
 
     private LuaValue[] Run(string chunk)

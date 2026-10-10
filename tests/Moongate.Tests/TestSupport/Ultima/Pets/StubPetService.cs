@@ -86,6 +86,13 @@ public sealed class StubPetService : IPetService
         return ObeyResult;
     }
 
+    public bool Bonded { get; set; }
+
+    public bool IsBonded(MobileEntity creature)
+    {
+        return Bonded;
+    }
+
     public Action? OnFeed { get; set; }
 
     public PetFeedResultType Feed(MobileEntity player, MobileEntity creature, string? itemTemplate, int amount)
