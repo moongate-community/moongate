@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"44c0d36126f14c4de02c8af35b18865d23231bbbd2570f9eae2cf447f01a60c2","title":"Localizzazione"} -->
+<!-- translation: {"sourceHash":"bd96b9e65f0d0f4bc2392ecb03597fb3043cd7a50e41ba75ec2703b81ae1c603","title":"Localizzazione"} -->
 
 # Localizzazione
 
@@ -221,8 +221,8 @@ Risiedono in `data/messages/<language>/moongate.toml`, separati dai testi standa
 | 30205 a 30220 | Call a game master, What is it about?, Question, Bug, Suggestion, Harassment, il prompt di scrittura, le risposte a una richiesta, l'avviso allo staff, la riga della risposta, il conteggio delle richieste in attesa e la descrizione del comando `pages` | Cosa leggono un giocatore e un game master dalla coda di [aiuto](help.md) |
 | 30224 a 30229 | The server will shut down in {0} minutes., la descrizione del comando `event` e le sue risposte | Cosa leggono un giocatore e un amministratore dal [calendario](schedule.md) |
 | 30230 a 30237 | Oooooh, aren't you cute!, TRICK!, You receive some candy., gli annunci della stagione | Cosa dice un negoziante e cosa legge un giocatore in [dolcetto o scherzetto](holidays.md#halloween-trick-or-treat) |
-| 30241 a 30244 | La descrizione del comando `lastonline` e le sue risposte | Cosa legge un game master da [`lastonline`](commands/lastonline.md) |
 | 30238 a 30240 | Merry Christmas!, The Christmas season is over., Happy Holidays! Gift items have been placed in your backpack. | Gli annunci e il regalo del [Natale](holidays.md#christmas-snowballs-and-gifts) |
+| 30241 a 30244 | La descrizione del comando `lastonline` e le sue risposte | Cosa legge un game master da [`lastonline`](commands/lastonline.md) |
 | 30185, 30186 | Apre il gump degli strumenti del game master…, Il gump gmtools manca: templates/gumps/gmtools.xml. | Il comando `gmtools` |
 
 L'intestazione dei testi dei comandi in `eng/moongate.toml` elenca gli ID di entrambi gli insiemi.

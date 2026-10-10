@@ -29,6 +29,25 @@ public sealed class LastOnlineCommandTests
     }
 
     [Fact]
+    public async Task TheDate_IsWrittenTheSameWhateverTheCultureOfTheHost()
+    {
+        Add(2, "Aria", new DateTime(2026, 10, 9, 18, 5, 0, DateTimeKind.Utc));
+        var previous = System.Globalization.CultureInfo.CurrentCulture;
+        System.Globalization.CultureInfo.CurrentCulture = new("th-TH");
+
+        try
+        {
+            var context = await RunAsync("aria");
+
+            Assert.Equal("Aria was last online on 2026-10-09 18:05 (UTC).", Assert.Single(context.Output).Text);
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = previous;
+        }
+    }
+
+    [Fact]
     public async Task ACharacterInTheWorld_IsOnline()
     {
         Add(2, "Aria", new DateTime(2026, 10, 9, 18, 5, 0, DateTimeKind.Utc));

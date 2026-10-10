@@ -79,7 +79,7 @@ public sealed class LastOnlineCommand : ICommandExecutor
                         CommandMessages.LastOnlineAt,
                         "{0} was last online on {1} (UTC).",
                         character.Name,
-                        at.ToString(DateFormat)
+                        at.ToString(DateFormat, System.Globalization.CultureInfo.InvariantCulture)
                     )
                 );
             }
