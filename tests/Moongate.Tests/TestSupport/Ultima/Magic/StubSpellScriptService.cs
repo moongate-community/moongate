@@ -17,6 +17,11 @@ public sealed class StubSpellScriptService : ISpellScriptService
     /// </summary>
     public ScriptResult Verdict { get; set; } = ScriptResult.Missing;
 
+    /// <summary>
+    ///     What <see cref="Cast" /> answers: it ran to its end unless a test sets it.
+    /// </summary>
+    public ScriptResult CastResult { get; set; } = ScriptResult.Completed([]);
+
     public List<(string Key, MobileEntity Caster, SpellTargetInfo Target, bool FromScroll)> Checks { get; } = [];
 
     public List<(string Key, MobileEntity Caster, SpellTargetInfo Target, bool FromScroll)> Casts { get; } = [];
@@ -37,6 +42,6 @@ public sealed class StubSpellScriptService : ISpellScriptService
     {
         Casts.Add((spell.Key, caster, target, fromScroll));
 
-        return ScriptResult.Completed([]);
+        return CastResult;
     }
 }

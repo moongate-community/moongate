@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Data.Scripts;
+using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Data.Targeting;
@@ -8,6 +9,7 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Spells;
 using Moongate.Server.Ultima.Types.Targeting;
 using Moongate.Tests.TestSupport.Scripting;
@@ -23,6 +25,7 @@ using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Tests.Server.Ultima.Services;
 
@@ -47,6 +50,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
     private readonly StubLineOfSightService _sight = new();
     private readonly StubItemHandlingService _handling = new();
     private readonly StubSpellbookService _books = new();
+    private readonly CapturingLogSink _log = new();
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -134,7 +138,8 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
             _skills,
             _sight,
             _timers,
-            _clock
+            _clock,
+            logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
 
@@ -156,7 +161,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void CastFromBook_ACircleThreeSpell_TakesAThirdOfASecondMorePerCircle()
+    public void CastFromBook_ACircleThreeSpell_TakesAQuarterOfASecondMorePerCircle()
     {
         _casts.CastFromBook(_aria, Fireball);
 
@@ -300,7 +305,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
 
         Assert.Equal(2, _ash.Amount);
         Assert.Equal(16, _aria.Mana);
-        Assert.Equal((_aria, SkillType.Magery, 0.0, 40.0), Assert.Single(_skills.Checks));
+        Assert.Equal((_aria, SkillType.Magery, 0.0, 40.0), MageryCheck());
         var cast = Assert.Single(_scripts.Casts);
         Assert.Equal(("magic_arrow", false), (cast.Key, cast.FromScroll));
         Assert.Equal((SpellTargetType.Mobile, _bran.Id), (cast.Target.Kind, cast.Target.Serial));
@@ -315,7 +320,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
 
         _targets.Answer(TargetResult.ForObject(_bran.Id));
 
-        Assert.Equal((_aria, SkillType.Magery, 20.0, 60.0), Assert.Single(_skills.Checks));
+        Assert.Equal((_aria, SkillType.Magery, 20.0, 60.0), MageryCheck());
         Assert.Equal(11, _aria.Mana);
     }
 
@@ -462,6 +467,85 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AHarmfulSpell_OnAnInvulnerableTarget_IsRefused_BeforeAnythingIsSpent()
+    {
+        _bran.Notoriety = NotorietyType.Invulnerable;
+        _casts.CastFromBook(_aria, MagicArrow);
+        FireDelay();
+
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        Assert.Equal([1001018], Told());
+        Assert.Equal((3, 20), (_ash.Amount, _aria.Mana));
+        Assert.Empty(_skills.Checks);
+        Assert.Empty(_scripts.Checks);
+        Assert.Empty(_scripts.Casts);
+    }
+
+    [Fact]
+    public void AHelpfulSpell_OnAnInvulnerableTarget_GoesOn()
+    {
+        _bran.Notoriety = NotorietyType.Invulnerable;
+        _scripts.Keys.Add("heal");
+        _casts = WithSpell(
+            new SpellDefinition { Id = 4, Key = "heal", Circle = 1, Target = SpellTargetType.Mobile, Action = 17 }
+        );
+        _books.Add(_book, 4);
+
+        _casts.CastFromBook(_aria, 4);
+        FireDelay();
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        Assert.Single(_scripts.Casts);
+    }
+
+    [Fact]
+    public void ACheckThatFails_RefusesTheCast_AndSpendsNothing()
+    {
+        _scripts.Verdict = ScriptResult.Failed(new ScriptErrorInfo("spells/magic_arrow.lua", 3, "boom", null));
+        _casts.CastFromBook(_aria, MagicArrow);
+        FireDelay();
+
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        Assert.Equal((3, 20), (_ash.Amount, _aria.Mana));
+        Assert.Empty(_skills.Checks);
+        Assert.Empty(_scripts.Casts);
+        Assert.Contains(_log.Events, line => line.Level == Serilog.Events.LogEventLevel.Warning);
+    }
+
+    [Fact]
+    public void ACastThatIsMissing_IsLogged_AsWellAsOneThatFailed()
+    {
+        _scripts.CastResult = ScriptResult.Missing;
+        _casts.CastFromBook(_aria, MagicArrow);
+        FireDelay();
+
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        var line = Assert.Single(_log.Events);
+        Assert.Equal(Serilog.Events.LogEventLevel.Warning, line.Level);
+        Assert.Contains("magic_arrow", line.RenderMessage());
+    }
+
+    [Fact]
+    public void EveryTryOfACast_AlsoTriesEvaluatingIntelligenceUpToItsCap_BeforeMagery()
+    {
+        _casts.CastFromBook(_aria, MagicArrow);
+        FireDelay();
+
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        Assert.Equal(
+            [
+                (_aria, SkillType.EvaluatingIntelligence, 0.0, 100.0),
+                (_aria, SkillType.Magery, 0.0, 40.0)
+            ],
+            _skills.Checks.Select(check => (check.Mobile, check.Skill, check.Min, check.Max)).ToList()
+        );
+    }
+
+    [Fact]
     public void TheScriptMayRefuseBeforeAnythingIsSpent_WithTheClientsText()
     {
         _scripts.Verdict = ScriptResult.Completed([1005000L]);
@@ -485,7 +569,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
         FireDelay();
         _targets.Answer(TargetResult.ForObject(_bran.Id));
 
-        Assert.Equal((_aria, SkillType.Magery, -50.0, -10.0), Assert.Single(_skills.Checks));
+        Assert.Equal((_aria, SkillType.Magery, -50.0, -10.0), MageryCheck());
         Assert.Equal((scroll, 1), Assert.Single(_handling.Consumed));
         var cast = Assert.Single(_scripts.Casts);
         Assert.True(cast.FromScroll);
@@ -632,6 +716,36 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
         delay.Callback();
 
         Assert.Empty(_targets.Begun);
+    }
+
+    private SpellCastService WithSpell(SpellDefinition spell)
+    {
+        var templates = Templates();
+
+        return new(
+            new SpellCatalogService(new StubDataLoaderService().With(spell), templates),
+            _books,
+            _scripts,
+            _items,
+            templates,
+            _handling,
+            _fixture.Mobiles,
+            _state,
+            _fixture.Sessions,
+            _targets,
+            _speech,
+            _effects,
+            _view,
+            _skills,
+            _sight,
+            _timers,
+            _clock
+        );
+    }
+
+    private (MobileEntity Mobile, SkillType Skill, double Min, double Max) MageryCheck()
+    {
+        return _skills.Checks.Single(check => check.Skill == SkillType.Magery);
     }
 
     private void FireDelay()

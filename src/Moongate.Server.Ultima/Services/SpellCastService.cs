@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Spells;
 using Moongate.Server.Ultima.Types.Targeting;
 using Moongate.Ultima.Types;
@@ -34,8 +35,10 @@ public sealed class SpellCastService : ISpellCastService
     private const int FizzleSound = 0x5C;
     private const int FirstCircle = 1;
     private const int EyeHeight = 14;
+    private const int DefaultSkillCap = 1000;
+    private const double TenthsPerPoint = 10.0;
 
-    private readonly ILogger _logger = Log.ForContext<SpellCastService>();
+    private readonly ILogger _logger;
     private readonly Dictionary<Serial, SpellCast> _casts = [];
     private readonly Dictionary<Serial, DateTimeOffset> _recovered = [];
     private readonly ISpellCatalogService _catalog;
@@ -75,9 +78,11 @@ public sealed class SpellCastService : ISpellCastService
         ILineOfSightService sight,
         ITimerService timers,
         TimeProvider time,
-        IMountService? mounts = null
+        IMountService? mounts = null,
+        ILogger? logger = null
     )
     {
+        _logger = logger ?? Log.ForContext<SpellCastService>();
         _mounts = mounts;
         _catalog = catalog;
         _books = books;
@@ -461,7 +466,26 @@ public sealed class SpellCastService : ISpellCastService
             return;
         }
 
+        // A harmful spell takes nothing from the caster for a target that cannot be harmed.
+        if (spell.Harmful &&
+            target.Kind == SpellTargetType.Mobile &&
+            _mobiles.TryGet(target.Serial, out var victim) &&
+            victim.Notoriety == NotorietyType.Invulnerable)
+        {
+            _speech.TellCliloc(caster, ISpellCastService.CannotHarmMessage);
+
+            return;
+        }
+
         var verdict = _scripts.Check(spell, caster, target, scroll is not null);
+
+        if (verdict.Kind == ScriptResultKind.Failed)
+        {
+            // A check that breaks is a refusal: nothing is spent for a script nobody can trust.
+            _logger.Warning("The check of the spell {Spell} failed, the cast is refused", spell.Key);
+
+            return;
+        }
 
         if (Refused(caster, verdict))
         {
@@ -487,6 +511,10 @@ public sealed class SpellCastService : ISpellCastService
 
         var (min, max) = SpellCircleRules.SkillWindow(spell.Circle, scroll is not null);
 
+        // Every try may teach Evaluating Intelligence, up to its cap, whether the spell then fizzles or not.
+        var evaluating = caster.Skills.FirstOrDefault(known => known.Skill == SkillType.EvaluatingIntelligence);
+        _skills.Check(caster, SkillType.EvaluatingIntelligence, 0, (evaluating?.Cap ?? DefaultSkillCap) / TenthsPerPoint);
+
         if (!_skills.Check(caster, SkillType.Magery, min, max))
         {
             Fizzle(caster);
@@ -503,9 +531,9 @@ public sealed class SpellCastService : ISpellCastService
 
         var result = _scripts.Cast(spell, caster, target, scroll is not null);
 
-        if (result.Kind == ScriptResultKind.Failed)
+        if (result.Kind is not (ScriptResultKind.Completed or ScriptResultKind.Suspended))
         {
-            _logger.Warning("The script of the spell {Spell} failed", spell.Key);
+            _logger.Warning("The script of the spell {Spell} did not run: {Result}", spell.Key, result.Kind);
         }
     }
 

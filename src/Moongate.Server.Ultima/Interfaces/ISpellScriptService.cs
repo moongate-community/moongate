@@ -12,13 +12,15 @@ namespace Moongate.Server.Ultima.Interfaces;
 public interface ISpellScriptService
 {
     /// <summary>
-    ///     Gets whether <c>scripts/spells/&lt;key&gt;.lua</c> exists: a spell without one cannot be cast.
+    ///     Gets whether <c>scripts/spells/&lt;key&gt;.lua</c> exists and loaded, its table holding a <c>cast</c>
+    ///     function: a spell without one cannot be cast, so nothing is spent for it.
     /// </summary>
     bool Has(SpellDefinition spell);
 
     /// <summary>
     ///     Calls <c>check(caster, target, spell)</c> of the spell's script, which may refuse the cast before anything is
-    ///     spent by returning a cliloc number or a text; <see cref="ScriptResult.Missing" /> when it has none.
+    ///     spent by returning a cliloc number or a text; <see cref="ScriptResult.Missing" /> when it has none. A check that
+    ///     fails refuses the cast too.
     /// </summary>
     ScriptResult Check(SpellDefinition spell, MobileEntity caster, SpellTargetInfo target, bool fromScroll);
 

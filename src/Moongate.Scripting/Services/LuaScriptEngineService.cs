@@ -274,6 +274,18 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <inheritdoc />
+    public bool HasMember(string table, string function)
+    {
+        _guard.EnsureScriptThread(nameof(HasMember));
+        var state = Ready(_state);
+
+        return state.Environment.TryGetValue(table, out var holder) &&
+               holder.TryRead<LuaTable>(out var members) &&
+               TryGetMember(members, function, out var value) &&
+               value.Type == LuaValueType.Function;
+    }
+
+    /// <inheritdoc />
     public bool IsRunningScript => _scheduler?.IsResuming ?? false;
 
     /// <inheritdoc />

@@ -90,6 +90,11 @@ public interface ISpellCastService : ISessionClosedListener
     const int WontWorkMessage = 501857;
 
     /// <summary>
+    ///     "You cannot perform negative acts on your target."
+    /// </summary>
+    const int CannotHarmMessage = 1001018;
+
+    /// <summary>
     ///     The most tiles away a target may be.
     /// </summary>
     const int TargetRange = 12;

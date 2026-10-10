@@ -46,6 +46,12 @@ public interface IScriptEngine
     ScriptResult CallMember(string owner, string table, string function, params object?[] args);
 
     /// <summary>
+    ///     Gets whether the global table <paramref name="table" /> exists and holds the function
+    ///     <paramref name="function" />, as <see cref="CallMember" /> would find it, without calling it.
+    /// </summary>
+    bool HasMember(string table, string function);
+
+    /// <summary>
     ///     Calls a function value a script handed to the host, such as a button callback kept by a module; it runs like
     ///     <see cref="Call" />, its coroutine belonging to <paramref name="owner" />, the script file it belongs with.
     /// </summary>

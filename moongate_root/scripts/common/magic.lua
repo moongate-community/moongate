@@ -29,7 +29,9 @@
 --   magic.curse(caster, target, info, stat)   the whole of a stat curse such as
 --                                      Clumsy: the caster aggresses the target,
 --                                      the target's own cast is disturbed, the
---                                      stat is lowered and the effect is shown
+--                                      stat is lowered and the effect is shown;
+--                                      nothing at all when the target cannot be
+--                                      harmed (combat.aggress is false)
 -- ==============================================================================
 
 local magic = {}
@@ -137,7 +139,11 @@ function magic.show(info, target)
 end
 
 function magic.curse(caster, target, info, stat)
-    combat.aggress(caster, target)
+    -- A target that cannot be harmed, as an invulnerable or a dead one, takes no curse.
+    if not combat.aggress(caster, target) then
+        return
+    end
+
     -- A curse may ruin the spell its target is casting.
     spell.disturb(target)
     mobile.add_stat_curse(target, stat, magic.curse_offset(caster), magic.curse_seconds(caster))

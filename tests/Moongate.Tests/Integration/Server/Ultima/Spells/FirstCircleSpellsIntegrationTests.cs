@@ -387,6 +387,38 @@ public sealed class FirstCircleSpellsIntegrationTests : IAsyncLifetime
         Assert.Equal(26, _aria.Mana);
     }
 
+    [Theory]
+    [InlineData("clumsy")]
+    [InlineData("feeblemind")]
+    [InlineData("weaken")]
+    [InlineData("magic_arrow")]
+    public void AHarmfulSpell_OnAnInvulnerableTarget_SpendsNothingAndChangesNothing(string key)
+    {
+        _bran.Notoriety = NotorietyType.Invulnerable;
+
+        Cast(key);
+
+        Assert.Empty(_errors);
+        Assert.Contains(1001018, ToldTo(_aria));
+        Assert.Equal(30, _aria.Mana);
+        Assert.Equal((0, 0, 0), (_bonuses.Bonus(_bran, StatBonusType.Strength), _bonuses.Bonus(_bran, StatBonusType.Dexterity), _bonuses.Bonus(_bran, StatBonusType.Intelligence)));
+    }
+
+    [Theory]
+    [InlineData("clumsy", StatBonusType.Dexterity)]
+    [InlineData("feeblemind", StatBonusType.Intelligence)]
+    [InlineData("weaken", StatBonusType.Strength)]
+    public void ACurse_TheCombatRefusesToAggress_LowersNothing(string key, StatBonusType stat)
+    {
+        _combat.Allows = false;
+
+        Cast(key);
+
+        Assert.Empty(_errors);
+        Assert.Equal(0, _bonuses.Bonus(_bran, stat));
+        Assert.Empty(_timers.Timers.Where(timer => timer.Name == "stat_curse"));
+    }
+
     [Fact]
     public void Weaken_LowersTheMaximumHits_AndTakesWhatIsAboveIt()
     {

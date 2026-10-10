@@ -58,7 +58,8 @@ public sealed class SpellScriptService : ISpellScriptService, IMoongateStartupSe
 
     public bool Has(SpellDefinition spell)
     {
-        return _running && _keys.Contains(spell.Key);
+        // The file is there and it loaded: its table holds the cast function, which is all a spell must have.
+        return _running && _keys.Contains(spell.Key) && _engine.HasMember(spell.Key, CastFunction);
     }
 
     public ScriptResult Check(SpellDefinition spell, MobileEntity caster, SpellTargetInfo target, bool fromScroll)
