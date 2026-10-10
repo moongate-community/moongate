@@ -112,6 +112,26 @@ public sealed class EffectModule
     }
 
     /// <summary>
+    ///     Plays an animation flying from a mobile or a ground item to a place of its map;
+    ///     <c>effect.moving_to(thrower, x, y, z, 0x0F0D)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Plays an effect graphic flying from a mobile or a ground item to x, y, z on its own map, as a thrown potion; false when it is not in the world or a value is out of range."
+    )]
+    public bool MovingTo(long from, int x, int y, int z, int graphic, LuaTable? options = null)
+    {
+        if (!TryLocate(from, out var source, out var map, out var start) || !TryReadOptions(graphic, options, out var effect))
+        {
+            return false;
+        }
+
+        _effects.PlayMoving(map, source, start, Serial.Zero, new Point3D(x, y, z), effect);
+
+        return true;
+    }
+
+    /// <summary>
     ///     Strikes a mobile or a ground item with a lightning bolt; <c>effect.lightning(who)</c>.
     /// </summary>
     [ScriptFunction(
