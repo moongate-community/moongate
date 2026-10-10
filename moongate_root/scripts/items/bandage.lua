@@ -222,6 +222,9 @@ end
 -- The owner of a bonded pet may be this far from its corpse when it is raised, in tiles.
 local OWNER_RANGE = 3
 
+-- The corpses being bandaged now, so that two healers do not raise the same one.
+local being_raised = {}
+
 -- Whether the owner of the pet is the healer, or near the corpse.
 local function owner_near(healer, corpse, owner)
     return healer == owner or item.in_range(corpse, owner, OWNER_RANGE)
@@ -237,7 +240,14 @@ local function finish_corpse(healer, corpse)
 
     local info = pet.corpse(corpse)
 
-    if info == nil or not item.in_range(corpse, healer, RANGE) then
+    -- The corpse is gone, decayed or raised by someone else, meanwhile.
+    if info == nil then
+        mobile.message_cliloc(healer, PET_NOT_RAISED)
+
+        return
+    end
+
+    if not item.in_range(corpse, healer, RANGE) then
         mobile.message_cliloc(healer, NOT_ENOUGH_CLOSE)
 
         return
@@ -261,6 +271,7 @@ local function finish_corpse(healer, corpse)
     end
 
     mobile.message_cliloc(healer, RAISED)
+    mobile.play_sound(healer, RAISE_SOUND)
     try_for_rise(healer, "veterinary", "animal_lore")
 end
 
@@ -287,12 +298,19 @@ local function begin_corpse(serial, healer, corpse, info)
         return
     end
 
+    if being_raised[corpse] then
+        mobile.message_cliloc(healer, CANNOT)
+
+        return
+    end
+
     if not item.consume(serial) then
         return
     end
 
     local token = {}
     applying[healer] = token
+    being_raised[corpse] = token
 
     mobile.message_cliloc(healer, BEGIN)
 
@@ -300,6 +318,11 @@ local function begin_corpse(serial, healer, corpse, info)
     local wait = (dex >= 100 and 3 or dex >= 40 and 4 or 5) + RAISE_WAIT
 
     timer.after(wait, function()
+        if being_raised[corpse] == token then
+            being_raised[corpse] = nil
+        end
+
+        -- A new bandage of the same healer replaced this one.
         if applying[healer] ~= token then
             return
         end

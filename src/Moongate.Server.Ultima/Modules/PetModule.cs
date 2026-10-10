@@ -133,7 +133,11 @@ public sealed class PetModule
         if (_items is null ||
             corpse is <= 0 or > uint.MaxValue ||
             !_items.TryGet(new Serial((uint)corpse), out var item) ||
-            item.GetProp(CorpseProps.PetOwner, 0L) is not (> 0 and <= uint.MaxValue and var owner))
+            item.ItemId != CorpseProps.Graphic ||
+            item.GroundLocation is null ||
+            // Read as it is: a script may have put anything in the props.
+            item.Props?.GetValueOrDefault(CorpseProps.PetOwner) is not (long or int) ||
+            Convert.ToInt64(item.Props[CorpseProps.PetOwner]) is not (> 0 and <= uint.MaxValue and var owner))
         {
             return null;
         }
@@ -296,12 +300,25 @@ public sealed class PetModule
         }
 
         var before = _pets.Loyalty(pet);
+        var wasBonded = pet.GetProp(MountProps.PetBonded, false);
+        var begin = pet.GetProp(MountProps.PetBondBegin, 0L);
         var result = _pets.Feed(owner, pet, food.TemplateId, food.Amount);
 
         if (result is PetFeedResultType.Fed or PetFeedResultType.AlreadyHappy or PetFeedResultType.Bonded && !_handling.Delete(food))
         {
             // The food could not be taken: the pet does not eat twice, so the loyalty it gained goes back.
             _pets.AdjustLoyalty(pet, before - _pets.Loyalty(pet));
+
+            // Nor did the food count for the bond.
+            if (!wasBonded)
+            {
+                pet.RemoveProp(MountProps.PetBonded);
+            }
+
+            if (begin == 0)
+            {
+                pet.RemoveProp(MountProps.PetBondBegin);
+            }
 
             return PetFeedResultType.WrongFood;
         }

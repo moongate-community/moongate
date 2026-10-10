@@ -240,6 +240,42 @@ public sealed class PetModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Feed_WhenTheFoodCannotBeTaken_TheBondItStartedGoesBackToo()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        items.Add([new ItemEntity { Id = new Serial(0x40000700), TemplateId = "apple", Amount = 1 }]);
+        var handling = new Moongate.Tests.TestSupport.Ultima.Items.StubItemHandlingService { DeleteFails = true };
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items, handling);
+        _pets.OnFeed = () =>
+        {
+            _horse.SetProp(MountProps.PetBonded, true);
+            _horse.SetProp(MountProps.PetBondBegin, 99L);
+        };
+
+        Run("return pet.feed(2, 0x100, 0x40000700)");
+
+        Assert.False(_horse.TryGetProp<bool>(MountProps.PetBonded, out _));
+        Assert.False(_horse.TryGetProp<long>(MountProps.PetBondBegin, out _));
+    }
+
+    [Fact]
+    public void Corpse_OfAnItemThatIsNoCorpseOrHoldsASpoiledOwner_IsNil()
+    {
+        var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
+        var sword = new ItemEntity { Id = new Serial(0x40000810), TemplateId = "sword", ItemId = 0x0F5E };
+        sword.SetProp("corpse.pet_owner", 2L);
+        var spoiled = new ItemEntity { Id = new Serial(0x40000811), TemplateId = "corpse", ItemId = 0x2006 };
+        spoiled.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        spoiled.SetProp("corpse.pet_owner", "two");
+        items.Add([sword, spoiled]);
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items);
+
+        var result = Run("return pet.corpse(0x40000810), pet.corpse(0x40000811)");
+
+        Assert.All(result, value => Assert.Equal(LuaValue.Nil, value));
+    }
+
+    [Fact]
     public void Feed_FoodInSomeoneElsesPack_IsNotTheirsToGive()
     {
         var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
@@ -331,9 +367,12 @@ public sealed class PetModuleTests : IAsyncLifetime
     {
         var items = Moongate.Tests.TestSupport.Ultima.Items.TestItems.Create();
         var corpse = new ItemEntity { Id = new Serial(0x40000800), TemplateId = "corpse", ItemId = 0x2006 };
+        corpse.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
         corpse.SetProp("corpse.pet_owner", 2L);
         corpse.SetProp("corpse.template", "horse");
-        items.Add([corpse, new ItemEntity { Id = new Serial(0x40000801), TemplateId = "corpse", ItemId = 0x2006 }]);
+        var plain = new ItemEntity { Id = new Serial(0x40000801), TemplateId = "corpse", ItemId = 0x2006 };
+        plain.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        items.Add([corpse, plain]);
         _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, items);
         _pets.FollowerCount = 3;
 

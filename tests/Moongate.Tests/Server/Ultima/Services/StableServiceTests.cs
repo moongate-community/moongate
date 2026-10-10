@@ -277,6 +277,19 @@ public sealed class StableServiceTests
     }
 
     [Fact]
+    public async Task AnOddStoredLoyalty_IsBroughtBackWithinItsLimits()
+    {
+        _player.SetProp(MountProps.Stabled, "horse");
+        _player.SetProp(MountProps.StabledLoyalty, "500");
+
+        _service.TryClaim(_player, 0, "horse");
+        await _npcs.FirstSpawn.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Equal(100, _npcs.Spawned.GetProp<int>(MountProps.PetLoyalty));
+        Assert.False(_npcs.Spawned.TryGetProp<bool>(MountProps.PetBonded, out _));
+    }
+
+    [Fact]
     public async Task APetThatIsNotBonded_ComesBackNotBonded()
     {
         _service.TryStable(_player, _horse);

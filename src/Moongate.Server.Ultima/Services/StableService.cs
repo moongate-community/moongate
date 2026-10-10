@@ -202,7 +202,7 @@ public sealed class StableService : IStableService
     {
         var kept = player.GetProp(MountProps.StabledLoyalty, "")
             .Split(Separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(text => int.TryParse(text, out var value) ? Math.Clamp(value, 0, BondedMark + PetService.MaxLoyalty) : PetService.MaxLoyalty)
+            .Select(text => int.TryParse(text, out var value) ? Normal(value) : PetService.MaxLoyalty)
             .Take(count)
             .ToList();
 
@@ -212,6 +212,14 @@ public sealed class StableService : IStableService
         }
 
         return kept;
+    }
+
+    // A stored number with its two parts kept inside their limits: the loyalty 0 to 100, plus the mark when bonded.
+    private static int Normal(int value)
+    {
+        return value >= BondedMark
+                   ? BondedMark + Math.Clamp(value - BondedMark, 0, PetService.MaxLoyalty)
+                   : Math.Clamp(value, 0, PetService.MaxLoyalty);
     }
 
     private static void Keep(MobileEntity player, List<string> stabled, List<int> loyalties)

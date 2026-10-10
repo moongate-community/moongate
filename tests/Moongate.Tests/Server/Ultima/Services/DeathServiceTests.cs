@@ -559,6 +559,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.Equal(40, born.GetProp<int>("pet.loyalty"));
         Assert.True(born.GetProp<bool>("pet.bonded"));
         Assert.Equal(10, born.Hits);
+        // Its owner is shown the follower it has again.
+        Assert.Contains(_aria.Id, _pets.ChangedFor);
     }
 
     [Fact]

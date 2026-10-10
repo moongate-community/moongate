@@ -102,11 +102,12 @@ and ignores the limit.
 A pet bonds with its owner through food. The first food the owner gives it that it eats starts the count; the next one
 after a week (`[ultima.pets] bonding_days`, 7) bonds it: "Your pet has bonded with you!". The owner needs the Animal Taming
 the creature asks, unless it asks 29.1 or less. Releasing the pet, or taming it again, breaks the bond. A bonded pet stays
-bonded through the stable and under a rider; the count of a bond that is not finished starts again after them.
+bonded through the stable and under a rider; the count of a bond that is not finished starts again after them. The game
+master's `tame` gives a pet to its new owner without the bond.
 [Animal Lore](#animal-lore) shows *(bonded)* or *(tame)* by its name.
 
 A bonded pet that dies leaves a corpse that remembers its owner, its loyalty and its bond; a pet that was not bonded dies for
-good. Use a clean bandage on the corpse: the healer needs 80 points of Veterinary and of Animal Lore, and succeeds with a
+good (the staff can still raise its corpse with `resurrect`, which brings back a wild creature). Use a clean bandage on the corpse: the healer needs 80 points of Veterinary and of Animal Lore, and succeeds with a
 chance of (Veterinary - 68) / 50; the owner is the healer or stands within 3 tiles of the corpse ("The pet's owner must be
 nearby"). The wait is the one of a ghost. The pet is born again where the corpse lies with 10 hit points, its owner, its
 loyalty and its bond, as a new creature; if its slots no longer fit the owner's followers it cannot be raised.

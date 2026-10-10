@@ -65,6 +65,7 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
     private const int TooFar = 500295;
     private const int Finished = 500969;
     private const int NotClose = 500963;
+    private const int CannotUse = 500970;
     private const int Raised = 500965;
     private const int Attempting = 1008078;
     private const int CannotSee = 500237;
@@ -523,6 +524,34 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
         Use();
         _pets.FollowerCount = 5;
 
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Equal(503256, Told(_aria)[^1]);
+        Assert.Empty(_death.Raised);
+    }
+
+    [Fact]
+    public void Bandage_OnAPetCorpseAnotherHealerIsAlreadyRaising_CannotBeUsed()
+    {
+        _targets.Result = TargetResult.ForObject(PetCorpse(Aria).Id);
+        Use();
+        Assert.Single(_timers.Timers);
+        _bandage.Amount = 4;
+
+        Use();
+
+        Assert.Equal(CannotUse, Told(_aria)[^1]);
+        Assert.Equal(4, _bandage.Amount);
+    }
+
+    [Fact]
+    public void Bandage_OnAPetCorpseThatIsGoneWhenTheWaitIsOver_FailsToResurrect()
+    {
+        var corpse = PetCorpse(Aria);
+        _targets.Result = TargetResult.ForObject(corpse.Id);
+        Use();
+
+        _items.Absorb(corpse);
         _timers.Fire(Assert.Single(_timers.Timers).Id);
 
         Assert.Equal(503256, Told(_aria)[^1]);

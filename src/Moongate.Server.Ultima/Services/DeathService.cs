@@ -395,10 +395,11 @@ public sealed class DeathService : IDeathService
         {
             var owner = Convert.ToInt64(props[CorpseProps.PetOwner]);
 
+            // The count of the followers is made afresh: a pet raised a moment ago may not be in it yet.
             if (owner is <= 0 or > uint.MaxValue ||
                 !_mobiles.TryGet(new Serial((uint)owner), out var master) ||
                 _pets is null ||
-                _pets.Value.Followers(master) + _pets.Value.SlotsOf(template) > _pets.Value.MaxFollowers)
+                !FitsAfresh(_pets.Value, master, template))
             {
                 _raising.Remove(serial);
 
@@ -430,6 +431,13 @@ public sealed class DeathService : IDeathService
         return ResurrectResultType.Raised;
     }
 
+    private static bool FitsAfresh(IPetService pets, MobileEntity master, string template)
+    {
+        pets.Changed(master.Id);
+
+        return pets.Followers(master) + pets.SlotsOf(template) <= pets.MaxFollowers;
+    }
+
     // On the game loop: who was born takes the name and the facing of who died, rises, and the corpse is gone. False
     // when who was born is gone already, removed or killed in the turn between its birth and this: nothing is shown
     // and the corpse stays.
@@ -452,10 +460,15 @@ public sealed class DeathService : IDeathService
             npc.Direction = (DirectionType)(direction & DirectionMask);
         }
 
-        // A pet comes back weak, as a player does.
+        // A pet comes back weak, as a player does, and is one follower more for its owner.
         if (raising.Props?.ContainsKey(MountProps.Owner) == true)
         {
             _state?.SetStats(npc, new MobileStatsChange { Hits = Math.Min(ResurrectedHits, npc.HitsMax), Mana = 0 });
+
+            if (npc.GetProp(MountProps.Owner, 0L) is > 0 and var master && master <= uint.MaxValue)
+            {
+                _pets?.Value.Changed(new Serial((uint)master));
+            }
         }
 
         // Shown again as who it was: it was born with a name and a facing of its template.
