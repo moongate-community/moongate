@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Server.Ultima.Data.Taming;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Death;
@@ -82,6 +83,7 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
     private readonly StubTargetService _targets = new();
     private readonly ScriptedRandom _random = new();
     private readonly StubDeathService _death = new();
+    private readonly Moongate.Tests.TestSupport.Ultima.Pets.StubPetService _pets = new();
     private readonly StubLineOfSightService _sight = new();
     private readonly RecordingEffectService _effects = new();
     private readonly ItemService _items;
@@ -146,7 +148,9 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
         };
         var data = new StubDataLoaderService().With(
             new SkillContent { Id = SkillType.Healing, GainFactor = 1.0, Delay = 1 },
-            new SkillContent { Id = SkillType.Anatomy, GainFactor = 1.0, Delay = 1 }
+            new SkillContent { Id = SkillType.Anatomy, GainFactor = 1.0, Delay = 1 },
+            new SkillContent { Id = SkillType.Veterinary, GainFactor = 1.0, Delay = 1 },
+            new SkillContent { Id = SkillType.AnimalLore, GainFactor = 1.0, Delay = 1 }
         );
 
         GumpScriptService? gumpScripts = null;
@@ -190,6 +194,9 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IRegionService>(new RegionService(new StubDataLoaderService().With<RegionContent>()));
         _container.RegisterInstance<ILineOfSightService>(_sight);
         _container.AddScriptModule<WorldModule>();
+        _container.RegisterInstance<IPetService>(_pets);
+        _container.RegisterInstance<ITamingService>(new TamingService(new StubDataLoaderService().With<TamingCreature>()));
+        _container.AddScriptModule<PetModule>();
         _container.RegisterInstance<IDeathService>(_death);
         _container.RegisterInstance<IEffectService>(_effects);
         _container.RegisterScriptEnum<EffectGraphicType>();
@@ -435,6 +442,107 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Bandage_OnTheCorpseOfABondedPet_OfTheHealer_RaisesItAfterTheWaitOfAGhost()
+    {
+        _targets.Result = TargetResult.ForObject(PetCorpse(Aria).Id);
+
+        Use();
+
+        Assert.Empty(_errors);
+        Assert.Equal([Who, Begin], Told(_aria));
+        Assert.Equal(4, _bandage.Amount);
+        // 100 dexterity: three seconds, and five more to raise.
+        var timer = Assert.Single(_timers.Timers);
+        Assert.Equal(TimeSpan.FromSeconds(8), timer.Interval);
+        _timers.Fire(timer.Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal(Raised, Told(_aria)[^1]);
+        Assert.Equal([new Serial(PetCorpseSerial)], RaisedSoon());
+    }
+
+    [Fact]
+    public void Bandage_OnTheCorpseOfAFriendsPet_WithTheFriendNear_RaisesIt()
+    {
+        _targets.Result = TargetResult.ForObject(PetCorpse(Bruno).Id);
+
+        Use();
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal(Raised, Told(_aria)[^1]);
+        Assert.Equal([new Serial(PetCorpseSerial)], RaisedSoon());
+    }
+
+    [Fact]
+    public void Bandage_OnTheCorpseOfAPetWhoseOwnerIsFarAway_AsksTheOwnerToComeNear()
+    {
+        _bruno.Location = new Point3D(_aria.Location.X + 6, _aria.Location.Y, _aria.Location.Z);
+        _targets.Result = TargetResult.ForObject(PetCorpse(Bruno).Id);
+
+        Use();
+
+        Assert.Empty(_errors);
+        Assert.Equal([Who, 1049670], Told(_aria));
+        Assert.Equal(5, _bandage.Amount);
+        Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void Bandage_OnTheCorpseOfAPetThatWasNotBonded_CannotBeUsed()
+    {
+        var corpse = PetCorpse(Aria);
+        corpse.RemoveProp("corpse.pet_owner");
+        _targets.Result = TargetResult.ForObject(corpse.Id);
+
+        Use();
+
+        Assert.Empty(_errors);
+        Assert.Equal([Who, 500970], Told(_aria));
+        Assert.Equal(5, _bandage.Amount);
+    }
+
+    [Fact]
+    public void Bandage_OnTheCorpseOfABondedPet_WithTooLittleVeterinary_FailsToResurrectIt()
+    {
+        _targets.Result = TargetResult.ForObject(PetCorpse(Aria).Id);
+        PetSkills(790, 1200);
+
+        Use();
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Empty(_errors);
+        Assert.Equal(503256, Told(_aria)[^1]);
+        Assert.Empty(_death.Raised);
+    }
+
+    [Fact]
+    public void Bandage_OnThePetCorpseWhenItNoLongerFitsTheOwner_FailsToResurrectIt()
+    {
+        _targets.Result = TargetResult.ForObject(PetCorpse(Aria).Id);
+        Use();
+        _pets.FollowerCount = 5;
+
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Equal(503256, Told(_aria)[^1]);
+        Assert.Empty(_death.Raised);
+    }
+
+    [Fact]
+    public void Bandage_OnAPetCorpse_TheHealerWalksAway_TheHealingIsLost()
+    {
+        _targets.Result = TargetResult.ForObject(PetCorpse(Aria).Id);
+        Use();
+
+        _aria.Location = new Point3D(_aria.Location.X - 5, _aria.Location.Y, _aria.Location.Z);
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+
+        Assert.Equal(NotClose, Told(_aria)[^1]);
+        Assert.Empty(_death.Raised);
+    }
+
+    [Fact]
     public void Bandage_WhenTheCursorIsPutAway_DoesNothingMore()
     {
         _targets.Result = TargetResult.Canceled(TargetCancelType.Canceled);
@@ -452,6 +560,39 @@ public sealed class BandageScriptIntegrationTests : IAsyncLifetime
         _engine.Dispose();
         await _fixture.DisposeAsync();
         _scripts.Dispose();
+    }
+
+    private const uint PetCorpseSerial = 0x40000900;
+
+    // mobile.resurrect hands a corpse to a task off the game loop: the serial is recorded a moment after the script ends.
+    private List<Serial> RaisedSoon()
+    {
+        SpinWait.SpinUntil(() => _death.Raised.Count > 0, TimeSpan.FromSeconds(5));
+
+        lock (_death.Raised)
+        {
+            return [.. _death.Raised];
+        }
+    }
+
+    // The corpse of a bonded pet that belonged to the owner, lying beside the healer.
+    private ItemEntity PetCorpse(long owner)
+    {
+        var corpse = new ItemEntity { Id = new Serial(PetCorpseSerial), TemplateId = "corpse", ItemId = 0x2006, Amount = 1 };
+        corpse.PlaceOnGround(_aria.Map, new Point3D(_aria.Location.X + 1, _aria.Location.Y, _aria.Location.Z));
+        corpse.SetProp("corpse.pet_owner", owner);
+        corpse.SetProp("corpse.template", "horse");
+        _items.Add([corpse]);
+        PetSkills(1200, 1200);
+
+        return corpse;
+    }
+
+    private void PetSkills(int veterinary, int lore)
+    {
+        _state.Skills.RemoveAll(skill => skill.Skill is SkillType.Veterinary or SkillType.AnimalLore);
+        _state.Skills.Add(new MobileSkill { Skill = SkillType.Veterinary, Base = veterinary });
+        _state.Skills.Add(new MobileSkill { Skill = SkillType.AnimalLore, Base = lore });
     }
 
     private void Skills(int healing, int anatomy)

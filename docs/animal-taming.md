@@ -97,6 +97,21 @@ The creatures of [`data/taming.toml`](data-files/taming.md): about 75, with the 
 for. A game master can still give any creature that can be ridden with [`tame`](commands/tame.md),
 and ignores the limit.
 
+## Bonding and raising a pet
+
+A pet bonds with its owner through food. The first food the owner gives it that it eats starts the count; the next one
+after a week (`[ultima.pets] bonding_days`, 7) bonds it: "Your pet has bonded with you!". The owner needs the Animal Taming
+the creature asks, unless it asks 29.1 or less. Releasing the pet, or taming it again, breaks the bond. A bonded pet stays
+bonded through the stable and under a rider; the count of a bond that is not finished starts again after them.
+[Animal Lore](#animal-lore) shows *(bonded)* or *(tame)* by its name.
+
+A bonded pet that dies leaves a corpse that remembers its owner, its loyalty and its bond; a pet that was not bonded dies for
+good. Use a clean bandage on the corpse: the healer needs 80 points of Veterinary and of Animal Lore, and succeeds with a
+chance of (Veterinary - 68) / 50; the owner is the healer or stands within 3 tiles of the corpse ("The pet's owner must be
+nearby"). The wait is the one of a ghost. The pet is born again where the corpse lies with 10 hit points, its owner, its
+loyalty and its bond, as a new creature; if its slots no longer fit the owner's followers it cannot be raised.
+The other ways to raise a pet (a spell, an ankh, the healers) are not built.
+
 ## Animal Lore
 
 Use the Animal Lore skill, pick a creature within 8 tiles and, if the skill check (from 0 to 120) passes, a gump of two
@@ -117,11 +132,12 @@ you tame. `pet.lore` also gives the slots of the creature, which the gump does n
 
 The Lua module `pet`: `pet.info(creature)`, `pet.followers(player)`, `pet.max_followers()`, `pet.tame(player,
 creature)`, `pet.loyalty(creature)`, `pet.control_chance(player, creature)`, `pet.obey(player, creature)` and `pet.feed(player, creature,
-item)` and `pet.lore(creature)` (armor, damage, foods, loyalty and the taming data in one table); the skill scripts are
+item)` and `pet.lore(creature)` (armor, damage, foods, loyalty, bond and the taming data in one table) and `pet.corpse(corpse)` (the owner a
+bonded pet's corpse remembers, and whether it fits their followers); the skill scripts are
 `scripts/skills/animal_taming.lua` and `scripts/skills/animal_lore.lua`.
 
 ## Not built yet
 
-Bonding; gold, metal and
+Raising a pet with a spell or an ankh; the friends of a pet; the bond count kept through the stable; gold, metal and
 leather as food; friend, transfer, drop and patrol; bringing the pets along when the owner
 travels by gate or spell; and the pets of a player who is offline stay where they were.

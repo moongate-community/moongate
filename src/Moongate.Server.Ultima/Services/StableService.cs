@@ -21,6 +21,7 @@ public sealed class StableService : IStableService
 {
     private const char Separator = ';';
     private const int SpawnAttempts = 3;
+    private const int BondedMark = 1000;
 
     private readonly IMobileService _mobiles;
     private readonly INpcService _npcs;
@@ -131,7 +132,9 @@ public sealed class StableService : IStableService
 
         var loyalties = Loyalties(player, stabled.Count);
         stabled.Add(templateId);
-        loyalties.Add(pet.GetProp(MountProps.PetLoyalty, PetService.MaxLoyalty));
+        loyalties.Add(
+            pet.GetProp(MountProps.PetLoyalty, PetService.MaxLoyalty) + (pet.GetProp(MountProps.PetBonded, false) ? BondedMark : 0)
+        );
         Keep(player, stabled, loyalties);
         _pets?.Value.Changed(player.Id);
 
@@ -172,8 +175,13 @@ public sealed class StableService : IStableService
         var location = player.Location;
         var props = new Dictionary<string, object?>
         {
-            [MountProps.Owner] = (long)player.Id.Value, [MountProps.PetLoyalty] = loyalty
+            [MountProps.Owner] = (long)player.Id.Value, [MountProps.PetLoyalty] = loyalty % BondedMark
         };
+
+        if (loyalty >= BondedMark)
+        {
+            props[MountProps.PetBonded] = true;
+        }
 
         // Off the loop: a new creature is saved first, to get its serial.
         _ = Task.Run(() => SpawnAsync(player.Id, template, map, location, props, loyalty));
@@ -188,12 +196,13 @@ public sealed class StableService : IStableService
                _bank.Pay(player, _config.Fee, true, out _) == BankResultType.Ok;
     }
 
-    // The loyalty of each stabled pet, one for each of the count, 100 where none is kept.
+    // The loyalty of each stabled pet, one for each of the count, 100 where none is kept; a bonded pet's has
+    // BondedMark added, so a number carries both.
     private static List<int> Loyalties(MobileEntity player, int count)
     {
         var kept = player.GetProp(MountProps.StabledLoyalty, "")
             .Split(Separator, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            .Select(text => int.TryParse(text, out var value) ? Math.Clamp(value, 0, PetService.MaxLoyalty) : PetService.MaxLoyalty)
+            .Select(text => int.TryParse(text, out var value) ? Math.Clamp(value, 0, BondedMark + PetService.MaxLoyalty) : PetService.MaxLoyalty)
             .Take(count)
             .ToList();
 

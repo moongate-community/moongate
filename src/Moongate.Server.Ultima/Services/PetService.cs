@@ -18,6 +18,7 @@ public sealed class PetService : IPetService
     public const int MaxLoyalty = 100;
 
     private const int MemoryLimit = 256;
+    private const int SecondsPerDay = 86400;
 
     // The creatures that ask this much Animal Taming or less always obey.
     private const double EasiestSkill = 29.1;
@@ -128,6 +129,8 @@ public sealed class PetService : IPetService
         creature.RemoveProp(MountProps.Owner);
         creature.RemoveProp(MountProps.PetOrder);
         creature.RemoveProp(MountProps.PetLoyalty);
+        creature.RemoveProp(MountProps.PetBonded);
+        creature.RemoveProp(MountProps.PetBondBegin);
 
         // Wild again, it belongs to the region it came from, which counts it once more.
         if (creature.TryGetProp<string>(MountProps.PetRegion, out var region))
@@ -227,14 +230,26 @@ public sealed class PetService : IPetService
             return PetFeedResultType.WrongFood;
         }
 
-        if (Loyalty(creature) >= MaxLoyalty)
+        var full = Loyalty(creature) >= MaxLoyalty;
+
+        if (!full)
         {
-            return PetFeedResultType.AlreadyHappy;
+            AdjustLoyalty(creature, (int)Math.Min((long)amount * _config.FoodGain, MaxLoyalty));
         }
 
-        AdjustLoyalty(creature, (int)Math.Min((long)amount * _config.FoodGain, MaxLoyalty));
+        if (Bond(player, creature))
+        {
+            return PetFeedResultType.Bonded;
+        }
 
-        return PetFeedResultType.Fed;
+        return full ? PetFeedResultType.AlreadyHappy : PetFeedResultType.Fed;
+    }
+
+    public bool IsBonded(MobileEntity creature)
+    {
+        ArgumentNullException.ThrowIfNull(creature);
+
+        return creature.GetProp(MountProps.PetBonded, false);
     }
 
     public int SlotsOf(string? templateId)
@@ -286,6 +301,38 @@ public sealed class PetService : IPetService
         _counted.Remove(player.Id);
 
         return PetResultType.Ok;
+    }
+
+    // Food from the owner bonds the pet: the first sets the time, the one that comes bonding_days later bonds it, as
+    // ModernUO's. The owner needs the Animal Taming the creature asks, unless it asks 29.1 or less. True when it bonded now.
+    private bool Bond(MobileEntity player, MobileEntity creature)
+    {
+        if (IsBonded(creature) ||
+            creature.TemplateId is not { } template ||
+            !_taming.TryGet(template, out var entry) ||
+            (entry.MinSkill > EasiestSkill && Skill(player, SkillType.AnimalTaming) < (int)Math.Round(entry.MinSkill * 10)))
+        {
+            return false;
+        }
+
+        var now = _time.GetUtcNow().ToUnixTimeSeconds();
+        var begin = creature.GetProp(MountProps.PetBondBegin, 0L);
+
+        if (begin == 0)
+        {
+            creature.SetProp(MountProps.PetBondBegin, now);
+
+            return false;
+        }
+
+        if (now < begin + (long)_config.BondingDays * SecondsPerDay)
+        {
+            return false;
+        }
+
+        creature.SetProp(MountProps.PetBonded, true);
+
+        return true;
     }
 
     // The skill of a player in tenths of a point, 0 for one it has not.

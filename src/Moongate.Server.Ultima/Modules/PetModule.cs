@@ -2,6 +2,7 @@ using Lua;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -81,7 +82,7 @@ public sealed class PetModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "What Animal Lore reads of a creature, as { armor, damage_min, damage_max, foods, loyalty, min_skill, slots, owner }: its armor rating, the least and most damage of its template (0 when it has none), the kinds of food it eats (meat, fruit, grain, fish, eggs) as a list, its loyalty 0 to 100 (nil when it has no owner), the Animal Taming it asks and its slots (nil when it cannot be tamed) and the serial of its owner, 0 when it has none. nil for a player or a serial that is not a mobile in the world."
+        "What Animal Lore reads of a creature, as { armor, damage_min, damage_max, foods, loyalty, bonded, min_skill, slots, owner }: its armor rating, the least and most damage of its template (0 when it has none), the kinds of food it eats (meat, fruit, grain, fish, eggs) as a list, its loyalty 0 to 100 (nil when it has no owner), whether it is bonded with its owner, the Animal Taming it asks and its slots (nil when it cannot be tamed) and the serial of its owner, 0 when it has none. nil for a player or a serial that is not a mobile in the world."
     )]
     public LuaTable? Lore(long creature)
     {
@@ -98,6 +99,7 @@ public sealed class PetModule
         table["damage_min"] = damage?.Min ?? 0;
         table["damage_max"] = damage?.Max ?? 0;
         table["owner"] = owner;
+        table["bonded"] = owner != 0 && _pets.IsBonded(mobile);
         table["foods"] = foods;
 
         if (owner != 0)
@@ -115,6 +117,33 @@ public sealed class PetModule
                 foods[index + 1] = entry.Food[index];
             }
         }
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Gets what is known of the corpse of a bonded pet; <c>pet.corpse(corpse)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "What the corpse of a bonded pet says, as { owner, fits }: the serial of the owner it had, and whether the pet would fit in the followers of that owner now (it must be in the world). nil for an item that is not the corpse of a bonded pet, or a serial that is not an item."
+    )]
+    public LuaTable? Corpse(long corpse)
+    {
+        if (_items is null ||
+            corpse is <= 0 or > uint.MaxValue ||
+            !_items.TryGet(new Serial((uint)corpse), out var item) ||
+            item.GetProp(CorpseProps.PetOwner, 0L) is not (> 0 and <= uint.MaxValue and var owner))
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["owner"] = owner;
+        table["fits"] = TryGet(owner, out var master) &&
+                        !master.IsNpc &&
+                        _pets.Followers(master) + _pets.SlotsOf(item.GetProp<string?>(CorpseProps.MobileTemplate, null)) <=
+                        _pets.MaxFollowers;
 
         return table;
     }
@@ -246,7 +275,7 @@ public sealed class PetModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Gives the item, with all the units of its stack, as food to the creature of the player: when it eats that item its loyalty rises by ultima.pets.food_gain for each unit and the item is gone. Gives a PetFeedResultType: Fed, AlreadyHappy (eaten all the same), WrongFood (the item is kept) or NotYours."
+        "Gives the item, with all the units of its stack, as food to the creature of the player: when it eats that item its loyalty rises by ultima.pets.food_gain for each unit and the item is gone. Gives a PetFeedResultType: Fed, AlreadyHappy (eaten all the same), Bonded (eaten, and this food bonded the pet with its owner), WrongFood (the item is kept) or NotYours."
     )]
     public PetFeedResultType Feed(long player, long creature, long item)
     {
@@ -269,7 +298,7 @@ public sealed class PetModule
         var before = _pets.Loyalty(pet);
         var result = _pets.Feed(owner, pet, food.TemplateId, food.Amount);
 
-        if (result is PetFeedResultType.Fed or PetFeedResultType.AlreadyHappy && !_handling.Delete(food))
+        if (result is PetFeedResultType.Fed or PetFeedResultType.AlreadyHappy or PetFeedResultType.Bonded && !_handling.Delete(food))
         {
             // The food could not be taken: the pet does not eat twice, so the loyalty it gained goes back.
             _pets.AdjustLoyalty(pet, before - _pets.Loyalty(pet));

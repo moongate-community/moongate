@@ -519,6 +519,75 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void ABondedPet_LeavesACorpse_ThatKeepsItsOwnerAndItsPetProps()
+    {
+        BondedPet();
+
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.Equal((long)_aria.Id.Value, corpse.GetProp<long>("corpse.pet_owner"));
+        Assert.Equal(40, corpse.GetProp<int>("corpse.pet.loyalty"));
+        Assert.True(corpse.GetProp<bool>("corpse.pet.bonded"));
+    }
+
+    [Fact]
+    public void APetThatIsNotBonded_LeavesAnOrdinaryCorpse()
+    {
+        BondedPet();
+        _orc.RemoveProp("pet.bonded");
+
+        _death.Kill(_orc);
+
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out var corpse));
+        Assert.False(corpse.TryGetProp<long>("corpse.pet_owner", out _));
+        Assert.False(corpse.TryGetProp<int>("corpse.pet.loyalty", out _));
+    }
+
+    [Fact]
+    public async Task Resurrect_TheCorpseOfABondedPet_BringsItBackAsItsOwnersWithItsLoyalty_AndTenHits()
+    {
+        BondedPet();
+        _death.Kill(_orc);
+        var born = await BornAsync(0x0011);
+        born.HitsMax = 50;
+
+        var result = await _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        Assert.Equal(ResurrectResultType.Raised, result.Type);
+        Assert.Equal((long)_aria.Id.Value, born.GetProp<long>("owner"));
+        Assert.Equal(40, born.GetProp<int>("pet.loyalty"));
+        Assert.True(born.GetProp<bool>("pet.bonded"));
+        Assert.Equal(10, born.Hits);
+    }
+
+    [Fact]
+    public async Task Resurrect_ABondedPetThatDoesNotFitTheFollowersOfItsOwner_IsRefused_AndTheCorpseStays()
+    {
+        BondedPet();
+        _death.Kill(_orc);
+        _pets.FollowerCount = 5;
+
+        var result = await _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        Assert.Equal(ResurrectResultType.CannotBeRaised, result.Type);
+        Assert.Empty(_npcs.Spawns);
+        Assert.True(_items.TryGet(new Serial(CorpseSerial), out _));
+    }
+
+    [Fact]
+    public async Task Resurrect_ABondedPetWhoseOwnerHasLeft_IsRefused()
+    {
+        BondedPet();
+        _orc.SetProp("owner", 0x7777L);
+        _death.Kill(_orc);
+
+        var result = await _death.ResurrectAsync(new Serial(CorpseSerial));
+
+        Assert.Equal(ResurrectResultType.CannotBeRaised, result.Type);
+    }
+
+    [Fact]
     public async Task Resurrect_AHumanBody_RisesWithItsFallPlayedBackwards()
     {
         _death.Kill(_orc);
@@ -917,6 +986,13 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     // The NPC the next birth gives, in the world as a born one is.
+    private void BondedPet()
+    {
+        _orc.SetProp("owner", (long)_aria.Id.Value);
+        _orc.SetProp("pet.bonded", true);
+        _orc.SetProp("pet.loyalty", 40);
+    }
+
     private async Task<MobileEntity> BornAsync(int body)
     {
         var born = new MobileEntity { Id = new Serial(901), Name = "an ettin", TemplateId = "orc", Body = body };

@@ -28,6 +28,10 @@
 --   whether the roll worked or not, and after a raise that worked. The one who
 --   heals is revealed if hidden, and sees who it heals: a hidden one or one
 --   behind a wall is not picked.
+--   corpse  the corpse of a bonded pet (the pet module): the healer needs 80 points of Veterinary and Animal Lore and
+--           a chance of (Veterinary - 68) / 50; the owner is the healer or stands within 3 tiles of the corpse. If it
+--           works the pet is born again where the corpse lies, with its owner, its loyalty and its bond, and 10 hit
+--           points. The wait is the one of a ghost. The corpse of a pet that was not bonded cannot be bandaged.
 --   There is no poison and no bleeding in the game yet, so no cure: bandages
 --   heal, and raise.
 --
@@ -55,6 +59,8 @@ local NOT_RAISED = 500966       -- You are unable to resurrect your patient.
 local ATTEMPTING = 1008078      -- {0} : Attempting to heal you.
 
 local CANNOT_SEE = 500237       -- Target can not be seen.
+local PET_NOT_RAISED = 503256   -- You fail to resurrect the creature.
+local OWNER_MUST_BE_NEAR = 1049670 -- The pet's owner must be nearby to attempt resurrection.
 
 -- How high above its feet a mobile sees, as the combat does.
 local EYE = 14
@@ -213,6 +219,96 @@ local function finish(healer, patient)
     try_for_rise(healer, primary, secondary)
 end
 
+-- The owner of a bonded pet may be this far from its corpse when it is raised, in tiles.
+local OWNER_RANGE = 3
+
+-- Whether the owner of the pet is the healer, or near the corpse.
+local function owner_near(healer, corpse, owner)
+    return healer == owner or item.in_range(corpse, owner, OWNER_RANGE)
+end
+
+-- What happens when the bandages are done on the corpse of a bonded pet.
+local function finish_corpse(healer, corpse)
+    if mobile.is_dead(healer) then
+        mobile.message_cliloc(healer, DIED)
+
+        return
+    end
+
+    local info = pet.corpse(corpse)
+
+    if info == nil or not item.in_range(corpse, healer, RANGE) then
+        mobile.message_cliloc(healer, NOT_ENOUGH_CLOSE)
+
+        return
+    end
+
+    if not owner_near(healer, corpse, info.owner) then
+        mobile.message_cliloc(healer, OWNER_MUST_BE_NEAR)
+
+        return
+    end
+
+    local skills = mobile.skills(healer)
+    local veterinary, lore = skills.veterinary or 0, skills.animal_lore or 0
+    local chance = (veterinary - RAISE_FROM) / RAISE_SPAN
+
+    if not info.fits or veterinary < RAISE_SKILL or lore < RAISE_SKILL or chance <= math.random()
+        or not mobile.resurrect(corpse) then
+        mobile.message_cliloc(healer, PET_NOT_RAISED)
+
+        return
+    end
+
+    mobile.message_cliloc(healer, RAISED)
+    try_for_rise(healer, "veterinary", "animal_lore")
+end
+
+-- Begins raising the bonded pet a corpse is of; the corpse of anything else cannot be bandaged.
+local function begin_corpse(serial, healer, corpse, info)
+    if not item.in_range(corpse, healer, RANGE) then
+        mobile.message_cliloc(healer, TOO_FAR)
+
+        return
+    end
+
+    local here, at = mobile.location(healer), item.location(corpse)
+
+    if here == nil or at == nil
+        or not world.line_of_sight(here.map, here.x, here.y, here.z + EYE, at.x, at.y, at.z) then
+        mobile.message_cliloc(healer, CANNOT_SEE)
+
+        return
+    end
+
+    if not owner_near(healer, corpse, info.owner) then
+        mobile.message_cliloc(healer, OWNER_MUST_BE_NEAR)
+
+        return
+    end
+
+    if not item.consume(serial) then
+        return
+    end
+
+    local token = {}
+    applying[healer] = token
+
+    mobile.message_cliloc(healer, BEGIN)
+
+    local dex = mobile.stats(healer).dexterity
+    local wait = (dex >= 100 and 3 or dex >= 40 and 4 or 5) + RAISE_WAIT
+
+    timer.after(wait, function()
+        if applying[healer] ~= token then
+            return
+        end
+
+        applying[healer] = nil
+        finish_corpse(healer, corpse)
+    end)
+end
+
 -- Begins healing the patient with the bandage; false when nothing began.
 local function begin(serial, healer, patient)
     local stats = mobile.stats(patient)
@@ -283,14 +379,23 @@ function bandage.on_use(serial, user)
             return
         end
 
-        if mobile.location(picked.serial) == nil then
-            mobile.message_cliloc(user, CANNOT)
+        if not at_hand(serial, user) then
+            mobile.message_cliloc(user, TOO_FAR)
 
             return
         end
 
-        if not at_hand(serial, user) then
-            mobile.message_cliloc(user, TOO_FAR)
+        -- The corpse of a bonded pet is raised with the Veterinary.
+        local dead_pet = pet.corpse(picked.serial)
+
+        if dead_pet ~= nil then
+            begin_corpse(serial, user, picked.serial, dead_pet)
+
+            return
+        end
+
+        if mobile.location(picked.serial) == nil then
+            mobile.message_cliloc(user, CANNOT)
 
             return
         end

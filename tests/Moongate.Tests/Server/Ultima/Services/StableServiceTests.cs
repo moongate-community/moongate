@@ -263,6 +263,31 @@ public sealed class StableServiceTests
     }
 
     [Fact]
+    public async Task ABondedPet_StaysBondedThroughTheStable()
+    {
+        _horse.SetProp(MountProps.PetLoyalty, 42);
+        _horse.SetProp(MountProps.PetBonded, true);
+        _service.TryStable(_player, _horse);
+
+        _service.TryClaim(_player, 0, "horse");
+        await _npcs.FirstSpawn.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Equal(42, _npcs.Spawned.GetProp<int>(MountProps.PetLoyalty));
+        Assert.True(_npcs.Spawned.GetProp<bool>(MountProps.PetBonded));
+    }
+
+    [Fact]
+    public async Task APetThatIsNotBonded_ComesBackNotBonded()
+    {
+        _service.TryStable(_player, _horse);
+
+        _service.TryClaim(_player, 0, "horse");
+        await _npcs.FirstSpawn.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.False(_npcs.Spawned.TryGetProp<bool>(MountProps.PetBonded, out _));
+    }
+
+    [Fact]
     public void AStableWithNoLoyaltiesKept_GivesEveryPetFullLoyalty()
     {
         _player.SetProp(MountProps.Stabled, "horse;grayhorse");
