@@ -128,7 +128,8 @@ The server looks every ten seconds for the sentences that are over.
 Sentences are kept in the table `world.jail_sentences` and written by the world save, so a
 restart forgets none.
 
-A prisoner cannot use a skill: it reads "You may not use skills in jail." (the staff is never held to it). Spells and travel do not exist yet. The cells are closed
+A prisoner cannot use a skill: it reads "You may not use skills in jail." (the staff is never held to it). A prisoner cannot cast a spell either: it reads "You cannot cast spells here.", so it cannot
+Recall or Teleport out. The cells are closed
 rooms with no door, and the region is [dim](server-configuration.md).
 
 ## The release
@@ -252,7 +253,7 @@ script [`jail_sentence.lua`](scripting/shipped-scripts.md#jail_sentencelua) does
 
 ## What it does not do yet
 
-- Forbid spells or recall in jail: they do not exist yet. Skills are forbidden.
+- Forbid travel by other means than a spell: a gate or a ride is not asked about a sentence. Skills and spells are forbidden.
 - Keep a record of past sentences: the reason lives with the sentence and on its note.
 - Jail a whole account: a sentence is of one character.
 
