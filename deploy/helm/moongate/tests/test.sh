@@ -32,5 +32,26 @@ expect_contains "bundled: handoff secret" "handoff-secret:" -f ci/bundled.yaml
 expect_contains "bundled: generated secret kept on uninstall" "helm.sh/resource-policy: keep" -f ci/bundled.yaml
 expect_contains "bundled: database host" "@t-moongate-postgresql:5432/moongate_realm_1" -f ci/bundled.yaml
 
+# Task 3: login
+expect_contains "login: deployment" "name: t-moongate-login" -f ci/external.yaml
+expect_contains "login: kind Deployment" "kind: Deployment" -f ci/external.yaml
+expect_contains "login: container port" "containerPort: 2593" -f ci/external.yaml
+expect_contains "login: client files claim" "claimName: uo-files" -f ci/external.yaml
+expect_contains "login: client files read-only" "readOnly: true" -f ci/external.yaml
+expect_contains "login: mode" 'mode = "login"' -f ci/external.yaml
+expect_contains "login: no ping server" "enable_ping_server = false" -f ci/external.yaml
+expect_contains "login: non-root" "runAsNonRoot: true" -f ci/external.yaml
+expect_contains "login: config checksum" "checksum/config:" -f ci/external.yaml
+expect_contains "login: accounts env" "name: MOONGATE_ACCOUNTS_DATABASE" -f ci/external.yaml
+expect_contains "login: accounts key" "key: accounts-runtime-url" -f ci/external.yaml
+expect_contains "login: user secret name" "name: moongate-secrets" -f ci/external.yaml
+expect_contains "login: schema init" "--target auth" -f ci/external.yaml
+expect_absent "login: schema init off" "accounts-schema-url" -f ci/external.yaml --set schema.enabled=false
+expect_contains "login: encryption mode" 'mode = "Optional"' -f ci/external.yaml --set network.encryptionMode=Optional
+expect_contains "login: service" "port: 2593" -f ci/external.yaml
+expect_contains "login: load balancer" "type: LoadBalancer" -f ci/external.yaml
+expect_contains "login: extra toml" "custom = 1" -f ci/external.yaml --set-string login.extraToml="custom = 1"
+expect_contains "login: bundled secret name" "name: t-moongate$" -f ci/bundled.yaml
+
 # TASK-MARKER: assertions of the next tasks are appended above this line.
 exit $status

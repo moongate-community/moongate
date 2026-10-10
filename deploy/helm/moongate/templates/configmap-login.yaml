@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "moongate.fullname" . }}-login
+  labels:
+    {{- include "moongate.labels" . | nindent 4 }}
+data:
+  moongate.toml: |
+    mode = "login"
+
+    [shard]
+    shard_name = {{ .Values.login.shardName | quote }}
+
+    [network]
+    listen_address = "0.0.0.0"
+    login_port = 2593
+    enable_ping_server = false
+
+    [network.encryption]
+    mode = {{ .Values.network.encryptionMode | quote }}
+
+    [ultima]
+    ultima_path = "/uo"
+
+    [persistence]
+    auto_sync_schema = false
+    migrations_directory = "/app/migrations"
+
+    [persistence.accounts]
+    connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
+
+    [redis]
+    connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+    handoff_secret = "$MOONGATE_HANDOFF_SECRET"
+
+    [realm_directory]
+    lease_duration_seconds = 15
+    max_realms = 128
+
+    [admin_api]
+    enabled = false
+    {{- with .Values.login.extraToml }}
+
+    {{- . | nindent 4 }}
+    {{- end }}
+  schema.toml: |
+    mode = "login"
+
+    [persistence]
+    auto_sync_schema = false
+    migrations_directory = "/app/migrations"
+
+    [persistence.accounts]
+    connection_string = "$MOONGATE_ACCOUNTS_SCHEMA_DATABASE"
