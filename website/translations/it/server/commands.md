@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"669330ca13ece02b5ff25421845addf94c31348c36ad51a36c8d3fb4044a1312","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"9700fb760c188716a9ca3be8716f2e75ccdf7bac0ed678e31f63a4a467f4fd1c","title":"Panoramica"} -->
 
 # Comandi del server
 
@@ -56,6 +56,7 @@ ruolo è la modalità del server che registra il comando: `Login`, `Game` o entr
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Sì | GameMaster | Game |
 | [`gmtools`](commands/gmtools.md) | `gmtools` | No | Sì | GameMaster | Game |
 | [`pages`](commands/pages.md) | `pages` | No | Sì | GameMaster | Game |
+| [`lastonline`](commands/lastonline.md) | `lastonline <name>` | Sì | Sì | GameMaster | Game |
 | [`event`](commands/event.md) | `event [list\|on\|off\|auto <id>]` | Sì | Sì | Administrator | Game |
 | [`hide`](commands/hide.md) | `hide` | No | Sì | GameMaster | Game |
 | [`unhide`](commands/unhide.md) | `unhide` | No | Sì | GameMaster | Game |
@@ -100,7 +101,7 @@ commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
 ### In base a chi li usa
 
 - **Tutti:** `help`, `echo`, `time`.
-- **Game master:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `tame`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
+- **Game master:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `tame`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `lastonline`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
   `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
 - **Amministratori:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `event`, `decorate`,
   `initial_spawn`, più tutto ciò che

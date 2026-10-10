@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**271 systems:** ✅ 88 done, 🟡 62 partly done, ❌ 121 not built yet.
+**272 systems:** ✅ 89 done, 🟡 62 partly done, ❌ 121 not built yet.
 
-**Coverage: 32%** of the systems done, **44%** counting a partly done system as half.
+**Coverage: 33%** of the systems done, **44%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -280,6 +280,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | World save | ✅ | Periodic and on shutdown, with `.save` |
 | Scheduled tasks, shutdown and seasonal events | ✅ | `data/schedule.toml`: tasks by hour, day or week (shutdown with warnings, message, Lua function), events by date with a staff switch and `on_start`/`on_end` hooks, in a chosen time zone; see [Schedule](schedule.md) |
 | Holiday events | 🟡 | [Holidays](holidays.md): Halloween (October 24 to November 15), where shopkeepers answer "trick or treat" with a candy or a trick, and Christmas (December 24 to January 1), with snowballs to throw and a gift at login once a season; both decorate the main towns while they are on |
+| Last online per character | ✅ | The date a character left the world is kept; [`lastonline <name>`](commands/lastonline.md) shows it, in the world or not; no logout delay yet |
 | Database backup | ✅ | Rotating SQL exports on a schedule and with `.sql_backup`; restore with psql |
 | Console | ✅ | |
 | Server configuration | ✅ | `moongate.toml`, validated at startup |

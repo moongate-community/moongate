@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e51689ef89593d242d341bb994a2181161f822d56e6143779283c2a4be097e93","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"6e93d5c157f8eb2b07267cceb8a4b532d3a5d4e0866e3a783f4cb1e6cc849ae9","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**271 sistemi:** ✅ 88 completati, 🟡 62 parzialmente completati, ❌ 121 non ancora realizzati.
+**272 sistemi:** ✅ 89 completati, 🟡 62 parzialmente completati, ❌ 121 non ancora realizzati.
 
-**Copertura: 32%** dei sistemi completati, **44%** contando un sistema parzialmente completato come metà.
+**Copertura: 33%** dei sistemi completati, **44%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -282,6 +282,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Salvataggio del mondo | ✅ | Periodico e allo spegnimento, con `.save` |
 | Task a orario, spegnimento ed eventi stagionali | ✅ | `data/schedule.toml`: task per ora, giorno o settimana (spegnimento con avvisi, messaggio, funzione Lua), eventi per data con interruttore dello staff e hook `on_start`/`on_end`, in un fuso orario a scelta; vedi [Calendario](schedule.md) |
 | Eventi festivi | 🟡 | [Feste](holidays.md): Halloween (dal 24 ottobre al 15 novembre), dove i negozianti rispondono a "trick or treat" con una caramella o uno scherzo, e Natale (dal 24 dicembre al 1° gennaio), con palle di neve da lanciare e un regalo all'accesso una volta a stagione; entrambi decorano le città principali finché sono attivi |
+| Ultimo accesso per personaggio | ✅ | Si conserva la data in cui un personaggio è uscito dal mondo; [`lastonline <name>`](commands/lastonline.md) la mostra, nel mondo o no; ancora nessun ritardo di uscita |
 | Backup del database | ✅ | Esportazioni SQL a rotazione, pianificate e con `.sql_backup`; ripristino con psql |
 | Console | ✅ | |
 | Configurazione del server | ✅ | `moongate.toml`, validato all'avvio |

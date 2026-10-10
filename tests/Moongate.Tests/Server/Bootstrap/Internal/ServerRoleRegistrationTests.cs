@@ -207,7 +207,7 @@ public sealed class ServerRoleRegistrationTests
         var definitions = container.Resolve<CommandRegistry>()
             .Registrations.Values.Select(registration => registration.Definition)
             .Distinct();
-        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30229));
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30244));
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Standalone)]
