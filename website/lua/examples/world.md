@@ -146,3 +146,13 @@ local function near_an_anvil(user)
     return false
 end
 ```
+
+## travel_allowed
+
+Whether the regions of a place let a recall in: false when any region covering it says no:
+
+```lua
+if not world.travel_allowed(map, x, y, z, "recall_in") then
+    mobile.message_cliloc(user, 1019004) -- You are not allowed to travel there.
+end
+```

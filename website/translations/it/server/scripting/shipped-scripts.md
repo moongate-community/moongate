@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"11baafdd3c428a2f664fb21f9f6b2562757b85dcd6707f169a4df20b88d5cc61","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"6badf3b330b675e40e54ba3fff7bd5dbc0f6048776778b205a8ade3309b95b68","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -293,10 +293,10 @@ oggetto, comprese le pozioni semplici dei venditori, per `potion.lua` ed `explos
 
 `scripts/items/test_kit.lua` è lo script delle sacche di prova per lo staff (`templates/items/test_kits.toml`,
 `script_id = "test_kit"`): `.add test_kit_alchemy` dà una sacca che si riempie, la prima volta che si apre, con l'attrezzo, i
-materiali e gli oggetti per provare un mestiere, le pozioni o il primo cerchio di Magery; poi è una sacca normale. Le sacche
+materiali e gli oggetti per provare un mestiere, le pozioni o gli incantesimi di Magery; poi è una sacca normale. Le sacche
 sono `test_kit_alchemy`, `test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`,
-`test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking` e `test_kit_magery` (un libro completo, 20 di ogni reagente e
-tre pergamene per ogni incantesimo del primo cerchio); la tabella `KITS` dice cosa contiene ognuna. L'abilità si imposta a
+`test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking` e `test_kit_magery` (un libro completo, 20 di ogni reagente,
+tre pergamene per ogni incantesimo costruito dei primi quattro cerchi e due rune di richiamo); la tabella `KITS` dice cosa contiene ognuna. L'abilità si imposta a
 parte, come `.set skill alchemy 100`.
 
 ## spellbook.lua e spell_scroll.lua
@@ -313,10 +313,22 @@ zaino. Entrambi chiamano soltanto il [modulo `spell`](https://moongate.sh/lua/sp
 [`spells.toml`](../data-files/spells.md). `cast(caster, target, info)` è l'effetto, chiamato quando il lancio è riuscito;
 `check(caster, target, info)` può rifiutare prima che si spenda qualcosa restituendo un numero di cliloc o un testo. Il
 bersaglio è `{ kind = "mobile" | "item", serial }`, `{ kind = "location", map, x, y, z }` oppure `{ kind = "none" }`, e `info`
-i dati dell'incantesimo con `scroll` vero per un lancio da pergamena. I sette script del primo cerchio sono `clumsy`,
-`create_food`, `feeblemind`, `heal`, `magic_arrow`, `night_sight` e `weaken`. `scripts/common/magic.lua` è ciò che
-condividono: la probabilità che un bersaglio resista, il fattore del danno, la maledizione e la sua durata, l'effetto e il
-suono di un incantesimo.
+i dati dell'incantesimo con `scroll` vero per un lancio da pergamena. Gli script costruiti sono il primo cerchio (`clumsy`,
+`create_food`, `feeblemind`, `heal`, `magic_arrow`, `night_sight`, `weaken`), `reactive_armor`, il secondo cerchio
+(`agility`, `cunning`, `cure`, `harm`, `protection`, `strength`), il terzo (`bless`, `fireball`, `poison`, `teleport`,
+`telekinesis`, `wall_of_stone`) e il quarto (`arch_cure`, `arch_protection`, `curse`, `fire_field`, `greater_heal`,
+`lightning`, `mana_drain`, `recall`); un incantesimo senza script dice di essere disabilitato. `scripts/common/magic.lua` è
+ciò che condividono: la probabilità che un bersaglio resista, il fattore del danno, la maledizione e il potenziamento con la
+loro durata, l'armatura di Protection, il rifiuto di una cura, l'effetto e il suono di un incantesimo.
+`scripts/common/field.lua` mette a terra la fila di pezzi di un campo.
+
+## magic_field.lua
+
+`scripts/items/magic_field.lua` è lo script dei pezzi dei campi (`script_id = "magic_field"`, template in
+`templates/items/magic/fields.toml`): i timer dell'oggetto `expire` e `tick` terminano un pezzo quando `field.until` è
+raggiunto, e un pezzo con `field.damage` brucia, con `combat.harm` e il lanciatore come attaccante, chi lo calpesta
+(`on_move_over`, `on_npc_move_over`) o ci sta dentro a ogni tick, una volta al secondo. Una prova di Resisting Spells riduce
+la bruciatura a un punto; un invulnerabile o un mobile morto viene lasciato in pace. Vedi [Magery](../magery.md).
 
 ## fishing_pole.lua
 

@@ -102,3 +102,23 @@ Ends the cast with no message, such as when a player is teleported away. The sho
 ```lua
 spell.cancel(user)
 ```
+
+## can_use_from_afar
+
+Whether Telekinesis may use an item, before anything is spent:
+
+```lua
+function telekinesis.check(caster, target, info)
+    if not spell.can_use_from_afar(caster, target.serial) then
+        return 501857 -- This spell won't work on that!
+    end
+end
+```
+
+## use_from_afar
+
+Uses an item as a double click would, from any distance: its script's `on_use` runs, or a container is shown open:
+
+```lua
+spell.use_from_afar(caster, target.serial)
+```

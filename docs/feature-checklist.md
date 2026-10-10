@@ -92,8 +92,8 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Spell casting: mana, reagents, fizzle, resist | 🟡 | [Magery](magery.md): the words of power, a delay of the circle in which the caster stands still, the target cursor, reagents and mana, the Magery window of a book or a scroll, the fizzle that loses the reagents, the recovery, and damage that ruins a cast above the first circle; from the spell icon, a macro or a scroll. Resisting Spells weakens a harmful spell. No reflection, no casting NPCs, no places where magic is refused |
-| The magery spells | 🟡 | The seven spells of the first circle: Clumsy, Create Food, Feeblemind, Heal, Magic Arrow, Night Sight and Weaken, each a script in `scripts/spells`; the 64 are in [`spells.toml`](data-files/spells.md). Circles 2 to 8 and Reactive Armor are next |
+| Spell casting: mana, reagents, fizzle, resist | 🟡 | [Magery](magery.md): the words of power, a delay of the circle in which the caster stands still, the target cursor, reagents and mana, the Magery window of a book or a scroll, the fizzle that loses the reagents, the recovery, and damage that ruins a cast above the first circle; from the spell icon, a macro or a scroll. Resisting Spells weakens a harmful spell. The travel rules of the regions are read by Teleport and Recall. No reflection, no casting NPCs |
+| The magery spells | 🟡 | 28 of the 64 spells, each a script in `scripts/spells`: the first circle, Reactive Armor, and the second to the fourth but Magic Trap, Untrap, Lock and Unlock (containers have no lock or trap state yet); the 64 are in [`spells.toml`](data-files/spells.md). Fields of fire and stone, Teleport, Telekinesis and Recall with runes (`.mark_rune`) are in. Circles 5 to 8 are next |
 | Necromancy | ❌ | |
 | Spellbooks, scrolls and wands | 🟡 | A spellbook that holds up to 64 spells, opens on a double click, takes the spell of a scroll dropped on it; a scroll is cast from the backpack, with no reagents and one used up on a success. No wands, and scrolls cannot be written yet |
 | Fields and summons | ❌ | |
@@ -347,7 +347,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Buff bar | ❌ | |
 | Walk sequence and speed checks | ✅ | |
 | Weight and overloading | ✅ | What a mobile carries and may carry (40 and 3.5 a point of strength) is counted and shown; an overloaded player tires at every step |
-| Timed effects (buffs and debuffs) | 🟡 | Strength and dexterity bonuses and night sight, for a time, never saved; poison, saved; no curses or buff bar yet |
+| Timed effects (buffs and debuffs) | 🟡 | Strength, dexterity and intelligence bonuses and curses (potions and spells) and night sight, for a time, never saved; poison, saved; the armor of Protection and Reactive Armor, kept with the mobile until their time is up; no buff bar yet |
 | Text prompts and input | ✅ | The Unicode prompt (0xC2), from scripts with the `prompt` module |
 | Visual effects: moving, lightning, particles | ✅ | From scripts with the `effect` module; particles for the Enhanced Client |
 | Sounds and music | ✅ | Sounds from scripts, thunder and region music |

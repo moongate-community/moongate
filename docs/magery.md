@@ -1,8 +1,8 @@
 # Magery
 
 A mage casts the spells of Magery from a spellbook or reads them from a scroll, by the rules of the classic game: words
-of power, a delay in which the caster stands still, a target cursor, reagents, mana and a skill check. This first part
-has the spellbook, the casting engine and the seven spells of the first circle; the other circles follow.
+of power, a delay in which the caster stands still, a target cursor, reagents, mana and a skill check. It has the
+spellbook, the casting engine, the first four circles and Reactive Armor; the other circles follow.
 
 ## The spellbook
 
@@ -57,16 +57,93 @@ of the text command and the extended command 0x1C of the client).
 | Magic Arrow | sulfurous ash | After half a second, 4 to 7 fire damage, three quarters of it when resisted, scaled by Evaluating Intelligence against Resisting Spells and by Magery, doubled against a monster or an animal |
 | Night Sight | sulfurous ash, spider silk | Sees in the dark for 15 to 39 minutes, as bright as the Magery says (26 at 100) |
 | Weaken | garlic, nightshade | As Clumsy, on the strength: the maximum hits of a player fall with it |
+| Reactive Armor | garlic, spider silk, sulfurous ash | For 25 seconds and half a second a point of Magery, a share of every melee blow that lands from arm's length goes back to its attacker: 10 per cent and a quarter of a per cent a point of Magery (35 at 100) |
 
-Reactive Armor has no script yet: casting it says the spell is disabled. A harmful spell makes the
-caster the aggressor of its target: a criminal against an innocent who does not fight it, and an NPC fights back. A curse
-of a stat that is as strong or stronger stays. A harmful spell on a target that cannot be harmed, such as a vendor or a
-banker, is refused with "You cannot perform negative acts on your target." before the reagents and the mana are spent.
+A harmful spell makes the caster the aggressor of its target: a criminal against an innocent who does not fight it, and
+an NPC fights back. A curse of a stat that is as strong or stronger stays. A harmful spell on a target that cannot be
+harmed, such as a vendor or a banker, is refused with "You cannot perform negative acts on your target." before the
+reagents and the mana are spent.
+
+## The second circle
+
+| Spell | Reagents | What it does |
+| --- | --- | --- |
+| Agility | blood moss, mandrake root | Raises the dexterity by 1 and a tenth of the caster's Magery, for 1.2 seconds a point of it |
+| Cunning | mandrake root, nightshade | As Agility, on the intelligence |
+| Strength | mandrake root, nightshade | As Agility, on the strength |
+| Cure | garlic, ginseng | May end a poison: the chance is (10000 + 75 a point of Magery - 1750 for each level of the poison, the lesser being 1) / 100 per cent. A cure that works tells the target and the caster, one that fails tells the caster |
+| Harm | nightshade, spider silk | At once, 1 to 15 damage, three quarters of it when resisted, scaled as the other damage spells; half at two tiles and a quarter beyond |
+| Protection | garlic, ginseng, sulfurous ash | Adds a tenth of the caster's Magery points to the armor of the target, for 1.2 seconds a point of it |
+| Magic Trap, Magic Untrap | | Disabled, see below |
+
+A buff of a stat that is as strong or stronger than the new one stays; a weaker one is replaced. A buff and a curse of the
+same stat add up. Protection is refused, before anything is spent, for a target that has it. It adds to what absorbs a
+blow, as the armor of a piece does, and is the classic spell of the days before the defensive spells changed (it does not
+stop a cast from being disturbed).
+
+## The third circle
+
+| Spell | Reagents | What it does |
+| --- | --- | --- |
+| Bless | garlic, mandrake root | As Agility, on the strength, the dexterity and the intelligence at once |
+| Fireball | black pearl | A ball of fire flies to the target and, half a second later, does 10 to 16 damage, scaled as Magic Arrow |
+| Poison | nightshade | Poisons the target unless it resists. The level goes by Magery and Poisoning together, less 10 for each tile beyond three: over 199.8 the deadly poison one time in ten and else the greater, over 170.2 the greater, over 130.2 the regular and else the lesser |
+| Teleport | blood moss, mandrake root | The caster stands at the place picked, in sight, with a puff at both places. Refused before anything is spent when the caster is too loaded to move, nothing can stand there, or a region forbids a teleport out of its place or into the destination |
+| Telekinesis | blood moss, mandrake root | Uses an item from afar as a double click would: a container opens, a door swings. Refused for what has no use to make |
+| Wall of Stone | blood moss, garlic | Three pieces of wall across the way from the caster to the place, which block movement for ten seconds; no piece where a mobile stands |
+| Magic Lock, Unlock | | Disabled, see below |
+
+## The fourth circle
+
+| Spell | Reagents | What it does |
+| --- | --- | --- |
+| Arch Cure | garlic, ginseng, mandrake root | Cure on everyone alive within two tiles of the place picked, with a chance a little lower, one per cent less |
+| Arch Protection | garlic, ginseng, mandrake root, sulfurous ash | Protection on everyone alive within three tiles of the place picked who has none |
+| Curse | nightshade, garlic, sulfurous ash | Lowers the three stats of the target together, as Clumsy, Feeblemind and Weaken do each |
+| Fire Field | black pearl, spider silk, sulfurous ash | Five pieces of fire across the way, for 20 seconds: whoever steps onto one or stands in it burns for 2 damage once a second (1 when a try of Resisting Spells succeeds); the fire does not block |
+| Greater Heal | garlic, ginseng, mandrake root, spider silk | Four tenths of the Magery and 1 to 10 hit points, with the refusals of Heal |
+| Lightning | mandrake root, sulfurous ash | At once, a bolt for 12 to 20 damage, scaled as Fireball |
+| Mana Drain | black pearl, mandrake root, spider silk | Takes 1 to 100 mana of the target (at most what it has) unless it resists, which it does 99 times in a hundred whatever its skill |
+| Recall | black pearl, blood moss, mandrake root | The caster is carried to the place a rune is marked with, with its sound at both ends |
+
+The fields are items with a time: Wall of Stone and Fire Field leave `magic_wall_of_stone` and `magic_fire_field_*` items on
+the ground, which a script ends when the time is up (they are kept with the world and end after a restart too). The caster
+of a fire is the aggressor of whoever burns, as for a blow: an innocent that burns makes it a criminal, an NPC fights
+back, and an invulnerable or a dead one is left alone.
+
+### Recall and runes
+
+A recall rune is the item `recall_rune`; marked, it holds a place (`rune.x`, `rune.y`, `rune.z`, `rune.map`). Staff mark
+one with [`.mark_rune`](commands/mark_rune.md) at the place where they stand; the Mark spell, of the sixth circle, will do
+it for players. Recall is refused, before anything is spent, for what is not a rune, a rune not marked, a criminal, a
+caster too loaded to move, a rune of another map, a place nothing can stand on and a region that does not let a recall out
+of its place or into the destination (the `recall_out` and `recall_in` flags of the regions).
+
+### Region rules
+
+`teleport_in`, `teleport_out`, `recall_in` and `recall_out` of [the regions](data-files/regions.md) are read: a travel is
+refused when any region covering the place switches the rule off, not only the one that applies there. Scripts ask with
+`world.travel_allowed`.
+
+### Left disabled
+
+Magic Lock, Unlock, Magic Trap and Magic Untrap have no script, and casting them says the spell is disabled: the only locks
+of the game are those of doors (read by the door script, opened by keys and lockpicks), and a container has neither a lock
+nor a trap to act on. They are built with the locks and traps of containers.
+
+### Simplified
+
+- Protection and Arch Protection add armor, as the classic spell did; the later rule that the protected is not disturbed by
+  damage, and the penalty it came with, are not built.
+- Recall does not check a fight in progress, which the classic game before the AOS did not either, and a mobile's pets do not
+  follow.
+- Teleport and Recall do not refuse a place a mobile or an item fills, only one nothing can stand on.
 
 ## Try it
 
-`.add test_kit_magery` gives a bag that fills when first opened with a full spellbook, 20 of each reagent and three
-scrolls of each first circle spell. Set the skill apart with `.set skill magery 100`.
+`.add test_kit_magery` gives a bag that fills when first opened with a full spellbook, 20 of each reagent, three
+scrolls of each spell of the first four circles that is built, and two recall runes. Set the skill apart with
+`.set skill magery 100`, and mark a rune with `.mark_rune`.
 
 ## Change the rules
 
@@ -82,18 +159,21 @@ scrolls of each first circle spell. Set the skill apart with `.set skill magery 
 ## Existing roots
 
 `mgctl init` never replaces a file you may have changed. Copy from the distribution `data/spells.toml`,
-`scripts/spells/`, `scripts/common/magic.lua`, `scripts/items/spellbook.lua`, `scripts/items/spell_scroll.lua`,
-`scripts/items/test_kit.lua`, `templates/items/magic/misc_magic.toml`, `templates/items/magic/scrolls.toml` and
-`templates/items/test_kits.toml`. A book already made keeps what it holds; a new `spellbook` one is empty.
+`scripts/spells/`, `scripts/common/magic.lua`, `scripts/common/field.lua`, `scripts/items/spellbook.lua`,
+`scripts/items/spell_scroll.lua`, `scripts/items/magic_field.lua`, `scripts/items/test_kit.lua`,
+`templates/items/magic/misc_magic.toml`, `templates/items/magic/scrolls.toml`, `templates/items/magic/fields.toml` and
+`templates/items/test_kits.toml`, and the new messages of `data/messages`. A book already made keeps what it holds; a new
+`spellbook` one is empty.
 
 ## Not yet
 
-Circles 2 to 8, Reactive Armor, inscription (writing scrolls), wands, an NPC that casts, the places where magic is
-refused, clearing the hands on a cast, Magic Reflection.
+Circles 5 to 8, Magic Lock, Unlock, Magic Trap and Magic Untrap, Magic Reflection, inscription (writing scrolls), wands,
+an NPC that casts, clearing the hands on a cast.
 
 ## See also
 
 - [Combat](combat.md)
 - [Potions](potions.md)
 - [Skills](skills.md)
+- [`.mark_rune`](commands/mark_rune.md)
 - [spells.toml](data-files/spells.md)

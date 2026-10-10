@@ -72,6 +72,7 @@ role is the server mode that registers the command: `Login`, `Game`, or both in 
 | [`book`](commands/book.md) | `book <template> [name=value ...]` | No | Yes | GameMaster | Game |
 | [`create_check`](commands/create_check.md) | `create_check <1..2000000000>` | No | Yes | GameMaster | Game |
 | [`add_gold`](commands/add_gold.md) | `add_gold <1..60000>`, then target a mobile | No | Yes | GameMaster | Game |
+| [`mark_rune`](commands/mark_rune.md) | `mark_rune`, then target a recall rune | No | Yes | GameMaster | Game |
 
 ### From a script
 
@@ -99,7 +100,7 @@ commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
 
 - **Everyone:** `help`, `echo`, `time`, `version`, `uptime`.
 - **Game masters:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `tame`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `jail`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
-  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
+  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`, `mark_rune`.
 - **Administrators:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `event`, `decorate`,
   `initial_spawn`, plus everything a
   game master uses.
