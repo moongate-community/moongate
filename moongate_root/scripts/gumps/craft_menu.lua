@@ -6,8 +6,8 @@
 --   scripts/common/crafting.lua opens for a craft. On the left the groups of
 --   the craft; on the right the recipes of the group picked, ten a page, each
 --   with a button that makes it and one that shows its page (the item, what it
---   takes, the skills and the player's chance). Below, the wood picked and how
---   many boards of it the player carries, with a button to change it, a
+--   takes, the skills and the player's chance). Below, the kind of wood or metal picked and
+--   how much of it the player carries, with a button to change it, a
 --   button that makes the last recipe again, and the text of what happened
 --   last. A button of a tool that is no longer in the
 --   backpack does nothing.
@@ -58,13 +58,13 @@ local function button(g, x, y, up, down, args, action)
     end }
 end
 
-local function wood_line(g, player, args, craft)
+local function material_line(g, player, args, craft)
     button(g, 0, BOTTOM - 30, 4005, 4007, args, function(who)
         crafting.make_last(who, args.tool, args.craft)
     end)
     label(g, 35, BOTTOM - 30, 120, "Make last")
 
-    -- Only a craft that works wood shows the wood picked.
+    -- Only a craft that works wood or metal in kinds shows the kind picked.
     local material = crafting.material(craft)
 
     if material then
@@ -80,7 +80,7 @@ local function wood_line(g, player, args, craft)
 
         label(g, 0, BOTTOM, 200, crafting.material_label(material) .. ": " .. (picked and picked.name or kind) .. " (" .. count .. ")")
         button(g, 210, BOTTOM, 4005, 4007, args, function(who)
-            open(who, args, { page = "woods" })
+            open(who, args, { page = "kinds" })
         end)
         label(g, 245, BOTTOM, 80, "Change")
     end
@@ -164,7 +164,7 @@ local function info_page(g, player, args, craft, group, group_index)
     label(g, RECIPES_X + 185, y, 100, "Back")
 end
 
-local function woods_page(g, player, args, craft)
+local function kinds_page(g, player, args, craft)
     local material = crafting.material(craft)
 
     for index, kind in ipairs(crafting.kinds(craft)) do
@@ -172,8 +172,14 @@ local function woods_page(g, player, args, craft)
         local count = crafting.count(player, crafting.templates(material, kind.id))
 
         button(g, RECIPES_X, y, 4005, 4007, args, function(who)
-            crafting.set_kind(who, kind.id, args.craft)
-            open(who, args)
+            local picked, refused = crafting.set_kind(who, kind.id, args.craft)
+
+            -- A kind the player cannot work stays on this page, which says why.
+            if picked then
+                open(who, args)
+            else
+                open(who, args, { page = "kinds", notice = crafting.notice(refused) })
+            end
         end)
         label(g, RECIPES_X + 35, y, RECIPE_WIDTH, kind.name .. " (" .. count .. ")")
     end
@@ -195,12 +201,12 @@ function craft_menu.body(g, player, args)
     if group then
         if args.page == "info" then
             info_page(g, player, args, craft, group, group_index)
-        elseif args.page == "woods" and crafting.material(craft) then
-            woods_page(g, player, args, craft)
+        elseif args.page == "kinds" and crafting.material(craft) then
+            kinds_page(g, player, args, craft)
         else
             list_page(g, player, args, craft, group, group_index)
         end
     end
 
-    wood_line(g, player, args, craft)
+    material_line(g, player, args, craft)
 end

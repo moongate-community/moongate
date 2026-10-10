@@ -43,7 +43,9 @@
 -- Functions:
 --   crafting.open(user, tool, craft_id, notice)   opens the crafting gump
 --   crafting.make(user, tool, craft_id, group, recipe)   one attempt
---   crafting.kind(user, craft_id) / crafting.set_kind(user, id, craft_id)   the kind of wood or metal picked, by craft
+--   crafting.kind(user, craft_id) / crafting.set_kind(user, id, craft_id)   the kind of wood or metal picked, by craft;
+--     set_kind gives false and the client text when the player cannot work it
+--   crafting.material_label(material)   "Wood" or "Metal", as the gump shows it
 --   crafting.material(craft) / crafting.kinds(craft)   the material a craft works in kinds, and its kinds
 --   crafting.group(user, craft_id) / crafting.set_group(user, index, craft_id)   the group shown, by craft
 --   crafting.takes(recipe, material)   whether a recipe takes that material
@@ -145,7 +147,7 @@ end
 local AT_YOUR_FEET = "Your backpack is full: the item is at your feet."
 local NOT_MADE = "The item could not be made."
 
--- Who is making something, until when; the wood and the group each player picked.
+-- Who is making something, until when; the kind of wood or metal and the group each player picked, by craft.
 local busy = {}
 local kinds = {}
 local groups = {}
@@ -234,13 +236,13 @@ end
 
 -- The kind a player picked for a craft; the material's default when none was picked.
 function crafting.kind(user, craft_id)
+    local material = MATERIALS[crafting.material(craft.get(craft_id or ""))]
     local picked = (kinds[user] or {})[craft_id or ""]
 
-    if picked then
+    -- A kind the material no longer knows, after its data changed, is the default again.
+    if picked and material and material.module.by_id(picked) then
         return picked
     end
-
-    local material = MATERIALS[crafting.material(craft.get(craft_id or ""))]
 
     return material and material.default or "plain"
 end
@@ -257,7 +259,7 @@ function crafting.set_kind(user, id, craft_id)
     if points(user, data.skill) < (kind[material.skill] or 0) then
         mobile.message_cliloc(user, material.cannot)
 
-        return false
+        return false, material.cannot
     end
 
     kinds[user] = kinds[user] or {}
@@ -288,12 +290,12 @@ function crafting.takes(recipe, material)
 end
 
 function crafting.templates(resource, kind)
+    -- A kind of another material, such as the oak picked for a recipe that also takes metal, leaves this one plain.
     local material = MATERIALS[resource]
+    local picked = material and kind and kind ~= material.default and material.module.by_id(kind)
 
-    if material and kind and kind ~= material.default then
-        local picked = material.module.by_id(kind)
-
-        return picked and { picked[material.template] } or {}
+    if picked then
+        return { picked[material.template] }
     end
 
     return craft.resource(resource) or { resource }
@@ -471,7 +473,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
     for _, resource in ipairs(recipe.resources) do
         local material = MATERIALS[resource.resource]
 
-        if material and kind ~= material.default then
+        if material and kind ~= material.default and material.module.by_id(kind) then
             hue = hue_of(user, crafting.templates(resource.resource, kind))
         end
     end

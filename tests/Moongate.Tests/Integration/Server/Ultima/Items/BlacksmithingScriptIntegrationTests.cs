@@ -105,7 +105,9 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "0x0fb1_forge", ItemId = new Serial(0x0FB1) },
             new ItemTemplate { Id = "0x13eb_ringmail_gloves", ItemId = new Serial(0x13EB) },
             new ItemTemplate { Id = "ingot_copper", ItemId = new Serial(0x1BF2), Stackable = true },
-            new ItemTemplate { Id = "ingot_valorite", ItemId = new Serial(0x1BF2), Stackable = true }
+            new ItemTemplate { Id = "ingot_valorite", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "0x1bd7_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "0x1db8_keg", ItemId = new Serial(0x1DB8) }
         )
     );
 
@@ -126,13 +128,33 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
                                 {
                                     Name = "Ringmail gloves", Item = "0x13eb_ringmail_gloves", SkillMin = 12.2, SkillMax = 37.2,
                                     Resources = [new() { Resource = "metal", Amount = 10 }]
+                                },
+                                new()
+                                {
+                                    Name = "Keg", Item = "0x1db8_keg", SkillMin = 0, SkillMax = 10,
+                                    Resources = [new() { Resource = "metal", Amount = 2 }, new() { Resource = "wood", Amount = 3 }]
                                 }
                             ]
                         }
                     ]
+                },
+                new CraftDefinition
+                {
+                    Id = "carpentry", Name = "Carpentry", Skill = "carpentry", Sound = Sound,
+                    Group =
+                    [
+                        new()
+                        {
+                            Name = "Boxes",
+                            Recipe = [new() { Name = "Box", Item = "0x1db8_keg", SkillMin = 0, SkillMax = 10, Resources = [new() { Resource = "wood", Amount = 1 }] }]
+                        }
+                    ]
                 }
             )
-            .With(new CraftResourceList { Id = "metal", Templates = ["0x1bf2_iron_ingot"] })
+            .With(
+                new CraftResourceList { Id = "metal", Templates = ["0x1bf2_iron_ingot"] },
+                new CraftResourceList { Id = "wood", Templates = ["0x1bd7_board"] }
+            )
     );
 
     private readonly ItemEntity _backpack = new()
@@ -196,6 +218,10 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
 
             function smithing_tool.pick(serial, user, kind, craft_id)
                 crafting_for_tests.set_kind(user, kind, craft_id or "blacksmithing")
+            end
+
+            function smithing_tool.kind_of(serial, user, craft_id)
+                mobile.message(user, "kind " .. crafting_for_tests.kind(user, craft_id))
             end
 
             function smithing_tool.last(serial, user)
@@ -424,13 +450,53 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         AtTheForge();
         SetSkill(SkillType.Carpentry, 650);
         Call("pick", Aria, "oak", "carpentry");
+        Call("pick", Aria, "copper", "blacksmithing");
         Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+        Call("kind_of", Aria, "carpentry");
+        Call("kind_of", Aria, "blacksmithing");
+
+        // Each craft keeps its own pick: oak for carpentry; copper was refused to a smith of 37.2, iron stays.
+        Assert.Equal(["kind oak", "kind iron"], Kinds());
 
         Make();
         Fire(1.25);
 
         Assert.Empty(_errors);
+        Assert.Equal([NoIdea, Created], Told());
+    }
+
+    [Fact]
+    public void ARecipeOfMetalAndWood_TakesTheMetalPicked_AndPlainWood_AndTakesTheColourOfTheMetal()
+    {
+        AtTheForge();
+        Skill(1000);
+        var copper = Carry("ingot_copper", 0x1BF2, 2);
+        copper.Hue = new Hue(0x96D);
+        var boards = Carry("0x1bd7_board", 0x1BD7, 3);
+
+        Call("pick", Aria, "copper");
+        Call("make", Aria, 1, 2);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
         Assert.Equal([Created], Told());
+        Assert.Equal((0, 0), (Left(copper), Left(boards)));
+        Assert.Equal(new Hue(0x96D), Assert.Single(Made("0x1db8_keg")).Hue);
+    }
+
+    [Fact]
+    public void ARecipeOfMetalAndWood_WithNothingPicked_TakesIronAndPlainWood()
+    {
+        AtTheForge();
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 2);
+        Carry("0x1bd7_board", 0x1BD7, 3);
+
+        Call("make", Aria, 1, 2);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([Created], Told());
+        Assert.Single(Made("0x1db8_keg"));
     }
 
     [Fact]
@@ -621,6 +687,13 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         }
 
         return made;
+    }
+
+    private List<string> Kinds()
+    {
+        return _speech.Told.Where(told => told.Player == _aria && told.Text.StartsWith("kind", StringComparison.Ordinal))
+            .Select(told => told.Text)
+            .ToList();
     }
 
     private List<int> Told()

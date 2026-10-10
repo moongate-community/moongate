@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"59b082fd665f6640d66a3a07b57631760774d471e1f2d13b5984b671c9add1a6","title":"Fabbro"} -->
+<!-- translation: {"sourceHash":"a38c9395e2e15bf069dfd747e2c21f32b89a8c7fbc4d98f8df3d246da245a4a2","title":"Fabbro"} -->
 
 # Fabbro
 
@@ -32,7 +32,7 @@ AOS Weapons, Axes, Polearms, Bashing e SE Weapons. Alcune:
 | Longsword | da 28 a 78 | 12 metallo |
 | War hammer | da 34,2 a 84 | 16 metallo |
 
-La scheda di ogni ricetta nel gump ne mostra i numeri. Il metallo sono i lingotti di ferro; il tessen chiede anche stoffa e Tailoring.
+La scheda di ogni ricetta nel gump ne mostra i numeri. Il metallo sono i lingotti del metallo scelto (ferro se non lo scegli: vedi [Metalli](#metals)); il tessen chiede anche stoffa e Tailoring.
 
 ## Metalli
 
