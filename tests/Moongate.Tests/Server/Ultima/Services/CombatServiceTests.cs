@@ -222,6 +222,59 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Harm_TakesTheHits_ShowsTheBlow_AndTheNpcFightsBack()
+    {
+        Assert.True(_combat.Harm(_aria, _orc, 12));
+
+        Assert.Equal(18, _orc.Hits);
+        Assert.Contains($"Struck {_aria.Id.Value} {_orc.Id.Value}", _murders.Calls);
+        Assert.Equal(_aria, _combat.TargetOf(_orc));
+        // A blow from afar: no war mode, and the one who harms fights no one for it.
+        Assert.DoesNotContain("war 2 True", _state.Flags);
+        Assert.Null(_combat.TargetOf(_aria));
+    }
+
+    [Fact]
+    public void Harm_AnInnocent_IsACrime_HarmingOneself_IsNot()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+        _aria.Notoriety = NotorietyType.Innocent;
+
+        _combat.Harm(_aria, _aria, 5);
+        Assert.Empty(_crimes.Calls);
+
+        _combat.Harm(_aria, _orc, 5);
+        Assert.Equal(["criminal 2"], _crimes.Calls);
+    }
+
+    [Fact]
+    public void Harm_ThatKills_NamesTheKiller()
+    {
+        _combat.Harm(_aria, _orc, 40);
+
+        Assert.Equal((_orc, (MobileEntity?)_aria), Assert.Single(_death.Killed));
+    }
+
+    [Fact]
+    public void Harm_WithoutAnAttacker_StillHurts()
+    {
+        Assert.True(_combat.Harm(null, _orc, 10));
+
+        Assert.Equal(20, _orc.Hits);
+        Assert.Empty(_crimes.Calls);
+    }
+
+    [Fact]
+    public void Harm_AnInvulnerable_OrWithNoDamage_IsRefused()
+    {
+        Assert.False(_combat.Harm(_aria, _orc, -1));
+        _orc.Notoriety = NotorietyType.Invulnerable;
+
+        Assert.False(_combat.Harm(_aria, _orc, 10));
+        Assert.Equal(30, _orc.Hits);
+    }
+
+    [Fact]
     public void Attack_AnInnocentThatDoesNotFightBack_MakesAPlayerACriminal()
     {
         _orc.Notoriety = NotorietyType.Innocent;
