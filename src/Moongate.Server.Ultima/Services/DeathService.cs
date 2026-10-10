@@ -158,6 +158,9 @@ public sealed class DeathService : IDeathService
     {
         if (!mobile.IsNpc)
         {
+            // A disguise ends before the body is asked about: the body of an animal has no ghost to turn into.
+            _disguise?.End(mobile);
+
             return KillPlayer(mobile, killer);
         }
 

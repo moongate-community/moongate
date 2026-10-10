@@ -179,6 +179,20 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Kill_OfAPlayerPolymorphedIntoAnAnimal_GivesItsOwnBodyBackFirst_SoItDies()
+    {
+        var disguise = new DisguiseService(_state, _timers, TimeProvider.System);
+        _aria.Body = 0x0190;
+        disguise.Disguise(_aria, new Moongate.Server.Ultima.Data.Mobiles.DisguiseLooks(Body: 0x00D3), TimeSpan.FromMinutes(1));
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+
+        Assert.True(_death.Kill(_aria));
+
+        Assert.True(_aria.IsDead);
+        Assert.Equal(0x0192, _aria.Body);
+    }
+
+    [Fact]
     public void Kill_CancelsTheCastOfTheDead_OfAnNpcAndOfAPlayer()
     {
         _aria.Body = 0x0190;
