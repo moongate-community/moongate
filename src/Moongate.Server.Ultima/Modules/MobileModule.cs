@@ -57,6 +57,7 @@ public sealed class MobileModule
 
     private readonly IStatBonusService? _bonuses;
     private readonly IItemTemplateService? _templates;
+    private readonly IPoisonService? _poison;
 
     public MobileModule(
         IMobileService mobiles,
@@ -76,12 +77,14 @@ public sealed class MobileModule
         IPacketSendService? sender = null,
         IMountService? mounts = null,
         IStatBonusService? bonuses = null,
-        IItemTemplateService? templates = null
+        IItemTemplateService? templates = null,
+        IPoisonService? poison = null
     )
     {
         _mounts = mounts;
         _bonuses = bonuses;
         _templates = templates;
+        _poison = poison;
         _sessions = sessions;
         _sender = sender;
         _death = death;
@@ -1110,6 +1113,48 @@ public sealed class MobileModule
         }
 
         return one is null || two is null;
+    }
+
+    /// <summary>
+    ///     Poisons the mobile at a level; <c>mobile.poison(user, 2)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Poisons the mobile at level 0 (lesser), 1 (regular), 2 (greater), 3 (deadly) or 4 (lethal): it loses hits every few seconds until the poison wears off, is cured or kills, its health bar turns green and it gets no hits back. 'poisoned' when it is, 'higher' when a poison as strong or stronger is at work already; false for an unknown level, a dead or unknown mobile. The level is saved with the mobile."
+    )]
+    public LuaValue Poison(long serial, int level)
+    {
+        if (_poison is null || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        return _poison.Apply(mobile, level) switch
+        {
+            PoisonResultType.Poisoned => "poisoned",
+            PoisonResultType.HigherActive => "higher",
+            _ => false
+        };
+    }
+
+    /// <summary>
+    ///     Cures the mobile of its poison; <c>mobile.cure(user)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Ends the mobile's poison and its green bar; false when it was not poisoned or is unknown.")]
+    public bool Cure(long serial)
+    {
+        return _poison is not null && TryGetMobile(serial, out var mobile) && _poison.Cure(mobile);
+    }
+
+    /// <summary>
+    ///     The level of the mobile's poison; <c>mobile.poison_level(user)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The level of the mobile's poison, 0 (lesser) to 4 (lethal); nil when it is not poisoned or is unknown.")]
+    public LuaValue PoisonLevel(long serial)
+    {
+        return _poison is not null && TryGetMobile(serial, out var mobile) && _poison.LevelOf(mobile) is { } level
+            ? level
+            : LuaValue.Nil;
     }
 
     private bool TryGetMobile(long serial, [NotNullWhen(true)] out MobileEntity? mobile)

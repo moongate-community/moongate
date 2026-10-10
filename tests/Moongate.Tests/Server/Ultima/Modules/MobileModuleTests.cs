@@ -27,6 +27,7 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Server.Ultima.Types.Items;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
@@ -45,6 +46,18 @@ public sealed class MobileModuleTests
     private readonly StubMusicService _music = new();
     private readonly RecordingLightService _light = new();
     private readonly RecordingTimerService _timers = new();
+    private PoisonService? _poisonService;
+
+    private PoisonService _poison => _poisonService ??= new PoisonService(
+        _state,
+        _death,
+        _timers,
+        new SessionService(new StubGameLoop()),
+        new StubPacketSendService(),
+        TestSectors.Create(),
+        _speech,
+        new CombatConfig()
+    );
 
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With<ItemTemplate>(
@@ -212,6 +225,20 @@ public sealed class MobileModuleTests
     }
 
     private uint _nextWorn = 0x40000500;
+
+    [Fact]
+    public void Poison_PoisonsCuresAndTellsTheLevel()
+    {
+        var result = Run(
+            "return mobile.poison(256, 2), mobile.poison(256, 1), mobile.poison_level(256), mobile.cure(256), mobile.cure(256), mobile.poison_level(256), mobile.poison(256, 9), mobile.poison(999, 1)"
+        );
+
+        Assert.Equal(["poisoned", "higher"], result[..2].Select(value => value.Read<string>()));
+        Assert.Equal(2, result[2].Read<int>());
+        Assert.Equal([true, false], result[3..5].Select(value => value.Read<bool>()));
+        Assert.Equal(LuaValue.Nil, result[5]);
+        Assert.Equal([false, false], result[6..].Select(value => value.Read<bool>()));
+    }
 
     [Fact]
     public void BackpackRegionAndLight_ComeFromTheWorld()
@@ -842,7 +869,8 @@ public sealed class MobileModuleTests
                 _death,
                 mounts: _mounts,
                 bonuses: new StatBonusService(_state, new SessionService(new StubGameLoop()), new StubPacketSendService(), _timers, _mobiles),
-                templates: templates ? _templates : null
+                templates: templates ? _templates : null,
+                poison: _poison
             )
         );
 
