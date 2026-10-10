@@ -1,0 +1,168 @@
+using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Interfaces.Sessions;
+using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Types.Mobiles;
+
+namespace Moongate.Server.Ultima.Services;
+
+/// <summary>
+///     Keeps the timed stat bonuses and the night sight of mobiles in memory, each ended by its own timer or by the
+///     player leaving: nothing of them is saved, so a restart leaves none behind.
+/// </summary>
+public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
+{
+    private const string BonusTimer = "stat_bonus";
+    private const string NightSightTimer = "night_sight";
+    private const int MaxLight = 30;
+
+    private readonly IMobileStateService _state;
+    private readonly ISessionService _sessions;
+    private readonly IPacketSendService _sender;
+    private readonly ITimerService _timers;
+    private readonly IMobileService _mobiles;
+    private readonly Dictionary<(Serial Mobile, StatBonusType Stat), string> _bonuses = [];
+    private readonly Dictionary<Serial, string> _nightSight = [];
+
+    public StatBonusService(
+        IMobileStateService state,
+        ISessionService sessions,
+        IPacketSendService sender,
+        ITimerService timers,
+        IMobileService mobiles
+    )
+    {
+        _state = state;
+        _sessions = sessions;
+        _sender = sender;
+        _timers = timers;
+        _mobiles = mobiles;
+    }
+
+    public bool TryAddBonus(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration)
+    {
+        if (amount <= 0 || duration <= TimeSpan.Zero || _bonuses.ContainsKey((mobile.Id, stat)))
+        {
+            return false;
+        }
+
+        SetBonus(mobile, stat, amount);
+        _bonuses[(mobile.Id, stat)] = _timers.RegisterTimer(BonusTimer, duration, () => EndBonus(mobile, stat));
+        ShowStatus(mobile);
+
+        return true;
+    }
+
+    public int Bonus(MobileEntity mobile, StatBonusType stat)
+    {
+        return stat == StatBonusType.Strength ? mobile.StrengthBonus : mobile.DexterityBonus;
+    }
+
+    public bool TrySetNightSight(MobileEntity mobile, int level, TimeSpan duration)
+    {
+        if (level is < 0 or > MaxLight || duration <= TimeSpan.Zero || _nightSight.ContainsKey(mobile.Id))
+        {
+            return false;
+        }
+
+        _nightSight[mobile.Id] = _timers.RegisterTimer(NightSightTimer, duration, () => EndNightSight(mobile));
+        SendLight(mobile, level);
+
+        return true;
+    }
+
+    public bool HasNightSight(MobileEntity mobile)
+    {
+        return _nightSight.ContainsKey(mobile.Id);
+    }
+
+    public void OnSessionClosed(GameSession session)
+    {
+        if (!session.CharacterId.IsValid || !_mobiles.TryGet(session.CharacterId, out var mobile))
+        {
+            return;
+        }
+
+        foreach (var stat in Enum.GetValues<StatBonusType>())
+        {
+            if (_bonuses.TryGetValue((mobile.Id, stat), out var timer))
+            {
+                _timers.UnregisterTimer(timer);
+                _bonuses.Remove((mobile.Id, stat));
+                SetBonus(mobile, stat, 0);
+            }
+        }
+
+        if (_nightSight.Remove(mobile.Id, out var light))
+        {
+            _timers.UnregisterTimer(light);
+        }
+
+        Clamp(mobile);
+    }
+
+    private void EndBonus(MobileEntity mobile, StatBonusType stat)
+    {
+        if (!_bonuses.Remove((mobile.Id, stat)))
+        {
+            return;
+        }
+
+        SetBonus(mobile, stat, 0);
+        Clamp(mobile);
+        ShowStatus(mobile);
+    }
+
+    private void EndNightSight(MobileEntity mobile)
+    {
+        if (_nightSight.Remove(mobile.Id))
+        {
+            SendLight(mobile, 0);
+        }
+    }
+
+    private static void SetBonus(MobileEntity mobile, StatBonusType stat, int amount)
+    {
+        if (stat == StatBonusType.Strength)
+        {
+            mobile.StrengthBonus = amount;
+        }
+        else
+        {
+            mobile.DexterityBonus = amount;
+        }
+    }
+
+    // Hits and stamina above the maximum the bonus held up go with it.
+    private void Clamp(MobileEntity mobile)
+    {
+        _state.SetStats(
+            mobile,
+            new MobileStatsChange
+            {
+                Hits = Math.Min(mobile.Hits, mobile.EffectiveHitsMax),
+                Stamina = Math.Min(mobile.Stamina, mobile.EffectiveStaminaMax)
+            }
+        );
+    }
+
+    private void ShowStatus(MobileEntity mobile)
+    {
+        if (_sessions.TryGetByCharacterId(mobile.Id, out var session))
+        {
+            _state.SendStatus(session, mobile);
+        }
+    }
+
+    private void SendLight(MobileEntity mobile, int level)
+    {
+        if (_sessions.TryGetByCharacterId(mobile.Id, out var session))
+        {
+            _sender.TrySend(session.SessionId, new PersonalLightLevelPacket(mobile.Id, level));
+        }
+    }
+}
