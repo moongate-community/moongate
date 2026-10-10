@@ -53,5 +53,27 @@ expect_contains "login: load balancer" "type: LoadBalancer" -f ci/external.yaml
 expect_contains "login: extra toml" "custom = 1" -f ci/external.yaml --set-string login.extraToml="custom = 1"
 expect_contains "login: bundled secret name" "name: t-moongate$" -f ci/bundled.yaml
 
+# Task 4: realms
+expect_contains "realms: statefulset 1" "name: t-moongate-realm-1$" -f ci/two-realms.yaml
+expect_contains "realms: statefulset 2" "name: t-moongate-realm-2$" -f ci/two-realms.yaml
+expect_contains "realms: kind" "kind: StatefulSet" -f ci/two-realms.yaml
+expect_contains "realms: mode" 'mode = "game"' -f ci/two-realms.yaml
+expect_contains "realms: server index" "server_index = 2" -f ci/two-realms.yaml
+expect_contains "realms: advertised address" 'advertised_address = "192.168.255.31"' -f ci/two-realms.yaml
+expect_contains "realms: volume claim template" "volumeClaimTemplates" -f ci/two-realms.yaml
+expect_contains "realms: grace period" "terminationGracePeriodSeconds: 120" -f ci/two-realms.yaml
+expect_contains "realms: game port" "containerPort: 2595" -f ci/two-realms.yaml
+expect_contains "realms: runtime key" "key: realm-2-runtime-url" -f ci/two-realms.yaml
+expect_contains "realms: schema key" "key: realm-2-schema-url" -f ci/two-realms.yaml
+expect_contains "realms: world target" "--target world" -f ci/two-realms.yaml
+expect_absent "realms: schema init off" "--target world" -f ci/two-realms.yaml --set schema.enabled=false
+expect_absent "realms: no ping by default" "12000" -f ci/two-realms.yaml
+expect_contains "realms: ping udp" "protocol: UDP" -f ci/two-realms.yaml --set 'realms[0].ping.enabled=true'
+expect_contains "realms: ping server on" "enable_ping_server = true" -f ci/two-realms.yaml --set 'realms[0].ping.enabled=true'
+expect_contains "realms: storage class" "storageClassName: longhorn" -f ci/two-realms.yaml --set 'realms[0].persistence.storageClass=longhorn'
+expect_contains "realms: service port" "port: 2595" -f ci/two-realms.yaml
+expect_contains "realms: custom advertised port" "advertised_port = 2600" -f ci/two-realms.yaml --set 'realms[0].advertisedPort=2600'
+expect_contains "realms: config checksum" "checksum/config:" -f ci/two-realms.yaml
+
 # TASK-MARKER: assertions of the next tasks are appended above this line.
 exit $status
