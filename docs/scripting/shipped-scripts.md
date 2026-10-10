@@ -289,6 +289,15 @@ and leaves an empty bottle (see [Potions](../potions.md)).
 it opens the crafting gump of alchemy (see [Alchemy](../alchemy.md)). `scripts/common/potions.lua` tells which potion an
 item is, the plain potions vendors sell included, for `potion.lua` and `explosion_potion.lua`.
 
+## test_kit.lua
+
+`scripts/items/test_kit.lua` is the script of the staff's test bags (`templates/items/test_kits.toml`,
+`script_id = "test_kit"`): `.add test_kit_alchemy` gives a bag that fills, the first time it is opened, with the tool, the
+materials and the items to try a craft or the potions; then it is a plain bag. The bags are `test_kit_alchemy`,
+`test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`, `test_kit_tinkering`,
+`test_kit_fletching` and `test_kit_cooking`; the table `KITS` says what each holds. The skill is set apart, as
+`.set skill alchemy 100`.
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,
