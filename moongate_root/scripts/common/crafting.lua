@@ -35,6 +35,10 @@
 --   never exceptional: the stack is not. An exceptional item is uncommon, a
 --   marked one rare.
 --
+--   A recipe may name a spell (data/crafts, field spell) the crafter must have in a
+--   spellbook it wears or carries, and a mana cost (field mana): both are checked
+--   at the start and again at the second stroke, with nothing taken when one is
+--   lacking. The mana is paid once, by a try that is made, a failure included.
 --   A craft may ask to stand near things (the table NEEDS): blacksmithing an
 --   anvil and a forge within 2 tiles, the baking of cooking an oven and its
 --   barbecue a fire, checked when the attempt starts and at its second
@@ -99,6 +103,10 @@ local NOT_AT_FORGE = 1044267  -- You must be near an anvil and a forge to smith 
 local NOT_AT_FIRE = 1044487   -- You must be near a fire source to cook.
 local NOT_AT_OVEN = 1044493   -- You must be near an oven to bake that.
 local NO_IDEA_METAL = 1044268 -- You have no idea how to work this metal.
+local NO_SPELL = 1042404      -- You don't have that spell!
+local NO_MANA = 502625        -- Insufficient mana for this spell.
+local INSCRIBED = 501629      -- You inscribe the spell and put the scroll in your backpack.
+local RUINED = 501630         -- You fail to inscribe the scroll, and the scroll is ruined.
 
 -- How much better than sure a success must be to be exceptional, and the skill that marks it.
 local EXCEPTIONAL_MARGIN = 0.6
@@ -121,6 +129,10 @@ local NOTICES = {
     [NOT_AT_FIRE] = "You must be near a fire source to cook.",
     [NOT_AT_OVEN] = "You must be near an oven to bake that.",
     [NO_IDEA_METAL] = "You have no idea how to work this metal.",
+    [NO_SPELL] = "You don't have that spell!",
+    [NO_MANA] = "Insufficient mana for this spell.",
+    [INSCRIBED] = "You inscribe the spell and put the scroll in your backpack.",
+    [RUINED] = "You fail to inscribe the scroll, and the scroll is ruined.",
     [FAILED] = "You failed to create the item, and some of your materials are lost.",
     [500287] = "You fail to create a useful potion.",
     [NO_SKILL] = "You don't have the required skills to attempt this item.",
@@ -155,15 +167,23 @@ local STACKS_WEAR_NOT = {
 -- What a craft says on a failure, and the sound of its success, when not the common ones: a potion poured.
 local FAILED_TEXT = {
     alchemy = 500287, -- You fail to create a useful potion.
+    inscription = RUINED,
+}
+
+-- What a craft says on a success when it makes no item of quality: a scroll inscribed.
+local SUCCESS_TEXT = {
+    inscription = INSCRIBED,
 }
 
 local SUCCESS_SOUND = {
     alchemy = 0x240,
+    inscription = 0x249,
 }
 
 -- The crafts whose items have no quality: never exceptional nor marked, as a map.
 local NO_QUALITY = {
     cartography = true,
+    inscription = true,
 }
 
 local NOT_DRAWN = "You could not finish what you made."
@@ -411,15 +431,38 @@ function crafting.chance(user, craft, recipe)
     return math.max(0, math.min(1, chance))
 end
 
--- The first resource the player lacks, as its client text; nil when all are there.
+-- The first thing the player lacks, as its client text; nil when all is there: the spell of a recipe in a book it
+-- carries, the resources, then the mana. Nothing is taken here.
 local function missing(user, recipe, kind)
+    if recipe.spell and recipe.spell ~= "" and not spell.find_book(user, recipe.spell) then
+        return NO_SPELL
+    end
+
     for _, resource in ipairs(recipe.resources) do
         if crafting.count(user, crafting.templates(resource.resource, kind)) < resource.amount then
             return MISSING[resource.resource] or NO_COMPONENTS
         end
     end
 
+    if (recipe.mana or 0) > 0 then
+        local stats = mobile.stats(user)
+
+        if not stats or stats.mana < recipe.mana then
+            return NO_MANA
+        end
+    end
+
     return nil
+end
+
+-- Takes the mana of a recipe, once, for a try that was made; a recipe with no mana takes none.
+local function pay_mana(user, recipe)
+    local cost = recipe.mana or 0
+    local stats = cost > 0 and mobile.stats(user)
+
+    if stats then
+        mobile.set_stats(user, { mana = math.max(0, stats.mana - cost) })
+    end
 end
 
 -- Takes amount units from the stacks, in turn; gives how many it could not take.
@@ -517,6 +560,9 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
             take(user, crafting.templates(resource.resource, kind), index == 1 and math.max(1, lost) or lost)
         end
 
+        -- The mana goes on a failure too: the try was made.
+        pay_mana(user, recipe)
+
         local failed = FAILED_TEXT[craft_id] or FAILED
         mobile.message_cliloc(user, failed)
 
@@ -578,6 +624,9 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
         end
     end
 
+    -- Item and resources are taken: the try is made, and the mana goes with it, once.
+    pay_mana(user, recipe)
+
     if at_feet then
         mobile.message(user, AT_YOUR_FEET)
     end
@@ -597,7 +646,7 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
         end
     end
 
-    local outcome = CREATED
+    local outcome = SUCCESS_TEXT[craft_id] or CREATED
 
     if not joined and not plain and not NO_QUALITY[craft_id] and crafting.roll() < chance - EXCEPTIONAL_MARGIN then
         item.set_prop(made, "quality", EXCEPTIONAL_QUALITY)

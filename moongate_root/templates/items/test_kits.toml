@@ -74,3 +74,10 @@ base_id = "base_test_kit"
 item_id = 0
 name = "a test kit: magery"
 hue = 0x0481
+
+[[item]]
+id = "test_kit_inscription"
+base_id = "base_test_kit"
+item_id = 0
+name = "a test kit: inscription"
+hue = 0x0046
