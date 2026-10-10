@@ -26,6 +26,7 @@ using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Schedule;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -35,7 +36,11 @@ using Lua;
 namespace Moongate.Tests.Integration.Server.Ultima.Gumps;
 
 /// <summary>
-///     Runs the gmtools gump shipped in <c>moongate_root</c> (templates/gumps/gmtools.xml and
+///     Runs the gmtools gump shipped in
+///     <c>
+///         moongate_root
+///     </c>
+///     (templates/gumps/gmtools.xml and
 ///     scripts/gumps/gmtools.lua)
 ///     with the real Lua engine: the sidebar, the weather panel and what its buttons do.
 /// </summary>
@@ -43,6 +48,7 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
 {
     private const long Staff = 7;
     private const long Player = 8;
+    private const long Administrator = 9;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -58,6 +64,8 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
+    private GameSession _administrator = null!;
+    private ScheduleServices _schedule = null!;
     private LuaScriptEngineService _engine = null!;
     private GumpModule _module = null!;
 
@@ -66,10 +74,17 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         _fixture = await BroadcastFixture.CreateAsync();
         _session = await _fixture.AddAsync(Staff);
         await _fixture.AddAsync(Player);
+        _administrator = await _fixture.AddAsync(Administrator);
+        await _fixture.Network.ExecuteOnLoopAsync(() => _administrator.Set(
+                SessionKeys.AccountType,
+                AccountType.Administrator
+            )
+        );
+        _schedule = await ScheduleServices.CreateAsync();
         await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
 
         // The weather is the one of a player: a mobile with an account.
-        foreach (var serial in new[] { Staff, Player })
+        foreach (var serial in new[] { Staff, Player, Administrator })
         {
             Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)serial), out var mobile));
             mobile.AccountId = new Serial((uint)(0x40 + serial));
@@ -112,6 +127,9 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<LogModule>();
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<MobileModule>();
+        _container.RegisterInstance<ISeasonalEventService>(_schedule.Events);
+        _container.RegisterInstance<IScheduleService>(_schedule.Schedule);
+        _container.AddScriptModule<ScheduleModule>();
         _container.AddScriptModule<GumpModule>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -378,6 +396,70 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
     }
 
+    [Fact]
+    public void AGameMaster_SeesNoEventsTool_AndAskingForItGivesTheFirstOne()
+    {
+        var built = Open(Staff, "events");
+
+        Assert.DoesNotContain("Events", built.Strings);
+        Assert.DoesNotContain("Seasonal events", built.Strings);
+        Assert.Contains("Weather here", string.Join('\n', built.Strings));
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public void AnAdministrator_SeesTheEventsTool_WithEveryEventItsDatesModeAndState()
+    {
+        var built = Open(Administrator, "events");
+
+        Assert.Contains("Events", built.Strings);
+        Assert.Contains("Seasonal events", built.Strings);
+        Assert.Contains("Halloween (10-20 to 11-02): auto, on", built.Strings);
+        Assert.Contains("Winter (12-20 to 01-06): auto, off", built.Strings);
+        // Four tools in the sidebar, then auto, on and off for each of the two events.
+        Assert.Equal([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], built.Buttons.Order());
+        Assert.Empty(_errors);
+    }
+
+    [Theory, InlineData(5, "halloween", "auto", true), InlineData(6, "halloween", "on", true),
+     InlineData(7, "halloween", "off", false),
+     InlineData(9, "winter", "on", true)]
+    public void AModeButton_SetsTheModeOfTheEvent_TellsTheAdministrator_AndShowsTheToolAgain(
+        int button,
+        string id,
+        string mode,
+        bool active
+    )
+    {
+        Open(Administrator, "events");
+        var before = _schedule.Scripts.Calls.Count;
+        // Halloween is on at the start of the fixture and Winter is off.
+        var changed = active != (id == "halloween");
+
+        Answer(0, button, _administrator);
+
+        var state = _schedule.Events.Get(id)!;
+        Assert.Equal((mode, active), (state.Mode, state.Active));
+        Assert.Contains(_speech.Told, told => told.Text.EndsWith($"is now {mode}."));
+        // The hook of an event that changed its state is queued, not run inside the click.
+        Assert.Equal(changed, _schedule.Scripts.Calls.Count > before);
+        Assert.Equal(2, _gumps.Opened.Count);
+        Assert.Empty(_errors);
+    }
+
+    [Fact]
+    public async Task AModeClickedByOneWhoIsNoLongerAnAdministrator_ChangesNothing()
+    {
+        Open(Administrator, "events");
+        await _fixture.Network.ExecuteOnLoopAsync(() => _administrator.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        Answer(0, 7, _administrator);
+
+        Assert.Equal("auto", _schedule.Events.Get("halloween")!.Mode);
+        Assert.Empty(_speech.Told);
+        Assert.Empty(_errors);
+    }
+
     // The account may lose its rank while the gump is open.
     [Fact]
     public async Task AKindClickedByOneWhoIsNoLongerStaff_ForcesNothing()
@@ -406,13 +488,13 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
         return _gumps.Opened[^1].Gump.Layout.Build();
     }
 
-    private void Answer(int gump, int button)
+    private void Answer(int gump, int button, GameSession? from = null)
     {
         // As the loop does: what the script posts runs after the script, not inside it.
         _loop.DeferTryPost = true;
         _gumps.Opened[gump]
             .Gump.OnResponse(
-                _session,
+                from ?? _session,
                 new GumpResponse { ButtonId = button, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
             );
         _loop.RunDeferred();

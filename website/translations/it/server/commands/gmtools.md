@@ -1,8 +1,8 @@
-<!-- translation: {"sourceHash":"5fa4864952cbf1a4fd2ae2c0edbe95b7bf6d05b0811e76b1187abd442d9fdf4b","title":"gmtools"} -->
+<!-- translation: {"sourceHash":"8194b32f9c387085562ff472e8194122c6bf8b2ffbb4b2f2576682e52d7413fb","title":"gmtools"} -->
 
 # gmtools
 
-Apre il gump degli strumenti del game master: a sinistra una barra laterale di strumenti (meteo, stagione e ora) e
+Apre il gump degli strumenti del game master: a sinistra una barra laterale di strumenti (meteo, stagione, ora e, per gli amministratori, eventi) e
 a destra i comandi dello strumento selezionato.
 
 | Sintassi | Console | In gioco | Livello minimo | Ruolo |
@@ -71,13 +71,28 @@ time of day)`. Un livello dà subito quella luce a ogni giocatore del mondo, com
 global light follows the time of day again.` La forzatura non viene salvata: un riavvio torna
 all'ora del giorno. Per un livello intermedio tra i pulsanti, usa `.globallight <0-31>`.
 
+## Eventi
+
+Lo strumento degli eventi è per gli amministratori, come [`.event`](event.md); un game master non lo vede. Elenca
+gli [eventi stagionali](../schedule.md#seasonal-events) con date, modalità e stato:
+
+```text
+Seasonal events
+Halloween (10-24 to 11-15): auto, on
+Christmas (12-24 to 01-01): auto, off
+```
+
+Sotto ogni evento ci sono tre pulsanti, `auto`, `on` e `off`: `auto` restituisce l'evento alle sue date, `on` e `off`
+lo forzano. Leggi `Halloween is now off.` e il gump si riapre; l'evento inizia o finisce come con il
+comando, e la sua modalità si conserva tra i riavvii. Il pannello elenca quattro eventi; gli altri restano a `.event`.
+
 ## Aggiungere uno strumento
 
 Il gump è [`templates/gumps/gmtools.xml`](../gumps.md) e il suo script
 [`scripts/gumps/gmtools.lua`](../scripting/shipped-scripts.md#gmtoolslua), che puoi modificare.
 Uno strumento è una voce della tabella `tools` nello script e una funzione che ne disegna il pannello. Chi
 non è un game master vede un gump vuoto, e un pulsante del gump non fa nulla per chi ha
-perso il grado dopo averlo aperto.
+perso il grado dopo averlo aperto. Uno strumento con `admin = true` nella tabella è solo per gli amministratori.
 
 ## Vedi anche
 
@@ -85,4 +100,5 @@ perso il grado dopo averlo aperto.
 - [`weather`](weather.md)
 - [`season`](season.md)
 - [`time`](time.md) e [`globallight`](globallight.md)
+- [`event`](event.md)
 - [`go`](go.md)

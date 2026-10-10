@@ -293,7 +293,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Help menu and stuck menu | ✅ | The Help button opens a menu: "I am stuck" takes a character to the nearest starting city after a wait, with a pause; useful commands; server rules; see [Help](help.md) |
 | Jails | ✅ | A gump lists the cells and who is in them; sentences in real days, a gold fine and a release note at the end, a chest of bread and water in every cell; a player who is offline is jailed by name and serves from its next login; see [Jail](jail.md) |
 | Who list | ❌ | |
-| Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places, and `.gmtools`, a gump with a sidebar of tools: it forces the weather, sets the season of the map and shows the time and sets the light; no property gump, add menu or area commands |
+| Staff tools: property gump, add menu, area commands | 🟡 | The gump of the named places, `.go`, with ModernUO's 558 places, and `.gmtools`, a gump with a sidebar of tools: it forces the weather, sets the season of the map, shows the time and sets the light, and switches the seasonal events (administrators); no property gump, add menu or area commands |
 | Named locations and travel menu for staff | ✅ | `.go <place>` and the go gump, with ModernUO's 558 places from `data/locations.toml` |
 | Web status pages | ❌ | |
 | Bug reports | 🟡 | Exception reports ready for a GitHub issue; no in-game report |

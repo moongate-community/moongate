@@ -580,7 +580,7 @@ slot, riempiti da due funzioni: `tools` disegna la barra laterale, un pulsante p
 `tools` nello script, e `panel` disegna il pannello di quello selezionato (`args.tool`, il primo quando
 non viene fornito o è sconosciuto). Un clic sulla barra laterale riapre il gump su quello strumento.
 
-Ci sono tre strumenti, meteo, stagione e ora. Il pannello meteo legge `world.weather_profile` e `world.weather` e
+Ci sono quattro strumenti, meteo, stagione, ora ed eventi. Il pannello meteo legge `world.weather_profile` e `world.weather` e
 ha un pulsante per ciascun tipo, `none`, `rain`, `snow` e `storm`, che chiama `world.set_weather` sul
 giocatore, gli dice `The weather of temperate is now storm until the next hour.` e riapre il gump.
 Il pannello stagione legge `world.season_here` e la stagione della mappa del giocatore
@@ -589,8 +589,8 @@ Il pannello stagione legge `world.season_here` e la stagione della mappa del gio
 is now winter.` e riaprono il gump. Il pannello ora legge `world.time`, `world.moon`,
 `world.light_here` e `world.global_light` e ha un pulsante per ciascuno di quattro livelli di luce e uno per
 `auto`, che chiamano `world.set_global_light` o `world.clear_global_light` e dicono al giocatore `The
-global light is now 26.`. Solo staff: gli slot sono vuoti per chiunque altro, e ogni
-pulsante ricontrolla `world.is_staff`.
+global light is now 26.`. Il pannello eventi (una voce con `admin = true`, quindi solo per gli amministratori) legge `schedule.events` e ha pulsanti `auto`, `on` e `off` per ogni evento, che chiamano `schedule.set_event`, dicono al giocatore `Halloween is now off.` e riaprono il gump. Solo staff: gli slot sono vuoti per chiunque altro, e ogni
+pulsante ricontrolla `world.is_staff`, e `world.is_administrator` per gli eventi.
 
 Per aggiungere uno strumento, scrivi una funzione pannello con firma `function(g, player)` e aggiungi
 `{ id = "...", title = "...", panel = ... }` a `tools`.
