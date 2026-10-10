@@ -178,6 +178,7 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IItemFactoryService>(new FakeItemFactoryService(_templates, new FakeTileDataService()));
         _container.RegisterInstance<IItemSerialPool>(_serials);
         _container.RegisterInstance<ITileDataService>(new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0).Item(0x0692, TileFlagType.Impassable, 20)
+            .Item(0x0082, TileFlagType.Impassable, 20)
         );
         _container.RegisterInstance<IContainerCapacityService>(_capacity);
         _container.RegisterInstance<IInventoryMutationGuard>(_guard);
@@ -389,20 +390,20 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData(11, 8)]
-    [InlineData(12, 4)]
-    [InlineData(20, 2)]
-    public void Harm_HurtsAtOnce_WholeNextToTheCaster_HalvedAtTwoTiles_AndAQuarterBeyond(int x, int damage)
+    [InlineData(11)]
+    [InlineData(12)]
+    [InlineData(20)]
+    public void Harm_HurtsAtOnce_WholeAtAnyDistance_AsTheDaysBeforeTheSecondDawnHadIt(int x)
     {
         _bran.Location = new Point3D(x, 10, 0);
         Roll(pick: 8);
 
         Cast("harm");
 
-        // 8 x 1.1 = 8.8; 4 x 1.1 = 4.4; 2 x 1.1 = 2.2.
+        // 8 x 1.1 = 8.8, whatever the distance.
         Assert.Empty(_errors);
         var harm = Assert.Single(_combat.Harmed);
-        Assert.Equal((_aria, _bran, damage), (harm.Attacker, harm.Target, harm.Damage));
+        Assert.Equal((_aria, _bran, 8), (harm.Attacker, harm.Target, harm.Damage));
         Assert.Equal([(_aria, _bran)], _combat.Aggressed);
         Assert.DoesNotContain(_timers.Timers, timer => Math.Abs(timer.Interval.TotalSeconds - 0.5) < 0.001);
         Assert.Equal(24, _aria.Mana);
@@ -475,6 +476,20 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
         // 12 x 1.1 = 13.2.
         var harm = Assert.Single(_combat.Harmed);
         Assert.Equal((_aria, _bran, 13), (harm.Attacker, harm.Target, harm.Damage));
+    }
+
+    [Fact]
+    public void Fireball_WhoseCasterLeftTheGameInTheMeantime_StillHurtsTheTarget_WithNoOneToBlame()
+    {
+        Roll(pick: 12);
+        Cast("fireball");
+        _fixture.Mobiles.LeaveWorld(_aria.Id);
+
+        FireHalfSecond();
+
+        Assert.Empty(_errors);
+        var harm = Assert.Single(_combat.Harmed);
+        Assert.Equal((null, _bran, 13), (harm.Attacker, harm.Target, harm.Damage));
     }
 
     [Theory]
@@ -830,6 +845,61 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AField_RaisesNoPieceWhereTheCasterCannotSee()
+    {
+        _movement.SpawnZ = (_, _) => 0;
+        _sight.Blocks = place => place.X == 14 && place.Y == 9;
+
+        CastAt("wall_of_stone", new Point3D(14, 10, 0));
+
+        Assert.Empty(_errors);
+        Assert.Equal([10, 11], PiecesNear(14, 10, "magic_wall_of_stone").Select(piece => piece.GroundLocation!.Value.Y).Order());
+    }
+
+    [Fact]
+    public void TwoWallsOfStone_DoNotStack_TheSecondSkipsWhatTheFirstFilled()
+    {
+        _movement.SpawnZ = (_, _) => 0;
+        CastAt("wall_of_stone", new Point3D(14, 10, 0));
+        _time.Advance(TimeSpan.FromSeconds(2));
+
+        CastAt("wall_of_stone", new Point3D(14, 11, 0));
+
+        // Rows 9, 10 and 11 hold the first; the second adds only 12.
+        Assert.Equal(4, PiecesNear(14, 10, "magic_wall_of_stone").Count);
+    }
+
+    [Fact]
+    public void FireField_SkipsAPlaceAnImpassableItemFills_ButNotWhereAMobileStands()
+    {
+        _movement.SpawnZ = (_, _) => 0;
+        Ground("door", 0x0692, new Point3D(13, 14, 0));
+        Place(_bran, new Point3D(15, 14, 0));
+
+        CastAt("fire_field", new Point3D(14, 14, 0));
+
+        Assert.Equal([12, 14, 15, 16], PiecesNear(14, 14, "magic_fire_field_ew").Select(piece => piece.GroundLocation!.Value.X).Order());
+    }
+
+    [Fact]
+    public void TheBurnedList_KeepsOnlyWhoWasBurnedInTheSecondThatIsRunning()
+    {
+        _movement.SpawnZ = (_, _) => 0;
+        _skills.ResultBySkill = skill => skill != SkillType.ResistingSpells;
+        var orc = Npc(0x200, OrcBody);
+        Place(_bran, new Point3D(14, 14, 0));
+        CastAt("fire_field", new Point3D(14, 14, 0));
+        RunItemTimers(TimeSpan.FromSeconds(1));
+        Assert.Equal(1, BurnedCount());
+
+        Place(_bran, new Point3D(30, 30, 0));
+        Place(orc, new Point3D(14, 14, 0));
+        RunItemTimers(TimeSpan.FromSeconds(2));
+
+        Assert.Equal(1, BurnedCount());
+    }
+
+    [Fact]
     public void FireField_RaisesFivePieces_AlongTheLineAcrossTheWay_ForTwentySeconds()
     {
         _movement.SpawnZ = (_, _) => 0;
@@ -1155,6 +1225,11 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
 
             _loop.DeferTryPost = false;
         }
+    }
+
+    private long BurnedCount()
+    {
+        return Convert.ToInt64(_engine.CallMember("items/magic_field.lua", "magic_field", "burned_count").Values[0]);
     }
 
     private void FireHalfSecond()

@@ -11,7 +11,7 @@
 --   mobile or an item fills, and a region that does not let a recall out of it
 --   or into it (the recall_out and
 --   recall_in flags of data/regions). Not built: a check for a fight in
---   progress (the classic game has none before the AOS) and the pets that
+--   progress (the engine has no combat heat to ask) and the pets that
 --   follow. Called by the spell service with the caster, the target
 --   ({ kind = "item", serial }) and the data of the spell.
 --

@@ -20,6 +20,7 @@
 --   on_move_over(serial, who)       a player stepped onto the piece
 --   on_npc_move_over(serial, who)   an NPC stepped onto it
 --   on_timer(serial, name)          the piece wakes ("tick") or ends ("expire")
+--   burned_count()                  how many mobiles the list of the burned holds
 -- ==============================================================================
 
 magic_field = {}
@@ -30,8 +31,10 @@ local RESIST_MAX = 30          -- the Resisting Spells points at which the burn 
 local HEIGHT_ABOVE = 16        -- a mobile stands in the field when its z is within these of the piece
 local HEIGHT_UNDER = 12
 
--- When each mobile was burned last, in seconds: at most once a second.
+-- When each mobile was burned last, in seconds: at most once a second. Only who was burned in the second that is
+-- running is kept: whoever was burned before can be burned again at once.
 local burned = {}
+local swept = 0
 
 local function burn(serial, who)
     local damage = item.get_prop(serial, "field.damage") or 0
@@ -52,6 +55,16 @@ local function burn(serial, who)
     end
 
     local now = world.now()
+
+    if swept ~= now then
+        swept = now
+
+        for key, at in pairs(burned) do
+            if at < now then
+                burned[key] = nil
+            end
+        end
+    end
 
     if burned[who] == now then
         return
@@ -105,4 +118,14 @@ function magic_field.on_timer(serial, name)
 
     burn_all(serial)
     item.start_timer(serial, "tick", 1)
+end
+
+function magic_field.burned_count()
+    local count = 0
+
+    for _ in pairs(burned) do
+        count = count + 1
+    end
+
+    return count
 end

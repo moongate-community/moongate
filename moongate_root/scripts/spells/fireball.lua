@@ -51,6 +51,9 @@ function fireball.cast(caster, target, info)
     local damage = magic.damage(caster, who, info, fireball.random(LEAST, MOST))
 
     timer.after(DAMAGE_DELAY, function()
-        combat.harm(who, damage, caster)
+        -- A caster that left the game in the meantime is to blame for nothing, but the ball still burns.
+        if not combat.harm(who, damage, caster) and not mobile.location(caster) then
+            combat.harm(who, damage)
+        end
     end)
 end

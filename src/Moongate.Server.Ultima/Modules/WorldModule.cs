@@ -214,20 +214,21 @@ public sealed class WorldModule
     /// <summary>
     ///     Gets whether a mobile could be put at <paramref name="x" />, <paramref name="y" />, <paramref name="z" />
     ///     without being on top of another mobile or inside an impassable or surface item lying on the ground, such as
-    ///     a closed door; <c>world.can_fit(map, x, y, z, caster)</c>.
+    ///     a closed door; <c>world.can_fit(map, x, y, z, caster)</c>. Mobiles are left out of the question with a false
+    ///     <paramref name="mobiles" />, as a field of fire does.
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Whether a mobile fits at the place x, y, z of the map: no other mobile than the one asked (0 for none) stands there at that height, and no impassable or surface item on the ground fills the space above z. Statics are not asked (see world.standing_z)."
+        "Whether a mobile fits at the place x, y, z of the map: no other mobile than the one named (0 for none) stands there at that height (not asked when mobiles is false), and no impassable or surface item on the ground fills the space above z. Statics are not asked (see world.standing_z)."
     )]
-    public bool CanFit(MapType map, int x, int y, int z, long except)
+    public bool CanFit(MapType map, int x, int y, int z, long except = 0, bool mobiles = true)
     {
         if (!_sectors.IsInside(map, x, y))
         {
             return false;
         }
 
-        foreach (var mobile in _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0))
+        foreach (var mobile in mobiles ? _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0) : [])
         {
             if ((long)mobile.Id.Value != except && mobile.Location.Z + PersonHeight > z && z + PersonHeight > mobile.Location.Z)
             {

@@ -27,6 +27,10 @@
 --       options.seconds  how long the field lasts
 --       options.damage   the damage of a piece of fire, 0 for none
 --       options.keep_free   true skips a place where someone stands, as a wall
+--
+--   A place is skipped when the caster cannot see it, nothing can stand on it
+--   (world.standing_z), or an impassable item already lies on it, so two walls
+--   do not stack.
 --       options.tick     true makes the piece wake every second, as fire does
 -- ==============================================================================
 
@@ -34,6 +38,9 @@ local field = {}
 
 -- How far under the place a piece may be put, as the classic spells adjust it.
 local DROP = 9
+
+-- How high above its feet the caster looks from, as the cast service measures a line of sight.
+local EYE = 14
 
 function field.east_to_west(from, x, y)
     local dx = from.x - x
@@ -69,23 +76,33 @@ function field.place(caster, target, options)
 
     local east_west = field.east_to_west(here, target.x, target.y)
     local template = east_west and options.east_west or options.north_south
-    local pieces = {}
+    local spots = {}
 
+    -- Which places take a piece is decided before any is put down, so a piece does not hide the next from the caster.
     for step = -options.reach, options.reach do
         local x = east_west and target.x + step or target.x
         local y = east_west and target.y or target.y + step
         local z = standing(target.map, x, y, target.z)
 
-        if z and not (options.keep_free and world.is_occupied(target.map, x, y)) then
-            local piece = item.create(template, target.map, x, y, z)
+        if z and
+            world.line_of_sight(target.map, here.x, here.y, here.z + EYE, x, y, z) and
+            world.can_fit(target.map, x, y, z, 0, options.keep_free == true)
+        then
+            spots[#spots + 1] = { x = x, y = y, z = z }
+        end
+    end
 
-            if piece then
-                item.set_prop(piece, "field.caster", caster)
-                item.set_prop(piece, "field.until", world.now() + options.seconds)
-                item.set_prop(piece, "field.damage", options.damage or 0)
-                item.start_timer(piece, options.tick and "tick" or "expire", options.tick and 1 or options.seconds)
-                pieces[#pieces + 1] = piece
-            end
+    local pieces = {}
+
+    for _, spot in ipairs(spots) do
+        local piece = item.create(template, target.map, spot.x, spot.y, spot.z)
+
+        if piece then
+            item.set_prop(piece, "field.caster", caster)
+            item.set_prop(piece, "field.until", world.now() + options.seconds)
+            item.set_prop(piece, "field.damage", options.damage or 0)
+            item.start_timer(piece, options.tick and "tick" or "expire", options.tick and 1 or options.seconds)
+            pieces[#pieces + 1] = piece
         end
     end
 
