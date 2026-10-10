@@ -10,7 +10,9 @@
 --   The Mining skill is tried 25 below and above the metal's difficulty: iron
 --   between 25 and 75, dull copper between 40 and 90, up to valorite between
 --   74 and 124; below that a smelt always fails, above it always works, and
---   the try may raise the skill.
+--   the try may raise the skill. A metal other than iron is not tried at all
+--   by a miner below its difficulty: "You have no idea how to smelt this
+--   strange ore!", and nothing burns.
 --     works   every ore of the pile becomes ingots, by the size of the pile:
 --             a large pile gives 2 ingots for each ore, a medium one 1, a small
 --             one 1 for every 2 ore (an odd one is left).
@@ -52,6 +54,7 @@ local ORE_TOO_FAR = 501976    -- The ore is too far away.
 local TOO_LITTLE = 501987     -- There is not enough metal-bearing ore in this pile to make an ingot.
 local SMELTED = 501988        -- You smelt the ore removing the impurities and put the metal in your backpack.
 local BURNT = 501990          -- You burn away the impurities but are left with less useable metal.
+local STRANGE_ORE = 501986    -- You have no idea how to smelt this strange ore!
 local TOO_FAR = 500446        -- That is too far away.
 local NOT_A_FORGE = "That is not a forge."
 local NO_ROOM = "You have no room in your backpack for the ingots: the metal is lost."
@@ -154,6 +157,13 @@ local function smelt(pile, user, picked)
 
     if ingots < 1 then
         mobile.message_cliloc(user, TOO_LITTLE)
+
+        return
+    end
+
+    -- A metal above the miner's skill is not even tried: nothing burns, and nothing is learnt from it.
+    if metal ~= metals.iron and (mobile.skills(user).mining or 0) < metal.smelt then
+        mobile.message_cliloc(user, STRANGE_ORE)
 
         return
     end

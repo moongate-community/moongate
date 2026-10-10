@@ -114,7 +114,6 @@ local function has_tool(tool, user)
     return item.owner(tool) == user or item.in_range(tool, user, 2)
 end
 
--- The swing landed.
 -- The metal a dig of the place gives the player: its own for one who has the skill of it, one dig in two; else iron.
 local function metal_for(user, map, x, y)
     local metal = metals.by_id(harvest.vein(RESOURCE, map, x, y))
@@ -127,6 +126,7 @@ local function metal_for(user, map, x, y)
     return metal
 end
 
+-- The swing landed.
 local function finish(tool, user, map, x, y)
     digging[user] = nil
 
@@ -136,7 +136,7 @@ local function finish(tool, user, map, x, y)
         return
     end
 
-    -- Drawn before the place is checked, so the rolls come in one order whatever follows.
+    -- Drawn first, before the place is checked; the rolls of the metal and of the pile follow only when they count.
     local sound = DIG_SOUNDS[math.min(math.floor(pickaxe.roll() * #DIG_SOUNDS) + 1, #DIG_SOUNDS)]
 
     if not near(here, map, x, y) then

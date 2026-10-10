@@ -27,8 +27,8 @@ double click meanwhile does nothing.
 
 ## What you get
 
-The try is rolled on the Mining skill between 0 and 100, so the chance of a dig that works is the skill itself,
-and the skill may rise at every try. A dig that works gives one pile of iron ore, which joins the pile of its
+In a place of iron the try is rolled on the Mining skill between 0 and 100, so the chance of a dig that works is the skill itself,
+and the skill may rise at every try (another metal has its own bounds: see [Metals](#metals)). A dig of iron that works gives one pile of iron ore, which joins the pile of its
 kind already in the backpack:
 
 | Pile | How often | Ingots it smelts into |
@@ -58,7 +58,10 @@ tomorrow. About half of the places are of iron.
 
 One who has the Mining of the metal digs its ore one dig in two, and iron the other; one who lacks it always digs
 iron. The ore of a metal is a large pile of its colour, which smelts into ingots of that metal, two for each ore, tried
-between the bounds of the last column. A single ore of a metal that fails to smelt is burnt away.
+between the bounds of the last column. A miner below a metal's difficulty (the middle of those bounds: 65 for dull
+copper, 99 for valorite) reads "You have no idea how to smelt this strange ore!" and nothing burns. A single ore of a metal
+that fails to smelt is burnt away. The ore of a metal always comes as a large pile, unlike iron's four sizes: a choice to
+keep one template a metal, which makes a little more metal than a pile size drawn as for iron would.
 
 ## Smelting
 
@@ -71,8 +74,8 @@ for the others): below 25 a smelt always fails, from 75 it always works, and the
 
 | The smelt | What happens |
 | --- | --- |
-| Works | The pile becomes iron ingots in your backpack, by its size (the table above); an odd small ore is left. You read "You smelt the ore removing the impurities and put the metal in your backpack." |
-| Fails | Half the pile is burnt away, rounded down. A pile of one ore gets smaller instead: a large one becomes medium, a medium one small. You read "You burn away the impurities but are left with less useable metal." |
+| Works | The pile becomes ingots of its metal in your backpack, by its size (the table above); an odd small ore is left. You read "You smelt the ore removing the impurities and put the metal in your backpack." |
+| Fails | Half the pile is burnt away, rounded down. A pile of one iron ore gets smaller instead (a single ore of another metal is burnt away): a large one becomes medium, a medium one small. You read "You burn away the impurities but are left with less useable metal." |
 
 A single small ore answers "There is not enough metal-bearing ore in this pile to make an ingot." Picking
 something that is no forge answers `That is not a forge.`, and a forge more than 2 tiles away "That is too far
@@ -84,14 +87,15 @@ Each map is cut in areas of 8 by 8 tiles. An area holds 10 to 34 ore, drawn the 
 dig that works takes one; a failed try takes none. The area is full again, all at once, 10 to 20 minutes after
 the first ore taken from it.
 
-The areas are kept in memory: after a restart every place is full. The numbers are the resource `ore` of
+The areas are kept in memory: after a restart every place is full, and its metal is drawn again. The numbers are the resource `ore` of
 [`harvest.toml`](data-files/harvest.md).
 
 ## Change the rules
 
 The rules of a dig are in `scripts/items/pickaxe.lua`: the range, the time, the piles and how often each comes,
 the land tiles that are rock and the statics that are a cave floor. Those of a smelt are in
-`scripts/items/ore.lua`: the range, the skill, the ingots of each pile and the graphics that are forges. See
+`scripts/items/ore.lua`: the range, the skill, the ingots of each pile; the forges are in `scripts/common/smithy.lua`
+and the metals (their ore, ingots, Mining and bounds) in `scripts/common/metals.lua`. See
 [Shipped scripts](scripting/shipped-scripts.md#pickaxelua-and-orelua). A template digs with
 `script_id = "pickaxe"` and is smelted with `script_id = "ore"`.
 
@@ -107,7 +111,7 @@ both scripts again, and add the `[[resource.vein]]` of the ore to your `data/har
 
 ## Not yet
 
-Combining two piles into one; tools that wear out; sand, stone and gems; melting a metal item back into ingots.
+A craft that uses the coloured ingots (blacksmithing takes iron only for now); combining two piles into one; tools that wear out; sand, stone and gems; melting a metal item back into ingots.
 
 ## See also
 
