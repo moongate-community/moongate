@@ -265,6 +265,12 @@ rules of `crafting.lua` and the wood picked.
 (`script_id = "cooking_tool"`): from the backpack it opens the crafting gump of cooking (see [Cooking](../cooking.md)),
 with the rules of `crafting.lua` and the ovens and fires of `scripts/common/heat.lua`.
 
+## map_item.lua
+
+`scripts/items/map_item.lua` is the script of the maps (`script_id = "map_item"`): from the backpack or the ground
+within 2 tiles it opens the map on its area with the `map` module (see [Maps](../maps.md)); farther away it says
+"That is too far away.".
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,

@@ -97,6 +97,7 @@ export const contentEntries = [
   { source: 'docs/tinkering.md', slug: 'server/tinkering', title: 'Tinkering', group: 'Scripting and content' },
   { source: 'docs/fletching.md', slug: 'server/fletching', title: 'Bowcraft and fletching', group: 'Scripting and content' },
   { source: 'docs/cooking.md', slug: 'server/cooking', title: 'Cooking', group: 'Scripting and content' },
+  { source: 'docs/maps.md', slug: 'server/maps', title: 'Maps', group: 'Scripting and content' },
   { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },

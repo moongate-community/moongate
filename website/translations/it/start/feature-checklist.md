@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"22760ed3b13e7f2ef3f2a3cb9f893dc59cdbd4afca2f395464eb62a7c5a6e892","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"6fd5d51354dd3457b0378036cfb3f6408a4e5385bb1b26e8144a058792330323","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**271 sistemi:** ✅ 91 completati, 🟡 66 parzialmente completati, ❌ 114 non ancora realizzati.
+**271 sistemi:** ✅ 91 completati, 🟡 67 parzialmente completati, ❌ 113 non ancora realizzati.
 
 **Copertura: 34%** dei sistemi completati, **46%** contando un sistema parzialmente completato come metà.
 
@@ -188,7 +188,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Luci | ✅ | Accensione e spegnimento; i lampioni si accendono di notte |
 | Pozioni e cibo | 🟡 | Il cibo si mangia: fame, stamina, suono e gesto. Le bevande si bevono a sorsi, lasciando una brocca o un bicchiere vuoto; nessun riempimento, nessuna ubriachezza. Una pozione di esempio viene bevuta e consumata, senza ancora alcun effetto |
 | Libri | 🟡 | Creazione da parte dello staff con [`.book`](commands/book.md) e pergamene leggibili da [template di testo TOML](data-files/books.md), variabili del destinatario congelate, titolo/autore/testo salvati e [allegati alle lettere ritirabili una sola volta](data-files/books.md#letter-attachments); [62 libri di lore in otto lingue](book-content-import.md), che aprono il [libro](data-files/books.md#books-and-parchments) del client con copertina e pagine; [libri in cui il giocatore scrive](data-files/books.md#books-a-player-writes-in), uno per ogni nuovo personaggio; copia e firma dei libri non realizzate |
-| Mappe e mappe del tesoro | ❌ | |
+| Mappe e mappe del tesoro | 🟡 | Le [mappe](maps.md) si aprono sulla loro area, con un percorso fino a 50 puntine; le 33 mappe pronte; un modulo Lua `map`. Niente cartografia, mappe del tesoro o SOS per ora |
 | Rune, recall e portali | ❌ | |
 | Moongate e teletrasporti | 🟡 | Teletrasporti attivati camminandoci sopra e quelli che rispondono a una parola, anche tra mappe, posizionati da `.decorate` con quelli del mondo e dei dungeon di ModernUO; moongate pubblici con un gump di destinazione; moongate semplici con una destinazione (`.moongate`); nessun Gate Travel |
 | Tinture e vasche per tintura | 🟡 | Le tinture danno alla vasca il colore scelto nel selettore del client, la vasca lo trasferisce a ciò che è tingibile, come gli abiti; nessuna vasca per pelle, mobili, nera o metallica |
