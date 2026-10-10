@@ -241,6 +241,15 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Say_SpeaksOverheadForEveryoneAround()
+    {
+        var result = Run("return mobile.say(2, '3'), mobile.say(999, '3'), mobile.say(2, '')");
+
+        Assert.Equal([true, false, false], result.Select(value => value.Read<bool>()));
+        Assert.Contains(_speech.Said, said => said.Speaker == _aria && said.Text == "3");
+    }
+
+    [Fact]
     public void BackpackRegionAndLight_ComeFromTheWorld()
     {
         var result = Run(

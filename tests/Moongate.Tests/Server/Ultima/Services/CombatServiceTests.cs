@@ -265,6 +265,45 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Harm_OnesOwnPet_IsNoCrime_AndThePetDoesNotTurnOnItsMaster()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+        _orc.SetProp("owner", (long)_aria.Id.Value);
+
+        _combat.Harm(_aria, _orc, 5);
+
+        Assert.Empty(_crimes.Calls);
+        Assert.Null(_combat.TargetOf(_orc));
+    }
+
+    [Fact]
+    public void Harm_ByAGhost_OrFromAnotherMap_HurtsWithNoOneToBlame()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+        _aria.Body = 0x0192;
+
+        Assert.True(_combat.Harm(_aria, _orc, 5));
+
+        Assert.Equal(25, _orc.Hits);
+        Assert.Empty(_crimes.Calls);
+        Assert.Null(_combat.TargetOf(_orc));
+    }
+
+    [Fact]
+    public void Harm_ADeadTarget_IsRefused_AndAnInnocentAlreadyFightingIsNoCrime()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+        _combat.Attack(_orc, _aria);
+        _crimes.Calls.Clear();
+
+        _combat.Harm(_aria, _orc, 5);
+        Assert.Empty(_crimes.Calls);
+
+        _aria.Body = 0x0192;
+        Assert.False(_combat.Harm(_orc, _aria, 5));
+    }
+
+    [Fact]
     public void Harm_AnInvulnerable_OrWithNoDamage_IsRefused()
     {
         Assert.False(_combat.Harm(_aria, _orc, -1));
@@ -999,6 +1038,18 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Tick();
 
         Assert.Equal(troll, _combat.TargetOf(_orc));
+    }
+
+    [Fact]
+    public void AKillingBlow_StopsTheFightOfBoth()
+    {
+        _orc.Hits = 1;
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        Assert.Single(_death.Killed);
+        Assert.Null(_combat.TargetOf(_aria));
     }
 
     [Fact]

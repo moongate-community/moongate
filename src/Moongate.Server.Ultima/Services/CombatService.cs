@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Effects;
 using Moongate.Server.Ultima.Data.Internal.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -208,8 +209,18 @@ public sealed class CombatService : ICombatService
             return false;
         }
 
+        // A ghost, or one gone to another map, is to blame for nothing.
+        if (attacker is not null && (attacker.IsDead || attacker.Map != target.Map))
+        {
+            attacker = null;
+        }
+
+        // One's own pet is no innocent to the blast that catches it, and it does not turn on its master.
+        var ownPet = attacker is not null && target.GetProp(MountProps.Owner, 0L) == attacker.Id.Value;
+
         // As an attack: a player who harms an innocent that is not fighting it is a criminal; not for harming itself.
         if (attacker is { IsNpc: false } &&
+            !ownPet &&
             attacker.Id != target.Id &&
             target.ShownNotoriety == NotorietyType.Innocent &&
             TargetOf(target)?.Id != attacker.Id &&
@@ -219,7 +230,7 @@ public sealed class CombatService : ICombatService
             _murders?.Aggressed(attacker, target);
         }
 
-        Wound(attacker, target, damage, _time.GetUtcNow());
+        Wound(attacker, target, damage, _time.GetUtcNow(), !ownPet);
 
         return true;
     }
@@ -543,7 +554,7 @@ public sealed class CombatService : ICombatService
     }
 
     // What a blow does once it lands: the hurt sound and gesture, the damage, and a death; true when it killed.
-    private bool Wound(MobileEntity? attacker, MobileEntity target, int damage, DateTimeOffset now)
+    private bool Wound(MobileEntity? attacker, MobileEntity target, int damage, DateTimeOffset now, bool fightBack = true)
     {
         if (SoundsOf(target)?.Hurt is { } hurt and > 0)
         {
@@ -570,7 +581,7 @@ public sealed class CombatService : ICombatService
         {
             _state.SetStats(target, new MobileStatsChange { Hits = hits });
 
-            if (attacker is not null && attacker.Id != target.Id)
+            if (fightBack && attacker is not null && attacker.Id != target.Id)
             {
                 FightBack(target, attacker, now);
             }
