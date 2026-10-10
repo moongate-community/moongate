@@ -1,3 +1,4 @@
+using Moongate.Server.Ultima.Types.Templates;
 using Lua;
 using Lua.Standard;
 using Moongate.Core.Geometry;
@@ -493,6 +494,17 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Equal("a strange brew", result[2].Read<string>());
         Assert.Equal(("a strange brew", new Hue(0x26)), (_ground.Name, _ground.Hue));
         Assert.Equal(2, _view.Calls.Count(call => call.StartsWith("Appeared", StringComparison.Ordinal)));
+    }
+
+    [Fact]
+    public void SetRarity_ChangesTheRarity_AndShowsTheNewTooltip_AnUnknownOneIsRefused()
+    {
+        var result = Run($"return item.set_rarity({_potions.Id.Value}, 'rare'), item.set_rarity({_potions.Id.Value}, 'mythic')");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.False(result[1].Read<bool>());
+        Assert.Equal(ItemRarityType.Rare, _potions.Rarity);
+        Assert.Contains(_fixture.Sender.Sent.OfType<PropertyListInfoPacket>(), packet => packet.Serial == _potions.Id);
     }
 
     [Fact]

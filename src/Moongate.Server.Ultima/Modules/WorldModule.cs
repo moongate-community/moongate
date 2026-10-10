@@ -28,6 +28,9 @@ public sealed class WorldModule
     private const int MinimumLight = 0;
     private const int MaximumLight = 31;
 
+    // A smithy, not a region: the statics of a wider square cost a read of each of its cells.
+    private const int MaxStaticsRange = 18;
+
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
     private readonly TimeProvider _time;
@@ -43,6 +46,7 @@ public sealed class WorldModule
     private readonly IMobileService? _mobiles;
     private readonly ILightService? _light;
     private readonly ISpeechService? _speech;
+    private readonly IMapService? _maps;
     private readonly ILogger _logger = Log.ForContext<WorldModule>();
 
     public WorldModule(
@@ -60,9 +64,11 @@ public sealed class WorldModule
         TimeProvider? time = null,
         IWorldPropsService? props = null,
         ILightService? light = null,
-        ISpeechService? speech = null
+        ISpeechService? speech = null,
+        IMapService? maps = null
     )
     {
+        _maps = maps;
         _speech = speech;
         _light = light;
         _props = props;
@@ -333,6 +339,49 @@ public sealed class WorldModule
     public bool IsWater(MapType map, int x, int y)
     {
         return _movement is not null && _sectors.IsInside(map, x, y) && _movement.TryGetSwimZ(map, x, y, out _);
+    }
+
+    /// <summary>
+    ///     Gets the statics of the map around a cell, such as the anvils and forges of a smithy;
+    ///     <c>for _, s in ipairs(world.statics(here.map, here.x, here.y, 2)) do ... end</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The statics of the map files within range tiles (0 to 18) of x, y on the map, at any height, as an array of { graphic, x, y, z }: what the map itself holds, such as the anvils, forges and trees of a place; ground items are world.items_in_range. Empty outside the map, for a range outside 0 to 18 or a map that is not loaded."
+    )]
+    public LuaTable Statics(MapType map, int x, int y, int range)
+    {
+        var list = new LuaTable();
+
+        if (_maps is null || range is < 0 or > MaxStaticsRange)
+        {
+            return list;
+        }
+
+        var index = 1;
+
+        for (var cellX = x - range; cellX <= x + range; cellX++)
+        {
+            for (var cellY = y - range; cellY <= y + range; cellY++)
+            {
+                if (!_maps.Contains(map, cellX, cellY))
+                {
+                    continue;
+                }
+
+                foreach (var tile in _maps.GetStatics(map, cellX, cellY))
+                {
+                    var entry = new LuaTable();
+                    entry["graphic"] = (int)tile.Id;
+                    entry["x"] = cellX;
+                    entry["y"] = cellY;
+                    entry["z"] = (int)tile.Z;
+                    list[index++] = entry;
+                }
+            }
+        }
+
+        return list;
     }
 
     /// <summary>

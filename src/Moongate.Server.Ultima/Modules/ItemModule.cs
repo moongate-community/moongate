@@ -1,4 +1,3 @@
-using Moongate.Server.Ultima.Interfaces.Items;
 using System.Diagnostics.CodeAnalysis;
 using Lua;
 using Moongate.Core.Geometry;
@@ -7,18 +6,20 @@ using Moongate.Core.Utils;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
-using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Speech;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 
@@ -417,6 +418,29 @@ public sealed class ItemModule
         }
 
         item.SetProp(key, prop);
+        Refresh(item);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Sets the rarity of an item, which its tooltip shows above common; <c>item.set_rarity(serial, "rare")</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Sets the item's rarity: 'common', 'uncommon', 'rare', 'epic' or 'legendary'; its tooltip shows a rarity above common, in its colour, and an item of another rarity does not join its stack. False for an unknown item or rarity."
+    )]
+    public bool SetRarity(long serial, string rarity)
+    {
+        if (!TryGetItem(serial, out var item) ||
+            !EnumNameUtils.TryParse<ItemRarityType>(rarity, out var value) ||
+            !Enum.IsDefined(value) ||
+            _inventory?.Allows(item) == false)
+        {
+            return false;
+        }
+
+        item.Rarity = value;
         Refresh(item);
 
         return true;
