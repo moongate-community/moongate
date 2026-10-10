@@ -33,6 +33,8 @@ CARPENTRY_TOOL_GRAPHICS = frozenset(
 TINKERING_TOOL_GRAPHICS = frozenset({0x1EB8, 0x1EB9, 0x1EBA, 0x1EBB, 0x1EBC})
 # What a tailor sews with: the sewing kit, not the scissors.
 TAILORING_TOOL_GRAPHICS = frozenset({0x0F9D})
+# What an alchemist grinds reagents with: the mortar and pestle.
+ALCHEMY_TOOL_GRAPHICS = frozenset({0x0E9B})
 # What a cartographer draws with: the pens and ink (inscription will share them).
 CARTOGRAPHY_TOOL_GRAPHICS = frozenset({0x0FBF, 0x0FC0})
 # What a cook works with: the skillets, the flour sifter and the rolling pin.
@@ -235,6 +237,9 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
         # The taxidermy kit shares a tool kit's graphic but stuffs trophies: no tinkering with it.
         # What UOX3's crafting tool script opens tinkering with: scripts/items/tinkering_tool.lua.
         template.script_id = "tinkering_tool"
+    elif graphic in ALCHEMY_TOOL_GRAPHICS:
+        # What an alchemist grinds with: scripts/items/alchemy_tool.lua.
+        template.script_id = "alchemy_tool"
     elif graphic in CARTOGRAPHY_TOOL_GRAPHICS:
         # What a cartographer draws with: scripts/items/cartography_tool.lua.
         template.script_id = "cartography_tool"
@@ -282,12 +287,14 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     if name:
         template.name = name
 
-    # What a player drinks: scripts/items/potion.lua.
-    if template.script_id is None and item_id.lower() in POTION_TEMPLATES:
+    # What a player drinks: scripts/items/potion.lua; a plain potion as the named one it is.
+    potion = GENERIC_POTIONS.get(item_id.lower(), item_id.lower())
+
+    if template.script_id is None and potion in POTION_TEMPLATES:
         template.script_id = "potion"
 
     # What a player throws: scripts/items/explosion_potion.lua.
-    if template.script_id is None and item_id.lower() in EXPLOSION_POTIONS:
+    if template.script_id is None and potion in EXPLOSION_POTIONS:
         template.script_id = "explosion_potion"
 
     # A blank map says it is blank when it is opened: scripts/items/map_item.lua.
@@ -542,6 +549,30 @@ POTION_TEMPLATES = frozenset(
 
 # The potions a player throws, scripts/items/explosion_potion.lua.
 EXPLOSION_POTIONS = frozenset({"lesserexplosionpotion", "explosionpotion", "greaterexplosionpotion"})
+
+# The plain potions vendors sell and loot drops, by the named one they are: they get its script.
+GENERIC_POTIONS = {
+    "0x0f06_black_potion": "nightsightpotion",
+    "0x0f07_orange_potion": "lessercurepotion",
+    "0x0f07_b_orange_potion": "curepotion",
+    "0x0f07_c_orange_potion": "greatercurepotion",
+    "0x0f08_blue_potion": "agilitypotion",
+    "0x0f08_b_blue_potion": "greateragilitypotion",
+    "0x0f09_white_potion": "strengthpotion",
+    "0x0f09_b_white_potion": "greaterstrengthpotion",
+    "0x0f0a_green_potion": "lesserpoisonpotion",
+    "0x0f0a_b_green_potion": "poisonpotion",
+    "0x0f0a_c_green_potion": "greaterpoisonpotion",
+    "0x0f0a_d_green_potion": "deadlypoisonpotion",
+    "0x0f0b_red_potion": "refreshmentpotion",
+    "0x0f0b_b_red_potion": "totalrefreshmentpotion",
+    "0x0f0c_yellow_potion": "lesserhealpotion",
+    "0x0f0c_b_yellow_potion": "healpotion",
+    "0x0f0c_c_yellow_potion": "greaterhealpotion",
+    "0x0f0d_purple_potion": "lesserexplosionpotion",
+    "0x0f0d_b_purple_potion": "explosionpotion",
+    "0x0f0d_c_purple_potion": "greaterexplosionpotion",
+}
 PRESET_MAP_FIELDS = ("map_width", "map_height", "map_x1", "map_y1", "map_x2", "map_y2", "map_facet")
 
 

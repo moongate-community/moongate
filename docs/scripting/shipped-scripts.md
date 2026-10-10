@@ -283,6 +283,12 @@ it opens the crafting gump of cartography (see [Cartography](../cartography.md))
 strength, agility and night sight, chosen by the template in its table `EFFECTS`; it checks the reach and a free hand,
 and leaves an empty bottle (see [Potions](../potions.md)).
 
+## alchemy_tool.lua
+
+`scripts/items/alchemy_tool.lua` is the script of the mortar and pestle (`script_id = "alchemy_tool"`): from the backpack
+it opens the crafting gump of alchemy (see [Alchemy](../alchemy.md)). `scripts/common/potions.lua` tells which potion an
+item is, the plain potions vendors sell included, for `potion.lua` and `explosion_potion.lua`.
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,

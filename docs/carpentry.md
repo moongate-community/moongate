@@ -51,7 +51,7 @@ and an exceptional staff hits harder in a fight, as [blacksmithing](blacksmithin
 
 A tool lasts 25 to 75 uses, drawn the first time you use it; its tooltip shows the uses left. Every attempt whose
 skill is tried, a success or a failure, takes one; a refused attempt takes none. The last use breaks it:
-"You have worn out your tool!". A stackable item (a shaft, an arrow) takes no use, and is never exceptional nor marked.
+"You have worn out your tool!". A stackable item (a shaft, an arrow) is never exceptional nor marked; arrows and shafts take no use of the tool.
 
 ## Make last
 

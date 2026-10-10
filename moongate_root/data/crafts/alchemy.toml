@@ -1,0 +1,210 @@
+# ==============================================================================
+# Moongate - data/crafts/alchemy.toml
+#
+# What it is for:
+#   The recipes of alchemy, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+# ==============================================================================
+
+id = "alchemy"
+name = "Alchemy"
+skill = "alchemy"
+sound = 0x0242
+
+[[group]]
+name = "Agility Potions"
+
+[[group.recipe]]
+name = "Agility"
+item = "0x0f08_blue_potion"
+skill_min = 15.1
+skill_max = 65.0
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Greater Agility"
+item = "0x0f08_b_blue_potion"
+skill_min = 35.1
+skill_max = 85.0
+resources = [{ resource = "blood_moss", amount = 3 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Cure Potions"
+
+[[group.recipe]]
+name = "Lesser Cure"
+item = "0x0f07_orange_potion"
+skill_min = 0.0
+skill_max = 50.0
+resources = [{ resource = "garlic", amount = 1 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Cure"
+item = "0x0f07_b_orange_potion"
+skill_min = 25.1
+skill_max = 75.0
+resources = [{ resource = "garlic", amount = 3 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Greater Cure"
+item = "0x0f07_c_orange_potion"
+skill_min = 65.1
+skill_max = 115.0
+resources = [{ resource = "garlic", amount = 6 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Explosion Potions"
+
+[[group.recipe]]
+name = "Lesser Explosion"
+item = "0x0f0d_purple_potion"
+skill_min = 5.1
+skill_max = 55.0
+resources = [{ resource = "sulfurous_ash", amount = 3 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Explosion"
+item = "0x0f0d_b_purple_potion"
+skill_min = 35.1
+skill_max = 85.0
+resources = [{ resource = "sulfurous_ash", amount = 5 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Greater Explosion"
+item = "0x0f0d_c_purple_potion"
+skill_min = 65.1
+skill_max = 115.0
+resources = [{ resource = "sulfurous_ash", amount = 10 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Healing Potions"
+
+[[group.recipe]]
+name = "Lesser Heal"
+item = "0x0f0c_yellow_potion"
+skill_min = 0.0
+skill_max = 50.0
+resources = [{ resource = "ginseng", amount = 1 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Heal"
+item = "0x0f0c_b_yellow_potion"
+skill_min = 15.1
+skill_max = 65.0
+resources = [{ resource = "ginseng", amount = 3 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Greater Heal"
+item = "0x0f0c_c_yellow_potion"
+skill_min = 55.1
+skill_max = 105.0
+resources = [{ resource = "ginseng", amount = 7 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Poison"
+
+[[group.recipe]]
+name = "Lesser Poison"
+item = "0x0f0a_green_potion"
+skill_min = 0.0
+skill_max = 50.0
+resources = [{ resource = "nightshade", amount = 1 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Poison"
+item = "0x0f0a_b_green_potion"
+skill_min = 15.1
+skill_max = 65.0
+resources = [{ resource = "nightshade", amount = 2 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Greater Poison"
+item = "0x0f0a_c_green_potion"
+skill_min = 55.1
+skill_max = 105.0
+resources = [{ resource = "nightshade", amount = 4 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Deadly Poison"
+item = "0x0f0a_d_green_potion"
+skill_min = 90.1
+skill_max = 140.0
+resources = [{ resource = "nightshade", amount = 8 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Refresh Potions"
+
+[[group.recipe]]
+name = "Refresh"
+item = "0x0f0b_red_potion"
+skill_min = 15.1
+skill_max = 65.0
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Total Refresh"
+item = "0x0f0b_b_red_potion"
+skill_min = 25.1
+skill_max = 75.0
+resources = [{ resource = "black_pearl", amount = 5 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Strength Potions"
+
+[[group.recipe]]
+name = "Strength"
+item = "0x0f09_white_potion"
+skill_min = 25.1
+skill_max = 75.0
+resources = [{ resource = "mandrake_root", amount = 2 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Greater Strength"
+item = "0x0f09_b_white_potion"
+skill_min = 45.1
+skill_max = 95.0
+resources = [{ resource = "mandrake_root", amount = 5 }, { resource = "bottles", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Nightsight Potions"
+
+[[group.recipe]]
+name = "Nightsight"
+item = "0x0f06_black_potion"
+skill_min = 0.0
+skill_max = 50.0
+resources = [{ resource = "spider_silk", amount = 5 }, { resource = "bottles", amount = 1 }]
+skills = []

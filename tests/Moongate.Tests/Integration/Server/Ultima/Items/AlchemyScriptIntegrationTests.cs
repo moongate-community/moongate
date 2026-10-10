@@ -55,27 +55,24 @@ using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
-using Moongate.Server.Ultima.Packets.World;
-using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 namespace Moongate.Tests.Integration.Server.Ultima.Items;
 
 /// <summary>
-///     The shipped <c>scripts/items/potion.lua</c>: heal, refresh, strength, agility and night sight potions.
+///     The shipped <c>scripts/items/alchemy_tool.lua</c> with the crafting engine: alchemy, potions from reagents and an empty bottle.
 /// </summary>
-public sealed class PotionScriptIntegrationTests : IAsyncLifetime
+public sealed class AlchemyScriptIntegrationTests : IAsyncLifetime
 {
     private const long Aria = 2;
 
-    private const int TooFar = 502138;
-    private const int NoFreeHand = 502172;
-    private const int FullHealth = 1049547;
-    private const int HealWait = 500235;
-    private const int SimilarEffect = 502173;
-    private const int CannotHeal = 1005000;
-    private const int NotPoisoned = 1042000;
-    private const int NotStrongEnough = 500232;
-    private const int Cured = 500231;
+    private const int Healing = 1;
+    private const int Heal = 1;
+
+    private const int Created = 1044154;
+    private const int NoComponents = 1044253;
+    private const int NoPotion = 500287;
+    private const int PourSound = 0x240;
+    private const int Sound = 0x0242;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -100,33 +97,52 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
 
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With<ItemTemplate>(
-            new ItemTemplate { Id = "lesserhealpotion", ItemId = new Serial(0x0F0C), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "0x0f0c_c_yellow_potion", ItemId = new Serial(0x0F0C), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "greaterhealpotion", ItemId = new Serial(0x0F0C), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "refreshmentpotion", ItemId = new Serial(0x0F0B), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "totalrefreshmentpotion", ItemId = new Serial(0x0F0B), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "strengthpotion", ItemId = new Serial(0x0F09), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "greateragilitypotion", ItemId = new Serial(0x0F08), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "nightsightpotion", ItemId = new Serial(0x0F06), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "poisonpotion", ItemId = new Serial(0x0F0A), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "greaterpoisonpotion", ItemId = new Serial(0x0F0A), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "lessercurepotion", ItemId = new Serial(0x0F07), ScriptId = "potion", Stackable = true },
-            new ItemTemplate { Id = "greatercurepotion", ItemId = new Serial(0x0F07), ScriptId = "potion", Stackable = true },
+            new ItemTemplate { Id = "mortarandpestle", ItemId = new Serial(0x0E9B), ScriptId = "alchemy_tool" },
+            new ItemTemplate { Id = "0x0f85_ginseng", ItemId = new Serial(0x0F85), Stackable = true },
+            new ItemTemplate { Id = "0x0f85_10_ginseng", ItemId = new Serial(0x0F85), Stackable = true },
             new ItemTemplate { Id = "0x0f0e_empty_bottle", ItemId = new Serial(0x0F0E), Stackable = true },
-            new ItemTemplate { Id = "halberd", ItemId = new Serial(0x143E), WeaponType = WeaponType.PoleArm },
-            new ItemTemplate { Id = "longsword", ItemId = new Serial(0x0F61), WeaponType = WeaponType.Sword },
-            new ItemTemplate { Id = "buckler", ItemId = new Serial(0x1B73) },
-            new ItemTemplate { Id = "pouch", ItemId = new Serial(0x0E79) }
+            new ItemTemplate { Id = "0x0f0c_b_yellow_potion", ItemId = new Serial(0x0F0C), Stackable = true, ScriptId = "potion" }
         )
     );
 
-    private readonly CraftService _crafts = new(new StubDataLoaderService().With<CraftDefinition>());
+    private readonly CraftService _crafts = new(
+        new StubDataLoaderService()
+            .With(
+                new CraftDefinition
+                {
+                    Id = "alchemy", Name = "Alchemy", Skill = "alchemy", Sound = Sound,
+                    Group =
+                    [
+                        new()
+                        {
+                            Name = "Healing Potions",
+                            Recipe =
+                            [
+                                new()
+                                {
+                                    Name = "Heal", Item = "0x0f0c_b_yellow_potion", SkillMin = 15.1, SkillMax = 65,
+                                    Resources =
+                                    [
+                                        new() { Resource = "ginseng", Amount = 3 },
+                                        new() { Resource = "0x0f0e_empty_bottle", Amount = 1 }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            )
+            .With(new CraftResourceList { Id = "ginseng", Templates = ["0x0f85_10_ginseng", "0x0f85_ginseng"] })
+    );
 
     private readonly ItemEntity _backpack = new()
         { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
 
     private readonly ItemEntity _bank = new()
         { Id = new Serial(0x40000003), TemplateId = "backpack", ItemId = 0x0E7C, Amount = 1 };
+
+    private readonly ItemEntity _tools = new()
+        { Id = new Serial(0x40000002), TemplateId = "mortarandpestle", ItemId = 0x0E9B, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
     private LuaScriptEngineService _engine = null!;
@@ -151,7 +167,10 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
 
         _backpack.Equip(new Serial((uint)Aria), LayerType.Backpack);
         _bank.Equip(new Serial((uint)Aria), LayerType.Bank);
-        _items.Add([_backpack, _bank]);
+        _tools.PutInContainer(_backpack.Id, new Point2D(10, 10));
+        // A saw that has been used already: no draw of its uses in the tests that are not about it.
+        _tools.SetProp("uses_remaining", 50L);
+        _items.Add([_backpack, _bank, _tools]);
 
         for (uint serial = 0x40000100; serial < 0x40000110; serial++)
         {
@@ -159,24 +178,43 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
         }
 
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
+        // The gump is drawn by another test: here opening it only says so, with the notice it would show.
         _scripts.Write(
-            "items/potion.lua",
-            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "potion.lua")) +
+            "items/alchemy_tool.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "alchemy_tool.lua")) +
             """
 
-            -- The heal of the test is the most of the potion.
-            potion.random = function(low, high) return high end
+            local crafting_for_tests = require("common.crafting")
 
-            -- The chance of a cure the test rolls, 0 when it says nothing.
-            local roll_for_tests = 0
-            potion.chance = function() return roll_for_tests end
+            crafting_for_tests.open = function(user, tool, craft_id, notice)
+                mobile.message(user, "opened " .. tostring(notice or ""))
+            end
 
-            function potion.set_roll(serial, value)
-                roll_for_tests = value
+            function alchemy_tool.make(serial, user, group, recipe)
+                crafting_for_tests.make(user, serial, "alchemy", group, recipe)
+            end
+
+            function alchemy_tool.pick(serial, user, kind, craft_id)
+                crafting_for_tests.set_kind(user, kind, craft_id or "alchemy")
+            end
+
+            function alchemy_tool.last(serial, user)
+                crafting_for_tests.make_last(user, serial, "alchemy")
+            end
+
+            function alchemy_tool.make_in(serial, user, craft_id, group, recipe)
+                crafting_for_tests.make(user, serial, craft_id, group, recipe)
+            end
+
+            -- The rolls of the script are the test's: the ones queued, then a high one, which is no exceptional item.
+            crafting_for_tests.roll = function() return 0.999 end
+
+            function alchemy_tool.set_rolls(serial, ...)
+                local rolls = { ... }
+                crafting_for_tests.roll = function() return table.remove(rolls, 1) or 0.999 end
             end
             """
         );
-        _scripts.Write("common/potions.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "potions.lua")));
         _scripts.Write("common/crafting.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "crafting.lua")));
         _scripts.Write("common/woods.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "woods.lua")));
         _scripts.Write("common/smithy.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "smithy.lua")));
@@ -188,7 +226,7 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
             HookInterval = 100, WriteDefinitions = false
         };
         var data = new StubDataLoaderService().With(
-            new SkillContent { Id = SkillType.Cooking, GainFactor = 1.0, Delay = 1 }
+            new SkillContent { Id = SkillType.Alchemy, GainFactor = 1.0, Delay = 1 }
         );
 
         _container.RegisterMoongateEventBus();
@@ -238,9 +276,6 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<EffectModule>();
         _container.AddScriptModule<CraftModule>();
-        _container.Register<IStatBonusService, StatBonusService>(Reuse.Singleton);
-        _container.RegisterInstance(new CombatConfig());
-        _container.Register<IPoisonService, PoisonService>(Reuse.Singleton, made: Parameters.Of.Type<Random>(_ => null));
         _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -265,297 +300,70 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void AHealPotion_HealsTheWounded_LeavesABottle_AndMakesThemWait()
+    public void TheMortar_InTheBackpack_OpensTheGumpOfAlchemy()
     {
-        (_aria.HitsMax, _aria.Hits) = (50, 10);
-        var potions = Carry("greaterhealpotion", 0x0F0C, 2);
-
-        Drink(potions);
+        Run(_tools);
 
         Assert.Empty(_errors);
-        Assert.Equal(40, _aria.Hits);
-        Assert.Equal(1, Left(potions));
-        Assert.Single(Made("0x0f0e_empty_bottle"));
-
-        _aria.Hits = 10;
-        Drink(potions);
-
-        Assert.Equal(10, _aria.Hits);
-        Assert.Equal(1, Left(potions));
-        Assert.Equal([HealWait], Told());
+        Assert.Single(Opened());
     }
 
     [Fact]
-    public void AHealPotion_AtFullHealth_IsNotDrunk()
+    public void AHealPotion_IsGroundFromGinsengAndPouredIntoABottle_AndIsNeverExceptional()
     {
-        _aria.Hits = _aria.HitsMax;
-        var potion = Carry("lesserhealpotion", 0x0F0C, 1);
+        Rolls(0.0);
+        var ginseng = Carry("0x0f85_10_ginseng", 0x0F85, 5);
+        var bottles = Carry("0x0f0e_empty_bottle", 0x0F0E, 2);
 
-        Drink(potion);
-
-        Assert.Equal(1, Left(potion));
-        Assert.Equal([FullHealth], Told());
-    }
-
-    [Fact]
-    public void ARefreshPotion_GivesAQuarterOfTheStamina_AndATotalOneAllOfIt()
-    {
-        (_aria.StaminaMax, _aria.Stamina) = (100, 10);
-
-        Drink(Carry("refreshmentpotion", 0x0F0B, 1));
-        Assert.Equal(35, _aria.Stamina);
-
-        Drink(Carry("totalrefreshmentpotion", 0x0F0B, 1));
-        Assert.Equal(100, _aria.Stamina);
-
-        var more = Carry("refreshmentpotion", 0x0F0B, 1);
-        Drink(more);
-        Assert.Equal(1, Left(more));
-    }
-
-    [Fact]
-    public void AStrengthPotion_RaisesStrengthForTwoMinutes_ButNotTwice()
-    {
-        var potions = Carry("strengthpotion", 0x0F09, 2);
-
-        Drink(potions);
+        Call("make", Aria, Healing, Heal);
+        Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Equal(10, _aria.StrengthBonus);
-        Assert.Equal(1, Left(potions));
-
-        Drink(potions);
-
-        Assert.Equal(1, Left(potions));
-        Assert.Equal([SimilarEffect], Told());
+        var potion = Assert.Single(Made("0x0f0c_b_yellow_potion"));
+        Assert.False(potion.TryGetProp<int>("quality", out _));
+        Assert.Equal((2, 1), (Left(ginseng), Left(bottles)));
     }
 
     [Fact]
-    public void AGreaterAgilityPotion_RaisesDexterityByTwenty()
+    public void APotion_WearsTheMortar_AndPoursWithItsSound()
     {
-        Drink(Carry("greateragilitypotion", 0x0F08, 1));
+        Carry("0x0f85_ginseng", 0x0F85, 3);
+        Carry("0x0f0e_empty_bottle", 0x0F0E, 1);
+
+        Call("make", Aria, Healing, Heal);
+        Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Equal(20, _aria.DexterityBonus);
+        Assert.True(_tools.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(49, left);
+        Assert.Contains(_speech.Sounds, sound => sound.Source == _aria && sound.Sound == PourSound);
     }
 
     [Fact]
-    public void ANightSightPotion_LightsThePlayer_Once()
+    public void AFailure_LosesSomeGinseng_ButNotTheBottle()
     {
-        var potions = Carry("nightsightpotion", 0x0F06, 2);
+        Skill(151);
+        _random.Doubles(0.99);
+        var ginseng = Carry("0x0f85_10_ginseng", 0x0F85, 3);
+        var bottles = Carry("0x0f0e_empty_bottle", 0x0F0E, 1);
 
-        Drink(potions);
-        Drink(potions);
+        Call("make", Aria, Healing, Heal);
+        Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Equal(1, Left(potions));
-        Assert.Equal([13], _fixture.Sender.Sent.OfType<PersonalLightLevelPacket>().Select(packet => packet.Level));
+        Assert.Equal((2, 1), (Left(ginseng), Left(bottles)));
+        Assert.Equal([NoPotion], Told());
+        Assert.Empty(Made("0x0f0c_b_yellow_potion"));
     }
 
     [Fact]
-    public void WithBothHandsFull_OrTooFar_NothingIsDrunk()
+    public void WithoutABottle_NothingIsMade()
     {
-        (_aria.HitsMax, _aria.Hits) = (50, 10);
-        var halberd = new ItemEntity { Id = new Serial(_next++), TemplateId = "halberd", ItemId = 0x143E, Amount = 1 };
-        halberd.Equip(_aria.Id, LayerType.TwoHanded);
-        _items.Add([halberd]);
-        var potion = Carry("lesserhealpotion", 0x0F0C, 1);
+        Carry("0x0f85_ginseng", 0x0F85, 3);
 
-        Drink(potion);
+        Call("make", Aria, Healing, Heal);
 
-        Assert.Equal(1, Left(potion));
-        Assert.Equal([NoFreeHand], Told());
-
-        _items.Remove([halberd.Id]);
-        var far = new ItemEntity { Id = new Serial(_next++), TemplateId = "lesserhealpotion", ItemId = 0x0F0C, Amount = 1 };
-        _items.Add([far]);
-        _items.PlaceOnGround(far, _aria.Map, new Point3D(12, 10, 0));
-
-        Drink(far);
-
-        Assert.Equal(1, Left(far));
-        Assert.Equal(TooFar, Told().Last());
-    }
-
-    [Fact]
-    public void APotionThatCannotBeUsedUp_GivesNothing()
-    {
-        (_aria.HitsMax, _aria.Hits) = (50, 10);
-        var potion = Carry("greaterhealpotion", 0x0F0C, 1);
-        _guard.Allowed = false;
-
-        Drink(potion);
-
-        Assert.Equal(10, _aria.Hits);
-        Assert.Empty(Made("0x0f0e_empty_bottle"));
-    }
-
-    [Fact]
-    public void APotionAsVendorsSellIt_WorksAsTheNamedOne()
-    {
-        (_aria.HitsMax, _aria.Hits) = (50, 10);
-
-        Drink(Carry("0x0f0c_c_yellow_potion", 0x0F0C, 1));
-
-        Assert.Empty(_errors);
-        Assert.Equal(40, _aria.Hits);
-    }
-
-    [Fact]
-    public void TheHealDelay_IsSharedByEveryHealPotion()
-    {
-        (_aria.HitsMax, _aria.Hits) = (50, 10);
-        Drink(Carry("lesserhealpotion", 0x0F0C, 1));
-        _aria.Hits = 10;
-
-        var greater = Carry("greaterhealpotion", 0x0F0C, 1);
-        Drink(greater);
-
-        Assert.Equal(1, Left(greater));
-        Assert.Equal(HealWait, Told().Last());
-    }
-
-    [Fact]
-    public void AShieldAlone_LeavesAHandFree_AWeaponAndAShieldDoNot()
-    {
-        (_aria.HitsMax, _aria.Hits) = (50, 10);
-        WearItem("buckler", 0x1B73, LayerType.TwoHanded);
-        var potions = Carry("lesserhealpotion", 0x0F0C, 2);
-
-        Drink(potions);
-        Assert.Equal(1, Left(potions));
-
-        WearItem("longsword", 0x0F61, LayerType.OneHanded);
-        _aria.Hits = 10;
-        Drink(potions);
-
-        Assert.Equal(1, Left(potions));
-        Assert.Equal(NoFreeHand, Told().Last());
-    }
-
-    [Fact]
-    public void APotionInABagOnTheGroundWithinATile_IsDrunk()
-    {
-        _aria.StaminaMax = 100;
-        _aria.Stamina = 10;
-        var bag = new ItemEntity { Id = new Serial(_next++), TemplateId = "pouch", ItemId = 0x0E79, Amount = 1 };
-        _items.Add([bag]);
-        _items.PlaceOnGround(bag, _aria.Map, new Point3D(11, 10, 0));
-        var potion = new ItemEntity { Id = new Serial(_next++), TemplateId = "totalrefreshmentpotion", ItemId = 0x0F0B, Amount = 1 };
-        potion.PutInContainer(bag.Id, new Point2D(20, 20));
-        _items.Add([potion]);
-
-        Drink(potion);
-
-        Assert.Empty(_errors);
-        Assert.Equal(100, _aria.Stamina);
-    }
-
-    [Fact]
-    public void WithAFullBackpack_TheBottleIsLeftAtTheFeet()
-    {
-        _aria.StaminaMax = 100;
-        _aria.Stamina = 10;
-        var potion = Carry("refreshmentpotion", 0x0F0B, 1);
-        _capacity.HasRoomResult = false;
-
-        Drink(potion);
-
-        Assert.Empty(_errors);
-        var bottle = Assert.Single(Made("0x0f0e_empty_bottle"));
-        Assert.Equal(_aria.Location, bottle.GroundLocation);
-    }
-
-    [Fact]
-    public void NightSight_LastsFifteenToThirtyNineMinutes()
-    {
-        Drink(Carry("nightsightpotion", 0x0F06, 1));
-
-        Assert.Equal(TimeSpan.FromMinutes(39), _timers.Timers.Single(timer => timer.Name == "night_sight").Interval);
-    }
-
-    [Fact]
-    public void APoisonPotion_PoisonsTheDrinker_AndAHealPotionIsThenRefused()
-    {
-        Drink(Carry("poisonpotion", 0x0F0A, 1));
-
-        Assert.Empty(_errors);
-        Assert.Equal(1, Poison().LevelOf(_aria));
-
-        (_aria.HitsMax, _aria.Hits) = (50, 10);
-        var heal = Carry("lesserhealpotion", 0x0F0C, 1);
-        Drink(heal);
-
-        Assert.Equal(1, Left(heal));
-        Assert.Equal(CannotHeal, Told().Last());
-    }
-
-    [Fact]
-    public void ACurePotion_IsRefusedWhenNotPoisoned()
-    {
-        var cure = Carry("lessercurepotion", 0x0F07, 1);
-
-        Drink(cure);
-
-        Assert.Equal(1, Left(cure));
-        Assert.Equal([NotPoisoned], Told());
-    }
-
-    [Fact]
-    public void ALesserCure_OftenFailsAgainstAGreaterPoison_AGreaterCureNever()
-    {
-        Drink(Carry("greaterpoisonpotion", 0x0F0A, 1));
-        var lesser = Carry("lessercurepotion", 0x0F07, 1);
-        _itemScripts.Run(lesser, "set_roll", 0.5);
-
-        Drink(lesser);
-
-        Assert.Equal(0, Left(lesser));
-        Assert.Equal(2, Poison().LevelOf(_aria));
-        Assert.Equal(NotStrongEnough, Told().Last());
-
-        Drink(Carry("greatercurepotion", 0x0F07, 1));
-
-        Assert.Null(Poison().LevelOf(_aria));
-        Assert.Equal(Cured, Told().Last());
-    }
-
-    [Fact]
-    public void AGreaterCure_HasAChanceAgainstALethalPoison()
-    {
-        Poison().Apply(_aria, 4);
-        var cure = Carry("greatercurepotion", 0x0F07, 2);
-        _itemScripts.Run(cure, "set_roll", 0.2);
-
-        Drink(cure);
-
-        Assert.Null(Poison().LevelOf(_aria));
-        Assert.Equal(Cured, Told().Last());
-    }
-
-    private IPoisonService Poison()
-    {
-        return _container.Resolve<IPoisonService>();
-    }
-
-    private void WearItem(string template, int graphic, LayerType layer)
-    {
-        var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = 1 };
-        item.Equip(_aria.Id, layer);
-        _items.Add([item]);
-    }
-
-    private void Drink(ItemEntity potion)
-    {
-        _loop.DeferTryPost = true;
-        _itemScripts.Run(potion, "on_use", Aria);
-
-        while (_loop.Deferred.Count > 0)
-        {
-            _loop.RunDeferred();
-        }
-
-        _loop.DeferTryPost = false;
+        Assert.Equal([NoComponents], Told());
     }
 
     public async Task DisposeAsync()
@@ -567,10 +375,46 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
 
     private void Skill(int tenths)
     {
-        _aria.Skills.RemoveAll(known => known.Skill == SkillType.Cooking);
-        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Cooking, Base = tenths });
-        _state.Skills.RemoveAll(known => known.Skill == SkillType.Cooking);
-        _state.Skills.Add(new MobileSkill { Skill = SkillType.Cooking, Base = tenths });
+        _aria.Skills.RemoveAll(known => known.Skill == SkillType.Alchemy);
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Alchemy, Base = tenths });
+        _state.Skills.RemoveAll(known => known.Skill == SkillType.Alchemy);
+        _state.Skills.Add(new MobileSkill { Skill = SkillType.Alchemy, Base = tenths });
+    }
+
+    private void Make(int recipe)
+    {
+        Call("make", Aria, 1, recipe);
+    }
+
+    private void Rolls(params double[] rolls)
+    {
+        Call("set_rolls", rolls.Cast<object?>().ToArray());
+    }
+
+    private void Call(string function, params object?[] args)
+    {
+        _loop.DeferTryPost = true;
+        _itemScripts.Run(_tools, function, args);
+
+        while (_loop.Deferred.Count > 0)
+        {
+            _loop.RunDeferred();
+        }
+
+        _loop.DeferTryPost = false;
+    }
+
+    private void Run(ItemEntity tool)
+    {
+        _loop.DeferTryPost = true;
+        _itemScripts.Run(tool, "on_use", Aria);
+
+        while (_loop.Deferred.Count > 0)
+        {
+            _loop.RunDeferred();
+        }
+
+        _loop.DeferTryPost = false;
     }
 
     // Fires the oldest timer of that many seconds that has not fired yet.

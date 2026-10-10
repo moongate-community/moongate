@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"eb1a2dd72e85c56665d1a5e3efe3786881f895c79b7d89f7f3f71d426c336940","title":"Pozioni"} -->
+<!-- translation: {"sourceHash":"66160b93c312da118eb6e0f5938bcd35df5c755ef2f1ea92c104f7cb12b6f6b1","title":"Pozioni"} -->
 
 # Pozioni
 
@@ -88,6 +88,8 @@ o la stamina che tenevano sopra i massimi base. I massimi di un NPC non crescono
 
 Gli script li danno con `mobile.add_stat_bonus(user, "strength", 10, 120)` e
 `mobile.set_night_sight(user, 13, 1200)`; `mobile.stats` dà sia i valori con i bonus sia quelli `base_`.
+
+Le pozioni si creano con l'[alchimia](alchemy.md); le pozioni semplici dei venditori e dei bottini funzionano come quelle con il nome.
 
 ## Cambiare le regole
 

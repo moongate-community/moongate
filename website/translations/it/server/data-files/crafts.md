@@ -1,8 +1,8 @@
-<!-- translation: {"sourceHash":"39a552ef3ebf7d43ee2a7ad77b85f1149c82798520f244164045e020447200c8","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"4ecd772b584a8a65950853bc730998eb923e545eb7fdd4b5ecdf883fc0ab3d3e","title":"Mestieri"} -->
 
 # Mestieri
 
-`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml`, `tailoring.toml`, `tinkering.toml`, `fletching.toml`, `cooking.toml` e `cartography.toml`), e
+`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml`, `tailoring.toml`, `tinkering.toml`, `fletching.toml`, `cooking.toml`, `cartography.toml` e `alchemy.toml`), e
 `resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole e
 [Fabbro](../blacksmithing.md). Ciò a cui un mestiere deve stare vicino, come l'incudine e la forgia del fabbro, non è un dato:
 è la tabella `NEEDS` di `scripts/common/crafting.lua`, che può indicarlo solo per alcuni gruppi (il forno di Baking, il
@@ -81,4 +81,6 @@ punti, e conta come legno solo le assi. UOX3 annida i suoi menu (Blacksmithing, 
 ricette diventa un gruppo, nell'ordine in cui i menu si incontrano. Il nome di una ricetta inizia con la maiuscola, e una seconda ricetta
 con lo stesso nome (un cucchiaio girato dall'altra parte) si distingue con un numero: "Spoon 2". La ricetta Tinker's tools crea
 gli attrezzi da tinker, non la cassetta degli attrezzi da 10 pietre di UOX3. Le ricette proprie di un menu radice (gli archi) formano un
-primo gruppo, una seconda radice (le frecce e i dardi dell'attrezzo da fletcher) si visita dopo, e i lotti di UOX3 (cinque, venti, cinquanta) sono esclusi.
+primo gruppo, una seconda radice (le frecce e i dardi dell'attrezzo da fletcher) si visita dopo, e i lotti di UOX3 (cinque, venti, cinquanta) sono esclusi. Un oggetto venduto singolo e a
+pile sotto una sola grafica, come un reagente (0x0f85_ginseng e 0x0f85_10_ginseng), diventa un elenco a sé (`ginseng`);
+una ricetta di alchimia richiede anche una bottiglia vuota, che UOX3 non mette.

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Moongate.Server.Ultima.Packets.Books;
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
@@ -722,6 +723,22 @@ public sealed class RepositoryTemplateFilesTests
         Assert.All(new[] { "mapmakerspen", "0x0fc0_pen_and_ink" }, id => Assert.Equal("cartography_tool", byId[id].ScriptId));
         Assert.Contains("0x14ec_blank_map", lists.Single(list => list.Id == "maps").Templates);
         Assert.DoesNotContain("0x0e34_a_blank_scroll", lists.Single(list => list.Id == "maps").Templates);
+
+        // Alchemy: twenty potions in eight groups, each in an empty bottle, as the plain potions vendors sell; a reagent
+        // counts one by one and by the ten.
+        var alchemy = crafts["alchemy"];
+        Assert.Equal(8, alchemy.Group.Count);
+        Assert.Equal(20, alchemy.Group.Sum(group => group.Recipe.Count));
+        Assert.All(
+            alchemy.Group.SelectMany(group => group.Recipe),
+            recipe => Assert.Contains(recipe.Resources, resource => resource.Resource == "bottles")
+        );
+        Assert.All(
+            alchemy.Group.SelectMany(group => group.Recipe),
+            recipe => Assert.Contains(byId[recipe.Item].ScriptId, new[] { "potion", "explosion_potion" })
+        );
+        Assert.Equal("alchemy_tool", byId["mortarandpestle"].ScriptId);
+        Assert.Equal(["0x0f85_10_ginseng", "0x0f85_ginseng"], lists.Single(list => list.Id == "ginseng").Templates);
     }
 
     [Fact]
@@ -1112,6 +1129,41 @@ public sealed class RepositoryTemplateFilesTests
             id => Assert.Equal("explosion_potion", templates[id].ScriptId)
         );
         Assert.True(templates.ContainsKey("0x0f0e_empty_bottle"));
+    }
+
+    [Fact]
+    public async Task EveryShippedPotion_IsOneTheScriptsKnow()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+        var scripts = Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts");
+        var plain = Regex.Matches(
+                await File.ReadAllTextAsync(Path.Combine(scripts, "common", "potions.lua")),
+                "\\[\"(0x[^\"]+)\"\\] = \"([a-z]+)\""
+            )
+            .ToDictionary(match => match.Groups[1].Value, match => match.Groups[2].Value);
+        var drunk = KeysOf(await File.ReadAllTextAsync(Path.Combine(scripts, "items", "potion.lua")), "EFFECTS");
+        var thrown = KeysOf(await File.ReadAllTextAsync(Path.Combine(scripts, "items", "explosion_potion.lua")), "DAMAGE");
+
+        // A potion with the script but no effect would do nothing, and say nothing.
+        Assert.All(
+            templates.Where(template => template.ScriptId == "potion"),
+            template => Assert.Contains(plain.GetValueOrDefault(template.Id, template.Id), drunk)
+        );
+        Assert.All(
+            templates.Where(template => template.ScriptId == "explosion_potion"),
+            template => Assert.Contains(plain.GetValueOrDefault(template.Id, template.Id), thrown)
+        );
+    }
+
+    // The keys of a Lua table written as "local NAME = { key = ..., }".
+    private static HashSet<string> KeysOf(string script, string table)
+    {
+        var start = script.IndexOf($"local {table} = {{", StringComparison.Ordinal);
+        var end = script.IndexOf("\n}", start, StringComparison.Ordinal);
+
+        return Regex.Matches(script[start..end], "^\\s+([a-z]+) = ", RegexOptions.Multiline)
+            .Select(match => match.Groups[1].Value)
+            .ToHashSet();
     }
 
     [Fact]

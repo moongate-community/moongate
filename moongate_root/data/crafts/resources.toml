@@ -79,3 +79,39 @@ templates = ["0x09b9_raw_bird", "0x09ba_raw_bird"]
 [[resource]]
 id = "maps"
 templates = ["0x14eb_map", "0x14ec_blank_map"]
+
+[[resource]]
+id = "blood_moss"
+templates = ["0x0f7b_10_blood_moss", "0x0f7b_blood_moss"]
+
+[[resource]]
+id = "bottles"
+templates = ["0x0f0e_empty_bottle"]
+
+[[resource]]
+id = "garlic"
+templates = ["0x0f84_10_garlic", "0x0f84_garlic"]
+
+[[resource]]
+id = "sulfurous_ash"
+templates = ["0x0f8c_10_sulfurous_ash", "0x0f8c_sulfurous_ash"]
+
+[[resource]]
+id = "ginseng"
+templates = ["0x0f85_10_ginseng", "0x0f85_ginseng"]
+
+[[resource]]
+id = "nightshade"
+templates = ["0x0f88_10_nightshade", "0x0f88_nightshade"]
+
+[[resource]]
+id = "black_pearl"
+templates = ["0x0f7a_10_black_pearl", "0x0f7a_black_pearl"]
+
+[[resource]]
+id = "mandrake_root"
+templates = ["0x0f86_10_mandrake_root", "0x0f86_mandrake_root"]
+
+[[resource]]
+id = "spider_silk"
+templates = ["0x0f8d_10_spider_silk", "0x0f8d_spider_silk"]

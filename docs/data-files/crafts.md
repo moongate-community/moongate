@@ -1,7 +1,7 @@
 # Crafts
 
 `data/crafts` holds the crafts players make things with, one file a craft (`carpentry.toml`, `blacksmithing.toml`,
-`tailoring.toml`, `tinkering.toml`, `fletching.toml`, `cooking.toml` and `cartography.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
+`tailoring.toml`, `tinkering.toml`, `fletching.toml`, `cooking.toml`, `cartography.toml` and `alchemy.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
 [Blacksmithing](../blacksmithing.md). What a craft must stand near, such as the anvil and the forge of blacksmithing, is not data:
 it is the table `NEEDS` of `scripts/common/crafting.lua`, which may name it for some groups only (the oven of Baking, the
 fire of Barbecue).
@@ -79,4 +79,6 @@ points, and counts only boards as wood. UOX3 nests its menus (Blacksmithing, Arm
 recipes becomes a group, in the order the menus are met. A recipe's name starts with a capital, and a second recipe of
 the same name (a spoon facing the other way) is told apart with a number: "Spoon 2". The tinker's tools recipe makes
 the tinker's tools, not UOX3's 10-stone tool kit. A root menu's own recipes (the bows) form a first group, a second root
-(the arrows and bolts of the fletching tool) is walked after it, and UOX3's batches (five, twenty, fifty) are left out.
+(the arrows and bolts of the fletching tool) is walked after it, and UOX3's batches (five, twenty, fifty) are left out. An item sold alone and in
+stacks under one graphic, as a reagent (0x0f85_ginseng and 0x0f85_10_ginseng), becomes a list of its own (`ginseng`);
+an alchemy recipe also takes an empty bottle, which UOX3 leaves out.
