@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e51689ef89593d242d341bb994a2181161f822d56e6143779283c2a4be097e93","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"2566d79f4ebad2bad2b45a6a854ce0bdf1036cb6e189abbd6debe9d27ca4bd66","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
