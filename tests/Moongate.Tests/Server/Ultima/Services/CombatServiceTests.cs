@@ -248,6 +248,40 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Aggress_AnInnocent_IsACrime_AndTheNpcFightsBack_WithNoHurt()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+
+        Assert.True(_combat.Aggress(_aria, _orc));
+
+        Assert.Equal(["criminal 2"], _crimes.Calls);
+        Assert.Equal(30, _orc.Hits);
+        Assert.Equal(_aria, _combat.TargetOf(_orc));
+        Assert.Null(_combat.TargetOf(_aria));
+    }
+
+    [Fact]
+    public void Aggress_Oneself_OrOnesOwnPet_IsNoCrime()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+        _orc.SetProp("owner", (long)_aria.Id.Value);
+
+        _combat.Aggress(_aria, _aria);
+        _combat.Aggress(_aria, _orc);
+
+        Assert.Empty(_crimes.Calls);
+        Assert.Null(_combat.TargetOf(_orc));
+    }
+
+    [Fact]
+    public void Aggress_ADeadTarget_OrAnotherMap_IsRefused()
+    {
+        _aria.Body = 0x0192;
+
+        Assert.False(_combat.Aggress(_aria, _orc));
+    }
+
+    [Fact]
     public void Harm_ThatKills_NamesTheKiller()
     {
         _combat.Harm(_aria, _orc, 40);

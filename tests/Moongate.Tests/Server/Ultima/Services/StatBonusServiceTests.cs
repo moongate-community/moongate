@@ -27,6 +27,7 @@ public sealed class StatBonusServiceTests : IAsyncLifetime
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out _aria!));
         _aria.AccountId = new Serial(0x42);
         (_aria.Strength, _aria.HitsMax, _aria.Hits, _aria.Dexterity, _aria.StaminaMax, _aria.Stamina) = (50, 50, 50, 40, 40, 40);
+        (_aria.Intelligence, _aria.ManaMax, _aria.Mana) = (60, 60, 60);
         _bonuses = new(_state, _fixture.Sessions, _fixture.Sender, _timers, _fixture.Mobiles);
     }
 
@@ -65,6 +66,75 @@ public sealed class StatBonusServiceTests : IAsyncLifetime
         Assert.Equal((0, 50), (_aria.StrengthBonus, _aria.Hits));
         Assert.Equal(0, _bonuses.Bonus(_aria, StatBonusType.Strength));
         Assert.Equal(2, _state.Statuses.Count);
+    }
+
+    [Fact]
+    public void ACurse_LowersTheStatAndTheMaximum_AndTakesWhatIsAbove()
+    {
+        Assert.True(_bonuses.TryAddCurse(_aria, StatBonusType.Strength, 9, TimeSpan.FromSeconds(108)));
+
+        Assert.Equal((-9, 41, 41), (_aria.StrengthBonus, _aria.EffectiveHitsMax, _aria.Hits));
+        Assert.Equal(41, _aria.EffectiveStrength);
+        Assert.Equal(-9, _bonuses.Bonus(_aria, StatBonusType.Strength));
+        Assert.Equal(TimeSpan.FromSeconds(108), Assert.Single(_timers.Timers).Interval);
+    }
+
+    [Fact]
+    public void AnIntelligenceCurse_LowersTheManaMaximum()
+    {
+        Assert.True(_bonuses.TryAddCurse(_aria, StatBonusType.Intelligence, 5, TimeSpan.FromSeconds(60)));
+
+        Assert.Equal((-5, 55, 55, 55), (_aria.IntelligenceBonus, _aria.EffectiveManaMax, _aria.Mana, _aria.EffectiveIntelligence));
+    }
+
+    [Fact]
+    public void AStrongerCurseReplacesTheOne_AndAWeakerOrEqualIsRefused()
+    {
+        _bonuses.TryAddCurse(_aria, StatBonusType.Dexterity, 5, TimeSpan.FromSeconds(60));
+
+        Assert.False(_bonuses.TryAddCurse(_aria, StatBonusType.Dexterity, 5, TimeSpan.FromSeconds(60)));
+        Assert.False(_bonuses.TryAddCurse(_aria, StatBonusType.Dexterity, 3, TimeSpan.FromSeconds(60)));
+        Assert.True(_bonuses.TryAddCurse(_aria, StatBonusType.Dexterity, 8, TimeSpan.FromSeconds(60)));
+
+        Assert.Equal(-8, _aria.DexterityBonus);
+        Assert.Single(_timers.Unregistered);
+    }
+
+    [Fact]
+    public void ACurseAndABonus_AddUp_AndEndEachAtItsOwnTime()
+    {
+        _bonuses.TryAddBonus(_aria, StatBonusType.Strength, 10, TimeSpan.FromMinutes(2));
+        _bonuses.TryAddCurse(_aria, StatBonusType.Strength, 4, TimeSpan.FromSeconds(30));
+
+        Assert.Equal(6, _aria.StrengthBonus);
+
+        _timers.Fire(_timers.Timers[1].Id);
+
+        Assert.Equal(10, _aria.StrengthBonus);
+
+        _timers.Fire(_timers.Timers[0].Id);
+
+        Assert.Equal(0, _aria.StrengthBonus);
+    }
+
+    [Theory]
+    [InlineData(0, 60)]
+    [InlineData(5, 0)]
+    public void ACurseOfNothing_OrForNoTime_IsRefused(int amount, int seconds)
+    {
+        Assert.False(_bonuses.TryAddCurse(_aria, StatBonusType.Strength, amount, TimeSpan.FromSeconds(seconds)));
+        Assert.Equal(0, _aria.StrengthBonus);
+    }
+
+    [Fact]
+    public void Leaving_EndsTheCurses()
+    {
+        _bonuses.TryAddCurse(_aria, StatBonusType.Intelligence, 5, TimeSpan.FromSeconds(60));
+
+        _bonuses.OnSessionClosed(_session);
+
+        Assert.Equal(0, _aria.IntelligenceBonus);
+        Assert.Single(_timers.Unregistered);
     }
 
     [Fact]

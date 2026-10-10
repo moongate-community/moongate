@@ -16,7 +16,15 @@ public interface IStatBonusService : IRegionChangeListener
     bool TryAddBonus(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration);
 
     /// <summary>
-    ///     Gets the bonus of a stat the mobile is under; 0 for none.
+    ///     Lowers a stat by <paramref name="amount" /> for <paramref name="duration" />, as the curses of Magery do: a player's
+    ///     maximum hits, stamina or mana fall with it. A stronger curse of the same stat replaces the one the mobile is
+    ///     under; false, with nothing changed, when that one is at least as strong, and for an amount or a duration that is
+    ///     not positive. A curse and a bonus of the same stat add up and end each at its own time.
+    /// </summary>
+    bool TryAddCurse(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration);
+
+    /// <summary>
+    ///     Gets what a stat is moved by now, the bonus less the curse the mobile is under; 0 for none.
     /// </summary>
     int Bonus(MobileEntity mobile, StatBonusType stat);
 

@@ -216,21 +216,37 @@ public sealed class CombatService : ICombatService
         }
 
         // One's own pet is no innocent to the blast that catches it, and it does not turn on its master.
-        var ownPet = attacker is not null && target.GetProp(MountProps.Owner, 0L) == attacker.Id.Value;
+        var ownPet = IsOwnPet(attacker, target);
 
-        // As an attack: a player who harms an innocent that is not fighting it is a criminal; not for harming itself.
-        if (attacker is { IsNpc: false } &&
-            !ownPet &&
-            attacker.Id != target.Id &&
-            target.ShownNotoriety == NotorietyType.Innocent &&
-            TargetOf(target)?.Id != attacker.Id &&
-            TargetOf(attacker)?.Id != target.Id)
+        if (attacker is not null)
         {
-            _crimes.MakeCriminal(attacker);
-            _murders?.Aggressed(attacker, target);
+            Accuse(attacker, target, ownPet);
         }
 
         Wound(attacker, target, damage, _time.GetUtcNow(), !ownPet);
+
+        return true;
+    }
+
+    public bool Aggress(MobileEntity attacker, MobileEntity target)
+    {
+        if (target.Notoriety == NotorietyType.Invulnerable ||
+            target.IsDead ||
+            attacker.IsDead ||
+            attacker.Map != target.Map ||
+            !_mobiles.IsInWorld(target.Id) ||
+            !_mobiles.IsInWorld(attacker.Id))
+        {
+            return false;
+        }
+
+        var ownPet = IsOwnPet(attacker, target);
+        Accuse(attacker, target, ownPet);
+
+        if (!ownPet && attacker.Id != target.Id)
+        {
+            FightBack(target, attacker, _time.GetUtcNow());
+        }
 
         return true;
     }
@@ -550,6 +566,26 @@ public sealed class CombatService : ICombatService
         if (Wound(attacker, target, DamageOf(attacker, target, weapon), now))
         {
             Stop(attacker);
+        }
+    }
+
+    private static bool IsOwnPet(MobileEntity? attacker, MobileEntity target)
+    {
+        return attacker is not null && target.GetProp(MountProps.Owner, 0L) == attacker.Id.Value;
+    }
+
+    // As an attack: a player who harms an innocent that is not fighting it is a criminal; not for harming itself.
+    private void Accuse(MobileEntity attacker, MobileEntity target, bool ownPet)
+    {
+        if (attacker is { IsNpc: false } &&
+            !ownPet &&
+            attacker.Id != target.Id &&
+            target.ShownNotoriety == NotorietyType.Innocent &&
+            TargetOf(target)?.Id != attacker.Id &&
+            TargetOf(attacker)?.Id != target.Id)
+        {
+            _crimes.MakeCriminal(attacker);
+            _murders?.Aggressed(attacker, target);
         }
     }
 

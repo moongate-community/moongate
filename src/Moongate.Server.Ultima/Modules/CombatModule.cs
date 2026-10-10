@@ -60,6 +60,18 @@ public sealed class CombatModule
     }
 
     /// <summary>
+    ///     Makes a mobile the aggressor of another without hurting it, as a curse does; <c>combat.aggress(caster, target)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Makes the first mobile the aggressor of the second without a blow or a hurt, as a curse is: a player who aggresses an innocent that is not fighting it is a criminal (not for itself or its own pet) and the murder report is told, and an NPC that is aggressed fights back. False when either is not in the world, they are on another map, or the target is dead or invulnerable."
+    )]
+    public bool Aggress(long attacker, long target)
+    {
+        return TryGet(attacker, out var who) && TryGet(target, out var other) && _combat.Aggress(who, other);
+    }
+
+    /// <summary>
     ///     Ends the fight of a mobile; <c>combat.stop(npc)</c>.
     /// </summary>
     [ScriptFunction(helpText: "Ends the fight of the mobile: it swings no more. False for a mobile not in the world.")]

@@ -97,6 +97,13 @@ public class MobileEntity : IMoongateEntity
     public int DexterityBonus { get; set; }
 
     /// <summary>
+    ///     Gets or sets the intelligence a timed effect adds, or takes away when it is a curse such as Feeblemind; never
+    ///     saved.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int IntelligenceBonus { get; set; }
+
+    /// <summary>
     ///     Gets the strength with its bonus: what the status shows and combat and carrying read.
     /// </summary>
     [Column(IsIgnore = true)]
@@ -109,17 +116,29 @@ public class MobileEntity : IMoongateEntity
     public int EffectiveDexterity => Dexterity + DexterityBonus;
 
     /// <summary>
+    ///     Gets the intelligence with its bonus or its curse: what the status shows and the spells read.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int EffectiveIntelligence => Intelligence + IntelligenceBonus;
+
+    /// <summary>
     ///     Gets the most hit points with the strength bonus: a player's maximum is its strength. An NPC's maximum is its
     ///     own: a bonus does not raise it.
     /// </summary>
     [Column(IsIgnore = true)]
-    public int EffectiveHitsMax => HitsMax + (IsNpc ? 0 : StrengthBonus);
+    public int EffectiveHitsMax => Math.Max(HitsMax + (IsNpc ? 0 : StrengthBonus), Math.Min(HitsMax, 1));
 
     /// <summary>
     ///     Gets the most stamina with the dexterity bonus: a player's maximum is its dexterity; an NPC's is its own.
     /// </summary>
     [Column(IsIgnore = true)]
-    public int EffectiveStaminaMax => StaminaMax + (IsNpc ? 0 : DexterityBonus);
+    public int EffectiveStaminaMax => Math.Max(StaminaMax + (IsNpc ? 0 : DexterityBonus), Math.Min(StaminaMax, 1));
+
+    /// <summary>
+    ///     Gets the most mana with the intelligence bonus: a player's maximum is its intelligence; an NPC's is its own.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int EffectiveManaMax => Math.Max(ManaMax + (IsNpc ? 0 : IntelligenceBonus), Math.Min(ManaMax, 1));
 
     /// <summary>
     ///     The item id of the hair style; 0 means no hair.
@@ -449,8 +468,10 @@ public class MobileEntity : IMoongateEntity
         // Timed bonuses are not saved: neither are the hits and stamina they held above the base maximums.
         copy.StrengthBonus = 0;
         copy.DexterityBonus = 0;
+        copy.IntelligenceBonus = 0;
         copy.Hits = Math.Min(Hits, HitsMax);
         copy.Stamina = Math.Min(Stamina, StaminaMax);
+        copy.Mana = Math.Min(Mana, ManaMax);
 
         // Only a character keeps its time: an NPC comes back innocent.
         if (IsNpc)
