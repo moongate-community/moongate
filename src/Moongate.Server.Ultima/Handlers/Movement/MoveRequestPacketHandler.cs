@@ -19,7 +19,7 @@ namespace Moongate.Server.Ultima.Handlers.Movement;
 ///     <see cref="IMobileService" /> and answers 0x22, or 0x21 with the real position; the players in range see the step or
 ///     the turn through <see cref="IWorldViewService" />; a game master or an administrator walks through doors; the scripted
 ///     items of the new cell are told of the step through
-///     <see cref="IMoveOverService" />.
+///     <see cref="IMoveOverService" />. A caster whose spell is in its delay stays where it is.
 /// </summary>
 /// <remarks>
 ///     Each step books the next one 400 ms later walking, 200 ms running, or 200 and 100 ms for a rider on a mount; a
@@ -50,6 +50,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
     private readonly IMobileStateService? _state;
     private readonly ISpeechService? _speech;
     private readonly IMountService? _mounts;
+    private readonly ISpellCastService? _casts;
 
     public MoveRequestPacketHandler(
         IMobileService mobiles,
@@ -61,9 +62,11 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
         IFatigueService? fatigue = null,
         IMobileStateService? state = null,
         ISpeechService? speech = null,
-        IMountService? mounts = null
+        IMountService? mounts = null,
+        ISpellCastService? casts = null
     )
     {
+        _casts = casts;
         _mounts = mounts;
         _state = state;
         _speech = speech;
@@ -95,6 +98,15 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 
         if (packet.Sequence != state.ExpectedSequence)
         {
+            Reject(session, state, mobile, packet.Sequence);
+
+            return;
+        }
+
+        // A caster does not move, nor turn, while the delay of its spell runs.
+        if (_casts?.BlocksMovement(mobile) == true)
+        {
+            _speech?.TellCliloc(mobile, ISpellCastService.FrozenMessage);
             Reject(session, state, mobile, packet.Sequence);
 
             return;

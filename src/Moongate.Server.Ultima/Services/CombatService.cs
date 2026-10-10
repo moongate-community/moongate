@@ -90,6 +90,7 @@ public sealed class CombatService : ICombatService
     private readonly IAmmoService? _ammo;
     private readonly IBloodService? _blood;
     private readonly IMountService? _mounts;
+    private readonly ISpellCastService? _casts;
     private string? _timerId;
 
     public CombatService(
@@ -115,9 +116,11 @@ public sealed class CombatService : ICombatService
         IEffectService? effects = null,
         IAmmoService? ammo = null,
         IBloodService? blood = null,
-        IMountService? mounts = null
+        IMountService? mounts = null,
+        ISpellCastService? casts = null
     )
     {
+        _casts = casts;
         _mounts = mounts;
         _ammo = ammo;
         _blood = blood;
@@ -617,6 +620,12 @@ public sealed class CombatService : ICombatService
         {
             _state.SetStats(target, new MobileStatsChange { Hits = hits });
 
+            if (damage > 0)
+            {
+                // A cast in its delay may be ruined by it.
+                _casts?.Hurt(target);
+            }
+
             if (fightBack && attacker is not null && attacker.Id != target.Id)
             {
                 FightBack(target, attacker, now);
@@ -626,6 +635,7 @@ public sealed class CombatService : ICombatService
         }
 
         _state.SetStats(target, new MobileStatsChange { Hits = 0 });
+        _casts?.Cancel(target);
 
         // A player that cannot die, such as one with a body that has no ghost, is left with one hit point.
         if (!_death.Kill(target, attacker) && !target.IsNpc)

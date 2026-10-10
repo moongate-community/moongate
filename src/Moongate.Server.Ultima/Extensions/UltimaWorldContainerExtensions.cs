@@ -84,6 +84,7 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IScheduleService, ScheduleService>(LuaScriptEngineService.StartupPriority + 6);
         container.AddMoongateService<ISeasonalEventService, SeasonalEventService>(LuaScriptEngineService.StartupPriority + 6);
         container.AddMoongateService<ISkillScriptService, SkillScriptService>(LuaScriptEngineService.StartupPriority + 5);
+        container.AddMoongateService<ISpellScriptService, SpellScriptService>(LuaScriptEngineService.StartupPriority + 5);
         container.Register<ISkillService, SkillService>(Reuse.Singleton);
         container.Register<ISkillUseService, SkillUseService>(Reuse.Singleton);
         container.AddMetricProvider<NpcTickMetricsProvider>();
@@ -161,6 +162,9 @@ public static class UltimaWorldContainerExtensions
         container.AddMoongateService<IPetLoyaltyService, PetLoyaltyService>(12);
         container.Register<ICraftService, CraftService>(Reuse.Singleton);
         container.Register<ISpellCatalogService, SpellCatalogService>(Reuse.Singleton);
+        container.Register<ISpellbookService, SpellbookService>(Reuse.Singleton);
+        container.Register<ISpellCastService, SpellCastService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, ISpellCastService>();
         container.AddUltimaScriptModules();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.

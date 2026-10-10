@@ -49,7 +49,6 @@ public sealed class TextCommandPacketHandlerTests : IAsyncLifetime
     }
 
     [Theory]
-    [InlineData(0x56)]
     [InlineData(0x58)]
     [InlineData(0xC7)]
     public void Handle_AnotherKindOfCommand_UsesNoSkill(byte kind)

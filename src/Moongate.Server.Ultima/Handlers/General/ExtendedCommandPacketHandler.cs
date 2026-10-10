@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
@@ -14,7 +15,8 @@ namespace Moongate.Server.Ultima.Handlers.General;
 /// <summary>
 ///     Dispatches the extended commands (0xBF) by subcommand: 0x10 asks for one object's tooltip, answered with 0xD6
 ///     when the character can see it; 0x1A sets the lock of one stat of the character; 0x13 asks for the context menu
-///     of a mobile or an item and 0x15 chooses an entry of it. The others are recognised and ignored for now.
+///     of a mobile or an item and 0x15 chooses an entry of it; 0x1C casts the spell of one of the client's icons. The
+///     others are recognised and ignored for now.
 /// </summary>
 public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedCommandPacket>
 {
@@ -28,21 +30,31 @@ public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedComman
     private const int ContextMenuSelectLength = 6;
     private const int StatLockLength = 2;
 
+    // The client's spell icon: whether a book follows (1) with its serial, then the number of the spell from 1.
+    private const ushort CastSpellSubcommand = 0x1C;
+    private const ushort WithBook = 1;
+
     private readonly ILogger _logger = Log.ForContext<ExtendedCommandPacketHandler>();
     private readonly ITooltipService _tooltips;
     private readonly IPacketSendService _sender;
     private readonly IMobileService? _mobiles;
     private readonly IMobileStateService? _state;
     private readonly IContextMenuService? _contextMenus;
+    private readonly ISpellCastService? _casts;
+    private readonly IItemService? _items;
 
     public ExtendedCommandPacketHandler(
         ITooltipService tooltips,
         IPacketSendService sender,
         IMobileService? mobiles = null,
         IMobileStateService? state = null,
-        IContextMenuService? contextMenus = null
+        IContextMenuService? contextMenus = null,
+        ISpellCastService? casts = null,
+        IItemService? items = null
     )
     {
+        _items = items;
+        _casts = casts;
         _contextMenus = contextMenus;
         _mobiles = mobiles;
         _state = state;
@@ -89,11 +101,52 @@ public sealed class ExtendedCommandPacketHandler : IPacketHandler<ExtendedComman
             return;
         }
 
+        if (packet.Subcommand == CastSpellSubcommand)
+        {
+            CastSpell(session, packet.Payload);
+
+            return;
+        }
+
         _logger.Debug(
             "Session {SessionId} sent extended command 0x{Subcommand:X2}, not handled yet",
             session.SessionId,
             packet.Subcommand
         );
+    }
+
+    private void CastSpell(GameSession session, byte[] payload)
+    {
+        if (_casts is null ||
+            _mobiles is null ||
+            payload.Length < sizeof(ushort) ||
+            !session.CharacterId.IsValid ||
+            !_mobiles.TryGet(session.CharacterId, out var caster) ||
+            !_mobiles.IsInWorld(caster.Id))
+        {
+            return;
+        }
+
+        var offset = sizeof(ushort);
+        ItemEntity? book = null;
+
+        if (BinaryPrimitives.ReadUInt16BigEndian(payload) == WithBook)
+        {
+            if (payload.Length < offset + sizeof(uint))
+            {
+                return;
+            }
+
+            _items?.TryGet(new Serial(BinaryPrimitives.ReadUInt32BigEndian(payload.AsSpan(offset))), out book);
+            offset += sizeof(uint);
+        }
+
+        if (payload.Length < offset + sizeof(ushort))
+        {
+            return;
+        }
+
+        _casts.CastFromBook(caster, BinaryPrimitives.ReadUInt16BigEndian(payload.AsSpan(offset)), book);
     }
 
     // The status window's lock arrows: the stat is 0 strength, 1 dexterity, 2 intelligence, the lock as the client

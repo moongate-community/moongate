@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Handlers.Items.Internal;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
+using Moongate.Server.Ultima.Types.Spells;
 using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -80,6 +81,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
     private readonly IInventoryMutationGuard? _inventory;
     private readonly INpcScriptService? _npcScripts;
+    private readonly ISpellbookService? _spellbooks;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -96,9 +98,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         IFatigueService? fatigue = null,
         IContainerCapacityService? capacity = null,
         IInventoryMutationGuard? inventory = null,
-        INpcScriptService? npcScripts = null
+        INpcScriptService? npcScripts = null,
+        ISpellbookService? spellbooks = null
     )
     {
+        _spellbooks = spellbooks;
         _npcScripts = npcScripts;
         _inventory = inventory;
         _capacity = capacity;
@@ -166,7 +170,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return;
         }
 
-        if (TakenByNpc(session, item, packet.Destination))
+        if (TakenByNpc(session, item, packet.Destination) || TakenBySpellbook(session, item, packet.Destination))
         {
             return;
         }
@@ -321,6 +325,39 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         // also where the rest of a stack lies when the script took only part of it from a chest on the ground.
         if (!_items.TryGet(item.Id, out _) ||
             (item.ContainerId is not null && _items.GetOwner(item) is { } owner && owner != session.CharacterId))
+        {
+            _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
+        }
+        else
+        {
+            HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+        }
+
+        LoadChanged(session, false);
+
+        return true;
+    }
+
+    // Dropped on a spellbook the player carries, a scroll gives its spell to the book: one of the scroll is used up. What
+    // is left of the stack, or the scroll of a spell the book holds already, goes back where it was lifted from.
+    private bool TakenBySpellbook(GameSession session, ItemEntity item, Serial destination)
+    {
+        if (_spellbooks is null ||
+            !destination.IsItem ||
+            !_items.TryGet(destination, out var book) ||
+            !_mobiles.TryGet(session.CharacterId, out var player))
+        {
+            return false;
+        }
+
+        var result = _spellbooks.AddScroll(player, book, item);
+
+        if (result == SpellbookDropType.Ignored)
+        {
+            return false;
+        }
+
+        if (!_items.TryGet(item.Id, out _))
         {
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
         }

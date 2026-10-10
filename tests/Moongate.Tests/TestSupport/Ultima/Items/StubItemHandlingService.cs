@@ -56,9 +56,22 @@ public sealed class StubItemHandlingService : IItemHandlingService
         return item;
     }
 
+    /// <summary>
+    ///     Gets the items <see cref="Consume" /> took from, with the amount each time.
+    /// </summary>
+    public List<(ItemEntity Item, int Amount)> Consumed { get; } = [];
+
     public bool Consume(ItemEntity item, int amount = 1)
     {
-        throw new NotSupportedException();
+        if (amount < 1 || item.Amount < amount)
+        {
+            return false;
+        }
+
+        Consumed.Add((item, amount));
+        item.Amount -= amount;
+
+        return true;
     }
 
     /// <summary>

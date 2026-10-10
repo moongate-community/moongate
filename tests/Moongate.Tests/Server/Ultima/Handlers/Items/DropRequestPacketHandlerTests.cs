@@ -20,6 +20,8 @@ using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Magic;
+using Moongate.Server.Ultima.Types.Spells;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Npcs;
@@ -67,6 +69,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingFatigueService _fatigue = new();
     private readonly RecordingNpcScriptService _npcScripts = new();
+    private readonly StubSpellbookService _spellbooks = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -962,6 +965,60 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         Assert.Empty(_scripts.Queued);
     }
 
+    // A scroll dropped on the spellbook the player carries gives its spell and is used up: the client drops it.
+    [Fact]
+    public async Task Handle_AScrollOnASpellbook_AddsTheSpell_AndTheUsedUpScrollLeavesTheCursor()
+    {
+        var book = Item(0x40000020, 0x0EFA);
+        book.PutInContainer(_backpack.Id, new Point2D(10, 10));
+        _items.Add([book]);
+        _spellbooks.Scrolls[CoinGraphic] = 1;
+        _spellbooks.Drop = SpellbookDropType.Added;
+        _spellbooks.OnScroll = scroll => _items.Remove([scroll.Id]);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, book.Id);
+
+        Assert.Equal((book, _coins), Assert.Single(_spellbooks.Dropped));
+        Assert.Equal(_coins.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent)).Serial);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Single(_fatigue.Loads);
+    }
+
+    // What is left of a stack, or a scroll of a spell the book holds, goes back to where it was lifted from.
+    [Theory]
+    [InlineData(SpellbookDropType.Added)]
+    [InlineData(SpellbookDropType.AlreadyPresent)]
+    public async Task Handle_AScrollOnASpellbookThatLeavesTheScroll_BouncesItBack(SpellbookDropType result)
+    {
+        var book = Item(0x40000020, 0x0EFA);
+        book.PutInContainer(_backpack.Id, new Point2D(10, 10));
+        _items.Add([book]);
+        _spellbooks.Scrolls[CoinGraphic] = 1;
+        _spellbooks.Drop = result;
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, book.Id);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_ANonScrollOnASpellbook_BouncesBack_WithNoSpellAdded()
+    {
+        var book = Item(0x40000020, 0x0EFA);
+        book.PutInContainer(_backpack.Id, new Point2D(10, 10));
+        _items.Add([book]);
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, book.Id);
+
+        // As any item dropped on a carried item: it goes into the container that item is in.
+        Assert.Empty(_spellbooks.Dropped);
+        Assert.Equal(_backpack.Id, _coins.ContainerId);
+    }
+
     // The script moved it somewhere the giver carries: the giver sees it there.
     [Fact]
     public async Task Handle_OnAnNpcWhoseScriptMovesTheItemToTheGiver_ShowsItWhereItIsNow()
@@ -1250,7 +1307,8 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
             _speech,
             _fatigue,
             _capacity,
-            npcScripts: _npcScripts
+            npcScripts: _npcScripts,
+            spellbooks: _spellbooks
         );
         var packet = new DropRequestPacket
             { Item = item, X = x, Y = y, Z = 0, GridIndex = gridIndex, Destination = destination };

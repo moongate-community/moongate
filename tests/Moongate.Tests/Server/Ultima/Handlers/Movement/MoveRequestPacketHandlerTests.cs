@@ -15,6 +15,7 @@ using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.Support.Timing;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Magic;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Mounts;
@@ -34,6 +35,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     private readonly RecordingMobileStateService _state = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly RecordingMountService _mounts = new();
+    private readonly RecordingSpellCastService _casts = new();
     private readonly StubMovementService _movement = new() { LandingZ = 10 };
     private readonly StubPacketSendService _sender = new();
     private readonly RecordingWorldViewService _view = new();
@@ -63,6 +65,32 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal(new Point3D(1497, 1628, 10), _aria.Location);
         var ack = Assert.IsType<MovementAckPacket>(Assert.Single(_sender.Sent));
         Assert.Equal(((byte)0, NotorietyType.Innocent), (ack.Sequence, ack.Notoriety));
+    }
+
+    [Fact]
+    public async Task Handle_ACasterInTheDelayOfItsSpell_DoesNotMoveNorTurn_AndIsToldItIsFrozen()
+    {
+        await EnterAsync();
+        _casts.Blocks = true;
+
+        await StepAsync(DirectionType.East, 0);
+        await StepAsync(DirectionType.South, 0);
+
+        Assert.Equal((new Point3D(1496, 1628, 10), DirectionType.East), (_aria.Location, _aria.Direction));
+        Assert.Equal(2, _sender.Sent.OfType<MovementRejectPacket>().Count());
+        Assert.Equal([500111, 500111], _speech.ToldClilocs.Select(told => told.Cliloc));
+    }
+
+    [Fact]
+    public async Task Handle_ACasterWhoseDelayIsOver_Moves()
+    {
+        await EnterAsync();
+        _casts.Casting = true;
+        _casts.Blocks = false;
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.Equal(new Point3D(1497, 1628, 10), _aria.Location);
     }
 
     [Fact]
@@ -585,7 +613,8 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
             _fatigue,
             _state,
             _speech,
-            _mounts
+            _mounts,
+            _casts
         );
         var packet = new MoveRequestPacket
             { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
