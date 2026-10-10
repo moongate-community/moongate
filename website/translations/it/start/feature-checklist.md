@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2566d79f4ebad2bad2b45a6a854ce0bdf1036cb6e189abbd6debe9d27ca4bd66","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"e4583a0c69d4493c1eb9b726419cc5bf823b9602ed62f566b2932564bde57e72","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -295,7 +295,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Menu di aiuto e menu per personaggi bloccati | ✅ | Il pulsante Help apre un menu: «Sono bloccato» porta un personaggio alla città di partenza più vicina dopo un'attesa, con una pausa; comandi utili; regole del server; vedi [Aiuto](help.md) |
 | Prigioni | ✅ | Un gump elenca le celle e i detenuti; pene in giorni reali, multa in oro e nota di rilascio alla fine, una cassa di pane e acqua in ogni cella; un giocatore offline viene incarcerato per nome e sconta la pena dal login successivo; vedi [Prigione](jail.md) |
 | Elenco dei presenti | ❌ | |
-| Strumenti dello staff: gump delle proprietà, menu di aggiunta, comandi di area | 🟡 | Il gump dei luoghi nominati, `.go`, con i 558 luoghi di ModernUO, e `.gmtools`, un gump con barra laterale di strumenti: forza il meteo, imposta la stagione della mappa, mostra l'ora e imposta la luce; nessun gump delle proprietà, menu di aggiunta o comando di area |
+| Strumenti dello staff: gump delle proprietà, menu di aggiunta, comandi di area | 🟡 | Il gump dei luoghi nominati, `.go`, con i 558 luoghi di ModernUO, e `.gmtools`, un gump con barra laterale di strumenti: forza il meteo, imposta la stagione della mappa, mostra l'ora, imposta la luce e accende o spegne gli eventi stagionali (amministratori); nessun gump delle proprietà, menu di aggiunta o comando di area |
 | Luoghi nominati e menu di viaggio per lo staff | ✅ | `.go <place>` e il gump go, con i 558 luoghi di ModernUO da `data/locations.toml` |
 | Pagine web di stato | ❌ | |
 | Segnalazioni di bug | 🟡 | Rapporti delle eccezioni pronti per una issue GitHub; nessuna segnalazione in gioco |

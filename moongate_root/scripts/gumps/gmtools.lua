@@ -14,7 +14,9 @@
 --   its map, and sets the season of the map until the restart, or gives it back its
 --   own, as .season does. The time tool shows the game time and the moons where the
 --   game master stands and the light, and gives every player the same light or goes
---   back to the time of day, as .globallight does.
+--   back to the time of day, as .globallight does. The events tool, for the
+--   administrators only, lists the seasonal events with their dates, mode and
+--   state, and sets one to auto, on or off, as .event does.
 --
 -- Functions:
 --   tools(g, player, args)  fills the sidebar slot; args.tool is the selected tool
@@ -231,21 +233,90 @@ local function time_panel(g, player)
     end
 end
 
--- The tools of the sidebar, in order; the first is the one shown when none is chosen.
+-- The events the panel lists, the height of each, and the modes of its buttons. The panel is 230 high: more events
+-- than fit are left to the .event command.
+local events_listed = 4
+local event_height = 48
+local event_modes = { "auto", "on", "off" }
+local event_mode_width = 110
+
+local function events_panel(g, player)
+    local list = schedule.events()
+
+    g:label_cropped{ x = 0, y = 0, width = panel_width, height = text_height, hue = title_hue, text = "Seasonal events" }
+
+    if #list == 0 then
+        g:label_cropped{ x = 0, y = 26, width = panel_width, height = text_height, text = "The schedule has no events." }
+
+        return
+    end
+
+    for index, entry in ipairs(list) do
+        local y = 26 + (index - 1) * event_height
+
+        if index > events_listed then
+            g:label_cropped{ x = 0, y = y, width = panel_width, height = text_height,
+                text = (#list - events_listed) .. " more: use .event" }
+
+            break
+        end
+
+        g:label_cropped{ x = 0, y = y, width = panel_width, height = text_height,
+            text = entry.name .. " (" .. entry.from .. " to " .. entry.to .. "): " .. entry.mode .. ", " ..
+                (entry.active and "on" or "off") }
+
+        for slot, mode in ipairs(event_modes) do
+            local x = (slot - 1) * event_mode_width
+
+            g:button{ x = x, y = y + 22, up = 4023, down = 4025, on_click = function(who)
+                -- The rank may have gone while the gump was open; .event is for the administrators.
+                if not world.is_administrator(who) then
+                    return
+                end
+
+                if schedule.set_event(entry.id, mode) then
+                    mobile.message(who, entry.name .. " is now " .. mode .. ".")
+                end
+
+                open(who, "events")
+            end }
+            g:label_cropped{ x = x + 35, y = y + 22, width = event_mode_width - 40, height = text_height, text = mode }
+        end
+    end
+end
+
+-- The tools of the sidebar, in order; the first is the one shown when none is chosen. An admin tool is for the
+-- administrators only, as the command it stands for.
 local tools = {
     { id = "weather", title = "Weather", panel = weather_panel },
     { id = "season", title = "Season", panel = season_panel },
     { id = "time", title = "Time", panel = time_panel },
+    { id = "events", title = "Events", panel = events_panel, admin = true },
 }
 
-local function selected(args)
+-- The tools this player may use.
+local function available(player)
+    local list = {}
+
     for _, tool in ipairs(tools) do
+        if not tool.admin or world.is_administrator(player) then
+            list[#list + 1] = tool
+        end
+    end
+
+    return list
+end
+
+local function selected(args, player)
+    local list = available(player)
+
+    for _, tool in ipairs(list) do
         if tool.id == args.tool then
             return tool
         end
     end
 
-    return tools[1]
+    return list[1]
 end
 
 function gmtools.tools(g, player, args)
@@ -253,13 +324,13 @@ function gmtools.tools(g, player, args)
         return
     end
 
-    local current = selected(args)
+    local current = selected(args, player)
 
-    for index, tool in ipairs(tools) do
+    for index, tool in ipairs(available(player)) do
         local y = (index - 1) * row_height
 
         g:button{ x = 0, y = y, up = 4005, down = 4007, on_click = function(who)
-            if world.is_staff(who) then
+            if world.is_staff(who) and (not tool.admin or world.is_administrator(who)) then
                 open(who, tool.id)
             end
         end }
@@ -273,5 +344,5 @@ function gmtools.panel(g, player, args)
         return
     end
 
-    selected(args).panel(g, player)
+    selected(args, player).panel(g, player)
 end
