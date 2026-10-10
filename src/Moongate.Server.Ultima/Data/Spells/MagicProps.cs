@@ -27,4 +27,10 @@ public static class MagicProps
     ///     reflected is turned back on its caster and the prop is gone. A death ends it.
     /// </summary>
     public const string Reflect = "magic.reflect";
+
+    /// <summary>
+    ///     Prop of a summoned creature: the time, in seconds since 1970, it goes away at. A creature that has it is a loan
+    ///     of the spell, which nobody may keep by riding it or by leaving it in a stable.
+    /// </summary>
+    public const string SummonUntil = "summon.until";
 }

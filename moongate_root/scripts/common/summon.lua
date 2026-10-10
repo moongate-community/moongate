@@ -47,6 +47,7 @@ local PUFF_SPEED = 8
 local PUFF_DURATION = 20
 local PUFF_SOUND = 0x201
 
+-- The same key as MagicProps.SummonUntil: the mount and stable services refuse a creature that has it.
 local UNTIL = "summon.until"
 
 -- How hard a creature is to dispel and how much the Magery of the caster weighs against it, by template; the others
