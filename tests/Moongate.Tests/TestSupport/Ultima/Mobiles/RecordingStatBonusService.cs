@@ -18,6 +18,11 @@ public sealed class RecordingStatBonusService : IStatBonusService
         return false;
     }
 
+    public bool TryAddCurse(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration)
+    {
+        return false;
+    }
+
     public int Bonus(MobileEntity mobile, StatBonusType stat)
     {
         return 0;
@@ -38,6 +43,7 @@ public sealed class RecordingStatBonusService : IStatBonusService
         Ended.Add(mobile);
         mobile.StrengthBonus = 0;
         mobile.DexterityBonus = 0;
+        mobile.IntelligenceBonus = 0;
     }
 
     public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)

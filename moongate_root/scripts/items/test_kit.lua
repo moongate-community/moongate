@@ -5,9 +5,11 @@
 --   The item script of the test bags for the staff, with
 --   script_id = "test_kit" (templates/items/test_kits.toml): ".add
 --   test_kit_alchemy" gives a bag that fills, the first time it is opened,
---   with what is needed to try a craft or a potion: the tool, the materials
---   and the items to use. Then it is a bag like any other. The skill to use
---   them is set apart, as ".set skill alchemy 100".
+--   with what is needed to try a craft, a potion or the spells of the first
+--   circle: the tool, the materials and the items to use, or a full spellbook,
+--   the reagents and some scrolls. Then it is a bag like any other. The skill
+--   to use them is set apart, as ".set skill alchemy 100" or ".set skill magery
+--   100".
 --
 -- Functions:
 --   test_kit.on_use(serial, user)   fills the bag once; the bag then opens
@@ -47,6 +49,13 @@ local KITS = {
     },
     test_kit_fletching = {
         { "0x1022_fletcher's_tools", 1 }, { "0x1bd7_board", 50 }, { "0x1bd1_feather", 50 },
+    },
+    test_kit_magery = {
+        { "spellbook_full", 1 }, { "0x0f7a_black_pearl", 20 }, { "0x0f7b_blood_moss", 20 }, { "0x0f84_garlic", 20 },
+        { "0x0f85_ginseng", 20 }, { "0x0f86_mandrake_root", 20 }, { "0x0f88_nightshade", 20 },
+        { "0x0f8c_sulfurous_ash", 20 }, { "0x0f8d_spider_silk", 20 }, { "0x1f2e_clumsy_scroll", 3 },
+        { "0x1f2f_create_food_scroll", 3 }, { "0x1f30_feeblemind_scroll", 3 }, { "0x1f31_heal_scroll", 3 },
+        { "0x1f32_magic_arrow_scroll", 3 }, { "0x1f33_night_sight_scroll", 3 }, { "0x1f34_weaken_scroll", 3 },
     },
     test_kit_cooking = {
         { "0x097f_skillet", 1 }, { "0x1039_sack_of_flour", 5 }, { "0x0ff8_pitcher_of_water", 5 },

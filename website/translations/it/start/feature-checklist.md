@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"296af12b0996a5ae571102501d292d62bf522e7b00f6c68c3794f28b53775be4","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"39c8be8fd2aae7b99a88a48a32842075468908b8131cf8708ab3894788f2ff5c","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**271 sistemi:** ✅ 91 completati, 🟡 69 parzialmente completati, ❌ 111 non ancora realizzati.
+**271 sistemi:** ✅ 91 completati, 🟡 72 parzialmente completati, ❌ 108 non ancora realizzati.
 
-**Copertura: 34%** dei sistemi completati, **46%** contando un sistema parzialmente completato come metà.
+**Copertura: 34%** dei sistemi completati, **47%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -94,10 +94,10 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 
 | Sistema | Moongate | Note |
 | --- | --- | --- |
-| Lancio degli incantesimi: mana, reagenti, fallimento, resistenza | ❌ | |
-| Incantesimi di magery | ❌ | |
+| Lancio degli incantesimi: mana, reagenti, fallimento, resistenza | 🟡 | [Magery](magery.md): le parole di potere, un ritardo del cerchio in cui il lanciatore sta fermo, il cursore di mira, reagenti e mana, la finestra di Magery di un libro o di una pergamena, il fallimento che fa perdere i reagenti, il recupero, e il danno che rovina un lancio sopra il primo cerchio; dall'icona dell'incantesimo, da una macro o da una pergamena. Resisting Spells indebolisce un incantesimo dannoso. Nessun riflesso, nessun PNG che lancia, nessun luogo in cui la magia è vietata |
+| Incantesimi di magery | 🟡 | I sette incantesimi del primo cerchio: Clumsy, Create Food, Feeblemind, Heal, Magic Arrow, Night Sight e Weaken, ognuno uno script in `scripts/spells`; i 64 sono in [`spells.toml`](data-files/spells.md). I cerchi da 2 a 8 e Reactive Armor sono i prossimi |
 | Necromancy | ❌ | |
-| Libri degli incantesimi, pergamene e bacchette | ❌ | |
+| Libri degli incantesimi, pergamene e bacchette | 🟡 | Un libro che contiene fino a 64 incantesimi, si apre con un doppio clic, prende l'incantesimo di una pergamena lasciata su di esso; una pergamena si lancia dallo zaino, senza reagenti e una se ne consuma in caso di successo. Niente bacchette, e le pergamene non si possono ancora scrivere |
 | Campi ed evocazioni | ❌ | |
 | Regole magiche delle regioni (no recall, no gate) | ❌ | |
 | Chivalry | ❌ | |

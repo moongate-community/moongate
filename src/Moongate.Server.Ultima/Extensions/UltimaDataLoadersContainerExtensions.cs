@@ -16,6 +16,7 @@ using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Data.Pets;
 using Moongate.Server.Ultima.Data.Taming;
 using Moongate.Server.Ultima.Data.Templates.Gumps;
@@ -79,6 +80,8 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<TamingLoader, TamingCreature>(31);
         // After the item templates, which the kinds of food name.
         container.AddUltimaDataLoader<PetFoodLoader, PetFood>(32);
+        // After the item templates, which the reagents and the scrolls of the spells name.
+        container.AddUltimaDataLoader<SpellsLoader, SpellDefinition>(33);
 
         return container;
     }

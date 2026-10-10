@@ -4,6 +4,7 @@ base_id = "base_item"
 item_id = 3834
 name = "a spellbook"
 rarity = "common"
+script_id = "spellbook"
 weight = 1.0
 layer = "one_handed"
 buy_price = 22
@@ -22,11 +23,17 @@ base_id = "0x0efa_a_spellbook"
 item_id = 0
 rarity = "common"
 
+[item.tags]
+spells = "255"
+
 [[item]]
 id = "spellbook1to2"
 base_id = "0x0efa_a_spellbook"
 item_id = 0
 rarity = "common"
+
+[item.tags]
+spells = "65535"
 
 [[item]]
 id = "spellbook1to3"
@@ -34,11 +41,17 @@ base_id = "0x0efa_a_spellbook"
 item_id = 0
 rarity = "common"
 
+[item.tags]
+spells = "16777215"
+
 [[item]]
 id = "spellbook1to4"
 base_id = "0x0efa_a_spellbook"
 item_id = 0
 rarity = "common"
+
+[item.tags]
+spells = "4294967295"
 
 [[item]]
 id = "spellbook1to5"
@@ -46,11 +59,17 @@ base_id = "0x0efa_a_spellbook"
 item_id = 0
 rarity = "common"
 
+[item.tags]
+spells = "1099511627775"
+
 [[item]]
 id = "spellbook1to6"
 base_id = "0x0efa_a_spellbook"
 item_id = 0
 rarity = "common"
+
+[item.tags]
+spells = "281474976710655"
 
 [[item]]
 id = "spellbook1to7"
@@ -58,11 +77,26 @@ base_id = "0x0efa_a_spellbook"
 item_id = 0
 rarity = "common"
 
+[item.tags]
+spells = "72057594037927935"
+
 [[item]]
 id = "spellbook1to8"
 base_id = "0x0efa_a_spellbook"
 item_id = 0
 rarity = "common"
+
+[item.tags]
+spells = "18446744073709551615"
+
+[[item]]
+id = "spellbook_full"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[item.tags]
+spells = "18446744073709551615"
 
 [[item]]
 id = "0x1f14_a_recall_rune"

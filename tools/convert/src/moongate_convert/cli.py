@@ -9,7 +9,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TextIO
 
-from . import books, chests, crafts, guildmasters, locations, signs, spawn, spawns, taming, teleporters, uox, vendors
+from . import books, chests, crafts, guildmasters, locations, signs, spawn, spawns, spells, taming, teleporters, uox, vendors
 
 # name -> (module run function, what --source is, what --destination is, help)
 _Run = Callable[[Path, Path, TextIO, TextIO], int]
@@ -170,6 +170,18 @@ def _crafts(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> int
     return crafts.run(arguments.source, arguments.items, arguments.destination, output, error)
 
 
+def _spells_options(command: argparse.ArgumentParser) -> None:
+    command.add_argument("--source", required=True, type=Path, help="UOX3's dfndata/spells folder, or its spells.dfn file")
+    command.add_argument(
+        "--items", required=True, type=Path, help="the item templates folder (templates/items): the reagents and the scrolls of the spells are found there"
+    )
+    command.add_argument("--destination", required=True, type=Path, help="the data folder (data); spells.toml is written there, replacing that of a previous run")
+
+
+def _spells(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> int:
+    return spells.run(arguments.source, arguments.items, arguments.destination, output, error)
+
+
 def _uox_options(command: argparse.ArgumentParser) -> None:
     command.add_argument("--source", required=True, type=Path, help="a UOX3 .dfn file, or a folder scanned for every .dfn under it")
     command.add_argument("--destination", required=True, type=Path, help="the item templates folder: one .toml per source file, at the same relative path")
@@ -226,6 +238,11 @@ CUSTOM: dict[str, tuple[str, Callable[[argparse.ArgumentParser], None], _Custom]
         "Convert UOX3's create menus into the crafts of data/crafts and their resource lists",
         _crafts_options,
         _crafts,
+    ),
+    "uox-spells": (
+        "Convert UOX3's spells.dfn into data/spells.toml: the 64 spells of Magery with their circle, reagents, target and scroll",
+        _spells_options,
+        _spells,
     ),
     "modernuo-guildmasters": (
         "Convert the guildmasters of ModernUO into mobile templates (a man and a woman for each trade) and npc lists",

@@ -219,11 +219,11 @@ public sealed class MobileModule
         table["body"] = mobile.Body;
         table["strength"] = mobile.EffectiveStrength;
         table["dexterity"] = mobile.EffectiveDexterity;
-        table["intelligence"] = mobile.Intelligence;
+        table["intelligence"] = mobile.EffectiveIntelligence;
         table["hits"] = mobile.Hits;
         table["hits_max"] = mobile.EffectiveHitsMax;
         table["mana"] = mobile.Mana;
-        table["mana_max"] = mobile.ManaMax;
+        table["mana_max"] = mobile.EffectiveManaMax;
         table["stamina"] = mobile.Stamina;
         table["stamina_max"] = mobile.EffectiveStaminaMax;
         table["fame"] = mobile.Fame;
@@ -1037,7 +1037,7 @@ public sealed class MobileModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Raises the mobile's 'strength' or 'dexterity' by amount for seconds, as a strength or an agility potion does: a player's maximum hits or stamina rise with it (an NPC's stay), and when the time is up both go back and what is above the new maximum is lost. The bonus is never saved and ends when the player leaves. False when it has a bonus of that stat already, for an unknown stat or mobile, or an amount or a time that is not positive."
+        "Raises the mobile's 'strength', 'dexterity' or 'intelligence' by amount for seconds, as a strength or an agility potion does: a player's maximum hits, stamina or mana rise with it (an NPC's stay), and when the time is up both go back and what is above the new maximum is lost. The bonus is never saved and ends when the player leaves. False when it has a bonus of that stat already, for an unknown stat or mobile, or an amount or a time that is not positive."
     )]
     public bool AddStatBonus(long serial, string stat, int amount, int seconds)
     {
@@ -1049,10 +1049,27 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Lowers a stat for a while, as Clumsy, Feeblemind and Weaken do; <c>mobile.add_stat_curse(target, "dexterity", 9, 108)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Lowers the mobile's 'strength', 'dexterity' or 'intelligence' by amount for seconds, as the curses of Magery do: a player's maximum hits, stamina or mana fall with it (an NPC's stay) and what is above the new maximum is lost; it ends when the time is up or the player leaves, and is never saved. A stronger curse of the same stat replaces the one it is under; false when that one is at least as strong, for an unknown stat or mobile, or an amount or a time that is not positive. A bonus of the same stat is kept: the two add up."
+    )]
+    public bool AddStatCurse(long serial, string stat, int amount, int seconds)
+    {
+        return _bonuses is not null &&
+               TryGetMobile(serial, out var mobile) &&
+               EnumNameUtils.TryParse<StatBonusType>(stat, out var type) &&
+               Enum.IsDefined(type) &&
+               _bonuses.TryAddCurse(mobile, type, amount, TimeSpan.FromSeconds(seconds));
+    }
+
+    /// <summary>
     ///     The bonus of a stat the mobile is under; <c>mobile.stat_bonus(user, "strength")</c>.
     /// </summary>
     [ScriptFunction(
-        helpText: "The bonus of 'strength' or 'dexterity' the mobile is under; 0 for none, an unknown stat or mobile."
+        helpText:
+        "What the mobile's 'strength', 'dexterity' or 'intelligence' is moved by now: the bonus less the curse it is under; 0 for none, an unknown stat or mobile."
     )]
     public int StatBonus(long serial, string stat)
     {

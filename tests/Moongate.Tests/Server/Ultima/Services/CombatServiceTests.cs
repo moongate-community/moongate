@@ -21,6 +21,7 @@ using Moongate.Tests.TestSupport.Ultima.Combat;
 using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Magic;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Skills;
@@ -67,6 +68,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private MobileEntity _aria = null!;
     private MobileEntity _orc = null!;
     private CombatService _combat = null!;
+    private readonly RecordingSpellCastService _casts = new();
 
     public async Task InitializeAsync()
     {
@@ -118,7 +120,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _effects,
             _ammo,
             _blood,
-            _mounts
+            _mounts,
+            _casts
         );
     }
 
@@ -245,6 +248,58 @@ public sealed class CombatServiceTests : IAsyncLifetime
 
         _combat.Harm(_aria, _orc, 5);
         Assert.Equal(["criminal 2"], _crimes.Calls);
+    }
+
+    [Fact]
+    public void Harm_TellsTheCastServiceTheTargetWasHurt_ButNotForADamageOfNothing()
+    {
+        _combat.Harm(_orc, _aria, 5);
+        _combat.Harm(_orc, _aria, 0);
+
+        Assert.Equal([_aria], _casts.Hurts);
+    }
+
+    [Fact]
+    public void Harm_ThatKills_EndsTheCastOfTheVictim()
+    {
+        _combat.Harm(_orc, _aria, 100);
+
+        Assert.Equal([_aria], _casts.Cancels);
+        Assert.Empty(_casts.Hurts);
+    }
+
+    [Fact]
+    public void Aggress_AnInnocent_IsACrime_AndTheNpcFightsBack_WithNoHurt()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+
+        Assert.True(_combat.Aggress(_aria, _orc));
+
+        Assert.Equal(["criminal 2"], _crimes.Calls);
+        Assert.Equal(30, _orc.Hits);
+        Assert.Equal(_aria, _combat.TargetOf(_orc));
+        Assert.Null(_combat.TargetOf(_aria));
+    }
+
+    [Fact]
+    public void Aggress_Oneself_OrOnesOwnPet_IsNoCrime()
+    {
+        _orc.Notoriety = NotorietyType.Innocent;
+        _orc.SetProp("owner", (long)_aria.Id.Value);
+
+        _combat.Aggress(_aria, _aria);
+        _combat.Aggress(_aria, _orc);
+
+        Assert.Empty(_crimes.Calls);
+        Assert.Null(_combat.TargetOf(_orc));
+    }
+
+    [Fact]
+    public void Aggress_ADeadTarget_OrAnotherMap_IsRefused()
+    {
+        _aria.Body = 0x0192;
+
+        Assert.False(_combat.Aggress(_aria, _orc));
     }
 
     [Fact]

@@ -18,6 +18,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
 {
     private const string BonusTimer = "stat_bonus";
+    private const string CurseTimer = "stat_curse";
     private const string NightSightTimer = "night_sight";
     private const int MaxLight = 30;
 
@@ -26,7 +27,8 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
     private readonly IPacketSendService _sender;
     private readonly ITimerService _timers;
     private readonly IMobileService _mobiles;
-    private readonly Dictionary<(Serial Mobile, StatBonusType Stat), string> _bonuses = [];
+    private readonly Dictionary<(Serial Mobile, StatBonusType Stat), (string Timer, int Amount)> _bonuses = [];
+    private readonly Dictionary<(Serial Mobile, StatBonusType Stat), (string Timer, int Amount)> _curses = [];
     private readonly Dictionary<Serial, (string Timer, int Level)> _nightSight = [];
 
     public StatBonusService(
@@ -51,8 +53,35 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
             return false;
         }
 
-        SetBonus(mobile, stat, amount);
-        _bonuses[(mobile.Id, stat)] = _timers.RegisterTimer(BonusTimer, duration, () => EndBonus(mobile, stat));
+        _bonuses[(mobile.Id, stat)] = (_timers.RegisterTimer(BonusTimer, duration, () => EndBonus(mobile, stat)), amount);
+        SetBonus(mobile, stat);
+        ShowStatus(mobile);
+        _state.SendHits(mobile);
+
+        return true;
+    }
+
+    public bool TryAddCurse(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration)
+    {
+        if (amount <= 0 || duration <= TimeSpan.Zero)
+        {
+            return false;
+        }
+
+        if (_curses.TryGetValue((mobile.Id, stat), out var current))
+        {
+            // The stronger curse of the stat wins, the one that is there already when it is as strong.
+            if (current.Amount >= amount)
+            {
+                return false;
+            }
+
+            _timers.UnregisterTimer(current.Timer);
+        }
+
+        _curses[(mobile.Id, stat)] = (_timers.RegisterTimer(CurseTimer, duration, () => EndCurse(mobile, stat)), amount);
+        SetBonus(mobile, stat);
+        Clamp(mobile);
         ShowStatus(mobile);
         _state.SendHits(mobile);
 
@@ -61,7 +90,12 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
 
     public int Bonus(MobileEntity mobile, StatBonusType stat)
     {
-        return stat == StatBonusType.Strength ? mobile.StrengthBonus : mobile.DexterityBonus;
+        return stat switch
+        {
+            StatBonusType.Strength => mobile.StrengthBonus,
+            StatBonusType.Dexterity => mobile.DexterityBonus,
+            _                       => mobile.IntelligenceBonus
+        };
     }
 
     public bool TrySetNightSight(MobileEntity mobile, int level, TimeSpan duration)
@@ -87,8 +121,10 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
         Forget(mobile.Id);
         mobile.StrengthBonus = 0;
         mobile.DexterityBonus = 0;
+        mobile.IntelligenceBonus = 0;
         mobile.Hits = Math.Min(mobile.Hits, mobile.EffectiveHitsMax);
         mobile.Stamina = Math.Min(mobile.Stamina, mobile.EffectiveStaminaMax);
+        mobile.Mana = Math.Min(mobile.Mana, mobile.EffectiveManaMax);
     }
 
     // The player may have left the world already: its effects are found by its serial alone.
@@ -126,9 +162,14 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
     {
         foreach (var stat in Enum.GetValues<StatBonusType>())
         {
-            if (_bonuses.Remove((mobile, stat), out var timer))
+            if (_bonuses.Remove((mobile, stat), out var bonus))
             {
-                _timers.UnregisterTimer(timer);
+                _timers.UnregisterTimer(bonus.Timer);
+            }
+
+            if (_curses.Remove((mobile, stat), out var curse))
+            {
+                _timers.UnregisterTimer(curse.Timer);
             }
         }
 
@@ -145,8 +186,20 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
             return;
         }
 
-        SetBonus(mobile, stat, 0);
+        SetBonus(mobile, stat);
         Clamp(mobile);
+        ShowStatus(mobile);
+        _state.SendHits(mobile);
+    }
+
+    private void EndCurse(MobileEntity mobile, StatBonusType stat)
+    {
+        if (!_curses.Remove((mobile.Id, stat)))
+        {
+            return;
+        }
+
+        SetBonus(mobile, stat);
         ShowStatus(mobile);
         _state.SendHits(mobile);
     }
@@ -159,15 +212,26 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
         }
     }
 
-    private static void SetBonus(MobileEntity mobile, StatBonusType stat, int amount)
+    // What the stat is moved by: the bonus it has less the curse it is under.
+    private void SetBonus(MobileEntity mobile, StatBonusType stat)
     {
-        if (stat == StatBonusType.Strength)
+        var amount = (_bonuses.TryGetValue((mobile.Id, stat), out var bonus) ? bonus.Amount : 0) -
+                     (_curses.TryGetValue((mobile.Id, stat), out var curse) ? curse.Amount : 0);
+
+        switch (stat)
         {
-            mobile.StrengthBonus = amount;
-        }
-        else
-        {
-            mobile.DexterityBonus = amount;
+            case StatBonusType.Strength:
+                mobile.StrengthBonus = amount;
+
+                break;
+            case StatBonusType.Dexterity:
+                mobile.DexterityBonus = amount;
+
+                break;
+            default:
+                mobile.IntelligenceBonus = amount;
+
+                break;
         }
     }
 
@@ -179,7 +243,8 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
             new MobileStatsChange
             {
                 Hits = Math.Min(mobile.Hits, mobile.EffectiveHitsMax),
-                Stamina = Math.Min(mobile.Stamina, mobile.EffectiveStaminaMax)
+                Stamina = Math.Min(mobile.Stamina, mobile.EffectiveStaminaMax),
+                Mana = Math.Min(mobile.Mana, mobile.EffectiveManaMax)
             }
         );
     }

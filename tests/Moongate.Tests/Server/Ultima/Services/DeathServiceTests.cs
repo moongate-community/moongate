@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Magic;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Mounts;
 using Moongate.Tests.TestSupport.Ultima.Npcs;
@@ -44,6 +45,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
     private readonly RecordingNpcSenseService _senses = new();
     private readonly RecordingMurderService _murders = new();
     private readonly RecordingMountService _mounts = new();
+    private readonly RecordingSpellCastService _casts = new();
     private readonly Moongate.Tests.TestSupport.Ultima.Pets.StubPetService _pets = new();
 
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
@@ -126,6 +128,7 @@ public sealed class DeathServiceTests : IAsyncLifetime
             murders: _murders,
             mounts: _mounts,
             pets: new Lazy<Moongate.Server.Ultima.Interfaces.IPetService>(() => _pets),
+            casts: new Lazy<Moongate.Server.Ultima.Interfaces.ISpellCastService>(() => _casts),
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -146,6 +149,18 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.False(_orc.TryGetProp<long>("poison.level", out _));
         Assert.False(_aria.TryGetProp<long>("poison.level", out _));
         Assert.False(_aria.TryGetProp<long>("poison.ticks", out _));
+    }
+
+    [Fact]
+    public void Kill_CancelsTheCastOfTheDead_OfAnNpcAndOfAPlayer()
+    {
+        _aria.Body = 0x0190;
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+
+        Assert.True(_death.Kill(_orc));
+        Assert.True(_death.Kill(_aria));
+
+        Assert.Equal([_orc, _aria], _casts.Cancels);
     }
 
     [Fact]

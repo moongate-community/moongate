@@ -519,7 +519,7 @@ public sealed class ServerRoleRegistrationTests
             // The host registers the event bus; this test container does not.
             container.RegisterMoongateEventBus();
             var listeners = container.ResolveMany<ISessionClosedListener>().ToList();
-            Assert.Equal(10, listeners.Count);
+            Assert.Equal(11, listeners.Count);
             Assert.Contains(listeners, listener => listener is StatBonusService);
             Assert.Contains(listeners, listener => listener is PoisonService);
             Assert.Contains(listeners, listener => listener is HuePickerService);
@@ -530,6 +530,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.Contains(listeners, listener => listener is CharacterLeaveWorldService);
             Assert.Contains(listeners, listener => listener is TargetService);
             Assert.Contains(listeners, listener => listener is GumpService);
+            Assert.Contains(listeners, listener => listener is SpellCastService);
             Assert.Contains(
                 "character_left_world",
                 container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(registration => registration.Name)

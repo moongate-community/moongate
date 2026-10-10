@@ -53,6 +53,17 @@ public sealed class FakeScriptEngine : IScriptEngine
         return MemberResult;
     }
 
+    /// <summary>
+    ///     Gets the table and function pairs <see cref="HasMember" /> knows; null knows every one.
+    /// </summary>
+    public HashSet<(string Table, string Function)>? Members { get; set; }
+
+    /// <inheritdoc />
+    public bool HasMember(string table, string function)
+    {
+        return Members is null || Members.Contains((table, function));
+    }
+
     /// <inheritdoc />
     public List<(string Owner, LuaFunction Function, object?[] Args)> FunctionCalls { get; } = [];
 

@@ -31,6 +31,13 @@ public interface ICombatService : IMoongateStartupService
     bool Harm(MobileEntity? attacker, MobileEntity target, int damage);
 
     /// <summary>
+    ///     Makes <paramref name="attacker" /> the aggressor of <paramref name="target" /> without a blow or a hurt, as a curse
+    ///     is: a player that curses an innocent who is not fighting it is a criminal and the murder report is told, and an
+    ///     NPC that is cursed fights back. False for a target that is dead, invulnerable or not in the world.
+    /// </summary>
+    bool Aggress(MobileEntity attacker, MobileEntity target);
+
+    /// <summary>
     ///     Ends the fight of <paramref name="mobile" />: it swings no more, and its player is told it fights no one.
     /// </summary>
     void Stop(MobileEntity mobile);

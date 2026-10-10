@@ -9,8 +9,8 @@ namespace Moongate.Server.Ultima.Packets.General;
 
 /// <summary>
 ///     A text command of the client (0x12, variable): its kind and a text that depends on it. Kind 0x24 uses a skill,
-///     the text starting with the number of the skill; the others, such as casting a spell or opening a door, are
-///     read and not acted on yet.
+///     the text starting with the number of the skill; 0x27 and 0x56 cast a spell, 0x43 opens the spellbook; the others,
+///     such as opening a door, are read and not acted on yet.
 /// </summary>
 [PacketHandler(0x12, PacketSizing.Variable, MinimumLength = 3, Description = "Text command")]
 public sealed class TextCommandPacket : BasePacket<TextCommandPacket>, IIncomingPacket<TextCommandPacket>
@@ -19,6 +19,22 @@ public sealed class TextCommandPacket : BasePacket<TextCommandPacket>, IIncoming
     ///     The kind of a command that uses a skill.
     /// </summary>
     public const byte UseSkill = 0x24;
+
+    /// <summary>
+    ///     The kind of a command that casts a spell from the spellbook: the number of the spell, then maybe the serial of the
+    ///     book.
+    /// </summary>
+    public const byte CastFromBook = 0x27;
+
+    /// <summary>
+    ///     The kind of a command that casts a spell from a macro: the number of the spell.
+    /// </summary>
+    public const byte CastFromMacro = 0x56;
+
+    /// <summary>
+    ///     The kind of a command that opens the spellbook: the kind of book, 1 for Magery.
+    /// </summary>
+    public const byte OpenSpellbook = 0x43;
 
     private const int HeaderLength = 4;
 

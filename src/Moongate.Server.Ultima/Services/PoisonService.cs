@@ -57,6 +57,7 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
     private readonly CombatConfig _combat;
     private readonly Random _random;
     private readonly IMobileService? _mobiles;
+    private readonly ISpellCastService? _casts;
     private readonly Dictionary<Serial, Ticking> _ticking = [];
 
     public PoisonService(
@@ -69,9 +70,11 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         ISpeechService speech,
         CombatConfig combat,
         Random? random = null,
-        IMobileService? mobiles = null
+        IMobileService? mobiles = null,
+        ISpellCastService? casts = null
     )
     {
+        _casts = casts;
         _state = state;
         _death = death;
         _timers = timers;
@@ -214,6 +217,9 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         if (mobile.Hits - damage > 0)
         {
             _state.SetStats(mobile, new MobileStatsChange { Hits = mobile.Hits - damage });
+
+            // Every damage ruins a cast in its delay, a poison's too.
+            _casts?.Hurt(mobile);
 
             if (ticking.Count % MessageEvery == 0)
             {

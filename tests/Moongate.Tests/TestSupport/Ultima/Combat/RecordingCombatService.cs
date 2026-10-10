@@ -41,6 +41,15 @@ public sealed class RecordingCombatService : ICombatService
         return Allows;
     }
 
+    public List<(MobileEntity Attacker, MobileEntity Target)> Aggressed { get; } = [];
+
+    public bool Aggress(MobileEntity attacker, MobileEntity target)
+    {
+        Aggressed.Add((attacker, target));
+
+        return Allows;
+    }
+
     public void Stop(MobileEntity mobile)
     {
         Stopped.Add(mobile);

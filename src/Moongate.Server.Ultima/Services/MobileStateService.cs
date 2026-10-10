@@ -73,7 +73,7 @@ public sealed class MobileStateService : IMobileStateService
         }
 
         var health = (mobile.Hits, mobile.EffectiveHitsMax);
-        var mana = (mobile.Mana, mobile.ManaMax);
+        var mana = (mobile.Mana, mobile.EffectiveManaMax);
         var stamina = (mobile.Stamina, mobile.EffectiveStaminaMax);
         // What only the whole status shows.
         var others = (mobile.Strength, mobile.Dexterity, mobile.Intelligence, mobile.Fame, mobile.Karma);
@@ -85,7 +85,7 @@ public sealed class MobileStateService : IMobileStateService
         mobile.StaminaMax = change.StaminaMax ?? mobile.StaminaMax;
         // A lowered maximum takes what is above it.
         mobile.Hits = Math.Clamp(change.Hits ?? mobile.Hits, 0, mobile.EffectiveHitsMax);
-        mobile.Mana = Math.Clamp(change.Mana ?? mobile.Mana, 0, mobile.ManaMax);
+        mobile.Mana = Math.Clamp(change.Mana ?? mobile.Mana, 0, mobile.EffectiveManaMax);
         mobile.Stamina = Math.Clamp(change.Stamina ?? mobile.Stamina, 0, mobile.EffectiveStaminaMax);
         mobile.Fame = change.Fame ?? mobile.Fame;
         mobile.Karma = change.Karma ?? mobile.Karma;
@@ -109,9 +109,9 @@ public sealed class MobileStateService : IMobileStateService
                     _sender.TrySend(own.SessionId, new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.EffectiveHitsMax));
                 }
 
-                if (mana != (mobile.Mana, mobile.ManaMax))
+                if (mana != (mobile.Mana, mobile.EffectiveManaMax))
                 {
-                    _sender.TrySend(own.SessionId, new MobileManaPacket(mobile.Id, mobile.Mana, mobile.ManaMax));
+                    _sender.TrySend(own.SessionId, new MobileManaPacket(mobile.Id, mobile.Mana, mobile.EffectiveManaMax));
                 }
 
                 if (stamina != (mobile.Stamina, mobile.EffectiveStaminaMax))

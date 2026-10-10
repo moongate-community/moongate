@@ -90,6 +90,7 @@ public sealed class CombatService : ICombatService
     private readonly IAmmoService? _ammo;
     private readonly IBloodService? _blood;
     private readonly IMountService? _mounts;
+    private readonly ISpellCastService? _casts;
     private string? _timerId;
 
     public CombatService(
@@ -115,9 +116,11 @@ public sealed class CombatService : ICombatService
         IEffectService? effects = null,
         IAmmoService? ammo = null,
         IBloodService? blood = null,
-        IMountService? mounts = null
+        IMountService? mounts = null,
+        ISpellCastService? casts = null
     )
     {
+        _casts = casts;
         _mounts = mounts;
         _ammo = ammo;
         _blood = blood;
@@ -216,21 +219,37 @@ public sealed class CombatService : ICombatService
         }
 
         // One's own pet is no innocent to the blast that catches it, and it does not turn on its master.
-        var ownPet = attacker is not null && target.GetProp(MountProps.Owner, 0L) == attacker.Id.Value;
+        var ownPet = IsOwnPet(attacker, target);
 
-        // As an attack: a player who harms an innocent that is not fighting it is a criminal; not for harming itself.
-        if (attacker is { IsNpc: false } &&
-            !ownPet &&
-            attacker.Id != target.Id &&
-            target.ShownNotoriety == NotorietyType.Innocent &&
-            TargetOf(target)?.Id != attacker.Id &&
-            TargetOf(attacker)?.Id != target.Id)
+        if (attacker is not null)
         {
-            _crimes.MakeCriminal(attacker);
-            _murders?.Aggressed(attacker, target);
+            Accuse(attacker, target, ownPet);
         }
 
         Wound(attacker, target, damage, _time.GetUtcNow(), !ownPet);
+
+        return true;
+    }
+
+    public bool Aggress(MobileEntity attacker, MobileEntity target)
+    {
+        if (target.Notoriety == NotorietyType.Invulnerable ||
+            target.IsDead ||
+            attacker.IsDead ||
+            attacker.Map != target.Map ||
+            !_mobiles.IsInWorld(target.Id) ||
+            !_mobiles.IsInWorld(attacker.Id))
+        {
+            return false;
+        }
+
+        var ownPet = IsOwnPet(attacker, target);
+        Accuse(attacker, target, ownPet);
+
+        if (!ownPet && attacker.Id != target.Id)
+        {
+            FightBack(target, attacker, _time.GetUtcNow());
+        }
 
         return true;
     }
@@ -553,6 +572,26 @@ public sealed class CombatService : ICombatService
         }
     }
 
+    private static bool IsOwnPet(MobileEntity? attacker, MobileEntity target)
+    {
+        return attacker is not null && target.GetProp(MountProps.Owner, 0L) == attacker.Id.Value;
+    }
+
+    // As an attack: a player who harms an innocent that is not fighting it is a criminal; not for harming itself.
+    private void Accuse(MobileEntity attacker, MobileEntity target, bool ownPet)
+    {
+        if (attacker is { IsNpc: false } &&
+            !ownPet &&
+            attacker.Id != target.Id &&
+            target.ShownNotoriety == NotorietyType.Innocent &&
+            TargetOf(target)?.Id != attacker.Id &&
+            TargetOf(attacker)?.Id != target.Id)
+        {
+            _crimes.MakeCriminal(attacker);
+            _murders?.Aggressed(attacker, target);
+        }
+    }
+
     // What a blow does once it lands: the hurt sound and gesture, the damage, and a death; true when it killed.
     private bool Wound(MobileEntity? attacker, MobileEntity target, int damage, DateTimeOffset now, bool fightBack = true)
     {
@@ -581,6 +620,12 @@ public sealed class CombatService : ICombatService
         {
             _state.SetStats(target, new MobileStatsChange { Hits = hits });
 
+            if (damage > 0)
+            {
+                // A cast in its delay may be ruined by it.
+                _casts?.Hurt(target);
+            }
+
             if (fightBack && attacker is not null && attacker.Id != target.Id)
             {
                 FightBack(target, attacker, now);
@@ -590,6 +635,7 @@ public sealed class CombatService : ICombatService
         }
 
         _state.SetStats(target, new MobileStatsChange { Hits = 0 });
+        _casts?.Cancel(target);
 
         // A player that cannot die, such as one with a body that has no ghost, is left with one hit point.
         if (!_death.Kill(target, attacker) && !target.IsNpc)

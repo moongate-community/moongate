@@ -89,6 +89,7 @@ public sealed class DeathService : IDeathService
     private readonly IMurderService? _murders;
     private readonly IMountService? _mounts;
     private readonly Lazy<IPetService>? _pets;
+    private readonly Lazy<ISpellCastService>? _casts;
     private readonly ILogger _logger;
 
     // Who is between its death and its removal: it does not die twice.
@@ -118,9 +119,11 @@ public sealed class DeathService : IDeathService
         IMurderService? murders = null,
         ILogger? logger = null,
         IMountService? mounts = null,
-        Lazy<IPetService>? pets = null
+        Lazy<IPetService>? pets = null,
+        Lazy<ISpellCastService>? casts = null
     )
     {
+        _casts = casts;
         _pets = pets;
         _mounts = mounts;
         _murders = murders;
@@ -156,6 +159,8 @@ public sealed class DeathService : IDeathService
             return false;
         }
 
+        // The dead cast no more, whatever killed them.
+        _casts?.Value.Cancel(mobile);
         EndPoison(mobile);
 
         // The dead are wanted no more: a body that still falls is not a criminal for the next guard.
@@ -305,7 +310,9 @@ public sealed class DeathService : IDeathService
             return false;
         }
 
-        // Death ends a poison at once: a quick resurrection does not bring it back.
+        // The dead cast no more, whatever killed them; a death ends a poison at once, a quick resurrection does not
+        // bring it back.
+        _casts?.Value.Cancel(player);
         EndPoison(player);
 
         // Read before the pardon: a criminal or a murderer is no innocent to loot.
