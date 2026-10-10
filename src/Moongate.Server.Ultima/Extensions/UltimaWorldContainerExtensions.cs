@@ -160,6 +160,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IPetService, PetService>(Reuse.Singleton);
         container.AddMoongateService<IPetLoyaltyService, PetLoyaltyService>(12);
         container.Register<ICraftService, CraftService>(Reuse.Singleton);
+        container.Register<ISpellCatalogService, SpellCatalogService>(Reuse.Singleton);
         container.AddUltimaScriptModules();
 
         // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
