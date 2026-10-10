@@ -54,7 +54,7 @@ skills = []
 
 [[group.recipe]]
 name = "Tinker's tools"
-item = "0x1eb9_tool_kit"
+item = "0x1ebc_tinker's_tools"
 skill_min = 1.5
 skill_max = 65.0
 resources = [{ resource = "metal", amount = 1 }]
@@ -187,7 +187,7 @@ resources = [{ resource = "metal", amount = 1 }]
 skills = []
 
 [[group.recipe]]
-name = "Spoon"
+name = "Spoon 2"
 item = "0x09f9_spoon"
 skill_min = 16.6
 skill_max = 67.0
@@ -211,7 +211,7 @@ resources = [{ resource = "metal", amount = 1 }]
 skills = []
 
 [[group.recipe]]
-name = "Fork"
+name = "Fork 2"
 item = "0x09f4_fork"
 skill_min = 17.2
 skill_max = 67.0
@@ -235,7 +235,7 @@ resources = [{ resource = "metal", amount = 1 }]
 skills = []
 
 [[group.recipe]]
-name = "Knives"
+name = "Knives 2"
 item = "0x09f7_knife"
 skill_min = 17.8
 skill_max = 68.0
@@ -286,7 +286,7 @@ resources = [{ resource = "metal", amount = 1 }, { resource = "gems", amount = 1
 skills = []
 
 [[group.recipe]]
-name = "Necklace"
+name = "Necklace 2"
 item = "0x1085_necklace"
 skill_min = 42.0
 skill_max = 92.0
@@ -302,7 +302,7 @@ resources = [{ resource = "metal", amount = 1 }, { resource = "gems", amount = 1
 skills = []
 
 [[group.recipe]]
-name = "Necklace"
+name = "Necklace 3"
 item = "0x1088_necklace"
 skill_min = 41.8
 skill_max = 92.0

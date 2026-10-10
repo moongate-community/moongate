@@ -1,8 +1,8 @@
-<!-- translation: {"sourceHash":"8286c26a28bb435b5fde061710007164e95e8f4830373f483e51f1efc743e50a","title":"Meccanica"} -->
+<!-- translation: {"sourceHash":"88e05d38ab9ac3c01d65b24a1af22f8dde6b0c3edf3ee325f69e006e4e4bafc5","title":"Meccanica"} -->
 
 # Meccanica
 
-Un armaiolo (tinker) crea attrezzi, parti, utensili, gioielli e candele dai lingotti, con gemme e cera d'api per alcuni. Le regole
+Un armaiolo (tinker) crea attrezzi, parti, utensili, gioielli e candele dai lingotti, con gemme, cera d'api o un teschio per alcuni. Le regole
 sono quelle di ogni mestiere: vedi [Falegnameria](carpentry.md) per la probabilità, i fallimenti, gli oggetti eccezionali, il marchio del
 creatore, gli attrezzi che si consumano e Make last.
 
@@ -28,7 +28,8 @@ creatore, gli attrezzi che si consumano e Make last.
 | More Tools | Froe | da 33,2 a 83 | 2 metallo |
 | Candles | Candelabra | da 67,1 a 117 | 4 metallo, 3 cera d'api |
 
-Le trappole di UOX3 sono escluse: un contenitore non si può ancora intrappolare. Due ricette di cui UOX3 scrive male l'abilità (la bilancia
+Le trappole di UOX3 sono escluse: un contenitore non si può ancora intrappolare. Il kit da tassidermia ha la grafica di una
+cassetta degli attrezzi ma non è un attrezzo da tinker. Gli utensili girati dall'altra parte hanno una seconda ricetta numerata (Spoon, Spoon 2). Due ricette di cui UOX3 scrive male l'abilità (la bilancia
 e il fornelletto, da 63,8 e 64,3 a 114) vengono corrette dal convertitore.
 
 ## Cambiare le regole

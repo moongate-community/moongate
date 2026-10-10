@@ -203,7 +203,7 @@ resources = [{ resource = "wood", amount = 35 }]
 skills = []
 
 [[group.recipe]]
-name = "Armoire"
+name = "Armoire 2"
 item = "0x0a53_armoire"
 skill_min = 84.1
 skill_max = 109.1
@@ -246,7 +246,7 @@ resources = [{ resource = "wood", amount = 20 }]
 skills = []
 
 [[group.recipe]]
-name = "Easel"
+name = "Easel 2"
 item = "0x0f68_easel_with_canvas"
 skill_min = 86.8
 skill_max = 111.8
@@ -254,7 +254,7 @@ resources = [{ resource = "wood", amount = 20 }]
 skills = []
 
 [[group.recipe]]
-name = "Easel"
+name = "Easel 3"
 item = "0x0f6a_easel_with_canvas"
 skill_min = 86.8
 skill_max = 111.8
@@ -340,7 +340,7 @@ resources = [{ resource = "wood", amount = 15 }, { resource = "cloth", amount = 
 skills = [{ skill = "musicianship", min = 45.0, max = 70.0 }]
 
 [[group.recipe]]
-name = "Tambourine"
+name = "Tambourine 2"
 item = "0x0e9e_tambourine"
 skill_min = 57.8
 skill_max = 82.8
@@ -356,7 +356,7 @@ resources = [{ resource = "wood", amount = 15 }]
 skills = []
 
 [[group.recipe]]
-name = "Short Stand"
+name = "Short Stand 2"
 item = "0x0eb8_music_stand"
 skill_min = 78.9
 skill_max = 104.0
@@ -372,7 +372,7 @@ resources = [{ resource = "wood", amount = 20 }]
 skills = []
 
 [[group.recipe]]
-name = "Tall Stand"
+name = "Tall Stand 2"
 item = "0x0ebc_music_stand"
 skill_min = 81.5
 skill_max = 105.5

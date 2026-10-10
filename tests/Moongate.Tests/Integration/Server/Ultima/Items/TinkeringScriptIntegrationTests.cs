@@ -67,6 +67,7 @@ public sealed class TinkeringScriptIntegrationTests : IAsyncLifetime
 
     private const int Gears = 1;
     private const int Ring = 2;
+    private const int RoundCandle = 3;
 
     private const int Created = 1044154;
     private const int NoMetal = 1044037;
@@ -101,7 +102,9 @@ public sealed class TinkeringScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "ingot_copper", ItemId = new Serial(0x1BF2), Stackable = true },
             new ItemTemplate { Id = "0x0f26_diamond", ItemId = new Serial(0x0F26), Stackable = true },
             new ItemTemplate { Id = "0x1053_gears", ItemId = new Serial(0x1053), Stackable = true },
-            new ItemTemplate { Id = "0x108a_ring", ItemId = new Serial(0x108A) }
+            new ItemTemplate { Id = "0x108a_ring", ItemId = new Serial(0x108A) },
+            new ItemTemplate { Id = "0x1422_beeswax", ItemId = new Serial(0x1422), Stackable = true },
+            new ItemTemplate { Id = "0x142f_candle", ItemId = new Serial(0x142F) }
         )
     );
 
@@ -127,6 +130,11 @@ public sealed class TinkeringScriptIntegrationTests : IAsyncLifetime
                                 {
                                     Name = "Weddingband", Item = "0x108a_ring", SkillMin = 41.8, SkillMax = 92,
                                     Resources = [new() { Resource = "metal", Amount = 1 }, new() { Resource = "diamonds", Amount = 1 }]
+                                },
+                                new()
+                                {
+                                    Name = "Round candle", Item = "0x142f_candle", SkillMin = 37.1, SkillMax = 87,
+                                    Resources = [new() { Resource = "0x1422_beeswax", Amount = 2 }]
                                 }
                             ]
                         }
@@ -348,6 +356,19 @@ public sealed class TinkeringScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Single(Made("0x108a_ring"));
+    }
+
+    [Fact]
+    public void ARoundCandle_IsMadeFromBeeswax_ATemplateNoListNames()
+    {
+        var beeswax = Carry("0x1422_beeswax", 0x1422, 2);
+
+        Make(RoundCandle);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Single(Made("0x142f_candle"));
+        Assert.Equal(0, Left(beeswax));
     }
 
     public async Task DisposeAsync()

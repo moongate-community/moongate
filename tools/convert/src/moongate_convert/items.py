@@ -227,7 +227,8 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
         # The prospector's tool shares the sledge hammer's graphic but digs: no forging with it.
         # What UOX3's crafting tool script opens blacksmithing with: scripts/items/smithing_tool.lua.
         template.script_id = "smithing_tool"
-    elif graphic in TINKERING_TOOL_GRAPHICS:
+    elif graphic in TINKERING_TOOL_GRAPHICS and "taxiderm" not in item_id.lower():
+        # The taxidermy kit shares a tool kit's graphic but stuffs trophies: no tinkering with it.
         # What UOX3's crafting tool script opens tinkering with: scripts/items/tinkering_tool.lua.
         template.script_id = "tinkering_tool"
     elif graphic in FLETCHING_TOOL_GRAPHICS:
