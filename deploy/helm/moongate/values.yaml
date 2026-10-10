@@ -35,6 +35,8 @@ login:
     port: 2593
     annotations: {}
     loadBalancerIP: ""
+    externalTrafficPolicy: ""   # Local keeps the players' addresses in the logs
+    nodePort: 0                 # only with type NodePort
   resources: {}
   nodeSelector: {}
   extraToml: ""                      # appended to the login moongate.toml
@@ -47,20 +49,21 @@ login:
 #   advertisedPort     default 2595
 #   persistence        {size: 5Gi, storageClass: ""}
 #   ping               {enabled: false}  UDP 12000 on one realm only
-#   service            {type: LoadBalancer, annotations: {}, loadBalancerIP: ""}
+#   service            {type: LoadBalancer, annotations: {}, loadBalancerIP: "", externalTrafficPolicy: ""}
+#                      with NodePort the advertisedPort is the node port (30000-32767)
 #   resources, nodeSelector, extraToml
 realms: []
 
 # Trial dependencies. Use your own PostgreSQL and Redis in production.
 postgresql:
   enabled: false
-  image: postgres:16-alpine
+  image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
   storage:
     size: 5Gi
     storageClass: ""
 redis:
   enabled: false
-  image: redis:7.4-alpine
+  image: redis:7.4.11-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
 
 networkPolicy:
   enabled: false

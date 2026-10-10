@@ -33,21 +33,21 @@ expect_contains "bundled: generated secret kept on uninstall" "helm.sh/resource-
 expect_contains "bundled: database host" "@t-moongate-postgresql:5432/moongate_realm_1" -f ci/bundled.yaml
 
 # Task 3: login
-expect_contains "login: deployment" "name: t-moongate-login" -f ci/external.yaml
+expect_contains "login: deployment" "name: t-moongate-login$" -f ci/external.yaml --show-only templates/login.yaml
 expect_contains "login: kind Deployment" "kind: Deployment" -f ci/external.yaml
 expect_contains "login: container port" "containerPort: 2593" -f ci/external.yaml
 expect_contains "login: client files claim" "claimName: uo-files" -f ci/external.yaml
-expect_contains "login: client files read-only" "readOnly: true" -f ci/external.yaml
+expect_contains "login: client files read-only" "readOnly: true" -f ci/external.yaml --show-only templates/login.yaml
 expect_contains "login: mode" 'mode = "login"' -f ci/external.yaml
 expect_contains "login: no ping server" "enable_ping_server = false" -f ci/external.yaml
-expect_contains "login: non-root" "runAsNonRoot: true" -f ci/external.yaml
-expect_contains "login: config checksum" "checksum/config:" -f ci/external.yaml
+expect_contains "login: non-root" "runAsNonRoot: true" -f ci/external.yaml --show-only templates/login.yaml
+expect_contains "login: config checksum" "checksum/config:" -f ci/external.yaml --show-only templates/login.yaml
 expect_contains "login: accounts env" "name: MOONGATE_ACCOUNTS_DATABASE" -f ci/external.yaml
 expect_contains "login: accounts key" "key: accounts-runtime-url" -f ci/external.yaml
 expect_contains "login: user secret name" "name: moongate-secrets" -f ci/external.yaml
 expect_contains "login: schema init" "--target auth" -f ci/external.yaml
 expect_absent "login: schema init off" "accounts-schema-url" -f ci/external.yaml --set schema.enabled=false
-expect_contains "login: encryption mode" 'mode = "Optional"' -f ci/external.yaml --set network.encryptionMode=Optional
+expect_contains "login: encryption mode" 'mode = "Optional"' -f ci/external.yaml --set network.encryptionMode=Optional --show-only templates/configmap-login.yaml
 expect_contains "login: service" "port: 2593" -f ci/external.yaml
 expect_contains "login: load balancer" "type: LoadBalancer" -f ci/external.yaml
 expect_contains "login: extra toml" "custom = 1" -f ci/external.yaml --set-string login.extraToml="custom = 1"
@@ -61,7 +61,7 @@ expect_contains "realms: mode" 'mode = "game"' -f ci/two-realms.yaml
 expect_contains "realms: server index" "server_index = 2" -f ci/two-realms.yaml
 expect_contains "realms: advertised address" 'advertised_address = "192.168.255.31"' -f ci/two-realms.yaml
 expect_contains "realms: volume claim template" "volumeClaimTemplates" -f ci/two-realms.yaml
-expect_contains "realms: grace period" "terminationGracePeriodSeconds: 120" -f ci/two-realms.yaml
+expect_contains "realms: grace period" "terminationGracePeriodSeconds: 120" -f ci/two-realms.yaml --show-only templates/realms.yaml
 expect_contains "realms: game port" "containerPort: 2595" -f ci/two-realms.yaml
 expect_contains "realms: runtime key" "key: realm-2-runtime-url" -f ci/two-realms.yaml
 expect_contains "realms: schema key" "key: realm-2-schema-url" -f ci/two-realms.yaml
@@ -82,7 +82,7 @@ expect_contains "bundled: init creates the realm roles" "provision_role moongate
 expect_contains "bundled: init creates the accounts roles" "provision_role moongate_accounts_runtime" -f ci/bundled.yaml
 expect_contains "bundled: world schema" "provision_schema moongate_realm_1 world" -f ci/bundled.yaml
 expect_contains "bundled: auth schema" "provision_schema moongate_accounts auth" -f ci/bundled.yaml
-expect_contains "bundled: postgres volume" "storage: 5Gi" -f ci/bundled.yaml
+expect_contains "bundled: postgres volume" "storage: 5Gi" -f ci/bundled.yaml --show-only templates/postgresql.yaml
 expect_contains "bundled: redis deployment" "name: t-moongate-redis$" -f ci/bundled.yaml
 expect_contains "bundled: redis password" "--requirepass" -f ci/bundled.yaml
 expect_contains "bundled: redis eviction" "noeviction" -f ci/bundled.yaml
@@ -95,6 +95,38 @@ expect_absent "network policy off by default" "kind: NetworkPolicy" -f ci/bundle
 expect_contains "network policy on" "kind: NetworkPolicy" -f ci/bundled.yaml --set networkPolicy.enabled=true
 if helm install t . -f ci/bundled.yaml --dry-run=client -n ns 2>&1 | grep -q "advertisedAddress"; then pass "notes mention advertisedAddress"; else fail "notes mention advertisedAddress"; fi
 if helm install t . -f ci/bundled.yaml --dry-run=client -n ns 2>&1 | grep -qi "trial"; then pass "notes warn about trial dependencies"; else fail "notes warn about trial dependencies"; fi
+
+# Review fixes
+expect_contains "realm id that looks like a number stays a string label" 'app.kubernetes.io/component: "1"' -f ci/two-realms.yaml --set-string 'realms[1].id=1' --show-only templates/realms.yaml
+expect_contains "realm id that looks like a boolean stays a string label" 'app.kubernetes.io/component: "yes"' -f ci/two-realms.yaml --set-string 'realms[1].id=yes' --show-only templates/realms.yaml
+for reserved in accounts login postgresql redis generated; do
+    expect_error "reserved realm id $reserved" "reserved realm id" -f ci/two-realms.yaml --set-string "realms[1].id=$reserved"
+done
+expect_error "NodePort realm needs a node port as advertised port" "30000-32767" -f ci/external.yaml --set 'realms[0].service.type=NodePort'
+expect_contains "NodePort realm uses the advertised port" "nodePort: 30595" -f ci/external.yaml --set 'realms[0].service.type=NodePort' --set 'realms[0].advertisedPort=30595' --show-only templates/realms.yaml
+expect_contains "NodePort login port" "nodePort: 30593" -f ci/external.yaml --set login.service.type=NodePort --set login.service.nodePort=30593 --show-only templates/login.yaml
+expect_absent "loadBalancerIP dropped for ClusterIP" "loadBalancerIP:" -f ci/external.yaml --set login.service.type=ClusterIP --set login.service.loadBalancerIP=192.168.255.40 --set 'realms[0].service.type=ClusterIP' --set 'realms[0].service.loadBalancerIP=192.168.255.41'
+expect_contains "loadBalancerIP kept for LoadBalancer" "loadBalancerIP: 192.168.255.41" -f ci/external.yaml --set 'realms[0].service.loadBalancerIP=192.168.255.41' --show-only templates/realms.yaml
+expect_contains "realm external traffic policy" "externalTrafficPolicy: Local" -f ci/external.yaml --set 'realms[0].service.externalTrafficPolicy=Local' --show-only templates/realms.yaml
+expect_contains "login external traffic policy" "externalTrafficPolicy: Local" -f ci/external.yaml --set login.service.externalTrafficPolicy=Local --show-only templates/login.yaml
+expect_contains "image pull secrets" "name: registry-creds" -f ci/two-realms.yaml --set 'imagePullSecrets[0].name=registry-creds' --show-only templates/realms.yaml
+expect_contains "realm extra toml" "custom_realm = 7" -f ci/external.yaml --set-string 'realms[0].extraToml=custom_realm = 7' --show-only templates/realms.yaml
+expect_contains "image tag defaults to appVersion" "moongate:0.16.0" -f ci/external.yaml --show-only templates/login.yaml
+expect_contains "image tag override" "moongate:9.9.9" -f ci/external.yaml --set image.tag=9.9.9 --show-only templates/login.yaml
+expect_contains "generated handoff secret is 64 hex characters" 'handoff: "[0-9a-f]{64}"' -f ci/bundled.yaml --show-only templates/secret.yaml
+expect_contains "generated secret has the realm roles" "realm-2-schema:" -f ci/bundled.yaml --set-string 'realms[1].id=realm-2' --set-string 'realms[1].name=R2' --set 'realms[1].serverIndex=2' --set-string 'realms[1].advertisedAddress=192.168.255.31' --show-only templates/secret.yaml
+expect_contains "network policy selects the trial pods" "values: \\[postgresql, redis\\]" -f ci/bundled.yaml --set networkPolicy.enabled=true --show-only templates/networkpolicy.yaml
+expect_contains "postgres runs as uid 70" "runAsUser: 70$" -f ci/bundled.yaml --show-only templates/postgresql.yaml
+expect_contains "redis runs as uid 999" "runAsUser: 999$" -f ci/bundled.yaml --show-only templates/redis.yaml
+expect_contains "postgres init script survives kubectl exec" 'POSTGRES_USER:-postgres' -f ci/bundled.yaml --show-only templates/postgresql.yaml
+expect_contains "trial images are pinned by digest" "postgres:16-alpine@sha256:" -f ci/bundled.yaml --show-only templates/postgresql.yaml
+expect_contains "redis image is pinned by digest" "redis:7.4.11-alpine@sha256:" -f ci/bundled.yaml --show-only templates/redis.yaml
+a=$(render -f ci/bundled.yaml --show-only templates/postgresql.yaml | grep 'checksum/init')
+b=$(render -f ci/bundled.yaml --set-string 'realms[0].name=Renamed' --show-only templates/postgresql.yaml | grep 'checksum/init')
+if [ "$a" = "$b" ]; then pass "renaming a realm does not restart the trial PostgreSQL"; else fail "renaming a realm does not restart the trial PostgreSQL"; fi
+if out=$(helm template aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa . -f ci/external.yaml --set-string 'realms[0].id=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' 2>&1); then fail "long release name is rejected"; elif grep -q "too long" <<<"$out"; then pass "long release name is rejected"; else fail "long release name: $out"; fi
+expect_error "ping must be an object" "ping" -f ci/external.yaml --set 'realms[0].ping=true'
+expect_error "unknown realm field is rejected" "advertisedPorts" -f ci/external.yaml --set 'realms[0].advertisedPorts=1'
 
 # TASK-MARKER: assertions of the next tasks are appended above this line.
 exit $status

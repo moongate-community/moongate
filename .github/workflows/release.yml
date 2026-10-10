@@ -156,7 +156,8 @@ jobs:
             ghcr.io/moongate-community/moongate:latest
 
   helm:
-    needs: release-please
+    # After the image job: the chart's appVersion names an image tag that must exist when the chart is published.
+    needs: [release-please, docker]
     if: needs.release-please.outputs.release_created == 'true'
     runs-on: [self-hosted, gung-dotnet]
     container:

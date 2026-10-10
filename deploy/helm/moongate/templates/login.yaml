@@ -94,6 +94,9 @@ spec:
   {{- if and .Values.login.service.loadBalancerIP (eq .Values.login.service.type "LoadBalancer") }}
   loadBalancerIP: {{ .Values.login.service.loadBalancerIP }}
   {{- end }}
+  {{- if and .Values.login.service.externalTrafficPolicy (ne .Values.login.service.type "ClusterIP") }}
+  externalTrafficPolicy: {{ .Values.login.service.externalTrafficPolicy }}
+  {{- end }}
   selector:
     {{- include "moongate.selectorLabels" (dict "root" . "component" "login") | nindent 4 }}
   ports:
@@ -101,3 +104,6 @@ spec:
       port: {{ .Values.login.service.port }}
       targetPort: login
       protocol: TCP
+      {{- if and .Values.login.service.nodePort (eq .Values.login.service.type "NodePort") }}
+      nodePort: {{ .Values.login.service.nodePort }}
+      {{- end }}

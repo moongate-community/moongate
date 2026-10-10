@@ -13,7 +13,7 @@ metadata:
   name: {{ $name }}
   labels:
     {{- include "moongate.labels" $ | nindent 4 }}
-    app.kubernetes.io/component: {{ .id }}
+    app.kubernetes.io/component: {{ .id | quote }}
 data:
   moongate.toml: |
     mode = "game"
@@ -82,7 +82,7 @@ metadata:
   name: {{ $name }}
   labels:
     {{- include "moongate.labels" $ | nindent 4 }}
-    app.kubernetes.io/component: {{ .id }}
+    app.kubernetes.io/component: {{ .id | quote }}
 spec:
   replicas: 1
   serviceName: {{ $name }}
@@ -96,7 +96,7 @@ spec:
     metadata:
       labels:
         {{- include "moongate.labels" $ | nindent 8 }}
-        app.kubernetes.io/component: {{ .id }}
+        app.kubernetes.io/component: {{ .id | quote }}
       annotations:
         checksum/config: {{ list (toYaml $realm) $.Values.network.encryptionMode | toJson | sha256sum }}
     spec:
@@ -174,7 +174,7 @@ metadata:
   name: {{ $name }}
   labels:
     {{- include "moongate.labels" $ | nindent 4 }}
-    app.kubernetes.io/component: {{ .id }}
+    app.kubernetes.io/component: {{ .id | quote }}
   {{- with $svc.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -184,6 +184,9 @@ spec:
   {{- if and $svc.loadBalancerIP (eq (default "LoadBalancer" $svc.type) "LoadBalancer") }}
   loadBalancerIP: {{ $svc.loadBalancerIP }}
   {{- end }}
+  {{- if and $svc.externalTrafficPolicy (ne (default "LoadBalancer" $svc.type) "ClusterIP") }}
+  externalTrafficPolicy: {{ $svc.externalTrafficPolicy }}
+  {{- end }}
   selector:
     {{- include "moongate.selectorLabels" (dict "root" $ "component" .id) | nindent 4 }}
   ports:
@@ -191,6 +194,9 @@ spec:
       port: {{ $port }}
       targetPort: game
       protocol: TCP
+      {{- if eq (default "LoadBalancer" $svc.type) "NodePort" }}
+      nodePort: {{ $port }}
+      {{- end }}
     {{- if $ping }}
     - name: ping
       port: 12000
