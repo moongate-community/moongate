@@ -1,0 +1,19 @@
+syntax = "proto3";
+package moongate.admin.v1;
+option csharp_namespace = "Moongate.Admin.Contracts.V1";
+import "google/protobuf/empty.proto";
+message BroadcastRequest { string text = 1; }
+message BroadcastResponse { uint32 recipients = 1; }
+message SaveWorldResponse { uint32 duration_ms = 1; }
+message BackupFile { string database = 1; string file_name = 2; uint64 size_bytes = 3; }
+message BackupFailure { string database = 1; string reason = 2; }
+message CreateSqlBackupResponse {
+  bool already_running = 1;
+  repeated BackupFile files = 2;
+  repeated BackupFailure failures = 3;
+}
+service AdminOperations {
+  rpc Broadcast(BroadcastRequest) returns (BroadcastResponse);
+  rpc SaveWorld(google.protobuf.Empty) returns (SaveWorldResponse);
+  rpc CreateSqlBackup(google.protobuf.Empty) returns (CreateSqlBackupResponse);
+}

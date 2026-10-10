@@ -4,6 +4,7 @@ using Grpc.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Moongate.Server.Admin.Authentication;
 using Moongate.Server.Admin.Data.Config;
@@ -18,6 +19,7 @@ namespace Moongate.Server.Admin.Internal;
 internal static class AdminGrpcApplication
 {
     private static readonly TimeSpan MaximumCallDuration = TimeSpan.FromSeconds(15);
+    private static readonly TimeSpan OperationsCallDuration = TimeSpan.FromMinutes(5);
 
     public static void AddServices(
         IServiceCollection services,
@@ -26,7 +28,8 @@ internal static class AdminGrpcApplication
         IAdminLoginThrottle throttle,
         IAdminServerInfoProvider info,
         IAccountService? accounts,
-        IAccountAdminAccessService? authority
+        IAccountAdminAccessService? authority,
+        AdminWorldServices? world = null
     )
     {
         // External instance registration keeps ownership with Moongate's root container.
@@ -44,6 +47,11 @@ internal static class AdminGrpcApplication
             services.AddSingleton(authority);
         }
 
+        if (world is not null)
+        {
+            services.AddSingleton(world);
+        }
+
         services.AddGrpc(options =>
             {
                 options.MaxReceiveMessageSize = config.MaxReceiveMessageBytes;
@@ -56,10 +64,21 @@ internal static class AdminGrpcApplication
                 AdminAuthorizationPolicies.Scheme,
                 _ => { }
             );
-        services.AddAuthorization(options => options.AddPolicy(
-                AdminAuthorizationPolicies.AccountAdministration,
-                policy => policy.RequireAuthenticatedUser().RequireRole(AdminAuthorizationPolicies.AdministratorRole)
-            )
+        services.AddAuthorization(options =>
+            {
+                options.AddPolicy(
+                    AdminAuthorizationPolicies.AccountAdministration,
+                    policy => policy.RequireAuthenticatedUser().RequireRole(AdminAuthorizationPolicies.AdministratorRole)
+                );
+                options.AddPolicy(
+                    AdminAuthorizationPolicies.Moderation,
+                    policy => policy.RequireAuthenticatedUser()
+                        .RequireRole(
+                            AdminAuthorizationPolicies.GameMasterRole,
+                            AdminAuthorizationPolicies.AdministratorRole
+                        )
+                );
+            }
         );
     }
 
@@ -85,7 +104,9 @@ internal static class AdminGrpcApplication
                     }
 
                     using var deadline = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
-                    deadline.CancelAfter(MaximumCallDuration);
+                    deadline.CancelAfter(
+                        context.GetEndpoint()?.Metadata.GetMetadata<AdminCallDeadline>()?.Duration ?? MaximumCallDuration
+                    );
                     context.RequestAborted = deadline.Token;
                     await next(context);
                 }
@@ -114,6 +135,15 @@ internal static class AdminGrpcApplication
         app.UseAuthorization();
         app.MapGrpcService<AdminSessionGrpcService>().AllowAnonymous();
         app.MapGrpcService<AdminServerGrpcService>().RequireAuthorization();
+
+        // The world services need a game host that gave the administration its sessions, saves and backups.
+        if ((mode & ServerMode.Game) != 0 && app.Services.GetService<AdminWorldServices>() is not null)
+        {
+            app.MapGrpcService<AdminPlayersGrpcService>().RequireAuthorization(AdminAuthorizationPolicies.Moderation);
+            app.MapGrpcService<AdminOperationsGrpcService>()
+                .RequireAuthorization(AdminAuthorizationPolicies.AccountAdministration)
+                .WithMetadata(new AdminCallDeadline(OperationsCallDuration));
+        }
 
         if ((mode & ServerMode.Login) != 0)
         {

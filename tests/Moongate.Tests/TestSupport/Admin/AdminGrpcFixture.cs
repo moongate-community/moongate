@@ -14,13 +14,15 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
 {
     private readonly WebApplication _app;
     public AccountAdminFixture Backend { get; }
+    public WebApplication App => _app;
     public GrpcChannel Channel { get; }
     public AdminRequestGate Gate { get; }
 
     public static async Task<AdminGrpcFixture> CreateAsync(
         ServerMode mode = ServerMode.Login,
         int concurrency = 64,
-        Func<IAccountService, IAccountService>? decorateAccounts = null
+        Func<IAccountService, IAccountService>? decorateAccounts = null,
+        AdminWorldServices? world = null
     )
     {
         var backend = await AccountAdminFixture.CreateAsync();
@@ -40,7 +42,8 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
             backend.Redis.Throttle,
             new TestAdminServerInfoProvider(),
             mode == ServerMode.Game ? null : decorateAccounts?.Invoke(backend.Accounts.Service) ?? backend.Accounts.Service,
-            mode == ServerMode.Game ? null : backend.Authority
+            mode == ServerMode.Game ? null : backend.Authority,
+            world
         );
         var app = builder.Build();
         AdminGrpcApplication.Configure(app, mode, gate);

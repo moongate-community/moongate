@@ -1,0 +1,25 @@
+syntax = "proto3";
+package moongate.admin.v1;
+option csharp_namespace = "Moongate.Admin.Contracts.V1";
+import "google/protobuf/empty.proto";
+import "moongate/admin/v1/common.proto";
+message OnlinePlayer {
+  int64 session_id = 1;
+  uint32 account_id = 2;
+  uint32 character_id = 3;
+  string name = 4;
+  AccountType account_type = 5;
+  int32 map = 6;
+  int32 x = 7;
+  int32 y = 8;
+  int32 z = 9;
+}
+// Keyset pagination: start with after_character_id = 0 and send next_after_character_id back until it is zero.
+message ListOnlinePlayersRequest { uint32 page_size = 1; uint32 after_character_id = 2; }
+message ListOnlinePlayersResponse { repeated OnlinePlayer players = 1; uint32 next_after_character_id = 2; }
+// reason is kept in the server log of the call, not shown to the player; at most 200 characters.
+message KickPlayerRequest { uint32 character_id = 1; string reason = 2; }
+service AdminPlayers {
+  rpc ListOnlinePlayers(ListOnlinePlayersRequest) returns (ListOnlinePlayersResponse);
+  rpc KickPlayer(KickPlayerRequest) returns (google.protobuf.Empty);
+}

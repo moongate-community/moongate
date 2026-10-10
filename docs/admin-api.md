@@ -79,8 +79,19 @@ Accounts created by `account create` have API access disabled. `CreateAccount` a
 | `AdminAccounts.UpdateAccountAccess` | Yes | No | Administrator |
 | `AdminAccounts.ChangeAccountPassword` | Yes | No | Administrator |
 | `AdminAccountSessions.RevokeAccountSessions` | Yes | No | Administrator |
+| `AdminPlayers.ListOnlinePlayers` | Standalone only | Yes | GameMaster or Administrator |
+| `AdminPlayers.KickPlayer` | Standalone only | Yes | GameMaster or Administrator, see below |
+| `AdminOperations.Broadcast` | Standalone only | Yes | Administrator |
+| `AdminOperations.SaveWorld` | Standalone only | Yes | Administrator |
+| `AdminOperations.CreateSqlBackup` | Standalone only | Yes | Administrator |
 
 Game hosts never resolve Accounts services or connect to the Accounts database. Unavailable role-specific services return `UNIMPLEMENTED`. Configure endpoint addresses in the panel backend; administration endpoints are not advertised in realm discovery.
+
+Game hosts (and a standalone host, which has both) also expose the world: who is online, a kick and the daily operations. A Login host does not have them (`UNIMPLEMENTED`).
+
+`ListOnlinePlayers` gives the characters that are in the world, by character id, with the keyset pagination of `ListAccounts` (`after_character_id`, `next_after_character_id`, default page size 50, maximum 200): the session, account and character ids, the name, the account type, the map and the coordinates. It does not give account names: a game host has no access to the accounts database. `KickPlayer` closes the connection of a character; a GameMaster cannot kick an account of its own level or higher (`PERMISSION_DENIED`), an Administrator can kick any, and nobody can kick their own account (`FAILED_PRECONDITION`). An unknown or offline character is `NOT_FOUND`. The `reason` (at most 200 characters) goes to the server log of the call, not to the player.
+
+`Broadcast` sends a nonblank text of at most 200 characters (no NUL) to everyone in the world and gives the number of recipients; a text the transport cannot carry once compressed is `INVALID_ARGUMENT`. A repeated call repeats the message: there is no request id. `SaveWorld` saves the world as `save` does and gives the milliseconds it took. `CreateSqlBackup` runs the backup of `sql_backup` (it saves the world first) and gives the file names, not their paths, the size of each and the failures; `already_running` is set when another backup is running. These three are Administrator only, and a call to this service may last up to 5 minutes, where any other has 15 seconds.
 
 Regular and GameMaster accounts may read server information when API-enabled, but cannot list/create accounts or revoke others' sessions. Unknown account types are rejected. `CreateAccount` can assign any defined type and explicitly enable API access because only Administrators can invoke it.
 
@@ -127,7 +138,7 @@ Supported account security changes go through `IAccountAdminAccessService.SetApi
 | `CANCELLED` / `DEADLINE_EXCEEDED` | Caller cancellation or bounded execution ended |
 | `INTERNAL` | Unexpected failure; inspect safe server logs |
 
-Calls have a maximum server execution window of 15 seconds. Cancellation does not undo a committed account creation. If a create response is lost, a retry may return `ALREADY_EXISTS`; use listing to reconcile. There is no exactly-once guarantee or automatic retry policy. Revocation does not roll back writes from already admitted requests.
+Calls have a maximum server execution window of 15 seconds (5 minutes for `AdminOperations`). Cancellation does not undo a committed account creation. If a create response is lost, a retry may return `ALREADY_EXISTS`; use listing to reconcile. There is no exactly-once guarantee or automatic retry policy. Revocation does not roll back writes from already admitted requests.
 
 Audits record operation, account IDs, outcome and request correlation; no passwords, tokens or request bodies. Future live-world mutations must be scheduled through the GameLoop. This version exposes no character editing or arbitrary command execution.
 

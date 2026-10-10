@@ -40,8 +40,18 @@ public sealed class StubPacketSendService : IPacketSendService
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    ///     Gets the sessions that were asked to be disconnected, in order.
+    /// </summary>
+    public List<long> Disconnected { get; } = [];
+
     public Task DisconnectAsync(long sessionId)
     {
+        lock (Disconnected)
+        {
+            Disconnected.Add(sessionId);
+        }
+
         return Task.CompletedTask;
     }
 

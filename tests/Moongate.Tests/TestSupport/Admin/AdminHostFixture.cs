@@ -7,6 +7,13 @@ using Moongate.Core.Utils;
 using Moongate.Server.Admin;
 using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Core.Interfaces.Admin;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Services.Sessions;
+using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Tests.TestSupport.Config;
@@ -85,6 +92,17 @@ internal sealed class AdminHostFixture : IAsyncDisposable
         {
             container.RegisterInstance<IAccountService>(Backend.Accounts.Service);
             container.RegisterInstance<IAccountAdminAccessService>(Backend.Authority);
+        }
+
+        if ((mode & ServerMode.Game) != 0)
+        {
+            // A game host brings the world the administration reads and acts on.
+            container.RegisterInstance<ISessionService>(new SessionService(new StubGameLoop()));
+            container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
+            container.RegisterInstance<IPacketSendService>(new StubPacketSendService());
+            container.RegisterInstance<IBroadcastService>(new FakeBroadcastService());
+            container.RegisterInstance<IWorldSaveService>(new FakeWorldSaveService());
+            container.RegisterInstance<ISqlBackupService>(new FakeSqlBackupService());
         }
 
         new MoongateAdminPlugin().Register(container);
