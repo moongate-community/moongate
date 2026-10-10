@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b07a773c61ac9bc5bf67b118bacf7c41185f0ae9accebc62424ee1347400087f","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"5ab291bc3380ab1dbcd67461289d7eab0cd67c0458edcb56f0cdd2cd660548e1","title":"Mestieri"} -->
 
 # Mestieri
 
@@ -56,8 +56,8 @@ templates = ["0x1bd7_board", "0x1bda_board"]
 | `id` | Il nome che le ricette gli danno, un identificatore in minuscolo. Ogni elenco una volta sola. |
 | `templates` | I template di oggetti che contano per esso, almeno uno. |
 
-`wood` sono le assi comuni: un tipo di legno scelto nel gump prende invece le assi di quel tipo, come dice
-`scripts/common/woods.lua`.
+`wood` sono le assi comuni e `metal` i lingotti di ferro: un tipo di legno o di metallo scelto nel gump prende invece le assi o i
+lingotti di quel tipo, come dicono `scripts/common/woods.lua` e `scripts/common/metals.lua`.
 
 ## Caricamento
 
