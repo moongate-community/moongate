@@ -174,6 +174,19 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void CastFromBook_ASpellWithACastDelayScale_TakesThatManyTimesTheDelayOfItsCircle()
+    {
+        var spell = Bolt(reflectable: false);
+        (spell.Circle, spell.CastDelayScale) = (5, 4.0);
+        var casts = WithSpell(spell);
+
+        casts.CastFromBook(_aria, EnergyBolt);
+
+        // 0.5 + 0.25 x 4 = 1.5 seconds, four times.
+        Assert.Equal(TimeSpan.FromSeconds(6.0), _timers.Timers.Single(timer => timer.Name == "spell_cast").Interval);
+    }
+
+    [Fact]
     public void CastFromBook_WithNoBookThatHoldsTheSpell_SaysYouDoNotHaveIt()
     {
         _books.Carried.Clear();

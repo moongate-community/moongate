@@ -177,7 +177,7 @@ public sealed class SpellCastService : ISpellCastService
         var elapsed = (_time.GetUtcNow() - cast.StartedAt).TotalSeconds;
         End(caster, cast);
         _recovered[caster.Id] = _time.GetUtcNow()
-            .AddSeconds(SpellCircleRules.DisturbRecovery(elapsed, SpellCircleRules.CastDelay(cast.Spell.Circle)));
+            .AddSeconds(SpellCircleRules.DisturbRecovery(elapsed, DelayOf(cast.Spell)));
         _speech.TellCliloc(caster, ISpellCastService.DisturbedMessage);
     }
 
@@ -283,7 +283,7 @@ public sealed class SpellCastService : ISpellCastService
             _speech.Say(caster, spell.Mantra);
         }
 
-        var delay = SpellCircleRules.CastDelay(spell.Circle);
+        var delay = DelayOf(spell);
         Gesture(caster, cast);
 
         // One more gesture for each 1.5 seconds the delay lasts, the first being the one just made.
@@ -299,6 +299,12 @@ public sealed class SpellCastService : ISpellCastService
         cast.DelayTimer = _timers.RegisterTimer(DelayTimer, TimeSpan.FromSeconds(delay), () => Ready(caster, cast));
 
         return true;
+    }
+
+    // The delay of the circle, times what the spell asks for: a few summons were slowed in the classic game.
+    private static double DelayOf(SpellDefinition spell)
+    {
+        return SpellCircleRules.CastDelay(spell.Circle) * spell.CastDelayScale;
     }
 
     private void Gesture(MobileEntity caster, SpellCast cast)
