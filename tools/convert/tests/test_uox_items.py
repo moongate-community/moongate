@@ -772,3 +772,26 @@ def test_the_tinker_tools_get_the_tinkering_tool_script(uox_workspace):
     assert by_name["tool kit"]["script_id"] == "tinkering_tool"
     # The taxidermy kit shares a tool kit's graphic but stuffs trophies: no tinkering with it.
     assert "script_id" not in by_name["a taxidermy kit"]
+
+
+def test_a_preset_map_gets_its_area_and_the_map_script(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[britainmap]\n{\nname=britain map\nid=0x14ec\ncustominttag=Map 3\n}\n"
+        "[malasmap]\n{\nname=malas map\nid=0x14ec\ncustominttag=Map 31\n}\n"
+        "[craftedcitymap]\n{\nname=city map\nid=0x14ec\ncustominttag=Map 50\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What opens a map: scripts/items/map_item.lua, on the area UOX3's preset table gives it.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    britain = by_name["britain map"]
+    assert britain["script_id"] == "map_item"
+    assert {key: britain["tags"][key] for key in britain["tags"] if key.startswith("map_")} == {
+        "map_x1": "1092", "map_y1": "1396", "map_x2": "1736", "map_y2": "1924", "map_width": "200", "map_height": "200",
+        "map_facet": "0",
+    }
+    assert by_name["malas map"]["tags"]["map_facet"] == "3"
+    # A crafted map is drawn by its cartographer: no area of its own, the script all the same.
+    assert by_name["city map"]["script_id"] == "map_item" and "map_x1" not in by_name["city map"]["tags"]
