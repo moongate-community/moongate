@@ -19,7 +19,8 @@ public sealed class SpellModule
 {
     private readonly ISpellCatalogService _catalog;
     private readonly ISpellbookService _books;
-    private readonly ISpellCastService _casts;
+    // Lazy: the cast service calls the spell scripts, whose engine builds this module.
+    private readonly Lazy<ISpellCastService> _casts;
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
     private readonly ISessionService _sessions;
@@ -27,7 +28,7 @@ public sealed class SpellModule
     public SpellModule(
         ISpellCatalogService catalog,
         ISpellbookService books,
-        ISpellCastService casts,
+        Lazy<ISpellCastService> casts,
         IMobileService mobiles,
         IItemService items,
         ISessionService sessions
@@ -50,7 +51,7 @@ public sealed class SpellModule
     )]
     public bool Cast(long caster, object spellRef)
     {
-        return TryMobile(caster, out var who) && TrySpell(spellRef, out var spell) && _casts.CastFromBook(who, spell.Id);
+        return TryMobile(caster, out var who) && TrySpell(spellRef, out var spell) && _casts.Value.CastFromBook(who, spell.Id);
     }
 
     /// <summary>
@@ -62,7 +63,7 @@ public sealed class SpellModule
     )]
     public bool CastScroll(long caster, long scroll)
     {
-        return TryMobile(caster, out var who) && TryItem(scroll, out var item) && _casts.CastFromScroll(who, item);
+        return TryMobile(caster, out var who) && TryItem(scroll, out var item) && _casts.Value.CastFromScroll(who, item);
     }
 
     /// <summary>
@@ -180,7 +181,26 @@ public sealed class SpellModule
     [ScriptFunction(helpText: "Whether the mobile is casting a spell, its delay running or its target cursor waiting.")]
     public bool IsCasting(long caster)
     {
-        return TryMobile(caster, out var who) && _casts.IsCasting(who);
+        return TryMobile(caster, out var who) && _casts.Value.IsCasting(who);
+    }
+
+    /// <summary>
+    ///     Disturbs the cast of a mobile as damage does; <c>spell.disturb(target)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Disturbs the cast of the mobile as damage does: a player's spell above the first circle, while its delay runs, is ruined (the player is told so and waits to cast again); nothing for a first circle spell, an NPC, a cast waiting for its target or a mobile that is not casting. A curse uses it on its target."
+    )]
+    public bool Disturb(long caster)
+    {
+        if (!TryMobile(caster, out var who))
+        {
+            return false;
+        }
+
+        _casts.Value.Hurt(who);
+
+        return true;
     }
 
     /// <summary>
@@ -191,12 +211,12 @@ public sealed class SpellModule
     )]
     public bool Cancel(long caster)
     {
-        if (!TryMobile(caster, out var who) || !_casts.IsCasting(who))
+        if (!TryMobile(caster, out var who) || !_casts.Value.IsCasting(who))
         {
             return false;
         }
 
-        _casts.Cancel(who);
+        _casts.Value.Cancel(who);
 
         return true;
     }

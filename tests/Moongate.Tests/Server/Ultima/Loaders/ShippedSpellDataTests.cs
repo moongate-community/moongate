@@ -42,6 +42,30 @@ public sealed class ShippedSpellDataTests
         Assert.Equal(SpellTargetType.None, spells.Single(spell => spell.Key == "create_food").Target);
     }
 
+    [Fact]
+    public async Task EverySpellScript_IsASpellOfTheData_AndEveryScrollAndBookHasItsScript()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var spells = (await new SpellsLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
+        var root = Path.Combine(directories["data"], "..");
+        var scripts = Directory.GetFiles(Path.Combine(root, "scripts", "spells"), "*.lua")
+            .Select(Path.GetFileNameWithoutExtension)
+            .ToList();
+        var templates = items.ToDictionary(item => item.Id);
+
+        Assert.NotEmpty(scripts);
+        Assert.All(scripts, key => Assert.Contains(spells, spell => spell.Key == key));
+        Assert.All(spells, spell => Assert.Equal("spell_scroll", templates[spell.Scroll].ScriptId));
+        Assert.All(
+            items.Where(item => item.Id.StartsWith("spellbook", StringComparison.Ordinal) || item.Id == "0x0efa_a_spellbook"),
+            item => Assert.Equal("spellbook", item.ScriptId)
+        );
+        Assert.Equal(ulong.MaxValue.ToString(), templates["spellbook_full"].Tags!["spells"]);
+        Assert.Equal("255", templates["spellbook1"].Tags!["spells"]);
+        Assert.Null(templates["spellbook"].Tags);
+    }
+
     private static DirectoriesConfig Directories()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

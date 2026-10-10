@@ -1,5 +1,5 @@
 # What it is for:
-#   Bags for the staff to try the crafts and the potions: ".add test_kit_alchemy" gives one, which fills the first time
+#   Bags for the staff to try the crafts, the potions and the first circle of Magery: ".add test_kit_alchemy" gives one, which fills the first time
 #   it is opened with the tool, the materials and the items to use (scripts/items/test_kit.lua), then is a plain bag.
 #
 # Fields:
@@ -67,3 +67,10 @@ base_id = "base_test_kit"
 item_id = 0
 name = "a test kit: cooking"
 hue = 0x0026
+
+[[item]]
+id = "test_kit_magery"
+base_id = "base_test_kit"
+item_id = 0
+name = "a test kit: magery"
+hue = 0x0481
