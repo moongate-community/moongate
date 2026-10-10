@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b93b3972e3006c840a52a623c44a940aa5f91bf97e747a147942a5fc477a368d","title":"Estrazione e fusione"} -->
+<!-- translation: {"sourceHash":"2fac2ff914f75483ea5689c10d13b8510ed4dbd36144a1e1e1cd991ff958b45f","title":"Estrazione e fusione"} -->
 
 # Estrazione e fusione
 
@@ -41,14 +41,35 @@ stesso tipo già nello zaino:
 
 L'attrezzo non si consuma.
 
+## Metalli
+
+Un luogo di roccia è di un solo metallo, estratto di nuovo ogni volta che il minerale ritorna: la stessa roccia può dare oro oggi e ferro
+domani. Circa metà dei luoghi è di ferro.
+
+| Metallo | Luoghi su mille | Mining richiesto | Lo scavo viene provato tra | Fuso tra |
+| --- | --- | --- | --- | --- |
+| Ferro | 496 | 0 | 0 e 100 | 25 e 75 |
+| Dull copper | 112 | 65 | 25 e 105 | 40 e 90 |
+| Shadow iron | 98 | 70 | 30 e 110 | 45 e 95 |
+| Copper | 84 | 75 | 35 e 115 | 50 e 100 |
+| Bronze | 70 | 80 | 40 e 120 | 55 e 105 |
+| Gold | 56 | 85 | 45 e 125 | 60 e 110 |
+| Agapite | 42 | 90 | 50 e 130 | 65 e 115 |
+| Verite | 28 | 95 | 55 e 135 | 70 e 120 |
+| Valorite | 14 | 99 | 59 e 139 | 74 e 124 |
+
+Chi ha il Mining del metallo ne scava il minerale uno scavo su due, e ferro l'altro; chi non ce l'ha scava sempre
+ferro. Il minerale di un metallo è un mucchio grande del suo colore, che si fonde in lingotti di quel metallo, due per ogni minerale, provato
+tra i limiti dell'ultima colonna. Un singolo minerale di un metallo che non si fonde viene bruciato.
+
 ## Fusione
 
 1. Fai doppio clic su un mucchio di minerale, nello zaino o a terra entro 2 caselle. Leggi "Select the forge on which to
    smelt the ore, or another pile of ore with which to combine it."
 2. Scegli una forgia entro 2 caselle: una posata come oggetto, o una che fa parte della mappa.
 
-L'intero mucchio viene fuso in una volta. La prova viene tirata sull'abilità Mining tra 25 e 75: sotto 25 una fusione
-fallisce sempre, da 75 riesce sempre, e la prova può far crescere l'abilità.
+L'intero mucchio viene fuso in una volta. La prova viene tirata sull'abilità Mining tra 25 e 75 per il ferro (vedi [Metalli](#metals)
+per gli altri): sotto 25 una fusione fallisce sempre, da 75 riesce sempre, e la prova può far crescere l'abilità.
 
 | La fusione | Che cosa succede |
 | --- | --- |
@@ -83,12 +104,12 @@ risorsa `ore` al tuo `data/harvest.toml`, e gli script ai template: `script_id =
 picconi e alle pale di `templates/items/skills/tools/mining.toml`, `script_id = "ore"` ai quattro mucchi di
 minerale di ferro di `templates/items/skills/resources/mining.toml`. Oppure copia i tre file dalla distribuzione:
 `mgctl init` non sostituisce mai un file che potresti aver modificato. `scripts/items/ore.lua` ora legge le forge da
-`scripts/common/smithy.lua`: copialo insieme.
+`scripts/common/smithy.lua`: copialo insieme. Per i metalli, copia `scripts/common/metals.lua`, `templates/items/metals.toml` e
+entrambi gli script di nuovo, e aggiungi le `[[resource.vein]]` del minerale al tuo `data/harvest.toml`: senza le vene ogni luogo è di ferro.
 
 ## Non ancora
 
-Gli altri otto metalli, dal rame opaco alla valorite, con una vena propria per ogni zona; unire due mucchi
-in uno; attrezzi che si consumano; sabbia, pietra e gemme; rifondere un oggetto di metallo in lingotti.
+Unire due mucchi in uno; attrezzi che si consumano; sabbia, pietra e gemme; rifondere un oggetto di metallo in lingotti.
 
 ## Vedi anche
 

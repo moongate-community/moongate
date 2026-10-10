@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ef5478d9802908939ab7990ef240fe43b2460b8c51795723e073d934cbb74ac9","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"1d0a7d49ec9a2a942e8fa259b9b7719a4851e2519d4fe8f5480f3a2718c3b482","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -205,7 +205,9 @@ lì: lo script contiene i terreni che sono roccia e gli statici che sono il pavi
 Mining viene provata tra 0 e 100 (`skill.check`), e uno scavo riuscito toglie dal luogo (`harvest.take`) e dà
 un mucchio (`item.give`). Una fusione sceglie una forgia, un oggetto (`item.item_id`, `item.in_range`) o uno statico, prova l'abilità
 tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, poi `item.give`) oppure ne brucia metà; un singolo minerale
-che fallisce rimpicciolisce. Un mucchio su un cursore viene rifiutato (`item.is_held`). Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
+che fallisce rimpicciolisce. Un mucchio su un cursore viene rifiutato (`item.is_held`). Il metallo di un luogo è la vena della sua zona
+(`harvest.vein`): `scripts/common/metals.lua` contiene minerale e lingotti di ogni metallo, il Mining richiesto, i limiti di uno scavo
+e la difficoltà di una fusione. Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
 
 ## axe.lua
 

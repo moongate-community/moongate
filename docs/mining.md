@@ -39,14 +39,35 @@ kind already in the backpack:
 
 The tool does not wear out.
 
+## Metals
+
+A place of rock is of one metal, drawn again each time its ore is back, so the same rock may give gold today and iron
+tomorrow. About half of the places are of iron.
+
+| Metal | Places in a thousand | Mining it asks for | Its dig is tried between | Smelted between |
+| --- | --- | --- | --- | --- |
+| Iron | 496 | 0 | 0 and 100 | 25 and 75 |
+| Dull copper | 112 | 65 | 25 and 105 | 40 and 90 |
+| Shadow iron | 98 | 70 | 30 and 110 | 45 and 95 |
+| Copper | 84 | 75 | 35 and 115 | 50 and 100 |
+| Bronze | 70 | 80 | 40 and 120 | 55 and 105 |
+| Gold | 56 | 85 | 45 and 125 | 60 and 110 |
+| Agapite | 42 | 90 | 50 and 130 | 65 and 115 |
+| Verite | 28 | 95 | 55 and 135 | 70 and 120 |
+| Valorite | 14 | 99 | 59 and 139 | 74 and 124 |
+
+One who has the Mining of the metal digs its ore one dig in two, and iron the other; one who lacks it always digs
+iron. The ore of a metal is a large pile of its colour, which smelts into ingots of that metal, two for each ore, tried
+between the bounds of the last column. A single ore of a metal that fails to smelt is burnt away.
+
 ## Smelting
 
 1. Double click a pile of ore, in your backpack or lying within 2 tiles. You read "Select the forge on which to
    smelt the ore, or another pile of ore with which to combine it."
 2. Pick a forge within 2 tiles: one placed as an item, or one that is part of the map.
 
-The whole pile is smelted at once. The try is rolled on the Mining skill between 25 and 75: below 25 a smelt
-always fails, from 75 it always works, and the try may raise the skill.
+The whole pile is smelted at once. The try is rolled on the Mining skill between 25 and 75 for iron (see [Metals](#metals)
+for the others): below 25 a smelt always fails, from 75 it always works, and the try may raise the skill.
 
 | The smelt | What happens |
 | --- | --- |
@@ -81,12 +102,12 @@ resource `ore` to your `data/harvest.toml`, and the scripts to the templates: `s
 pickaxes and the shovels of `templates/items/skills/tools/mining.toml`, `script_id = "ore"` to the four piles of
 iron ore of `templates/items/skills/resources/mining.toml`. Or copy the three files from the distribution:
 `mgctl init` never replaces a file you may have changed. `scripts/items/ore.lua` now reads the forges from
-`scripts/common/smithy.lua`: copy it with it.
+`scripts/common/smithy.lua`: copy it with it. For the metals, copy `scripts/common/metals.lua`, `templates/items/metals.toml` and
+both scripts again, and add the `[[resource.vein]]` of the ore to your `data/harvest.toml`: without the veins every place is iron.
 
 ## Not yet
 
-The other eight metals, from dull copper to valorite, with a vein of its own for each area; combining two piles
-into one; tools that wear out; sand, stone and gems; melting a metal item back into ingots.
+Combining two piles into one; tools that wear out; sand, stone and gems; melting a metal item back into ingots.
 
 ## See also
 
