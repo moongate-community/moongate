@@ -29,8 +29,8 @@ local ANY_FROM = 110
 -- The client's texts.
 local WHICH = 500328       -- What animal should I look at?
 local NOT_AN_ANIMAL = 500329 -- That's not an animal!
-local DEAD = 500331        -- The spirits of the dead are not the province of animal lore.
 local TOO_FAR = 500446     -- That is too far away.
+local NO_SIGHT = 1049654   -- You can no longer see the creature.
 local FAILED = 500334      -- You can't think of anything you know offhand.
 local ONLY_TAMED = 1049674 -- At your skill level, you can only lore tamed creatures.
 local ONLY_TAMEABLE = 1049675 -- At your skill level, you can only lore tamed or tameable creatures.
@@ -89,10 +89,6 @@ end
 
 -- Why the creature may not be looked at, as the client says it, or nil. lore is the skill of the player in points.
 local function refusal(creature, lore, points)
-    if mobile.is_dead(creature) then
-        return DEAD
-    end
-
     local body = mobile.body_type(creature)
 
     if lore == nil or (body ~= BodyType.Animal and body ~= BodyType.Monster and body ~= BodyType.Sea) then
@@ -111,6 +107,15 @@ local function refusal(creature, lore, points)
     end
 
     return nil
+end
+
+-- A number of the creature, or --- when it has none.
+local function amount(value)
+    if value == nil or value <= 0 then
+        return NONE
+    end
+
+    return value
 end
 
 local function bar(current, maximum)
@@ -163,13 +168,13 @@ local function first_page(g, creature, lore)
     line(g, y + LINE, HITS, bar(stats.hits, stats.hits_max))
     line(g, y + 2 * LINE, STAMINA, bar(stats.stamina, stats.stamina_max))
     line(g, y + 3 * LINE, MANA, bar(stats.mana, stats.mana_max))
-    line(g, y + 4 * LINE, STRENGTH, stats.strength)
-    line(g, y + 5 * LINE, DEXTERITY, stats.dexterity)
-    line(g, y + 6 * LINE, INTELLIGENCE, stats.intelligence)
+    line(g, y + 4 * LINE, STRENGTH, amount(stats.strength))
+    line(g, y + 5 * LINE, DEXTERITY, amount(stats.dexterity))
+    line(g, y + 6 * LINE, INTELLIGENCE, amount(stats.intelligence))
 
     y = y + 8 * LINE
     header(g, y, MISCELLANEOUS)
-    line(g, y + LINE, ARMOR_RATING, lore.armor)
+    line(g, y + LINE, ARMOR_RATING, amount(lore.armor))
     line(g, y + 2 * LINE, BASE_DAMAGE, lore.damage_max > 0 and (lore.damage_min .. "-" .. lore.damage_max) or NONE)
 
     y = y + 4 * LINE
@@ -205,33 +210,49 @@ end
 local function show(user, creature, lore)
     local g = gump.create("animal_lore", 250, 50)
 
-    g:background{ x = 0, y = 0, gump = 9200, width = 340, height = 440 }
+    g:background{ x = 0, y = 0, gump = 9200, width = 340, height = 470 }
     g:text{ x = 40, y = 25, hue = HEADER_HUE, text = npc.name(creature) or "" }
     g:page()
     first_page(g, creature, lore)
-    g:button{ x = 290, y = 405, up = 5601, down = 5603, page = 2 }
+    g:button{ x = 290, y = 435, up = 5601, down = 5603, page = 2 }
     g:page()
     second_page(g, creature, lore)
-    g:button{ x = 20, y = 405, up = 5603, down = 5601, page = 1 }
+    g:button{ x = 20, y = 435, up = 5603, down = 5601, page = 1 }
 
     gump.send(user, g, {})
 end
 
+-- Why the creature cannot be reached: too far, or out of sight; nil when it can be looked at.
+local function unreachable(user, creature)
+    local at, there = mobile.location(user), mobile.location(creature)
+
+    if at == nil or there == nil or at.map ~= there.map or distance(at, there) > SIGHT then
+        return TOO_FAR
+    end
+
+    if not world.line_of_sight(at.map, at.x, at.y, at.z, there.x, there.y, there.z) then
+        return NO_SIGHT
+    end
+
+    return nil
+end
+
 local function look(user, creature)
-    local points = mobile.skills(user).animal_lore or 0
+    -- The reach is the cursor's, so it comes first, as in ModernUO.
+    local far = unreachable(user, creature)
+
+    if far ~= nil then
+        mobile.message_cliloc(user, far)
+
+        return
+    end
+
+    local points = (mobile.skills(user) or {}).animal_lore or 0
     local lore = pet.lore(creature)
     local why = refusal(creature, lore, points)
 
     if why ~= nil then
         mobile.message_cliloc(user, why)
-
-        return
-    end
-
-    local at, there = mobile.location(user), mobile.location(creature)
-
-    if at == nil or there == nil or at.map ~= there.map or distance(at, there) > SIGHT then
-        mobile.message_cliloc(user, TOO_FAR)
 
         return
     end
@@ -250,12 +271,6 @@ function animal_lore.on_use(user)
 
     target.pick(user, function(picked)
         if picked.kind ~= "object" then
-            return
-        end
-
-        if mobile.is_dead(user) then
-            mobile.message_cliloc(user, DEAD)
-
             return
         end
 

@@ -189,7 +189,7 @@ client's own texts as system messages (ModernUO shows them over the one examined
 ## animal_lore.lua
 
 `scripts/skills/animal_lore.lua` is the Animal Lore skill: `on_use` says "What animal should I look at?" (500328), gives a
-cursor, and refuses a dead creature, one that is not an animal (`mobile.body_type`) and, by the skill, a creature that is not
+cursor, and refuses a creature out of reach or sight (500446, 1049654), one that is not an animal (`mobile.body_type`; a dead creature has left the world) and, by the skill, a creature that is not
 tamed under 100 points or not tameable under 110. The check is `skill.check(user, "animal_lore", 0, 120)`; a pass builds a
 two-page gump with `gump.create` from `pet.lore`, `mobile.stats` and `mobile.skills`, all labels clilocs of the client. See
 [Animal taming](../animal-taming.md#animal-lore).

@@ -136,7 +136,7 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 | --- | --- | --- | --- | --- |
 | 5.1 | 🟡 | **Gathering**: mining, lumberjacking, fishing, with resource regions that run out and regrow. Done: fishing with a pole, lumberjacking with an axe, its boards, kinds of wood and rare finds, mining iron ore and smelting it, and the areas that run out and come back. Left: the other metals, the special catches of fishing | Feeds crafting | |
 | 5.2 | 🟡 | **Crafting engine**, then each craft as data; repair. Done: the engine, its gump and [carpentry](carpentry.md), with exceptional items, the maker's mark, tool wear and make last. Left: the other crafts, repair | The peaceful play style and the player economy | UOX3 `create/` (618 recipes) |
-| 5.3 | ❌ | **Taming, pet commands, stables, mounts** | Needs AI (3.2), notoriety (3.4) and vendors (4.1) | UOX3 `TOTAME`, `CONTROLSLOTS`, `FOOD` tags |
+| 5.3 | ✅ | **Taming, pet commands, stables, mounts** | Needs AI (3.2), notoriety (3.4) and vendors (4.1) | UOX3 `TOTAME`, `CONTROLSLOTS`, `FOOD` tags |
 | 5.4 | 🟡 | **The remaining active skills**: hiding, stealth, stealing, snooping, lore skills, bard skills, tracking. Done: hiding, [stealth](scripting/shipped-scripts.md#stealthlua), [snooping](scripting/shipped-scripts.md#snoopinglua), detect hidden, anatomy, evaluating intelligence and forensic evaluation ([the lore skills](scripting/shipped-scripts.md#the-lore-skills)). [Animal Lore](animal-taming.md#animal-lore) is done. Left: stealing, tracking, arms lore, item ID, taste ID, the bard skills | Each is small once 1.2 exists | |
 
 ## Phase 6: playing together

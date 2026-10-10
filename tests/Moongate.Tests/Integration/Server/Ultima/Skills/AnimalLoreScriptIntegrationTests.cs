@@ -68,6 +68,7 @@ public sealed class AnimalLoreScriptIntegrationTests : IAsyncLifetime
     private const int Which = 500328;
     private const int NotAnAnimal = 500329;
     private const int TooFar = 500446;
+    private const int NoSight = 1049654;
     private const int Failed = 500334;
     private const int OnlyTamed = 1049674;
     private const int OnlyTameable = 1049675;
@@ -184,6 +185,7 @@ public sealed class AnimalLoreScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ISkillService>(new SkillService(_state, data, new SkillsConfig(), _random));
         _container.RegisterScriptEnum<BodyType>();
         _container.AddScriptModule<MobileModule>();
+        _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<SkillModule>();
         _container.AddScriptModule<TargetModule>();
         _container.AddScriptModule<PetModule>();
@@ -253,6 +255,7 @@ public sealed class AnimalLoreScriptIntegrationTests : IAsyncLifetime
         Assert.Contains("40/50", text);
         Assert.Contains("3-8", text);
         Assert.Contains("6", text);
+        Assert.Equal(1, text.Count(entry => entry == "6"));
         Assert.Contains("29.1", text);
         // Two pages: a button to each.
         Assert.Equal([2, 1], gump.Layout.Entries.OfType<GumpButton>().Select(button => button.Page));
@@ -262,6 +265,7 @@ public sealed class AnimalLoreScriptIntegrationTests : IAsyncLifetime
     public void AWildHorse_ForSomeoneWithLoreOneHundred_IsWild()
     {
         Skill(100);
+        _random.Rest = 0.0;
 
         Use();
 
@@ -317,6 +321,7 @@ public sealed class AnimalLoreScriptIntegrationTests : IAsyncLifetime
     public void AnUntameableCreature_FromOneHundredTen_IsLookedAt()
     {
         Skill(110);
+        _random.Rest = 0.0;
         var orc = Creature(0x102, "orc", 0x11, 2);
         _targets.Result = TargetResult.ForObject(orc.Id);
 
@@ -356,6 +361,76 @@ public sealed class AnimalLoreScriptIntegrationTests : IAsyncLifetime
 
         Assert.Equal([Which, TooFar], Told());
         Assert.Empty(_gumps.Opened);
+    }
+
+    [Fact]
+    public void ADiagonalFarAway_IsTooFar_AsTheDistanceIsTheLargerOfTheTwo()
+    {
+        _horse.SetProp(MountProps.Owner, (long)_aria.Id.Value);
+        _horse.Location = new Point3D(_aria.Location.X + 2, _aria.Location.Y + 9, _aria.Location.Z);
+
+        Use();
+
+        Assert.Equal([Which, TooFar], Told());
+    }
+
+    [Fact]
+    public void AHorseOnAnotherMap_IsTooFar()
+    {
+        _horse.SetProp(MountProps.Owner, (long)_aria.Id.Value);
+        _horse.Map = MapType.Ilshenar;
+
+        Use();
+
+        Assert.Equal([Which, TooFar], Told());
+    }
+
+    [Fact]
+    public void AHorseBehindAWall_CannotBeSeen()
+    {
+        _horse.SetProp(MountProps.Owner, (long)_aria.Id.Value);
+        _sight.Allow = false;
+
+        Use();
+
+        Assert.Equal([Which, NoSight], Told());
+        Assert.Empty(_gumps.Opened);
+    }
+
+    [Fact]
+    public void TheReachIsCheckedBeforeTheSkill_AFarWildHorseIsTooFar_NotOnlyTamed()
+    {
+        Skill(50);
+        _horse.Location = new Point3D(_aria.Location.X + 20, _aria.Location.Y, _aria.Location.Z);
+
+        Use();
+
+        Assert.Equal([Which, TooFar], Told());
+    }
+
+    [Fact]
+    public void AStatOfZero_ShowsNone_NotZero()
+    {
+        _horse.SetProp(MountProps.Owner, (long)_aria.Id.Value);
+        _horse.Armor = 0;
+        _horse.Intelligence = 0;
+
+        Use();
+
+        var text = Assert.Single(_gumps.Opened).Gump.Layout.Entries.OfType<GumpText>().Select(entry => entry.Text).ToList();
+        Assert.DoesNotContain("0", text);
+        Assert.Contains("---", text);
+    }
+
+    [Fact]
+    public void ALabelOfTheGump_IsDrawnInTheLabelColor()
+    {
+        _horse.SetProp(MountProps.Owner, (long)_aria.Id.Value);
+
+        Use();
+
+        var html = Assert.Single(_gumps.Opened).Gump.Layout.Entries.OfType<GumpHtmlLocalized>().ToList();
+        Assert.All(html, entry => Assert.NotNull(entry.Color));
     }
 
     [Fact]

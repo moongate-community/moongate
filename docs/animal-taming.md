@@ -101,7 +101,8 @@ and ignores the limit.
 
 Use the Animal Lore skill, pick a creature within 8 tiles and, if the skill check (from 0 to 120) passes, a gump of two
 pages tells what it is. The page shows the same whatever your skill is; the skill decides which creatures you may look
-at: a tamed one always, one that can be tamed from 100 points, any other animal or monster from 110. Failing reads that you
+at: a tamed one always, one that can be tamed from 100 points, any other animal or monster from 110. A creature farther
+than 8 tiles or out of sight is refused first ("That is too far away", "You can no longer see the creature"). Failing reads that you
 can't think of anything you know offhand.
 
 - Page 1: hits, stamina and mana, strength, dexterity and intelligence, armor rating, damage, and the loyalty rating, from
@@ -110,7 +111,7 @@ can't think of anything you know offhand.
   10 points), the kinds of food it eats and the Animal Taming it asks.
 
 The texts are the client's own. Each time you try to tame a creature, Animal Lore gets a try of its own, so it grows while
-you tame. Resistances, elemental damage, regeneration, barding, pack instincts and bonding are not shown.
+you tame. `pet.lore` also gives the slots of the creature, which the gump does not show. Resistances, elemental damage, regeneration, barding, pack instincts and bonding are not shown.
 
 ## For scripts
 
