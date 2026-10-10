@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"65d2b4927bfc92f0c9350b1923ada5b8a73126500de20a767ac8109e63a5aff4","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"2674bb60fec962db9c7a31d443e242f07b83fea1af980915e37c13c58ec26237","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -186,6 +186,14 @@ di `data/skills.toml`.
   cercatore più un tiro da -10 a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff
   viene trovato solo da altro staff; l'abilità aspetta 10 secondi.
   Trappole, case e fazioni non ci sono ancora.
+
+## animal_lore.lua
+
+`scripts/skills/animal_lore.lua` è l'abilità Animal Lore: `on_use` dice "What animal should I look at?" (500328), dà un
+cursore, e rifiuta una creatura fuori portata o fuori vista (500446, 1049654), una che non è un animale (`mobile.body_type`; una creatura morta ha lasciato il mondo) e, in base all'abilità, una creatura non
+addomesticata sotto i 100 punti o non addomesticabile sotto i 110. La prova è `skill.check(user, "animal_lore", 0, 120)`; una riuscita costruisce un
+gump di due pagine con `gump.create` da `pet.lore`, `mobile.stats` e `mobile.skills`, con tutte le etichette in clilocs del client. Vedi
+[Domatura degli animali](../animal-taming.md#animal-lore).
 
 ## pickaxe.lua e ore.lua
 
