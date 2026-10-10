@@ -54,6 +54,9 @@ for _, kind in ipairs(metals.kinds) do
     by_ingot[kind.ingot] = kind
 end
 
+-- A large pile of shadow iron the converted item files have: it is shadow iron too, never iron.
+by_ore["shadow_iron_ore"] = by_id.shadow_iron
+
 function metals.by_id(id)
     return id and by_id[id]
 end

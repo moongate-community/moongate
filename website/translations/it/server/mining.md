@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2fac2ff914f75483ea5689c10d13b8510ed4dbd36144a1e1e1cd991ff958b45f","title":"Estrazione e fusione"} -->
+<!-- translation: {"sourceHash":"7288f6ad70e6c3c8c98148c9258a5345a1e3b39013850a6a3945535e786dbd84","title":"Estrazione e fusione"} -->
 
 # Estrazione e fusione
 
@@ -29,8 +29,8 @@ doppio clic nel frattempo non fa nulla.
 
 ## Che cosa ottieni
 
-La prova viene tirata sull'abilità Mining tra 0 e 100, quindi la probabilità di uno scavo riuscito è l'abilità stessa,
-e l'abilità può crescere a ogni prova. Uno scavo riuscito dà un mucchio di minerale di ferro, che si unisce al mucchio dello
+In un luogo di ferro la prova viene tirata sull'abilità Mining tra 0 e 100, quindi la probabilità di uno scavo riuscito è l'abilità stessa,
+e l'abilità può crescere a ogni prova (un altro metallo ha i suoi limiti: vedi [Metalli](#metals)). Uno scavo di ferro riuscito dà un mucchio di minerale di ferro, che si unisce al mucchio dello
 stesso tipo già nello zaino:
 
 | Mucchio | Quanto spesso | Lingotti in cui si fonde |
@@ -60,7 +60,10 @@ domani. Circa metà dei luoghi è di ferro.
 
 Chi ha il Mining del metallo ne scava il minerale uno scavo su due, e ferro l'altro; chi non ce l'ha scava sempre
 ferro. Il minerale di un metallo è un mucchio grande del suo colore, che si fonde in lingotti di quel metallo, due per ogni minerale, provato
-tra i limiti dell'ultima colonna. Un singolo minerale di un metallo che non si fonde viene bruciato.
+tra i limiti dell'ultima colonna. Il [fabbro](blacksmithing.md#metals) forgia con i lingotti di ogni metallo. Un minatore sotto la difficoltà di un metallo (il centro di quei limiti: 65 per il dull
+copper, 99 per la valorite) legge "You have no idea how to smelt this strange ore!" e non brucia nulla. Un singolo minerale di un metallo
+che non si fonde viene bruciato. Il minerale di un metallo arriva sempre come mucchio grande, a differenza delle quattro dimensioni del ferro: una scelta per
+avere un solo template per metallo, che dà un po' più metallo di quanto darebbe una dimensione estratta come per il ferro.
 
 ## Fusione
 
@@ -73,8 +76,8 @@ per gli altri): sotto 25 una fusione fallisce sempre, da 75 riesce sempre, e la 
 
 | La fusione | Che cosa succede |
 | --- | --- |
-| Riesce | Il mucchio diventa lingotti di ferro nel tuo zaino, in base alla sua dimensione (la tabella sopra); un minerale piccolo dispari resta. Leggi "You smelt the ore removing the impurities and put the metal in your backpack." |
-| Fallisce | Metà del mucchio brucia, arrotondata per difetto. Un mucchio di un solo minerale invece rimpicciolisce: uno grande diventa medio, uno medio piccolo. Leggi "You burn away the impurities but are left with less useable metal." |
+| Riesce | Il mucchio diventa lingotti del suo metallo nel tuo zaino, in base alla sua dimensione (la tabella sopra); un minerale piccolo dispari resta. Leggi "You smelt the ore removing the impurities and put the metal in your backpack." |
+| Fallisce | Metà del mucchio brucia, arrotondata per difetto. Un mucchio di un solo minerale di ferro invece rimpicciolisce (un singolo minerale di un altro metallo brucia): uno grande diventa medio, uno medio piccolo. Leggi "You burn away the impurities but are left with less useable metal." |
 
 Un singolo minerale piccolo risponde "There is not enough metal-bearing ore in this pile to make an ingot." Scegliere
 qualcosa che non è una forgia risponde `That is not a forge.`, e una forgia a più di 2 caselle "That is too far
@@ -86,14 +89,15 @@ Ogni mappa è divisa in zone di 8 caselle per 8. Una zona contiene da 10 a 34 mi
 scavo riuscito ne toglie uno; una prova fallita non ne toglie. La zona torna piena, tutta in una volta, da 10 a 20 minuti dopo
 il primo minerale preso.
 
-Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno. I numeri sono la risorsa `ore` di
+Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno, e il suo metallo viene estratto di nuovo. I numeri sono la risorsa `ore` di
 [`harvest.toml`](data-files/harvest.md).
 
 ## Cambiare le regole
 
 Le regole di uno scavo sono in `scripts/items/pickaxe.lua`: la distanza, il tempo, i mucchi e quanto spesso esce ciascuno,
 i terreni che sono roccia e gli statici che sono il pavimento di una grotta. Quelle di una fusione sono in
-`scripts/items/ore.lua`: la distanza, l'abilità, i lingotti di ogni mucchio e le grafiche che sono forge. Vedi
+`scripts/items/ore.lua`: la distanza, l'abilità, i lingotti di ogni mucchio; le forge sono in `scripts/common/smithy.lua`
+e i metalli (minerale, lingotti, Mining e limiti) in `scripts/common/metals.lua`. Vedi
 [Script forniti](scripting/shipped-scripts.md#pickaxelua-and-orelua). Un template scava con
 `script_id = "pickaxe"` e viene fuso con `script_id = "ore"`.
 

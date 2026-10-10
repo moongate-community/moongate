@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"c8807a71fc133c487435582a60bafae6e0f990c4a37b334dcab1fa3992634891","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"07b8c39f1b993355db683f9ffb80a7a40a6185cc2113e644d73f7d1a65357a8a","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -202,10 +202,10 @@ gump a due pagine con `gump.create` da `pet.lore`, `mobile.stats` e `mobile.skil
 Uno scavo sceglie un luogo (`target.pick_location`), che dà il `land` della casella e la `graphic` di uno statico scelto
 lì: lo script contiene i terreni che sono roccia e gli statici che sono il pavimento di una grotta. Il personaggio colpisce
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare del minerale (`harvest.amount`), l'abilità
-Mining viene provata tra 0 e 100 (`skill.check`), e uno scavo riuscito toglie dal luogo (`harvest.take`) e dà
+Mining viene provata tra i limiti del metallo del luogo (`skill.check`; 0 e 100 per il ferro), e uno scavo riuscito toglie dal luogo (`harvest.take`) e dà
 un mucchio (`item.give`). Una fusione sceglie una forgia, un oggetto (`item.item_id`, `item.in_range`) o uno statico, prova l'abilità
-tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, poi `item.give`) oppure ne brucia metà; un singolo minerale
-che fallisce rimpicciolisce. Un mucchio su un cursore viene rifiutato (`item.is_held`). Il metallo di un luogo è la vena della sua zona
+tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, poi `item.give`) oppure ne brucia metà; un singolo minerale di ferro
+che fallisce rimpicciolisce, e un metallo sopra l'abilità del minatore viene rifiutato senza prova. Un mucchio su un cursore viene rifiutato (`item.is_held`). Il metallo di un luogo è la vena della sua zona
 (`harvest.vein`): `scripts/common/metals.lua` contiene minerale e lingotti di ogni metallo, il Mining richiesto, i limiti di uno scavo
 e la difficoltà di una fusione. Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
 

@@ -83,6 +83,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     private const int Smelted = 501988;
     private const int Burnt = 501990;
     private const int OreTooFar = 501976;
+    private const int StrangeOre = 501986;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -815,13 +816,14 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     }
 
     [Theory]
-    // Dull copper is tried between 40 and 90: below 40 it always burns; valorite between 74 and 124.
-    [InlineData("ore_dull_copper", 399)]
-    [InlineData("ore_valorite", 739)]
-    public void Smelting_AnOreOfAMetal_BelowItsDifficulty_Burns(string ore, int tenths)
+    // At its difficulty a metal is tried halfway: dull copper at 65 between 40 and 90, valorite at 99 between 74 and 124.
+    [InlineData("ore_dull_copper", 650)]
+    [InlineData("ore_valorite", 990)]
+    public void Smelting_AnOreOfAMetal_ThatFails_BurnsHalfOfIt(string ore, int tenths)
     {
         Skill(tenths);
         var pile = Pile(ore, 4);
+        _random.Doubles(0.99);
 
         Smelt(pile, TargetResult.ForObject(_forge.Id));
 
@@ -829,6 +831,55 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
         Assert.Equal([WhichForge, Burnt], Told());
         Assert.Equal(2, pile.Amount);
         Assert.DoesNotContain(Carried(), item => item.TemplateId.Contains("ingot", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    // Dull copper is smelted from 65 Mining, valorite from 99: below, the ore is not even tried, nor burnt.
+    [InlineData("ore_dull_copper", 649)]
+    [InlineData("ore_valorite", 989)]
+    public void Smelting_AMetalAboveTheMinersSkill_IsRefused_AndNothingBurns(string ore, int tenths)
+    {
+        Skill(tenths);
+        var pile = Pile(ore, 4);
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge, StrangeOre], Told());
+        Assert.Equal(4, pile.Amount);
+        Assert.Equal(0, _random.Rolls);
+    }
+
+    [Fact]
+    public void Smelting_ASingleOreOfAMetalThatFails_IsBurntAway_AndBecomesNoIron()
+    {
+        Skill(650);
+        var pile = Pile("ore_dull_copper", 1);
+        _random.Doubles(0.99);
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge, Burnt], Told());
+        Assert.Empty(Carried());
+    }
+
+    [Fact]
+    public void Digging_AMetal_IsTriedBetweenItsOwnBounds_AndAFailureTakesNothing()
+    {
+        // Dull copper at 65 is tried between 25 and 105: one chance in two, where iron would give 65 in 100.
+        _place.Integers(0, 496);
+        Skill(650);
+        Rolls(0.0, 0.9);
+        _random.Doubles(0.55);
+
+        Dig(_rock);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhereToDig, Failed], Told());
+        Assert.Empty(Carried());
+        Assert.Equal(10, _harvest.Amount("ore", MapType.Trammel, _rock.X, _rock.Y));
     }
 
     public async Task DisposeAsync()
