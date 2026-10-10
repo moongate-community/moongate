@@ -4,6 +4,7 @@ base_id = "base_item"
 item_id = 3997
 name = "sewing kit"
 rarity = "common"
+script_id = "tailoring_tool"
 weight = 2.0
 buy_price = 3
 sell_price = 1

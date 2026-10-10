@@ -351,3 +351,9 @@ def test_a_menu_entry_without_its_submenu_is_a_conversion_error(tmp_path):
 
     assert crafts.run(source, items, destination, io.StringIO(), error) == 2
     assert "SUBMENU 3" in error.getvalue()
+
+
+def test_the_crafts_the_converter_knows_and_their_sounds():
+    # Each craft: its id, the name its gump shows, its skill and the root menu of UOX3's file.
+    assert crafts.CRAFTS["tailoring"] == ("tailoring", "Tailoring", "tailoring", 39)
+    assert crafts.SOUNDS["tailoring"] == 0x0248

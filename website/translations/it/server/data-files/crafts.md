@@ -1,8 +1,8 @@
-<!-- translation: {"sourceHash":"5ab291bc3380ab1dbcd67461289d7eab0cd67c0458edcb56f0cdd2cd660548e1","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"73e93cd662c6f81bd03da3b427a28c5e8dfa6e349dd81c9ba23698684c7a4116","title":"Mestieri"} -->
 
 # Mestieri
 
-`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml` e `blacksmithing.toml`), e
+`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml` e `tailoring.toml`), e
 `resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole e
 [Fabbro](../blacksmithing.md). Ciò a cui un mestiere deve stare vicino, come l'incudine e la forgia del fabbro, non è un dato:
 è la tabella `NEEDS` di `scripts/common/crafting.lua`.

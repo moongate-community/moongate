@@ -90,6 +90,8 @@ local MARKED = 1044156        -- You create an exceptional quality item and affi
 local WORN_OUT = 1044038      -- You have worn out your tool!
 local NOTHING_YET = 1044165   -- You haven't made anything yet.
 local NO_METAL = 1044037      -- You do not have sufficient metal to make that.
+local NO_LEATHER = 1044463    -- You do not have sufficient leather to make that.
+local NO_BONE = 1049063       -- You do not have enough bones to make that.
 local NOT_AT_FORGE = 1044267  -- You must be near an anvil and a forge to smith items.
 local NO_IDEA_METAL = 1044268 -- You have no idea how to work this metal.
 
@@ -108,6 +110,8 @@ local NOTICES = {
     [MARKED] = "You create an exceptional quality item and affix your maker's mark.",
     [NOTHING_YET] = "You haven't made anything yet.",
     [NO_METAL] = "You do not have sufficient metal to make that.",
+    [NO_LEATHER] = "You do not have sufficient leather to make that.",
+    [NO_BONE] = "You do not have enough bones to make that.",
     [NOT_AT_FORGE] = "You must be near an anvil and a forge to smith items.",
     [NO_IDEA_METAL] = "You have no idea how to work this metal.",
     [FAILED] = "You failed to create the item, and some of your materials are lost.",
@@ -118,7 +122,7 @@ local NOTICES = {
     [STRANGE_WOOD] = "You cannot work this strange and unusual wood.",
 }
 
-local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH, metal = NO_METAL }
+local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH, metal = NO_METAL, leather = NO_LEATHER, bone = NO_BONE }
 
 -- The materials a craft works in kinds, by the resource that takes them: the module of the kinds, the kind picked when
 -- none is, the field of a kind with its template, the field with the skill it asks of the craft, and the client
