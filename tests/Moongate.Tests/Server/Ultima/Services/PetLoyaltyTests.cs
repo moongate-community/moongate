@@ -27,6 +27,7 @@ public sealed class PetLoyaltyTests
     private readonly RecordingMobileStateService _state = new();
     private readonly PetsConfig _config = new();
     private double _roll = 0.5;
+    private readonly SettableClock _clock = new();
     private readonly PetService _service;
     private readonly StubDataLoaderService _data;
 
@@ -55,7 +56,7 @@ public sealed class PetLoyaltyTests
             TestItems.Create(),
             taming,
             _config,
-            null,
+            _clock,
             new Lazy<IMobileStateService>(() => _state),
             null,
             new PetFoodService(_data, taming),
@@ -257,6 +258,82 @@ public sealed class PetLoyaltyTests
         horse.SetProp(MountProps.Owner, 77L);
 
         Assert.Equal(PetFeedResultType.NotYours, _service.Feed(_player, horse, "apple", 1));
+    }
+
+    [Fact]
+    public void Feed_TheFirstFoodSetsTheTimeOfTheBond_AndFoodBeforeTheDaysDoesNotBond()
+    {
+        var horse = Pet(0x100, "horse");
+
+        Assert.Equal(PetFeedResultType.AlreadyHappy, _service.Feed(_player, horse, "apple", 1));
+        _clock.Advance(TimeSpan.FromDays(6));
+        Assert.Equal(PetFeedResultType.AlreadyHappy, _service.Feed(_player, horse, "apple", 1));
+
+        Assert.False(_service.IsBonded(horse));
+        Assert.NotEqual(0L, horse.GetProp<long>(MountProps.PetBondBegin));
+    }
+
+    [Fact]
+    public void Feed_FoodAfterTheBondingDays_BondsThePet()
+    {
+        var horse = Pet(0x100, "horse");
+        _service.Feed(_player, horse, "apple", 1);
+        _clock.Advance(TimeSpan.FromDays(7));
+
+        Assert.Equal(PetFeedResultType.Bonded, _service.Feed(_player, horse, "apple", 1));
+
+        Assert.True(_service.IsBonded(horse));
+        Assert.Equal(PetFeedResultType.AlreadyHappy, _service.Feed(_player, horse, "apple", 1));
+    }
+
+    [Fact]
+    public void Feed_BondingDaysOfZero_BondsAtTheSecondFood()
+    {
+        _config.BondingDays = 0;
+        var horse = Pet(0x100, "horse");
+
+        _service.Feed(_player, horse, "apple", 1);
+
+        Assert.Equal(PetFeedResultType.Bonded, _service.Feed(_player, horse, "apple", 1));
+    }
+
+    [Fact]
+    public void Feed_AnOwnerWithTooLittleTaming_NeverBondsAPetThatAsksMore()
+    {
+        Teach(500, 0);
+        var hard = Pet(0x100, "hard");
+        hard.SetProp(MountProps.PetLoyalty, 50);
+        var drake = Pet(0x101, "drake");
+
+        _service.Feed(_player, drake, "ham", 1);
+        _clock.Advance(TimeSpan.FromDays(30));
+
+        Assert.NotEqual(PetFeedResultType.Bonded, _service.Feed(_player, drake, "ham", 1));
+        Assert.False(_service.IsBonded(drake));
+        Assert.False(drake.TryGetProp<long>(MountProps.PetBondBegin, out _));
+    }
+
+    [Fact]
+    public void Feed_FoodThePetDoesNotLike_DoesNotStartTheBond()
+    {
+        var horse = Pet(0x100, "horse");
+
+        _service.Feed(_player, horse, "ham", 1);
+
+        Assert.False(horse.TryGetProp<long>(MountProps.PetBondBegin, out _));
+    }
+
+    [Fact]
+    public void LetGo_ABondedPet_LosesTheBond()
+    {
+        var horse = Pet(0x100, "horse");
+        horse.SetProp(MountProps.PetBonded, true);
+        horse.SetProp(MountProps.PetBondBegin, 5L);
+
+        _service.LetGo(horse);
+
+        Assert.False(_service.IsBonded(horse));
+        Assert.False(horse.TryGetProp<long>(MountProps.PetBondBegin, out _));
     }
 
     [Fact]

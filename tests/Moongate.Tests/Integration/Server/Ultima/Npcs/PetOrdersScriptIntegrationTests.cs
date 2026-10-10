@@ -673,6 +673,18 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void FoodThatBondsThePet_IsEaten_AndTheOwnerIsToldItBonded()
+    {
+        _pets.FeedResult = PetFeedResultType.Bonded;
+
+        var result = _npcs.Run(_horse, "on_drag_drop", (long)_aria.Id.Value, 0x40000700L);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal(true, result.Values[0]);
+        Assert.Contains(_speech.ToldClilocs, told => told.Player == _aria && told.Cliloc == 1049666);
+    }
+
+    [Fact]
     public void FoodDroppedByAnotherPlayer_IsNotEatenAndNotOffered()
     {
         var result = _npcs.Run(_horse, "on_drag_drop", 0x999L, 0x40000700L);

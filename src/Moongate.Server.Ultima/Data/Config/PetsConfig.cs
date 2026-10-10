@@ -39,6 +39,11 @@ public sealed class PetsConfig
     public int DisobeyLoss { get; set; } = 3;
 
     /// <summary>
+    ///     Gets or sets the days between the first food its owner gives a pet and the food that bonds it. 0 to 365.
+    /// </summary>
+    public int BondingDays { get; set; } = 7;
+
+    /// <summary>
     ///     Validates the settings before server services begin startup.
     /// </summary>
     public void Validate()
@@ -55,6 +60,7 @@ public sealed class PetsConfig
         Check(FoodGain, 1, 100, "food_gain");
         Check(ObeyGain, 0, 100, "obey_gain");
         Check(DisobeyLoss, 0, 100, "disobey_loss");
+        Check(BondingDays, 0, 365, "bonding_days");
     }
 
     private static void Check(int value, int min, int max, string name)

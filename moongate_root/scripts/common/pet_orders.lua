@@ -26,7 +26,7 @@
 -- Functions:
 --   think(serial, mind, here)                 one think of an owned pet that is not fighting
 --   listen(serial, speaker, text, keywords)   what a pet hears
---   feed(serial, giver, given)                food dropped on a pet: its owner's gives it loyalty; true when eaten
+--   feed(serial, giver, given)                food dropped on a pet: its owner's gives it loyalty, and bonds it in time; true when eaten
 -- ==============================================================================
 
 local pet_orders = {}
@@ -58,6 +58,7 @@ local EAT = MonsterAnimationType.Fidget1
 local HAPPIER = 502060
 local SHIES_AWAY = 1043257
 local WILD = 1043255
+local BONDED = 1049666 -- Your pet has bonded with you!
 
 -- What a pet that does not obey does: it growls and fidgets, angry.
 local ANGER = MonsterAnimationType.Fidget2
@@ -362,12 +363,16 @@ function pet_orders.feed(serial, giver, given)
     local before = pet.loyalty(serial) or 0
     local result = pet.feed(giver, serial, given)
 
-    if result == PetFeedResultType.Fed or result == PetFeedResultType.AlreadyHappy then
+    if result == PetFeedResultType.Fed or result == PetFeedResultType.AlreadyHappy or result == PetFeedResultType.Bonded then
         mobile.animate(serial, EAT)
         npc.play_sound(serial, "idle")
 
         if (pet.loyalty(serial) or 0) > before then
             npc.say_cliloc(serial, HAPPIER)
+        end
+
+        if result == PetFeedResultType.Bonded then
+            mobile.message_cliloc(giver, BONDED)
         end
 
         return true

@@ -96,6 +96,9 @@ public sealed class TameCommand : ICommandExecutor
                     return;
                 }
 
+                // A new owner has not bonded with it yet.
+                creature.RemoveProp(MountProps.PetBonded);
+                creature.RemoveProp(MountProps.PetBondBegin);
                 creature.SetProp(MountProps.Owner, (long)owner.Id.Value);
                 answer = _localization.Text(
                     CommandMessages.Tamed,
