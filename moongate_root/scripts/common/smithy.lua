@@ -11,14 +11,15 @@
 -- Functions:
 --   smithy.is_anvil(graphic)          whether a graphic is an anvil
 --   smithy.is_forge(graphic)          whether a graphic is a forge
---   smithy.near(user, test, range)    whether a ground item or a static within range tiles passes test
+--   smithy.near(user, test, range)    whether a ground item or a static within range tiles, and 16 above or below, passes test
 --   smithy.at_anvil_and_forge(user)   whether the player stands within 2 tiles of an anvil and of a forge
 -- ==============================================================================
 
 local smithy = {}
 
--- How far an anvil and a forge may be from a smith, in tiles.
+-- How far an anvil and a forge may be from a smith, in tiles, and above or below: one on another floor is not there.
 local RANGE = 2
+local HEIGHT = 16
 
 -- The graphics, alone or as a range.
 local ANVILS = {
@@ -55,13 +56,15 @@ function smithy.near(user, test, range)
     end
 
     for _, static in ipairs(world.statics(here.map, here.x, here.y, range)) do
-        if test(static.graphic) then
+        if test(static.graphic) and math.abs(static.z - here.z) <= HEIGHT then
             return true
         end
     end
 
     for _, serial in ipairs(world.items_in_range(here.map, here.x, here.y, range)) do
-        if test(item.item_id(serial)) then
+        local there = item.location(serial)
+
+        if test(item.item_id(serial)) and there and math.abs(there.z - here.z) <= HEIGHT then
             return true
         end
     end

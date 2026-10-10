@@ -116,7 +116,8 @@ skill is the one of its own weapon, Wrestling when it holds none. A bow, a cross
 **not** fought with yet: such a player fights with its fists. An NPC fights with its template, whatever it wears.
 
 A crafted item's quality counts: an exceptional weapon does 20% more damage and a low one 20% less, added to the bonuses
-above; an exceptional piece of armor or shield gives 8 more armor and a low one 8 less, never below 0. See
+above; an exceptional piece of armor gives 8 more armor and a low one 8 less, never below 0; a shield counts
+for nothing yet, exceptional or not. See
 [Blacksmithing](blacksmithing.md).
 
 The armor rating of the whole player, which the status window shows, is the armor of each part weighted by the share

@@ -26,7 +26,6 @@ id = "prospectors_tool"
 item_id = 4020
 name = "prospector's tool"
 rarity = "common"
-script_id = "smithing_tool"
 weapon_type = "mace"
 
 [[item]]

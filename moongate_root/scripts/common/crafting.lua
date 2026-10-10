@@ -44,7 +44,8 @@
 --   crafting.open(user, tool, craft_id, notice)   opens the crafting gump
 --   crafting.make(user, tool, craft_id, group, recipe)   one attempt
 --   crafting.kind(user) / crafting.set_kind(user, id)   the wood picked
---   crafting.group(user) / crafting.set_group(user, index)   the group shown
+--   crafting.group(user, craft_id) / crafting.set_group(user, index, craft_id)   the group shown, by craft
+--   crafting.takes_wood(recipe) / crafting.works_wood(craft)   whether wood is taken
 --   crafting.templates(resource, kind)   the templates that count
 --   crafting.count(user, templates)   how many units the player carries
 --   crafting.chance(user, craft, recipe)   the chance, 0 to 1
@@ -204,12 +205,37 @@ function crafting.set_kind(user, id, craft_skill)
     return true
 end
 
-function crafting.group(user)
-    return groups[user] or 1
+-- The group each player shows, by craft.
+function crafting.group(user, craft_id)
+    return (groups[user] or {})[craft_id or ""] or 1
 end
 
-function crafting.set_group(user, index)
-    groups[user] = index
+function crafting.set_group(user, index, craft_id)
+    groups[user] = groups[user] or {}
+    groups[user][craft_id or ""] = index
+end
+
+function crafting.takes_wood(recipe)
+    for _, resource in ipairs(recipe.resources) do
+        if resource.resource == "wood" then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Whether any recipe of the craft takes wood: its gump shows the wood picked.
+function crafting.works_wood(craft)
+    for _, group in ipairs(craft.groups) do
+        for _, recipe in ipairs(group.recipes) do
+            if crafting.takes_wood(recipe) then
+                return true
+            end
+        end
+    end
+
+    return false
 end
 
 function crafting.templates(resource, kind)
@@ -349,7 +375,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
         return
     end
 
-    local lacking = missing(user, recipe, kind) or not_near(user, craft_id)
+    local lacking = not_near(user, craft_id) or missing(user, recipe, kind)
 
     if lacking then
         mobile.message_cliloc(user, lacking)
@@ -487,7 +513,8 @@ function crafting.make(user, tool, craft_id, group, index)
         return
     end
 
-    local wood = woods.by_id(kind)
+    -- The wood picked counts only for a recipe that takes wood: a smith forges whatever a carpenter picked.
+    local wood = crafting.takes_wood(recipe) and woods.by_id(kind)
 
     if wood and points(user, craft.skill) < wood.carpentry then
         mobile.message_cliloc(user, STRANGE_WOOD)

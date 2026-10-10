@@ -197,7 +197,7 @@ name = "Bronze shield"
 item = "0x1b72"
 skill_min = 0.0
 skill_max = 15.0
-resources = [{ resource = "0x1bf2_iron_ingot", amount = 12 }]
+resources = [{ resource = "metal", amount = 12 }]
 skills = []
 
 [[group.recipe]]
@@ -527,7 +527,7 @@ name = "Tessen"
 item = "0x27ee"
 skill_min = 85.0
 skill_max = 112.0
-resources = [{ resource = "metal", amount = 16 }, { resource = "0x175f_folded_cloth", amount = 10 }]
+resources = [{ resource = "metal", amount = 16 }, { resource = "cloth", amount = 10 }]
 skills = [{ skill = "tailoring", min = 50.0, max = 112.0 }]
 
 [[group.recipe]]

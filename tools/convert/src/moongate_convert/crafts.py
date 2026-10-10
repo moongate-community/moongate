@@ -61,8 +61,12 @@ def run(source: Path, items: Path, destination: Path, output: TextIO, error: Tex
 
     try:
         templates = _template_ids(items)
-        lists = _resource_lists(source / RESOURCES_FILE, templates, error)
-        crafts = {CRAFTS[name][0]: _craft(source / f"{name}.dfn", name, lists, templates) for name in CRAFTS if (source / f"{name}.dfn").is_file()}
+        lists, list_of_graphic = _resource_lists(source / RESOURCES_FILE, templates, error)
+        crafts = {
+            CRAFTS[name][0]: _craft(source / f"{name}.dfn", name, lists, list_of_graphic, templates)
+            for name in CRAFTS
+            if (source / f"{name}.dfn").is_file()
+        }
     except (ConversionError, OSError, tomllib.TOMLDecodeError) as exception:
         error.write(f"Crafts conversion failed: {exception}\n")
 
@@ -98,8 +102,10 @@ def _resolve(value: str, templates: list[str]) -> list[str]:
     return sorted(template for template in templates if template.startswith(key + "_"))
 
 
-def _resource_lists(path: Path, templates: list[str], error: TextIO) -> dict[str, list[str]]:
+def _resource_lists(path: Path, templates: list[str], error: TextIO) -> tuple[dict[str, list[str]], dict[int, str]]:
+    """The lists by name, and the first list each graphic belongs to."""
     lists: dict[str, list[str]] = {}
+    list_of_graphic: dict[int, str] = {}
 
     for block in dfn.parse(read_lines(path)):
         parts = block.header.split()
@@ -117,6 +123,8 @@ def _resource_lists(path: Path, templates: list[str], error: TextIO) -> dict[str
             if graphic is None or (name == "wood" and graphic in NOT_WOOD):
                 continue
 
+            list_of_graphic.setdefault(graphic, name)
+
             found.extend(template for template in _resolve(f"0x{graphic:04x}", templates) if template not in found)
 
         if found:
@@ -124,7 +132,7 @@ def _resource_lists(path: Path, templates: list[str], error: TextIO) -> dict[str
         else:
             error.write(f"The resource list {name} has no template: left out\n")
 
-    return lists
+    return lists, {graphic: name for graphic, name in list_of_graphic.items() if name in lists}
 
 
 def _blocks(path: Path) -> dict[str, dfn.DfnBlock]:
@@ -143,7 +151,7 @@ def _values(block: dfn.DfnBlock, tag: str) -> list[str]:
     return values
 
 
-def _craft(path: Path, name: str, lists: dict[str, list[str]], templates: list[str]) -> dict:
+def _craft(path: Path, name: str, lists: dict[str, list[str]], list_of_graphic: dict[int, str], templates: list[str]) -> dict:
     craft_id, title, skill, root = CRAFTS[name]
     blocks = _blocks(path)
     groups: list[dict] = []
@@ -169,7 +177,7 @@ def _craft(path: Path, name: str, lists: dict[str, list[str]], templates: list[s
             recipes = []
 
             for number in _values(blocks[f"SUBMENU {submenu}"], "ITEM"):
-                recipe = _recipe(blocks[f"ITEM {number}"], skill, lists, templates)
+                recipe = _recipe(blocks[f"ITEM {number}"], skill, lists, list_of_graphic, templates)
 
                 if recipe is not None:
                     recipes.append(recipe)
@@ -179,12 +187,17 @@ def _craft(path: Path, name: str, lists: dict[str, list[str]], templates: list[s
 
             walk(submenu)
 
-    walk(str(root))
+    try:
+        walk(str(root))
+    except KeyError as missing:
+        raise ConversionError(f"{path.name} names {missing.args[0]}, which it does not have") from missing
 
     return {"name": title, "skill": skill, "sound": SOUNDS[craft_id], "groups": groups}
 
 
-def _recipe(block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], templates: list[str]) -> dict | None:
+def _recipe(
+    block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], list_of_graphic: dict[int, str], templates: list[str]
+) -> dict | None:
     name = block.fields.get("NAME", block.header)
     added = block.fields["ADDITEM"].split(",")[0].strip()
 
@@ -222,6 +235,9 @@ def _recipe(block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], 
                 raise ConversionError(f"the recipe {name} names the resource list {what}, which has no template")
         elif graphic in NOT_WOOD:
             resource = "wood"
+        elif graphic in list_of_graphic:
+            # UOX3 names some ingots and cloth by their graphic: they are the list, so the player reads which one lacks.
+            resource = list_of_graphic[graphic]
         else:
             found = _resolve(what, templates)
 

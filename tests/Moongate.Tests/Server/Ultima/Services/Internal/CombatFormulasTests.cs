@@ -1,6 +1,6 @@
-using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Combat;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Tests.TestSupport.Randomness;
 
 namespace Moongate.Tests.Server.Ultima.Services.Internal;

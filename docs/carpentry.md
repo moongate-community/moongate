@@ -45,7 +45,7 @@ A success is exceptional as often as its chance minus six tenths: at the most of
 with a chance of six tenths or less. An item that joins a stack you carry is never exceptional. You read "You create an exceptional quality item." and its tooltip says exceptional.
 Made at 100 Carpentry, an exceptional item also bears your mark: "You create an exceptional quality item and affix
 your maker's mark.", and its tooltip says crafted by your name. An exceptional item is uncommon, a marked one rare,
-and an exceptional staff or shield is stronger in a fight, as [blacksmithing](blacksmithing.md) says.
+and an exceptional staff hits harder in a fight, as [blacksmithing](blacksmithing.md) says.
 
 ## Tools wear out
 

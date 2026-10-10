@@ -79,7 +79,7 @@ them with the part that is lifted.
 A reward chest that makes one of its prizes rare:
 
 ```lua
-local prize = item.give(user, "0x13ff_katana")
+local prize = item.give(user, "0x13ff")
 
 if prize then
     item.set_rarity(prize, "rare")

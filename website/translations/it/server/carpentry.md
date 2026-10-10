@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"bd31d99c578c39fe26b0b3a86c850745c4c1269415b5de01edb4f6062c85ae23","title":"Falegnameria"} -->
+<!-- translation: {"sourceHash":"74a88eda0bab64db42eed21fad1e72d2a6326c2948c123de4b2c80480c82f9a3","title":"Falegnameria"} -->
 
 # Falegnameria
 
@@ -47,7 +47,7 @@ Una riuscita è eccezionale tanto spesso quanto la sua probabilità meno sei dec
 con una probabilità di sei decimi o meno. Un oggetto che si unisce a una pila che porti non è mai eccezionale. Leggi "You create an exceptional quality item." e il suo tooltip dice exceptional.
 Creato con 100 di Carpentry, un oggetto eccezionale porta anche il tuo marchio: "You create an exceptional quality item and affix
 your maker's mark.", e il suo tooltip dice crafted by con il tuo nome. Un oggetto eccezionale è non comune, uno con il marchio raro,
-e un bastone o uno scudo eccezionale è più forte in combattimento, come dice il [fabbro](blacksmithing.md).
+e un bastone eccezionale colpisce più forte in combattimento, come dice il [fabbro](blacksmithing.md).
 
 ## Gli attrezzi si consumano
 

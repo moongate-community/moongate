@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"d82156df04b1d6f5a483003795c5d27ce5f7a2a85a72a1d89e8065ec5cbe929d","title":"Combattimento"} -->
+<!-- translation: {"sourceHash":"12380d420f3dc3c30e41dac8c781f6c756cba4c3c8bb3764aa8459c57413d958","title":"Combattimento"} -->
 
 # Combattimento
 
@@ -119,7 +119,8 @@ difensore è quella della sua arma, Wrestling quando non ne impugna. Un arco, un
 **non** usati ancora per combattere: un giocatore così combatte a mani nude. Un NPC combatte con il suo template, qualunque cosa indossi.
 
 La qualità di un oggetto creato conta: un'arma eccezionale fa il 20% di danno in più e una di bassa qualità il 20% in meno, sommati ai bonus
-qui sopra; un pezzo d'armatura o uno scudo eccezionale dà 8 di armatura in più e uno di bassa qualità 8 in meno, mai sotto 0. Vedi
+qui sopra; un pezzo d'armatura eccezionale dà 8 di armatura in più e uno di bassa qualità 8 in meno, mai sotto 0; uno scudo per ora
+non conta nulla, eccezionale o no. Vedi
 [Fabbro](blacksmithing.md).
 
 Il valore di armatura dell'intero giocatore, mostrato dalla finestra di stato, è l'armatura di ogni parte pesata con la quota

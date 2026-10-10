@@ -30,11 +30,12 @@ AOS Weapons, Axes, Polearms, Bashing and SE Weapons. A few of them:
 | Longsword | 28 to 78 | 12 metal |
 | War hammer | 34.2 to 84 | 16 metal |
 
-The page of each recipe in the gump shows its numbers. Metal is iron ingots; a few recipes take cloth or Tailoring too.
+The page of each recipe in the gump shows its numbers. Metal is iron ingots; the tessen takes cloth and Tailoring too.
 
 ## Exceptional weapons and armor
 
-An exceptional weapon does 20% more damage; an exceptional piece of armor or shield gives 8 more armor. See
+An exceptional weapon does 20% more damage; an exceptional piece of armor gives 8 more armor (a shield counts for
+nothing in a fight yet). See
 [Combat](combat.md#weapons-and-armor). An exceptional item is uncommon, and rare when it bears the maker's mark: its
 tooltip shows the rarity in its colour.
 
@@ -51,7 +52,8 @@ tooltip shows the rarity in its colour.
 `scripts/common/crafting.lua`, `scripts/common/smithy.lua`, `scripts/items/smithing_tool.lua` and
 `scripts/items/ore.lua` (it now reads `smithy.lua`), and the files of the tools: `templates/items/skills/tools/blacksmithy.toml`,
 `templates/items/gear/weapons/maces_hammers.toml` and `templates/items/misc/bod_rewards_blacksmith.toml`, or give
-`script_id = "smithing_tool"` to your hammers, sledge hammers and tongs.
+`script_id = "smithing_tool"` to your hammers, sledge hammers and tongs. Weapons and armor made exceptional before
+this version grow stronger at once and keep the rarity they had.
 
 ## Not yet
 

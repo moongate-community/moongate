@@ -398,7 +398,8 @@ public sealed class ItemModule
         // The timer props are the item's timers: only item.start_timer and item.stop_timer write them.
         if (string.IsNullOrWhiteSpace(key) ||
             key.StartsWith(ItemTimerQueue.PropPrefix, StringComparison.Ordinal) ||
-            !TryGetItem(serial, out var item))
+            !TryGetItem(serial, out var item) ||
+            IsHeld(item))
         {
             return false;
         }
@@ -432,7 +433,9 @@ public sealed class ItemModule
     )]
     public bool SetRarity(long serial, string rarity)
     {
+        // Shown again where it was lifted from, an item on a cursor would be drawn there while the player holds it.
         if (!TryGetItem(serial, out var item) ||
+            IsHeld(item) ||
             !EnumNameUtils.TryParse<ItemRarityType>(rarity, out var value) ||
             !Enum.IsDefined(value) ||
             _inventory?.Allows(item) == false)

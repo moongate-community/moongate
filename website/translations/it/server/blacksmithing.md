@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"8ac0f9185fee7aa9aee0a5838810b64ce60397ae597cf2f604f28bf805e52155","title":"Fabbro"} -->
+<!-- translation: {"sourceHash":"6050456ad4708e7c100be4e05890bb1de2e7553fa8dc188aacc6592e02eab04c","title":"Fabbro"} -->
 
 # Fabbro
 
@@ -32,11 +32,12 @@ AOS Weapons, Axes, Polearms, Bashing e SE Weapons. Alcune:
 | Longsword | da 28 a 78 | 12 metallo |
 | War hammer | da 34,2 a 84 | 16 metallo |
 
-La scheda di ogni ricetta nel gump ne mostra i numeri. Il metallo sono i lingotti di ferro; alcune ricette chiedono anche stoffa o Tailoring.
+La scheda di ogni ricetta nel gump ne mostra i numeri. Il metallo sono i lingotti di ferro; il tessen chiede anche stoffa e Tailoring.
 
 ## Armi e armature eccezionali
 
-Un'arma eccezionale fa il 20% di danno in più; un pezzo d'armatura o uno scudo eccezionale dà 8 di armatura in più. Vedi
+Un'arma eccezionale fa il 20% di danno in più; un pezzo d'armatura eccezionale dà 8 di armatura in più (uno scudo per ora
+non conta nulla in combattimento). Vedi
 [Combattimento](combat.md#weapons-and-armor). Un oggetto eccezionale è non comune, e raro quando porta il marchio del creatore: il suo
 tooltip mostra la rarità nel suo colore.
 
@@ -53,7 +54,8 @@ tooltip mostra la rarità nel suo colore.
 `scripts/common/crafting.lua`, `scripts/common/smithy.lua`, `scripts/items/smithing_tool.lua` e
 `scripts/items/ore.lua` (ora legge `smithy.lua`), e i file degli attrezzi: `templates/items/skills/tools/blacksmithy.toml`,
 `templates/items/gear/weapons/maces_hammers.toml` e `templates/items/misc/bod_rewards_blacksmith.toml`, oppure dai
-`script_id = "smithing_tool"` ai tuoi martelli, mazze e tenaglie.
+`script_id = "smithing_tool"` ai tuoi martelli, mazze e tenaglie. Armi e armature rese eccezionali prima di
+questa versione diventano subito più forti e mantengono la rarità che avevano.
 
 ## Non ancora
 

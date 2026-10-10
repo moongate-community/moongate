@@ -414,6 +414,53 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(ItemRarityType.Common, Assert.Single(Made("0x13eb_ringmail_gloves")).Rarity);
     }
 
+    [Fact]
+    public void AKindOfWoodPickedForCarpentry_DoesNotStopTheSmith()
+    {
+        AtTheForge();
+        SetSkill(SkillType.Carpentry, 650);
+        Call("pick", Aria, "oak");
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+
+        Make();
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([Created], Told());
+    }
+
+    [Fact]
+    public void AnAnvilOnAnotherFloor_IsNoAnvil()
+    {
+        Ground("0x0faf_anvil", 0x0FAF, 11, 10, 30);
+        _map.AddStatic(9, 10, 0x0FB1, 0);
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+
+        Make();
+
+        Assert.Equal([NotAtTheForge], Told());
+    }
+
+    [Fact]
+    public void TheForgeAndTheIngotsGoneBeforeTheSecondStroke_SayTheForge_AndNeitherTryNorWear()
+    {
+        var anvil = Ground("0x0faf_anvil", 0x0FAF, 11, 10);
+        _map.AddStatic(11, 11, 0x0FB1, 0);
+        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+        Skill(200);
+
+        Make();
+        _items.Remove([anvil.Id]);
+        _items.MoveToContainer(ingots, _bank.Id, new Point2D(5, 5));
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([NotAtTheForge], Told());
+        Assert.Equal(0, _random.Rolls);
+        Assert.True(_hammer.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(50, left);
+    }
+
     public async Task DisposeAsync()
     {
         _engine.Dispose();
@@ -429,11 +476,16 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
 
     private void Skill(int tenths)
     {
-        // The skill service reads the mobile, the mobile module the state service: both hold the same.
-        _aria.Skills.RemoveAll(known => known.Skill == SkillType.Blacksmithy);
-        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Blacksmithy, Base = tenths });
-        _state.Skills.RemoveAll(known => known.Skill == SkillType.Blacksmithy);
-        _state.Skills.Add(new MobileSkill { Skill = SkillType.Blacksmithy, Base = tenths });
+        SetSkill(SkillType.Blacksmithy, tenths);
+    }
+
+    // The skill service reads the mobile, the mobile module the state service: both hold the same.
+    private void SetSkill(SkillType skill, int tenths)
+    {
+        _aria.Skills.RemoveAll(known => known.Skill == skill);
+        _aria.Skills.Add(new MobileSkill { Skill = skill, Base = tenths });
+        _state.Skills.RemoveAll(known => known.Skill == skill);
+        _state.Skills.Add(new MobileSkill { Skill = skill, Base = tenths });
     }
 
     private void Make()
@@ -499,11 +551,11 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         return item;
     }
 
-    private ItemEntity Ground(string template, int graphic, int x, int y)
+    private ItemEntity Ground(string template, int graphic, int x, int y, int z = 0)
     {
         var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = 1 };
         _items.Add([item]);
-        _items.PlaceOnGround(item, _aria.Map, new Point3D(x, y, 0));
+        _items.PlaceOnGround(item, _aria.Map, new Point3D(x, y, z));
 
         return item;
     }

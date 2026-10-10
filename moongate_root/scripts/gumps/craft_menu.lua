@@ -59,20 +59,24 @@ local function button(g, x, y, up, down, args, action)
     end }
 end
 
-local function wood_line(g, player, args)
-    local kind = crafting.kind(player)
-    local count = crafting.count(player, crafting.templates("wood", kind))
-
+local function wood_line(g, player, args, craft)
     button(g, 0, BOTTOM - 30, 4005, 4007, args, function(who)
         crafting.make_last(who, args.tool, args.craft)
     end)
     label(g, 35, BOTTOM - 30, 120, "Make last")
 
-    label(g, 0, BOTTOM, 200, "Wood: " .. kind .. " (" .. count .. ")")
-    button(g, 210, BOTTOM, 4005, 4007, args, function(who)
-        open(who, args, { page = "woods" })
-    end)
-    label(g, 245, BOTTOM, 80, "Change")
+    -- Only a craft that works wood shows the wood picked.
+    if crafting.works_wood(craft) then
+        local kind = crafting.kind(player)
+        local count = crafting.count(player, crafting.templates("wood", kind))
+
+        label(g, 0, BOTTOM, 200, "Wood: " .. kind .. " (" .. count .. ")")
+        button(g, 210, BOTTOM, 4005, 4007, args, function(who)
+            open(who, args, { page = "woods" })
+        end)
+        label(g, 245, BOTTOM, 80, "Change")
+    end
+
     g:button{ x = 400, y = BOTTOM, up = 4017, down = 4019, on_click = function() end }
     label(g, 435, BOTTOM, 60, "Exit")
 
@@ -86,10 +90,10 @@ local function groups_column(g, player, args, craft)
         local y = FIRST_ROW + (index - 1) * ROW
 
         button(g, GROUPS_X, y, 4005, 4007, args, function(who)
-            crafting.set_group(who, index)
+            crafting.set_group(who, index, args.craft)
             open(who, args)
         end)
-        label(g, GROUPS_X + 35, y, GROUPS_WIDTH, group.name, index == crafting.group(player) and PICKED_HUE or 0)
+        label(g, GROUPS_X + 35, y, GROUPS_WIDTH, group.name, index == crafting.group(player, args.craft) and PICKED_HUE or 0)
     end
 end
 
@@ -178,7 +182,7 @@ function craft_menu.body(g, player, args)
         return
     end
 
-    local group_index = math.min(crafting.group(player), #craft.groups)
+    local group_index = math.min(crafting.group(player, args.craft), #craft.groups)
     local group = craft.groups[group_index]
 
     label(g, 0, 0, 490, string.upper(craft.name), TITLE_HUE)
@@ -187,12 +191,12 @@ function craft_menu.body(g, player, args)
     if group then
         if args.page == "info" then
             info_page(g, player, args, craft, group, group_index)
-        elseif args.page == "woods" then
+        elseif args.page == "woods" and crafting.works_wood(craft) then
             woods_page(g, player, args, craft)
         else
             list_page(g, player, args, craft, group, group_index)
         end
     end
 
-    wood_line(g, player, args)
+    wood_line(g, player, args, craft)
 end

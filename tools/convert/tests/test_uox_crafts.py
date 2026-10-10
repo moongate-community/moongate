@@ -310,7 +310,7 @@ def test_blacksmithing_walks_the_nested_menus_into_groups_in_their_order(tmp_pat
     assert (gloves["item"], gloves["skill_min"], gloves["skill_max"]) == ("0x13eb_ringmail_gloves", 12.2, 37.2)
     # The gump shows a name as a title: UOX3 writes these in lower case.
     assert gloves["name"] == "Ringmail gloves"
-    assert gorget["resources"] == [{"resource": "0x1bf2_iron_ingot", "amount": 12}, {"resource": "0x175f_folded_cloth", "amount": 3}]
+    assert gorget["resources"] == [{"resource": "metal", "amount": 12}, {"resource": "0x175f_folded_cloth", "amount": 3}]
     assert gorget["skills"] == [{"skill": "tailoring", "min": 20.0, "max": 45.0}]
     assert smithing["group"][1]["recipe"][0]["item"] == "0x1b73_buckler"
 
@@ -323,3 +323,31 @@ def test_every_skill_name_is_one_of_the_server(tmp_path):
     ids = set(re.findall(r'^id = "([a-z_]+)"', skills.read_text(), re.M))
 
     assert [name for name in crafts.SKILL_NAMES.values() if name not in ids] == []
+
+
+def test_a_raw_graphic_of_a_resource_list_becomes_that_list(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE METAL]\n{\nID=0x1bf2\nID=0x1bef\n}\n[RESOURCE CLOTH]\n{\nID=0x175f\n}\n")
+    (source / "smithing.dfn").write_text(SMITHING)
+    (items / "all.toml").write_text(SMITH_ITEMS)
+
+    assert crafts.run(source, items, destination, io.StringIO(), io.StringIO()) == 0
+
+    # UOX3 names some ingots and cloth by their graphic: they are the lists, so the player reads which one lacks.
+    gorget = tomllib.loads((destination / "blacksmithing.toml").read_text())["group"][0]["recipe"][1]
+    assert gorget["resources"] == [{"resource": "metal", "amount": 12}, {"resource": "cloth", "amount": 3}]
+
+
+def test_a_menu_entry_without_its_submenu_is_a_conversion_error(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE METAL]\n{\nID=0x1bf2\n}\n")
+    (source / "smithing.dfn").write_text(SMITHING.replace("[SUBMENU 3]", "[SUBMENU 33]"))
+    (items / "all.toml").write_text(SMITH_ITEMS)
+    error = io.StringIO()
+
+    assert crafts.run(source, items, destination, io.StringIO(), error) == 2
+    assert "SUBMENU 3" in error.getvalue()
