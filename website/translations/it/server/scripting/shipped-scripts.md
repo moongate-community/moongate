@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6d794b9f636014f6f14a093fbd1b867721e678fd1f42ede5042fcac766412ad8","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"0f2cd38e39fecc5036873b12543f9b9bc8f257bb2d24bb8fe0834242b002187b","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -241,6 +241,11 @@ con le regole di `crafting.lua`. `scripts/common/smithy.lua` contiene le grafich
 le trova entro una distanza da un giocatore, tra gli elementi fissi della mappa (`world.statics`) e gli oggetti a terra
 (`world.items_in_range`, `item.item_id`); la tabella `NEEDS` del motore chiede al fabbro un'incudine e una forgia entro
 2 caselle, e `ore.lua` legge le sue forge da lì.
+
+## tailoring_tool.lua
+
+`scripts/items/tailoring_tool.lua` è lo script dei kit da cucito (`script_id = "tailoring_tool"`): dallo zaino
+apre il gump di creazione della sartoria (vedi [Sartoria](../tailoring.md)), con le regole di `crafting.lua`.
 
 ## fishing_pole.lua
 
