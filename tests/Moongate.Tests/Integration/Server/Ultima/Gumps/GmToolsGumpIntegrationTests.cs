@@ -432,12 +432,17 @@ public sealed class GmToolsGumpIntegrationTests : IAsyncLifetime
     )
     {
         Open(Administrator, "events");
+        var before = _schedule.Scripts.Calls.Count;
+        // Halloween is on at the start of the fixture and Winter is off.
+        var changed = active != (id == "halloween");
 
         Answer(0, button, _administrator);
 
         var state = _schedule.Events.Get(id)!;
         Assert.Equal((mode, active), (state.Mode, state.Active));
         Assert.Contains(_speech.Told, told => told.Text.EndsWith($"is now {mode}."));
+        // The hook of an event that changed its state is queued, not run inside the click.
+        Assert.Equal(changed, _schedule.Scripts.Calls.Count > before);
         Assert.Equal(2, _gumps.Opened.Count);
         Assert.Empty(_errors);
     }

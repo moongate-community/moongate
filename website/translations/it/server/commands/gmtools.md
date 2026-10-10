@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"8df3a11e8f48792b67ee4134bc48010cac102741467f79e801cf098f755f4aa6","title":"gmtools"} -->
+<!-- translation: {"sourceHash":"8194b32f9c387085562ff472e8194122c6bf8b2ffbb4b2f2576682e52d7413fb","title":"gmtools"} -->
 
 # gmtools
 
@@ -79,7 +79,7 @@ gli [eventi stagionali](../schedule.md#seasonal-events) con date, modalità e st
 ```text
 Seasonal events
 Halloween (10-24 to 11-15): auto, on
-Winter (12-20 to 01-06): auto, off
+Christmas (12-24 to 01-01): auto, off
 ```
 
 Sotto ogni evento ci sono tre pulsanti, `auto`, `on` e `off`: `auto` restituisce l'evento alle sue date, `on` e `off`

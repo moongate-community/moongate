@@ -233,8 +233,8 @@ local function time_panel(g, player)
     end
 end
 
--- The events the panel lists, the height of each, and the modes of its buttons. The panel is 230 high: more events
--- than fit are left to the .event command.
+-- The events the panel lists, the height of each, and the modes of its buttons. The panel has room for about this
+-- many: more events than fit are left to the .event command.
 local events_listed = 4
 local event_height = 48
 local event_modes = { "auto", "on", "off" }

@@ -77,7 +77,7 @@ The events tool is for administrators, as [`.event`](event.md) is; a game master
 ```text
 Seasonal events
 Halloween (10-24 to 11-15): auto, on
-Winter (12-20 to 01-06): auto, off
+Christmas (12-24 to 01-01): auto, off
 ```
 
 Under each event are three buttons, `auto`, `on` and `off`: `auto` gives the event back to its dates, `on` and `off`
