@@ -247,6 +247,12 @@ finds them within a range of a player, among the statics of the map (`world.stat
 `scripts/items/tailoring_tool.lua` is the script of the sewing kits (`script_id = "tailoring_tool"`): from the backpack it
 opens the crafting gump of tailoring (see [Tailoring](../tailoring.md)), with the rules of `crafting.lua`.
 
+## tinkering_tool.lua
+
+`scripts/items/tinkering_tool.lua` is the script of the tinker's tools and tool kits (`script_id = "tinkering_tool"`):
+from the backpack it opens the crafting gump of tinkering (see [Tinkering](../tinkering.md)), with the rules of
+`crafting.lua` and the metal picked.
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,

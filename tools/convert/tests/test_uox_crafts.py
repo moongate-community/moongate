@@ -357,3 +357,111 @@ def test_the_crafts_the_converter_knows_and_their_sounds():
     # Each craft: its id, the name its gump shows, its skill and the root menu of UOX3's file.
     assert crafts.CRAFTS["tailoring"] == ("tailoring", "Tailoring", "tailoring", 39)
     assert crafts.SOUNDS["tailoring"] == 0x0248
+
+
+def test_tinkering_is_known_its_traps_left_out_and_its_misspelt_group_fixed():
+    assert crafts.CRAFTS["tinkering"] == ("tinkering", "Tinkering", "tinkering", 59)
+    assert crafts.SOUNDS["tinkering"] == 0x023B
+    # The traps of tinkering arm containers, which cannot be trapped yet; UOX3's file lacks their menu too.
+    assert "traps" in crafts.SKIPPED_GROUPS
+    assert crafts.GROUP_FIXES["Miscellaneuos"] == "Miscellaneous"
+
+
+def test_a_skill_line_uox3_got_wrong_is_fixed():
+    # UOX3 writes the scales of tinkering as 63.8 to 11.4: a zero is missing from the most.
+    assert crafts.SKILL_FIXES[("tinkering", "scales")] == "37 638 1140"
+    assert crafts.SKILL_FIXES[("tinkering", "heating stand")] == "37 643 1140"
+
+
+TINKERING = """
+[SUBMENU 59]
+{
+MENU=60
+MENU=61
+}
+[MENUENTRY 60]
+{
+NAME=Tools
+SUBMENU=60
+}
+[MENUENTRY 61]
+{
+NAME=Miscellaneuos
+SUBMENU=61
+}
+[SUBMENU 60]
+{
+ITEM=1
+ITEM=2
+ITEM=3
+}
+[SUBMENU 61]
+{
+ITEM=4
+}
+[ITEM 1]
+{
+NAME=tinker's tools
+RESOURCE=METAL 2
+SKILL=37 100 600
+ADDITEM=0x1eb9
+}
+[ITEM 2]
+{
+NAME=spoon
+RESOURCE=METAL 1
+SKILL=37 0 500
+ADDITEM=0x09f8
+}
+[ITEM 3]
+{
+NAME=spoon
+RESOURCE=METAL 1
+SKILL=37 0 500
+ADDITEM=0x09f9
+}
+[ITEM 4]
+{
+NAME=scales
+RESOURCE=METAL 4
+SKILL=37 638 114
+ADDITEM=0x1851
+}
+"""
+
+TINKER_ITEMS = """
+[[item]]
+id = "0x1bf2_iron_ingot"
+[[item]]
+id = "0x1eb9_tool_kit"
+[[item]]
+id = "0x1ebc_tinker's_tools"
+[[item]]
+id = "0x09f8_spoon"
+[[item]]
+id = "0x09f9_spoon"
+[[item]]
+id = "0x1851_scales"
+"""
+
+
+def test_tinkering_fixes_what_uox3_writes_wrong(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE METAL]\n{\nID=0x1bf2\n}\n")
+    (source / "tinkering.dfn").write_text(TINKERING)
+    (items / "all.toml").write_text(TINKER_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 0, error.getvalue()
+
+    tinkering = tomllib.loads((destination / "tinkering.toml").read_text())
+    assert [group["name"] for group in tinkering["group"]] == ["Tools", "Miscellaneous"]
+    tools, spoon, other_spoon = tinkering["group"][0]["recipe"]
+    # UOX3 makes the heavy tool kit; the recipe is named for the tinker's tools.
+    assert tools["item"] == "0x1ebc_tinker's_tools"
+    # Two recipes of one name are told apart in the gump.
+    assert (spoon["name"], other_spoon["name"]) == ("Spoon", "Spoon 2")
+    scales = tinkering["group"][1]["recipe"][0]
+    assert (scales["skill_min"], scales["skill_max"]) == (63.8, 114.0)

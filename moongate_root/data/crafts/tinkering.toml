@@ -1,0 +1,519 @@
+# ==============================================================================
+# Moongate - data/crafts/tinkering.toml
+#
+# What it is for:
+#   The recipes of tinkering, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+# ==============================================================================
+
+id = "tinkering"
+name = "Tinkering"
+skill = "tinkering"
+sound = 0x023B
+
+[[group]]
+name = "Tools"
+
+[[group.recipe]]
+name = "Scissors"
+item = "0x0f9e_scissors"
+skill_min = 14.5
+skill_max = 55.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Mortar & pestle"
+item = "0x0e9b_mortar_&_pestle"
+skill_min = 23.3
+skill_max = 73.0
+resources = [{ resource = "metal", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Scorp"
+item = "0x10e7_scorp"
+skill_min = 32.9
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Tinker's tools"
+item = "0x1ebc_tinker's_tools"
+skill_min = 1.5
+skill_max = 65.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Fletcher's Tools"
+item = "0x1022_fletcher's_tools"
+skill_min = 35.0
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Hatchet"
+item = "0x0f43"
+skill_min = 33.9
+skill_max = 84.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Draw knife"
+item = "0x10e4_draw_knife"
+skill_min = 32.6
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Sewing kit"
+item = "0x0f9d_sewing_kit"
+skill_min = 18.8
+skill_max = 69.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Saw"
+item = "0x1034_saw"
+skill_min = 31.3
+skill_max = 81.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Dovetail saw"
+item = "0x1028_dovetail_saw"
+skill_min = 32.7
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group]]
+name = "Parts"
+
+[[group.recipe]]
+name = "Gears"
+item = "0x1053_gears"
+skill_min = 14.7
+skill_max = 65.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Clock parts"
+item = "0x104f_clock_parts"
+skill_min = 30.5
+skill_max = 81.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Barrel tap"
+item = "0x1004_barrel_tap"
+skill_min = 50.1
+skill_max = 100.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Springs"
+item = "0x105d_springs"
+skill_min = 13.7
+skill_max = 64.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Sextant parts"
+item = "0x1059_sextant_parts"
+skill_min = 32.0
+skill_max = 82.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Barrel hoops"
+item = "0x10e1_barrel_hoops"
+skill_min = 20.0
+skill_max = 70.0
+resources = [{ resource = "metal", amount = 5 }]
+skills = []
+
+[[group.recipe]]
+name = "Hinge"
+item = "0x1055_hinge"
+skill_min = 14.8
+skill_max = 65.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group]]
+name = "Utensils"
+
+[[group.recipe]]
+name = "Butcher knife"
+item = "0x13f6"
+skill_min = 26.1
+skill_max = 76.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Spoon"
+item = "0x09f8_spoon"
+skill_min = 16.6
+skill_max = 67.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Spoon 2"
+item = "0x09f9_spoon"
+skill_min = 16.6
+skill_max = 67.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Plate"
+item = "0x09d7_plate"
+skill_min = 20.6
+skill_max = 71.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Fork"
+item = "0x09f5_fork"
+skill_min = 17.2
+skill_max = 67.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Fork 2"
+item = "0x09f4_fork"
+skill_min = 17.2
+skill_max = 67.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Cleaver"
+item = "0x0ec2"
+skill_min = 23.4
+skill_max = 73.0
+resources = [{ resource = "metal", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Knives"
+item = "0x09f6_knife"
+skill_min = 17.8
+skill_max = 68.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Knives 2"
+item = "0x09f7_knife"
+skill_min = 17.8
+skill_max = 68.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Goblet"
+item = "0x099a_goblet"
+skill_min = 21.1
+skill_max = 71.0
+resources = [{ resource = "metal", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Pewter mug"
+item = "0x1000_pewter_mug"
+skill_min = 22.5
+skill_max = 73.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Skinning knife"
+item = "0x0ec5"
+skill_min = 23.3
+skill_max = 73.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group]]
+name = "Jewelry"
+
+[[group.recipe]]
+name = "Weddingband"
+item = "weddingband"
+skill_min = 41.8
+skill_max = 92.0
+resources = [{ resource = "metal", amount = 1 }, { resource = "diamonds", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Necklace"
+item = "0x1089_necklace"
+skill_min = 41.8
+skill_max = 92.0
+resources = [{ resource = "metal", amount = 1 }, { resource = "gems", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Necklace 2"
+item = "0x1085_necklace"
+skill_min = 42.0
+skill_max = 92.0
+resources = [{ resource = "metal", amount = 1 }, { resource = "gems", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Earrings"
+item = "0x1087_earrings"
+skill_min = 48.4
+skill_max = 99.0
+resources = [{ resource = "metal", amount = 1 }, { resource = "gems", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Necklace 3"
+item = "0x1088_necklace"
+skill_min = 41.8
+skill_max = 92.0
+resources = [{ resource = "metal", amount = 1 }, { resource = "gems", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Bracelet"
+item = "0x1086_bracelet"
+skill_min = 44.5
+skill_max = 96.0
+resources = [{ resource = "metal", amount = 2 }, { resource = "gems", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Miscellaneous"
+
+[[group.recipe]]
+name = "Keyring"
+item = "0x1011_key_ring"
+skill_min = 21.8
+skill_max = 72.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Scales"
+item = "0x1851_scales"
+skill_min = 63.8
+skill_max = 114.0
+resources = [{ resource = "metal", amount = 5 }]
+skills = []
+
+[[group.recipe]]
+name = "Iron key"
+item = "0x1010_iron_key"
+skill_min = 23.2
+skill_max = 73.0
+resources = [{ resource = "metal", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Globe"
+item = "0x1047_globe"
+skill_min = 57.3
+skill_max = 107.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Spy glass"
+item = "0x14f5_spyglass"
+skill_min = 63.8
+skill_max = 114.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Lantern"
+item = "0x0a25_lantern"
+skill_min = 33.2
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Heating stand"
+item = "0x1849_heating_stand"
+skill_min = 64.3
+skill_max = 114.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group]]
+name = "More Tools"
+
+[[group.recipe]]
+name = "Froe"
+item = "0x10e5_froe"
+skill_min = 33.2
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Tongs"
+item = "0x0fbc_tongs"
+skill_min = 34.2
+skill_max = 84.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Shovel"
+item = "0x0f3a"
+skill_min = 41.1
+skill_max = 91.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Hammer"
+item = "0x102a_hammer"
+skill_min = 33.2
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Smith's hammer"
+item = "0x13e3"
+skill_min = 41.9
+skill_max = 92.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Sledge hammer"
+item = "0x0fb5"
+skill_min = 48.6
+skill_max = 97.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Inshave"
+item = "0x10e6_inshave"
+skill_min = 33.2
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Pickaxe"
+item = "0x0e86"
+skill_min = 42.1
+skill_max = 92.0
+resources = [{ resource = "metal", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Lockpick"
+item = "0x14fb_lockpick"
+skill_min = 48.5
+skill_max = 99.0
+resources = [{ resource = "metal", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Candles"
+
+[[group.recipe]]
+name = "Candelabra"
+item = "0x0a27_candlabra"
+skill_min = 67.1
+skill_max = 117.0
+resources = [{ resource = "metal", amount = 4 }, { resource = "0x1422_beeswax", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Standing Candelabra"
+item = "0x0a29_candlabra"
+skill_min = 77.1
+skill_max = 127.0
+resources = [{ resource = "metal", amount = 12 }, { resource = "0x1422_beeswax", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Tall candle"
+item = "0x0a26_candle"
+skill_min = 47.1
+skill_max = 97.0
+resources = [{ resource = "metal", amount = 2 }, { resource = "0x1422_beeswax", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Round candle"
+item = "0x142f_candle"
+skill_min = 37.1
+skill_max = 87.0
+resources = [{ resource = "0x1422_beeswax", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Thick candle"
+item = "0x1433_candle"
+skill_min = 37.1
+skill_max = 87.0
+resources = [{ resource = "0x1422_beeswax", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Small candle"
+item = "0x1437_candle"
+skill_min = 27.1
+skill_max = 77.0
+resources = [{ resource = "0x1422_beeswax", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Candle"
+item = "0x0a28_candle"
+skill_min = 17.1
+skill_max = 67.0
+resources = [{ resource = "metal", amount = 1 }, { resource = "0x1422_beeswax", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Skull with candle"
+item = "0x1857_skull_with_candle"
+skill_min = 97.1
+skill_max = 147.0
+resources = [{ resource = "0x1ae3_skull", amount = 1 }, { resource = "0x1422_beeswax", amount = 1 }]
+skills = []

@@ -1,8 +1,8 @@
-<!-- translation: {"sourceHash":"73e93cd662c6f81bd03da3b427a28c5e8dfa6e349dd81c9ba23698684c7a4116","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"e95b885ac9a48f6183c49315e6d4d563c64fe5442199bcf5cb6572f818be41ee","title":"Mestieri"} -->
 
 # Mestieri
 
-`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml` e `tailoring.toml`), e
+`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml`, `tailoring.toml` e `tinkering.toml`), e
 `resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole e
 [Fabbro](../blacksmithing.md). Ciò a cui un mestiere deve stare vicino, come l'incudine e la forgia del fabbro, non è un dato:
 è la tabella `NEEDS` di `scripts/common/crafting.lua`.
@@ -38,7 +38,7 @@ skills = []
 | `name` | Ciò che mostra il gump. |
 | `item` | Il template dell'oggetto creato. |
 | `skill_min` | Il minimo dell'abilità principale per provarla: lì la probabilità è una su due. Da 0 a 150. |
-| `skill_max` | L'abilità a cui non fallisce mai. Non sotto `skill_min`, al massimo 150. |
+| `skill_max` | L'abilità a cui non fallisce mai. Non sotto `skill_min`, al massimo 150. UOX3 ne mette alcune sopra 100 (la tunica borchiata, il teschio con candela): quelle non diventano mai certe, né eccezionali sotto `skill_max - 60`. |
 | `resources` | Cosa richiede: `resource` è un elenco di `resources.toml` o un template di oggetto, `amount` almeno 1. Almeno uno. |
 | `skills` | Altre abilità richieste: `skill`, `min` (il minimo per provarla) e `max`, rispetto a cui viene provata. |
 
@@ -77,4 +77,6 @@ uv run --project tools/convert moongate-convert uox-crafts --source <UOX3>/data/
 
 Il convertitore esclude i gruppi che creano deed e la ricetta delle assi, trasforma i decimi di abilità di UOX3 in
 punti, e conta come legno solo le assi. UOX3 annida i suoi menu (Blacksmithing, Armor, Ringmail): ogni menu che contiene
-ricette diventa un gruppo, nell'ordine in cui i menu si incontrano. Il nome di una ricetta inizia con la maiuscola.
+ricette diventa un gruppo, nell'ordine in cui i menu si incontrano. Il nome di una ricetta inizia con la maiuscola, e una seconda ricetta
+con lo stesso nome (un cucchiaio girato dall'altra parte) si distingue con un numero: "Spoon 2". La ricetta Tinker's tools crea
+gli attrezzi da tinker, non la cassetta degli attrezzi da 10 pietre di UOX3.

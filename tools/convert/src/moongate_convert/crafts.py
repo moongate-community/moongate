@@ -16,18 +16,28 @@ CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "carpentry": ("carpentry", "Carpentry", "carpentry", 19),
     "smithing": ("blacksmithing", "Blacksmithing", "blacksmithy", 1),
     "tailoring": ("tailoring", "Tailoring", "tailoring", 39),
+    "tinkering": ("tinkering", "Tinkering", "tinkering", 59),
 }
 
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248}
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B}
 
 # The groups that make deeds, which mean nothing until houses exist.
-SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons"}
+SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons", "traps"}
 
 # What an axe already does: logs sawn into boards.
 SKIPPED_ITEMS = {"0x1bd7"}
 
 NAME_FIXES = {"Magincian Throne": "Magician Throne"}
+
+# The main skill lines UOX3 gets wrong, by the craft's skill and the recipe's name (lower case): the whole SKILL= value.
+SKILL_FIXES = {("tinkering", "scales"): "37 638 1140", ("tinkering", "heating stand"): "37 643 1140"}
+
+# The items UOX3 makes in place of the one a recipe is named for: the tinker's tools, not the 10-stone tool kit.
+ITEM_FIXES = {"0x1eb9": "0x1ebc_tinker's_tools"}
+
+# The groups whose names UOX3 misspells.
+GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
 
 # UOX3's skill numbers are the client's skill ids: the names of data/skills.toml (a test checks them).
 SKILL_NAMES: dict[int, str] = {
@@ -95,7 +105,7 @@ def _template_ids(items: Path) -> list[str]:
 
 def _resolve(value: str, templates: list[str]) -> list[str]:
     """The templates of a UOX3 item id: the one named so, else every one whose id is the graphic followed by its name."""
-    key = value.lower()
+    key = ITEM_FIXES.get(value.lower(), value.lower())
 
     if key in templates:
         return [key]
@@ -184,7 +194,7 @@ def _craft(path: Path, name: str, lists: dict[str, list[str]], list_of_graphic: 
                     recipes.append(recipe)
 
             if recipes:
-                groups.append({"name": group_name, "recipes": recipes})
+                groups.append({"name": GROUP_FIXES.get(group_name, group_name), "recipes": recipes})
 
             walk(submenu)
 
@@ -192,6 +202,16 @@ def _craft(path: Path, name: str, lists: dict[str, list[str]], list_of_graphic: 
         walk(str(root))
     except KeyError as missing:
         raise ConversionError(f"{path.name} names {missing.args[0]}, which it does not have") from missing
+
+    # Recipes of one name (a spoon facing either way) are told apart in the gump: the second is "Spoon 2".
+    met: dict[str, int] = {}
+
+    for group in groups:
+        for recipe in group["recipes"]:
+            met[recipe["name"]] = met.get(recipe["name"], 0) + 1
+
+            if met[recipe["name"]] > 1:
+                recipe["name"] = f"{recipe['name']} {met[recipe['name']]}"
 
     return {"name": title, "skill": skill, "sound": SOUNDS[craft_id], "groups": groups}
 
@@ -211,8 +231,12 @@ def _recipe(
         raise ConversionError(f"the recipe {name} makes {added}, which is not one item template")
 
     skills = []
+    skill_lines = _values(block, "SKILL")
 
-    for value in _values(block, "SKILL"):
+    if (craft_skill, name.lower()) in SKILL_FIXES and skill_lines:
+        skill_lines[0] = SKILL_FIXES[(craft_skill, name.lower())]
+
+    for value in skill_lines:
         number, low, high = (int(part) for part in value.split()[:3])
 
         if number not in SKILL_NAMES:
