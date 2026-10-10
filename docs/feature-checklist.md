@@ -370,4 +370,4 @@ Systems most emulators do not have:
   rest, from the fine and the release note at the end of the sentence to the bread and water in the
   cell.
 - Plugins that add services, commands, Lua modules, metrics, entities and their own settings.
-- Docker images and a multi-realm example.
+- Docker images, a multi-realm example and a [Helm chart](kubernetes.md) for Kubernetes.

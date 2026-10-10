@@ -1,0 +1,11 @@
+uo:
+  existingClaim: uo-files
+postgresql:
+  enabled: true
+redis:
+  enabled: true
+realms:
+  - id: realm-1
+    name: "Moongate Realm 1"
+    serverIndex: 1
+    advertisedAddress: 192.168.255.30

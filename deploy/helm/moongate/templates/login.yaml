@@ -1,0 +1,109 @@
+{{- $secret := include "moongate.secretName" . -}}
+{{- $name := printf "%s-login" (include "moongate.fullname" .) -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "moongate.labels" . | nindent 4 }}
+    app.kubernetes.io/component: login
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "moongate.selectorLabels" (dict "root" . "component" "login") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "moongate.labels" . | nindent 8 }}
+        app.kubernetes.io/component: login
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap-login.yaml") . | sha256sum }}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.login.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "moongate.podSecurityContext" . | nindent 8 }}
+      initContainers:
+        {{- include "moongate.initContainers" (dict "root" . "target" "auth" "schemaEnv" "MOONGATE_ACCOUNTS_SCHEMA_DATABASE" "schemaKey" "accounts-schema-url") | nindent 8 }}
+      containers:
+        - name: login
+          image: {{ include "moongate.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["/app/mgserver"]
+          env:
+            - {name: MOONGATE_ROOT, value: /data}
+            {{- include "moongate.secretEnv" (dict "name" "MOONGATE_ACCOUNTS_DATABASE" "secret" $secret "key" "accounts-runtime-url") | nindent 12 }}
+            {{- include "moongate.secretEnv" (dict "name" "MOONGATE_REDIS_CONNECTION_STRING" "secret" $secret "key" "redis-connection-string") | nindent 12 }}
+            {{- include "moongate.secretEnv" (dict "name" "MOONGATE_HANDOFF_SECRET" "secret" $secret "key" "handoff-secret") | nindent 12 }}
+          ports:
+            - {name: login, containerPort: 2593, protocol: TCP}
+          startupProbe:
+            tcpSocket: {port: login}
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            tcpSocket: {port: login}
+            periodSeconds: 10
+          securityContext:
+            {{- include "moongate.containerSecurityContext" . | nindent 12 }}
+          {{- with .Values.login.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+            - {name: config, mountPath: /data/config/moongate.toml, subPath: moongate.toml}
+            - {name: uo, mountPath: /uo, readOnly: true}
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: {{ $name }}
+        - name: uo
+          persistentVolumeClaim:
+            claimName: {{ .Values.uo.existingClaim }}
+            readOnly: true
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "moongate.labels" . | nindent 4 }}
+    app.kubernetes.io/component: login
+  {{- with .Values.login.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.login.service.type }}
+  {{- if and .Values.login.service.loadBalancerIP (eq .Values.login.service.type "LoadBalancer") }}
+  loadBalancerIP: {{ .Values.login.service.loadBalancerIP }}
+  {{- end }}
+  {{- if and .Values.login.service.externalTrafficPolicy (ne .Values.login.service.type "ClusterIP") }}
+  externalTrafficPolicy: {{ .Values.login.service.externalTrafficPolicy }}
+  {{- end }}
+  selector:
+    {{- include "moongate.selectorLabels" (dict "root" . "component" "login") | nindent 4 }}
+  ports:
+    - name: login
+      port: {{ .Values.login.service.port }}
+      targetPort: login
+      protocol: TCP
+      {{- if and .Values.login.service.nodePort (eq .Values.login.service.type "NodePort") }}
+      nodePort: {{ .Values.login.service.nodePort }}
+      {{- end }}

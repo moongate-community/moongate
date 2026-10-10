@@ -1,0 +1,69 @@
+# Moongate chart values. Read docs/kubernetes.md before the first install.
+
+image:
+  repository: ghcr.io/moongate-community/moongate
+  tag: ""            # defaults to the chart appVersion
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+uo:
+  # Required: a PVC with your Ultima Online client files, mounted read-only on /uo.
+  existingClaim: ""
+
+secrets:
+  # Name of a Secret with the connection strings. Leave empty only with the bundled
+  # PostgreSQL and Redis (trials): the chart then generates the passwords.
+  existingSecret: ""
+
+schema:
+  # An init container applies the SQL migrations before the server starts.
+  enabled: true
+
+terminationGracePeriodSeconds: 120   # the final world save takes 8 to 15 seconds
+
+podSecurity:
+  runAsUser: 1654
+  fsGroup: 1654
+
+network:
+  encryptionMode: Disabled           # Disabled, Optional or Required
+
+login:
+  shardName: Moongate
+  service:
+    type: LoadBalancer
+    port: 2593
+    annotations: {}
+    loadBalancerIP: ""
+    externalTrafficPolicy: ""   # Local keeps the players' addresses in the logs
+    nodePort: 0                 # only with type NodePort
+  resources: {}
+  nodeSelector: {}
+  extraToml: ""                      # appended to the login moongate.toml
+
+# One entry per realm. Each realm is its own StatefulSet, volume and database.
+#   id                 DNS label, unique (realm-1)
+#   name               shown in the client's realm list
+#   serverIndex        1 to 255, unique
+#   advertisedAddress  IPv4 literal the client connects to (the Service's external IP)
+#   advertisedPort     default 2595
+#   persistence        {size: 5Gi, storageClass: ""}
+#   ping               {enabled: false}  UDP 12000 on one realm only
+#   service            {type: LoadBalancer, annotations: {}, loadBalancerIP: "", externalTrafficPolicy: ""}
+#                      with NodePort the advertisedPort is the node port (30000-32767)
+#   resources, nodeSelector, extraToml
+realms: []
+
+# Trial dependencies. Use your own PostgreSQL and Redis in production.
+postgresql:
+  enabled: false
+  image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+  storage:
+    size: 5Gi
+    storageClass: ""
+redis:
+  enabled: false
+  image: redis:7.4.11-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+
+networkPolicy:
+  enabled: false

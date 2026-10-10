@@ -12,6 +12,16 @@
           "type": "xml",
           "path": "Directory.Build.props",
           "xpath": "//Version"
+        },
+        {
+          "type": "yaml",
+          "path": "deploy/helm/moongate/Chart.yaml",
+          "jsonpath": "$.version"
+        },
+        {
+          "type": "yaml",
+          "path": "deploy/helm/moongate/Chart.yaml",
+          "jsonpath": "$.appVersion"
         }
       ]
     }

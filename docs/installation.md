@@ -1,7 +1,7 @@
 # Install on Linux
 
 This page installs the released server binary. To run the published container instead, use
-[Run with Docker](docker.md); to build from source, use [First start](getting-started.md).
+[Run with Docker](docker.md) or [on Kubernetes](kubernetes.md); to build from source, use [First start](getting-started.md).
 
 ## Install
 

@@ -1,0 +1,38 @@
+name: Helm
+
+# The chart is checked on its own: lint, render assertions and the Kubernetes schemas.
+on:
+  pull_request:
+    paths:
+      - deploy/helm/**
+      - .github/workflows/helm.yml
+  push:
+    branches:
+      - develop
+      - main
+    paths:
+      - deploy/helm/**
+      - .github/workflows/helm.yml
+
+concurrency:
+  group: helm-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  chart:
+    runs-on: [self-hosted, gung-dotnet]
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install helm and kubeconform
+        run: |
+          deploy/helm/ci-tools.sh /usr/local/bin
+
+      - name: Lint, render and validate
+        run: deploy/helm/moongate/tests/validate.sh

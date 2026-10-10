@@ -155,6 +155,39 @@ jobs:
             ghcr.io/moongate-community/moongate:${{ needs.release-please.outputs.version }}
             ghcr.io/moongate-community/moongate:latest
 
+  helm:
+    # After the image job: the chart's appVersion names an image tag that must exist when the chart is published.
+    needs: [release-please, docker]
+    if: needs.release-please.outputs.release_created == 'true'
+    runs-on: [self-hosted, gung-dotnet]
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.release-please.outputs.sha }}
+
+      - name: Install helm and kubeconform
+        run: deploy/helm/ci-tools.sh /usr/local/bin
+
+      - name: Check the chart
+        run: deploy/helm/moongate/tests/validate.sh
+
+      # The chart version is the release version; Chart.yaml in the repository is bumped by release-please too.
+      - name: Package and push the chart
+        env:
+          VERSION: ${{ needs.release-please.outputs.version }}
+          REGISTRY_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REGISTRY_USER: ${{ github.actor }}
+        run: |
+          printf '%s' "$REGISTRY_TOKEN" | helm registry login ghcr.io --username "$REGISTRY_USER" --password-stdin
+          helm package deploy/helm/moongate --version "$VERSION" --app-version "$VERSION"
+          helm push "moongate-$VERSION.tgz" oci://ghcr.io/moongate-community/charts
+
   nuget:
     needs: release-please
     if: needs.release-please.outputs.release_created == 'true'

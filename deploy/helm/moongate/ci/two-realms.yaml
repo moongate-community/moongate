@@ -1,0 +1,14 @@
+uo:
+  existingClaim: uo-files
+secrets:
+  existingSecret: moongate-secrets
+realms:
+  - id: realm-1
+    name: "Moongate Realm 1"
+    serverIndex: 1
+    advertisedAddress: 192.168.255.30
+  - id: realm-2
+    name: "Moongate Realm 2"
+    serverIndex: 2
+    advertisedAddress: 192.168.255.31
+    advertisedPort: 2595

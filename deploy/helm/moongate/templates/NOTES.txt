@@ -1,0 +1,21 @@
+Moongate {{ .Chart.AppVersion }} installed as {{ .Release.Name }} in {{ .Release.Namespace }}.
+
+1. Find the address of each Service:
+
+   kubectl get svc -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+2. The login sends clients to each realm's advertisedAddress and advertisedPort.
+   They must be the external address and port of that realm's Service:
+{{- range .Values.realms }}
+   - {{ .id }}: advertisedAddress {{ .advertisedAddress }}, port {{ default 2595 .advertisedPort }}
+{{- end }}
+   If they differ, set them in your values and run helm upgrade.
+
+3. Watch the start (the first one applies the SQL and takes a while):
+
+   kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }} -w
+{{- if or .Values.postgresql.enabled .Values.redis.enabled }}
+
+The bundled PostgreSQL and Redis are for trials. Their generated passwords live in the
+Secret {{ include "moongate.generatedName" . }}, which stays after helm uninstall.
+{{- end }}

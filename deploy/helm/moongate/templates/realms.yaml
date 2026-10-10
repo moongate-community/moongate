@@ -1,0 +1,206 @@
+{{- $secret := include "moongate.secretName" . -}}
+{{- range .Values.realms }}
+{{- $realm := . -}}
+{{- $name := printf "%s-%s" (include "moongate.fullname" $) .id -}}
+{{- $port := int (default 2595 .advertisedPort) -}}
+{{- $ping := and .ping .ping.enabled -}}
+{{- $svc := default dict .service -}}
+{{- $persistence := default dict .persistence }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "moongate.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ .id | quote }}
+data:
+  moongate.toml: |
+    mode = "game"
+
+    [shard]
+    shard_name = {{ .name | quote }}
+
+    [network]
+    listen_address = "0.0.0.0"
+    game_port = 2595
+    enable_ping_server = {{ if $ping }}true{{ else }}false{{ end }}
+    {{- if $ping }}
+    ping_port = 12000
+    {{- end }}
+
+    [network.encryption]
+    mode = {{ $.Values.network.encryptionMode | quote }}
+
+    [ultima]
+    ultima_path = "/uo"
+
+    [persistence]
+    auto_sync_schema = false
+    migrations_directory = "/app/migrations"
+
+    [persistence.realm]
+    connection_string = "$MOONGATE_REALM_DATABASE"
+
+    [redis]
+    connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+    handoff_secret = "$MOONGATE_HANDOFF_SECRET"
+
+    [realm_directory]
+    realm_id = {{ .id | quote }}
+    name = {{ .name | quote }}
+    server_index = {{ int .serverIndex }}
+    advertised_address = {{ .advertisedAddress | quote }}
+    advertised_port = {{ $port }}
+
+    [admin_api]
+    enabled = false
+    {{- with .extraToml }}
+
+    {{- . | nindent 4 }}
+    {{- end }}
+  schema.toml: |
+    mode = "game"
+
+    [persistence]
+    auto_sync_schema = false
+    migrations_directory = "/app/migrations"
+
+    [persistence.realm]
+    connection_string = "$MOONGATE_REALM_SCHEMA_DATABASE"
+
+    [realm_directory]
+    realm_id = {{ .id | quote }}
+    name = {{ .name | quote }}
+    server_index = {{ int .serverIndex }}
+    advertised_address = {{ .advertisedAddress | quote }}
+    advertised_port = {{ $port }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "moongate.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ .id | quote }}
+spec:
+  replicas: 1
+  serviceName: {{ $name }}
+  podManagementPolicy: OrderedReady
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      {{- include "moongate.selectorLabels" (dict "root" $ "component" .id) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "moongate.labels" $ | nindent 8 }}
+        app.kubernetes.io/component: {{ .id | quote }}
+      annotations:
+        checksum/config: {{ list (toYaml $realm) $.Values.network.encryptionMode | toJson | sha256sum }}
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: {{ $.Values.terminationGracePeriodSeconds }}
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- include "moongate.podSecurityContext" $ | nindent 8 }}
+      initContainers:
+        {{- include "moongate.initContainers" (dict "root" $ "target" "world" "schemaEnv" "MOONGATE_REALM_SCHEMA_DATABASE" "schemaKey" (printf "%s-schema-url" .id)) | nindent 8 }}
+      containers:
+        - name: game
+          image: {{ include "moongate.image" $ }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          command: ["/app/mgserver"]
+          env:
+            - {name: MOONGATE_ROOT, value: /data}
+            {{- include "moongate.secretEnv" (dict "name" "MOONGATE_REALM_DATABASE" "secret" $secret "key" (printf "%s-runtime-url" .id)) | nindent 12 }}
+            {{- include "moongate.secretEnv" (dict "name" "MOONGATE_REDIS_CONNECTION_STRING" "secret" $secret "key" "redis-connection-string") | nindent 12 }}
+            {{- include "moongate.secretEnv" (dict "name" "MOONGATE_HANDOFF_SECRET" "secret" $secret "key" "handoff-secret") | nindent 12 }}
+          ports:
+            - {name: game, containerPort: 2595, protocol: TCP}
+            {{- if $ping }}
+            - {name: ping, containerPort: 12000, protocol: UDP}
+            {{- end }}
+          startupProbe:
+            tcpSocket: {port: game}
+            periodSeconds: 5
+            failureThreshold: 120
+          readinessProbe:
+            tcpSocket: {port: game}
+            periodSeconds: 10
+          securityContext:
+            {{- include "moongate.containerSecurityContext" $ | nindent 12 }}
+          {{- with .resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - {name: data, mountPath: /data}
+            - {name: config, mountPath: /data/config/moongate.toml, subPath: moongate.toml}
+            - {name: uo, mountPath: /uo, readOnly: true}
+      volumes:
+        - name: tmp
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: {{ $name }}
+        - name: uo
+          persistentVolumeClaim:
+            claimName: {{ $.Values.uo.existingClaim }}
+            readOnly: true
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- with $persistence.storageClass }}
+        storageClassName: {{ . }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ default "5Gi" $persistence.size }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "moongate.labels" $ | nindent 4 }}
+    app.kubernetes.io/component: {{ .id | quote }}
+  {{- with $svc.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ default "LoadBalancer" $svc.type }}
+  {{- if and $svc.loadBalancerIP (eq (default "LoadBalancer" $svc.type) "LoadBalancer") }}
+  loadBalancerIP: {{ $svc.loadBalancerIP }}
+  {{- end }}
+  {{- if and $svc.externalTrafficPolicy (ne (default "LoadBalancer" $svc.type) "ClusterIP") }}
+  externalTrafficPolicy: {{ $svc.externalTrafficPolicy }}
+  {{- end }}
+  selector:
+    {{- include "moongate.selectorLabels" (dict "root" $ "component" .id) | nindent 4 }}
+  ports:
+    - name: game
+      port: {{ $port }}
+      targetPort: game
+      protocol: TCP
+      {{- if eq (default "LoadBalancer" $svc.type) "NodePort" }}
+      nodePort: {{ $port }}
+      {{- end }}
+    {{- if $ping }}
+    - name: ping
+      port: 12000
+      targetPort: ping
+      protocol: UDP
+    {{- end }}
+{{- end }}
