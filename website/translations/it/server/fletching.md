@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"fe520fdd7c430ff661f394fa4c3fae32414249fff2ea55c57660c19e5d340db8","title":"Archi e frecce"} -->
+<!-- translation: {"sourceHash":"08d643deeffc0c8ab3e30f27f9dc26f6824a48786ac5a51ce9b29032cb41be4c","title":"Archi e frecce"} -->
 
 # Archi e frecce
 
@@ -13,6 +13,9 @@ eccezionali, il marchio del creatore, gli attrezzi che si consumano e Make last.
 3. Scegli il legno con Change, come fa un [falegname](carpentry.md): assi comuni se non lo scegli, oppure un tipo di legno che chiede
    tanto Bowcraft/Fletching quanto chiede Carpentry a un falegname, e colora l'arco.
 4. Premi il pulsante prima di una ricetta, oppure apri la sua scheda. Make last la ripete: una freccia si crea una alla volta.
+
+Aste, frecce e dardi si impilano, quindi non sono mai eccezionali né marchiati, e crearli non consuma l'attrezzo.
+Prendono il colore del legno scelto: le aste di quercia si impilano solo con aste di quercia.
 
 ## Le ricette
 
@@ -31,7 +34,7 @@ eccezionali, il marchio del creatore, gli attrezzi che si consumano e Make last.
 | Crossbow Bolts | Bolt | da 0 a 70 | 1 asta, 1 piuma |
 
 I lotti da cinque, venti e cinquanta di UOX3 sono esclusi: Make last li crea uno dopo l'altro. Anche la legna da ardere è esclusa:
-la taglia già un'[ascia](lumberjacking.md) dai tronchi.
+la stacca già una lama da un albero (vedi [Taglio della legna](lumberjacking.md)).
 
 ## Cambiare le regole
 
@@ -47,7 +50,8 @@ la taglia già un'[ascia](lumberjacking.md) dai tronchi.
 
 ## Non ancora
 
-Creare più frecce in una volta, e gli archi delle ere successive.
+Creare più frecce in una volta, e gli archi delle ere successive. Le piume vengono solo dagli oggetti iniziali
+del fletcher: nessun venditore le vende e gli uccelli non si possono ancora scuoiare.
 
 ## Vedi anche
 

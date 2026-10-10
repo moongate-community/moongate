@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"19d9b17c9d310d45564d171e0238742e8208a9ee591cb7d9bdc029df832139cf","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"018d86cd351fb5a4bbbd1665e7295d61c603c3f67728b47991bc34a2069f887d","title":"Mestieri"} -->
 
 # Mestieri
 
@@ -80,4 +80,4 @@ punti, e conta come legno solo le assi. UOX3 annida i suoi menu (Blacksmithing, 
 ricette diventa un gruppo, nell'ordine in cui i menu si incontrano. Il nome di una ricetta inizia con la maiuscola, e una seconda ricetta
 con lo stesso nome (un cucchiaio girato dall'altra parte) si distingue con un numero: "Spoon 2". La ricetta Tinker's tools crea
 gli attrezzi da tinker, non la cassetta degli attrezzi da 10 pietre di UOX3. Le ricette proprie di un menu radice (gli archi) formano un
-primo gruppo, una seconda radice (le frecce e i dardi dell'attrezzo da fletcher) si visita dopo, e i lotti da cinque o più di UOX3 sono esclusi.
+primo gruppo, una seconda radice (le frecce e i dardi dell'attrezzo da fletcher) si visita dopo, e i lotti di UOX3 (cinque, venti, cinquanta) sono esclusi.
