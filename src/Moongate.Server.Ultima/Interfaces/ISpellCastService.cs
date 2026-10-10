@@ -129,8 +129,8 @@ public interface ISpellCastService : ISessionClosedListener
     void Hurt(MobileEntity caster);
 
     /// <summary>
-    ///     Ends the cast of the caster, if any, with no message and no recovery, as its death does: the target cursor is
-    ///     taken away.
+    ///     Ends the cast of the caster, if any, with no message and no recovery of its own, as its death does: the target
+    ///     cursor is taken away. The recovery that the end of the delay set stays.
     /// </summary>
     void Cancel(MobileEntity caster);
 }

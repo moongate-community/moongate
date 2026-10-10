@@ -29,11 +29,11 @@ of the text command and the extended command 0x1C of the client).
    none. Putting the cursor away ends the cast and costs nothing. After the delay the caster waits 0.75 seconds before
    another cast.
 4. On the target the cast takes the reagents from the backpack (a scroll holds its own), the mana again and tries
-   Magery. A success pays the mana, uses up one scroll and runs the spell. A failure fizzles: the reagents are lost, the
-   mana is not, a scroll stays.
-5. Damage taken while the delay runs ruins a spell above the first circle: the caster is told, and waits
-   the less of the delay was done, from a second down to a fifth of one. The first circle is never ruined, and a cast waiting for its
-   target is not.
+   Evaluating Intelligence, which may grow from every try, and Magery. A success pays the mana, uses up one scroll and
+   runs the spell. A failure fizzles: the reagents are lost, the mana is not, a scroll stays.
+5. Damage taken while the delay runs, a blow or a tick of poison, ruins a spell above the first circle: the caster is
+   told, and waits longer the less of the delay was done, from a second down to a fifth of one. The first circle is
+   never ruined, and a cast waiting for its target is not. A caster that dies, of whatever, casts no more.
 
 | Circle | Mana | Delay | Magery window of a book | Magery window of a scroll |
 | --- | --- | --- | --- | --- |
@@ -60,7 +60,8 @@ of the text command and the extended command 0x1C of the client).
 
 Reactive Armor has no script yet: casting it says the spell is disabled. A harmful spell makes the
 caster the aggressor of its target: a criminal against an innocent who does not fight it, and an NPC fights back. A curse
-of a stat that is as strong or stronger stays.
+of a stat that is as strong or stronger stays. A harmful spell on a target that cannot be harmed, such as a vendor or a
+banker, is refused with "You cannot perform negative acts on your target." before the reagents and the mana are spent.
 
 ## Try it
 

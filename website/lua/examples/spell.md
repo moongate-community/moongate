@@ -97,7 +97,7 @@ spell.disturb(target)
 
 ## cancel
 
-Ends the cast with no message and no recovery, such as when a player is teleported away:
+Ends the cast with no message, such as when a player is teleported away. The short wait that the end of the delay set stays, so a cancel at the target cursor still leaves it:
 
 ```lua
 spell.cancel(user)

@@ -207,7 +207,7 @@ public sealed class SpellModule
     ///     Ends the cast of a mobile; <c>spell.cancel(user)</c>.
     /// </summary>
     [ScriptFunction(
-        helpText: "Ends the cast of the mobile, if it has one, with no message and no recovery, and takes its target cursor away."
+        helpText: "Ends the cast of the mobile, if it has one, with no message, and takes its target cursor away. The recovery that the end of the delay already set stays, so a cancel at the cursor still leaves the short wait before the next cast."
     )]
     public bool Cancel(long caster)
     {

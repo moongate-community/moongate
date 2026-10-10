@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6bc9a0cccd0e7601dcf38f0791dfbbf221752ad5b37a6a6032661885018bf83b","title":"Magery"} -->
+<!-- translation: {"sourceHash":"522e25e0d56865910a7e700a7202471f4edaa53434204e238139ace5eb0a7650","title":"Magery"} -->
 
 # Magery
 
@@ -33,11 +33,12 @@ pergamena (i tipi 0x27 e 0x56 del comando di testo e il comando esteso 0x1C del 
    subito se non ne chiede. Mettere via il cursore termina il lancio e non costa nulla. Dopo il ritardo il lanciatore
    aspetta 0,75 secondi prima di un altro lancio.
 4. Sul bersaglio il lancio prende i reagenti dallo zaino (una pergamena porta i suoi), controlla di nuovo il mana e prova
-   Magery. Un successo paga il mana, consuma una pergamena ed esegue l'incantesimo. Un fallimento fallisce: i reagenti si
-   perdono, il mana no, una pergamena resta.
-5. Il danno subito mentre il ritardo corre rovina un incantesimo sopra il primo cerchio: il lanciatore viene avvisato e
-   aspetta tanto meno quanto meno del ritardo era trascorso, da un secondo fino a un quinto di secondo. Il primo cerchio non
-   viene mai rovinato, e nemmeno un lancio che aspetta il suo bersaglio.
+   Evaluating Intelligence, che può crescere a ogni prova, e Magery. Un successo paga il mana, consuma una pergamena ed
+   esegue l'incantesimo. Un fallimento fallisce: i reagenti si perdono, il mana no, una pergamena resta.
+5. Il danno subito mentre il ritardo corre, un colpo o un tick di veleno, rovina un incantesimo sopra il primo cerchio: il
+   lanciatore viene avvisato e aspetta tanto più a lungo quanto meno del ritardo era trascorso, da un secondo fino a un
+   quinto di secondo. Il primo cerchio non viene mai rovinato, e nemmeno un lancio che aspetta il suo bersaglio. Un
+   lanciatore che muore, di qualunque cosa, non lancia più.
 
 | Cerchio | Mana | Ritardo | Finestra di Magery di un libro | Finestra di Magery di una pergamena |
 | --- | --- | --- | --- | --- |
@@ -64,7 +65,9 @@ pergamena (i tipi 0x27 e 0x56 del comando di testo e il comando esteso 0x1C del 
 
 Reactive Armor non ha ancora uno script: lanciarlo dice che l'incantesimo è disabilitato. Un incantesimo dannoso rende il
 lanciatore l'aggressore del bersaglio: un criminale contro un innocente che non combatte, e un PNG reagisce. Una
-maledizione su una statistica che è forte uguale o di più resta.
+maledizione su una statistica che è forte uguale o di più resta. Un incantesimo dannoso su un bersaglio che non può essere
+colpito, come un venditore o un banchiere, viene rifiutato con "You cannot perform negative acts on your target." prima
+che reagenti e mana siano spesi.
 
 ## Provalo
 
