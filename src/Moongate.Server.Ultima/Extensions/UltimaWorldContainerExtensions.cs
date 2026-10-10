@@ -128,6 +128,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<IMapDisplayService, MapDisplayService>(Reuse.Singleton);
         container.Register<IStatBonusService, StatBonusService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IStatBonusService>();
+        container.Register<IPoisonService, PoisonService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IPoisonService>();
         container.RegisterMapping<ISessionClosedListener, IHuePickerService>();
         container.RegisterMapping<ISessionClosedListener, IVendorService>();
         container.RegisterMapping<ISessionClosedListener, ITrainingService>();

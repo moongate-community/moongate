@@ -6,7 +6,8 @@
 --   heal (3-10, 6-20, 9-30 hits, then 10 seconds before another heal potion),
 --   refresh (a quarter of the stamina, a total one all of it), strength and
 --   agility (+10, greater +20, for 2 minutes) and night sight (15 to 39
---   minutes). Drinking needs the potion in the backpack or within 1 tile (in a
+--   minutes), poison (lesser to deadly, poisons the drinker) and cure (a
+--   chance by the cure and the poison's level). Drinking needs the potion in the backpack or within 1 tile (in a
 --   bag on the ground too) and a free hand; one potion goes, then its effect,
 --   and an empty bottle comes back, at the feet when the backpack is full. The
 --   effect is chosen by the potion's template: each has a check, which may
@@ -15,11 +16,13 @@
 -- Functions:
 --   potion.on_use(serial, user)   drinks the potion
 --   potion.random(low, high)      the roll of a heal and of night sight, math.random
+--   potion.chance()               the roll of a cure, 0 to 1, math.random
 -- ==============================================================================
 
 potion = {}
 
 potion.random = math.random
+potion.chance = math.random
 
 local REACH = 1
 local TOO_FAR = 502138        -- That is too far away for you to use.
@@ -29,6 +32,10 @@ local HEAL_WAIT = 500235      -- You must wait 10 seconds before using another h
 local SIMILAR_EFFECT = 502173 -- You are already under a similar effect.
 local FULL_STAMINA = "You decide against drinking this potion, as you are already at full stamina."
 local HAS_NIGHT_SIGHT = "You already have night sight."
+local CANNOT_HEAL = 1005000      -- You can not heal yourself in your current state.
+local NOT_POISONED = 1042000     -- You are not poisoned.
+local CURED = 500231             -- You feel cured of poison!
+local NOT_STRONG_ENOUGH = 500232 -- That potion was not strong enough to cure your ailment!
 
 local DRINK_SOUND = 0x2D6
 local BOTTLE = "0x0f0e_empty_bottle"
@@ -39,6 +46,8 @@ local BONUS_SOUND = 0x1E7
 local NIGHT_LEVEL = 13
 local NIGHT_EFFECT = 0x376A
 local NIGHT_SOUND = 0x1E3
+local CURE_EFFECT = 0x373A
+local CURE_SOUND = 0x1E0
 
 -- When each player may drink a heal potion again: one more second, so the wait is never under ten.
 local heal_ready = {}
@@ -48,6 +57,10 @@ local function full_health(user)
 
     if stats.hits >= stats.hits_max then
         return FULL_HEALTH
+    end
+
+    if mobile.poison_level(user) then
+        return CANNOT_HEAL
     end
 
     local ready = heal_ready[user]
@@ -115,6 +128,40 @@ local night_sight = {
     end,
 }
 
+-- A poison potion poisons whoever drinks it; a weaker one than the poison at work changes nothing.
+local function poison(level)
+    return {
+        check = function() end,
+        apply = function(user)
+            mobile.poison(user, level)
+        end,
+    }
+end
+
+-- A cure cures a poison by the chance it has against that poison's level; used up either way.
+local function cure(chances)
+    return {
+        check = function(user)
+            if not mobile.poison_level(user) then
+                return NOT_POISONED
+            end
+        end,
+        apply = function(user)
+            local level = mobile.poison_level(user)
+
+            -- The glow and the sound of a cure, whether it works or not.
+            effect.on(user, CURE_EFFECT)
+            mobile.play_sound(user, CURE_SOUND)
+
+            if level and potion.chance() < (chances[level] or 0) and mobile.cure(user) then
+                mobile.message_cliloc(user, CURED)
+            else
+                mobile.message_cliloc(user, NOT_STRONG_ENOUGH)
+            end
+        end,
+    }
+end
+
 -- What each potion does, by its template.
 local EFFECTS = {
     lesserhealpotion = heal(3, 10),
@@ -127,6 +174,14 @@ local EFFECTS = {
     agilitypotion = bonus("dexterity", 10),
     greateragilitypotion = bonus("dexterity", 20),
     nightsightpotion = night_sight,
+    lesserpoisonpotion = poison(0),
+    poisonpotion = poison(1),
+    greaterpoisonpotion = poison(2),
+    deadlypoisonpotion = poison(3),
+    -- The chance against lesser (0), regular (1), greater (2), deadly (3) and lethal (4) poison.
+    lessercurepotion = cure({ [0] = 0.75, [1] = 0.50, [2] = 0.15 }),
+    curepotion = cure({ [0] = 1.00, [1] = 0.75, [2] = 0.50, [3] = 0.15 }),
+    greatercurepotion = cure({ [0] = 1.00, [1] = 1.00, [2] = 1.00, [3] = 0.75, [4] = 0.25 }),
 }
 
 local function tell(user, message)

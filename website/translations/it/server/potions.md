@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"7cfd30c46481f8363f46e7380796c123f80aff661058ab71dc6473c1895d23f7","title":"Pozioni"} -->
+<!-- translation: {"sourceHash":"e30b5baffb07a8ee36489f2328e9bb94b014328e6c68b01369186b1ea1b6d044","title":"Pozioni"} -->
 
 # Pozioni
 
@@ -21,7 +21,39 @@ come una tenuta sul cursore, non fa nulla.
 Una seconda pozione di forza (o di agilità) mentre dura la prima viene rifiutata: "You are already under a similar effect.";
 così anche una seconda visione notturna. Quando un bonus finisce, i punti ferita o la stamina sopra il nuovo massimo se ne vanno.
 
-Le pozioni di veleno e gli antidoti, e le pozioni esplosive, non si bevono ancora: arrivano con il veleno e con il lancio.
+Le pozioni esplosive non si bevono: verranno lanciate.
+
+## Veleno
+
+Una pozione di veleno avvelena chi la beve, al suo livello: lesser, regular, greater o deadly. Un mobile avvelenato perde
+punti ferita a intervalli di pochi secondi, la sua barra della vita diventa verde, non recupera punti ferita, e chi è vicino legge che sembra stare male;
+le pozioni di cura vengono rifiutate ("You can not heal yourself in your current state.").
+
+| Livello | Danno a colpo | Ogni | Colpi |
+| --- | --- | --- | --- |
+| Lesser | 1 e il 2,5% dei punti ferita, da 4 a 26 | 3 s | 10 |
+| Regular | 1 e il 3,125%, da 5 a 26 | 3 s | 10 |
+| Greater | 1 e il 6,25%, da 6 a 26 | 3 s | 10 |
+| Deadly | 1 e il 12,5%, da 7 a 26 | 4 s | 10 |
+
+Il primo colpo arriva dopo 3,5 secondi, e metà dei colpi ripete il danno del precedente. Un veleno più forte sostituisce uno
+più debole; uno più debole non cambia nulla. Il veleno svanisce ("The poison seems to have worn off."), viene curato, o
+uccide; la morte lo ferma subito. Si salva con il personaggio insieme ai colpi già fatti: uscire dal gioco non lo ferma,
+continua al rientro successivo. Il veleno di un NPC non si salva. Un livello 4, lethal, esiste per i mostri. Un giocatore avvelenato e nascosto
+non viene visto stare male. I client più vecchi della 7.0 non disegnano la barra verde.
+
+## Antidoti
+
+Un antidoto cura il veleno con una probabilità; si consuma comunque ("That potion was not strong enough to cure your
+ailment!"), e viene rifiutato quando chi beve non è avvelenato ("You are not poisoned.").
+
+| Antidoto | Lesser | Regular | Greater | Deadly | Lethal |
+| --- | --- | --- | --- | --- | --- |
+| Antidoto minore | 75% | 50% | 15% | 0% | 0% |
+| Antidoto | 100% | 75% | 50% | 15% | 0% |
+| Antidoto maggiore | 100% | 100% | 100% | 75% | 25% |
+
+Gli script avvelenano e curano con `mobile.poison(user, 2)`, `mobile.cure(user)` e `mobile.poison_level(user)`.
 
 ## Bonus e visione notturna
 
@@ -46,7 +78,8 @@ visione notturna.
 
 ## Non ancora
 
-Veleno e antidoti (fetta 2), esplosione (fetta 3), alchimia, la barra dei buff, i barili di pozioni.
+Esplosione (fetta 3), alchimia, armi avvelenate e l'abilità Poisoning, mostri velenosi, bende che curano, la barra
+dei buff, i barili di pozioni.
 
 ## Vedi anche
 

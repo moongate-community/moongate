@@ -107,7 +107,9 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
 
         // A player with an empty stomach gets no hit points back, as in UOX3; the staff, which never gets hungry,
         // is left alone.
-        if (_config.HungerEnabled && !mobile.IsNpc && mobile.Hunger <= 0 && !IsStaff(mobile))
+        // Nor does a poisoned mobile: the poison takes them.
+        if ((_config.HungerEnabled && !mobile.IsNpc && mobile.Hunger <= 0 && !IsStaff(mobile)) ||
+            PoisonService.IsPoisoned(mobile))
         {
             clock.HitsAt = 0;
         }

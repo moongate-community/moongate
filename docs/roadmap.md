@@ -92,7 +92,7 @@ written. The [Lua API reference](https://moongate.sh/lua/) lists what Lua has to
 | --- | --- | --- | --- | --- |
 | 1.1 | ✅ | **Regeneration** of hits, mana and stamina; hunger and thirst, food that is eaten and drinks that are drunk | Nothing depends on anything else; visible in the first fight | |
 | 1.2 | ✅ | **Skill use, check and gain**; stat gain; caps and locks. A [skill](skills.md) is used from the client, checked by `skill.check`, gained under the skill cap and the total cap and locked up, down or locked from the skill window; a successful check raises strength, dexterity and intelligence as ModernUO's classic rule, to 100 each and 225 in all, with their own locks. Hiding is the first skill script; the others come with their systems | The progression of the game; every later system calls the skill check | UOX3 `skills.dfn` (61 skills: stat weights, gain curves), ModernUO `skills.json` |
-| 1.3 | 🟡 | **Timed effects**: one mechanism for poison, curses, blessings, polymorph, hiding; the buff bar shows them. Done: stat bonuses and night sight | Magic, potions and combat all need it | |
+| 1.3 | 🟡 | **Timed effects**: one mechanism for poison, curses, blessings, polymorph, hiding; the buff bar shows them. Done: stat bonuses, night sight and poison | Magic, potions and combat all need it | |
 | 1.4 | ✅ | **Containers on the ground**, with item and weight limits; weight and overloading: a container on the ground opens, items go in and out of it, 125 at most and up to its limit of stones; a player carries 40 stones and 3.5 a point of strength, and moving overloaded or running costs stamina | Corpses, vendors, chests and houses need them | |
 | 1.5 | 🟡 | **Context menus and old-style menus**. Done: the text prompt (`prompt.ask`), and [context menus](context-menus.md) with the server's entries and the ones a Lua script adds | Vendors, pets, crafting and guilds open through them | |
 | 1.6 | ✅ | **Item combat fields** in the templates and the converter: damage, speed, armour, hit points, strength requirement | Combat reads them; the converter reads them from UOX3 now | UOX3 `items/gear/` |
@@ -128,7 +128,7 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 | 4.2 | ❌ | **Secure trade** between players | Player economy | |
 | 4.3 | ❌ | **Spell casting and Magery**: spellbooks, reagents, scrolls, words of power, the 64 spells | Half of all characters cast | UOX3 `spells.dfn` (mana, reagents, delay, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebooks** | The way players travel; needs the region rules of 3.5 | |
-| 4.5 | 🟡 | **Potions and alchemy effects**. Done: [heal, refresh, strength, agility and night sight](potions.md); next poison and cure, then explosion | Small once timed effects and spells exist | |
+| 4.5 | 🟡 | **Potions and alchemy effects**. Done: [heal, refresh, strength, agility, night sight, poison and cure](potions.md); next explosion | Small once timed effects and spells exist | |
 
 ## Phase 5: professions
 

@@ -115,3 +115,35 @@ if not mobile.has_free_hand(user) then
     return true
 end
 ```
+
+## poison
+
+A trap that poisons whoever opens the chest:
+
+```lua
+if mobile.poison(user, 1) == "poisoned" then
+    mobile.message(user, "A cloud of green gas rises from the chest!")
+end
+```
+
+## cure
+
+A healer's blessing that ends a poison:
+
+```lua
+if mobile.cure(user) then
+    mobile.message_cliloc(user, 500231) -- You feel cured of poison!
+end
+```
+
+## poison_level
+
+Refuses a deadly poisoned player at the gate:
+
+```lua
+local level = mobile.poison_level(user)
+
+if level and level >= 3 then
+    mobile.message(user, "Come back when you are cured.")
+end
+```

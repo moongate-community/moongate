@@ -237,6 +237,33 @@ public sealed class RegenerationServiceTests
     }
 
     [Fact]
+    public void Tick_ACorruptPoison_IsNoPoison()
+    {
+        _aria.SetProp(PoisonService.LevelProp, "green");
+        _aria.Hits = 50;
+        _regeneration.Tick(_aria);
+
+        _clock.Advance(TimeSpan.FromSeconds(11));
+        _regeneration.Tick(_aria);
+
+        Assert.Equal(51, _aria.Hits);
+    }
+
+    [Fact]
+    public void Tick_APoisonedMobile_GetsNoHitsBack_ButStamina()
+    {
+        _aria.SetProp(PoisonService.LevelProp, 1L);
+        _aria.Hits = 50;
+        _aria.Stamina = 50;
+        _regeneration.Tick(_aria);
+
+        _clock.Advance(TimeSpan.FromSeconds(11));
+        _regeneration.Tick(_aria);
+
+        Assert.Equal((50, 51), (_aria.Hits, _aria.Stamina));
+    }
+
+    [Fact]
     public void Tick_AParchedPlayer_GetsNoStaminaBack_ButHits_AndAnNpcIsNotThirsty()
     {
         var orc = new MobileEntity

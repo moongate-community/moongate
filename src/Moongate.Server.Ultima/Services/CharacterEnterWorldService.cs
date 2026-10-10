@@ -43,6 +43,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly ICrimeService? _crimes;
     private readonly ICombatGearService? _gear;
     private readonly IMurderService? _murders;
+    private readonly IPoisonService? _poison;
     private readonly IPetService? _pets;
 
     public CharacterEnterWorldService(
@@ -59,10 +60,12 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         ICrimeService? crimes = null,
         ICombatGearService? gear = null,
         IMurderService? murders = null,
-        IPetService? pets = null
+        IPetService? pets = null,
+        IPoisonService? poison = null
     )
     {
         _murders = murders;
+        _poison = poison;
         _pets = pets;
         _gear = gear;
         _crimes = crimes;
@@ -141,7 +144,12 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
 
         // After the sequence: the client must know where it stands before it is shown the others.
         if (!await context.RunOnGameLoopAsync(
-                session => _view.Entered(character, session.SessionId, session.ClientVersion, session.AccountType),
+                session =>
+                {
+                    _view.Entered(character, session.SessionId, session.ClientVersion, session.AccountType);
+                    // A poison it logged out with takes its hits again, its green bar shown once the client knows it.
+                    _poison?.Resume(character);
+                },
                 cancellationToken
             ))
         {

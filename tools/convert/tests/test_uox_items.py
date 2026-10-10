@@ -816,18 +816,19 @@ def test_the_pens_get_the_cartography_tool_script(uox_workspace):
     assert by_name["pen and ink"]["script_id"] == "cartography_tool"
 
 
-def test_the_simple_potions_get_the_potion_script_and_the_others_wait(uox_workspace):
+def test_the_potions_a_player_drinks_get_the_potion_script_and_explosion_waits(uox_workspace):
     uox_workspace.write_source(
         "items.dfn",
         "[healpotion]\n{\nname=yellow potion\nid=0x0f0c\n}\n"
         "[nightsightpotion]\n{\nname=black potion\nid=0x0f06\n}\n"
-        "[poisonpotion]\n{\nname=green potion\nid=0x0f0a\n}\n",
+        "[poisonpotion]\n{\nname=green potion\nid=0x0f0a\n}\n"
+        "[curepotion]\n{\nname=orange potion\nid=0x0f07\n}\n"
+        "[explosionpotion]\n{\nname=purple potion\nid=0x0f0d\n}\n",
     )
 
     assert uox_workspace.run() == 0, uox_workspace.combined
 
-    # What a player drinks: scripts/items/potion.lua. Poison, cure and explosion come with their own systems.
+    # What a player drinks: scripts/items/potion.lua. Explosion potions are thrown, and come with throwing.
     items = uox_workspace.items()
-    assert items["healpotion"]["script_id"] == "potion"
-    assert items["nightsightpotion"]["script_id"] == "potion"
-    assert "script_id" not in items["poisonpotion"]
+    assert [items[name]["script_id"] for name in ("healpotion", "nightsightpotion", "poisonpotion", "curepotion")] == ["potion"] * 4
+    assert "script_id" not in items["explosionpotion"]
