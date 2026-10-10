@@ -287,3 +287,7 @@
 30238 = "¡Feliz Navidad! Ha empezado la temporada de bolas de nieve: haz doble clic en un montón de nieve."
 30239 = "La temporada de Navidad ha terminado."
 30240 = "¡Felices fiestas! Los regalos están en tu mochila."
+30241 = "Muestra cuándo estuvo conectado un personaje por última vez, en el mundo o no: lastonline <nombre>."
+30242 = "{0} está conectado ahora."
+30243 = "{0} estuvo conectado por última vez el {1} (UTC)."
+30244 = "{0} aún no tiene fecha de última conexión: no ha salido del mundo desde que se registra la fecha."

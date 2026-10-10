@@ -220,6 +220,7 @@ They live in `data/messages/<language>/moongate.toml`, apart from the standard t
 | 30224 to 30229 | The server will shut down in {0} minutes., the description of the `event` command and its replies | What a player and an administrator read from the [schedule](schedule.md) |
 | 30230 to 30237 | Oooooh, aren't you cute!, TRICK!, You receive some candy., the announcements of the season | What a shopkeeper says and a player reads in [trick or treat](holidays.md#halloween-trick-or-treat) |
 | 30238 to 30240 | Merry Christmas!, The Christmas season is over., Happy Holidays! Gift items have been placed in your backpack. | The announcements and the gift of [Christmas](holidays.md#christmas-snowballs-and-gifts) |
+| 30241 to 30244 | The description of the `lastonline` command and its replies | What a game master reads from [`lastonline`](commands/lastonline.md) |
 | 30185, 30186 | Opens the gump of the game master's tools…, The gmtools gump is missing: templates/gumps/gmtools.xml. | The `gmtools` command |
 
 The header of the command texts in `eng/moongate.toml` lists the ids of both sets.

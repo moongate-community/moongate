@@ -287,3 +287,7 @@
 30238 = "Frohe Weihnachten! Die Zeit der Schneebälle hat begonnen: Doppelklick auf einen Schneehaufen."
 30239 = "Die Weihnachtszeit ist vorbei."
 30240 = "Frohe Feiertage! Die Geschenke liegen in deinem Rucksack."
+30241 = "Zeigt, wann ein Charakter zuletzt online war, in der Welt oder nicht: lastonline <Name>."
+30242 = "{0} ist jetzt online."
+30243 = "{0} war zuletzt am {1} (UTC) online."
+30244 = "{0} hat noch kein Datum des letzten Besuchs: Der Charakter hat die Welt nicht verlassen, seit das Datum gespeichert wird."
