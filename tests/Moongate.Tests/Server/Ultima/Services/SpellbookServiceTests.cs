@@ -58,7 +58,7 @@ public sealed class SpellbookServiceTests : IAsyncLifetime
             ),
             templates
         );
-        _books = new(_items, templates, catalog, _fixture.Sender, _speech, _handling);
+        _books = new(_items, templates, catalog, _fixture.Sender, _speech, _handling, _fixture.Sessions);
     }
 
     public async Task DisposeAsync()
@@ -148,6 +148,61 @@ public sealed class SpellbookServiceTests : IAsyncLifetime
         Assert.Equal([1, 4, 64], content.Items.Select(entry => entry.Amount));
         Assert.Equal([0x7FFFFFFFu, 0x7FFFFFFCu, 0x7FFFFFC0u], content.Items.Select(entry => entry.Serial.Value));
         Assert.All(content.Items, entry => Assert.Equal(book.Id, entry.Container));
+    }
+
+    [Fact]
+    public void Open_ABookInThePack_TellsTheClientAboutTheBookBeforeTheGump()
+    {
+        var book = Book("spellbook1", _backpack.Id);
+
+        _books.Open(_session, book);
+
+        var sent = _fixture.Sender.Sent.ToList();
+        var update = sent.FindIndex(packet => packet is ContainerItemUpdatePacket { Item.Serial: var serial } && serial == book.Id);
+        var display = sent.FindIndex(packet => packet is DisplayContainerPacket);
+        Assert.True(update >= 0, "the book is told to the client");
+        Assert.True(update < display, "and before the gump");
+    }
+
+    [Fact]
+    public void Open_AWornBook_TellsTheClientTheEquipmentBeforeTheGump()
+    {
+        var book = Book("spellbook1");
+        book.Equip(_aria.Id, LayerType.OneHanded);
+
+        _books.Open(_session, book);
+
+        var sent = _fixture.Sender.Sent.ToList();
+        var worn = sent.FindIndex(packet => packet is WornItemPacket { Item: var serial } && serial == book.Id);
+        var display = sent.FindIndex(packet => packet is DisplayContainerPacket);
+        Assert.True(worn >= 0, "the worn book is told to the client");
+        Assert.True(worn < display, "and before the gump");
+        Assert.DoesNotContain(_fixture.Sender.Sent, packet => packet is ContainerItemUpdatePacket);
+    }
+
+    [Fact]
+    public void Add_ToABookTheOwnerCarries_SendsTheBookAgain_AndRefreshesNothing()
+    {
+        var book = Book("spellbook", _backpack.Id);
+
+        Assert.True(_books.Add(book, 4));
+
+        Assert.Empty(_handling.Refreshed);
+        var content = Assert.Single(_fixture.Sender.Sent.OfType<ContainerContentPacket>());
+        Assert.Equal([4], content.Items.Select(entry => entry.Amount));
+    }
+
+    [Fact]
+    public void Add_ToAWornBook_NeverPullsItOffThePaperdoll()
+    {
+        var book = Book("spellbook");
+        book.Equip(_aria.Id, LayerType.OneHanded);
+
+        Assert.True(_books.Add(book, 4));
+
+        Assert.Empty(_handling.Refreshed);
+        Assert.DoesNotContain(_fixture.Sender.Sent, packet => packet is ContainerItemUpdatePacket);
+        Assert.Single(_fixture.Sender.Sent.OfType<ContainerContentPacket>());
     }
 
     [Fact]

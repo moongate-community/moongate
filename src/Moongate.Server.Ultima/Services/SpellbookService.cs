@@ -27,6 +27,7 @@ public sealed class SpellbookService : ISpellbookService
     private readonly IPacketSendService _sender;
     private readonly ISpeechService _speech;
     private readonly IItemHandlingService _handling;
+    private readonly ISessionService _sessions;
 
     public SpellbookService(
         IItemService items,
@@ -34,7 +35,8 @@ public sealed class SpellbookService : ISpellbookService
         ISpellCatalogService catalog,
         IPacketSendService sender,
         ISpeechService speech,
-        IItemHandlingService handling
+        IItemHandlingService handling,
+        ISessionService sessions
     )
     {
         _items = items;
@@ -43,6 +45,7 @@ public sealed class SpellbookService : ISpellbookService
         _sender = sender;
         _speech = speech;
         _handling = handling;
+        _sessions = sessions;
     }
 
     public bool IsSpellbook(ItemEntity item)
@@ -77,7 +80,18 @@ public sealed class SpellbookService : ISpellbookService
         }
 
         book.SetProp(ISpellbookService.SpellsProp, unchecked((long)(GetSpells(book) | Bit(spellId))));
-        _handling.Refresh(book);
+
+        // The owner sees the book again, with the new spell: a gump that is open gets the list it did not have. Refresh
+        // would draw a worn book as one in a container, so only a book nobody carries goes through it.
+        if (_items.GetOwner(book) is { } owner &&
+            _sessions.GetAll().FirstOrDefault(session => session.CharacterId == owner) is { } owned)
+        {
+            Open(owned, book);
+        }
+        else
+        {
+            _handling.Refresh(book);
+        }
 
         return true;
     }
@@ -114,6 +128,16 @@ public sealed class SpellbookService : ISpellbookService
                     new(new(FakeSerialBase - (uint)index), 0, index + 1, 0, 0, 0, book.Id, default)
                 );
             }
+        }
+
+        // The client may never have been told about the book: the contents of a pack reach it when the pack is opened.
+        if (book.MobileId is not null && book.Layer is not null)
+        {
+            _sender.TrySend(session.SessionId, new WornItemPacket(book));
+        }
+        else if (book.ContainerId is not null)
+        {
+            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(book, session.UsesContainerGrid()));
         }
 
         _sender.TrySend(
