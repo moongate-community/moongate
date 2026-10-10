@@ -129,6 +129,7 @@ public sealed class AnimalScriptIntegrationTests : IAsyncLifetime
             );
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
         _scripts.Write("common/pet_orders.lua", File.ReadAllText(ShippedScript("common/pet_orders.lua")));
+        _scripts.Write("common/summon.lua", File.ReadAllText(ShippedScript("common/summon.lua")));
         _scripts.Write("common/creature.lua", File.ReadAllText(ShippedScript("common/creature.lua")));
         _scripts.Write("mobiles/animal.lua", File.ReadAllText(ShippedScript("mobiles/animal.lua")));
         _scripts.Write("mobiles/scared_animal.lua", File.ReadAllText(ShippedScript("mobiles/scared_animal.lua")));

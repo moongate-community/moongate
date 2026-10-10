@@ -104,6 +104,15 @@ public sealed class PetModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Refresh_TellsThePetServiceTheFollowersChanged_ForAPlayerOnly()
+    {
+        var result = Run("return pet.refresh(2), pet.refresh(0x100), pet.refresh(0x999)");
+
+        Assert.Equal([true, false, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal([_aria.Id], _pets.ChangedFor);
+    }
+
+    [Fact]
     public void Release_AsksThePetService()
     {
         Assert.True(Run("return pet.release(2, 0x100)")[0].Read<bool>());

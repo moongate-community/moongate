@@ -190,7 +190,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
             );
 
         foreach (var script in new[]
-                     { "common/creature.lua", "common/pet_orders.lua", "mobiles/animal.lua", "mobiles/monster.lua", "mobiles/scared_animal.lua", "gumps/pet_release.lua" })
+                     { "common/creature.lua", "common/pet_orders.lua", "common/summon.lua", "mobiles/animal.lua", "mobiles/monster.lua", "mobiles/scared_animal.lua", "gumps/pet_release.lua" })
         {
             _scripts.Write(script, File.ReadAllText(ShippedScript(script)));
         }

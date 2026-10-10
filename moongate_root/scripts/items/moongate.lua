@@ -16,6 +16,9 @@
 -- Functions:
 --   on_move_over(serial, who)   a player stepped onto the gate
 --   on_use(serial, user)        a player double clicked the gate
+--   on_timer(serial, name)      the gate's own time is up ("expire", set by the
+--                               spell Gate Travel, which makes its gates of the
+--                               template magic_gate): the gate goes away
 -- ==============================================================================
 
 moongate = {}
@@ -201,4 +204,11 @@ function moongate.on_use(serial, user)
     end
 
     return true
+end
+
+-- Called when a timer of the gate runs out: the gates of Gate Travel last a while.
+function moongate.on_timer(serial, name)
+    if name == "expire" then
+        item.delete(serial)
+    end
 end

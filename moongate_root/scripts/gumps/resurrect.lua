@@ -13,7 +13,9 @@
 --   accept(player, response, args)  the Continue button; args.ankh is the ankh,
 --                                    args.healer the healer that offered,
 --                                    args.bandager the player whose bandages raised it:
---                                    no reach to keep, as ModernUO's
+--                                    no reach to keep, as ModernUO's; args.caster
+--                                    the player whose Resurrection spell asked,
+--                                    with the same: the spell kept the reach
 --   cancel(player, response, args)   the Cancel button: nothing happens
 -- ==============================================================================
 
@@ -43,8 +45,8 @@ local sound = 0x214
 
 -- Whether the ankh or the healer that asked is still within reach of the ghost.
 local function in_reach(player, args)
-    -- A player's bandages ask the ghost once, where the healer stood: no reach to keep.
-    if args.bandager then
+    -- A player's bandages, or its spell, ask the ghost once, at the reach they have: none to keep.
+    if args.bandager or args.caster then
         return true
     end
 

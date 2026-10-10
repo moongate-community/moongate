@@ -46,6 +46,11 @@ public sealed class WorldModuleTests : IAsyncLifetime
             },
             new RegionContent
             {
+                Map = MapType.Trammel, Name = "Cove", RuneName = "Cove Town",
+                Areas = [new RegionAreaContent { X1 = 2000, Y1 = 2000, X2 = 2100, Y2 = 2100 }]
+            },
+            new RegionContent
+            {
                 Map = MapType.Trammel, Name = "Covetous", TeleportIn = false, RecallOut = false,
                 Areas = [new RegionAreaContent { X1 = 2400, Y1 = 400, X2 = 2600, Y2 = 600 }]
             }
@@ -200,6 +205,17 @@ public sealed class WorldModuleTests : IAsyncLifetime
 
         Assert.Equal("Britain", result[0].Read<string>());
         Assert.Equal((LuaValue.Nil, LuaValue.Nil), (result[1], result[2]));
+    }
+
+    [Fact]
+    public void RunePlace_IsTheRuneNameOfTheRegion_ItsName_OrTheMapOutsideEveryRegion()
+    {
+        var result = Run(
+            "return world.rune_place('Trammel', 2050, 2050, 0), world.rune_place('Trammel', 1500, 1600, 0), world.rune_place('Trammel', 3000, 3000, 0), world.rune_place('Trammel', 1500, 1600, 500)"
+        );
+
+        Assert.Equal(["Cove Town", "Britain", "Trammel"], result[..3].Select(value => value.Read<string>()));
+        Assert.Equal(LuaValue.Nil, result[3]);
     }
 
     [Fact]

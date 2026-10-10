@@ -23,7 +23,8 @@
 --   creature.new(options)  gives a table with on_think(serial) and on_speech(serial, speaker, text, keywords), the
 --                          functions a mobile script defines
 --
--- A creature a player tamed follows and obeys its owner (common/pet_orders.lua) and goes for nobody.
+-- A creature a player tamed follows and obeys its owner (common/pet_orders.lua) and goes for nobody. One a spell
+-- summoned (common/summon.lua) is the same, and goes away when its time is up.
 --
 -- What a creature keeps:
 --   Its state in memory by serial, not saved: after a restart, or once no player
@@ -31,6 +32,7 @@
 -- ==============================================================================
 
 local pet_orders = require("common.pet_orders")
+local summon = require("common.summon")
 
 local creature = {}
 
@@ -363,6 +365,13 @@ function creature.new(options)
             return
         end
 
+        -- A summoned creature goes away when its time is up or its master is gone.
+        if summon.tick(serial) then
+            minds[serial] = nil
+
+            return
+        end
+
         local mind = mind_of(serial)
         mind.thinks = mind.thinks + 1
 
@@ -415,10 +424,14 @@ function creature.new(options)
         return is_owned(serial) and pet_orders.feed(serial, giver, given)
     end
 
-    -- It dies, or is raised again: what it was doing is forgotten with it.
-    function script.on_death(serial)
+    -- It dies, or is raised again: what it was doing is forgotten with it. A summoned creature leaves no corpse.
+    function script.on_death(serial, corpse)
         npc.set_prop(serial, "combat.passive", nil)
         minds[serial] = nil
+
+        if corpse and summon.is_summoned(serial) then
+            item.delete(corpse)
+        end
     end
 
     return script

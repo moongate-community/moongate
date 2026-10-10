@@ -3,15 +3,19 @@
 #
 # What it is for:
 #   The pieces of the fields the spells of Magery raise: a wall of stone, and a
-#   field of fire along the east-west or the north-south line. scripts/spells/
-#   wall_of_stone.lua and fire_field.lua put them down, five or three at a time,
-#   and scripts/items/magic_field.lua takes them away when their time is up and
-#   burns whoever stands in a field of fire.
+#   field of fire, of poison, of paralysis or of energy along the east-west or
+#   the north-south line. scripts/spells/wall_of_stone.lua, fire_field.lua,
+#   poison_field.lua, paralyze_field.lua and energy_field.lua put them down, five
+#   or three at a time, and scripts/items/magic_field.lua takes them away when
+#   their time is up, burns or poisons whoever stands in a field of fire or of
+#   poison and paralyzes whoever steps onto a field of paralysis. magic_gate is
+#   the gate Gate Travel opens at each end (scripts/items/moongate.lua takes the
+#   traveller, and takes the gate away when its time is up).
 #
 # Fields:
 #   id, base_id, item_id, name   as every item template
 #   movable    false: nobody picks a piece up
-#   script_id  magic_field: the script that ends the field and burns
+#   script_id  magic_field: the script that ends the field and burns; moongate for the gate
 #   decays     false: the script ends the field, not the decay service
 # ==============================================================================
 
@@ -44,3 +48,73 @@ rarity = "common"
 movable = false
 decays = false
 script_id = "magic_field"
+
+[[item]]
+id = "magic_poison_field_ew"
+base_id = "base_item"
+item_id = 0x3915
+name = "a field of poison"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"
+
+[[item]]
+id = "magic_poison_field_ns"
+base_id = "base_item"
+item_id = 0x3922
+name = "a field of poison"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"
+
+[[item]]
+id = "magic_paralyze_field_ew"
+base_id = "base_item"
+item_id = 0x3967
+name = "a field of paralysis"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"
+
+[[item]]
+id = "magic_paralyze_field_ns"
+base_id = "base_item"
+item_id = 0x3979
+name = "a field of paralysis"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"
+
+[[item]]
+id = "magic_energy_field_ew"
+base_id = "base_item"
+item_id = 0x3946
+name = "a field of energy"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"
+
+[[item]]
+id = "magic_energy_field_ns"
+base_id = "base_item"
+item_id = 0x3956
+name = "a field of energy"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"
+
+[[item]]
+id = "magic_gate"
+base_id = "base_item"
+item_id = 0x0F6C
+name = "a gate"
+rarity = "common"
+movable = false
+decays = false
+script_id = "moongate"

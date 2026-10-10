@@ -306,6 +306,25 @@ public sealed class WorldModule
     }
 
     /// <summary>
+    ///     Gets the name a rune marked at a place is called after; <c>world.rune_place(MapType.Trammel, 1496, 1628, 10)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The place a recall rune marked at x, y, z of the map is called after: the rune name of its region, else the name of the region, else the name of the map. nil for a z outside -128 to 127."
+    )]
+    public string? RunePlace(MapType map, int x, int y, int z)
+    {
+        if (z is < sbyte.MinValue or > sbyte.MaxValue)
+        {
+            return null;
+        }
+
+        var region = _regions.Find(map, new Point3D(x, y, z));
+
+        return region?.RuneName ?? region?.Name ?? map.ToString();
+    }
+
+    /// <summary>
     ///     Gets the mobiles, players and NPCs, within <paramref name="range" /> tiles of a place as a list of serials;
     ///     <c>for _, who in ipairs(world.mobiles_in_range(here.map, here.x, here.y, 5)) do ... end</c>.
     /// </summary>
