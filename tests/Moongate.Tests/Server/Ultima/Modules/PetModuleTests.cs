@@ -256,6 +256,48 @@ public sealed class PetModuleTests : IAsyncLifetime
         Assert.Empty(handling.Deleted);
     }
 
+    [Fact]
+    public void Lore_OfATamedCreature_GivesItsArmorDamageFoodLoyaltyAndTamingData()
+    {
+        var templates = new Moongate.Server.Ultima.Services.MobileTemplateService(
+            new StubDataLoaderService().With(
+                new Moongate.Server.Ultima.Data.Templates.Mobiles.MobileTemplate
+                {
+                    Id = "horse", Damage = Moongate.Core.Primitives.DiceSpec.Parse("1d6+2")
+                }
+            )
+        );
+        _module = new(_pets, _taming, _fixture.Mobiles, _state, _fixture.Sessions, _clock, templates: templates);
+        _horse.Armor = 6;
+        _horse.SetProp(MountProps.Owner, 2L);
+        _pets.LoyaltyOf = 70;
+
+        var result = Run(
+            "local l = pet.lore(0x100) return l.armor, l.damage_min, l.damage_max, l.loyalty, l.min_skill, l.slots, l.owner, #l.foods, l.foods[1]"
+        );
+
+        Assert.Equal([6.0, 3.0, 8.0, 70.0, 29.1, 2.0, 2.0, 1.0], result.Take(8).Select(value => value.Read<double>()));
+        Assert.Equal("meat", result[8].Read<string>());
+    }
+
+    [Fact]
+    public void Lore_OfAWildCreatureThatCannotBeTamed_HasNoLoyaltyNoSkillAndNoFood()
+    {
+        var result = Run("local l = pet.lore(0x101) return l.loyalty, l.min_skill, #l.foods, l.owner, l.damage_max");
+
+        Assert.Equal(LuaValue.Nil, result[0]);
+        Assert.Equal(LuaValue.Nil, result[1]);
+        Assert.Equal([0.0, 0.0, 0.0], result.Skip(2).Select(value => value.Read<double>()));
+    }
+
+    [Fact]
+    public void Lore_OfAPlayerOrNobody_IsNil()
+    {
+        var result = Run("return pet.lore(2), pet.lore(0x999)");
+
+        Assert.All(result, value => Assert.Equal(LuaValue.Nil, value));
+    }
+
     private LuaValue[] Run(string chunk)
     {
         using var state = LuaState.Create();

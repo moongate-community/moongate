@@ -97,14 +97,30 @@ The creatures of [`data/taming.toml`](data-files/taming.md): about 75, with the 
 for. A game master can still give any creature that can be ridden with [`tame`](commands/tame.md),
 and ignores the limit.
 
+## Animal Lore
+
+Use the Animal Lore skill, pick a creature within 8 tiles and, if the skill check (from 0 to 120) passes, a gump of two
+pages tells what it is. The page shows the same whatever your skill is; the skill decides which creatures you may look
+at: a tamed one always, one that can be tamed from 100 points, any other animal or monster from 110. Failing reads that you
+can't think of anything you know offhand.
+
+- Page 1: hits, stamina and mana, strength, dexterity and intelligence, armor rating, damage, and the loyalty rating, from
+  *wild* (a creature with no owner, or with no loyalty) to *wonderfully happy*.
+- Page 2: wrestling, tactics, magic resistance and anatomy, magery, evaluating intelligence and meditation (`---` under
+  10 points), the kinds of food it eats and the Animal Taming it asks.
+
+The texts are the client's own. Each time you try to tame a creature, Animal Lore gets a try of its own, so it grows while
+you tame. Resistances, elemental damage, regeneration, barding, pack instincts and bonding are not shown.
+
 ## For scripts
 
 The Lua module `pet`: `pet.info(creature)`, `pet.followers(player)`, `pet.max_followers()`, `pet.tame(player,
 creature)`, `pet.loyalty(creature)`, `pet.control_chance(player, creature)`, `pet.obey(player, creature)` and `pet.feed(player, creature,
-item)`; the skill script is `scripts/skills/animal_taming.lua`.
+item)` and `pet.lore(creature)` (armor, damage, foods, loyalty and the taming data in one table); the skill scripts are
+`scripts/skills/animal_taming.lua` and `scripts/skills/animal_lore.lua`.
 
 ## Not built yet
 
-Animal Lore as a skill to learn and to read a pet's loyalty (the chance to be obeyed already counts the Animal Lore a character has); bonding; gold, metal and
+Bonding; gold, metal and
 leather as food; friend, transfer, drop and patrol; bringing the pets along when the owner
 travels by gate or spell; and the pets of a player who is offline stay where they were.

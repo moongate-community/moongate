@@ -123,7 +123,8 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
         _horse = Creature(0x100, "horse", 2);
 
         var data = new StubDataLoaderService().With(
-            new SkillContent { Id = SkillType.AnimalTaming, GainFactor = 1.0, Delay = 30 }
+            new SkillContent { Id = SkillType.AnimalTaming, GainFactor = 1.0, Delay = 30 },
+            new SkillContent { Id = SkillType.AnimalLore, GainFactor = 1.0, Delay = 1 }
         );
         _pets = new PetService(_fixture.Mobiles, _items, _taming, new PetsConfig(), _time);
         _container.RegisterMoongateEventBus();
@@ -233,6 +234,19 @@ public sealed class AnimalTamingScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_timers.Timers);
         // What the horse was fighting, it fights no more.
         Assert.Equal([_horse], _combat.Stopped);
+    }
+
+    [Fact]
+    public void TheRollOfTheTaming_AlsoTriesAnimalLore_ToLearnFromIt()
+    {
+        _state.Skills.Add(new MobileSkill { Skill = SkillType.AnimalLore, Base = 200, Cap = 1200 });
+        _aria.Skills = [.. _aria.Skills, new MobileSkill { Skill = SkillType.AnimalLore, Base = 200, Cap = 1200 }];
+        _random.Rest = 0.0;
+
+        TameUntilTheRoll();
+
+        Assert.Empty(_errors);
+        Assert.Contains(_state.SkillsSet, set => set.Skill == SkillType.AnimalLore && set.Value > 200);
     }
 
     [Fact]
