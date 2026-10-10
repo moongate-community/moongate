@@ -99,6 +99,22 @@ public sealed class SpellModule
     }
 
     /// <summary>
+    ///     The spellbook a mobile carries that holds a spell; <c>spell.find_book(user, "heal")</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The serial of a spellbook the mobile wears or carries in its backpack (not in a bag inside it) that holds the spell, by number or key, the one a cast would use; nil when it has none, for an unknown spell or a mobile that is not in the world."
+    )]
+    public long? FindBook(long mobile, object spellRef)
+    {
+        return TryMobile(mobile, out var who) &&
+               TrySpell(spellRef, out var spell) &&
+               _books.FindCarried(who, spell.Id) is { } book
+            ? book.Id.Value
+            : null;
+    }
+
+    /// <summary>
     ///     Writes a spell in a spellbook; <c>spell.add(book, "heal")</c>.
     /// </summary>
     [ScriptFunction(
