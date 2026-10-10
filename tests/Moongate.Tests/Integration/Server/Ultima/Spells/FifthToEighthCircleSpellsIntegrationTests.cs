@@ -1010,7 +1010,8 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.True(_bran.Hidden);
-        Assert.Equal(1000, _bran.AllowedStealthSteps);
+        // No steps of stealth: the first step it takes shows it, as it does for a Hiding without Stealth.
+        Assert.Equal(0, _bran.AllowedStealthSteps);
         Assert.Equal(40, _aria.Mana);
         Assert.Contains(_combat.Stopped, who => who == _bran);
 

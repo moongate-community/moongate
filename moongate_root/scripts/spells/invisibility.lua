@@ -3,8 +3,8 @@
 --
 -- What it is for:
 --   The sixth circle spell Invisibility: the target is hidden, as by the Hiding skill, for 1.2 seconds a point
---   of the caster's Magery, and may walk while it lasts; running, or a swing, a spell or a harm of its own,
---   shows it. Its fight is stopped and it leaves war mode. A staff member and an invulnerable creature, such
+--   of the caster's Magery; with no steps of Stealth, the first step it takes, or a swing, a spell or a harm
+--   of its own, shows it, as it does for a Hiding. Its fight is stopped and it leaves war mode. A staff member and an invulnerable creature, such
 --   as a vendor, are refused, before anything is spent: "This spell won't work on that!". The hidden state is
 --   saved with the mobile: a player that is still hidden after a restart is shown by its first step. Called by
 --   the spell service with the caster, the target ({ kind = "mobile", serial }) and the data of the spell.
@@ -24,8 +24,6 @@ local PER_POINT = 1.2
 local PUFF = 0x376A
 local PUFF_SPEED = 10
 local PUFF_DURATION = 15
--- Steps it may take while hidden: more than any time of the spell can walk; running shows it all the same.
-local STEPS = 1000
 
 function invisibility.check(caster, target, info)
     local who = target.serial
@@ -49,7 +47,6 @@ function invisibility.cast(caster, target, info)
     combat.stop(who)
     mobile.set_war_mode(who, false)
     mobile.set_hidden(who, true)
-    mobile.set_stealth_steps(who, STEPS)
     mobile.set_prop(who, "magic.invisible_until", until_time)
 
     timer.after(seconds, function()
