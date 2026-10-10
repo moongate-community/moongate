@@ -104,4 +104,6 @@ Standalone mode, the sample plugin, the administration API (it needs a TLS certi
 
 ## What was tried
 
-The chart passes lint, its render assertions and the Kubernetes schemas. It has not run with a real client yet.
+The chart passes lint, its render assertions and the Kubernetes schemas. It was installed on a five-node k3s cluster in a throwaway namespace with the trial PostgreSQL and Redis and an empty client-files claim: the roles and databases were created, the init containers applied 4 migrations to Auth and 26 to World, the login started and listened, and the realm stopped at `tiledata.mul not found in the Ultima path: /uo`, as it must without client files. `helm upgrade` kept the generated passwords and restarted only the pod whose configuration changed.
+
+Not tried yet: a real client, a `ReadWriteMany` volume, `LoadBalancer` addresses, the NetworkPolicy, and installing from the published OCI address (the first publication happens with the next release). The readiness probes are plain TCP connects, so every probe shows in the server log as a client that connects and leaves.

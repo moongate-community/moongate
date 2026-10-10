@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"fda350c33adfefe2d02a20a5a9ebd53bc2f5244f1b115be3740a518dfab2fc75","title":"Eseguire su Kubernetes"} -->
+<!-- translation: {"sourceHash":"3cfd3422f0a711c75f16a513b88f3be01778112ba75e8e8a950d3a87b4423252","title":"Eseguire su Kubernetes"} -->
 
 # Eseguire su Kubernetes
 
@@ -106,4 +106,6 @@ Modalità standalone, il plugin di esempio, l'API di amministrazione (richiede u
 
 ## Cosa è stato provato
 
-Il chart supera lint, le sue asserzioni di rendering e gli schemi di Kubernetes. Non è ancora stato eseguito con un client reale.
+Il chart supera lint, le sue asserzioni di rendering e gli schemi di Kubernetes. È stato installato su un cluster k3s a cinque nodi in un namespace usa e getta, con PostgreSQL e Redis di prova e una claim vuota per i file del client: ruoli e database sono stati creati, gli init container hanno applicato 4 migrazioni ad Auth e 26 a World, il login è partito e ascolta, e il realm si è fermato su `tiledata.mul not found in the Ultima path: /uo`, come deve senza i file del client. `helm upgrade` ha mantenuto le password generate e ha riavviato solo il pod la cui configurazione era cambiata.
+
+Non ancora provati: un client reale, un volume `ReadWriteMany`, gli indirizzi `LoadBalancer`, la NetworkPolicy e l'installazione dall'indirizzo OCI pubblicato (la prima pubblicazione avviene con il prossimo rilascio). Le readiness probe sono semplici connessioni TCP, quindi ogni probe compare nel log del server come un client che si connette e se ne va.
