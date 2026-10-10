@@ -54,8 +54,8 @@ templates = ["0x1bd7_board", "0x1bda_board"]
 | `id` | The name recipes give it, a lower-case identifier. Each list once. |
 | `templates` | The item templates that count for it, at least one. |
 
-`wood` is the plain boards: a kind of wood picked in the gump takes the boards of that kind instead, as
-`scripts/common/woods.lua` says.
+`wood` is the plain boards and `metal` the iron ingots: a kind of wood or metal picked in the gump takes the boards or
+ingots of that kind instead, as `scripts/common/woods.lua` and `scripts/common/metals.lua` say.
 
 ## Loading
 

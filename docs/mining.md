@@ -58,7 +58,7 @@ tomorrow. About half of the places are of iron.
 
 One who has the Mining of the metal digs its ore one dig in two, and iron the other; one who lacks it always digs
 iron. The ore of a metal is a large pile of its colour, which smelts into ingots of that metal, two for each ore, tried
-between the bounds of the last column. A miner below a metal's difficulty (the middle of those bounds: 65 for dull
+between the bounds of the last column. [Blacksmithing](blacksmithing.md#metals) forges with the ingots of each metal. A miner below a metal's difficulty (the middle of those bounds: 65 for dull
 copper, 99 for valorite) reads "You have no idea how to smelt this strange ore!" and nothing burns. A single ore of a metal
 that fails to smelt is burnt away. The ore of a metal always comes as a large pile, unlike iron's four sizes: a choice to
 keep one template a metal, which makes a little more metal than a pile size drawn as for iron would.
@@ -111,7 +111,7 @@ both scripts again, and add the `[[resource.vein]]` of the ore to your `data/har
 
 ## Not yet
 
-A craft that uses the coloured ingots (blacksmithing takes iron only for now); combining two piles into one; tools that wear out; sand, stone and gems; melting a metal item back into ingots.
+Combining two piles into one; tools that wear out; sand, stone and gems; melting a metal item back into ingots.
 
 ## See also
 

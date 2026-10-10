@@ -227,8 +227,9 @@ recipes with `craft.get` and the resource lists with `craft.resource`, counts an
 the player carries (`item.find`, `item.amount`, `item.consume`; a pile on the cursor is left out with `item.is_held`),
 plays the two strokes (`mobile.play_sound`, `timer.after`), tries the other skills of the recipe and then the main one
 between twice its least minus its most and its most (`skill.check`), so the chance is one in two at the least, and
-makes the item (`item.give`, else `item.create` at the player's feet), with the hue of the kind of wood
-(passing the hue of the kind of wood to `item.give`, or `item.set_hue` at the feet). A success may be exceptional (`crafting.roll`, the props `quality`, `crafter_id`, `crafter_name`), and every attempt whose skill is tried takes a use of the tool (the prop `uses_remaining`, drawn 25 to 75, `item.delete` at the last). Who is making something, the group and wood each player picked and the last recipe each started (`crafting.make_last`) are kept in memory.
+makes the item (`item.give`, else `item.create` at the player's feet), with the hue of the kind of wood or metal
+picked (passing it to `item.give`, or `item.set_hue` at the feet): the engine's table `MATERIALS` ties the resource `wood`
+to `scripts/common/woods.lua` and `metal` to `scripts/common/metals.lua`, and the kind picked is kept by craft. A success may be exceptional (`crafting.roll`, the props `quality`, `crafter_id`, `crafter_name`), and every attempt whose skill is tried takes a use of the tool (the prop `uses_remaining`, drawn 25 to 75, `item.delete` at the last). Who is making something, the group and the kind of wood or metal each player picked, by craft, and the last recipe each started (`crafting.make_last`) are kept in memory.
 `scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` on the carpentry tools) opens the crafting gump
 from the backpack; the gump is `templates/gumps/craft_menu.xml` with `scripts/gumps/craft_menu.lua`, one for every craft.
 

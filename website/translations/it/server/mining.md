@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"48229577ff03674a706e3405c77dad271b1adcfcd55868819726c9e47324a0ba","title":"Estrazione e fusione"} -->
+<!-- translation: {"sourceHash":"7288f6ad70e6c3c8c98148c9258a5345a1e3b39013850a6a3945535e786dbd84","title":"Estrazione e fusione"} -->
 
 # Estrazione e fusione
 
@@ -60,7 +60,7 @@ domani. Circa metà dei luoghi è di ferro.
 
 Chi ha il Mining del metallo ne scava il minerale uno scavo su due, e ferro l'altro; chi non ce l'ha scava sempre
 ferro. Il minerale di un metallo è un mucchio grande del suo colore, che si fonde in lingotti di quel metallo, due per ogni minerale, provato
-tra i limiti dell'ultima colonna. Un minatore sotto la difficoltà di un metallo (il centro di quei limiti: 65 per il dull
+tra i limiti dell'ultima colonna. Il [fabbro](blacksmithing.md#metals) forgia con i lingotti di ogni metallo. Un minatore sotto la difficoltà di un metallo (il centro di quei limiti: 65 per il dull
 copper, 99 per la valorite) legge "You have no idea how to smelt this strange ore!" e non brucia nulla. Un singolo minerale di un metallo
 che non si fonde viene bruciato. Il minerale di un metallo arriva sempre come mucchio grande, a differenza delle quattro dimensioni del ferro: una scelta per
 avere un solo template per metallo, che dà un po' più metallo di quanto darebbe una dimensione estratta come per il ferro.
@@ -113,7 +113,7 @@ entrambi gli script di nuovo, e aggiungi le `[[resource.vein]]` del minerale al 
 
 ## Non ancora
 
-Un mestiere che usi i lingotti colorati (per ora il fabbro usa solo il ferro); unire due mucchi in uno; attrezzi che si consumano; sabbia, pietra e gemme; rifondere un oggetto di metallo in lingotti.
+Unire due mucchi in uno; attrezzi che si consumano; sabbia, pietra e gemme; rifondere un oggetto di metallo in lingotti.
 
 ## Vedi anche
 

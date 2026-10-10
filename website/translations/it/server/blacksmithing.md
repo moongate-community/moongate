@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6050456ad4708e7c100be4e05890bb1de2e7553fa8dc188aacc6592e02eab04c","title":"Fabbro"} -->
+<!-- translation: {"sourceHash":"a38c9395e2e15bf069dfd747e2c21f32b89a8c7fbc4d98f8df3d246da245a4a2","title":"Fabbro"} -->
 
 # Fabbro
 
@@ -32,7 +32,28 @@ AOS Weapons, Axes, Polearms, Bashing e SE Weapons. Alcune:
 | Longsword | da 28 a 78 | 12 metallo |
 | War hammer | da 34,2 a 84 | 16 metallo |
 
-La scheda di ogni ricetta nel gump ne mostra i numeri. Il metallo sono i lingotti di ferro; il tessen chiede anche stoffa e Tailoring.
+La scheda di ogni ricetta nel gump ne mostra i numeri. Il metallo sono i lingotti del metallo scelto (ferro se non lo scegli: vedi [Metalli](#metals)); il tessen chiede anche stoffa e Tailoring.
+
+## Metalli
+
+La riga in basso del gump mostra il metallo che lavori e quanti lingotti ne porti; Change elenca i metalli.
+Il ferro è quello predefinito. Un altro metallo, scavato e fuso da un [minatore](mining.md), chiede Blacksmithy e dà il suo colore
+all'oggetto:
+
+| Metallo | Blacksmithy richiesto |
+| --- | --- |
+| Ferro | 0 |
+| Dull copper | 65 |
+| Shadow iron | 70 |
+| Copper | 75 |
+| Bronze | 80 |
+| Gold | 85 |
+| Agapite | 90 |
+| Verite | 95 |
+| Valorite | 99 |
+
+Scegliere un metallo che non sai lavorare risponde "You have no idea how to work this metal." Il metallo scelto vale solo per i
+lingotti, e resta fino a un riavvio, separato dal legno scelto per la falegnameria.
 
 ## Armi e armature eccezionali
 
@@ -51,7 +72,7 @@ tooltip mostra la rarità nel suo colore.
 ## Root esistenti
 
 `mgctl init` non sostituisce mai un file che potresti aver modificato. Copia dalla distribuzione `data/crafts/blacksmithing.toml`,
-`scripts/common/crafting.lua`, `scripts/common/smithy.lua`, `scripts/items/smithing_tool.lua` e
+`scripts/common/crafting.lua`, `scripts/common/smithy.lua`, `scripts/common/metals.lua`, `scripts/items/smithing_tool.lua` e
 `scripts/items/ore.lua` (ora legge `smithy.lua`), e i file degli attrezzi: `templates/items/skills/tools/blacksmithy.toml`,
 `templates/items/gear/weapons/maces_hammers.toml` e `templates/items/misc/bod_rewards_blacksmith.toml`, oppure dai
 `script_id = "smithing_tool"` ai tuoi martelli, mazze e tenaglie. Armi e armature rese eccezionali prima di
@@ -59,7 +80,7 @@ questa versione diventano subito più forti e mantengono la rarità che avevano.
 
 ## Non ancora
 
-Metalli colorati (da dull copper a valorite), riparazione, rifondere gli oggetti in lingotti, e le mosse speciali delle armi AOS e
+Il bonus d'armatura dei metalli colorati, riparazione, rifondere gli oggetti in lingotti, e le mosse speciali delle armi AOS e
 SE.
 
 ## Vedi anche

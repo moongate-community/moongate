@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"cf5adddce291b56cb286a8d5bd4c96c873a004238c3ec3a887db4b93407acd66","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"6d794b9f636014f6f14a093fbd1b867721e678fd1f42ede5042fcac766412ad8","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -227,8 +227,9 @@ ricette con `craft.get` e gli elenchi di materiali con `craft.resource`, conta e
 che il giocatore porta (`item.find`, `item.amount`, `item.consume`; una pila sul cursore è esclusa con `item.is_held`),
 esegue i due colpi (`mobile.play_sound`, `timer.after`), prova le altre abilità della ricetta e poi quella principale
 tra il doppio del minimo meno il massimo e il massimo (`skill.check`), così la probabilità al minimo è una su due, e
-crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), con il colore del tipo di legno
-(passando il colore del tipo di legno a `item.give`, oppure `item.set_hue` ai piedi). Una riuscita può essere eccezionale (`crafting.roll`, le proprietà `quality`, `crafter_id`, `crafter_name`), e ogni tentativo la cui abilità viene provata toglie un uso all'attrezzo (la proprietà `uses_remaining`, estratta tra 25 e 75, `item.delete` all'ultimo). Chi sta creando, il gruppo e il legno scelti da ogni giocatore e l'ultima ricetta iniziata da ciascuno (`crafting.make_last`) sono tenuti in memoria.
+crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), con il colore del tipo di legno o di metallo
+scelto (passandolo a `item.give`, oppure `item.set_hue` ai piedi): la tabella `MATERIALS` del motore lega la risorsa `wood`
+a `scripts/common/woods.lua` e `metal` a `scripts/common/metals.lua`, e il tipo scelto è ricordato per mestiere. Una riuscita può essere eccezionale (`crafting.roll`, le proprietà `quality`, `crafter_id`, `crafter_name`), e ogni tentativo la cui abilità viene provata toglie un uso all'attrezzo (la proprietà `uses_remaining`, estratta tra 25 e 75, `item.delete` all'ultimo). Chi sta creando, il gruppo e il tipo di legno o di metallo scelti da ogni giocatore, per mestiere, e l'ultima ricetta iniziata da ciascuno (`crafting.make_last`) sono tenuti in memoria.
 `scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` sugli attrezzi da falegname) apre il gump di creazione
 dallo zaino; il gump è `templates/gumps/craft_menu.xml` con `scripts/gumps/craft_menu.lua`, uno per tutti i mestieri.
 
