@@ -2,6 +2,7 @@ using System.Data.Common;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Moongate.Server.Core.Exceptions.Admin;
+using Moongate.Server.Ultima.Data.Account;
 using Serilog;
 
 namespace Moongate.Server.Admin.Internal;
@@ -54,7 +55,12 @@ internal sealed class AdminExceptionInterceptor : Interceptor
                 StatusCode.Unavailable,
                 "Administration dependency unavailable."
             ),
-            KeyNotFoundException => new(StatusCode.NotFound, "Account not found."),
+            AccountNotFoundException => new(StatusCode.NotFound, "Account not found."),
+            LastAdministratorException => new(
+                StatusCode.FailedPrecondition,
+                "The change would leave no unlocked administrator with API access."
+            ),
+            WrongCurrentPasswordException => new(StatusCode.PermissionDenied, "The current password is not correct."),
             _ when IsDependencyUnavailable(exception) => new(
                 StatusCode.Unavailable,
                 "Administration dependency unavailable."
