@@ -1,7 +1,7 @@
 # Maps
 
-A map item opens in the client on the part of the world it shows, with the course of pins plotted on it. Cartography,
-treasure maps and SOS bottles will draw their maps on top of this.
+A map item opens in the client on the part of the world it shows, with the course of pins plotted on it. [Cartography](cartography.md)
+draws maps on top of this; treasure maps and SOS bottles will too.
 
 ## Open a map
 
@@ -48,7 +48,7 @@ clear it or set it again.
 
 ## Not yet
 
-Cartography, treasure maps, SOS bottles and indecipherable maps. Inserting and removing pins has not been tried with a
+Treasure maps, SOS bottles and indecipherable maps. Inserting and removing pins has not been tried with a
 client yet.
 
 ## See also

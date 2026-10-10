@@ -725,3 +725,75 @@ def test_a_resource_fix_naming_no_template_stops_the_conversion(tmp_path, monkey
 
     assert crafts.run(source, items, destination, output, error) == 2
     assert "no_such_pizza" in error.getvalue()
+
+
+CARTOGRAPHY = """
+[SUBMENU 80]
+{
+ITEM=2000
+ITEM=2003
+ITEM=2004
+}
+[ITEM 2000]
+{
+NAME=local map
+RESOURCE=MAPS 1
+SKILL=12 0 50
+ADDITEM=craftedlocalmap
+}
+[ITEM 2003]
+{
+NAME=world map
+RESOURCE=MAPS 1
+SKILL=12 980 1500
+ADDITEM=largeworldmap
+}
+[ITEM 2004]
+{
+NAME=world map
+RESOURCE=MAPS 1
+SKILL=12 980 1500
+ADDITEM=ilshenarmap
+}
+"""
+
+CARTOGRAPHY_ITEMS = """
+[[item]]
+id = "0x0e34_a_blank_scroll"
+[[item]]
+id = "0x14eb_map"
+[[item]]
+id = "0x14ec_blank_map"
+[[item]]
+id = "craftedlocalmap"
+[[item]]
+id = "largeworldmap"
+[[item]]
+id = "ilshenarmap"
+"""
+
+
+def test_cartography_has_the_classic_numbers_names_by_facet_and_takes_blank_maps(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE MAPS]\n{\nID=0x14eb\nID=0x0e34\n}\n")
+    (source / "cartography.dfn").write_text(CARTOGRAPHY)
+    (items / "all.toml").write_text(CARTOGRAPHY_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 0, error.getvalue()
+
+    cartography = tomllib.loads((destination / "cartography.toml").read_text())
+    assert (cartography["name"], cartography["skill"], cartography["sound"]) == ("Cartography", "cartography", 0x0249)
+    # The root menu holds the recipes themselves.
+    [group] = cartography["group"]
+    assert group["name"] == "Maps"
+    local, world, ilshenar = group["recipe"]
+    # UOX3 writes 0 to 5 for the local map and 98 to 150 for the world maps: the classic numbers instead.
+    assert (local["name"], local["skill_min"], local["skill_max"]) == ("Local map", 10.0, 70.0)
+    assert (world["name"], world["skill_min"], world["skill_max"]) == ("World map", 39.5, 99.5)
+    assert ilshenar["name"] == "World map of Ilshenar"
+    # A blank map, as vendors sell it, is a map to draw on; a blank scroll is the scribe's.
+    lists = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}
+    assert lists["maps"] == ["0x14eb_map", "0x14ec_blank_map"]

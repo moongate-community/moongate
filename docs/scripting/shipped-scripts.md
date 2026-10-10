@@ -271,6 +271,12 @@ with the rules of `crafting.lua` and the ovens and fires of `scripts/common/heat
 within 2 tiles it opens the map on its area with the `map` module (see [Maps](../maps.md)); farther away it says
 "That is too far away.".
 
+## cartography_tool.lua
+
+`scripts/items/cartography_tool.lua` is the script of the pens (`script_id = "cartography_tool"`): from the backpack
+it opens the crafting gump of cartography (see [Cartography](../cartography.md)); a map made is drawn by
+`scripts/common/cartography.lua`.
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,

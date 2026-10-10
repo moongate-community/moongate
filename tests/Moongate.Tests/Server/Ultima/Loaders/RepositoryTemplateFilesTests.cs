@@ -712,6 +712,16 @@ public sealed class RepositoryTemplateFilesTests
         );
         Assert.Contains("0x1039_sack_of_flour", lists.Single(list => list.Id == "flour").Templates);
         Assert.Contains("0x1045_sack_of_flour", lists.Single(list => list.Id == "flour").Templates);
+
+        // Cartography: eight maps with the classic numbers; the pens draw them, a blank map is what they are drawn on.
+        var cartography = crafts["cartography"];
+        var maps = cartography.Group.Single().Recipe;
+        Assert.Equal(8, maps.Count);
+        Assert.Equal((10.0, 70.0), (maps[0].SkillMin, maps[0].SkillMax));
+        Assert.All(maps.Skip(3), recipe => Assert.Equal((39.5, 99.5), (recipe.SkillMin, recipe.SkillMax)));
+        Assert.All(new[] { "mapmakerspen", "0x0fc0_pen_and_ink" }, id => Assert.Equal("cartography_tool", byId[id].ScriptId));
+        Assert.Contains("0x14ec_blank_map", lists.Single(list => list.Id == "maps").Templates);
+        Assert.DoesNotContain("0x0e34_a_blank_scroll", lists.Single(list => list.Id == "maps").Templates);
     }
 
     [Fact]

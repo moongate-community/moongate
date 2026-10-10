@@ -804,3 +804,13 @@ def test_a_blank_map_gets_the_map_script_so_it_says_it_is_blank(uox_workspace):
 
     by_name = {item.get("name"): item for item in uox_workspace.items().values()}
     assert by_name["blank map"]["script_id"] == "map_item"
+
+
+def test_the_pens_get_the_cartography_tool_script(uox_workspace):
+    uox_workspace.write_source("items.dfn", "[0x0fc0]\n{\nname=pen and ink\nid=0x0fc0\n}\n")
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a cartographer draws with: scripts/items/cartography_tool.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["pen and ink"]["script_id"] == "cartography_tool"

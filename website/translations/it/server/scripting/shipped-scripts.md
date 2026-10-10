@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e1e4a8cf12051ec464bdd47f8623c0a2140393351c478d9bce6aeed1c677e729","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"b1799dc299a4328c9137627550ed13f9622b6d7d208a87710fd5fa5a30003eaa","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -270,6 +270,12 @@ con le regole di `crafting.lua` e i forni e fuochi di `scripts/common/heat.lua`.
 `scripts/items/map_item.lua` è lo script delle mappe (`script_id = "map_item"`): dallo zaino o da terra
 entro 2 caselle apre la mappa sulla sua area con il modulo `map` (vedi [Mappe](../maps.md)); più lontano dice
 "That is too far away.".
+
+## cartography_tool.lua
+
+`scripts/items/cartography_tool.lua` è lo script delle penne (`script_id = "cartography_tool"`): dallo zaino
+apre il gump di creazione della cartografia (vedi [Cartografia](../cartography.md)); una mappa creata viene disegnata da
+`scripts/common/cartography.lua`.
 
 ## fishing_pole.lua
 
