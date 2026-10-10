@@ -1,7 +1,7 @@
 # Crafts
 
 `data/crafts` holds the crafts players make things with, one file a craft (`carpentry.toml`, `blacksmithing.toml`,
-`tailoring.toml` and `tinkering.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
+`tailoring.toml`, `tinkering.toml` and `fletching.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
 [Blacksmithing](../blacksmithing.md). What a craft must stand near, such as the anvil and the forge of blacksmithing, is not data:
 it is the table `NEEDS` of `scripts/common/crafting.lua`.
 
@@ -77,4 +77,5 @@ The converter leaves out the groups that make deeds and the recipe of boards, tu
 points, and counts only boards as wood. UOX3 nests its menus (Blacksmithing, Armor, Ringmail): each menu that holds
 recipes becomes a group, in the order the menus are met. A recipe's name starts with a capital, and a second recipe of
 the same name (a spoon facing the other way) is told apart with a number: "Spoon 2". The tinker's tools recipe makes
-the tinker's tools, not UOX3's 10-stone tool kit.
+the tinker's tools, not UOX3's 10-stone tool kit. A root menu's own recipes (the bows) form a first group, a second root
+(the arrows and bolts of the fletching tool) is walked after it, and UOX3's batches of five or more are left out.

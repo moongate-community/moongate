@@ -1,8 +1,8 @@
-<!-- translation: {"sourceHash":"e95b885ac9a48f6183c49315e6d4d563c64fe5442199bcf5cb6572f818be41ee","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"19d9b17c9d310d45564d171e0238742e8208a9ee591cb7d9bdc029df832139cf","title":"Mestieri"} -->
 
 # Mestieri
 
-`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml`, `tailoring.toml` e `tinkering.toml`), e
+`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml`, `tailoring.toml`, `tinkering.toml` e `fletching.toml`), e
 `resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole e
 [Fabbro](../blacksmithing.md). Ciò a cui un mestiere deve stare vicino, come l'incudine e la forgia del fabbro, non è un dato:
 è la tabella `NEEDS` di `scripts/common/crafting.lua`.
@@ -79,4 +79,5 @@ Il convertitore esclude i gruppi che creano deed e la ricetta delle assi, trasfo
 punti, e conta come legno solo le assi. UOX3 annida i suoi menu (Blacksmithing, Armor, Ringmail): ogni menu che contiene
 ricette diventa un gruppo, nell'ordine in cui i menu si incontrano. Il nome di una ricetta inizia con la maiuscola, e una seconda ricetta
 con lo stesso nome (un cucchiaio girato dall'altra parte) si distingue con un numero: "Spoon 2". La ricetta Tinker's tools crea
-gli attrezzi da tinker, non la cassetta degli attrezzi da 10 pietre di UOX3.
+gli attrezzi da tinker, non la cassetta degli attrezzi da 10 pietre di UOX3. Le ricette proprie di un menu radice (gli archi) formano un
+primo gruppo, una seconda radice (le frecce e i dardi dell'attrezzo da fletcher) si visita dopo, e i lotti da cinque o più di UOX3 sono esclusi.

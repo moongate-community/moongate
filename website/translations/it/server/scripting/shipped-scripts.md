@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"205388d4e09dbbea34f86665f35f39eeb0617d019c607db9db10d33bf690b017","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"64598267138f84a683f3851d8de59795083a5948c6f9497c7f302af9ffe0eb3f","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -252,6 +252,12 @@ apre il gump di creazione della sartoria (vedi [Sartoria](../tailoring.md)), con
 `scripts/items/tinkering_tool.lua` è lo script degli attrezzi da tinker e delle cassette degli attrezzi (`script_id = "tinkering_tool"`):
 dallo zaino apre il gump di creazione della meccanica (vedi [Meccanica](../tinkering.md)), con le regole di
 `crafting.lua` e il metallo scelto.
+
+## fletching_tool.lua
+
+`scripts/items/fletching_tool.lua` è lo script degli attrezzi da fletcher (`script_id = "fletching_tool"`): dallo
+zaino apre il gump di creazione di archi e frecce (vedi [Archi e frecce](../fletching.md)), con le
+regole di `crafting.lua` e il legno scelto.
 
 ## fishing_pole.lua
 

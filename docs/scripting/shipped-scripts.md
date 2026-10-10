@@ -253,6 +253,12 @@ opens the crafting gump of tailoring (see [Tailoring](../tailoring.md)), with th
 from the backpack it opens the crafting gump of tinkering (see [Tinkering](../tinkering.md)), with the rules of
 `crafting.lua` and the metal picked.
 
+## fletching_tool.lua
+
+`scripts/items/fletching_tool.lua` is the script of the fletcher's tools (`script_id = "fletching_tool"`): from the
+backpack it opens the crafting gump of bowcraft and fletching (see [Bowcraft and fletching](../fletching.md)), with the
+rules of `crafting.lua` and the wood picked.
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,
