@@ -1,0 +1,66 @@
+# Moongate chart values. Read docs/kubernetes.md before the first install.
+
+image:
+  repository: ghcr.io/moongate-community/moongate
+  tag: ""            # defaults to the chart appVersion
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+uo:
+  # Required: a PVC with your Ultima Online client files, mounted read-only on /uo.
+  existingClaim: ""
+
+secrets:
+  # Name of a Secret with the connection strings. Leave empty only with the bundled
+  # PostgreSQL and Redis (trials): the chart then generates the passwords.
+  existingSecret: ""
+
+schema:
+  # An init container applies the SQL migrations before the server starts.
+  enabled: true
+
+terminationGracePeriodSeconds: 120   # the final world save takes 8 to 15 seconds
+
+podSecurity:
+  runAsUser: 1654
+  fsGroup: 1654
+
+network:
+  encryptionMode: Disabled           # Disabled, Optional or Required
+
+login:
+  shardName: Moongate
+  service:
+    type: LoadBalancer
+    port: 2593
+    annotations: {}
+    loadBalancerIP: ""
+  resources: {}
+  nodeSelector: {}
+  extraToml: ""                      # appended to the login moongate.toml
+
+# One entry per realm. Each realm is its own StatefulSet, volume and database.
+#   id                 DNS label, unique (realm-1)
+#   name               shown in the client's realm list
+#   serverIndex        1 to 255, unique
+#   advertisedAddress  IPv4 literal the client connects to (the Service's external IP)
+#   advertisedPort     default 2595
+#   persistence        {size: 5Gi, storageClass: ""}
+#   ping               {enabled: false}  UDP 12000 on one realm only
+#   service            {type: LoadBalancer, annotations: {}, loadBalancerIP: ""}
+#   resources, nodeSelector, extraToml
+realms: []
+
+# Trial dependencies. Use your own PostgreSQL and Redis in production.
+postgresql:
+  enabled: false
+  image: postgres:16-alpine
+  storage:
+    size: 5Gi
+    storageClass: ""
+redis:
+  enabled: false
+  image: redis:7.4-alpine
+
+networkPolicy:
+  enabled: false

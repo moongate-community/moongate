@@ -1,0 +1,14 @@
+apiVersion: v2
+name: moongate
+description: Moongate Ultima Online server, one login and any number of realms
+type: application
+version: 0.16.0
+appVersion: "0.16.0"
+kubeVersion: ">=1.26.0-0"
+home: https://github.com/moongate-community/moongate
+sources:
+  - https://github.com/moongate-community/moongate
+keywords:
+  - ultima-online
+  - game-server
+  - moongate
