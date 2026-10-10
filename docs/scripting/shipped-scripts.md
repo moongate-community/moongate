@@ -293,10 +293,10 @@ item is, the plain potions vendors sell included, for `potion.lua` and `explosio
 
 `scripts/items/test_kit.lua` is the script of the staff's test bags (`templates/items/test_kits.toml`,
 `script_id = "test_kit"`): `.add test_kit_alchemy` gives a bag that fills, the first time it is opened, with the tool, the
-materials and the items to try a craft, the potions or the first circle of Magery; then it is a plain bag. The bags are
+materials and the items to try a craft, the potions or the spells of Magery; then it is a plain bag. The bags are
 `test_kit_alchemy`, `test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`,
 `test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking` and `test_kit_magery` (a full spellbook, 20 of each
-reagent and three scrolls of each first circle spell); the table `KITS` says what each holds. The skill is set apart, as
+reagent, three scrolls of each built spell of the first four circles and two recall runes); the table `KITS` says what each holds. The skill is set apart, as
 `.set skill alchemy 100`.
 
 ## spellbook.lua and spell_scroll.lua
@@ -313,9 +313,22 @@ call the [`spell` module](https://moongate.sh/lua/spell/); see [Magery](../mager
 [`spells.toml`](../data-files/spells.md). `cast(caster, target, info)` is the effect, called once the cast succeeded;
 `check(caster, target, info)` may refuse before anything is spent by returning a cliloc number or a text. The target is
 `{ kind = "mobile" | "item", serial }`, `{ kind = "location", map, x, y, z }` or `{ kind = "none" }`, and `info` the data
-of the spell with `scroll` true for a cast from a scroll. The seven scripts of the first circle are `clumsy`,
-`create_food`, `feeblemind`, `heal`, `magic_arrow`, `night_sight` and `weaken`. `scripts/common/magic.lua` is what they
-share: the chance a target resists, the damage scalar, the curse and its time, the effect and the sound of a spell.
+of the spell with `scroll` true for a cast from a scroll. The scripts built are the first circle (`clumsy`,
+`create_food`, `feeblemind`, `heal`, `magic_arrow`, `night_sight`, `weaken`), `reactive_armor`, the second circle
+(`agility`, `cunning`, `cure`, `harm`, `protection`, `strength`), the third (`bless`, `fireball`, `poison`, `teleport`,
+`telekinesis`, `wall_of_stone`) and the fourth (`arch_cure`, `arch_protection`, `curse`, `fire_field`, `greater_heal`,
+`lightning`, `mana_drain`, `recall`); a spell without a script says it is disabled. `scripts/common/magic.lua` is what
+they share: the chance a target resists, the damage scalar, the curse and the buff with their time, the armor of a
+Protection, the refusal of a heal, the effect and the sound of a spell. `scripts/common/field.lua` puts down the line of
+pieces of a field.
+
+## magic_field.lua
+
+`scripts/items/magic_field.lua` is the script of the pieces of the fields (`script_id = "magic_field"`, templates in
+`templates/items/magic/fields.toml`): the item timers `expire` and `tick` end a piece when its `field.until` is reached,
+and a piece with `field.damage` burns, with `combat.harm` and the caster as the attacker, whoever steps onto it
+(`on_move_over`, `on_npc_move_over`) or stands in it at each tick, once a second. A try of Resisting Spells lessens the
+burn to one point; an invulnerable or a dead mobile is left alone. See [Magery](../magery.md).
 
 ## fishing_pole.lua
 

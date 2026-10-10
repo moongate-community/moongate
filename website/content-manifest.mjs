@@ -66,6 +66,7 @@ export const contentEntries = [
   { source: 'docs/commands/key.md', slug: 'server/commands/key', title: 'key', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/create_check.md', slug: 'server/commands/create-check', title: 'create_check', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/add_gold.md', slug: 'server/commands/add-gold', title: 'add_gold', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/mark_rune.md', slug: 'server/commands/mark-rune', title: 'mark_rune', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/motd.md', slug: 'server/motd', title: 'Message of the day', group: 'Run a shard' },
   { source: 'docs/persistence-operations.md', slug: 'server/persistence-operations', title: 'Operate PostgreSQL', group: 'Run a shard' },
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Run a shard' },

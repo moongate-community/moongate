@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Data.Effects;
 using Moongate.Server.Ultima.Data.Internal.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -64,6 +65,12 @@ public sealed class CombatService : ICombatService
     private const double Tenth = 10.0;
     private const double PassiveMinimum = 0;
     private const double PassiveMaximum = 100;
+    private const int ReactiveBasePercent = 10;
+    private const double ReactivePointsPerPercent = 4.0;
+    private const int ReactiveSound = 0x1F1;
+    private const int ReactiveEffect = 0x374A;
+    private const int ReactiveEffectSpeed = 10;
+    private const int ReactiveEffectDuration = 16;
 
     private readonly ILogger _logger = Log.ForContext<CombatService>();
     private readonly Dictionary<Serial, Fighter> _fighters = [];
@@ -566,10 +573,73 @@ public sealed class CombatService : ICombatService
             return;
         }
 
-        if (Wound(attacker, target, DamageOf(attacker, target, weapon), now))
+        var damage = DamageOf(attacker, target, weapon);
+        var attackerFell = false;
+
+        // Only a melee blow of someone that can be hurt goes back: not an arrow, and not a guard's.
+        if (!IsRanged(weapon) && attacker.Notoriety != NotorietyType.Invulnerable)
+        {
+            damage = Reflect(attacker, target, damage, now, out attackerFell);
+        }
+
+        // An attacker that fell to its own blow is a ghost: it keeps no fight with the target, and strikes no more.
+        if (attackerFell || attacker.IsDead || !_mobiles.IsInWorld(attacker.Id))
+        {
+            Wound(null, target, damage, now, false);
+
+            return;
+        }
+
+        if (Wound(attacker, target, damage, now))
         {
             Stop(attacker);
         }
+    }
+
+    private static bool IsRanged(WeaponInfo? weapon)
+    {
+        return weapon is { Type: { } kind } && kind.Projectile != 0;
+    }
+
+    // Reactive Armor: a part of the melee blow of someone at arm's length goes back to it, as much as 10 per cent and a
+    // quarter of a point of the Magery of the wearer, when it is hit; the target is spared that much.
+    private int Reflect(MobileEntity attacker, MobileEntity target, int damage, DateTimeOffset now, out bool attackerFell)
+    {
+        attackerFell = false;
+
+        if (!IsMagicActive(target, MagicProps.ReactiveUntil, now) ||
+            attacker.Map != target.Map ||
+            Math.Max(
+                Math.Abs(attacker.Location.X - target.Location.X),
+                Math.Abs(attacker.Location.Y - target.Location.Y)
+            ) > 1)
+        {
+            return damage;
+        }
+
+        var percent = (int)(ReactiveBasePercent + Points(target, SkillType.Magery) / ReactivePointsPerPercent);
+        var reflected = damage * percent / 100;
+
+        if (reflected <= 0)
+        {
+            return damage;
+        }
+
+        _speech.PlaySound(attacker, ReactiveSound);
+        _effects?.PlayOn(
+            attacker.Id,
+            attacker.Map,
+            attacker.Location,
+            new EffectOptions { Graphic = ReactiveEffect, Speed = ReactiveEffectSpeed, Duration = ReactiveEffectDuration }
+        );
+        attackerFell = Wound(null, attacker, reflected, now, false);
+
+        return damage - reflected;
+    }
+
+    private static bool IsMagicActive(MobileEntity mobile, string untilKey, DateTimeOffset now)
+    {
+        return mobile.TryGetProp<long>(untilKey, out var until) && until > now.ToUnixTimeSeconds();
     }
 
     private static bool IsOwnPet(MobileEntity? attacker, MobileEntity target)
@@ -741,17 +811,26 @@ public sealed class CombatService : ICombatService
         return Absorb(CombatFormulas.Reduce(damage, halved, rate), target);
     }
 
+    // What a Protection or an Arch Protection adds to the armor, while it lasts.
+    private int MagicArmor(MobileEntity target)
+    {
+        return IsMagicActive(target, MagicProps.ArmorUntil, _time.GetUtcNow())
+            ? (int)Math.Clamp(target.GetProp(MagicProps.ArmorBonus, 0L), 0L, 1000L)
+            : 0;
+    }
+
     // An NPC has the armor of its template, one number; a player the piece of armor on the part the blow lands on.
     private int Absorb(int damage, MobileEntity target)
     {
         if (target.IsNpc)
         {
-            return CombatFormulas.Final(damage, target.Armor, _random);
+            return CombatFormulas.Final(damage, target.Armor + MagicArmor(target), _random);
         }
 
         var piece = _gear.ArmorAt(target, CombatFormulas.ZoneOf(_random.NextDouble()));
+        var absorbed = CombatFormulas.AbsorbedByPiece(piece, _random) + CombatFormulas.Absorbed(MagicArmor(target), _random);
 
-        return Math.Max(damage - CombatFormulas.AbsorbedByPiece(piece, _random), 1);
+        return Math.Max(damage - absorbed, 1);
     }
 
     // The weapon of a player, between its least and its most; the dice of the template of an NPC; else the fists of ModernUO.

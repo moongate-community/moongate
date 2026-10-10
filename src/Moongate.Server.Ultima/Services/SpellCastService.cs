@@ -4,6 +4,7 @@ using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Effects;
 using Moongate.Server.Ultima.Data.Internal.Spells;
 using Moongate.Server.Ultima.Data.Mobiles;
@@ -59,6 +60,7 @@ public sealed class SpellCastService : ISpellCastService
     private readonly ITimerService _timers;
     private readonly TimeProvider _time;
     private readonly IMountService? _mounts;
+    private readonly IJailService? _jail;
 
     public SpellCastService(
         ISpellCatalogService catalog,
@@ -79,11 +81,13 @@ public sealed class SpellCastService : ISpellCastService
         ITimerService timers,
         TimeProvider time,
         IMountService? mounts = null,
+        IJailService? jail = null,
         ILogger? logger = null
     )
     {
         _logger = logger ?? Log.ForContext<SpellCastService>();
         _mounts = mounts;
+        _jail = jail;
         _catalog = catalog;
         _books = books;
         _scripts = scripts;
@@ -206,6 +210,15 @@ public sealed class SpellCastService : ISpellCastService
         if (caster.IsDead)
         {
             _speech.TellCliloc(caster, ISpellCastService.DeadMessage);
+
+            return false;
+        }
+
+        // As the jail region of ModernUO: a prisoner casts nothing, so it cannot Recall or Teleport out. Staff is exempt.
+        if (_jail?.GetSentence(caster.Id) is not null &&
+            !(_sessions.TryGetByCharacterId(caster.Id, out var jailed) && jailed.AccountType >= AccountType.GameMaster))
+        {
+            _speech.TellCliloc(caster, ISpellCastService.NotInJailMessage);
 
             return false;
         }

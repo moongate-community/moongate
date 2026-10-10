@@ -416,7 +416,7 @@ public sealed class FirstCircleSpellsIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal(0, _bonuses.Bonus(_bran, stat));
-        Assert.Empty(_timers.Timers.Where(timer => timer.Name == "stat_curse"));
+        Assert.DoesNotContain(_timers.Timers, timer => timer.Name == "stat_curse");
     }
 
     [Fact]

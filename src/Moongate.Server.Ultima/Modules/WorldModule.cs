@@ -1,6 +1,7 @@
 using Lua;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Utils;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
@@ -30,6 +31,7 @@ public sealed class WorldModule
 
     // A smithy, not a region: the statics of a wider square cost a read of each of its cells.
     private const int MaxStaticsRange = 18;
+    private const int PersonHeight = 16;
 
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
@@ -47,6 +49,7 @@ public sealed class WorldModule
     private readonly ILightService? _light;
     private readonly ISpeechService? _speech;
     private readonly IMapService? _maps;
+    private readonly ITileDataService? _tiles;
     private readonly ILogger _logger = Log.ForContext<WorldModule>();
 
     public WorldModule(
@@ -65,9 +68,11 @@ public sealed class WorldModule
         IWorldPropsService? props = null,
         ILightService? light = null,
         ISpeechService? speech = null,
-        IMapService? maps = null
+        IMapService? maps = null,
+        ITileDataService? tiles = null
     )
     {
+        _tiles = tiles;
         _maps = maps;
         _speech = speech;
         _light = light;
@@ -207,6 +212,57 @@ public sealed class WorldModule
     }
 
     /// <summary>
+    ///     Gets whether a mobile could be put at <paramref name="x" />, <paramref name="y" />, <paramref name="z" />
+    ///     without being on top of another mobile or inside an impassable or surface item lying on the ground, such as
+    ///     a closed door; <c>world.can_fit(map, x, y, z, caster)</c>. Mobiles are left out of the question with a false
+    ///     <paramref name="mobiles" />, as a field of fire does.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether a mobile fits at the place x, y, z of the map: no other mobile than the one named (0 for none) stands there at that height (not asked when mobiles is false), and no impassable or surface item on the ground fills the space above z. Statics are not asked (see world.standing_z)."
+    )]
+    public bool CanFit(MapType map, int x, int y, int z, long except = 0, bool mobiles = true)
+    {
+        if (!_sectors.IsInside(map, x, y))
+        {
+            return false;
+        }
+
+        foreach (var mobile in mobiles ? _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0) : [])
+        {
+            if ((long)mobile.Id.Value != except && mobile.Location.Z + PersonHeight > z && z + PersonHeight > mobile.Location.Z)
+            {
+                return false;
+            }
+        }
+
+        if (_tiles is null)
+        {
+            return true;
+        }
+
+        var items = _sectors.GetItemsAt(map, x, y);
+
+        for (var index = 0; index < items.Count; index++)
+        {
+            var found = items[index];
+
+            if (found.GroundLocation is not { } spot || !_tiles.TryGetItem(found.ItemId, out var data) ||
+                (data.Flags & (TileFlagType.Impassable | TileFlagType.Surface)) == 0)
+            {
+                continue;
+            }
+
+            if (spot.Z + data.StandHeight > z && z + PersonHeight > spot.Z)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /// <summary>
     ///     Gets whether guards protect the place <paramref name="x" />, <paramref name="y" />, <paramref name="z" /> of
     ///     <paramref name="map" />, such as a town;
     ///     <c>world.is_guarded(MapType.Trammel, 1496, 1628, 10)</c>.
@@ -218,6 +274,22 @@ public sealed class WorldModule
     public bool IsGuarded(MapType map, int x, int y, int z)
     {
         return z is >= sbyte.MinValue and <= sbyte.MaxValue && _regions.Find(map, new Point3D(x, y, z))?.Guarded == true;
+    }
+
+    /// <summary>
+    ///     Gets whether a travel rule lets a mobile through a place, as Teleport and Recall ask;
+    ///     <c>world.travel_allowed(here.map, x, y, z, "teleport_in")</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the travel rule ('recall_in', 'recall_out', 'gate_in', 'gate_out', 'mark', 'teleport_in' or 'teleport_out') lets a mobile through the place x, y, z of the map: false when any region covering the place switches it off, true outside every region. False also for an unknown rule or a z outside -128 to 127."
+    )]
+    public bool TravelAllowed(MapType map, int x, int y, int z, string rule)
+    {
+        return z is >= sbyte.MinValue and <= sbyte.MaxValue &&
+               EnumNameUtils.TryParse<RegionTravelType>(rule, out var type) &&
+               Enum.IsDefined(type) &&
+               _regions.AllowsTravel(map, new Point3D(x, y, z), type);
     }
 
     /// <summary>

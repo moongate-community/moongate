@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.Combat;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Combat;
@@ -687,6 +688,134 @@ public sealed class CombatServiceTests : IAsyncLifetime
         Tick();
 
         Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
+    public void TheMagicArmorOfAProtectedPlayer_TakesMoreOffABlow_WhileItLasts()
+    {
+        var now = _clock.Now.ToUnixTimeSeconds();
+        _aria.SetProp(MagicProps.ArmorBonus, 50L);
+        _aria.SetProp(MagicProps.ArmorUntil, now + 60);
+        _gear.Armor[ArmorZoneType.Chest] = 30;
+        // The chest, and 15 of the piece: the orc's 8 halved is 4, and the least is 1; the magic armor adds 8 more.
+        _random.Doubles(0.99, 0.0, 0.99, 0.0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        Assert.Equal(29, _aria.Hits);
+    }
+
+    [Fact]
+    public void TheMagicArmorOfAProtectedPlayer_DoesNothingOnceItsTimeIsUp()
+    {
+        var now = _clock.Now.ToUnixTimeSeconds();
+        _aria.SetProp(MagicProps.ArmorBonus, 50L);
+        _aria.SetProp(MagicProps.ArmorUntil, now - 1);
+        _random.Doubles(0.01, 0.0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
+    public void ReactiveArmor_SendsAPartOfAMeleeBlowBack_AsMuchAsTheMageryOfTheWearerAtTheBlowGives()
+    {
+        var now = _clock.Now.ToUnixTimeSeconds();
+        _aria.SetProp(MagicProps.ReactiveUntil, now + 60);
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Magery, Base = 1000 });
+        _random.Doubles(0.01, 0.0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        // The orc's 4 at 10 + 100 / 4 = 35 per cent: 1 goes back, 3 stay.
+        Assert.Equal(27, _aria.Hits);
+        Assert.Equal(29, _orc.Hits);
+        Assert.Contains((_orc, 0x1F1), _speech.Sounds);
+        Assert.Contains(_effects.On, shown => shown.Target == _orc.Id && shown.Options.Graphic == 0x374A);
+    }
+
+    [Fact]
+    public void ReactiveArmor_TakesTheMageryOfTheWearerWhenItIsHit_NotWhenItWasCast()
+    {
+        var now = _clock.Now.ToUnixTimeSeconds();
+        _aria.SetProp(MagicProps.ReactiveUntil, now + 60);
+        _random.Doubles(0.01, 0.0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        // No Magery: 10 per cent of 4 is no whole point, and nothing goes back.
+        Assert.Equal((26, 30), (_aria.Hits, _orc.Hits));
+    }
+
+    [Fact]
+    public void ReactiveArmor_ThatHasRunOut_ReflectsNothing()
+    {
+        var now = _clock.Now.ToUnixTimeSeconds();
+        _aria.SetProp(MagicProps.ReactiveUntil, now - 1);
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Magery, Base = 1000 });
+        _random.Doubles(0.01, 0.0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        Assert.Equal((26, 30), (_aria.Hits, _orc.Hits));
+    }
+
+    [Fact]
+    public void ReactiveArmor_DoesNotSendBackAShotFromAnArcherOneTileAway()
+    {
+        var now = _clock.Now.ToUnixTimeSeconds();
+        _aria.SetProp(MagicProps.ReactiveUntil, now + 60);
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Magery, Base = 1000 });
+        _gear.Ranged = Bow;
+        _random.Doubles(0.01, 0.0);
+        _combat.Attack(_orc, _aria);
+
+        Tick();
+
+        Assert.Equal(30, _orc.Hits);
+        Assert.DoesNotContain((_orc, 0x1F1), _speech.Sounds);
+    }
+
+    [Fact]
+    public void ReactiveArmor_DoesNotHurtAnInvulnerableAttacker_SuchAsAGuard()
+    {
+        var now = _clock.Now.ToUnixTimeSeconds();
+        _aria.SetProp(MagicProps.ReactiveUntil, now + 60);
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Magery, Base = 1000 });
+        _random.Doubles(0.01, 0.0);
+        _combat.Attack(_orc, _aria);
+        _orc.Notoriety = NotorietyType.Invulnerable;
+
+        Tick();
+
+        Assert.Equal(30, _orc.Hits);
+        Assert.Equal(26, _aria.Hits);
+    }
+
+    [Fact]
+    public void ReactiveArmor_ThatKillsTheAttacker_LeavesNoFightBackNorMurderBookkeepingForTheGhost()
+    {
+        var now = _clock.Now.ToUnixTimeSeconds();
+        _orc.SetProp(MagicProps.ReactiveUntil, now + 60);
+        _orc.Skills.Add(new MobileSkill { Skill = SkillType.Magery, Base = 1000 });
+        _aria.Hits = 1;
+        _random.Integers(7);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        // The blow of 8 sends 2 back (35 per cent): that is the end of aria; the orc keeps the rest of it.
+        Assert.Equal(0, _aria.Hits);
+        Assert.Equal([(_aria, (MobileEntity?)null)], _death.Killed);
+        Assert.True(_orc.Hits < 30);
+        Assert.DoesNotContain($"Struck {_aria.Id.Value} {_orc.Id.Value}", _murders.Calls);
+        Assert.Null(_combat.TargetOf(_orc));
     }
 
     [Fact]

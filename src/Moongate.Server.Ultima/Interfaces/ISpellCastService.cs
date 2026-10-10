@@ -95,6 +95,11 @@ public interface ISpellCastService : ISessionClosedListener
     const int CannotHarmMessage = 1001018;
 
     /// <summary>
+    ///     "You cannot cast spells here." what a prisoner in jail reads, as the jail region of ModernUO says it.
+    /// </summary>
+    const int NotInJailMessage = 502629;
+
+    /// <summary>
     ///     The most tiles away a target may be.
     /// </summary>
     const int TargetRange = 12;

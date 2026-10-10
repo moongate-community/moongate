@@ -95,6 +95,12 @@ if not mobile.add_stat_bonus(user, "strength", 10, 120) then
 end
 ```
 
+A spell buff passes `true` last: a weaker bonus of the stat is replaced, and only one as strong or stronger refuses it:
+
+```lua
+mobile.add_stat_bonus(target, "dexterity", 11, 120, true)
+```
+
 ## add_stat_curse
 
 A curse of the dexterity, as Clumsy casts it: 11 points for two minutes. A curse of the same stat that is as strong or

@@ -21,29 +21,11 @@ heal = {}
 
 heal.random = math.random
 
-local CANNOT_HEAL_SELF = 1005000    -- You can not heal yourself in your current state.
-local CANNOT_HEAL_OTHER = 1010398   -- You can not heal that person in their current state.
-local WONT_WORK = 501857            -- This spell won't work on that!
 local LEAST = 1
 local MOST = 5
 
 function heal.check(caster, target, info)
-    local who = target.serial
-    local dead = magic.refuse_dead(who)
-
-    if dead then
-        return dead
-    end
-
-    if mobile.poison_level(who) then
-        return caster == who and CANNOT_HEAL_SELF or CANNOT_HEAL_OTHER
-    end
-
-    local stats = mobile.stats(who)
-
-    if stats and stats.hits >= stats.hits_max then
-        return WONT_WORK
-    end
+    return magic.refuse_unhealable(caster, target.serial)
 end
 
 function heal.cast(caster, target, info)

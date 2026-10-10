@@ -146,3 +146,27 @@ local function near_an_anvil(user)
     return false
 end
 ```
+
+## travel_allowed
+
+Whether the regions of a place let a recall in: false when any region covering it says no:
+
+```lua
+if not world.travel_allowed(map, x, y, z, "recall_in") then
+    mobile.message_cliloc(user, 1019004) -- You are not allowed to travel there.
+end
+```
+
+## can_fit
+
+Whether a mobile fits at a place, as Teleport asks: no other mobile stands there and no impassable item, a shut door
+among them, lies on the ground. The fifth argument names a mobile that does not count (the caster); a false sixth leaves
+mobiles out of the question:
+
+```lua
+local z = world.standing_z(map, x, y, user_z)
+
+if not z or not world.can_fit(map, x, y, z, caster) then
+    return 501942 -- That location is blocked.
+end
+```

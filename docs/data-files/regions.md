@@ -129,8 +129,10 @@ teleport_out = true
 ```
 
 The server reads a region's type, music, season and weather for the players inside it.
-The `guarded` flag is read too: by the guards, the texts of entering and leaving a guarded place, and the vendors. No
-system reads the housing, logout and travel rules yet: they are loaded and validated only.
+The `guarded` flag is read too: by the guards, the texts of entering and leaving a guarded place, and the vendors. The
+travel rules `teleport_in`, `teleport_out`, `recall_in` and `recall_out` are read by the [Teleport and Recall
+spells](../magery.md#region-rules): a travel is refused when any region covering the place switches the rule off. No
+system reads the housing and logout rules, nor `gate_in`, `gate_out` and `mark`, yet: they are loaded and validated only.
 
 ## Validation at startup
 

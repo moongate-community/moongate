@@ -130,8 +130,9 @@ Il server cerca ogni dieci secondi le pene terminate.
 Le pene vengono conservate nella tabella `world.jail_sentences` e scritte dal salvataggio del mondo, quindi un
 riavvio non ne dimentica nessuna.
 
-In prigione non è ancora vietato nulla: incantesimi, abilità e viaggi non esistono. Le celle sono stanze
-chiuse senza porta e la regione è [poco illuminata](server-configuration.md).
+Un detenuto non può usare un'abilità: legge «You may not use skills in jail.» (lo staff non è mai vincolato).
+Non può nemmeno lanciare un incantesimo: legge «You cannot cast spells here.», quindi non può fare Recall o
+Teleport per uscire. Le celle sono stanze chiuse senza porta e la regione è [poco illuminata](server-configuration.md).
 
 ## La scarcerazione
 
@@ -254,7 +255,7 @@ non controlla chi lo chiama: uno script per lo staff verifica prima `world.is_st
 
 ## Cosa non fa ancora
 
-- Vietare qualcosa in prigione: non ci sono incantesimi, abilità o recall da vietare.
+- Vietare il viaggio con mezzi diversi da un incantesimo: un portale o una cavalcatura non chiedono della pena. Abilità e incantesimi sono vietati.
 - Conservare un registro delle pene passate: il motivo vive con la pena e sulla sua nota.
 - Imprigionare un intero account: una pena riguarda un solo personaggio.
 

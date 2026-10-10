@@ -183,9 +183,78 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         Handle(session, new UseRequestPacket { Target = target });
     }
 
+    public bool CanUseFromAfar(GameSession session, ItemEntity item)
+    {
+        if (!session.CharacterId.IsValid ||
+            !_mobiles.TryGet(session.CharacterId, out var user) ||
+            user.IsDead ||
+            !IsAccessible(user, item))
+        {
+            return false;
+        }
+
+        // What a double click would be refused too: a bank that is not open, an inventory the guard keeps shut.
+        if (_inventory?.AllowsOwner(user.Id) == false ||
+            _inventory?.Allows(item) == false ||
+            (_bank is not null && !_bank.CanAccess(session, user, item)))
+        {
+            return false;
+        }
+
+        if (_scripts is not null && _scripts.Has(item, UseFunction))
+        {
+            return true;
+        }
+
+        return _tiles.TryGetItem(item.ItemId, out var tile) && (tile.Flags & TileFlagType.Container) != 0;
+    }
+
+    public bool UseFromAfar(GameSession session, Serial target)
+    {
+        if (!session.CharacterId.IsValid ||
+            !_mobiles.TryGet(session.CharacterId, out var character) ||
+            !_items.TryGet(target, out var item) ||
+            !CanUseFromAfar(session, item))
+        {
+            return false;
+        }
+
+        if (_scripts is not null && _scripts.Has(item, UseFunction))
+        {
+            // Safe: the Has above says the script is there.
+            var result = _scripts.Run(item, UseFunction, (long)character.Id.Value);
+
+            if (result.Kind == ScriptResultKind.Suspended ||
+                (result.Kind == ScriptResultKind.Completed && result.Values is [true, ..]))
+            {
+                return true;
+            }
+        }
+
+        if (!_tiles.TryGetItem(item.ItemId, out var tile) || (tile.Flags & TileFlagType.Container) == 0)
+        {
+            return false;
+        }
+
+        _views.Show(session, item);
+
+        return true;
+    }
+
     public bool HasPaperdoll(MobileEntity mobile)
     {
         return _bodies.Value.TryGetValue(mobile.Body, out var type) && type == BodyType.Human;
+    }
+
+    // What the user carries, or lies on the ground, or is inside what does: not what another mobile carries.
+    private bool IsAccessible(MobileEntity user, ItemEntity item)
+    {
+        if (_items.GetOwner(item) is { } owner)
+        {
+            return owner == user.Id;
+        }
+
+        return _items.GetGroundRoot(item) is { } root && _items.IsLyingOnGround(root) && root.Map == user.Map;
     }
 
     // A creature that is a mount is ridden, and the character itself, while it rides, gets off: no paperdoll either way.

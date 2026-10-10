@@ -1033,19 +1033,27 @@ public sealed class MobileModule
     }
 
     /// <summary>
-    ///     Raises a stat for a while, as a strength potion does; <c>mobile.add_stat_bonus(user, "strength", 10, 120)</c>.
+    ///     Raises a stat for a while, as a strength potion does; <c>mobile.add_stat_bonus(user, "strength", 10, 120)</c>, or with <c>true</c> last to replace a weaker one.
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Raises the mobile's 'strength', 'dexterity' or 'intelligence' by amount for seconds, as a strength or an agility potion does: a player's maximum hits, stamina or mana rise with it (an NPC's stay), and when the time is up both go back and what is above the new maximum is lost. The bonus is never saved and ends when the player leaves. False when it has a bonus of that stat already, for an unknown stat or mobile, or an amount or a time that is not positive."
+        "Raises the mobile's 'strength', 'dexterity' or 'intelligence' by amount for seconds, as a strength or an agility potion does: a player's maximum hits, stamina or mana rise with it (an NPC's stay), and when the time is up both go back and what is above the new maximum is lost. The bonus is never saved and ends when the player leaves. False when it has a bonus of that stat already, for an unknown stat or mobile, or an amount or a time that is not positive. With replace true, as a spell buff does, a weaker bonus of the stat is replaced by this one and only one as strong or stronger refuses it."
     )]
-    public bool AddStatBonus(long serial, string stat, int amount, int seconds)
+    public bool AddStatBonus(long serial, string stat, int amount, int seconds, bool? replace = null)
     {
-        return _bonuses is not null &&
-               TryGetMobile(serial, out var mobile) &&
-               EnumNameUtils.TryParse<StatBonusType>(stat, out var type) &&
-               Enum.IsDefined(type) &&
-               _bonuses.TryAddBonus(mobile, type, amount, TimeSpan.FromSeconds(seconds));
+        if (_bonuses is null ||
+            !TryGetMobile(serial, out var mobile) ||
+            !EnumNameUtils.TryParse<StatBonusType>(stat, out var type) ||
+            !Enum.IsDefined(type))
+        {
+            return false;
+        }
+
+        var duration = TimeSpan.FromSeconds(seconds);
+
+        return replace == true
+            ? _bonuses.TryAddBuff(mobile, type, amount, duration)
+            : _bonuses.TryAddBonus(mobile, type, amount, duration);
     }
 
     /// <summary>

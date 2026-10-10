@@ -32,6 +32,28 @@
 --                                      stat is lowered and the effect is shown;
 --                                      nothing at all when the target cannot be
 --                                      harmed (combat.aggress is false)
+--   magic.curse_all(caster, target, info)   the same for the three stats at once,
+--                                      as Curse does
+--   magic.buff(caster, target, info, stats)   the whole of a stat buff such as
+--                                      Agility: each stat of the list is raised
+--                                      as a curse is lowered, a stronger buff
+--                                      of the stat replacing a weaker one, and
+--                                      the effect is shown
+--   magic.protected(who)               whether the mobile has the armor of a
+--                                      Protection on now
+--   magic.protect(caster, who)         puts that armor on a mobile that has none:
+--                                      a tenth of the caster's Magery points of
+--                                      armor for 1.2 seconds a point; false when
+--                                      it has it already
+--   magic.refuse_unhealable(caster, target)   the cliloc a heal is refused with
+--                                      for a dead, poisoned or whole target
+--   magic.distance(a, b)               the distance in tiles of two places
+--                                      ({ x, y }): the larger of the two
+--                                      differences, which is how far a spell reaches
+--   magic.euclid(a, b)                 the straight distance of two places, which
+--                                      Poison weighs its level by
+--   magic.alive_in_range(map, x, y, range)   the serials of the mobiles that are
+--                                      not dead within range tiles of a place
 -- ==============================================================================
 
 local magic = {}
@@ -39,6 +61,8 @@ local magic = {}
 magic.random = math.random
 
 local WONT_WORK = 501857     -- This spell won't work on that!
+local CANNOT_HEAL_SELF = 1005000    -- You can not heal yourself in your current state.
+local CANNOT_HEAL_OTHER = 1010398   -- You can not heal that person in their current state.
 local RESISTING = 501783     -- You feel yourself resisting magical energy.
 local RESISTED_SHARE = 0.75
 local HUMAN_ENEMY_SCALE = 2
@@ -65,8 +89,9 @@ function magic.resist_percent(caster, target, circle)
     return math.max(by_skill, by_circle) / 2
 end
 
-function magic.resisted(caster, target, circle)
-    local chance = magic.resist_percent(caster, target, circle) / 100
+function magic.resisted(caster, target, circle, percent)
+    -- A spell may name its own chance, such as Mana Drain's nearly sure one.
+    local chance = (percent or magic.resist_percent(caster, target, circle)) / 100
 
     if chance <= 0 then
         return false
@@ -124,6 +149,47 @@ function magic.curse_offset(caster)
     return 1 + math.floor(magic.points(caster, "magery") * 0.1)
 end
 
+function magic.refuse_unhealable(caster, target)
+    local dead = magic.refuse_dead(target)
+
+    if dead then
+        return dead
+    end
+
+    if mobile.poison_level(target) then
+        return caster == target and CANNOT_HEAL_SELF or CANNOT_HEAL_OTHER
+    end
+
+    local stats = mobile.stats(target)
+
+    if stats and stats.hits >= stats.hits_max then
+        return WONT_WORK
+    end
+end
+
+function magic.distance(a, b)
+    return math.max(math.abs(a.x - b.x), math.abs(a.y - b.y))
+end
+
+function magic.euclid(a, b)
+    local dx = a.x - b.x
+    local dy = a.y - b.y
+
+    return math.sqrt(dx * dx + dy * dy)
+end
+
+function magic.alive_in_range(map, x, y, range)
+    local alive = {}
+
+    for _, who in ipairs(world.mobiles_in_range(map, x, y, range)) do
+        if not mobile.is_dead(who) then
+            alive[#alive + 1] = who
+        end
+    end
+
+    return alive
+end
+
 function magic.curse_seconds(caster)
     return math.floor(magic.points(caster, "magery") * 1.2)
 end
@@ -147,6 +213,45 @@ function magic.curse(caster, target, info, stat)
     -- A curse may ruin the spell its target is casting.
     spell.disturb(target)
     mobile.add_stat_curse(target, stat, magic.curse_offset(caster), magic.curse_seconds(caster))
+    magic.show(info, target)
+end
+
+function magic.protected(who)
+    return (mobile.get_prop(who, "magic.armor_until") or 0) > world.now()
+end
+
+function magic.protect(caster, who)
+    if magic.protected(who) then
+        return false
+    end
+
+    mobile.set_prop(who, "magic.armor", math.floor(magic.points(caster, "magery") / 10))
+    mobile.set_prop(who, "magic.armor_until", world.now() + magic.curse_seconds(caster))
+
+    return true
+end
+
+local STATS = { "strength", "dexterity", "intelligence" }
+
+function magic.curse_all(caster, target, info)
+    if not combat.aggress(caster, target) then
+        return
+    end
+
+    spell.disturb(target)
+
+    for _, stat in ipairs(STATS) do
+        mobile.add_stat_curse(target, stat, magic.curse_offset(caster), magic.curse_seconds(caster))
+    end
+
+    magic.show(info, target)
+end
+
+function magic.buff(caster, target, info, stats)
+    for _, stat in ipairs(stats) do
+        mobile.add_stat_bonus(target, stat, magic.curse_offset(caster), magic.curse_seconds(caster), true)
+    end
+
     magic.show(info, target)
 end
 

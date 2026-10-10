@@ -5,6 +5,7 @@ using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -57,6 +58,26 @@ public sealed class RegionService : IRegionService
         }
 
         return null;
+    }
+
+    public bool AllowsTravel(MapType map, Point3D location, RegionTravelType rule)
+    {
+        if (location.X < 0 ||
+            location.Y < 0 ||
+            !_cells.Value.TryGetValue((map, location.X >> CellShift, location.Y >> CellShift), out var regions))
+        {
+            return true;
+        }
+
+        foreach (var region in regions)
+        {
+            if (region.Contains(location.X, location.Y, location.Z) && !Allows(region, rule))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public RegionContent? Current(Serial mobile)
@@ -117,6 +138,21 @@ public sealed class RegionService : IRegionService
         {
             listener.RegionChanged(player, previous, current);
         }
+    }
+
+    private static bool Allows(RegionContent region, RegionTravelType rule)
+    {
+        return rule switch
+        {
+            RegionTravelType.RecallIn    => region.RecallIn,
+            RegionTravelType.RecallOut   => region.RecallOut,
+            RegionTravelType.GateIn      => region.GateIn,
+            RegionTravelType.GateOut     => region.GateOut,
+            RegionTravelType.Mark        => region.Mark,
+            RegionTravelType.TeleportIn  => region.TeleportIn,
+            RegionTravelType.TeleportOut => region.TeleportOut,
+            _                            => true
+        };
     }
 
     private static string NameOf(RegionContent? region)

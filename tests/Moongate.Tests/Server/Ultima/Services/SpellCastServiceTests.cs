@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Data.Templates.Items;
@@ -16,6 +17,7 @@ using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Jail;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Magic;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -51,6 +53,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
     private readonly StubItemHandlingService _handling = new();
     private readonly StubSpellbookService _books = new();
     private readonly CapturingLogSink _log = new();
+    private readonly StubJailService _jail = new();
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -139,6 +142,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
             _sight,
             _timers,
             _clock,
+            jail: _jail,
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -197,6 +201,27 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
         Assert.False(_casts.CastFromBook(_aria, MagicArrow));
 
         Assert.Equal([1019048], Told());
+    }
+
+    [Fact]
+    public void CastFromBook_APrisonerInJail_IsRefusedAsTheJailRegionDoes_AndNothingStarts()
+    {
+        _jail.SentenceList.Add(new JailSentenceEntity { Id = _aria.Id });
+
+        Assert.False(_casts.CastFromBook(_aria, MagicArrow));
+
+        Assert.Equal([502629], Told());
+        Assert.Empty(_timers.Timers);
+        Assert.False(_casts.IsCasting(_aria));
+    }
+
+    [Fact]
+    public async Task CastFromBook_AStaffMemberWithASentence_IsNeverHeldToIt()
+    {
+        _jail.SentenceList.Add(new JailSentenceEntity { Id = _aria.Id });
+        await _fixture.Network.ExecuteOnLoopAsync(() => _session.Set(SessionKeys.AccountType, AccountType.GameMaster));
+
+        Assert.True(_casts.CastFromBook(_aria, MagicArrow));
     }
 
     [Fact]

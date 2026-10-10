@@ -22,6 +22,25 @@ public sealed class RecordingUseService : IUseService
         Used.Add((session, target));
     }
 
+    public List<(GameSession Session, Serial Target)> UsedFromAfar { get; } = [];
+
+    /// <summary>
+    ///     What <see cref="CanUseFromAfar" /> answers.
+    /// </summary>
+    public bool CanUse { get; set; } = true;
+
+    public bool CanUseFromAfar(GameSession session, ItemEntity item)
+    {
+        return CanUse;
+    }
+
+    public bool UseFromAfar(GameSession session, Serial target)
+    {
+        UsedFromAfar.Add((session, target));
+
+        return CanUse;
+    }
+
     public bool HasPaperdoll(MobileEntity mobile)
     {
         return PaperdollBodies.Contains(mobile.Body);

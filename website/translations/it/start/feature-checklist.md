@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"39c8be8fd2aae7b99a88a48a32842075468908b8131cf8708ab3894788f2ff5c","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"31a91e46395ba58a611342a2cd4249e34e2ab2801fad927cb5871be530d9622b","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -94,8 +94,8 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 
 | Sistema | Moongate | Note |
 | --- | --- | --- |
-| Lancio degli incantesimi: mana, reagenti, fallimento, resistenza | 🟡 | [Magery](magery.md): le parole di potere, un ritardo del cerchio in cui il lanciatore sta fermo, il cursore di mira, reagenti e mana, la finestra di Magery di un libro o di una pergamena, il fallimento che fa perdere i reagenti, il recupero, e il danno che rovina un lancio sopra il primo cerchio; dall'icona dell'incantesimo, da una macro o da una pergamena. Resisting Spells indebolisce un incantesimo dannoso. Nessun riflesso, nessun PNG che lancia, nessun luogo in cui la magia è vietata |
-| Incantesimi di magery | 🟡 | I sette incantesimi del primo cerchio: Clumsy, Create Food, Feeblemind, Heal, Magic Arrow, Night Sight e Weaken, ognuno uno script in `scripts/spells`; i 64 sono in [`spells.toml`](data-files/spells.md). I cerchi da 2 a 8 e Reactive Armor sono i prossimi |
+| Lancio degli incantesimi: mana, reagenti, fallimento, resistenza | 🟡 | [Magery](magery.md): le parole di potere, un ritardo del cerchio in cui il lanciatore sta fermo, il cursore di mira, reagenti e mana, la finestra di Magery di un libro o di una pergamena, il fallimento che fa perdere i reagenti, il recupero, e il danno che rovina un lancio sopra il primo cerchio; dall'icona dell'incantesimo, da una macro o da una pergamena. Resisting Spells indebolisce un incantesimo dannoso. Le regole di viaggio delle regioni sono lette da Teleport e Recall. Nessun riflesso, nessun PNG che lancia |
+| Incantesimi di magery | 🟡 | 28 dei 64 incantesimi, ognuno uno script in `scripts/spells`: il primo cerchio, Reactive Armor, e dal secondo al quarto tranne Magic Trap, Untrap, Lock e Unlock (i contenitori non hanno ancora uno stato di lucchetto o trappola); i 64 sono in [`spells.toml`](data-files/spells.md). Campi di fuoco e di pietra, Teleport, Telekinesis e Recall con le rune (`.mark_rune`) ci sono. I cerchi da 5 a 8 sono i prossimi |
 | Necromancy | ❌ | |
 | Libri degli incantesimi, pergamene e bacchette | 🟡 | Un libro che contiene fino a 64 incantesimi, si apre con un doppio clic, prende l'incantesimo di una pergamena lasciata su di esso; una pergamena si lancia dallo zaino, senza reagenti e una se ne consuma in caso di successo. Niente bacchette, e le pergamene non si possono ancora scrivere |
 | Campi ed evocazioni | ❌ | |
@@ -349,7 +349,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Barra dei buff | ❌ | |
 | Controlli della sequenza e della velocità di camminata | ✅ | |
 | Peso e sovraccarico | ✅ | Ciò che un mobile trasporta e può trasportare (40 e 3.5 per punto di forza) viene conteggiato e mostrato; un giocatore sovraccarico si stanca a ogni passo |
-| Effetti temporanei (buff e debuff) | 🟡 | Bonus di forza e destrezza e visione notturna, a tempo, mai salvati; veleno, salvato; ancora niente maledizioni o barra dei buff |
+| Effetti temporanei (buff e debuff) | 🟡 | Bonus e maledizioni di forza, destrezza e intelligenza (pozioni e incantesimi) e visione notturna, a tempo, mai salvati; veleno, salvato; l'armatura di Protection e Reactive Armor, conservate con il mobile fino alla scadenza; ancora niente barra dei buff |
 | Richieste di testo e input | ✅ | Prompt Unicode (0xC2), dagli script con il modulo `prompt` |
 | Effetti visivi: movimento, fulmini, particelle | ✅ | Dagli script con il modulo `effect`; particelle per l'Enhanced Client |
 | Suoni e musica | ✅ | Suoni dagli script, tuoni e musica delle regioni |
