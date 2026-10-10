@@ -176,4 +176,7 @@ public static class CommandMessages
     public const int EventSwitched = 30227;
     public const int EventUnknown = 30228;
     public const int EventNone = 30229;
+    public const int MarkRuneDescription = 30241;
+    public const int RuneMarked = 30242;
+    public const int NotARune = 30243;
 }

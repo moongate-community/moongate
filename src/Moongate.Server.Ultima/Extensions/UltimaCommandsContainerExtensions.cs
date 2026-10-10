@@ -87,6 +87,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.UnhideDescription
         );
+        container.RegisterCommand<MarkRuneCommand>(
+            "mark_rune",
+            "Marks the recall rune you target with the place where you stand, for the Recall spell.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.MarkRuneDescription
+        );
         container.RegisterCommand<ResurrectCommand>(
             "resurrect",
             "Raises the NPC whose corpse you target: it is born again where the corpse lies.",
