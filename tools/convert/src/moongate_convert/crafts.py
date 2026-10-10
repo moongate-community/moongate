@@ -33,6 +33,9 @@ NAME_FIXES = {"Magincian Throne": "Magician Throne"}
 # The main skill lines UOX3 gets wrong, by the craft's skill and the recipe's name (lower case): the whole SKILL= value.
 SKILL_FIXES = {("tinkering", "scales"): "37 638 1140", ("tinkering", "heating stand"): "37 643 1140"}
 
+# The items UOX3 makes in place of the one a recipe is named for: the tinker's tools, not the 10-stone tool kit.
+ITEM_FIXES = {"0x1eb9": "0x1ebc_tinker's_tools"}
+
 # The groups whose names UOX3 misspells.
 GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
 
@@ -102,7 +105,7 @@ def _template_ids(items: Path) -> list[str]:
 
 def _resolve(value: str, templates: list[str]) -> list[str]:
     """The templates of a UOX3 item id: the one named so, else every one whose id is the graphic followed by its name."""
-    key = value.lower()
+    key = ITEM_FIXES.get(value.lower(), value.lower())
 
     if key in templates:
         return [key]
@@ -199,6 +202,16 @@ def _craft(path: Path, name: str, lists: dict[str, list[str]], list_of_graphic: 
         walk(str(root))
     except KeyError as missing:
         raise ConversionError(f"{path.name} names {missing.args[0]}, which it does not have") from missing
+
+    # Recipes of one name (a spoon facing either way) are told apart in the gump: the second is "Spoon 2".
+    met: dict[str, int] = {}
+
+    for group in groups:
+        for recipe in group["recipes"]:
+            met[recipe["name"]] = met.get(recipe["name"], 0) + 1
+
+            if met[recipe["name"]] > 1:
+                recipe["name"] = f"{recipe['name']} {met[recipe['name']]}"
 
     return {"name": title, "skill": skill, "sound": SOUNDS[craft_id], "groups": groups}
 

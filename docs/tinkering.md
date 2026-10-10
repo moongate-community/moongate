@@ -1,6 +1,6 @@
 # Tinkering
 
-A tinker makes tools, parts, utensils, jewelry and candles from ingots, with gems and beeswax for some of them. The rules
+A tinker makes tools, parts, utensils, jewelry and candles from ingots, with gems, beeswax or a skull for some of them. The rules
 are the ones of every craft: see [Carpentry](carpentry.md) for the chance, failures, exceptional items, the maker's
 mark, tools that wear out and Make last.
 
@@ -26,7 +26,8 @@ mark, tools that wear out and Make last.
 | More Tools | Froe | 33.2 to 83 | 2 metal |
 | Candles | Candelabra | 67.1 to 117 | 4 metal, 3 beeswax |
 
-UOX3's traps are left out: a container cannot be trapped yet. Two recipes whose skill UOX3 writes wrong (the scales
+UOX3's traps are left out: a container cannot be trapped yet. The taxidermy kit shares a tool kit's graphic but is
+no tinker's tool. Utensils facing either way have a numbered second recipe (Spoon, Spoon 2). Two recipes whose skill UOX3 writes wrong (the scales
 and the heating stand, 63.8 and 64.3 to 114) are fixed by the converter.
 
 ## Change the rules
