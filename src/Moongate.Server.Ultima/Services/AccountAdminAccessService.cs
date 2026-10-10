@@ -7,6 +7,7 @@ using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Data.Admin;
 using Moongate.Server.Core.Interfaces.Admin;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Account;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Interfaces;
@@ -129,7 +130,7 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
 
     public async Task SetApiAccessAsync(string username, bool enabled, CancellationToken token = default)
     {
-        var id = await FindIdAsync(username, token) ?? throw new KeyNotFoundException("Account not found.");
+        var id = await FindIdAsync(username, token) ?? throw new AccountNotFoundException();
         await MutateAsync(id, account => account.CanAccessApi = enabled, token);
     }
 
@@ -171,7 +172,27 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
                 account.CanAccessApi = patch.CanAccessApi ?? account.CanAccessApi;
                 account.IsLocked = patch.IsLocked ?? account.IsLocked;
             },
-            token
+            token,
+            (tx, target) => EnsureAnAdministratorRemainsAsync(tx, target, patch, token)
+        );
+    }
+
+    public Task ChangeOwnPasswordAsync(
+        Serial accountId,
+        string currentPassword,
+        string newPassword,
+        CancellationToken token = default
+    )
+    {
+        var hash = HashUtils.HashPassword(newPassword);
+
+        return MutateAsync(
+            accountId,
+            account => account.HashPassword = hash,
+            token,
+            (_, target) => HashUtils.VerifyPassword(currentPassword, target.HashPassword)
+                               ? Task.CompletedTask
+                               : throw new WrongCurrentPasswordException()
         );
     }
 
@@ -189,7 +210,7 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
             async tx =>
             {
                 _ = await tx.GetByIdForUpdateAsync<AccountEntity>(accountId, token) ??
-                    throw new KeyNotFoundException("Account not found.");
+                    throw new AccountNotFoundException();
                 await _sessions.ResetGateAsync(accountId, false, token);
             },
             token
@@ -203,7 +224,54 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
         return accounts.Count == 0 ? null : accounts[0].Id;
     }
 
-    private async Task<AccountEntity> MutateAsync(Serial accountId, Action<AccountEntity> mutation, CancellationToken token)
+    private static bool IsActiveAdministrator(AccountEntity account)
+    {
+        return account.AccountType == AccountType.Administrator && account.CanAccessApi && !account.IsLocked;
+    }
+
+    // The change must leave an unlocked administrator with API access. The other administrators are locked, in the order of
+    // their ids, before they are counted, so two administrators changing each other at the same moment cannot both pass.
+    private static async Task EnsureAnAdministratorRemainsAsync(
+        IPersistenceTransaction tx,
+        AccountEntity target,
+        AccountAccessPatch patch,
+        CancellationToken token
+    )
+    {
+        var removes = patch.IsLocked == true ||
+                      patch.CanAccessApi == false ||
+                      patch.AccountType is { } type && type != AccountType.Administrator;
+
+        if (!removes || !IsActiveAdministrator(target))
+        {
+            return;
+        }
+
+        var others = await tx.GetDataAccess<AccountEntity>()
+            .QueryAsync(
+                account => account.AccountType == AccountType.Administrator && account.CanAccessApi && !account.IsLocked,
+                token
+            );
+
+        foreach (var id in others.Select(account => account.Id).Where(id => id != target.Id).Order())
+        {
+            var locked = await tx.GetByIdForUpdateAsync<AccountEntity>(id, token);
+
+            if (locked is not null && IsActiveAdministrator(locked))
+            {
+                return;
+            }
+        }
+
+        throw new LastAdministratorException();
+    }
+
+    private async Task<AccountEntity> MutateAsync(
+        Serial accountId,
+        Action<AccountEntity> mutation,
+        CancellationToken token,
+        Func<IPersistenceTransaction, AccountEntity, Task>? guard = null
+    )
     {
         AdminAccountGate? fenced = null;
         AccountEntity? changed = null;
@@ -212,7 +280,14 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
             async tx =>
             {
                 var account = await tx.GetByIdForUpdateAsync<AccountEntity>(accountId, token) ??
-                              throw new KeyNotFoundException("Account not found.");
+                              throw new AccountNotFoundException();
+
+                // Refused before the sessions are fenced: a change that does not happen ends nobody's session.
+                if (guard is not null)
+                {
+                    await guard(tx, account);
+                }
+
                 fenced = await _sessions.ResetGateAsync(accountId, true, token);
                 mutation(account);
                 account.UpdatedAt = DateTime.UtcNow;

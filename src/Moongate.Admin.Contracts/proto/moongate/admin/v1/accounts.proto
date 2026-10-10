@@ -18,7 +18,8 @@ message UpdateAccountAccessRequest {
   optional bool can_access_api = 3;
   optional bool is_locked = 4;
 }
-message ChangeAccountPasswordRequest { uint32 account_id = 1; string new_password = 2; }
+// current_password is required when the account is the caller's own, and ignored for another account.
+message ChangeAccountPasswordRequest { uint32 account_id = 1; string new_password = 2; string current_password = 3; }
 service AdminAccounts {
   rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
   rpc CreateAccount(CreateAccountRequest) returns (AccountSummary);

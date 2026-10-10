@@ -34,6 +34,17 @@ public interface IAccountAdminAccessService
     Task<AccountEntity> PatchAccessAsync(Serial accountId, AccountAccessPatch patch, CancellationToken token = default);
 
     /// <summary>
+    ///     Changes the password of an account given its current one, revoking prior sessions. A wrong current password throws
+    ///     <see cref="WrongCurrentPasswordException" />; the sessions stay.
+    /// </summary>
+    Task ChangeOwnPasswordAsync(
+        Serial accountId,
+        string currentPassword,
+        string newPassword,
+        CancellationToken token = default
+    );
+
+    /// <summary>
     ///     Changes a password while revoking prior administrative sessions.
     /// </summary>
     Task ChangePasswordAsync(Serial accountId, string password, CancellationToken token = default);

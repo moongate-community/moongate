@@ -5,6 +5,7 @@ using Moongate.Server.Core.Exceptions.Admin;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Ultima.Commands;
+using Moongate.Server.Ultima.Data.Account;
 using Moongate.Tests.TestSupport.Admin;
 using Moongate.Tests.TestSupport.Persistence;
 
@@ -87,7 +88,7 @@ public sealed class AccountAdminAccessServiceTests
             (await fixture.Accounts.Accounts.GetByIdAsync(result.Account!.Id))!.AccountType
         );
         await fixture.Authority.SetApiAccessAsync("admin", false);
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => fixture.Authority.SetApiAccessAsync("missing", true));
+        await Assert.ThrowsAsync<AccountNotFoundException>(() => fixture.Authority.SetApiAccessAsync("missing", true));
     }
 
     [Fact]
@@ -96,6 +97,10 @@ public sealed class AccountAdminAccessServiceTests
         await using var fixture = await AccountAdminFixture.CreateAsync();
         var created = await fixture.Accounts.Service.CreateAccountAsync(
             new() { Username = "admin", Password = fixture.Accounts.Password, AccountType = AccountType.Administrator, CanAccessApi = true }
+        );
+        // Another active administrator stays, so this one may be locked.
+        await fixture.Accounts.Service.CreateAccountAsync(
+            new() { Username = "other", Password = fixture.Accounts.Password, AccountType = AccountType.Administrator, CanAccessApi = true }
         );
         Assert.NotNull(await fixture.Authority.LoginAsync("admin", fixture.Accounts.Password));
         var digest = fixture.Store.LastDigest!;
@@ -130,10 +135,80 @@ public sealed class AccountAdminAccessServiceTests
         await using var fixture = await AccountAdminFixture.CreateAsync();
         var created = await fixture.Accounts.Service.CreateAccountAsync("player", fixture.Accounts.Password, AccountType.Regular);
 
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => fixture.Authority.PatchAccessAsync(new(0x7777), new() { IsLocked = true }));
+        await Assert.ThrowsAsync<AccountNotFoundException>(() => fixture.Authority.PatchAccessAsync(new(0x7777), new() { IsLocked = true }));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
             () => fixture.Authority.PatchAccessAsync(created.Account!.Id, new() { AccountType = (AccountType)99 })
         );
+    }
+
+    [Theory, InlineData("lock"), InlineData("api"), InlineData("type")]
+    public async Task PatchAccessAsync_TheLastActiveAdministrator_CannotBeTakenAway_AndItsSessionsStay(string change)
+    {
+        await using var fixture = await AccountAdminFixture.CreateAsync();
+        var created = await fixture.Accounts.Service.CreateAccountAsync(
+            new() { Username = "admin", Password = fixture.Accounts.Password, AccountType = AccountType.Administrator, CanAccessApi = true }
+        );
+        Assert.NotNull(await fixture.Authority.LoginAsync("admin", fixture.Accounts.Password));
+        var digest = fixture.Store.LastDigest!;
+        var patch = change switch
+        {
+            "lock" => new AccountAccessPatch { IsLocked = true },
+            "api" => new AccountAccessPatch { CanAccessApi = false },
+            _ => new AccountAccessPatch { AccountType = AccountType.GameMaster }
+        };
+
+        await Assert.ThrowsAsync<LastAdministratorException>(() => fixture.Authority.PatchAccessAsync(created.Account!.Id, patch));
+
+        Assert.NotNull(await fixture.Redis.Store.FindAsync(digest));
+        var stored = (await fixture.Accounts.Accounts.GetByIdAsync(created.Account.Id))!;
+        Assert.Equal((AccountType.Administrator, true, false), (stored.AccountType, stored.CanAccessApi, stored.IsLocked));
+    }
+
+    [Fact]
+    public async Task PatchAccessAsync_WithAnotherActiveAdministrator_TheFirstCanGo_ThenTheOtherIsTheLast()
+    {
+        await using var fixture = await AccountAdminFixture.CreateAsync();
+        var first = await fixture.Accounts.Service.CreateAccountAsync(
+            new() { Username = "first", Password = fixture.Accounts.Password, AccountType = AccountType.Administrator, CanAccessApi = true }
+        );
+        var second = await fixture.Accounts.Service.CreateAccountAsync(
+            new() { Username = "second", Password = fixture.Accounts.Password, AccountType = AccountType.Administrator, CanAccessApi = true }
+        );
+        var player = await fixture.Accounts.Service.CreateAccountAsync("player", fixture.Accounts.Password, AccountType.Regular);
+
+        // A player, or an administrator that is not active, may change freely.
+        await fixture.Authority.PatchAccessAsync(player.Account!.Id, new() { IsLocked = true });
+        await fixture.Authority.PatchAccessAsync(first.Account!.Id, new() { IsLocked = true });
+
+        await Assert.ThrowsAsync<LastAdministratorException>(
+            () => fixture.Authority.PatchAccessAsync(second.Account!.Id, new() { IsLocked = true })
+        );
+        // Unlocking the first makes the second free to go.
+        await fixture.Authority.PatchAccessAsync(first.Account.Id, new() { IsLocked = false });
+        var locked = await fixture.Authority.PatchAccessAsync(second.Account.Id, new() { IsLocked = true });
+        Assert.True(locked.IsLocked);
+    }
+
+    [Fact]
+    public async Task ChangeOwnPasswordAsync_NeedsTheCurrentPassword()
+    {
+        await using var fixture = await AccountAdminFixture.CreateAsync();
+        var created = await fixture.Accounts.Service.CreateAccountAsync(
+            new() { Username = "admin", Password = fixture.Accounts.Password, AccountType = AccountType.Administrator, CanAccessApi = true }
+        );
+        Assert.NotNull(await fixture.Authority.LoginAsync("admin", fixture.Accounts.Password));
+        var digest = fixture.Store.LastDigest!;
+
+        await Assert.ThrowsAsync<WrongCurrentPasswordException>(
+            () => fixture.Authority.ChangeOwnPasswordAsync(created.Account!.Id, "not-the-password", "brand-new-secret")
+        );
+        Assert.NotNull(await fixture.Redis.Store.FindAsync(digest));
+
+        await fixture.Authority.ChangeOwnPasswordAsync(created.Account.Id, fixture.Accounts.Password, "brand-new-secret");
+
+        Assert.Null(await fixture.Redis.Store.FindAsync(digest));
+        Assert.NotNull(await fixture.Authority.LoginAsync("admin", "brand-new-secret"));
+        Assert.Null(await fixture.Authority.LoginAsync("admin", fixture.Accounts.Password));
     }
 
     [Fact]

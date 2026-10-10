@@ -47,6 +47,20 @@ public sealed class AdminClusterTests
         Assert.Equal(
             StatusCode.Unimplemented,
             (await Assert.ThrowsAsync<RpcException>(() =>
+                new AdminAccounts.AdminAccountsClient(fixture.GameChannel).UpdateAccountAccessAsync(new(), headers)
+                    .ResponseAsync
+            )).StatusCode
+        );
+        Assert.Equal(
+            StatusCode.Unimplemented,
+            (await Assert.ThrowsAsync<RpcException>(() =>
+                new AdminAccounts.AdminAccountsClient(fixture.GameChannel).ChangeAccountPasswordAsync(new(), headers)
+                    .ResponseAsync
+            )).StatusCode
+        );
+        Assert.Equal(
+            StatusCode.Unimplemented,
+            (await Assert.ThrowsAsync<RpcException>(() =>
                 new AdminLogin.AdminLoginClient(fixture.GameChannel).LoginAsync(new()).ResponseAsync
             )).StatusCode
         );

@@ -104,6 +104,54 @@ public sealed class AdminAccountManagementGrpcTests
             .UpdateAccountAccessAsync(new() { AccountId = self, IsLocked = false, CanAccessApi = true, AccountType = AccountType.Administrator }, admin);
 
         Assert.Equal(self, summary.AccountId);
+        // Any security change ends the sessions of the account, the caller's own included: it logs in again.
+        Assert.Equal(
+            StatusCode.Unauthenticated,
+            (await Assert.ThrowsAsync<RpcException>(() => new AdminServer.AdminServerClient(fixture.Channel).GetServerInfoAsync(new(), admin).ResponseAsync)).StatusCode
+        );
+    }
+
+    [Fact]
+    public async Task UpdateAccountAccess_AnUnknownAccountType_IsInvalid()
+    {
+        await using var fixture = await AdminGrpcFixture.CreateAsync();
+        var admin = await LoginAsync(fixture, "admin", DomainAccountType.Administrator);
+        var player = await CreateAsync(fixture, "player", DomainAccountType.Regular, false);
+
+        var error = await Assert.ThrowsAsync<RpcException>(
+            () => new AdminAccounts.AdminAccountsClient(fixture.Channel)
+                .UpdateAccountAccessAsync(new() { AccountId = player, AccountType = (AccountType)99 }, admin)
+                .ResponseAsync
+        );
+
+        Assert.Equal(StatusCode.InvalidArgument, error.StatusCode);
+    }
+
+    [Fact]
+    public async Task ChangeAccountPassword_OnYourOwnAccount_NeedsTheCurrentPassword()
+    {
+        await using var fixture = await AdminGrpcFixture.CreateAsync();
+        var admin = await LoginAsync(fixture, "admin", DomainAccountType.Administrator);
+        var self = await IdOfAsync(fixture, admin, "admin");
+        var accounts = new AdminAccounts.AdminAccountsClient(fixture.Channel);
+
+        Assert.Equal(
+            StatusCode.InvalidArgument,
+            (await Assert.ThrowsAsync<RpcException>(() => accounts.ChangeAccountPasswordAsync(new() { AccountId = self, NewPassword = "a-brand-new-secret" }, admin).ResponseAsync)).StatusCode
+        );
+        Assert.Equal(
+            StatusCode.PermissionDenied,
+            (await Assert.ThrowsAsync<RpcException>(() => accounts.ChangeAccountPasswordAsync(new() { AccountId = self, NewPassword = "a-brand-new-secret", CurrentPassword = "wrong" }, admin).ResponseAsync)).StatusCode
+        );
+        // A wrong attempt leaves the session alone.
+        Assert.NotNull(await new AdminServer.AdminServerClient(fixture.Channel).GetServerInfoAsync(new(), admin));
+
+        await accounts.ChangeAccountPasswordAsync(
+            new() { AccountId = self, NewPassword = "a-brand-new-secret", CurrentPassword = fixture.Backend.Accounts.Password },
+            admin
+        );
+
+        Assert.False(string.IsNullOrEmpty((await new AdminLogin.AdminLoginClient(fixture.Channel).LoginAsync(new() { Username = "admin", Password = "a-brand-new-secret" })).AccessToken));
     }
 
     [Fact]
