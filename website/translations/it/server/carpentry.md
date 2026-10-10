@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a1291500e045924b9652226373d964c82b63493eb7e3d379f8cb8f0bffd05aff","title":"Falegnameria"} -->
+<!-- translation: {"sourceHash":"8a8478eeb697d93faad1a83d5a5f08fb794f006aa62372a341cd7b59027a757a","title":"Falegnameria"} -->
 
 # Falegnameria
 
@@ -53,7 +53,7 @@ e un bastone eccezionale colpisce più forte in combattimento, come dice il [fab
 
 Un attrezzo dura da 25 a 75 usi, estratti la prima volta che lo usi; il suo tooltip mostra gli usi rimasti. Ogni tentativo la cui
 abilità viene provata, riuscito o fallito, ne toglie uno; un tentativo rifiutato no. L'ultimo uso lo rompe:
-"You have worn out your tool!".
+"You have worn out your tool!". Un oggetto impilabile (un'asta, una freccia) non toglie usi, e non è mai eccezionale né marchiato.
 
 ## Crea l'ultimo
 

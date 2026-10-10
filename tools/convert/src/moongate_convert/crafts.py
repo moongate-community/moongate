@@ -17,24 +17,37 @@ CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "smithing": ("blacksmithing", "Blacksmithing", "blacksmithy", 1),
     "tailoring": ("tailoring", "Tailoring", "tailoring", 39),
     "tinkering": ("tinkering", "Tinkering", "tinkering", 59),
+    "bowcraft": ("fletching", "Bowcraft and Fletching", "bowcraft_fletching", 49),
 }
 
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B}
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055}
 
 # The groups that make deeds, which mean nothing until houses exist.
 SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons", "traps"}
 
-# What an axe already does: logs sawn into boards.
-SKIPPED_ITEMS = {"0x1bd7"}
+# What a player already gets elsewhere: boards from an axe, kindling hacked off a tree with a blade.
+SKIPPED_ITEMS = {"0x1bd7", "0x0de1"}
 
-NAME_FIXES = {"Magincian Throne": "Magician Throne"}
+# The crafts whose root menu holds recipes of its own: the name of the group they form, first.
+ROOT_GROUPS = {"fletching": "Weapons"}
+
+# The menus UOX3 opens from a second tool (arrows and bolts from the fletching tool), walked after the root.
+EXTRA_ROOTS = {"fletching": ["51"]}
+
+NAME_FIXES = {"Magincian Throne": "Magician Throne", "one shaft": "Shaft", "one arrow": "Arrow", "one bolt": "Bolt"}
 
 # The main skill lines UOX3 gets wrong, by the craft's skill and the recipe's name (lower case): the whole SKILL= value.
 SKILL_FIXES = {("tinkering", "scales"): "37 638 1140", ("tinkering", "heating stand"): "37 643 1140"}
 
-# The items UOX3 makes in place of the one a recipe is named for: the tinker's tools, not the 10-stone tool kit.
-ITEM_FIXES = {"0x1eb9": "0x1ebc_tinker's_tools"}
+# The items UOX3 makes in place of the one a recipe is named for (the tinker's tools, not the 10-stone tool kit), and the
+# single shaft, arrow and bolt among the stacks that share their graphic.
+ITEM_FIXES = {
+    "0x1eb9": "0x1ebc_tinker's_tools",
+    "0x1bd4": "0x1bd4_shaft",
+    "0x0f3f": "0x0f3f_arrow",
+    "0x1bfb": "0x1bfb_crossbow_bolt",
+}
 
 # The groups whose names UOX3 misspells.
 GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
@@ -185,21 +198,33 @@ def _craft(path: Path, name: str, lists: dict[str, list[str]], list_of_graphic: 
                 continue
 
             seen.add(submenu)
-            recipes = []
-
-            for number in _values(blocks[f"SUBMENU {submenu}"], "ITEM"):
-                recipe = _recipe(blocks[f"ITEM {number}"], skill, lists, list_of_graphic, templates)
-
-                if recipe is not None:
-                    recipes.append(recipe)
+            recipes = recipes_of(submenu)
 
             if recipes:
                 groups.append({"name": GROUP_FIXES.get(group_name, group_name), "recipes": recipes})
 
             walk(submenu)
 
+    def recipes_of(menu: str) -> list[dict]:
+        recipes = []
+
+        for number in _values(blocks[f"SUBMENU {menu}"], "ITEM"):
+            recipe = _recipe(blocks[f"ITEM {number}"], skill, lists, list_of_graphic, templates)
+
+            if recipe is not None:
+                recipes.append(recipe)
+
+        return recipes
+
     try:
+        if craft_id in ROOT_GROUPS:
+            groups.append({"name": ROOT_GROUPS[craft_id], "recipes": recipes_of(str(root))})
+
         walk(str(root))
+
+        for extra in EXTRA_ROOTS.get(craft_id, []):
+            seen.add(extra)
+            walk(extra)
     except KeyError as missing:
         raise ConversionError(f"{path.name} names {missing.args[0]}, which it does not have") from missing
 
@@ -220,9 +245,11 @@ def _recipe(
     block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], list_of_graphic: dict[int, str], templates: list[str]
 ) -> dict | None:
     name = block.fields.get("NAME", block.header)
-    added = block.fields["ADDITEM"].split(",")[0].strip()
+    added, _, count = block.fields["ADDITEM"].partition(",")
+    added = added.strip()
 
-    if added.lower() in SKIPPED_ITEMS:
+    # A batch (five shafts) is the recipe of one made five times: Make last repeats it.
+    if added.lower() in SKIPPED_ITEMS or count.strip() not in ("", "1"):
         return None
 
     item = _resolve(added, templates)

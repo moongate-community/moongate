@@ -688,9 +688,17 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(59, tinkering.Group.Sum(group => group.Recipe.Count));
         Assert.All(new[] { "0x1ebc_tinker's_tools", "0x1eb8_tool_kit" }, id => Assert.Equal("tinkering_tool", byId[id].ScriptId));
         Assert.NotEqual("tinkering_tool", byId["taxidermykit"].ScriptId);
+
         var recipes = tinkering.Group.SelectMany(group => group.Recipe).ToList();
         Assert.Equal("0x1ebc_tinker's_tools", recipes.Single(recipe => recipe.Name == "Tinker's tools").Item);
         Assert.Equal(recipes.Count, recipes.Select(recipe => recipe.Name).Distinct().Count());
+
+        // Bowcraft and fletching: the bows of its root, then shafts, arrows and bolts; the fletcher's tools work.
+        var fletching = crafts["fletching"];
+        Assert.Equal("bowcraft_fletching", fletching.Skill);
+        Assert.Equal(["Weapons", "Shafts", "Arrows", "Crossbow Bolts"], fletching.Group.Select(group => group.Name));
+        Assert.Equal(9, fletching.Group.Sum(group => group.Recipe.Count));
+        Assert.All(new[] { "0x1022_fletcher's_tools", "0x1023_fletcher's_tools" }, id => Assert.Equal("fletching_tool", byId[id].ScriptId));
     }
 
     [Fact]

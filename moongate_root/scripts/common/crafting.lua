@@ -126,7 +126,8 @@ local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH, metal = NO_METAL, leather = 
 
 -- The materials a craft works in kinds, by the resource that takes them: the module of the kinds, the kind picked when
 -- none is, the field of a kind with its template, the field with the skill it asks of the craft, and the client
--- text when the skill is lacking.
+-- text when the skill is lacking. Every craft that works wood (bowcraft too) asks a kind's carpentry, every craft that
+-- works metal (tinkering too) a kind's blacksmithy: the same minimums.
 local MATERIALS = {
     wood = { module = woods, default = "plain", template = "boards", skill = "carpentry", cannot = STRANGE_WOOD, label = "Wood" },
     metal = { module = metals, default = "iron", template = "ingot", skill = "blacksmithy", cannot = NO_IDEA_METAL, label = "Metal" },
@@ -173,8 +174,13 @@ function crafting.uses(tool)
     return left
 end
 
--- Takes one use of the tool; false, with the client's text, when that was its last and it broke.
-local function wear(user, tool)
+-- Takes one use of the tool; false, with the client's text, when that was its last and it broke. Making a stackable item
+-- (an arrow, a shaft) takes none: UOX3 made them by the fifty for one use.
+local function wear(user, tool, plain)
+    if plain then
+        return true
+    end
+
     local left = crafting.uses(tool) - 1
 
     if left > 0 then
@@ -425,6 +431,8 @@ end
 -- The second stroke: the result.
 local function finish(user, tool, craft_id, craft, recipe, kind)
     busy[user] = nil
+    -- A stackable item (arrows, shafts) is plain: no quality and no mark, so every one of its colour stacks.
+    local plain = item.is_stackable(recipe.item)
 
     local here = mobile.location(user)
 
@@ -464,7 +472,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
         mobile.message_cliloc(user, FAILED)
 
-        if wear(user, tool) then
+        if wear(user, tool, plain) then
             crafting.open(user, tool, craft_id, NOTICES[FAILED])
         end
 
@@ -496,7 +504,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
     if not made then
         mobile.message(user, NOT_MADE)
 
-        if wear(user, tool) then
+        if wear(user, tool, plain) then
             crafting.open(user, tool, craft_id, NOT_MADE)
         end
 
@@ -514,7 +522,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
             mobile.message(user, NOT_MADE)
 
-            if wear(user, tool) then
+            if wear(user, tool, plain) then
                 crafting.open(user, tool, craft_id, NOT_MADE)
             end
 
@@ -528,7 +536,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
     local outcome = CREATED
 
-    if not joined and crafting.roll() < chance - EXCEPTIONAL_MARGIN then
+    if not joined and not plain and crafting.roll() < chance - EXCEPTIONAL_MARGIN then
         item.set_prop(made, "quality", EXCEPTIONAL_QUALITY)
         item.set_rarity(made, "uncommon")
         outcome = EXCEPTIONAL
@@ -543,7 +551,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
     mobile.message_cliloc(user, outcome)
 
-    if wear(user, tool) then
+    if wear(user, tool, plain) then
         crafting.open(user, tool, craft_id, NOTICES[outcome])
     end
 end

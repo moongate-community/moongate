@@ -78,6 +78,9 @@ ALIASES = {
     "evilwanderinghealer": ["evilwhealer"],
 }
 
+# Where the name of a ModernUO type is not the one of its template: the single crossbow bolt, not a stack of twenty.
+TYPE_ALIASES = {"bolt": "crossbow_bolt"}
+
 # The two graphics of one item, one for each way it faces: ModernUO sells it under one, a template may be named by the other.
 _FLIPPABLE = re.compile(r"\[Flippable\(([^)\]]*)\)\]")
 _ID_LINE = re.compile(r'^id\s*=\s*"([^"]+)"', re.MULTILINE)
@@ -405,7 +408,7 @@ def _family_of(graphic: int, index: ShopIndex) -> list[str] | None:
 def _item_of(line: BuyLine, index: ShopIndex, report: ConversionReport) -> str | None:
     """The template of a graphic: the one named like the type, else the only one, else the first (and the report says so)."""
     candidates = _family_of(line.graphic, index)
-    wanted = snake_case(line.type_name)
+    wanted = TYPE_ALIASES.get(snake_case(line.type_name), snake_case(line.type_name))
 
     if candidates is None:
         named_so = index.by_name.get(wanted, [])

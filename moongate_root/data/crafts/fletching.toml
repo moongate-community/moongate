@@ -1,0 +1,110 @@
+# ==============================================================================
+# Moongate - data/crafts/fletching.toml
+#
+# What it is for:
+#   The recipes of bowcraft and fletching, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+# ==============================================================================
+
+id = "fletching"
+name = "Bowcraft and Fletching"
+skill = "bowcraft_fletching"
+sound = 0x0055
+
+[[group]]
+name = "Weapons"
+
+[[group.recipe]]
+name = "Bow"
+item = "0x13b2"
+skill_min = 30.0
+skill_max = 70.0
+resources = [{ resource = "wood", amount = 7 }]
+skills = []
+
+[[group.recipe]]
+name = "Crossbow"
+item = "0x0f4f"
+skill_min = 60.0
+skill_max = 100.0
+resources = [{ resource = "wood", amount = 7 }]
+skills = []
+
+[[group.recipe]]
+name = "Heavy crossbow"
+item = "0x13fd"
+skill_min = 90.0
+skill_max = 130.0
+resources = [{ resource = "wood", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Composite bow"
+item = "0x26cc"
+skill_min = 70.0
+skill_max = 100.0
+resources = [{ resource = "wood", amount = 7 }]
+skills = []
+
+[[group.recipe]]
+name = "Repeating crossbow"
+item = "0x26cd"
+skill_min = 90.0
+skill_max = 100.0
+resources = [{ resource = "wood", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Yumi"
+item = "0x27f0"
+skill_min = 90.0
+skill_max = 100.0
+resources = [{ resource = "wood", amount = 10 }]
+skills = []
+
+[[group]]
+name = "Shafts"
+
+[[group.recipe]]
+name = "Shaft"
+item = "0x1bd4_shaft"
+skill_min = 0.0
+skill_max = 40.0
+resources = [{ resource = "wood", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Arrows"
+
+[[group.recipe]]
+name = "Arrow"
+item = "0x0f3f_arrow"
+skill_min = 0.0
+skill_max = 40.0
+resources = [{ resource = "0x1bd4_shaft", amount = 1 }, { resource = "0x1bd1_feather", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Crossbow Bolts"
+
+[[group.recipe]]
+name = "Bolt"
+item = "0x1bfb_crossbow_bolt"
+skill_min = 0.0
+skill_max = 70.0
+resources = [{ resource = "0x1bd4_shaft", amount = 1 }, { resource = "0x1bd1_feather", amount = 1 }]
+skills = []

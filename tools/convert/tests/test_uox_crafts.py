@@ -373,6 +373,124 @@ def test_a_skill_line_uox3_got_wrong_is_fixed():
     assert crafts.SKILL_FIXES[("tinkering", "heating stand")] == "37 643 1140"
 
 
+BOWCRAFT = """
+[SUBMENU 49]
+{
+ITEM=190
+MENU=50
+ITEM=191
+}
+[MENUENTRY 49]
+{
+NAME=Previous Menu
+SUBMENU=49
+}
+[MENUENTRY 50]
+{
+NAME=Shafts
+SUBMENU=50
+}
+[SUBMENU 50]
+{
+ITEM=194
+ITEM=195
+MENU=49
+}
+[SUBMENU 51]
+{
+MENU=52
+}
+[MENUENTRY 52]
+{
+NAME=Arrows
+SUBMENU=52
+}
+[SUBMENU 52]
+{
+ITEM=198
+}
+[ITEM 190]
+{
+NAME=kindling
+RESOURCE=WOOD 1
+SKILL=8 0 500
+ADDITEM=0x0de1
+}
+[ITEM 191]
+{
+NAME=bow
+RESOURCE=WOOD 7
+SKILL=8 300 700
+ADDITEM=0x13b2
+}
+[ITEM 194]
+{
+NAME=one shaft
+RESOURCE=WOOD 1
+SKILL=8 0 400
+ADDITEM=0x1bd4
+}
+[ITEM 195]
+{
+NAME=five shafts
+RESOURCE=WOOD 5
+SKILL=8 0 400
+ADDITEM=0x1bd4,5
+}
+[ITEM 198]
+{
+NAME=one arrow
+RESOURCE=0x1bd4 1
+RESOURCE=0x1bd1 1
+SKILL=8 0 400
+ADDITEM=0x0f3f
+}
+"""
+
+BOWCRAFT_ITEMS = """
+[[item]]
+id = "0x1bd7_board"
+[[item]]
+id = "0x0de1_kindling"
+[[item]]
+id = "0x13b2_bow"
+[[item]]
+id = "0x1bd4_shaft"
+[[item]]
+id = "0x1bd4_5_shaft"
+[[item]]
+id = "0x1bd1_feather"
+[[item]]
+id = "0x0f3f_arrow"
+[[item]]
+id = "0x0f3f_5"
+"""
+
+
+def test_fletching_takes_the_bows_of_its_root_and_the_menus_of_the_fletching_tool(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE WOOD]\n{\nID=0x1bd7\n}\n")
+    (source / "bowcraft.dfn").write_text(BOWCRAFT)
+    (items / "all.toml").write_text(BOWCRAFT_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 0, error.getvalue()
+
+    fletching = tomllib.loads((destination / "fletching.toml").read_text())
+    assert (fletching["name"], fletching["skill"], fletching["sound"]) == ("Bowcraft and Fletching", "bowcraft_fletching", 0x0055)
+    # The root's own recipes are the bows; UOX3 opens arrows and bolts from the fletching tool, a second root.
+    assert [group["name"] for group in fletching["group"]] == ["Weapons", "Shafts", "Arrows"]
+    # Kindling is what an axe already makes; a batch of five is the recipe of one made five times.
+    assert [recipe["name"] for recipe in fletching["group"][0]["recipe"]] == ["Bow"]
+    assert [recipe["name"] for recipe in fletching["group"][1]["recipe"]] == ["Shaft"]
+    arrow = fletching["group"][2]["recipe"][0]
+    assert (arrow["name"], arrow["item"]) == ("Arrow", "0x0f3f_arrow")
+    # The stacks of five shafts or arrows share the graphic: the recipe makes and takes the single one.
+    assert arrow["resources"] == [{"resource": "0x1bd4_shaft", "amount": 1}, {"resource": "0x1bd1_feather", "amount": 1}]
+
+
 TINKERING = """
 [SUBMENU 59]
 {
