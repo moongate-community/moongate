@@ -32,6 +32,11 @@ public sealed class CraftModuleTests
                                     Name = "Lute", Item = "0x0eb3_lute", SkillMin = 68.4, SkillMax = 93.4,
                                     Resources = [new() { Resource = "wood", Amount = 25 }, new() { Resource = "cloth", Amount = 10 }],
                                     Skills = [new() { Skill = "musicianship", Min = 45, Max = 70 }]
+                                },
+                                new()
+                                {
+                                    Name = "Bolt", Item = "0x0eb3_lute", SkillMin = -25, SkillMax = 25,
+                                    Resources = [new() { Resource = "wood", Amount = 1 }], Spell = "magic_arrow", Mana = 4
                                 }
                             ]
                         }
@@ -69,6 +74,20 @@ public sealed class CraftModuleTests
         Assert.Equal((68.4, 93.4), (result[9].Read<double>(), result[10].Read<double>()));
         Assert.Equal((2, "cloth", 10), (result[11].Read<int>(), result[12].Read<string>(), result[13].Read<int>()));
         Assert.Equal(("musicianship", 45.0, 70.0), (result[14].Read<string>(), result[15].Read<double>(), result[16].Read<double>()));
+    }
+
+    [Fact]
+    public void ARecipe_GivesTheSpellItAsksFor_AndTheManaItTakes_OrNone()
+    {
+        var result = Run(
+            """
+            local recipes = craft.get("carpentry").groups[1].recipes
+            return recipes[2].spell, recipes[2].mana, recipes[2].skill_min, recipes[1].spell, recipes[1].mana
+            """
+        );
+
+        Assert.Equal(("magic_arrow", 4, -25.0), (result[0].Read<string>(), result[1].Read<int>(), result[2].Read<double>()));
+        Assert.Equal(("", 0), (result[3].Read<string>(), result[4].Read<int>()));
     }
 
     [Fact]

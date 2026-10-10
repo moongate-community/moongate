@@ -14,12 +14,13 @@ namespace Moongate.Server.Ultima.Loaders;
 ///     Loads the crafts of <c>data/crafts</c>, one a file, all but <c>resources.toml</c>. The folder may be missing: no
 ///     craft then. Skill names are kept in the snake_case form scripts read them by. A bad or repeated id, a craft
 ///     without a name or groups, a group without recipes, an unknown skill, a group or recipe without a name, an item or resource that is
-///     neither an item template nor a resource list, an amount below 1, a recipe without resources, or skill bounds
-///     outside 0 to 150 or the least above the most stop the server at startup, naming the file.
+///     neither an item template nor a resource list, an amount below 1, a recipe without resources, a spell that is
+///     no key or a mana below 0, or skill bounds outside 0 to 150 (the least of the main skill from -50) or the least above the most stop the server at startup, naming the file.
 /// </summary>
 public class CraftsLoader : IDataLoader<CraftDefinition>
 {
     private const double MaxSkill = 150;
+    private const double MinSkill = -50;
     private const string ResourcesFile = "resources.toml";
 
     private readonly ILogger _logger = Log.ForContext<CraftsLoader>();
@@ -128,9 +129,19 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
             throw Invalid(path, $"{where} makes '{recipe.Item}', which is not an item template");
         }
 
-        if (!AreBounds(recipe.SkillMin, recipe.SkillMax))
+        if (recipe.SkillMin < MinSkill || !AreBounds(Math.Max(recipe.SkillMin, 0), recipe.SkillMax) || recipe.SkillMin > recipe.SkillMax)
         {
-            throw Invalid(path, $"{where} has skill bounds outside 0 to {MaxSkill} or the least above the most");
+            throw Invalid(path, $"{where} has skill bounds outside {MinSkill} to {MaxSkill} or the least above the most");
+        }
+
+        if (recipe.Mana < 0)
+        {
+            throw Invalid(path, $"{where} takes {recipe.Mana} mana");
+        }
+
+        if (recipe.Spell.Length > 0 && !ScriptIdUtils.IsValid(recipe.Spell))
+        {
+            throw Invalid(path, $"{where} names the spell '{recipe.Spell}', which {ScriptIdUtils.Rule}");
         }
 
         if (recipe.Resources.Count == 0)

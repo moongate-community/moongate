@@ -26,7 +26,7 @@ public sealed class CraftModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "The craft of that id as { id, name, skill, sound, groups }: groups is an array of { name, recipes }, a recipe { name, item, graphic, skill_min, skill_max, resources, skills }, resources an array of { resource, amount } (a list of craft.resource or an item template) and skills an array of { skill, min, max } besides the craft's own. graphic is the item's graphic, 0 when its template has none. Nil for an unknown id."
+        "The craft of that id as { id, name, skill, sound, groups }: groups is an array of { name, recipes }, a recipe { name, item, graphic, skill_min, skill_max, resources, skills, spell, mana }, resources an array of { resource, amount } (a list of craft.resource or an item template) and skills an array of { skill, min, max } besides the craft's own. graphic is the item's graphic, 0 when its template has none; spell is the key of the spell a recipe asks the crafter to have in a book it carries (empty for none) and mana what a try takes (0 for none). Nil for an unknown id."
     )]
     public LuaTable? Get(string id)
     {
@@ -123,6 +123,8 @@ public sealed class CraftModule
         table["skill_max"] = recipe.SkillMax;
         table["resources"] = resources;
         table["skills"] = skills;
+        table["spell"] = recipe.Spell;
+        table["mana"] = recipe.Mana;
 
         return table;
     }

@@ -16,7 +16,7 @@ public class CraftRecipe
     public string Item { get; set; } = string.Empty;
 
     /// <summary>
-    ///     The least of the main skill to try it, in points.
+    ///     The least of the main skill to try it, in points; below zero for a recipe a beginner may always try.
     /// </summary>
     public double SkillMin { get; set; }
 
@@ -34,4 +34,15 @@ public class CraftRecipe
     ///     Other skills it asks for.
     /// </summary>
     public List<CraftRecipeSkill> Skills { get; set; } = [];
+
+    /// <summary>
+    ///     The key of the spell (<c>data/spells.toml</c>) the crafter must have in a spellbook it carries, empty for a
+    ///     recipe that asks for none. Only inscription uses it.
+    /// </summary>
+    public string Spell { get; set; } = string.Empty;
+
+    /// <summary>
+    ///     The mana a try takes from the crafter, 0 for none.
+    /// </summary>
+    public int Mana { get; set; }
 }

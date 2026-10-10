@@ -46,6 +46,24 @@ public sealed class CraftsLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_ASpellRecipe_KeepsItsSpellAndMana_AndMayStartBelowZero()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/crafts/resources.toml", Resources);
+        root.CreateFile(
+            "data/crafts/carpentry.toml",
+            Head + Stool.Replace("skill_min = 11.0", "skill_min = -25.0").Replace("skills = []", "skills = []\nspell = \"magic_arrow\"\nmana = 4") + Lute
+        );
+
+        var craft = Assert.Single((await Load(root)).Crafts);
+        var scroll = craft.Group[0].Recipe[0];
+        var lute = craft.Group[0].Recipe[1];
+
+        Assert.Equal((-25.0, "magic_arrow", 4), (scroll.SkillMin, scroll.Spell, scroll.Mana));
+        Assert.Equal((string.Empty, 0), (lute.Spell, lute.Mana));
+    }
+
+    [Fact]
     public async Task LoadDataAsync_WithoutTheFolder_HasNoCraft()
     {
         using var root = new TemporaryDirectory();
@@ -61,6 +79,9 @@ public sealed class CraftsLoaderTests
     [InlineData("item = \"0x0a2a\"", "item = \"0x7777\"")]
     [InlineData("skill_min = 11.0", "skill_min = 40.0")]
     [InlineData("skill_max = 36.0", "skill_max = 151.0")]
+    [InlineData("skill_min = 11.0", "skill_min = -51.0")]
+    [InlineData("skills = []", "skills = []\nmana = -1")]
+    [InlineData("skills = []", "skills = []\nspell = \"Magic Arrow\"")]
     [InlineData("resource = \"wood\", amount = 9", "resource = \"gems\", amount = 9")]
     [InlineData("resource = \"wood\", amount = 9", "resource = \"wood\", amount = 0")]
     [InlineData("resources = [{ resource = \"wood\", amount = 9 }]", "resources = []")]
