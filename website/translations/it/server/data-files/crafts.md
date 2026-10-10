@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"edfb39bd81eb1349c6cbab4317468748146a52099b39ba839e0efc1c4f39a3d7","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"ba1c039fe9100b14a8dc084ac4ffbe1650c4e589aebdd65476493535f1a38415","title":"Mestieri"} -->
 
 # Mestieri
 
@@ -38,12 +38,12 @@ skills = []
 | `[[group.recipe]]` | Una ricetta del gruppo, in ordine. |
 | `name` | Ciò che mostra il gump. |
 | `item` | Il template dell'oggetto creato. |
-| `skill_min` | Il minimo dell'abilità principale per provarla: lì la probabilità è una su due. Da -50 a 150; sotto 0 viene sempre tentata (il primo cerchio di [Inscription](../inscription.md) parte da -25). |
+| `skill_min` | Il minimo dell'abilità principale per provarla: lì la probabilità è una su due. Da -50 a 150; sotto 0 viene sempre tentata. |
 | `skill_max` | L'abilità a cui non fallisce mai. Non sotto `skill_min`, al massimo 150. UOX3 ne mette alcune sopra 100 (la tunica borchiata, il teschio con candela): quelle non diventano mai certe, né eccezionali sotto `skill_max - 60`. |
 | `resources` | Cosa richiede: `resource` è un elenco di `resources.toml` o un template di oggetto, `amount` almeno 1. Almeno uno. |
 | `skills` | Altre abilità richieste: `skill`, `min` (il minimo per provarla) e `max`, rispetto a cui viene provata. |
-| `spell` | Facoltativo. La chiave di un incantesimo di `data/spells.toml` che chi crea deve avere in un libro che indossa o porta nello zaino, altrimenti "You don't have that spell!". Un identificatore in minuscolo; omesso per nessuno. |
-| `mana` | Facoltativo, 0 o più. Il mana che costa un tentativo, controllato all'inizio e al secondo colpo, pagato una volta da un tentativo che viene fatto (anche un fallimento). |
+| `spell` | Facoltativo. La chiave di un incantesimo di `data/spells.toml` che chi crea deve avere in un libro che indossa o porta nello zaino, altrimenti "You don't have that spell!". Deve essere una chiave di quel file; omesso per nessuno. |
+| `mana` | Facoltativo, 0 o più. Il mana che costa un tentativo, controllato all'inizio e al secondo colpo, pagato una volta, da un successo soltanto. |
 
 ## resources.toml
 
@@ -66,7 +66,7 @@ lingotti di quel tipo, come dicono `scripts/common/woods.lua` e `scripts/common/
 
 Il server si ferma all'avvio, indicando il file, per: un id che non è un identificatore in minuscolo o è usato due volte, un'abilità
 sconosciuta, un gruppo o una ricetta senza nome, un oggetto o materiale che non è né un template di oggetto né un elenco, una
-quantità sotto 1, una ricetta che non richiede nulla, limiti di abilità fuori da -50 a 150 (il massimo da 0) o il minimo sopra il massimo, uno `spell` che non è un identificatore in minuscolo, un `mana` sotto 0, oppure un elenco
+quantità sotto 1, una ricetta che non richiede nulla, limiti di abilità fuori da -50 a 150 (il massimo da 0) o il minimo sopra il massimo, uno `spell` che non è una chiave di `data/spells.toml` (gli incantesimi si caricano prima dei mestieri), un `mana` sotto 0, oppure un elenco
 senza template o che ne nomina uno inesistente, un mestiere senza nome, senza `[[group]]` o con un gruppo senza ricette. Senza la cartella non si può creare nulla.
 
 ## Da dove vengono i file
@@ -75,7 +75,8 @@ Sono convertiti dai menu di creazione di UOX3:
 
 ```bash
 uv run --project tools/convert moongate-convert uox-crafts --source <UOX3>/data/dfndata/create \
-    --items moongate_root/templates/items --destination moongate_root/data/crafts
+    --items moongate_root/templates/items --destination moongate_root/data/crafts \
+    --spells moongate_root/data/spells.toml
 ```
 
 Il convertitore esclude i gruppi che creano deed e la ricetta delle assi, trasforma i decimi di abilità di UOX3 in
@@ -89,4 +90,6 @@ una ricetta di alchimia richiede anche una bottiglia vuota, che UOX3 non mette.
 
 L'inscription non è nei menu di UOX3 come dati che il server possa usare: `uox-crafts --spells moongate_root/data/spells.toml`
 la costruisce da `spells.toml` (una pergamena per ogni incantesimo abilitato, nel gruppo del suo cerchio, i reagenti
-dell'incantesimo, una pergamena vuota dell'elenco `blank_scrolls`, il mana e la finestra classici del cerchio), e scrive `spell` e `mana`.
+dell'incantesimo, una pergamena vuota dell'elenco `blank_scrolls`, il mana del cerchio e la finestra del file dati classico), e scrive
+`spell` e `mana`. Senza `--spells` il mestiere non viene ricostruito: l'elenco `blank_scrolls` viene scritto comunque, e il
+convertitore dice che `inscription.toml` è rimasto com'era.

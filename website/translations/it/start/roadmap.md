@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"7854daed6c16c7b6fcbc21a23249d1e35c95684805d86631d7654233720a7b18","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"3458b43e2a3bdda549c3dfd4dbed530933ea43ede16f5f15ae0c647861736f72","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -128,7 +128,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 | --- | --- | --- | --- | --- |
 | 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere, [acquisto e vendita ai venditori](vendors.md) con i negozi di ModernUO, rifornimento e rivendita; [istruttori di abilità](skills.md#trainers) per venditori e guaritori; i [maestri di gilda](skills.md#guildmasters) con le loro gilde | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
 | 4.2 | ❌ | **Scambio sicuro** tra giocatori | Economia dei giocatori | |
-| 4.3 | ✅ | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi. Fatto: il [libro, il motore di lancio, gli otto cerchi e Reactive Armor](magery.md), con Teleport, Recall, Mark e Gate Travel (regole di viaggio delle regioni lette), i campi, le creature evocate, Magic Reflection, Incognito e Polymorph. Le pergamene si scrivono con l'[inscription](inscription.md). In attesa dello stato di lucchetto e trappola dei contenitori: Magic Lock, Unlock, Trap e Untrap | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
+| 4.3 | 🟡 | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi. Fatto: il [libro, il motore di lancio, gli otto cerchi e Reactive Armor](magery.md), con Teleport, Recall, Mark e Gate Travel (regole di viaggio delle regioni lette), i campi, le creature evocate, Magic Reflection, Incognito e Polymorph. Le pergamene si scrivono con l'[inscription](inscription.md). In attesa dello stato di lucchetto e trappola dei contenitori: Magic Lock, Unlock, Trap e Untrap | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebook** | Il modo in cui i giocatori viaggiano; richiede le regole delle regioni di 3.5 | |
 | 4.5 | ✅ | **Pozioni ed effetti alchemici**. Fatto: [cura, rinvigorimento, forza, agilità, visione notturna, veleno, antidoti ed esplosione](potions.md), e l'[alchimia](alchemy.md) | Piccolo quando esistono effetti temporanei e incantesimi | |
 

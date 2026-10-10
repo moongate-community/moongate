@@ -31,6 +31,7 @@ UOX3's skill numbers are off by a digit or past any skill: the converter writes 
 - The recipes are [`data/crafts/cartography.toml`](data-files/crafts.md).
 - The pen is the template with `script_id = "cartography_tool"` (`scripts/items/cartography_tool.lua`); how a map
   is drawn is `scripts/common/cartography.lua`. The pen and ink is a scribe's: it opens [Inscription](inscription.md).
+  The mapmaker sells the mapmaker's pen (`mapmakerspen`) and buys it back; a scribe and a mage sell the pen and ink.
 
 ## Existing roots
 

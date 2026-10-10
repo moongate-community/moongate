@@ -36,12 +36,12 @@ skills = []
 | `[[group.recipe]]` | A recipe of the group, in order. |
 | `name` | What the gump shows. |
 | `item` | The item template made. |
-| `skill_min` | The least of the main skill to try it: the chance there is one in two. -50 to 150; below 0 it is always tried (the first circle of [Inscription](../inscription.md) starts at -25). |
+| `skill_min` | The least of the main skill to try it: the chance there is one in two. -50 to 150; below 0 it is always tried. |
 | `skill_max` | The skill at which it never fails. Not below `skill_min`, at most 150. UOX3 sets some above 100 (the studded tunic, the skull with candle): those never become certain, nor exceptional below `skill_max - 60`. |
 | `resources` | What it takes: `resource` is a list of `resources.toml` or an item template, `amount` at least 1. At least one. |
 | `skills` | Other skills it asks for: `skill`, `min` (the least to try it) and `max`, which its try is measured against. |
-| `spell` | Optional. The key of a spell of `data/spells.toml` the crafter must have in a spellbook it wears or carries in its backpack, else "You don't have that spell!". A lower-case identifier; left out for none. |
-| `mana` | Optional, 0 or more. The mana a try takes, checked at the start and at the second stroke, paid once by a try that is made (a failure too). |
+| `spell` | Optional. The key of a spell of `data/spells.toml` the crafter must have in a spellbook it wears or carries in its backpack, else "You don't have that spell!". It must be a key of that file; left out for none. |
+| `mana` | Optional, 0 or more. The mana a try takes, checked at the start and at the second stroke, paid once, by a success only. |
 
 ## resources.toml
 
@@ -64,7 +64,7 @@ ingots of that kind instead, as `scripts/common/woods.lua` and `scripts/common/m
 
 The server stops at startup, naming the file, for: an id that is not a lower-case identifier or is used twice, an
 unknown skill, a group or recipe without a name, an item or resource that is neither an item template nor a list, an
-amount below 1, a recipe that takes nothing, skill bounds outside -50 to 150 (the most from 0) or the least above the most, a `spell` that is not a lower-case identifier, a `mana` below 0, or a list
+amount below 1, a recipe that takes nothing, skill bounds outside -50 to 150 (the most from 0) or the least above the most, a `spell` that is not a key of `data/spells.toml` (the spells load before the crafts), a `mana` below 0, or a list
 without templates or naming one that does not exist, a craft with no name, with no `[[group]]` or with a group that has no recipe. Without the folder nothing can be crafted.
 
 ## Where the files come from
@@ -73,7 +73,8 @@ They are converted from UOX3's create menus:
 
 ```bash
 uv run --project tools/convert moongate-convert uox-crafts --source <UOX3>/data/dfndata/create \
-    --items moongate_root/templates/items --destination moongate_root/data/crafts
+    --items moongate_root/templates/items --destination moongate_root/data/crafts \
+    --spells moongate_root/data/spells.toml
 ```
 
 The converter leaves out the groups that make deeds and the recipe of boards, turns UOX3's tenths of skill into
@@ -87,4 +88,6 @@ an alchemy recipe also takes an empty bottle, which UOX3 leaves out.
 
 Inscription is not in UOX3's menus as data the server can use: `uox-crafts --spells moongate_root/data/spells.toml`
 builds it from `spells.toml` (a scroll for each enabled spell, in the group of its circle, the reagents of the spell, a
-blank scroll of the list `blank_scrolls`, the classic mana and window of the circle), and writes `spell` and `mana`.
+blank scroll of the list `blank_scrolls`, the mana of the circle and the window of the classic data file), and writes
+`spell` and `mana`. Without `--spells` the craft is not rebuilt: the list `blank_scrolls` is still written, and the
+converter says that `inscription.toml` was left as it was.

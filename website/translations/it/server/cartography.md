@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"44d404645b90c3ead6b5ccd5ac7711ca1939c1b6bc60493f5a63a652e5f64acf","title":"Cartografia"} -->
+<!-- translation: {"sourceHash":"80abf5f8b26eb726c5a78c1fbf87969faec4e3422a70b72533e160b300cfccc3","title":"Cartografia"} -->
 
 # Cartografia
 
@@ -33,6 +33,7 @@ I numeri di abilità di UOX3 sono sbagliati di una cifra o oltre ogni abilità: 
 - Le ricette sono [`data/crafts/cartography.toml`](data-files/crafts.md).
 - La penna è il template con `script_id = "cartography_tool"` (`scripts/items/cartography_tool.lua`); come si disegna una mappa
   è `scripts/common/cartography.lua`. Penna e inchiostro è di uno scriba: apre [Inscription](inscription.md).
+  Il cartografo vende la penna da cartografo (`mapmakerspen`) e la ricompra; uno scriba e un mago vendono penna e inchiostro.
 
 ## Root esistenti
 
