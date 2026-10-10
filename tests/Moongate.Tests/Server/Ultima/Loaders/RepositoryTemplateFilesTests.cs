@@ -1100,12 +1100,14 @@ public sealed class RepositoryTemplateFilesTests
             new[]
             {
                 "lesserhealpotion", "healpotion", "greaterhealpotion", "refreshmentpotion", "totalrefreshmentpotion",
-                "strengthpotion", "greaterstrengthpotion", "agilitypotion", "greateragilitypotion", "nightsightpotion"
+                "strengthpotion", "greaterstrengthpotion", "agilitypotion", "greateragilitypotion", "nightsightpotion",
+                "lesserpoisonpotion", "poisonpotion", "greaterpoisonpotion", "deadlypoisonpotion", "lessercurepotion",
+                "curepotion", "greatercurepotion"
             },
             id => Assert.Equal("potion", templates[id].ScriptId)
         );
-        // Poison, cure and explosion come with their own systems; a drunk potion leaves this bottle.
-        Assert.True(string.IsNullOrEmpty(templates["poisonpotion"].ScriptId));
+        // Explosion potions are thrown, and come with throwing; a drunk potion leaves this bottle.
+        Assert.True(string.IsNullOrEmpty(templates["explosionpotion"].ScriptId));
         Assert.True(templates.ContainsKey("0x0f0e_empty_bottle"));
     }
 

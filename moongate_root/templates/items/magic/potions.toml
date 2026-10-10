@@ -123,6 +123,7 @@ id = "lessercurepotion"
 base_id = "0x0f07_orange_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f07_b_orange_potion"
@@ -138,6 +139,7 @@ id = "curepotion"
 base_id = "0x0f07_b_orange_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f07_c_orange_potion"
@@ -153,6 +155,7 @@ id = "greatercurepotion"
 base_id = "0x0f07_c_orange_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f08_blue_potion"
@@ -232,6 +235,7 @@ id = "lesserpoisonpotion"
 base_id = "0x0f0a_green_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f0a_b_green_potion"
@@ -247,6 +251,7 @@ id = "poisonpotion"
 base_id = "0x0f0a_b_green_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f0a_c_green_potion"
@@ -262,6 +267,7 @@ id = "greaterpoisonpotion"
 base_id = "0x0f0a_c_green_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f0a_d_green_potion"
@@ -277,6 +283,7 @@ id = "deadlypoisonpotion"
 base_id = "0x0f0a_d_green_potion"
 item_id = 0
 rarity = "common"
+script_id = "potion"
 
 [[item]]
 id = "0x0f0c_yellow_potion"

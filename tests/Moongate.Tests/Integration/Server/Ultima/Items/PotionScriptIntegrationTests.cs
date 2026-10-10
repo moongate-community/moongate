@@ -55,6 +55,7 @@ using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
@@ -72,6 +73,10 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
     private const int FullHealth = 1049547;
     private const int HealWait = 500235;
     private const int SimilarEffect = 502173;
+    private const int CannotHeal = 1005000;
+    private const int NotPoisoned = 1042000;
+    private const int NotStrongEnough = 500232;
+    private const int Cured = 500231;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -103,6 +108,10 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "strengthpotion", ItemId = new Serial(0x0F09), ScriptId = "potion", Stackable = true },
             new ItemTemplate { Id = "greateragilitypotion", ItemId = new Serial(0x0F08), ScriptId = "potion", Stackable = true },
             new ItemTemplate { Id = "nightsightpotion", ItemId = new Serial(0x0F06), ScriptId = "potion", Stackable = true },
+            new ItemTemplate { Id = "poisonpotion", ItemId = new Serial(0x0F0A), ScriptId = "potion", Stackable = true },
+            new ItemTemplate { Id = "greaterpoisonpotion", ItemId = new Serial(0x0F0A), ScriptId = "potion", Stackable = true },
+            new ItemTemplate { Id = "lessercurepotion", ItemId = new Serial(0x0F07), ScriptId = "potion", Stackable = true },
+            new ItemTemplate { Id = "greatercurepotion", ItemId = new Serial(0x0F07), ScriptId = "potion", Stackable = true },
             new ItemTemplate { Id = "0x0f0e_empty_bottle", ItemId = new Serial(0x0F0E), Stackable = true },
             new ItemTemplate { Id = "halberd", ItemId = new Serial(0x143E), WeaponType = WeaponType.PoleArm },
             new ItemTemplate { Id = "longsword", ItemId = new Serial(0x0F61), WeaponType = WeaponType.Sword },
@@ -157,6 +166,14 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
 
             -- The heal of the test is the most of the potion.
             potion.random = function(low, high) return high end
+
+            -- The chance of a cure the test rolls, 0 when it says nothing.
+            local roll_for_tests = 0
+            potion.chance = function() return roll_for_tests end
+
+            function potion.set_roll(serial, value)
+                roll_for_tests = value
+            end
             """
         );
         _scripts.Write("common/crafting.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "crafting.lua")));
@@ -221,6 +238,8 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<EffectModule>();
         _container.AddScriptModule<CraftModule>();
         _container.Register<IStatBonusService, StatBonusService>(Reuse.Singleton);
+        _container.RegisterInstance(new CombatConfig());
+        _container.Register<IPoisonService, PoisonService>(Reuse.Singleton, made: Parameters.Of.Type<Random>(_ => null));
         _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -441,6 +460,57 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
         Drink(Carry("nightsightpotion", 0x0F06, 1));
 
         Assert.Equal(TimeSpan.FromMinutes(39), _timers.Timers.Single(timer => timer.Name == "night_sight").Interval);
+    }
+
+    [Fact]
+    public void APoisonPotion_PoisonsTheDrinker_AndAHealPotionIsThenRefused()
+    {
+        Drink(Carry("poisonpotion", 0x0F0A, 1));
+
+        Assert.Empty(_errors);
+        Assert.Equal(1, Poison().LevelOf(_aria));
+
+        (_aria.HitsMax, _aria.Hits) = (50, 10);
+        var heal = Carry("lesserhealpotion", 0x0F0C, 1);
+        Drink(heal);
+
+        Assert.Equal(1, Left(heal));
+        Assert.Equal(CannotHeal, Told().Last());
+    }
+
+    [Fact]
+    public void ACurePotion_IsRefusedWhenNotPoisoned()
+    {
+        var cure = Carry("lessercurepotion", 0x0F07, 1);
+
+        Drink(cure);
+
+        Assert.Equal(1, Left(cure));
+        Assert.Equal([NotPoisoned], Told());
+    }
+
+    [Fact]
+    public void ALesserCure_OftenFailsAgainstAGreaterPoison_AGreaterCureNever()
+    {
+        Drink(Carry("greaterpoisonpotion", 0x0F0A, 1));
+        var lesser = Carry("lessercurepotion", 0x0F07, 1);
+        _itemScripts.Run(lesser, "set_roll", 0.5);
+
+        Drink(lesser);
+
+        Assert.Equal(0, Left(lesser));
+        Assert.Equal(2, Poison().LevelOf(_aria));
+        Assert.Equal(NotStrongEnough, Told().Last());
+
+        Drink(Carry("greatercurepotion", 0x0F07, 1));
+
+        Assert.Null(Poison().LevelOf(_aria));
+        Assert.Equal(Cured, Told().Last());
+    }
+
+    private IPoisonService Poison()
+    {
+        return _container.Resolve<IPoisonService>();
     }
 
     private void WearItem(string template, int graphic, LayerType layer)

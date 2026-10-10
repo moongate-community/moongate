@@ -526,12 +526,14 @@ PRESET_MAPS: dict[str, tuple[int, int, int, int, int, int, int]] = {
 }
 CRAFTED_MAP = "50"
 BLANK_MAP = "blank map"
-# The potions scripts/items/potion.lua knows: heal, refresh, strength, agility and night sight. Poison, cure and
-# explosion potions wait for their own systems.
+# The potions scripts/items/potion.lua knows: heal, refresh, strength, agility, night sight, poison and cure. Explosion
+# potions are thrown, and wait for throwing.
 POTION_TEMPLATES = frozenset(
     {
         "lesserhealpotion", "healpotion", "greaterhealpotion", "refreshmentpotion", "totalrefreshmentpotion",
         "strengthpotion", "greaterstrengthpotion", "agilitypotion", "greateragilitypotion", "nightsightpotion",
+        "lesserpoisonpotion", "poisonpotion", "greaterpoisonpotion", "deadlypoisonpotion", "lessercurepotion",
+        "curepotion", "greatercurepotion",
     }
 )
 PRESET_MAP_FIELDS = ("map_width", "map_height", "map_x1", "map_y1", "map_x2", "map_y2", "map_facet")
