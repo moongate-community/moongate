@@ -722,6 +722,22 @@ public sealed class RepositoryTemplateFilesTests
         Assert.All(new[] { "mapmakerspen", "0x0fc0_pen_and_ink" }, id => Assert.Equal("cartography_tool", byId[id].ScriptId));
         Assert.Contains("0x14ec_blank_map", lists.Single(list => list.Id == "maps").Templates);
         Assert.DoesNotContain("0x0e34_a_blank_scroll", lists.Single(list => list.Id == "maps").Templates);
+
+        // Alchemy: twenty potions in eight groups, each in an empty bottle, as the plain potions vendors sell; a reagent
+        // counts one by one and by the ten.
+        var alchemy = crafts["alchemy"];
+        Assert.Equal(8, alchemy.Group.Count);
+        Assert.Equal(20, alchemy.Group.Sum(group => group.Recipe.Count));
+        Assert.All(
+            alchemy.Group.SelectMany(group => group.Recipe),
+            recipe => Assert.Contains(recipe.Resources, resource => resource.Resource == "0x0f0e_empty_bottle")
+        );
+        Assert.All(
+            alchemy.Group.SelectMany(group => group.Recipe),
+            recipe => Assert.Contains(byId[recipe.Item].ScriptId, new[] { "potion", "explosion_potion" })
+        );
+        Assert.Equal("alchemy_tool", byId["mortarandpestle"].ScriptId);
+        Assert.Equal(["0x0f85_10_ginseng", "0x0f85_ginseng"], lists.Single(list => list.Id == "ginseng").Templates);
     }
 
     [Fact]
