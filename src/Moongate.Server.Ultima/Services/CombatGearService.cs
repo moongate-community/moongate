@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Combat;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
@@ -64,7 +65,9 @@ public sealed class CombatGearService : ICombatGearService
                 _templates.TryGet(item.TemplateId, out var template) &&
                 template.ArmorRating is { } rating)
             {
-                best = Math.Max(best, rating);
+                // An exceptional piece gives eight more, a low one eight less.
+                var step = (int)QualityOf(item) - (int)ItemQualityType.Regular;
+                best = Math.Max(best, Math.Max(rating + step * CombatFormulas.QualityArmorStep, 0));
             }
         }
 
@@ -98,11 +101,18 @@ public sealed class CombatGearService : ICombatGearService
         var tactics = Points(mobile, SkillType.Tactics);
         var anatomy = Points(mobile, SkillType.Anatomy);
         var lumberjacking = weapon?.Type == WeaponType.Axe ? Points(mobile, SkillType.Lumberjacking) : 0;
+        var quality = weapon?.Quality ?? ItemQualityType.Regular;
 
         return status with
         {
-            DamageMin = Math.Max(CombatFormulas.ScaleDamage(min, tactics, mobile.Strength, anatomy, lumberjacking), 1),
-            DamageMax = Math.Max(CombatFormulas.ScaleDamage(max, tactics, mobile.Strength, anatomy, lumberjacking), 1),
+            DamageMin = Math.Max(
+                CombatFormulas.ScaleDamage(min, tactics, mobile.Strength, anatomy, lumberjacking, quality),
+                1
+            ),
+            DamageMax = Math.Max(
+                CombatFormulas.ScaleDamage(max, tactics, mobile.Strength, anatomy, lumberjacking, quality),
+                1
+            ),
             // Before AOS the client shows the armor rating where the physical resistance goes.
             PhysicalResistance = ArmorRatingOf(mobile)
         };
@@ -139,11 +149,28 @@ public sealed class CombatGearService : ICombatGearService
                 template.TwoHandedWeapon == true,
                 template.DamageMin ?? 0,
                 template.DamageMax.Value,
-                template.Speed ?? CombatService.FistsSpeed
+                template.Speed ?? CombatService.FistsSpeed,
+                QualityOf(item)
             );
         }
 
         return null;
+    }
+
+    // The quality a crafter gave the item; regular without one, or with a prop that is no quality.
+    private static ItemQualityType QualityOf(ItemEntity item)
+    {
+        try
+        {
+            return item.TryGetProp<long>(ItemPropKeys.Quality, out var quality) &&
+                   Enum.IsDefined((ItemQualityType)quality)
+                ? (ItemQualityType)quality
+                : ItemQualityType.Regular;
+        }
+        catch (Exception exception) when (exception is InvalidCastException or FormatException or OverflowException)
+        {
+            return ItemQualityType.Regular;
+        }
     }
 
     private static double Points(MobileEntity mobile, SkillType skill)

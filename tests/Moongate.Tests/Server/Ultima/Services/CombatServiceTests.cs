@@ -479,6 +479,19 @@ public sealed class CombatServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AnExceptionalWeapon_HitsAFifthHarder()
+    {
+        _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 10, 20, 35, ItemQualityType.Exceptional);
+        _random.Integers(4);
+        _combat.Attack(_aria, _orc);
+
+        Tick();
+
+        // 14 from the roll, a fifth more: 16.
+        Assert.Equal(30 - 16, _orc.Hits);
+    }
+
+    [Fact]
     public void ANpcIsNotGivenTheWeaponsItWears_ItKeepsItsTemplateDice()
     {
         _gear.Weapon = new(SkillType.Swordsmanship, WeaponType.Sword, false, 100, 200, 35);

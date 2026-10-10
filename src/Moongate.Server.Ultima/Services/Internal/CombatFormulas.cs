@@ -1,4 +1,5 @@
 using Moongate.Server.Ultima.Types.Combat;
+using Moongate.Server.Ultima.Types.Items;
 
 namespace Moongate.Server.Ultima.Services.Internal;
 
@@ -8,6 +9,10 @@ namespace Moongate.Server.Ultima.Services.Internal;
 /// </summary>
 internal static class CombatFormulas
 {
+    // How much a step of quality above or below regular changes the damage of a weapon and the rating of armor.
+    public const double QualityDamageStep = 0.2;
+    public const int QualityArmorStep = 8;
+
     /// <summary>
     ///     The delay of a swing is an hour for a weapon with no speed, rather than a division by zero, as ModernUO.
     /// </summary>
@@ -61,9 +66,17 @@ internal static class CombatFormulas
 
     /// <summary>
     ///     Raises or lowers the damage by the tactics, the strength and the anatomy of the attacker, and by its
-    ///     lumberjacking when it hits with an axe: a fifth more at 100, and a tenth on top.
+    ///     lumberjacking when it hits with an axe: a fifth more at 100, and a tenth on top. A weapon of exceptional
+    ///     quality does a fifth more, one of low quality a fifth less.
     /// </summary>
-    public static int ScaleDamage(int damage, double tactics, double strength, double anatomy, double lumberjacking = 0)
+    public static int ScaleDamage(
+        int damage,
+        double tactics,
+        double strength,
+        double anatomy,
+        double lumberjacking = 0,
+        ItemQualityType quality = ItemQualityType.Regular
+    )
     {
         double scaled = damage;
         scaled += scaled * (tactics - Base) / 100;
@@ -78,6 +91,8 @@ internal static class CombatFormulas
         {
             mods += 0.1;
         }
+
+        mods += ((int)quality - (int)ItemQualityType.Regular) * QualityDamageStep;
 
         scaled += scaled * mods;
 
