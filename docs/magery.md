@@ -57,12 +57,15 @@ of the text command and the extended command 0x1C of the client).
 | Magic Arrow | sulfurous ash | After half a second, 4 to 7 fire damage, three quarters of it when resisted, scaled by Evaluating Intelligence against Resisting Spells and by Magery, doubled against a monster or an animal |
 | Night Sight | sulfurous ash, spider silk | Sees in the dark for 15 to 39 minutes, as bright as the Magery says (26 at 100) |
 | Weaken | garlic, nightshade | As Clumsy, on the strength: the maximum hits of a player fall with it |
-| Reactive Armor | garlic, spider silk, sulfurous ash | For 25 seconds and half a second a point of Magery, a share of every melee blow that lands from arm's length goes back to its attacker: 10 per cent and a quarter of a per cent a point of Magery (35 at 100) |
+| Reactive Armor | garlic, spider silk, sulfurous ash | For 25 seconds and half a second a point of the caster's Magery, a share of every melee blow that lands from arm's length goes back to its attacker: 10 per cent and a quarter of a per cent a point of the Magery of the wearer when it is hit (35 at 100). An arrow does not go back, a guard is never hurt by it, and an attacker that falls to it ends the blow |
 
 A harmful spell makes the caster the aggressor of its target: a criminal against an innocent who does not fight it, and
 an NPC fights back. A curse of a stat that is as strong or stronger stays. A harmful spell on a target that cannot be
 harmed, such as a vendor or a banker, is refused with "You cannot perform negative acts on your target." before the
 reagents and the mana are spent.
+
+A prisoner in [jail](jail.md) casts no spell: it reads "You cannot cast spells here.", so it cannot Recall or Teleport out.
+Staff is never held to it.
 
 ## The second circle
 
@@ -72,7 +75,7 @@ reagents and the mana are spent.
 | Cunning | mandrake root, nightshade | As Agility, on the intelligence |
 | Strength | mandrake root, nightshade | As Agility, on the strength |
 | Cure | garlic, ginseng | May end a poison: the chance is (10000 + 75 a point of Magery - 1750 for each level of the poison, the lesser being 1) / 100 per cent. A cure that works tells the target and the caster, one that fails tells the caster |
-| Harm | nightshade, spider silk | At once, 1 to 15 damage, three quarters of it when resisted, scaled as the other damage spells; half at two tiles and a quarter beyond |
+| Harm | nightshade, spider silk | At once, 1 to 15 damage, three quarters of it when resisted, scaled as the other damage spells, whole at any distance |
 | Protection | garlic, ginseng, sulfurous ash | Adds a tenth of the caster's Magery points to the armor of the target, for 1.2 seconds a point of it |
 | Magic Trap, Magic Untrap | | Disabled, see below |
 
@@ -88,9 +91,9 @@ stop a cast from being disturbed).
 | Bless | garlic, mandrake root | As Agility, on the strength, the dexterity and the intelligence at once |
 | Fireball | black pearl | A ball of fire flies to the target and, half a second later, does 10 to 16 damage, scaled as Magic Arrow |
 | Poison | nightshade | Poisons the target unless it resists. The level goes by Magery and Poisoning together, less 10 for each tile beyond three: over 199.8 the deadly poison one time in ten and else the greater, over 170.2 the greater, over 130.2 the regular and else the lesser |
-| Teleport | blood moss, mandrake root | The caster stands at the place picked, in sight, with a puff at both places. Refused before anything is spent when the caster is too loaded to move, nothing can stand there, or a region forbids a teleport out of its place or into the destination |
+| Teleport | blood moss, mandrake root | The caster stands at the place picked, in sight, with a puff at both places. Refused before anything is spent when the caster is too loaded to move, nothing can stand there, a mobile stands there or an impassable item such as a shut door lies there, or a region forbids a teleport out of its place or into the destination |
 | Telekinesis | blood moss, mandrake root | Uses an item from afar as a double click would: a container opens, a door swings. Refused for what has no use to make |
-| Wall of Stone | blood moss, garlic | Three pieces of wall across the way from the caster to the place, which block movement for ten seconds; no piece where a mobile stands |
+| Wall of Stone | blood moss, garlic | Three pieces of wall across the way from the caster to the place, which block movement for ten seconds; no piece where a mobile stands, where the caster cannot see or where an impassable item already lies. Refused in a guarded town |
 | Magic Lock, Unlock | | Disabled, see below |
 
 ## The fourth circle
@@ -100,7 +103,7 @@ stop a cast from being disturbed).
 | Arch Cure | garlic, ginseng, mandrake root | Cure on everyone alive within two tiles of the place picked, with a chance a little lower, one per cent less |
 | Arch Protection | garlic, ginseng, mandrake root, sulfurous ash | Protection on everyone alive within three tiles of the place picked who has none |
 | Curse | nightshade, garlic, sulfurous ash | Lowers the three stats of the target together, as Clumsy, Feeblemind and Weaken do each |
-| Fire Field | black pearl, spider silk, sulfurous ash | Five pieces of fire across the way, for 20 seconds: whoever steps onto one or stands in it burns for 2 damage once a second (1 when a try of Resisting Spells succeeds); the fire does not block |
+| Fire Field | black pearl, spider silk, sulfurous ash | Five pieces of fire across the way, for 20 seconds: whoever steps onto one or stands in it burns for 2 damage once a second (1 when a try of Resisting Spells succeeds); the fire does not block. No piece where the caster cannot see or an impassable item lies. Refused in a guarded town |
 | Greater Heal | garlic, ginseng, mandrake root, spider silk | Four tenths of the Magery and 1 to 10 hit points, with the refusals of Heal |
 | Lightning | mandrake root, sulfurous ash | At once, a bolt for 12 to 20 damage, scaled as Fireball |
 | Mana Drain | black pearl, mandrake root, spider silk | Takes 1 to 100 mana of the target (at most what it has) unless it resists, which it does 99 times in a hundred whatever its skill |
@@ -116,8 +119,9 @@ back, and an invulnerable or a dead one is left alone.
 A recall rune is the item `recall_rune`; marked, it holds a place (`rune.x`, `rune.y`, `rune.z`, `rune.map`). Staff mark
 one with [`.mark_rune`](commands/mark_rune.md) at the place where they stand; the Mark spell, of the sixth circle, will do
 it for players. Recall is refused, before anything is spent, for what is not a rune, a rune not marked, a criminal, a
-caster too loaded to move, a rune of another map, a place nothing can stand on and a region that does not let a recall out
-of its place or into the destination (the `recall_out` and `recall_in` flags of the regions).
+caster too loaded to move, a rune of another map, a place nothing can stand on or a mobile or an impassable item fills, and
+a region that does not let a recall out of its place or into the destination (the `recall_out` and `recall_in` flags of the
+regions).
 
 ### Region rules
 
@@ -135,9 +139,18 @@ nor a trap to act on. They are built with the locks and traps of containers.
 
 - Protection and Arch Protection add armor, as the classic spell did; the later rule that the protected is not disturbed by
   damage, and the penalty it came with, are not built.
-- Recall does not check a fight in progress, which the classic game before the AOS did not either, and a mobile's pets do not
-  follow.
-- Teleport and Recall do not refuse a place a mobile or an item fills, only one nothing can stand on.
+- Recall does not check a fight in progress (the classic game refuses it for a while after a blow struck at a player; the
+  engine has no such combat heat yet), and a mobile's pets do not follow.
+- A prisoner is refused every spell, which also stops a travel out of the cells; a gate or a ride is not asked about a
+  sentence.
+
+### Which era
+
+Where the classic game changed with its expansions, the spells follow the earliest, the days with no expansion, as the
+casting tables of the first circle do: Harm hurts whole at any distance (the falloff came with the Second Dawn),
+Protection and Arch Protection add armor, Reactive Armor sends back a share of a melee blow by the Magery of its wearer,
+and Fire Field lasts 20 seconds whatever the Magery. The later rules (an absorbing Reactive Armor, a Protection that guards
+against disturbance, a longer Fire Field) are not built.
 
 ## Try it
 

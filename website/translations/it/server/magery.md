@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"78d712a6385c2764d6f496664993fb21a22554d2d96768cdef4b3c92af51743d","title":"Magery"} -->
+<!-- translation: {"sourceHash":"9f336c053b119869667772af43997cfa0eecff1813a10d3130b8ef526921a1ae","title":"Magery"} -->
 
 # Magery
 
@@ -62,13 +62,15 @@ pergamena (i tipi 0x27 e 0x56 del comando di testo e il comando esteso 0x1C del 
 | Magic Arrow | cenere sulfurea | Dopo mezzo secondo, da 4 a 7 danni da fuoco, tre quarti se resistito, scalati da Evaluating Intelligence contro Resisting Spells e dalla Magery, raddoppiati contro un mostro o un animale |
 | Night Sight | cenere sulfurea, seta di ragno | Vede al buio per 15-39 minuti, con la luminosità che dice la Magery (26 a 100) |
 | Weaken | aglio, nightshade | Come Clumsy, sulla forza: i punti ferita massimi di un giocatore calano di conseguenza |
-
-| Reactive Armor | aglio, seta di ragno, cenere sulfurea | Per 25 secondi e mezzo secondo a punto di Magery, una parte di ogni colpo in mischia che arriva da distanza di un braccio torna a chi lo ha dato: il 10 per cento e un quarto di per cento a punto di Magery (35 a 100) |
+| Reactive Armor | aglio, seta di ragno, cenere sulfurea | Per 25 secondi e mezzo secondo a punto di Magery del lanciatore, una parte di ogni colpo in mischia che arriva da distanza di un braccio torna a chi lo ha dato: il 10 per cento e un quarto di per cento a punto della Magery di chi la indossa quando viene colpito (35 a 100). Una freccia non torna indietro, una guardia non ne è mai ferita, e un attaccante che cade per questo termina il colpo |
 
 Un incantesimo dannoso rende il lanciatore l'aggressore del bersaglio: un criminale contro un innocente che non combatte, e
 un PNG reagisce. Una maledizione su una statistica che è forte uguale o di più resta. Un incantesimo dannoso su un bersaglio
 che non può essere colpito, come un venditore o un banchiere, viene rifiutato con "You cannot perform negative acts on your
 target." prima che reagenti e mana siano spesi.
+
+Un detenuto in [prigione](jail.md) non lancia alcun incantesimo: legge "You cannot cast spells here.", quindi non può fare
+Recall o Teleport per uscire. Lo staff non ne è mai vincolato.
 
 ## Il secondo cerchio
 
@@ -78,7 +80,7 @@ target." prima che reagenti e mana siano spesi.
 | Cunning | radice di mandragora, nightshade | Come Agility, sull'intelligenza |
 | Strength | radice di mandragora, nightshade | Come Agility, sulla forza |
 | Cure | aglio, ginseng | Può far finire un veleno: la probabilità è (10000 + 75 a punto di Magery - 1750 per ogni livello del veleno, il minore essendo 1) / 100 per cento. Una cura riuscita avvisa il bersaglio e il lanciatore, una fallita il lanciatore |
-| Harm | nightshade, seta di ragno | Subito, da 1 a 15 danni, tre quarti se resistito, scalati come gli altri incantesimi di danno; la metà a due caselle e un quarto oltre |
+| Harm | nightshade, seta di ragno | Subito, da 1 a 15 danni, tre quarti se resistito, scalati come gli altri incantesimi di danno, interi a qualunque distanza |
 | Protection | aglio, ginseng, cenere sulfurea | Aggiunge un decimo dei punti di Magery del lanciatore all'armatura del bersaglio, per 1,2 secondi a punto |
 | Magic Trap, Magic Untrap | | Disabilitati, vedi sotto |
 
@@ -95,9 +97,9 @@ disturbato).
 | Bless | aglio, radice di mandragora | Come Agility, su forza, destrezza e intelligenza insieme |
 | Fireball | perla nera | Una palla di fuoco vola al bersaglio e, mezzo secondo dopo, fa da 10 a 16 danni, scalati come Magic Arrow |
 | Poison | nightshade | Avvelena il bersaglio se non resiste. Il livello dipende da Magery e Poisoning insieme, meno 10 per ogni casella oltre tre: oltre 199,8 il veleno mortale una volta su dieci e altrimenti il maggiore, oltre 170,2 il maggiore, oltre 130,2 il normale e altrimenti il minore |
-| Teleport | blood moss, radice di mandragora | Il lanciatore si trova nel punto scelto, in linea di vista, con uno sbuffo in entrambi i punti. Rifiutato prima che si spenda qualcosa quando il lanciatore è troppo carico per muoversi, nessuno può stare lì, o una regione vieta un teletrasporto in uscita dal suo punto o in entrata nella destinazione |
+| Teleport | blood moss, radice di mandragora | Il lanciatore si trova nel punto scelto, in linea di vista, con uno sbuffo in entrambi i punti. Rifiutato prima che si spenda qualcosa quando il lanciatore è troppo carico per muoversi, nessuno può stare lì, vi sta un mobile o vi giace un oggetto invalicabile come una porta chiusa, o una regione vieta un teletrasporto in uscita dal suo punto o in entrata nella destinazione |
 | Telekinesis | blood moss, radice di mandragora | Usa un oggetto da lontano come farebbe un doppio clic: un contenitore si apre, una porta si muove. Rifiutato per ciò che non ha un uso |
-| Wall of Stone | blood moss, aglio | Tre pezzi di muro di traverso sulla via dal lanciatore al punto, che bloccano il movimento per dieci secondi; nessun pezzo dove sta un mobile |
+| Wall of Stone | blood moss, aglio | Tre pezzi di muro di traverso sulla via dal lanciatore al punto, che bloccano il movimento per dieci secondi; nessun pezzo dove sta un mobile, dove il lanciatore non vede o dove giace già un oggetto invalicabile. Rifiutato in una città sorvegliata |
 | Magic Lock, Unlock | | Disabilitati, vedi sotto |
 
 ## Il quarto cerchio
@@ -107,7 +109,7 @@ disturbato).
 | Arch Cure | aglio, ginseng, radice di mandragora | Cure su chiunque sia vivo entro due caselle dal punto scelto, con una probabilità un poco più bassa, l'uno per cento in meno |
 | Arch Protection | aglio, ginseng, radice di mandragora, cenere sulfurea | Protection su chiunque sia vivo entro tre caselle dal punto scelto e non l'abbia già |
 | Curse | nightshade, aglio, cenere sulfurea | Abbassa le tre statistiche del bersaglio insieme, come fanno Clumsy, Feeblemind e Weaken ciascuno |
-| Fire Field | perla nera, seta di ragno, cenere sulfurea | Cinque pezzi di fuoco di traverso sulla via, per 20 secondi: chi calpesta un pezzo o ci sta dentro brucia per 2 danni una volta al secondo (1 quando una prova di Resisting Spells riesce); il fuoco non blocca |
+| Fire Field | perla nera, seta di ragno, cenere sulfurea | Cinque pezzi di fuoco di traverso sulla via, per 20 secondi: chi calpesta un pezzo o ci sta dentro brucia per 2 danni una volta al secondo (1 quando una prova di Resisting Spells riesce); il fuoco non blocca. Nessun pezzo dove il lanciatore non vede o dove giace un oggetto invalicabile. Rifiutato in una città sorvegliata |
 | Greater Heal | aglio, ginseng, radice di mandragora, seta di ragno | Quattro decimi della Magery e da 1 a 10 punti ferita, con i rifiuti di Heal |
 | Lightning | radice di mandragora, cenere sulfurea | Subito, un fulmine da 12 a 20 danni, scalati come Fireball |
 | Mana Drain | perla nera, radice di mandragora, seta di ragno | Toglie da 1 a 100 mana al bersaglio (al massimo quello che ha) se non resiste, cosa che fa 99 volte su cento qualunque sia la sua abilità |
@@ -124,8 +126,8 @@ Una runa di richiamo è l'oggetto `recall_rune`; segnata, contiene un punto (`ru
 staff ne segna una con [`.mark_rune`](commands/mark_rune.md) nel punto in cui si trova; l'incantesimo Mark, del sesto cerchio,
 lo farà per i giocatori. Recall viene rifiutato, prima che si spenda qualcosa, per ciò che non è una runa, una runa non
 segnata, un criminale, un lanciatore troppo carico per muoversi, una runa di un'altra mappa, un punto in cui nulla può
-stare e una regione che non permette un richiamo in uscita dal suo punto o in entrata nella destinazione (i flag
-`recall_out` e `recall_in` delle regioni).
+stare o che un mobile o un oggetto invalicabile occupa, e una regione che non permette un richiamo in uscita dal suo punto
+o in entrata nella destinazione (i flag `recall_out` e `recall_in` delle regioni).
 
 ### Regole delle regioni
 
@@ -144,9 +146,18 @@ contenitori.
 
 - Protection e Arch Protection aggiungono armatura, come l'incantesimo classico; la regola successiva per cui il protetto non
   viene disturbato dal danno, e la penalità che l'accompagnava, non sono costruite.
-- Recall non controlla un combattimento in corso, come non faceva il gioco classico prima dell'AOS, e gli animali di un
-  mobile non lo seguono.
-- Teleport e Recall non rifiutano un punto occupato da un mobile o da un oggetto, solo uno in cui nulla può stare.
+- Recall non controlla un combattimento in corso (il gioco classico lo rifiuta per un po' dopo un colpo dato a un
+  giocatore; il motore non ha ancora un simile calore di combattimento), e gli animali di un mobile non lo seguono.
+- A un detenuto è rifiutato ogni incantesimo, il che ferma anche un viaggio fuori dalle celle; un portale o una
+  cavalcatura non chiedono della pena.
+
+### Quale epoca
+
+Dove il gioco classico è cambiato con le sue espansioni, gli incantesimi seguono la più antica, i giorni senza espansioni,
+come le tabelle di lancio del primo cerchio: Harm ferisce intero a qualunque distanza (il calo con la distanza è venuto con
+la Second Dawn), Protection e Arch Protection aggiungono armatura, Reactive Armor rimanda una parte di un colpo in mischia
+secondo la Magery di chi la indossa, e Fire Field dura 20 secondi qualunque sia la Magery. Le regole successive (una
+Reactive Armor che assorbe, una Protection che protegge dal disturbo, un Fire Field più lungo) non sono costruite.
 
 ## Provalo
 
