@@ -58,6 +58,7 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
     private readonly Random _random;
     private readonly IMobileService? _mobiles;
     private readonly ISpellCastService? _casts;
+    private readonly IParalysisService? _paralysis;
     private readonly Dictionary<Serial, Ticking> _ticking = [];
 
     public PoisonService(
@@ -71,9 +72,11 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         CombatConfig combat,
         Random? random = null,
         IMobileService? mobiles = null,
-        ISpellCastService? casts = null
+        ISpellCastService? casts = null,
+        IParalysisService? paralysis = null
     )
     {
+        _paralysis = paralysis;
         _casts = casts;
         _state = state;
         _death = death;
@@ -213,6 +216,9 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
             : Math.Clamp(1 + (int)(mobile.Hits * level.Share), level.Min, level.Max);
         ticking.LastDamage = damage;
         ShowDamage(mobile, damage);
+
+        // Every damage breaks a paralysis, a poison's too.
+        _paralysis?.Release(mobile);
 
         if (mobile.Hits - damage > 0)
         {

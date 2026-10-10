@@ -12,6 +12,11 @@
 --   field.caster    the serial of who raised it
 --   field.until     the time, as world.now(), the piece goes away at
 --   field.damage    what a piece of fire does to whoever is in it, 0 for none
+--   field.effect    "poison" or "paralyze": what a piece does to whoever steps onto
+--                   it or stands in it; none for fire (which burns by field.damage)
+--                   and for a wall or a field of energy
+--   field.power     the poison level of a piece of poison, the seconds of a piece
+--                   of paralysis
 --
 -- Functions:
 --   field.east_to_west(from, x, y)   whether a line raised at x, y lies from east
@@ -26,6 +31,8 @@
 --       options.reach    how many pieces on each side of the middle one
 --       options.seconds  how long the field lasts
 --       options.damage   the damage of a piece of fire, 0 for none
+--       options.effect   "poison" or "paralyze", as the prop field.effect
+--       options.power    the level or the seconds, as the prop field.power
 --       options.keep_free   true skips a place where someone stands, as a wall
 --
 --   A place is skipped when the caster cannot see it, nothing can stand on it
@@ -101,6 +108,12 @@ function field.place(caster, target, options)
             item.set_prop(piece, "field.caster", caster)
             item.set_prop(piece, "field.until", world.now() + options.seconds)
             item.set_prop(piece, "field.damage", options.damage or 0)
+
+            if options.effect then
+                item.set_prop(piece, "field.effect", options.effect)
+                item.set_prop(piece, "field.power", options.power or 0)
+            end
+
             item.start_timer(piece, options.tick and "tick" or "expire", options.tick and 1 or options.seconds)
             pieces[#pieces + 1] = piece
         end

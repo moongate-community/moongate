@@ -47,12 +47,13 @@ end
 function poison.cast(caster, target, info)
     local who = target.serial
 
-    if not combat.aggress(caster, who) then
+    if not magic.aggress(caster, who, info) then
         return
     end
 
-    -- A poison may ruin the spell its target is casting.
+    -- A poison may ruin the spell its target is casting, and frees a paralyzed target.
     spell.disturb(who)
+    mobile.release_paralysis(who)
 
     if magic.resisted(caster, who, info.circle) then
         mobile.message_cliloc(who, RESISTING)

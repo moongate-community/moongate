@@ -51,6 +51,31 @@ public sealed class SpellsLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_TheCastDelayScale_IsOneUnlessTheSpellSaysOtherwise()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/spells.toml", Clumsy + Clumsy.Replace("id = 1", "id = 2").Replace("\"clumsy\"", "\"slow\"") + "cast_delay_scale = 4\n");
+
+        var spells = (await CreateLoader(root).LoadDataAsync()).Entities.OrderBy(spell => spell.Id).ToList();
+
+        Assert.Equal([1.0, 4.0], spells.Select(spell => spell.CastDelayScale));
+    }
+
+    [Theory]
+    [InlineData("0")]
+    [InlineData("-1")]
+    [InlineData("11")]
+    public async Task LoadDataAsync_ACastDelayScaleOutOfZeroToTen_StopsTheServerNamingIt(string scale)
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/spells.toml", Clumsy + $"cast_delay_scale = {scale}\n");
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+
+        Assert.Contains("cast_delay_scale", error.Message);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_NoFile_LoadsNothing()
     {
         using var root = new TemporaryDirectory();

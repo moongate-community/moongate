@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"6badf3b330b675e40e54ba3fff7bd5dbc0f6048776778b205a8ade3309b95b68","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"540ee5db9d218befe0a050d72f8c13720c48b6fdfe443c2cd7640fe5d24268d6","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -317,10 +317,31 @@ i dati dell'incantesimo con `scroll` vero per un lancio da pergamena. Gli script
 `create_food`, `feeblemind`, `heal`, `magic_arrow`, `night_sight`, `weaken`), `reactive_armor`, il secondo cerchio
 (`agility`, `cunning`, `cure`, `harm`, `protection`, `strength`), il terzo (`bless`, `fireball`, `poison`, `teleport`,
 `telekinesis`, `wall_of_stone`) e il quarto (`arch_cure`, `arch_protection`, `curse`, `fire_field`, `greater_heal`,
-`lightning`, `mana_drain`, `recall`); un incantesimo senza script dice di essere disabilitato. `scripts/common/magic.lua` è
-ciò che condividono: la probabilità che un bersaglio resista, il fattore del danno, la maledizione e il potenziamento con la
-loro durata, l'armatura di Protection, il rifiuto di una cura, l'effetto e il suono di un incantesimo.
-`scripts/common/field.lua` mette a terra la fila di pezzi di un campo.
+`lightning`, `mana_drain`, `recall`), il quinto (`blade_spirits`, `dispel_field`, `incognito`, `magic_reflection`,
+`mind_blast`, `paralyze`, `poison_field`, `summon_creature`), il sesto (`dispel`, `energy_bolt`, `explosion`,
+`invisibility`, `mark`, `mass_curse`, `paralyze_field`, `reveal`), il settimo (`chain_lightning`, `energy_field`,
+`flame_strike`, `gate_travel`, `mana_vampire`, `mass_dispel`, `meteor_swarm`, `polymorph`) e l'ottavo (`earthquake`,
+`energy_vortex`, `resurrection`, `summon_air_elemental`, `summon_daemon`, `summon_earth_elemental`,
+`summon_fire_elemental`, `summon_water_elemental`); un incantesimo senza script dice di essere disabilitato.
+`scripts/common/magic.lua` è ciò che condividono: la probabilità che un bersaglio resista, il fattore del danno, la
+maledizione e il potenziamento con la loro durata, l'armatura di Protection, il rifiuto di una cura, l'effetto e il suono
+di un incantesimo e, per gli incantesimi che colpiscono un punto, chi possono colpire (`valid_indirect`,
+`indirect_targets`), il danno che arriva dopo (`harm_after`), la probabilità di un Dispel e `aggress`, che rende il lanciatore l'aggressore del bersaglio e conosce
+l'incantesimo che Magic Reflection ha rimandato indietro (`info.reflected`, `info.reflector`): il lanciatore è allora il
+suo stesso bersaglio e si ferisce da sé, senza crimine. `scripts/common/field.lua`
+mette a terra la fila di pezzi di un campo.
+
+## common/summon.lua
+
+`scripts/common/summon.lua` è ciò che condividono gli incantesimi che chiamano una creatura:
+`summon.create(caster, template, place, seconds, sound, uncontrollable)` chiede la creatura con `npc.spawn` e, quando c'è,
+ne fa un seguace del lanciatore (la proprietà `owner`, l'ordine di animale `guard`), imposta `summon.until`,
+`summon.difficulty` e `summon.focus`, e avvia il timer che la manda via; con `uncontrollable` riceve la proprietà
+`pet.uncontrollable`, e `common/pet_orders.lua` le fa non sentire parole e non prendere cibo (uno spirito di lama, un vortice di energia). `summon.refuse` e `summon.refuse_template` dicono, con il cliloc 1049645, che i seguaci del
+lanciatore non hanno posto per lei (`pet.followers`, `pet.slots_of`). `summon.tick` è chiamato da `common/creature.lua` a
+ogni pensiero di una creatura: manda via quella il cui tempo è scaduto o il cui padrone è morto, se n'è andato o l'ha
+lasciata. `summon.dismiss` la porta via in uno sbuffo (`effect.at`, `npc.delete`); lo usa un Dispel. Una creatura evocata che
+muore non lascia cadavere (l'`on_death` di `creature.lua`). Vedi [Magery](../magery.md#summoned-creatures).
 
 ## magic_field.lua
 
@@ -328,7 +349,10 @@ loro durata, l'armatura di Protection, il rifiuto di una cura, l'effetto e il su
 `templates/items/magic/fields.toml`): i timer dell'oggetto `expire` e `tick` terminano un pezzo quando `field.until` è
 raggiunto, e un pezzo con `field.damage` brucia, con `combat.harm` e il lanciatore come attaccante, chi lo calpesta
 (`on_move_over`, `on_npc_move_over`) o ci sta dentro a ogni tick, una volta al secondo. Una prova di Resisting Spells riduce
-la bruciatura a un punto; un invulnerabile o un mobile morto viene lasciato in pace. Vedi [Magery](../magery.md).
+la bruciatura a un punto; un invulnerabile o un mobile morto viene lasciato in pace. Un pezzo con `field.effect = "poison"`
+avvelena, al livello di `field.power`, e uno con `"paralyze"` immobilizza per `field.power` secondi (`mobile.paralyze`) chi lo
+calpesta, quando il lanciatore è nel gioco e può colpirlo (`magic.valid_indirect`), il lanciatore essendone l'aggressore. I
+campi di energia e il muro di pietra non hanno altro effetto che il loro peso. Vedi [Magery](../magery.md).
 
 ## fishing_pole.lua
 
@@ -636,6 +660,16 @@ vivo, la linea di vista (`world.line_of_sight`), che la creatura sia ancora selv
 frase gentile; l'ultima tira `skill.check(user, "animal_taming", min - 0.1, min + 49.9)` e `pet.tame`. Vedi
 [Domatura degli animali](../animal-taming.md).
 
+## polymorph_forms.lua
+
+`scripts/gumps/polymorph_forms.lua` è lo script dell'elenco di forme dell'incantesimo Polymorph
+(`templates/gumps/polymorph_forms.xml`). Ognuno dei suoi 18 pulsanti chiama la funzione con il suo nome (`chicken`, `dog`,
+`wolf`, `panther`, `gorilla`, `black_bear`, `grizzly_bear`, `polar_bear`, `human_male`, `slime`, `orc`, `lizardman`,
+`gargoyle`, `ogre`, `troll`, `ettin`, `daemon`, `human_female`), che conserva il corpo nelle proprietà
+`magic.polymorph_body` e `magic.polymorph_until` (quindici secondi) e lancia di nuovo l'incantesimo, dal libro o da una
+pergamena dello zaino. Lo script dell'incantesimo `scripts/spells/polymorph.lua` cambia poi il corpo con
+`mobile.disguise`. Vedi [Magery](../magery.md).
+
 ## ankh.lua e resurrect.lua
 
 `scripts/items/ankh.lua` è lo script del template `decoration_ankh`, i due pezzi di ogni
@@ -663,7 +697,9 @@ durante quel secondo non avvia nulla. Quando il portale
 si trova in una regione sorvegliata e la destinazione no (`world.is_guarded`), chiede prima conferma: un
 gump con OKAY e CANCEL e il suono `0x20E`; OKAY da più di una casella di distanza dice "È
 troppo lontano." (messaggio 393) con `mobile.message`. Le regole ModernUO su sigilli, giovani
-giocatori, assassini, lancio di incantesimi, animali e dissoluzione del portale non sono ancora presenti.
+giocatori, assassini, lancio di incantesimi e animali non sono ancora presenti. I portali dell'incantesimo Gate Travel sono del
+template `magic_gate`, che usa questo script: il suo timer di oggetto `expire` (`on_timer`) porta via il portale dopo 30
+secondi, e l'incantesimo Dispel Field lo porta via, con il portale all'altro capo (la prop `gate.partner`).
 
 ## bulletin_board.lua
 

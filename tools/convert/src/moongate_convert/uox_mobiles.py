@@ -347,6 +347,11 @@ def _validate(table: dict) -> str | None:
     if isinstance(flee_at, int) and not -1 <= flee_at <= 100:
         return invalid("flee_at", "must be from -1 to 100")
 
+    control_slots = table.get("control_slots")
+
+    if isinstance(control_slots, int) and not 1 <= control_slots <= 10:
+        return invalid("control_slots", "must be from 1 to 10")
+
     script_id = table.get("script_id")
 
     if script_id is not None and not re.fullmatch(r"[a-z_][a-z0-9_]*", script_id):

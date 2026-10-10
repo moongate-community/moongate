@@ -34,6 +34,9 @@ public sealed class SpellCastService : ISpellCastService
     private const int FizzleSpeed = 6;
     private const int FizzleDuration = 30;
     private const int FizzleSound = 0x5C;
+    private const int ReflectGraphic = 0x37B9;
+    private const int ReflectSpeed = 10;
+    private const int ReflectDuration = 5;
     private const int FirstCircle = 1;
     private const int EyeHeight = 14;
     private const int DefaultSkillCap = 1000;
@@ -174,7 +177,7 @@ public sealed class SpellCastService : ISpellCastService
         var elapsed = (_time.GetUtcNow() - cast.StartedAt).TotalSeconds;
         End(caster, cast);
         _recovered[caster.Id] = _time.GetUtcNow()
-            .AddSeconds(SpellCircleRules.DisturbRecovery(elapsed, SpellCircleRules.CastDelay(cast.Spell.Circle)));
+            .AddSeconds(SpellCircleRules.DisturbRecovery(elapsed, DelayOf(cast.Spell)));
         _speech.TellCliloc(caster, ISpellCastService.DisturbedMessage);
     }
 
@@ -280,7 +283,7 @@ public sealed class SpellCastService : ISpellCastService
             _speech.Say(caster, spell.Mantra);
         }
 
-        var delay = SpellCircleRules.CastDelay(spell.Circle);
+        var delay = DelayOf(spell);
         Gesture(caster, cast);
 
         // One more gesture for each 1.5 seconds the delay lasts, the first being the one just made.
@@ -296,6 +299,12 @@ public sealed class SpellCastService : ISpellCastService
         cast.DelayTimer = _timers.RegisterTimer(DelayTimer, TimeSpan.FromSeconds(delay), () => Ready(caster, cast));
 
         return true;
+    }
+
+    // The delay of the circle, times what the spell asks for: a few summons were slowed in the classic game.
+    private static double DelayOf(SpellDefinition spell)
+    {
+        return SpellCircleRules.CastDelay(spell.Circle) * spell.CastDelayScale;
     }
 
     private void Gesture(MobileEntity caster, SpellCast cast)
@@ -542,12 +551,45 @@ public sealed class SpellCastService : ISpellCastService
             _handling.Consume(scroll);
         }
 
-        var result = _scripts.Cast(spell, caster, target, scroll is not null);
+        // A spell Magic Reflection turns back keeps its caster, who is now its target: it hurts itself, with its own
+        // skills, and the wearer it was aimed at is told to the script as the reflector.
+        var reflector = TryReflect(caster, spell, ref target);
+
+        var result = _scripts.Cast(spell, caster, target, scroll is not null, reflector);
 
         if (result.Kind is not (ScriptResultKind.Completed or ScriptResultKind.Suspended))
         {
             _logger.Warning("The script of the spell {Spell} did not run: {Result}", spell.Key, result.Kind);
         }
+    }
+
+    // Magic Reflection, as the classic single-use rule has it: the first harmful spell that can be reflected, aimed at
+    // someone else who wears it, is turned on its caster and the reflection is gone. The reflected spell is not
+    // reflected again, since the swap is made once, here. Only the target is swapped: the caster stays the caster and the
+    // script makes it the aggressor of the wearer. Gives who reflected it.
+    private MobileEntity? TryReflect(MobileEntity caster, SpellDefinition spell, ref SpellTargetInfo target)
+    {
+        if (!spell.Harmful ||
+            !spell.Reflectable ||
+            target.Kind != SpellTargetType.Mobile ||
+            target.Serial == caster.Id ||
+            !_mobiles.TryGet(target.Serial, out var wearer) ||
+            !_mobiles.IsInWorld(wearer.Id) ||
+            !wearer.GetProp(MagicProps.Reflect, false))
+        {
+            return null;
+        }
+
+        wearer.RemoveProp(MagicProps.Reflect);
+        _effects.PlayOn(
+            wearer.Id,
+            wearer.Map,
+            wearer.Location,
+            new EffectOptions { Graphic = ReflectGraphic, Speed = ReflectSpeed, Duration = ReflectDuration }
+        );
+        target = new(SpellTargetType.Mobile, caster.Id, caster.Map, caster.Location);
+
+        return wearer;
     }
 
     // The script of a spell may refuse before anything is spent: a cliloc number or a text is told to the caster, false

@@ -19,6 +19,11 @@ public class SpellsLoader : IDataLoader<SpellDefinition>
     public const int MaxSpellId = 64;
     public const int MaxCircle = 8;
 
+    /// <summary>
+    ///     The most a spell may multiply the cast delay of its circle by.
+    /// </summary>
+    public const double MaxCastDelayScale = 10;
+
     private readonly ILogger _logger = Log.ForContext<SpellsLoader>();
     private readonly DirectoriesConfig _directoriesConfig;
     private readonly IDataLoaderService _dataLoaderService;
@@ -88,6 +93,11 @@ public class SpellsLoader : IDataLoader<SpellDefinition>
         if (spell.Circle is < 1 or > MaxCircle)
         {
             throw Invalid($"the circle of {spell.Key} must be 1 to {MaxCircle}");
+        }
+
+        if (spell.CastDelayScale is <= 0 or > MaxCastDelayScale)
+        {
+            throw Invalid($"the cast_delay_scale of {spell.Key} must be above 0 and at most {MaxCastDelayScale}");
         }
 
         foreach (var reagent in spell.Reagents)

@@ -67,12 +67,25 @@ public sealed class SpellScriptService : ISpellScriptService, IMoongateStartupSe
         return Call(spell, CheckFunction, caster, target, fromScroll);
     }
 
-    public ScriptResult Cast(SpellDefinition spell, MobileEntity caster, SpellTargetInfo target, bool fromScroll)
+    public ScriptResult Cast(
+        SpellDefinition spell,
+        MobileEntity caster,
+        SpellTargetInfo target,
+        bool fromScroll,
+        MobileEntity? reflector = null
+    )
     {
-        return Call(spell, CastFunction, caster, target, fromScroll);
+        return Call(spell, CastFunction, caster, target, fromScroll, reflector);
     }
 
-    private ScriptResult Call(SpellDefinition spell, string function, MobileEntity caster, SpellTargetInfo target, bool fromScroll)
+    private ScriptResult Call(
+        SpellDefinition spell,
+        string function,
+        MobileEntity caster,
+        SpellTargetInfo target,
+        bool fromScroll,
+        MobileEntity? reflector = null
+    )
     {
         if (!Has(spell))
         {
@@ -85,7 +98,7 @@ public sealed class SpellScriptService : ISpellScriptService, IMoongateStartupSe
             function,
             (long)caster.Id.Value,
             TargetTable(target),
-            InfoTable(spell, fromScroll)
+            InfoTable(spell, fromScroll, reflector)
         );
     }
 
@@ -122,7 +135,7 @@ public sealed class SpellScriptService : ISpellScriptService, IMoongateStartupSe
         return table;
     }
 
-    private static LuaTable InfoTable(SpellDefinition spell, bool fromScroll)
+    private static LuaTable InfoTable(SpellDefinition spell, bool fromScroll, MobileEntity? reflector)
     {
         var table = new LuaTable();
         table["id"] = spell.Id;
@@ -138,6 +151,12 @@ public sealed class SpellScriptService : ISpellScriptService, IMoongateStartupSe
         table["projectile_speed"] = spell.ProjectileSpeed;
         table["harmful"] = spell.Harmful;
         table["resistable"] = spell.Resistable;
+        table["reflected"] = reflector is not null;
+
+        if (reflector is not null)
+        {
+            table["reflector"] = (long)reflector.Id.Value;
+        }
 
         return table;
     }

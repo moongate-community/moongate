@@ -28,8 +28,9 @@
 --                                      on the target, as data/spells.toml says
 --   magic.curse(caster, target, info, stat)   the whole of a stat curse such as
 --                                      Clumsy: the caster aggresses the target,
---                                      the target's own cast is disturbed, the
---                                      stat is lowered and the effect is shown;
+--                                      the target's own cast is disturbed, its
+--                                      paralysis ended, the stat is lowered and
+--                                      the effect is shown;
 --                                      nothing at all when the target cannot be
 --                                      harmed (combat.aggress is false)
 --   magic.curse_all(caster, target, info)   the same for the three stats at once,
@@ -54,6 +55,33 @@
 --                                      Poison weighs its level by
 --   magic.alive_in_range(map, x, y, range)   the serials of the mobiles that are
 --                                      not dead within range tiles of a place
+--   magic.refuse_in_town(map, x, y, z)   the cliloc 500946 that refuses a spell
+--                                      of the sixth circle and above cast, or
+--                                      aimed, at a guarded town; nil for none
+--   magic.valid_indirect(caster, who)  whether a spell that hits a place may
+--                                      hit the mobile: not the dead, not a
+--                                      staff member that is hidden, not the
+--                                      caster's own creatures, and not a
+--                                      player or an owned creature that looks
+--                                      innocent, unless the caster is a
+--                                      murderer. The caster itself is valid
+--   magic.indirect_targets(caster, map, x, y, range)   the serials, the caster
+--                                      and the invulnerable left out, that a
+--                                      spell of a place may hit within range
+--   magic.harm(caster, who, damage)    a blow of the caster's; the damage is
+--                                      done, with no one to blame, when the
+--                                      caster has left the game
+--   magic.harm_after(caster, who, damage, seconds)   the same, a while later
+--   magic.aggress(caster, who, info)   makes the caster the aggressor of who and
+--                                      says whether the spell goes on; false for
+--                                      one that cannot be harmed. A spell that
+--                                      Magic Reflection turned back (info.reflected)
+--                                      has the caster for who: it is the aggressor
+--                                      of the wearer (info.reflector) it aimed at
+--                                      and hurts itself, with no crime
+--   magic.dispel_chance(caster, difficulty, focus)   the chance, 0 to 1 or
+--                                      more, that a Dispel undoes a summoned
+--                                      creature of that difficulty and focus
 -- ==============================================================================
 
 local magic = {}
@@ -64,6 +92,7 @@ local WONT_WORK = 501857     -- This spell won't work on that!
 local CANNOT_HEAL_SELF = 1005000    -- You can not heal yourself in your current state.
 local CANNOT_HEAL_OTHER = 1010398   -- You can not heal that person in their current state.
 local RESISTING = 501783     -- You feel yourself resisting magical energy.
+local IN_TOWN = 500946       -- You cannot cast this in town!
 local RESISTED_SHARE = 0.75
 local HUMAN_ENEMY_SCALE = 2
 local EFFECT_SPEED = 10
@@ -134,11 +163,12 @@ function magic.damage_scalar(caster, target)
     return scalar
 end
 
-function magic.damage(caster, target, info, base)
+function magic.damage(caster, target, info, base, share)
     local damage = base
 
+    -- The share that is kept when the target resists: three quarters, and a spell may keep less.
     if info.resistable and magic.resisted(caster, target, info.circle) then
-        damage = damage * RESISTED_SHARE
+        damage = damage * (share or RESISTED_SHARE)
         mobile.message_cliloc(target, RESISTING)
     end
 
@@ -190,6 +220,81 @@ function magic.alive_in_range(map, x, y, range)
     return alive
 end
 
+function magic.refuse_in_town(map, x, y, z)
+    if world.is_guarded(map, x, y, z) then
+        return IN_TOWN
+    end
+end
+
+function magic.valid_indirect(caster, who)
+    if who == caster then
+        return true
+    end
+
+    if mobile.is_dead(who) then
+        return false
+    end
+
+    local flags = mobile.flags(who)
+
+    if flags and flags.hidden and world.is_staff(who) then
+        return false
+    end
+
+    local owner = mobile.get_prop(who, "owner")
+
+    if owner == caster then
+        return false
+    end
+
+    -- A blue player, or a creature that somebody owns and that looks blue, is not hit by a spell of a place.
+    if (mobile.is_player(who) or (owner ~= nil and owner ~= 0)) and mobile.notoriety(who) == "innocent" and
+        not mobile.is_murderer(caster) then
+        return false
+    end
+
+    return true
+end
+
+function magic.indirect_targets(caster, map, x, y, range)
+    local found = {}
+
+    for _, who in ipairs(world.mobiles_in_range(map, x, y, range)) do
+        if who ~= caster and mobile.notoriety(who) ~= "invulnerable" and magic.valid_indirect(caster, who) then
+            found[#found + 1] = who
+        end
+    end
+
+    return found
+end
+
+function magic.aggress(caster, who, info)
+    if info.reflected then
+        combat.aggress(caster, info.reflector)
+
+        return true
+    end
+
+    return combat.aggress(caster, who)
+end
+
+function magic.harm(caster, who, damage)
+    -- A caster that left the game in the meantime is to blame for nothing, but the damage is done all the same.
+    if not combat.harm(who, damage, caster) and not mobile.location(caster) then
+        combat.harm(who, damage)
+    end
+end
+
+function magic.harm_after(caster, who, damage, seconds)
+    timer.after(seconds, function()
+        magic.harm(caster, who, damage)
+    end)
+end
+
+function magic.dispel_chance(caster, difficulty, focus)
+    return (50 + 100 * (magic.points(caster, "magery") - difficulty) / (focus * 2)) / 100
+end
+
 function magic.curse_seconds(caster)
     return math.floor(magic.points(caster, "magery") * 1.2)
 end
@@ -206,12 +311,13 @@ end
 
 function magic.curse(caster, target, info, stat)
     -- A target that cannot be harmed, as an invulnerable or a dead one, takes no curse.
-    if not combat.aggress(caster, target) then
+    if not magic.aggress(caster, target, info) then
         return
     end
 
-    -- A curse may ruin the spell its target is casting.
+    -- A curse may ruin the spell its target is casting, and frees a paralyzed target.
     spell.disturb(target)
+    mobile.release_paralysis(target)
     mobile.add_stat_curse(target, stat, magic.curse_offset(caster), magic.curse_seconds(caster))
     magic.show(info, target)
 end
@@ -234,11 +340,12 @@ end
 local STATS = { "strength", "dexterity", "intelligence" }
 
 function magic.curse_all(caster, target, info)
-    if not combat.aggress(caster, target) then
+    if not magic.aggress(caster, target, info) then
         return
     end
 
     spell.disturb(target)
+    mobile.release_paralysis(target)
 
     for _, stat in ipairs(STATS) do
         mobile.add_stat_curse(target, stat, magic.curse_offset(caster), magic.curse_seconds(caster))

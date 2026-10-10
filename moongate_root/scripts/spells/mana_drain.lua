@@ -33,11 +33,12 @@ end
 function mana_drain.cast(caster, target, info)
     local who = target.serial
 
-    if not combat.aggress(caster, who) then
+    if not magic.aggress(caster, who, info) then
         return
     end
 
     spell.disturb(who)
+    mobile.release_paralysis(who)
 
     if magic.resisted(caster, who, info.circle, RESIST_PERCENT) then
         mobile.message_cliloc(who, RESISTING)

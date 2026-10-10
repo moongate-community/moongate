@@ -170,3 +170,11 @@ if not z or not world.can_fit(map, x, y, z, caster) then
     return 501942 -- That location is blocked.
 end
 ```
+
+## rune_place
+
+The name a recall rune takes when it is marked at a place: the rune name of its region, else its name, else the map:
+
+```lua
+item.set_name(rune, "a recall rune for " .. world.rune_place(here.map, here.x, here.y, here.z))
+```

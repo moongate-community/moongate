@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Moongate - templates/gumps/polymorph_forms.xml
+
+  What it is for:
+    The list of forms the spell Polymorph asks the caster to pick from, nine animals and
+    nine monsters and men. Each button calls the function of its name in scripts/gumps/
+    polymorph_forms.lua, which keeps the body for a moment and casts the spell again; closing the
+    gump with a right click casts nothing.
+
+  Arguments:
+    none
+-->
+<gump id="polymorph_forms" x="80" y="80"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="gump.xsd">
+  <background x="0" y="0" gump="9200" width="420" height="330" />
+  <text x="20" y="15" hue="1152">Polymorph: pick a form</text>
+  <button x="20" y="50" up="4005" down="4007" on_click="chicken" />
+  <text x="55" y="51">Chicken</text>
+  <button x="20" y="78" up="4005" down="4007" on_click="dog" />
+  <text x="55" y="79">Dog</text>
+  <button x="20" y="106" up="4005" down="4007" on_click="wolf" />
+  <text x="55" y="107">Wolf</text>
+  <button x="20" y="134" up="4005" down="4007" on_click="panther" />
+  <text x="55" y="135">Panther</text>
+  <button x="20" y="162" up="4005" down="4007" on_click="gorilla" />
+  <text x="55" y="163">Gorilla</text>
+  <button x="20" y="190" up="4005" down="4007" on_click="black_bear" />
+  <text x="55" y="191">Black bear</text>
+  <button x="20" y="218" up="4005" down="4007" on_click="grizzly_bear" />
+  <text x="55" y="219">Grizzly bear</text>
+  <button x="20" y="246" up="4005" down="4007" on_click="polar_bear" />
+  <text x="55" y="247">Polar bear</text>
+  <button x="20" y="274" up="4005" down="4007" on_click="human_male" />
+  <text x="55" y="275">Human male</text>
+  <button x="220" y="50" up="4005" down="4007" on_click="slime" />
+  <text x="255" y="51">Slime</text>
+  <button x="220" y="78" up="4005" down="4007" on_click="orc" />
+  <text x="255" y="79">Orc</text>
+  <button x="220" y="106" up="4005" down="4007" on_click="lizardman" />
+  <text x="255" y="107">Lizardman</text>
+  <button x="220" y="134" up="4005" down="4007" on_click="gargoyle" />
+  <text x="255" y="135">Gargoyle</text>
+  <button x="220" y="162" up="4005" down="4007" on_click="ogre" />
+  <text x="255" y="163">Ogre</text>
+  <button x="220" y="190" up="4005" down="4007" on_click="troll" />
+  <text x="255" y="191">Troll</text>
+  <button x="220" y="218" up="4005" down="4007" on_click="ettin" />
+  <text x="255" y="219">Ettin</text>
+  <button x="220" y="246" up="4005" down="4007" on_click="daemon" />
+  <text x="255" y="247">Daemon</text>
+  <button x="220" y="274" up="4005" down="4007" on_click="human_female" />
+  <text x="255" y="275">Human female</text>
+</gump>

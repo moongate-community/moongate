@@ -37,8 +37,8 @@ end
 function magic_arrow.cast(caster, target, info)
     local who = target.serial
 
-    combat.aggress(caster, who)
-    effect.moving(caster, who, info.projectile ~= 0 and info.projectile or ARROW, {
+    magic.aggress(caster, who, info)
+    effect.moving(info.reflector or caster, who, info.projectile ~= 0 and info.projectile or ARROW, {
         speed = info.projectile_speed ~= 0 and info.projectile_speed or ARROW_SPEED,
     })
 

@@ -129,6 +129,8 @@ public sealed class DeathServiceTests : IAsyncLifetime
             mounts: _mounts,
             pets: new Lazy<Moongate.Server.Ultima.Interfaces.IPetService>(() => _pets),
             casts: new Lazy<Moongate.Server.Ultima.Interfaces.ISpellCastService>(() => _casts),
+            paralysis: new ParalysisService(_state, _timers, TimeProvider.System),
+            disguise: new DisguiseService(_state, _timers, TimeProvider.System),
             logger: new LoggerConfiguration().MinimumLevel.Information().WriteTo.Sink(_log).CreateLogger()
         );
     }
@@ -149,6 +151,45 @@ public sealed class DeathServiceTests : IAsyncLifetime
         Assert.False(_orc.TryGetProp<long>("poison.level", out _));
         Assert.False(_aria.TryGetProp<long>("poison.level", out _));
         Assert.False(_aria.TryGetProp<long>("poison.ticks", out _));
+    }
+
+    [Fact]
+    public void Kill_EndsAParalysisADisguiseAndAMagicReflection_OfAPlayerAndOfAnNpc()
+    {
+        var paralysis = new ParalysisService(_state, _timers, TimeProvider.System);
+        var disguise = new DisguiseService(_state, _timers, TimeProvider.System);
+        _aria.Body = 0x0190;
+        _aria.Name = "Aria";
+        paralysis.Paralyze(_aria, TimeSpan.FromSeconds(20));
+        disguise.Disguise(_aria, new Moongate.Server.Ultima.Data.Mobiles.DisguiseLooks(Name: "Grog"), TimeSpan.FromMinutes(1));
+        _aria.SetProp("magic.reflect", true);
+        paralysis.Paralyze(_orc, TimeSpan.FromSeconds(20));
+        _orc.SetProp("magic.reflect", true);
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+
+        Assert.True(_death.Kill(_orc));
+        Assert.True(_death.Kill(_aria));
+
+        Assert.Equal("Aria", _aria.Name);
+        Assert.False(_aria.TryGetProp<long>(ParalysisService.UntilProp, out _));
+        Assert.False(_aria.TryGetProp<long>(DisguiseService.UntilProp, out _));
+        Assert.False(_aria.TryGetProp<bool>("magic.reflect", out _));
+        Assert.False(_orc.TryGetProp<bool>("magic.reflect", out _));
+        Assert.False(_orc.TryGetProp<long>(ParalysisService.UntilProp, out _));
+    }
+
+    [Fact]
+    public void Kill_OfAPlayerPolymorphedIntoAnAnimal_GivesItsOwnBodyBackFirst_SoItDies()
+    {
+        var disguise = new DisguiseService(_state, _timers, TimeProvider.System);
+        _aria.Body = 0x0190;
+        disguise.Disguise(_aria, new Moongate.Server.Ultima.Data.Mobiles.DisguiseLooks(Body: 0x00D3), TimeSpan.FromMinutes(1));
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+
+        Assert.True(_death.Kill(_aria));
+
+        Assert.True(_aria.IsDead);
+        Assert.Equal(0x0192, _aria.Body);
     }
 
     [Fact]

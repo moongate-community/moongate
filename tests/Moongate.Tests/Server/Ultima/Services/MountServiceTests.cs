@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
@@ -121,6 +122,17 @@ public sealed class MountServiceTests
         Assert.Equal("horse", item.GetProp<string>(MountProps.PetTemplate));
         Assert.Equal((long)_rider.Id.Value, item.GetProp<long>(MountProps.PetOwner));
         Assert.Contains($"Worn {_rider.Id.Value} {item.Id.Value}", _view.Calls);
+    }
+
+    [Fact]
+    public void TryMount_ASummonedHorse_IsRefusedInSilence_ItIsNoPetToKeep()
+    {
+        _horse.SetProp(MagicProps.SummonUntil, 4_000_000_000L);
+
+        Assert.False(_service.TryMount(_rider, _horse));
+
+        Assert.False(_service.IsMounted(_rider));
+        Assert.Empty(_npcs.Removals);
     }
 
     [Fact]

@@ -92,6 +92,19 @@ def test_a_spell_keeps_what_the_engine_reads(tmp_path: Path):
     assert spell["enabled"] is True
 
 
+def test_only_blade_spirits_and_summon_creature_take_four_times_the_delay_of_their_circle(tmp_path: Path):
+    blades = spell_block(33, "Blade Spirits", "FLAGS=0x0000\n")
+    creature = spell_block(40, "Summon Creature", "FLAGS=0x0000\n")
+    code, _, error, data = convert(tmp_path, full_source(tmp_path, {33: blades, 40: creature}))
+
+    assert code == 0, error
+    scales = {spell["key"]: spell.get("cast_delay_scale") for spell in data["spell"]}
+    assert scales["blade_spirits"] == 4
+    assert scales["summon_creature"] == 4
+    # Every other spell leaves the field out: the engine reads 1.
+    assert [key for key, scale in scales.items() if scale is not None] == ["blade_spirits", "summon_creature"]
+
+
 def test_all_64_spells_come_out_in_order(tmp_path: Path):
     code, output, _, data = convert(tmp_path, full_source(tmp_path))
 

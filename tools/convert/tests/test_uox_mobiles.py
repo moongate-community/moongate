@@ -201,6 +201,49 @@ def test_flee_at_is_the_hit_percent_under_which_the_creature_runs_minus_one_for_
     assert "flee_at" not in mobiles["zero"]
 
 
+def test_control_slots_are_what_a_summoned_creature_counts_for_and_the_summons_take_the_monster_script(workspace):
+    workspace.items_and_names()
+    workspace.mobile(
+        "npc/magicsummon.dfn",
+        "[airele-summon]\n{\nID=0x000D\nCONTROLSLOTS=2\n}\n[firele-summon]\n{\nID=0x000F\nCONTROLSLOTS=4\n}\n"
+        "[plain]\n{\nID=0x0190\n}\n[bad-summon]\n{\nID=0x0190\nCONTROLSLOTS=40\n}\n[zero-summon]\n{\nID=0x0190\nCONTROLSLOTS=0\n}\n"
+        "[horse]\n{\nID=0x00c8\nCONTROLSLOTS=3\n}\n",
+    )
+
+    assert workspace.run() == 0, workspace.combined
+
+    mobiles = workspace.mobiles("magicsummon.toml")
+
+    assert (mobiles["airele_summon"].get("control_slots"), mobiles["firele_summon"].get("control_slots")) == (2, 4)
+    assert mobiles["airele_summon"].get("script_id") == "monster"
+    assert "control_slots" not in mobiles["plain"]
+    # A value out of 1 to 10 is left out rather than written as a template that cannot load.
+    assert "control_slots" not in mobiles["bad_summon"] and "control_slots" not in mobiles["zero_summon"]
+    # The tamable creatures take their slots from the taming data.
+    assert "control_slots" not in mobiles["horse"]
+
+
+def test_the_blade_spirit_the_vortex_and_the_daemon_take_the_hits_and_followers_of_the_earliest_game(workspace):
+    workspace.items_and_names()
+    workspace.mobile(
+        "npc/magicsummon.dfn",
+        "[energyvortex-summon]\n{\nID=0x00a4\nHP=1900\nCONTROLSLOTS=2\n}\n"
+        "[bladespirit-summon]\n{\nID=0x023E\nHPMAX=1200\nCONTROLSLOTS=2\n}\n"
+        "[daemon-summon]\n{\nID=0x000a\nHPMAX=700\nCONTROLSLOTS=4\n}\n"
+        "[airele-summon]\n{\nID=0x000D\nHPMAX=100\nCONTROLSLOTS=2\n}\n",
+    )
+
+    assert workspace.run() == 0, workspace.combined
+
+    mobiles = workspace.mobiles("magicsummon.toml")
+
+    # Classic, with no expansion: 70 and 80 hits for one follower each, a daemon for five; the others keep what UOX3 says.
+    assert (mobiles["energyvortex_summon"]["hits"], mobiles["energyvortex_summon"]["control_slots"]) == (70, 1)
+    assert (mobiles["bladespirit_summon"]["hits"], mobiles["bladespirit_summon"]["control_slots"]) == (80, 1)
+    assert (mobiles["daemon_summon"]["hits"], mobiles["daemon_summon"]["control_slots"]) == (700, 5)
+    assert (mobiles["airele_summon"]["hits"], mobiles["airele_summon"]["control_slots"]) == (100, 2)
+
+
 def test_a_random_pick_of_two_creatures_becomes_the_first(workspace):
     # UOX3's [dragon] GET=graydragon reddragon: a template has one base, so the first is kept and counted.
     workspace.items_and_names()

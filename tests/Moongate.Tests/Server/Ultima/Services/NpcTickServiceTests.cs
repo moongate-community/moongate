@@ -32,6 +32,37 @@ public sealed class NpcTickServiceTests
     }
 
     [Fact]
+    public void Think_OfAnNpcSavedParalyzedAndDisguised_EndsTheOldParalysis_AndTimesTheDisguise()
+    {
+        var timers = new RecordingTimerService();
+        var state = new RecordingMobileStateService { Apply = true };
+        var time = new SettableClock();
+        var now = time.GetUtcNow().ToUnixTimeSeconds();
+        var paralysis = new ParalysisService(state, timers, time);
+        var disguise = new DisguiseService(state, timers, time);
+        var ticks = new NpcTickService(
+            timers,
+            new NpcsConfig(),
+            paralysis: new Lazy<IParalysisService>(() => paralysis),
+            disguise: new Lazy<IDisguiseService>(() => disguise)
+        );
+        var npc = Npc(0x100);
+        npc.Frozen = true;
+        npc.Body = 17;
+        npc.SetProp(ParalysisService.UntilProp, now - 5);
+        npc.SetProp(DisguiseService.UntilProp, now + 60);
+        npc.SetProp(DisguiseService.BodyProp, 400L);
+        ticks.Wake(npc);
+
+        timers.Fire(timers.Timers.Single(timer => timer.Name == "npc_think").Id);
+
+        // The time of the paralysis passed while it was away; the disguise is timed for what is left.
+        Assert.False(npc.Frozen);
+        Assert.False(npc.TryGetProp<long>(ParalysisService.UntilProp, out _));
+        Assert.Contains(timers.Timers, timer => timer.Name == "disguise" && timer.Interval == TimeSpan.FromSeconds(60));
+    }
+
+    [Fact]
     public void Wake_Twice_RegistersOnce()
     {
         var timers = new RecordingTimerService();

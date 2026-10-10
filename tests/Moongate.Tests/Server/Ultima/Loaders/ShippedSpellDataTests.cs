@@ -43,6 +43,20 @@ public sealed class ShippedSpellDataTests
     }
 
     [Fact]
+    public async Task ShippedSpells_OnlyBladeSpiritsAndSummonCreature_TakeFourTimesTheDelayOfTheirCircle()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var spells = (await new SpellsLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
+
+        Assert.Equal(
+            ["blade_spirits", "summon_creature"],
+            spells.Where(spell => spell.CastDelayScale != 1.0).Select(spell => spell.Key).Order()
+        );
+        Assert.All(spells.Where(spell => spell.CastDelayScale != 1.0), spell => Assert.Equal(4.0, spell.CastDelayScale));
+    }
+
+    [Fact]
     public async Task EverySpellScript_IsASpellOfTheData_AndEveryScrollAndBookHasItsScript()
     {
         var directories = Directories();

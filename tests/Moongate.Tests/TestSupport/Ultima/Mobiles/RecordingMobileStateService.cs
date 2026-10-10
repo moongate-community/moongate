@@ -92,12 +92,23 @@ public sealed class RecordingMobileStateService : IMobileStateService
     {
         Names.Add((mobile, name));
 
+        if (Apply && Result)
+        {
+            mobile.Name = name;
+        }
+
         return Result;
     }
 
     public bool SetLooks(MobileEntity mobile, int? body, int? hue)
     {
         Looks.Add((mobile, body, hue));
+
+        if (Apply && Result)
+        {
+            mobile.Body = body ?? mobile.Body;
+            mobile.SkinHue = hue is { } skin ? new Moongate.Core.Primitives.Hue((ushort)skin) : mobile.SkinHue;
+        }
 
         return Result;
     }

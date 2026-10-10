@@ -190,6 +190,7 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         child.ScriptId ??= parent.ScriptId;
         child.NpcGuild ??= parent.NpcGuild;
         child.FleeAt ??= parent.FleeAt;
+        child.ControlSlots ??= parent.ControlSlots;
         child.BloodHue ??= parent.BloodHue;
         child.Visibility ??= parent.Visibility;
         child.Movement ??= parent.Movement;

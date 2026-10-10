@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -79,7 +80,9 @@ public sealed class StableService : IStableService
             return StableResultType.NoPlayer;
         }
 
+        // A summoned creature is a loan of its spell: stabling it would give a pet that never goes away.
         if (!pet.IsNpc ||
+            pet.TryGetProp<long>(MagicProps.SummonUntil, out _) ||
             !_mobiles.IsInWorld(pet.Id) ||
             pet.TemplateId is not { } templateId ||
             !_templates.TryGet(templateId, out var template) ||

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"45edf1412be3f07908248f2b597276f7b08dce18f74946d3913023b0b83eebbe","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"fbd49437cb1277dd06e54398d933cf3a595a1ce94d4aeec851d35ae252098d51","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -128,7 +128,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 | --- | --- | --- | --- | --- |
 | 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere, [acquisto e vendita ai venditori](vendors.md) con i negozi di ModernUO, rifornimento e rivendita; [istruttori di abilità](skills.md#trainers) per venditori e guaritori; i [maestri di gilda](skills.md#guildmasters) con le loro gilde | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
 | 4.2 | ❌ | **Scambio sicuro** tra giocatori | Economia dei giocatori | |
-| 4.3 | 🟡 | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi. Fatto: il [libro, il motore di lancio, i primi quattro cerchi e Reactive Armor](magery.md), con Teleport e Recall (regole di viaggio delle regioni lette). Resta: i cerchi da 5 a 8, Magic Lock, Unlock, Trap e Untrap (i contenitori non hanno uno stato di lucchetto o trappola), inscription | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
+| 4.3 | 🟡 | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi. Fatto: il [libro, il motore di lancio, gli otto cerchi e Reactive Armor](magery.md), con Teleport, Recall, Mark e Gate Travel (regole di viaggio delle regioni lette), i campi, le creature evocate, Magic Reflection, Incognito e Polymorph. Resta: Magic Lock, Unlock, Trap e Untrap (i contenitori non hanno uno stato di lucchetto o trappola), inscription | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebook** | Il modo in cui i giocatori viaggiano; richiede le regole delle regioni di 3.5 | |
 | 4.5 | ✅ | **Pozioni ed effetti alchemici**. Fatto: [cura, rinvigorimento, forza, agilità, visione notturna, veleno, antidoti ed esplosione](potions.md), e l'[alchimia](alchemy.md) | Piccolo quando esistono effetti temporanei e incantesimi | |
 

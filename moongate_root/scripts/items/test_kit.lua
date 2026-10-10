@@ -6,8 +6,8 @@
 --   script_id = "test_kit" (templates/items/test_kits.toml): ".add
 --   test_kit_alchemy" gives a bag that fills, the first time it is opened,
 --   with what is needed to try a craft, a potion or the spells of the first
---   to fourth circles: the tool, the materials and the items to use, or a full
---   spellbook, the reagents, some scrolls and two recall runes (marked with
+--   to eighth circles: the tool, the materials and the items to use, or a full
+--   spellbook, the reagents, some scrolls and four recall runes (marked with
 --   ".mark_rune"). Then it is a bag like any other. The skill
 --   to use them is set apart, as ".set skill alchemy 100" or ".set skill magery
 --   100".
@@ -64,7 +64,19 @@ local KITS = {
         { "0x1f44_wall_of_stone_scroll", 3 }, { "0x1f45_archcure_scroll", 3 }, { "0x1f46_archprotection_scroll", 3 },
         { "0x1f47_curse_scroll", 3 }, { "0x1f48_fire_field_scroll", 3 }, { "0x1f49_greater_heal_scroll", 3 },
         { "0x1f4a_lightning_scroll", 3 }, { "0x1f4b_mana_drain_scroll", 3 }, { "0x1f4c_recall_scroll", 3 },
-        { "recall_rune", 2 },
+        { "0x1f4d_blade_spirits_scroll", 3 }, { "0x1f4e_dispel_field_scroll", 3 }, { "0x1f4f_incognito_scroll", 3 },
+        { "0x1f50_magic_reflection_scroll", 3 }, { "0x1f51_mind_blast_scroll", 3 }, { "0x1f52_paralyze_scroll", 3 },
+        { "0x1f53_poison_field_scroll", 3 }, { "0x1f54_summon_creature_scroll", 3 }, { "0x1f55_dispel_scroll", 3 },
+        { "0x1f56_energy_bolt_scroll", 3 }, { "0x1f57_explosion_scroll", 3 }, { "0x1f58_invisibility_scroll", 3 },
+        { "0x1f59_mark_scroll", 3 }, { "0x1f5a_mass_curse_scroll", 3 }, { "0x1f5b_paralyze_field_scroll", 3 },
+        { "0x1f5c_reveal_scroll", 3 }, { "0x1f5d_chain_lightning_scroll", 3 }, { "0x1f5e_energy_field_scroll", 3 },
+        { "0x1f5f_flamestrike_scroll", 3 }, { "0x1f60_gate_travel_scroll", 3 }, { "0x1f61_mana_vampire_scroll", 3 },
+        { "0x1f62_mass_dispel_scroll", 3 }, { "0x1f63_meteor_storm_scroll", 3 }, { "0x1f64_polymorph_scroll", 3 },
+        { "0x1f65_earthquake_scroll", 3 }, { "0x1f66_energy_vortex_scroll", 3 }, { "0x1f67_resurrection_scroll", 3 },
+        { "0x1f68_summon_air_elemental_scroll", 3 }, { "0x1f69_summon_daemon_scroll", 3 },
+        { "0x1f6a_summon_earth_elemental_scroll", 3 }, { "0x1f6b_summon_fire_elemental_scroll", 3 },
+        { "0x1f6c_summon_water_elemental_scroll", 3 },
+        { "recall_rune", 4 },
     },
     test_kit_cooking = {
         { "0x097f_skillet", 1 }, { "0x1039_sack_of_flour", 5 }, { "0x0ff8_pitcher_of_water", 5 },

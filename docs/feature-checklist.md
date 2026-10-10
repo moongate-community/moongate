@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**271 systems:** ✅ 91 done, 🟡 72 partly done, ❌ 108 not built yet.
+**271 systems:** ✅ 93 done, 🟡 72 partly done, ❌ 106 not built yet.
 
-**Coverage: 34%** of the systems done, **47%** counting a partly done system as half.
+**Coverage: 34%** of the systems done, **48%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -92,12 +92,12 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Spell casting: mana, reagents, fizzle, resist | 🟡 | [Magery](magery.md): the words of power, a delay of the circle in which the caster stands still, the target cursor, reagents and mana, the Magery window of a book or a scroll, the fizzle that loses the reagents, the recovery, and damage that ruins a cast above the first circle; from the spell icon, a macro or a scroll. Resisting Spells weakens a harmful spell. The travel rules of the regions are read by Teleport and Recall. No reflection, no casting NPCs |
-| The magery spells | 🟡 | 28 of the 64 spells, each a script in `scripts/spells`: the first circle, Reactive Armor, and the second to the fourth but Magic Trap, Untrap, Lock and Unlock (containers have no lock or trap state yet); the 64 are in [`spells.toml`](data-files/spells.md). Fields of fire and stone, Teleport, Telekinesis and Recall with runes (`.mark_rune`) are in. Circles 5 to 8 are next |
+| Spell casting: mana, reagents, fizzle, resist | 🟡 | [Magery](magery.md): the words of power, a delay of the circle in which the caster stands still, the target cursor, reagents and mana, the Magery window of a book or a scroll, the fizzle that loses the reagents, the recovery, and damage that ruins a cast above the first circle; from the spell icon, a macro or a scroll. Resisting Spells weakens a harmful spell. The travel rules of the regions are read by Teleport, Recall, Mark and Gate Travel. Magic Reflection turns back the first harmful spell aimed at its wearer. No casting NPCs |
+| The magery spells | 🟡 | 60 of the 64 spells, each a script in `scripts/spells`: the eight circles and Reactive Armor, but Magic Trap, Untrap, Lock and Unlock (containers have no lock or trap state yet); the 64 are in [`spells.toml`](data-files/spells.md). Fields of fire, stone, poison, paralysis and energy, Teleport, Telekinesis, Recall, Mark and Gate Travel with runes (`.mark_rune`), the summoned creatures that fight for the caster, Dispel, Incognito, Polymorph, Invisibility and Resurrection are in |
 | Necromancy | ❌ | |
 | Spellbooks, scrolls and wands | 🟡 | A spellbook that holds up to 64 spells, opens on a double click, takes the spell of a scroll dropped on it; a scroll is cast from the backpack, with no reagents and one used up on a success. No wands, and scrolls cannot be written yet |
-| Fields and summons | ❌ | |
-| Region magic rules (no recall, no gate) | ❌ | |
+| Fields and summons | ✅ | The fields of the spells (stone, fire, poison, paralysis, energy) and the creatures they call: blade spirits, an energy vortex, a random animal, the four elementals and a daemon, each a follower of the caster that guards it and goes away with its time, its master or a Dispel. See [Magery](magery.md#summoned-creatures) |
+| Region magic rules (no recall, no gate) | ✅ | The `recall_in`, `recall_out`, `gate_in`, `gate_out`, `teleport_in`, `teleport_out` and `mark` flags of [the regions](data-files/regions.md) are read by Recall, Gate Travel, Teleport and Mark |
 | Chivalry | ❌ | |
 | Bushido | ❌ | |
 | Ninjitsu | ❌ | |
@@ -347,7 +347,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Buff bar | ❌ | |
 | Walk sequence and speed checks | ✅ | |
 | Weight and overloading | ✅ | What a mobile carries and may carry (40 and 3.5 a point of strength) is counted and shown; an overloaded player tires at every step |
-| Timed effects (buffs and debuffs) | 🟡 | Strength, dexterity and intelligence bonuses and curses (potions and spells) and night sight, for a time, never saved; poison, saved; the armor of Protection and Reactive Armor, kept with the mobile until their time is up; no buff bar yet |
+| Timed effects (buffs and debuffs) | 🟡 | Strength, dexterity and intelligence bonuses and curses (potions and spells) and night sight, for a time, never saved; poison, saved; the armor of Protection and Reactive Armor, kept with the mobile until their time is up; a paralysis and a disguise (Incognito, Polymorph), kept with the mobile and taken up again at login; no buff bar yet |
 | Text prompts and input | ✅ | The Unicode prompt (0xC2), from scripts with the `prompt` module |
 | Visual effects: moving, lightning, particles | ✅ | From scripts with the `effect` module; particles for the Enhanced Client |
 | Sounds and music | ✅ | Sounds from scripts, thunder and region music |

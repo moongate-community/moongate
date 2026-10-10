@@ -8,6 +8,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Death;
 using Moongate.Server.Ultima.Data.Internal.Death;
 using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
@@ -90,6 +91,8 @@ public sealed class DeathService : IDeathService
     private readonly IMountService? _mounts;
     private readonly Lazy<IPetService>? _pets;
     private readonly Lazy<ISpellCastService>? _casts;
+    private readonly IParalysisService? _paralysis;
+    private readonly IDisguiseService? _disguise;
     private readonly ILogger _logger;
 
     // Who is between its death and its removal: it does not die twice.
@@ -120,9 +123,13 @@ public sealed class DeathService : IDeathService
         ILogger? logger = null,
         IMountService? mounts = null,
         Lazy<IPetService>? pets = null,
-        Lazy<ISpellCastService>? casts = null
+        Lazy<ISpellCastService>? casts = null,
+        IParalysisService? paralysis = null,
+        IDisguiseService? disguise = null
     )
     {
+        _paralysis = paralysis;
+        _disguise = disguise;
         _casts = casts;
         _pets = pets;
         _mounts = mounts;
@@ -151,6 +158,9 @@ public sealed class DeathService : IDeathService
     {
         if (!mobile.IsNpc)
         {
+            // A disguise ends before the body is asked about: the body of an animal has no ghost to turn into.
+            _disguise?.End(mobile);
+
             return KillPlayer(mobile, killer);
         }
 
@@ -162,6 +172,7 @@ public sealed class DeathService : IDeathService
         // The dead cast no more, whatever killed them.
         _casts?.Value.Cancel(mobile);
         EndPoison(mobile);
+        EndSpells(mobile);
 
         // The dead are wanted no more: a body that still falls is not a criminal for the next guard.
         if (mobile.Criminal)
@@ -300,6 +311,15 @@ public sealed class DeathService : IDeathService
         mobile.RemoveProp(PoisonService.TicksProp);
     }
 
+    // A death ends what a spell put on the mobile that does not outlast it: a paralysis, a disguise (before the corpse
+    // is made, so the corpse is its own) and a Magic Reflection.
+    private void EndSpells(MobileEntity mobile)
+    {
+        _paralysis?.Release(mobile);
+        _disguise?.End(mobile);
+        mobile.RemoveProp(MagicProps.Reflect);
+    }
+
     private bool KillPlayer(MobileEntity player, MobileEntity? killer)
     {
         if (_state is null ||
@@ -314,6 +334,7 @@ public sealed class DeathService : IDeathService
         // bring it back.
         _casts?.Value.Cancel(player);
         EndPoison(player);
+        EndSpells(player);
 
         // Read before the pardon: a criminal or a murderer is no innocent to loot.
         var innocent = !player.IsMurderer && !player.Criminal;

@@ -33,6 +33,7 @@ public sealed class PoisonServiceTests : IAsyncLifetime
     private MobileEntity _aria = null!;
     private MobileEntity _boris = null!;
     private PoisonService _poison = null!;
+    private ParalysisService _paralysis = null!;
 
     public async Task InitializeAsync()
     {
@@ -44,6 +45,7 @@ public sealed class PoisonServiceTests : IAsyncLifetime
         _aria.AccountId = new Serial(0x42);
         _boris.AccountId = new Serial(0x43);
         (_aria.HitsMax, _aria.Hits) = (100, 100);
+        _paralysis = new(_state, _timers, TimeProvider.System);
         _poison = new(
             _state,
             _death,
@@ -55,7 +57,8 @@ public sealed class PoisonServiceTests : IAsyncLifetime
             new CombatConfig { DisplayDamageNumbers = true },
             _random,
             _fixture.Mobiles,
-            _casts
+            _casts,
+            _paralysis
         );
     }
 
@@ -100,6 +103,18 @@ public sealed class PoisonServiceTests : IAsyncLifetime
 
         Assert.Equal(87, _aria.Hits);
         Assert.Contains(_fixture.Sender.Sent.OfType<DamagePacket>(), damage => damage.Damage == 13);
+    }
+
+    [Fact]
+    public void ATick_FreesAParalyzedMobile_AsAnyDamageDoes()
+    {
+        _paralysis.Paralyze(_aria, TimeSpan.FromSeconds(30));
+        _poison.Apply(_aria, 0);
+
+        Fire();
+
+        Assert.False(_aria.Frozen);
+        Assert.False(_paralysis.IsParalyzed(_aria));
     }
 
     [Fact]

@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -148,6 +149,16 @@ public sealed class StableServiceTests
 
         Assert.Equal(StableResultType.NotAPet, _service.TryStable(_player, orc));
         Assert.Equal(StableResultType.NotAPet, _service.TryStable(_player, _player));
+    }
+
+    [Fact]
+    public void TryStable_ASummonedCreature_IsNotAPetToKeep()
+    {
+        _horse.SetProp(MagicProps.SummonUntil, 4_000_000_000L);
+
+        Assert.Equal(StableResultType.NotAPet, _service.TryStable(_player, _horse));
+        Assert.Empty(_npcs.Removals);
+        Assert.Empty(_bank.Paid);
     }
 
     [Fact]

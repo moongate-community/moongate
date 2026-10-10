@@ -45,6 +45,8 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly IMurderService? _murders;
     private readonly IPoisonService? _poison;
     private readonly IPetService? _pets;
+    private readonly IParalysisService? _paralysis;
+    private readonly IDisguiseService? _disguise;
 
     public CharacterEnterWorldService(
         IMobileService mobiles,
@@ -61,9 +63,13 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         ICombatGearService? gear = null,
         IMurderService? murders = null,
         IPetService? pets = null,
-        IPoisonService? poison = null
+        IPoisonService? poison = null,
+        IParalysisService? paralysis = null,
+        IDisguiseService? disguise = null
     )
     {
+        _paralysis = paralysis;
+        _disguise = disguise;
         _murders = murders;
         _poison = poison;
         _pets = pets;
@@ -149,6 +155,9 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
                     _view.Entered(character, session.SessionId, session.ClientVersion, session.AccountType);
                     // A poison it logged out with takes its hits again, its green bar shown once the client knows it.
                     _poison?.Resume(character);
+                    // A paralysis or a disguise it logged out with goes on for what was left of it, or ends.
+                    _paralysis?.Resume(character);
+                    _disguise?.Resume(character);
                 },
                 cancellationToken
             ))

@@ -317,10 +317,30 @@ of the spell with `scroll` true for a cast from a scroll. The scripts built are 
 `create_food`, `feeblemind`, `heal`, `magic_arrow`, `night_sight`, `weaken`), `reactive_armor`, the second circle
 (`agility`, `cunning`, `cure`, `harm`, `protection`, `strength`), the third (`bless`, `fireball`, `poison`, `teleport`,
 `telekinesis`, `wall_of_stone`) and the fourth (`arch_cure`, `arch_protection`, `curse`, `fire_field`, `greater_heal`,
-`lightning`, `mana_drain`, `recall`); a spell without a script says it is disabled. `scripts/common/magic.lua` is what
-they share: the chance a target resists, the damage scalar, the curse and the buff with their time, the armor of a
-Protection, the refusal of a heal, the effect and the sound of a spell. `scripts/common/field.lua` puts down the line of
-pieces of a field.
+`lightning`, `mana_drain`, `recall`), the fifth (`blade_spirits`, `dispel_field`, `incognito`, `magic_reflection`,
+`mind_blast`, `paralyze`, `poison_field`, `summon_creature`), the sixth (`dispel`, `energy_bolt`, `explosion`,
+`invisibility`, `mark`, `mass_curse`, `paralyze_field`, `reveal`), the seventh (`chain_lightning`, `energy_field`,
+`flame_strike`, `gate_travel`, `mana_vampire`, `mass_dispel`, `meteor_swarm`, `polymorph`) and the eighth (`earthquake`,
+`energy_vortex`, `resurrection`, `summon_air_elemental`, `summon_daemon`, `summon_earth_elemental`,
+`summon_fire_elemental`, `summon_water_elemental`); a spell without a script says it is disabled.
+`scripts/common/magic.lua` is what they share: the chance a target resists, the damage scalar, the curse and the buff
+with their time, the armor of a Protection, the refusal of a heal, the effect and the sound of a spell, and, for the
+spells that hit a place, who they may hit (`valid_indirect`, `indirect_targets`), the damage that is done later
+(`harm_after`), the chance of a Dispel, and `aggress`, which makes the caster the aggressor of the target and knows the
+spell that Magic Reflection turned back (`info.reflected`, `info.reflector`): the caster is then its own target and hurts
+itself with no crime. `scripts/common/field.lua` puts down the line of pieces of a field.
+
+## common/summon.lua
+
+`scripts/common/summon.lua` is what the spells that call a creature share:
+`summon.create(caster, template, place, seconds, sound, uncontrollable)` asks for the creature with `npc.spawn` and, once
+it is there, makes it a follower of the caster (the prop `owner`, the pet order `guard`), sets `summon.until`,
+`summon.difficulty` and `summon.focus`, and starts the timer that sends it away; with `uncontrollable` it gets the prop
+`pet.uncontrollable`, and `common/pet_orders.lua` lets it hear no word and take no food (a blade spirit, an energy vortex). `summon.refuse` and `summon.refuse_template` say, with the cliloc 1049645, that the followers of the caster
+have no room for it (`pet.followers`, `pet.slots_of`). `summon.tick` is called by `common/creature.lua` on every think of
+a creature: it sends away one whose time is up or whose master is dead, gone or let it go. `summon.dismiss` takes it away
+in a puff (`effect.at`, `npc.delete`); a Dispel uses it. A summoned creature that dies leaves no corpse (the `on_death` of
+`creature.lua`). See [Magery](../magery.md#summoned-creatures).
 
 ## magic_field.lua
 
@@ -328,7 +348,10 @@ pieces of a field.
 `templates/items/magic/fields.toml`): the item timers `expire` and `tick` end a piece when its `field.until` is reached,
 and a piece with `field.damage` burns, with `combat.harm` and the caster as the attacker, whoever steps onto it
 (`on_move_over`, `on_npc_move_over`) or stands in it at each tick, once a second. A try of Resisting Spells lessens the
-burn to one point; an invulnerable or a dead mobile is left alone. See [Magery](../magery.md).
+burn to one point; an invulnerable or a dead mobile is left alone. A piece with `field.effect = "poison"` poisons, at the
+level of `field.power`, and one with `"paralyze"` freezes for `field.power` seconds (`mobile.paralyze`) whoever steps onto
+it, when the caster is in the game and may harm them (`magic.valid_indirect`), the caster being their aggressor. The
+fields of energy and the wall of stone have no effect but their weight. See [Magery](../magery.md).
 
 ## fishing_pole.lua
 
@@ -635,6 +658,15 @@ tamer alive, the line of sight (`world.line_of_sight`), the creature still wild 
 kind line; the last rolls `skill.check(user, "animal_taming", min - 0.1, min + 49.9)` and `pet.tame`. See
 [Animal taming](../animal-taming.md).
 
+## polymorph_forms.lua
+
+`scripts/gumps/polymorph_forms.lua` is the script of the list of forms of the spell Polymorph
+(`templates/gumps/polymorph_forms.xml`). Each of its 18 buttons calls the function of its name (`chicken`, `dog`, `wolf`,
+`panther`, `gorilla`, `black_bear`, `grizzly_bear`, `polar_bear`, `human_male`, `slime`, `orc`, `lizardman`, `gargoyle`,
+`ogre`, `troll`, `ettin`, `daemon`, `human_female`), which keeps the body in the props `magic.polymorph_body` and
+`magic.polymorph_until` (fifteen seconds) and casts the spell again, from the book or from a scroll of the backpack. The
+spell script `scripts/spells/polymorph.lua` then changes the body with `mobile.disguise`. See [Magery](../magery.md).
+
 ## ankh.lua and resurrect.lua
 
 `scripts/items/ankh.lua` is the script of the `decoration_ankh` template, the two pieces of each
@@ -662,7 +694,9 @@ during the second starts nothing. When the gate
 stands in a guarded region and the destination does not (`world.is_guarded`), it asks first: a
 gump with OKAY and CANCEL and the sound `0x20E`; OKAY from more than a cell away tells "That is
 too far away." (message 393) with `mobile.message`. ModernUO's rules about sigils, young
-players, murderers, casting, pets and dispelling the gate are not there yet.
+players, murderers, casting and pets are not there yet. The gates of the spell Gate Travel are of the template
+`magic_gate`, which uses this script: its item timer `expire` (`on_timer`) takes the gate away after 30 seconds, and the
+Dispel Field spell takes it, with the gate at its other end (the prop `gate.partner`).
 
 ## bulletin_board.lua
 

@@ -190,7 +190,7 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
             );
 
         foreach (var script in new[]
-                     { "common/creature.lua", "common/pet_orders.lua", "mobiles/animal.lua", "mobiles/monster.lua", "mobiles/scared_animal.lua", "gumps/pet_release.lua" })
+                     { "common/creature.lua", "common/pet_orders.lua", "common/summon.lua", "mobiles/animal.lua", "mobiles/monster.lua", "mobiles/scared_animal.lua", "gumps/pet_release.lua" })
         {
             _scripts.Write(script, File.ReadAllText(ShippedScript(script)));
         }
@@ -369,6 +369,17 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors.Select(error => error.ToString()));
         Assert.Equal([order, order], new[] { _horse, _llama }.Select(pet => pet.GetProp("pet.order", "follow")));
+    }
+
+    [Fact]
+    public void AnUncontrollableCreature_DoesNotHearTheWordsOfItsOwner()
+    {
+        _horse.SetProp("pet.uncontrollable", true);
+
+        Say("all stay", SpeechKeywordType.AllStay);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal("follow", _horse.GetProp("pet.order", "follow"));
     }
 
     [Fact]

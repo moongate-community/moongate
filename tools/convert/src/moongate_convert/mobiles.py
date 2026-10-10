@@ -59,6 +59,12 @@ _SCRIPT_IDS = IgnoreCaseDict(
         "wraith": "monster",
         "spectre": "monster",
         "lich": "monster",
+        # The creatures the spells of Magery summon: they fight for their master through the pet orders.
+        "airele-summon": "monster",
+        "earthele-summon": "monster",
+        "firele-summon": "monster",
+        "waterele-summon": "monster",
+        "daemon-summon": "monster",
     }
 )
 
@@ -135,6 +141,7 @@ class Mobile:
     script_id: str | None = None
     npc_guild: str | None = None
     flee_at: int | None = None
+    control_slots: int | None = None
     blood_hue: int | None = None
     visibility: str | None = None
     movement: str | None = None
@@ -426,6 +433,13 @@ def _apply_numbers(block: DfnBlock, template: Mobile, context: BuildContext) -> 
 
             if flee_at is not None and (flee_at == -1 or 1 <= flee_at <= 100):
                 template.flee_at = flee_at
+        elif key == "CONTROLSLOTS" and block.header.lower().endswith("-summon"):
+            # The creatures the spells of Magery summon count for these followers (1 to 10, else left out); the tamable
+            # ones take their slots from data/taming.toml.
+            slots = dfn.uox_number(value)
+
+            if slots is not None and 1 <= slots <= 10:
+                template.control_slots = slots
         elif key == "FLAG":
             template.notoriety = _NOTORIETY.get(upper_invariant(value), template.notoriety)
         elif key in ("CUSTOMINTTAG", "CUSTOMSTRINGTAG"):
@@ -436,6 +450,31 @@ def _apply_numbers(block: DfnBlock, template: Mobile, context: BuildContext) -> 
             if points is not None:
                 template.skills = template.skills if template.skills is not None else {}
                 template.skills[snake_case(skill)] = points
+
+    _apply_classic_summon(block, template)
+
+
+# What the earliest game, with no expansion, gives three summons that UOX3's data makes far stronger: the hits and the
+# followers it counts for. A daemon keeps the hits of UOX3 and counts for five.
+_CLASSIC_SUMMONS = {
+    "energyvortex-summon": (70, 1),
+    "bladespirit-summon": (80, 1),
+    "daemon-summon": (None, 5),
+}
+
+
+def _apply_classic_summon(block: DfnBlock, template: Mobile) -> None:
+    classic = _CLASSIC_SUMMONS.get(block.header.lower())
+
+    if classic is None:
+        return
+
+    hits, slots = classic
+
+    if hits is not None:
+        template.hits = DiceSpec.from_value(hits)
+
+    template.control_slots = slots
 
 
 def _apply_element_resist(value: str, template: Mobile, context: BuildContext) -> None:
@@ -630,7 +669,7 @@ def _scalar(value: object) -> str:
 _PLAIN_FIELDS = [
     "id", "base_id", "comment", "name", "name_list", "title", "body", "gender", "race", "skin_hue", "hair", "hair_hue", "beard",
     "beard_hue", "strength", "dexterity", "intelligence", "hits", "mana", "stamina", "damage", "armor", "notoriety", "karma", "fame",
-    "loot", "gold", "script_id", "npc_guild", "flee_at", "blood_hue", "visibility", "movement",
+    "loot", "gold", "script_id", "npc_guild", "flee_at", "control_slots", "blood_hue", "visibility", "movement",
 ]  # fmt: skip
 
 

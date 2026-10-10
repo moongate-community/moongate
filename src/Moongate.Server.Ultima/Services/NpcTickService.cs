@@ -25,6 +25,8 @@ public sealed class NpcTickService : INpcTickService
 
     // Lazy: the regeneration needs the mobiles, which need the sectors, which need this service.
     private readonly Lazy<IRegenerationService>? _regeneration;
+    private readonly Lazy<IParalysisService>? _paralysis;
+    private readonly Lazy<IDisguiseService>? _disguise;
     private readonly Dictionary<Serial, string> _awake = [];
 
     public int AwakeCount => _awake.Count;
@@ -35,9 +37,13 @@ public sealed class NpcTickService : INpcTickService
         ITimerService timers,
         NpcsConfig config,
         INpcThinker? thinker = null,
-        Lazy<IRegenerationService>? regeneration = null
+        Lazy<IRegenerationService>? regeneration = null,
+        Lazy<IParalysisService>? paralysis = null,
+        Lazy<IDisguiseService>? disguise = null
     )
     {
+        _paralysis = paralysis;
+        _disguise = disguise;
         _regeneration = regeneration;
         _timers = timers;
         _config = config;
@@ -91,6 +97,10 @@ public sealed class NpcTickService : INpcTickService
         {
             // An NPC regenerates while it thinks: asleep, far from every player, it does not.
             _regeneration?.Value.Tick(npc);
+            // A paralysis or a disguise it was saved with has no timer after a restart: it goes on for what was left of
+            // it, or ends. Nothing happens for an NPC that has neither.
+            _paralysis?.Value.Resume(npc);
+            _disguise?.Value.Resume(npc);
             _thinker?.Think(npc);
         }
         catch (Exception exception)

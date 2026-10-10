@@ -36,6 +36,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
     private const int AshGraphic = 0x0F8C;
     private const int ArrowScroll = 0x1F32;
     private const int MagicArrow = 5;
+    private const int EnergyBolt = 5;
     private const int Fireball = 18;
     private const int CreateFood = 2;
     private const int Recall = 32;
@@ -170,6 +171,19 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
         _casts.CastFromBook(_aria, Fireball);
 
         Assert.Equal(TimeSpan.FromSeconds(1.0), Assert.Single(_timers.Timers).Interval);
+    }
+
+    [Fact]
+    public void CastFromBook_ASpellWithACastDelayScale_TakesThatManyTimesTheDelayOfItsCircle()
+    {
+        var spell = Bolt(reflectable: false);
+        (spell.Circle, spell.CastDelayScale) = (5, 4.0);
+        var casts = WithSpell(spell);
+
+        casts.CastFromBook(_aria, EnergyBolt);
+
+        // 0.5 + 0.25 x 4 = 1.5 seconds, four times.
+        Assert.Equal(TimeSpan.FromSeconds(6.0), _timers.Timers.Single(timer => timer.Name == "spell_cast").Interval);
     }
 
     [Fact]
@@ -743,6 +757,59 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
         Assert.Empty(_targets.Begun);
     }
 
+    [Fact]
+    public void AHarmfulReflectableSpell_AtAMobileWithReflection_ReachesItsCaster_WhoStaysTheCaster()
+    {
+        var casts = WithSpell(Bolt(reflectable: true));
+        _bran.SetProp(MagicProps.Reflect, true);
+
+        casts.CastFromBook(_aria, EnergyBolt);
+        FireDelay();
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        var cast = Assert.Single(_scripts.Casts);
+        Assert.Equal((_aria, SpellTargetType.Mobile, _aria.Id), (cast.Caster, cast.Target.Kind, cast.Target.Serial));
+        Assert.Equal(_aria.Location, cast.Target.Location);
+        Assert.Same(_bran, Assert.Single(_scripts.Reflectors));
+        Assert.False(_bran.TryGetProp<bool>(MagicProps.Reflect, out _));
+        // The caster paid for it, and the one that reflected shows the flash.
+        Assert.Equal(16, _aria.Mana);
+        Assert.Contains(_effects.On, shown => shown.Target == _bran.Id && shown.Options.Graphic == 0x37B9);
+    }
+
+    [Fact]
+    public void AReflection_IsSpentByTheFirstSpellOnly_ASecondOneIsNotReflected()
+    {
+        var casts = WithSpell(Bolt(reflectable: true));
+        _bran.SetProp(MagicProps.Reflect, true);
+
+        casts.CastFromBook(_aria, EnergyBolt);
+        FireDelay();
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+        _clock.Advance(TimeSpan.FromSeconds(5));
+        casts.CastFromBook(_aria, EnergyBolt);
+        FireDelay();
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        Assert.Equal([_aria, _aria], _scripts.Casts.Select(cast => cast.Caster));
+        Assert.Equal([_bran, null], _scripts.Reflectors);
+    }
+
+    [Fact]
+    public void ASpellThatCannotBeReflected_OrAimedAtTheCasterItself_LeavesTheReflectionBe()
+    {
+        var plain = WithSpell(Bolt(reflectable: false));
+        _bran.SetProp(MagicProps.Reflect, true);
+
+        plain.CastFromBook(_aria, EnergyBolt);
+        FireDelay();
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        var cast = Assert.Single(_scripts.Casts);
+        Assert.Equal((_aria, _bran.Id), (cast.Caster, cast.Target.Serial));
+        Assert.True(_bran.GetProp(MagicProps.Reflect, false));
+    }
+
     private SpellCastService WithSpell(SpellDefinition spell)
     {
         var templates = Templates();
@@ -766,6 +833,15 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
             _timers,
             _clock
         );
+    }
+
+    private static SpellDefinition Bolt(bool reflectable)
+    {
+        return new()
+        {
+            Id = EnergyBolt, Key = "magic_arrow", Name = "Energy Bolt", Circle = 1, Mantra = "Corp Por", Action = 17,
+            Target = SpellTargetType.Mobile, Harmful = true, Reflectable = reflectable, Scroll = "arrowscroll"
+        };
     }
 
     private (MobileEntity Mobile, SkillType Skill, double Min, double Max) MageryCheck()

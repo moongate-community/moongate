@@ -174,6 +174,37 @@ public sealed class PetModule
     }
 
     /// <summary>
+    ///     Gets how many followers a creature of a mobile template counts for; <c>pet.slots_of("airele_summon")</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "How many followers a creature of the mobile template counts for once a player owns it: its entry in data/taming.toml, else the control_slots of its template, else 1."
+    )]
+    public int SlotsOf(string template)
+    {
+        return _pets.SlotsOf(template);
+    }
+
+    /// <summary>
+    ///     Tells that the followers of a player changed; <c>pet.refresh(player)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Tells the game that the followers of the player may have changed, such as when a spell gave it a creature: they are counted again at the next ask and the player is shown its status with the new count. False for a serial that is not a player in the world."
+    )]
+    public bool Refresh(long player)
+    {
+        if (!TryGet(player, out var mobile) || mobile.IsNpc)
+        {
+            return false;
+        }
+
+        _pets.Changed(mobile.Id);
+
+        return true;
+    }
+
+    /// <summary>
     ///     Makes a creature the player's own; <c>pet.tame(who, creature)</c>.
     /// </summary>
     [ScriptFunction(

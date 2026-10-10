@@ -42,6 +42,8 @@ HEADER = """# ==================================================================
 #     harmful          a spell that hurts or curses: the cursor is the harmful one and the caster may become a criminal
 #     resistable       Resisting Spells may weaken it
 #     reflectable      Magic Reflection may turn it back
+#     cast_delay_scale how many times the cast delay of its circle it takes; left out for 1. Blade Spirits and Summon
+#                      Creature take 4, as the classic game slowed them
 #     sound            the sound of the spell, 0 for none
 #     effect           the graphic played on the target, 0 for none; effect_duration is its length
 #     projectile       the graphic that flies from the caster to the target, 0 for none; projectile_speed is its speed
@@ -55,6 +57,13 @@ HEADER = """# ==================================================================
 NAMES = {
     "Reactive Armour": ("reactive_armor", "Reactive Armor"),
     "Flamestrike": ("flame_strike", "Flame Strike"),
+}
+
+# How many times the cast delay of its circle a spell takes, by its key: the two summons the classic game with no expansion
+# slowed to four times. The other spells take 1 and the field is left out.
+CAST_DELAY_SCALES = {
+    "blade_spirits": 4,
+    "summon_creature": 4,
 }
 
 # The words of a spell by its key where UOX3 has a typo; every other spell keeps the words of its file.
@@ -278,6 +287,7 @@ def read(source: Path, scrolls: dict[int, str], templates: set[str]) -> list[dic
             "harmful": bool(flags & _FLAG_AGGRESSIVE) and spell_id not in NOT_HARMFUL,
             "resistable": bool(flags & _FLAG_RESISTABLE),
             "reflectable": bool(flags & _FLAG_REFLECTABLE),
+            "cast_delay_scale": CAST_DELAY_SCALES.get(key),
             "sound": number(fields.get("SOUNDFX")),
             "effect": effect,
             "effect_duration": effect_duration,
@@ -324,6 +334,10 @@ def write(spells: list[dict]) -> str:
         lines.append(f"harmful = {str(spell['harmful']).lower()}")
         lines.append(f"resistable = {str(spell['resistable']).lower()}")
         lines.append(f"reflectable = {str(spell['reflectable']).lower()}")
+
+        if spell["cast_delay_scale"] is not None:
+            lines.append(f"cast_delay_scale = {spell['cast_delay_scale']}")
+
         lines.append(f"sound = {_hex(spell['sound'])}")
         lines.append(f"effect = {_hex(spell['effect'])}")
         lines.append(f"effect_duration = {spell['effect_duration']}")

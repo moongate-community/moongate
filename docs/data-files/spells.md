@@ -42,6 +42,7 @@ enabled = true
 | `harmful` | The spell hurts or curses: its cursor is the harmful one. |
 | `resistable` | Resisting Spells may weaken it. |
 | `reflectable` | Magic Reflection may turn it back. |
+| `cast_delay_scale` | How many times the cast delay of its circle the spell takes, above 0 and at most 10; 1 when left out. Blade Spirits and Summon Creature carry 4, as the classic game slowed them. |
 | `sound` | The sound of the spell, 0 for none. |
 | `effect`, `effect_duration` | The graphic played on the target and for how long, 0 for none. |
 | `projectile`, `projectile_speed` | The graphic that flies from the caster to the target and how fast, 0 for none. |

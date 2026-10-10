@@ -26,6 +26,11 @@ public sealed class StubSpellScriptService : ISpellScriptService
 
     public List<(string Key, MobileEntity Caster, SpellTargetInfo Target, bool FromScroll)> Casts { get; } = [];
 
+    /// <summary>
+    ///     Who reflected each cast, in the order of <see cref="Casts" />: null for a cast that was not reflected.
+    /// </summary>
+    public List<MobileEntity?> Reflectors { get; } = [];
+
     public bool Has(SpellDefinition spell)
     {
         return Keys.Contains(spell.Key);
@@ -38,8 +43,15 @@ public sealed class StubSpellScriptService : ISpellScriptService
         return Verdict;
     }
 
-    public ScriptResult Cast(SpellDefinition spell, MobileEntity caster, SpellTargetInfo target, bool fromScroll)
+    public ScriptResult Cast(
+        SpellDefinition spell,
+        MobileEntity caster,
+        SpellTargetInfo target,
+        bool fromScroll,
+        MobileEntity? reflector = null
+    )
     {
+        Reflectors.Add(reflector);
         Casts.Add((spell.Key, caster, target, fromScroll));
 
         return CastResult;

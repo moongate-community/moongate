@@ -11,10 +11,19 @@
 --   harmed (an invulnerable, a dead one) is left alone. A burn is lessened to
 --   one point when the burned resists, by a try of Resisting Spells.
 --
+--   A piece of poison poisons, and a piece of paralysis paralyzes, whoever steps
+--   onto it (a piece of poison also whoever stands in it, once a second), as the
+--   classic Poison Field and Paralyze Field. These two do not touch a player
+--   who looks innocent, unless the caster is a murderer, nor the caster's own
+--   creatures (magic.valid_indirect); the caster itself is touched. They do
+--   nothing once their caster has left the game.
+--
 -- Props it reads:
 --   field.caster   the serial of who raised the field
 --   field.until    the time, as world.now(), the piece goes away at
 --   field.damage   the damage of a burn; none for a piece with no fire
+--   field.effect   "poison" or "paralyze"; none for fire, a wall and energy
+--   field.power    the poison level, or the seconds of paralysis
 --
 -- Functions:
 --   on_move_over(serial, who)       a player stepped onto the piece
@@ -23,9 +32,16 @@
 --   burned_count()                  how many mobiles the list of the burned holds
 -- ==============================================================================
 
+local magic = require("common.magic")
+
 magic_field = {}
 
 local BURN_SOUND = 0x208
+local POISON_SOUND = 0x474
+local PARALYZE_SOUND = 0x204
+local PARALYZE_EFFECT = 0x376A
+local PARALYZE_SPEED = 10
+local PARALYZE_DURATION = 16
 local RESISTING = 501783       -- You feel yourself resisting magical energy.
 local RESIST_MAX = 30          -- the Resisting Spells points at which the burn is always lessened
 local HEIGHT_ABOVE = 16        -- a mobile stands in the field when its z is within these of the piece
@@ -36,24 +52,20 @@ local HEIGHT_UNDER = 12
 local burned = {}
 local swept = 0
 
-local function burn(serial, who)
-    local damage = item.get_prop(serial, "field.damage") or 0
-
-    if damage <= 0 or mobile.is_dead(who) then
-        return
-    end
-
+-- Whether the mobile stands within reach, in height, of the piece.
+local function inside(serial, who)
     local at = item.location(serial)
     local there = mobile.location(who)
 
     if not at or not there or there.map ~= at.map then
-        return
+        return false
     end
 
-    if there.z + HEIGHT_ABOVE <= at.z or at.z + HEIGHT_UNDER <= there.z then
-        return
-    end
+    return not (there.z + HEIGHT_ABOVE <= at.z or at.z + HEIGHT_UNDER <= there.z)
+end
 
+-- Whether the mobile may be affected now: at most once a second, and the list is swept as time goes on.
+local function once_a_second(who)
     local now = world.now()
 
     if swept ~= now then
@@ -67,10 +79,20 @@ local function burn(serial, who)
     end
 
     if burned[who] == now then
-        return
+        return false
     end
 
     burned[who] = now
+
+    return true
+end
+
+local function burn(serial, who)
+    local damage = item.get_prop(serial, "field.damage") or 0
+
+    if damage <= 0 or mobile.is_dead(who) or not inside(serial, who) or not once_a_second(who) then
+        return
+    end
 
     local caster = item.get_prop(serial, "field.caster")
 
@@ -87,6 +109,60 @@ local function burn(serial, who)
     end
 end
 
+-- Whether the piece may do its harm to the mobile: its caster is in the game and the mobile is a valid target of a
+-- spell of a place, which the caster then is the aggressor of.
+local function harmed_by(serial, who)
+    local caster = item.get_prop(serial, "field.caster")
+
+    if not caster or not mobile.location(caster) or mobile.is_dead(who) or not magic.valid_indirect(caster, who) then
+        return nil
+    end
+
+    if who ~= caster and not combat.aggress(caster, who) then
+        return nil
+    end
+
+    return caster
+end
+
+local function poison(serial, who)
+    if not inside(serial, who) or not once_a_second(who) or not harmed_by(serial, who) then
+        return
+    end
+
+    mobile.poison(who, item.get_prop(serial, "field.power") or 1)
+    mobile.play_sound(who, POISON_SOUND)
+end
+
+local function paralyze(serial, who)
+    if not inside(serial, who) or not harmed_by(serial, who) then
+        return
+    end
+
+    if mobile.paralyze(who, item.get_prop(serial, "field.power") or 1) then
+        -- A paralysis ruins the spell its target is casting.
+        spell.disturb(who)
+        mobile.play_sound(who, PARALYZE_SOUND)
+        effect.on(who, PARALYZE_EFFECT, { speed = PARALYZE_SPEED, duration = PARALYZE_DURATION })
+    end
+end
+
+-- What a piece does to a mobile that is in it or steps onto it.
+local function affect(serial, who, stepped)
+    local kind = item.get_prop(serial, "field.effect")
+
+    if kind == "poison" then
+        poison(serial, who)
+    elseif kind == "paralyze" then
+        -- A paralysis is for who steps onto the piece, as the classic field: not for who is put down on it.
+        if stepped then
+            paralyze(serial, who)
+        end
+    else
+        burn(serial, who)
+    end
+end
+
 local function burn_all(serial)
     local at = item.location(serial)
 
@@ -95,16 +171,16 @@ local function burn_all(serial)
     end
 
     for _, who in ipairs(world.mobiles_in_range(at.map, at.x, at.y, 0)) do
-        burn(serial, who)
+        affect(serial, who, false)
     end
 end
 
 function magic_field.on_move_over(serial, who)
-    burn(serial, who)
+    affect(serial, who, true)
 end
 
 function magic_field.on_npc_move_over(serial, who)
-    burn(serial, who)
+    affect(serial, who, true)
 end
 
 function magic_field.on_timer(serial, name)

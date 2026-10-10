@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Data.Mounts;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -82,8 +83,10 @@ public sealed class MountService : IMountService
 
     public bool TryMount(MobileEntity rider, MobileEntity pet, bool force = false)
     {
-        // A creature that is dying, or that cannot be ridden, is no mount; a rider that cannot carry one gets none.
+        // A creature that is dying, or that cannot be ridden, is no mount; a rider that cannot carry one gets none. A summoned
+        // one is a loan of its spell: riding it would turn it into a creature that never goes away.
         if (!pet.IsNpc ||
+            pet.TryGetProp<long>(MagicProps.SummonUntil, out _) ||
             MountItemTemplate(pet) is not { } mountItem ||
             rider.IsDead ||
             _death?.Value.IsDying(pet.Id) == true ||

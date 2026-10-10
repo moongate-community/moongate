@@ -6,11 +6,12 @@ skin_hue = 117
 strength = 200
 dexterity = 200
 intelligence = 100
-hits = 1900
+hits = 70
 mana = 0
 stamina = 250
 damage = "1d19+7"
 script_id = "monster"
+control_slots = 1
 [mobile.skills]
 resisting_spells = 99
 tactics = 90
@@ -29,6 +30,8 @@ dexterity = "1d11+54"
 intelligence = "1d15+90"
 damage = "1d9+4"
 armor = 20
+script_id = "monster"
+control_slots = 2
 [mobile.skills]
 magery = "1d16+59"
 resisting_spells = "1d16+59"
@@ -51,6 +54,8 @@ dexterity = "1d10+55"
 intelligence = "1d15+60"
 damage = "1d16+2"
 armor = 20
+script_id = "monster"
+control_slots = 2
 [mobile.skills]
 resisting_spells = "1d46+29"
 parrying = "1d26+39"
@@ -73,6 +78,8 @@ dexterity = "1d10+55"
 intelligence = "1d15+90"
 damage = "1d9+3"
 armor = 20
+script_id = "monster"
+control_slots = 4
 [mobile.skills]
 magery = "1d16+59"
 resisting_spells = "1d16+59"
@@ -96,6 +103,8 @@ dexterity = "1d20+65"
 intelligence = "1d25+100"
 damage = "1d9+3"
 armor = 20
+script_id = "monster"
+control_slots = 3
 movement = "both"
 [mobile.skills]
 magery = "1d16+69"
@@ -117,11 +126,12 @@ body = 574
 strength = 150
 dexterity = 150
 intelligence = 150
-hits = 1200
+hits = 80
 mana = 0
 stamina = 250
 damage = "1d9+9"
 script_id = "monster"
+control_slots = 1
 [mobile.skills]
 resisting_spells = 70
 tactics = 90
@@ -141,6 +151,8 @@ dexterity = "1d10+65"
 intelligence = "1d8+150"
 damage = "1d16+9"
 armor = 25
+script_id = "monster"
+control_slots = 5
 [mobile.skills]
 magery = "1d11+69"
 resisting_spells = "1d11+69"
@@ -169,6 +181,7 @@ damage = "1d51+49"
 armor = 50
 karma = 10000
 fame = 10000
+control_slots = 3
 [mobile.skills]
 resisting_spells = 65
 tactics = 100
@@ -192,6 +205,7 @@ mana = 100
 stamina = 70
 damage = "1d51+49"
 armor = 50
+control_slots = 4
 [mobile.skills]
 resisting_spells = 100
 tactics = 100

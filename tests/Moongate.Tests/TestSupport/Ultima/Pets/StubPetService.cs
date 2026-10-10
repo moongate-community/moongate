@@ -103,9 +103,11 @@ public sealed class StubPetService : IPetService
         return FeedResult;
     }
 
+    public Dictionary<string, int> Slots { get; } = [];
+
     public int SlotsOf(string? templateId)
     {
-        return 1;
+        return templateId is not null && Slots.TryGetValue(templateId, out var slots) ? slots : 1;
     }
 
     public PetResultType TryTame(MobileEntity player, MobileEntity creature)

@@ -65,6 +65,12 @@ public class SpellDefinition
     public bool Reflectable { get; set; }
 
     /// <summary>
+    ///     How many times the cast delay of its circle the spell takes: 1 for most, 4 for the two summons the classic
+    ///     game slowed (Blade Spirits and Summon Creature).
+    /// </summary>
+    public double CastDelayScale { get; set; } = 1.0;
+
+    /// <summary>
     ///     The sound of the spell; 0 for none.
     /// </summary>
     public int Sound { get; set; }
