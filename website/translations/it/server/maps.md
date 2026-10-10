@@ -1,9 +1,9 @@
-<!-- translation: {"sourceHash":"a85711f6ba385cbdffb15f354c6034040602be64bffacac0b3c021a376298da5","title":"Mappe"} -->
+<!-- translation: {"sourceHash":"55d7ad1b86067ce0370d63cbfe9f9174303f2f78aef89b80de1d50f30fb7fe2f","title":"Mappe"} -->
 
 # Mappe
 
-Un oggetto mappa si apre nel client sulla parte del mondo che mostra, con il percorso di puntine tracciato sopra. La cartografia,
-le mappe del tesoro e i messaggi in bottiglia disegneranno le loro mappe su questa base.
+Un oggetto mappa si apre nel client sulla parte del mondo che mostra, con il percorso di puntine tracciato sopra. La [cartografia](cartography.md)
+disegna le mappe su questa base; lo faranno anche le mappe del tesoro e i messaggi in bottiglia.
 
 ## Aprire una mappa
 
@@ -50,7 +50,7 @@ tag `map_*` ai tuoi template di mappe.
 
 ## Non ancora
 
-Cartografia, mappe del tesoro, messaggi in bottiglia e mappe indecifrabili. Inserire e togliere puntine non è ancora stato provato con un
+Mappe del tesoro, messaggi in bottiglia e mappe indecifrabili. Inserire e togliere puntine non è ancora stato provato con un
 client.
 
 ## Vedi anche
