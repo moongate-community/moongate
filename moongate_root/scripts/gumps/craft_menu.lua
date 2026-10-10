@@ -17,7 +17,6 @@
 -- ==============================================================================
 
 local crafting = require("common.crafting")
-local woods = require("common.woods")
 
 craft_menu = {}
 
@@ -66,11 +65,20 @@ local function wood_line(g, player, args, craft)
     label(g, 35, BOTTOM - 30, 120, "Make last")
 
     -- Only a craft that works wood shows the wood picked.
-    if crafting.works_wood(craft) then
-        local kind = crafting.kind(player)
-        local count = crafting.count(player, crafting.templates("wood", kind))
+    local material = crafting.material(craft)
 
-        label(g, 0, BOTTOM, 200, "Wood: " .. kind .. " (" .. count .. ")")
+    if material then
+        local kind = crafting.kind(player, args.craft)
+        local count = crafting.count(player, crafting.templates(material, kind))
+        local picked = nil
+
+        for _, each in ipairs(crafting.kinds(craft)) do
+            if each.id == kind then
+                picked = each
+            end
+        end
+
+        label(g, 0, BOTTOM, 200, crafting.material_label(material) .. ": " .. (picked and picked.name or kind) .. " (" .. count .. ")")
         button(g, 210, BOTTOM, 4005, 4007, args, function(who)
             open(who, args, { page = "woods" })
         end)
@@ -121,7 +129,7 @@ local function info_page(g, player, args, craft, group, group_index)
         return
     end
 
-    local kind = crafting.kind(player)
+    local kind = crafting.kind(player, args.craft)
     local y = FIRST_ROW
 
     g:item{ x = RECIPES_X, y = y, item = recipe.graphic }
@@ -157,18 +165,14 @@ local function info_page(g, player, args, craft, group, group_index)
 end
 
 local function woods_page(g, player, args, craft)
-    local all = { woods.plain }
+    local material = crafting.material(craft)
 
-    for _, kind in ipairs(woods.kinds) do
-        all[#all + 1] = kind
-    end
-
-    for index, kind in ipairs(all) do
+    for index, kind in ipairs(crafting.kinds(craft)) do
         local y = FIRST_ROW + (index - 1) * ROW
-        local count = crafting.count(player, crafting.templates("wood", kind.id))
+        local count = crafting.count(player, crafting.templates(material, kind.id))
 
         button(g, RECIPES_X, y, 4005, 4007, args, function(who)
-            crafting.set_kind(who, kind.id, craft.skill)
+            crafting.set_kind(who, kind.id, args.craft)
             open(who, args)
         end)
         label(g, RECIPES_X + 35, y, RECIPE_WIDTH, kind.name .. " (" .. count .. ")")
@@ -191,7 +195,7 @@ function craft_menu.body(g, player, args)
     if group then
         if args.page == "info" then
             info_page(g, player, args, craft, group, group_index)
-        elseif args.page == "woods" and crafting.works_wood(craft) then
+        elseif args.page == "woods" and crafting.material(craft) then
             woods_page(g, player, args, craft)
         else
             list_page(g, player, args, craft, group, group_index)

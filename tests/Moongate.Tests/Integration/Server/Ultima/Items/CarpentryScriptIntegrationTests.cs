@@ -243,7 +243,7 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
             end
 
             function carpentry_tool.pick(serial, user, kind)
-                crafting_for_tests.set_kind(user, kind)
+                crafting_for_tests.set_kind(user, kind, "carpentry")
             end
 
             function carpentry_tool.last(serial, user)
@@ -266,6 +266,7 @@ public sealed class CarpentryScriptIntegrationTests : IAsyncLifetime
         _scripts.Write("common/crafting.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "crafting.lua")));
         _scripts.Write("common/woods.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "woods.lua")));
         _scripts.Write("common/smithy.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "smithy.lua")));
+        _scripts.Write("common/metals.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "metals.lua")));
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
