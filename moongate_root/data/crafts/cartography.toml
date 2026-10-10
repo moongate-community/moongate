@@ -14,10 +14,12 @@
 #   [[group.recipe]]
 #     name          as the gump shows it
 #     item          the item template made
-#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_min     the least of the main skill to try it: the chance is half; below zero, always tried
 #     skill_max     the skill at which it never fails
 #     resources     what it takes: a list of resources.toml or an item template, and the amount
 #     skills        other skills it asks for, with their least and most
+#     spell         the key of a spell (data/spells.toml) the crafter must have in a spellbook it carries; left out for none
+#     mana          the mana a try takes, spent on a failure too; left out for none
 # ==============================================================================
 
 id = "cartography"
