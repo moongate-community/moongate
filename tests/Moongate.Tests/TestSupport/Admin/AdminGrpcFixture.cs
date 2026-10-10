@@ -22,7 +22,8 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
         ServerMode mode = ServerMode.Login,
         int concurrency = 64,
         Func<IAccountService, IAccountService>? decorateAccounts = null,
-        AdminWorldServices? world = null
+        AdminWorldServices? world = null,
+        TimeSpan? operationsDeadline = null
     )
     {
         var backend = await AccountAdminFixture.CreateAsync();
@@ -46,7 +47,7 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
             world
         );
         var app = builder.Build();
-        AdminGrpcApplication.Configure(app, mode, gate);
+        AdminGrpcApplication.Configure(app, mode, gate, operationsDeadline);
         await app.StartAsync();
         gate.Activate();
 

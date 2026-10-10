@@ -37,6 +37,8 @@ internal sealed class FakeWorldSaveService : IWorldSaveService
 
     public TimeSpan Delay { get; set; }
 
+    public Exception? Failure { get; set; }
+
     public Task StartAsync()
     {
         return Task.CompletedTask;
@@ -53,6 +55,11 @@ internal sealed class FakeWorldSaveService : IWorldSaveService
 
     public async Task SaveAsync(CancellationToken cancellationToken = default)
     {
+        if (Failure is not null)
+        {
+            throw Failure;
+        }
+
         await Task.Delay(Delay, cancellationToken);
         Saves++;
     }
@@ -72,6 +79,12 @@ internal sealed class FakeSqlBackupService : ISqlBackupService
 
     public int Backups { get; private set; }
 
+    public TimeSpan Delay { get; set; }
+
+    public bool Completed { get; private set; }
+
+    public bool SawCancellation { get; private set; }
+
     public Task StartAsync()
     {
         return Task.CompletedTask;
@@ -82,10 +95,13 @@ internal sealed class FakeSqlBackupService : ISqlBackupService
         return Task.CompletedTask;
     }
 
-    public Task<SqlBackupResult> BackupAsync(CancellationToken cancellationToken = default)
+    public async Task<SqlBackupResult> BackupAsync(CancellationToken cancellationToken = default)
     {
         Backups++;
+        SawCancellation = cancellationToken.CanBeCanceled;
+        await Task.Delay(Delay, CancellationToken.None);
+        Completed = true;
 
-        return Task.FromResult(Result);
+        return Result;
     }
 }

@@ -18,6 +18,7 @@ namespace Moongate.Server.Admin.Internal;
 
 internal static class AdminGrpcApplication
 {
+    private const string DeadlineKey = "AdminDeadline";
     private static readonly TimeSpan MaximumCallDuration = TimeSpan.FromSeconds(15);
     private static readonly TimeSpan OperationsCallDuration = TimeSpan.FromMinutes(5);
 
@@ -82,7 +83,12 @@ internal static class AdminGrpcApplication
         );
     }
 
-    public static void Configure(WebApplication app, ServerMode mode, AdminRequestGate gate)
+    public static void Configure(
+        WebApplication app,
+        ServerMode mode,
+        AdminRequestGate gate,
+        TimeSpan? operationsDeadline = null
+    )
     {
         app.UseRouting();
 
@@ -104,10 +110,9 @@ internal static class AdminGrpcApplication
                     }
 
                     using var deadline = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
-                    deadline.CancelAfter(
-                        context.GetEndpoint()?.Metadata.GetMetadata<AdminCallDeadline>()?.Duration ?? MaximumCallDuration
-                    );
+                    deadline.CancelAfter(MaximumCallDuration);
                     context.RequestAborted = deadline.Token;
+                    context.Items[DeadlineKey] = deadline;
                     await next(context);
                 }
                 finally
@@ -133,6 +138,20 @@ internal static class AdminGrpcApplication
         );
         app.UseAuthentication();
         app.UseAuthorization();
+
+        // The longer deadline of an endpoint starts when the call is authenticated and authorized, not before: a call that
+        // is refused had the default one.
+        app.Use(async (context, next) =>
+            {
+                if (context.GetEndpoint()?.Metadata.GetMetadata<AdminCallDeadline>() is { } longer &&
+                    context.Items[DeadlineKey] is CancellationTokenSource source)
+                {
+                    source.CancelAfter(longer.Duration);
+                }
+
+                await next(context);
+            }
+        );
         app.MapGrpcService<AdminSessionGrpcService>().AllowAnonymous();
         app.MapGrpcService<AdminServerGrpcService>().RequireAuthorization();
 
@@ -142,7 +161,7 @@ internal static class AdminGrpcApplication
             app.MapGrpcService<AdminPlayersGrpcService>().RequireAuthorization(AdminAuthorizationPolicies.Moderation);
             app.MapGrpcService<AdminOperationsGrpcService>()
                 .RequireAuthorization(AdminAuthorizationPolicies.AccountAdministration)
-                .WithMetadata(new AdminCallDeadline(OperationsCallDuration));
+                .WithMetadata(new AdminCallDeadline(operationsDeadline ?? OperationsCallDuration));
         }
 
         if ((mode & ServerMode.Login) != 0)

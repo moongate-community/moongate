@@ -110,6 +110,48 @@ public sealed class AdminWorldGrpcTests
         Assert.Empty(world.Game.Sender.Disconnected);
     }
 
+    [Theory, InlineData("bad\0reason"), InlineData("line\nbreak"), InlineData("tab\there")]
+    public async Task KickPlayer_ControlCharactersInTheReason_AreInvalid(string reason)
+    {
+        await using var world = await World.CreateAsync();
+        await world.PlayerAsync(10, 901, DomainAccountType.Regular, "Anna");
+        var headers = await world.LoginAsync(DomainAccountType.Administrator);
+
+        var error = await Assert.ThrowsAsync<RpcException>(
+            () => new AdminPlayers.AdminPlayersClient(world.Fixture.Channel).KickPlayerAsync(new() { CharacterId = 10, Reason = reason }, headers).ResponseAsync
+        );
+
+        Assert.Equal(StatusCode.InvalidArgument, error.StatusCode);
+        Assert.Empty(world.Game.Sender.Disconnected);
+    }
+
+    [Fact]
+    public async Task KickPlayer_ASocketThatFaultsWhileClosing_IsStillAKick()
+    {
+        await using var world = await World.CreateAsync();
+        world.Game.Sender.DisconnectFailure = new IOException("broken pipe");
+        await world.PlayerAsync(10, 901, DomainAccountType.Regular, "Anna");
+        var headers = await world.LoginAsync(DomainAccountType.Administrator);
+
+        await new AdminPlayers.AdminPlayersClient(world.Fixture.Channel).KickPlayerAsync(new() { CharacterId = 10 }, headers);
+
+        Assert.Equal([world.Sessions[10].SessionId], world.Game.Sender.Disconnected);
+    }
+
+    [Fact]
+    public async Task KickPlayer_AGameMasterKickingItsOwnAccount_IsRefusedAsYourOwn()
+    {
+        await using var world = await World.CreateAsync();
+        var headers = await world.LoginAsync(DomainAccountType.GameMaster);
+        await world.PlayerAsync(10, world.CallerAccountId, DomainAccountType.GameMaster, "Me");
+
+        var error = await Assert.ThrowsAsync<RpcException>(
+            () => new AdminPlayers.AdminPlayersClient(world.Fixture.Channel).KickPlayerAsync(new() { CharacterId = 10 }, headers).ResponseAsync
+        );
+
+        Assert.Equal(StatusCode.FailedPrecondition, error.StatusCode);
+    }
+
     [Fact]
     public async Task KickPlayer_YourOwnAccount_IsRefused()
     {
@@ -161,7 +203,7 @@ public sealed class AdminWorldGrpcTests
         Assert.Equal(["Restart in 5 minutes"], world.Broadcast.Texts);
     }
 
-    [Theory, InlineData(""), InlineData("   "), InlineData("a\0b"), InlineData("TOO-LONG")]
+    [Theory, InlineData(""), InlineData("   "), InlineData("a\0b"), InlineData("a\nb"), InlineData("TOO-LONG")]
     public async Task Broadcast_BadText_IsInvalid(string text)
     {
         await using var world = await World.CreateAsync();
@@ -181,7 +223,7 @@ public sealed class AdminWorldGrpcTests
     public async Task Broadcast_ATextTheTransportCannotCarry_IsInvalid()
     {
         await using var world = await World.CreateAsync();
-        world.Broadcast.Failure = new ArgumentException("too long for the transport");
+        world.Broadcast.Failure = new ArgumentException("too long for the transport", "text");
         var headers = await world.LoginAsync(DomainAccountType.Administrator);
 
         var error = await Assert.ThrowsAsync<RpcException>(
@@ -189,6 +231,94 @@ public sealed class AdminWorldGrpcTests
         );
 
         Assert.Equal(StatusCode.InvalidArgument, error.StatusCode);
+    }
+
+    [Fact]
+    public async Task Broadcast_AnotherArgumentException_IsNotReportedAsABadText()
+    {
+        await using var world = await World.CreateAsync();
+        world.Broadcast.Failure = new ArgumentException("something else", "other");
+        var headers = await world.LoginAsync(DomainAccountType.Administrator);
+
+        var error = await Assert.ThrowsAsync<RpcException>(
+            () => new AdminOperations.AdminOperationsClient(world.Fixture.Channel).BroadcastAsync(new() { Text = "hello" }, headers).ResponseAsync
+        );
+
+        Assert.Equal(StatusCode.Internal, error.StatusCode);
+    }
+
+    [Fact]
+    public async Task SaveWorld_WhileTheServerStops_IsUnavailable()
+    {
+        await using var world = await World.CreateAsync();
+        world.Saves.Failure = new InvalidOperationException("World saving is not active or shutdown has begun.");
+        var headers = await world.LoginAsync(DomainAccountType.Administrator);
+
+        var error = await Assert.ThrowsAsync<RpcException>(
+            () => new AdminOperations.AdminOperationsClient(world.Fixture.Channel).SaveWorldAsync(new(), headers).ResponseAsync
+        );
+
+        Assert.Equal(StatusCode.Unavailable, error.StatusCode);
+    }
+
+    [Fact]
+    public async Task SavesAndBackups_AreLimitedToAFewAtATime()
+    {
+        await using var world = await World.CreateAsync();
+        world.Saves.Delay = TimeSpan.FromSeconds(2);
+        var headers = await world.LoginAsync(DomainAccountType.Administrator);
+        var client = new AdminOperations.AdminOperationsClient(world.Fixture.Channel);
+
+        var calls = Enumerable.Range(0, 3).Select(_ => client.SaveWorldAsync(new(), headers).ResponseAsync).ToList();
+        var codes = new List<StatusCode>();
+
+        foreach (var call in calls)
+        {
+            try
+            {
+                await call;
+                codes.Add(StatusCode.OK);
+            }
+            catch (RpcException error)
+            {
+                codes.Add(error.StatusCode);
+            }
+        }
+
+        Assert.Equal(2, codes.Count(code => code == StatusCode.OK));
+        Assert.Equal(1, codes.Count(code => code == StatusCode.ResourceExhausted));
+    }
+
+    [Fact]
+    public async Task AnOperationPastItsDeadline_StopsWaiting_AndTheSaveGoesOn()
+    {
+        await using var world = await World.CreateAsync(operationsDeadline: TimeSpan.FromMilliseconds(300));
+        world.Saves.Delay = TimeSpan.FromSeconds(1);
+        var headers = await world.LoginAsync(DomainAccountType.Administrator);
+
+        var error = await Assert.ThrowsAsync<RpcException>(
+            () => new AdminOperations.AdminOperationsClient(world.Fixture.Channel).SaveWorldAsync(new(), headers).ResponseAsync
+        );
+
+        Assert.Contains(error.StatusCode, new[] { StatusCode.Cancelled, StatusCode.DeadlineExceeded });
+    }
+
+    [Fact]
+    public async Task ABackup_GoesOnWhenTheClientLeaves()
+    {
+        await using var world = await World.CreateAsync();
+        world.Backups.Delay = TimeSpan.FromSeconds(1);
+        var headers = await world.LoginAsync(DomainAccountType.Administrator);
+
+        var error = await Assert.ThrowsAsync<RpcException>(
+            () => new AdminOperations.AdminOperationsClient(world.Fixture.Channel)
+                .CreateSqlBackupAsync(new(), headers, deadline: DateTime.UtcNow.AddMilliseconds(300))
+                .ResponseAsync
+        );
+
+        Assert.Equal(StatusCode.DeadlineExceeded, error.StatusCode);
+        SpinWait.SpinUntil(() => world.Backups.Completed, TimeSpan.FromSeconds(5));
+        Assert.True(world.Backups.Completed);
     }
 
     [Fact]
@@ -221,7 +351,9 @@ public sealed class AdminWorldGrpcTests
         var file = Assert.Single(response.Files);
         Assert.Equal(("accounts", "accounts-1.sql", 2048ul), (file.Database, file.FileName, file.SizeBytes));
         Assert.DoesNotContain("private", file.ToString());
-        Assert.Equal(("realm", "disk full"), (response.Failures[0].Database, response.Failures[0].Reason));
+        // The reason stays in the server log: it can carry paths or details of the database.
+        Assert.Equal(("realm", "The backup failed; see the server log."), (response.Failures[0].Database, response.Failures[0].Reason));
+        Assert.DoesNotContain("disk full", response.ToString());
     }
 
     [Fact]
@@ -295,12 +427,13 @@ public sealed class AdminWorldGrpcTests
         public uint CallerAccountId { get; private set; }
         public Dictionary<long, GameSession> Sessions { get; } = [];
 
-        public static async Task<World> CreateAsync()
+        public static async Task<World> CreateAsync(TimeSpan? operationsDeadline = null)
         {
             var world = new World { Game = await BroadcastFixture.CreateAsync() };
             world.Fixture = await AdminGrpcFixture.CreateAsync(
                 Moongate.Server.Core.Types.Hosting.ServerMode.Standalone,
-                world: new(world.Game.Sessions, world.Game.Mobiles, world.Game.Sender, world.Broadcast, world.Saves, world.Backups)
+                world: new(world.Game.Sessions, world.Game.Mobiles, world.Game.Sender, world.Broadcast, world.Saves, world.Backups),
+                operationsDeadline: operationsDeadline
             );
 
             return world;

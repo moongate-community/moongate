@@ -48,6 +48,9 @@ internal sealed class AdminPlayersGrpcService : AdminPlayers.AdminPlayersBase
 
         var response = new ListOnlinePlayersResponse();
 
+        // Read while the game loop goes on: the map and the coordinates are read one by one, so a player who changes map at
+        // that moment can show the new place with the old map. It is a snapshot for a list.
+
         foreach (var (session, _, mobile) in page.Take(size))
         {
             response.Players.Add(
@@ -65,25 +68,28 @@ internal sealed class AdminPlayersGrpcService : AdminPlayers.AdminPlayersBase
         return Task.FromResult(response);
     }
 
-    public override async Task<Empty> KickPlayer(KickPlayerRequest request, ServerCallContext context)
+    public override Task<Empty> KickPlayer(KickPlayerRequest request, ServerCallContext context)
     {
         if (request.CharacterId == 0)
         {
             throw new RpcException(new(StatusCode.InvalidArgument, "Character ID must be nonzero."));
         }
 
-        if (request.Reason.Length > MaximumReasonLength || request.Reason.Contains('\0'))
+        // No control character: a reason is written in the log and must not look like another line of it.
+        if (request.Reason.Length > MaximumReasonLength || request.Reason.Any(char.IsControl))
         {
             throw new RpcException(new(StatusCode.InvalidArgument, "The reason is too long or malformed."));
         }
 
         var http = context.GetHttpContext();
-        http.Items["AdminTargetId"] = request.CharacterId;
 
         if (!_sessions.TryGetByCharacterId(new(request.CharacterId), out var target))
         {
             throw new RpcException(new(StatusCode.NotFound, "Player not online."));
         }
+
+        // The audit line names accounts, as the account calls do.
+        http.Items["AdminTargetId"] = target.AccountId.Value;
 
         if (http.User.FindFirstValue(ClaimTypes.NameIdentifier) == target.AccountId.Value.ToString(CultureInfo.InvariantCulture))
         {
@@ -105,9 +111,25 @@ internal sealed class AdminPlayersGrpcService : AdminPlayers.AdminPlayersBase
                 target.AccountId.Value,
                 request.Reason
             );
-        await _packets.DisconnectAsync(target.SessionId);
 
-        return new();
+        // The connection closes on its own: the call does not wait for the outbox of the player to drain, and a fault of
+        // a socket that was half dead is not a failure of the kick.
+        _ = ObserveAsync(_packets.DisconnectAsync(target.SessionId), request.CharacterId);
+
+        return Task.FromResult(new Empty());
+    }
+
+    private static async Task ObserveAsync(Task disconnect, uint characterId)
+    {
+        try
+        {
+            await disconnect;
+        }
+        catch (Exception exception)
+        {
+            Log.ForContext<AdminPlayersGrpcService>()
+                .Warning(exception, "The disconnection of character {CharacterId} ended with a fault", characterId);
+        }
     }
 
     private static AccountType ToContract(DomainAccountType type)

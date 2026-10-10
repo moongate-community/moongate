@@ -45,6 +45,11 @@ public sealed class StubPacketSendService : IPacketSendService
     /// </summary>
     public List<long> Disconnected { get; } = [];
 
+    /// <summary>
+    ///     Gets or sets the fault the task of a disconnection ends with, as a half dead socket would give.
+    /// </summary>
+    public Exception? DisconnectFailure { get; set; }
+
     public Task DisconnectAsync(long sessionId)
     {
         lock (Disconnected)
@@ -52,7 +57,7 @@ public sealed class StubPacketSendService : IPacketSendService
             Disconnected.Add(sessionId);
         }
 
-        return Task.CompletedTask;
+        return DisconnectFailure is null ? Task.CompletedTask : Task.FromException(DisconnectFailure);
     }
 
     /// <summary>
