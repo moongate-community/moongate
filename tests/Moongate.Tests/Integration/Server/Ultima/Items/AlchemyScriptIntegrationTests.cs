@@ -70,6 +70,8 @@ public sealed class AlchemyScriptIntegrationTests : IAsyncLifetime
 
     private const int Created = 1044154;
     private const int NoComponents = 1044253;
+    private const int NoPotion = 500287;
+    private const int PourSound = 0x240;
     private const int Sound = 0x0242;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
@@ -320,6 +322,38 @@ public sealed class AlchemyScriptIntegrationTests : IAsyncLifetime
         var potion = Assert.Single(Made("0x0f0c_b_yellow_potion"));
         Assert.False(potion.TryGetProp<int>("quality", out _));
         Assert.Equal((2, 1), (Left(ginseng), Left(bottles)));
+    }
+
+    [Fact]
+    public void APotion_WearsTheMortar_AndPoursWithItsSound()
+    {
+        Carry("0x0f85_ginseng", 0x0F85, 3);
+        Carry("0x0f0e_empty_bottle", 0x0F0E, 1);
+
+        Call("make", Aria, Healing, Heal);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.True(_tools.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(49, left);
+        Assert.Contains(_speech.Sounds, sound => sound.Source == _aria && sound.Sound == PourSound);
+    }
+
+    [Fact]
+    public void AFailure_LosesSomeGinseng_ButNotTheBottle()
+    {
+        Skill(151);
+        _random.Doubles(0.99);
+        var ginseng = Carry("0x0f85_10_ginseng", 0x0F85, 3);
+        var bottles = Carry("0x0f0e_empty_bottle", 0x0F0E, 1);
+
+        Call("make", Aria, Healing, Heal);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal((2, 1), (Left(ginseng), Left(bottles)));
+        Assert.Equal([NoPotion], Told());
+        Assert.Empty(Made("0x0f0c_b_yellow_potion"));
     }
 
     [Fact]

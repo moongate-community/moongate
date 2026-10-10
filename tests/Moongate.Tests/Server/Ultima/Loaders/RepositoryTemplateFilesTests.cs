@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Moongate.Server.Ultima.Packets.Books;
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
@@ -1128,6 +1129,41 @@ public sealed class RepositoryTemplateFilesTests
             id => Assert.Equal("explosion_potion", templates[id].ScriptId)
         );
         Assert.True(templates.ContainsKey("0x0f0e_empty_bottle"));
+    }
+
+    [Fact]
+    public async Task EveryShippedPotion_IsOneTheScriptsKnow()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToArray();
+        var scripts = Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts");
+        var plain = Regex.Matches(
+                await File.ReadAllTextAsync(Path.Combine(scripts, "common", "potions.lua")),
+                "\\[\"(0x[^\"]+)\"\\] = \"([a-z]+)\""
+            )
+            .ToDictionary(match => match.Groups[1].Value, match => match.Groups[2].Value);
+        var drunk = KeysOf(await File.ReadAllTextAsync(Path.Combine(scripts, "items", "potion.lua")), "EFFECTS");
+        var thrown = KeysOf(await File.ReadAllTextAsync(Path.Combine(scripts, "items", "explosion_potion.lua")), "DAMAGE");
+
+        // A potion with the script but no effect would do nothing, and say nothing.
+        Assert.All(
+            templates.Where(template => template.ScriptId == "potion"),
+            template => Assert.Contains(plain.GetValueOrDefault(template.Id, template.Id), drunk)
+        );
+        Assert.All(
+            templates.Where(template => template.ScriptId == "explosion_potion"),
+            template => Assert.Contains(plain.GetValueOrDefault(template.Id, template.Id), thrown)
+        );
+    }
+
+    // The keys of a Lua table written as "local NAME = { key = ..., }".
+    private static HashSet<string> KeysOf(string script, string table)
+    {
+        var start = script.IndexOf($"local {table} = {{", StringComparison.Ordinal);
+        var end = script.IndexOf("\n}", start, StringComparison.Ordinal);
+
+        return Regex.Matches(script[start..end], "^\\s+([a-z]+) = ", RegexOptions.Multiline)
+            .Select(match => match.Groups[1].Value)
+            .ToHashSet();
     }
 
     [Fact]

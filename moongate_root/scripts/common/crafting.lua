@@ -122,6 +122,7 @@ local NOTICES = {
     [NOT_AT_OVEN] = "You must be near an oven to bake that.",
     [NO_IDEA_METAL] = "You have no idea how to work this metal.",
     [FAILED] = "You failed to create the item, and some of your materials are lost.",
+    [500287] = "You fail to create a useful potion.",
     [NO_SKILL] = "You don't have the required skills to attempt this item.",
     [NO_WOOD] = "You do not have sufficient wood to make that.",
     [NO_CLOTH] = "You don't have enough cloth to make that.",
@@ -144,6 +145,20 @@ local MATERIALS = {
 -- map is drawn where the cartographer stands.
 local MADE = {
     cartography = "common.cartography",
+}
+
+-- The crafts whose stackable items do not wear the tool: UOX3 made arrows and shafts by the fifty for one use.
+local STACKS_WEAR_NOT = {
+    fletching = true,
+}
+
+-- What a craft says on a failure, and the sound of its success, when not the common ones: a potion poured.
+local FAILED_TEXT = {
+    alchemy = 500287, -- You fail to create a useful potion.
+}
+
+local SUCCESS_SOUND = {
+    alchemy = 0x240,
 }
 
 -- The crafts whose items have no quality: never exceptional nor marked, as a map.
@@ -205,10 +220,10 @@ function crafting.uses(tool)
     return left
 end
 
--- Takes one use of the tool; false, with the client's text, when that was its last and it broke. Making a stackable item
--- (an arrow, a shaft) takes none: UOX3 made them by the fifty for one use.
-local function wear(user, tool, plain)
-    if plain then
+-- Takes one use of the tool; false, with the client's text, when that was its last and it broke. A use that costs
+-- nothing, as an arrow of a fletcher (STACKS_WEAR_NOT), takes none.
+local function wear(user, tool, free)
+    if free then
         return true
     end
 
@@ -464,6 +479,7 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
     busy[user] = nil
     -- A stackable item (arrows, shafts) is plain: no quality and no mark, so every one of its colour stacks.
     local plain = item.is_stackable(recipe.item)
+    local free = plain and STACKS_WEAR_NOT[craft_id]
 
     local here = mobile.location(user)
 
@@ -501,10 +517,11 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
             take(user, crafting.templates(resource.resource, kind), index == 1 and math.max(1, lost) or lost)
         end
 
-        mobile.message_cliloc(user, FAILED)
+        local failed = FAILED_TEXT[craft_id] or FAILED
+        mobile.message_cliloc(user, failed)
 
-        if wear(user, tool, plain) then
-            crafting.open(user, tool, craft_id, NOTICES[FAILED])
+        if wear(user, tool, free) then
+            crafting.open(user, tool, craft_id, NOTICES[failed])
         end
 
         return
@@ -535,7 +552,7 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
     if not made then
         mobile.message(user, NOT_MADE)
 
-        if wear(user, tool, plain) then
+        if wear(user, tool, free) then
             crafting.open(user, tool, craft_id, NOT_MADE)
         end
 
@@ -553,7 +570,7 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
 
             mobile.message(user, NOT_MADE)
 
-            if wear(user, tool, plain) then
+            if wear(user, tool, free) then
                 crafting.open(user, tool, craft_id, NOT_MADE)
             end
 
@@ -597,7 +614,11 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
 
     mobile.message_cliloc(user, outcome)
 
-    if wear(user, tool, plain) then
+    if SUCCESS_SOUND[craft_id] then
+        mobile.play_sound(user, SUCCESS_SOUND[craft_id])
+    end
+
+    if wear(user, tool, free) then
         crafting.open(user, tool, craft_id, NOTICES[outcome])
     end
 end
