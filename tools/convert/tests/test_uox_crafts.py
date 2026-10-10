@@ -365,3 +365,9 @@ def test_tinkering_is_known_its_traps_left_out_and_its_misspelt_group_fixed():
     # The traps of tinkering arm containers, which cannot be trapped yet; UOX3's file lacks their menu too.
     assert "traps" in crafts.SKIPPED_GROUPS
     assert crafts.GROUP_FIXES["Miscellaneuos"] == "Miscellaneous"
+
+
+def test_a_skill_line_uox3_got_wrong_is_fixed():
+    # UOX3 writes the scales of tinkering as 63.8 to 11.4: a zero is missing from the most.
+    assert crafts.SKILL_FIXES[("tinkering", "scales")] == "37 638 1140"
+    assert crafts.SKILL_FIXES[("tinkering", "heating stand")] == "37 643 1140"

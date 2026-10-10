@@ -30,6 +30,9 @@ SKIPPED_ITEMS = {"0x1bd7"}
 
 NAME_FIXES = {"Magincian Throne": "Magician Throne"}
 
+# The main skill lines UOX3 gets wrong, by the craft's skill and the recipe's name (lower case): the whole SKILL= value.
+SKILL_FIXES = {("tinkering", "scales"): "37 638 1140", ("tinkering", "heating stand"): "37 643 1140"}
+
 # The groups whose names UOX3 misspells.
 GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
 
@@ -215,8 +218,12 @@ def _recipe(
         raise ConversionError(f"the recipe {name} makes {added}, which is not one item template")
 
     skills = []
+    skill_lines = _values(block, "SKILL")
 
-    for value in _values(block, "SKILL"):
+    if (craft_skill, name.lower()) in SKILL_FIXES and skill_lines:
+        skill_lines[0] = SKILL_FIXES[(craft_skill, name.lower())]
+
+    for value in skill_lines:
         number, low, high = (int(part) for part in value.split()[:3])
 
         if number not in SKILL_NAMES:
