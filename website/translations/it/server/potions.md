@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a2ddd2adfc9f0a9a4c1ebe8d6ec8dc4710463c6e15facb20edb294010916d17f","title":"Pozioni"} -->
+<!-- translation: {"sourceHash":"e30b5baffb07a8ee36489f2328e9bb94b014328e6c68b01369186b1ea1b6d044","title":"Pozioni"} -->
 
 # Pozioni
 
@@ -38,19 +38,20 @@ le pozioni di cura vengono rifiutate ("You can not heal yourself in your current
 
 Il primo colpo arriva dopo 3,5 secondi, e metà dei colpi ripete il danno del precedente. Un veleno più forte sostituisce uno
 più debole; uno più debole non cambia nulla. Il veleno svanisce ("The poison seems to have worn off."), viene curato, o
-uccide; la morte lo ferma. Si salva con il personaggio: uscire dal gioco non lo ferma, riparte al rientro successivo.
-Un livello 4, lethal, esiste per i mostri.
+uccide; la morte lo ferma subito. Si salva con il personaggio insieme ai colpi già fatti: uscire dal gioco non lo ferma,
+continua al rientro successivo. Il veleno di un NPC non si salva. Un livello 4, lethal, esiste per i mostri. Un giocatore avvelenato e nascosto
+non viene visto stare male. I client più vecchi della 7.0 non disegnano la barra verde.
 
 ## Antidoti
 
 Un antidoto cura il veleno con una probabilità; si consuma comunque ("That potion was not strong enough to cure your
 ailment!"), e viene rifiutato quando chi beve non è avvelenato ("You are not poisoned.").
 
-| Antidoto | Lesser | Regular | Greater | Deadly |
-| --- | --- | --- | --- | --- |
-| Antidoto minore | 75% | 50% | 15% | 0% |
-| Antidoto | 100% | 75% | 50% | 15% |
-| Antidoto maggiore | 100% | 100% | 100% | 75% |
+| Antidoto | Lesser | Regular | Greater | Deadly | Lethal |
+| --- | --- | --- | --- | --- | --- |
+| Antidoto minore | 75% | 50% | 15% | 0% | 0% |
+| Antidoto | 100% | 75% | 50% | 15% | 0% |
+| Antidoto maggiore | 100% | 100% | 100% | 75% | 25% |
 
 Gli script avvelenano e curano con `mobile.poison(user, 2)`, `mobile.cure(user)` e `mobile.poison_level(user)`.
 

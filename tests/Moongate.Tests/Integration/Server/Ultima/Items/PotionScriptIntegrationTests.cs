@@ -55,7 +55,6 @@ using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
-using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
@@ -503,6 +502,19 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(NotStrongEnough, Told().Last());
 
         Drink(Carry("greatercurepotion", 0x0F07, 1));
+
+        Assert.Null(Poison().LevelOf(_aria));
+        Assert.Equal(Cured, Told().Last());
+    }
+
+    [Fact]
+    public void AGreaterCure_HasAChanceAgainstALethalPoison()
+    {
+        Poison().Apply(_aria, 4);
+        var cure = Carry("greatercurepotion", 0x0F07, 2);
+        _itemScripts.Run(cure, "set_roll", 0.2);
+
+        Drink(cure);
 
         Assert.Null(Poison().LevelOf(_aria));
         Assert.Equal(Cured, Told().Last());

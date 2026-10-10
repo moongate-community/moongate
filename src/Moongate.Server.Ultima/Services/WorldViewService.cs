@@ -550,6 +550,12 @@ public sealed class WorldViewService : IWorldViewService
         _sender.TrySend(sessionId, incoming);
         _sender.TrySend(sessionId, _tooltips.Info(mobile));
 
+        // A poisoned mobile comes into view with its green bar.
+        if (PoisonService.ReadLevel(mobile) is { } poison)
+        {
+            _sender.TrySend(sessionId, new HealthBarStatusPacket(mobile.Id.Value, HealthBarType.Poison, poison + 1));
+        }
+
         // Not the bank box: the others never see it.
         foreach (var item in _items.GetWorn(mobile.Id).Where(item => item.Layer != LayerType.Bank))
         {

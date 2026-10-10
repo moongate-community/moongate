@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
@@ -23,6 +24,11 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
     ///     The prop that keeps a mobile's poison level, saved with it.
     /// </summary>
     public const string LevelProp = "poison.level";
+
+    /// <summary>
+    ///     The prop that keeps how many ticks a poison has done, so that coming back does not start its count again.
+    /// </summary>
+    public const string TicksProp = "poison.ticks";
 
     private const string TimerName = "poison";
     private const int MessageEvery = 2;
@@ -50,6 +56,7 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
     private readonly ISpeechService _speech;
     private readonly CombatConfig _combat;
     private readonly Random _random;
+    private readonly IMobileService? _mobiles;
     private readonly Dictionary<Serial, Ticking> _ticking = [];
 
     public PoisonService(
@@ -61,7 +68,8 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         ISectorService sectors,
         ISpeechService speech,
         CombatConfig combat,
-        Random? random = null
+        Random? random = null,
+        IMobileService? mobiles = null
     )
     {
         _state = state;
@@ -73,9 +81,10 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         _speech = speech;
         _combat = combat;
         _random = random ?? Random.Shared;
+        _mobiles = mobiles;
     }
 
-    public PoisonResultType Apply(MobileEntity mobile, int level)
+    public PoisonResultType Apply(MobileEntity mobile, int level, MobileEntity? source = null)
     {
         if (level < 0 || level >= Levels.Length || mobile.IsDead)
         {
@@ -89,7 +98,8 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
 
         Stop(mobile.Id);
         mobile.SetProp(LevelProp, (long)level);
-        Start(mobile, level);
+        mobile.RemoveProp(TicksProp);
+        Start(mobile, level, 0, source);
         TellIll(mobile, level);
 
         return PoisonResultType.Poisoned;
@@ -109,16 +119,23 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
 
     public int? LevelOf(MobileEntity mobile)
     {
-        try
-        {
-            return mobile.TryGetProp<long>(LevelProp, out var level) && level >= 0 && level < Levels.Length
-                ? (int)level
-                : null;
-        }
-        catch (Exception exception) when (exception is InvalidCastException or FormatException or OverflowException)
-        {
-            return null;
-        }
+        return ReadLevel(mobile);
+    }
+
+    /// <summary>
+    ///     Gets whether the mobile's saved poison level reads as a poison; a corrupt one does not.
+    /// </summary>
+    public static bool IsPoisoned(MobileEntity mobile)
+    {
+        return ReadLevel(mobile) is not null;
+    }
+
+    /// <summary>
+    ///     Gets the level of the mobile's saved poison; null when it has none or one that does not read.
+    /// </summary>
+    public static int? ReadLevel(MobileEntity mobile)
+    {
+        return ReadNumber(mobile, LevelProp) is { } level && level >= 0 && level < Levels.Length ? level : null;
     }
 
     public void Resume(MobileEntity mobile)
@@ -128,7 +145,7 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
             return;
         }
 
-        Start(mobile, level);
+        Start(mobile, level, ReadNumber(mobile, TicksProp) ?? 0, null);
     }
 
     // The ticks stop with the session; the level stays with the character for its next login.
@@ -140,9 +157,9 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         }
     }
 
-    private void Start(MobileEntity mobile, int level)
+    private void Start(MobileEntity mobile, int level, int count, MobileEntity? source)
     {
-        var ticking = new Ticking(level);
+        var ticking = new Ticking(level) { Count = count, Source = source };
         _ticking[mobile.Id] = ticking;
         ticking.Timer = _timers.RegisterTimer(
             TimerName,
@@ -161,7 +178,16 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
             return;
         }
 
-        if (mobile.IsDead)
+        // Gone from the world, as a removed NPC: nothing more is shown of it.
+        if (_mobiles?.IsInWorld(mobile.Id) == false)
+        {
+            Stop(mobile.Id);
+
+            return;
+        }
+
+        // Ended elsewhere, as by a death, or dead before this tick.
+        if (LevelOf(mobile) != ticking.Level || mobile.IsDead)
         {
             End(mobile);
 
@@ -169,6 +195,7 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         }
 
         var level = Levels[ticking.Level];
+        mobile.SetProp(TicksProp, (long)(ticking.Count + 1));
 
         if (ticking.Count++ == level.Ticks)
         {
@@ -202,7 +229,7 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         End(mobile);
 
         // A player that cannot die, such as one with a body that has no ghost, is left with one hit point.
-        if (!_death.Kill(mobile) && !mobile.IsNpc)
+        if (!_death.Kill(mobile, ticking.Source) && !mobile.IsNpc)
         {
             _state.SetStats(mobile, new MobileStatsChange { Hits = 1 });
         }
@@ -212,6 +239,7 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
     {
         Stop(mobile.Id);
         mobile.RemoveProp(LevelProp);
+        mobile.RemoveProp(TicksProp);
         ShowBar(mobile, 0);
     }
 
@@ -260,9 +288,28 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         }
     }
 
+    // The players who see it: a hidden mobile is seen by its own player and the staff only.
     private IEnumerable<MobileEntity> Around(MobileEntity mobile)
     {
-        return _sectors.GetMobilesInRange(mobile.Map, mobile.Location, SeeRange).Where(other => !other.IsNpc);
+        return _sectors.GetMobilesInRange(mobile.Map, mobile.Location, SeeRange)
+            .Where(other => !other.IsNpc && (!mobile.Hidden || other.Id == mobile.Id || IsStaff(other)));
+    }
+
+    private bool IsStaff(MobileEntity player)
+    {
+        return _sessions.TryGetByCharacterId(player.Id, out var session) && session.AccountType >= AccountType.GameMaster;
+    }
+
+    private static int? ReadNumber(MobileEntity mobile, string key)
+    {
+        try
+        {
+            return mobile.TryGetProp<long>(key, out var value) && value is >= 0 and <= int.MaxValue ? (int)value : null;
+        }
+        catch (Exception exception) when (exception is InvalidCastException or FormatException or OverflowException)
+        {
+            return null;
+        }
     }
 
     private sealed class Ticking
@@ -279,5 +326,7 @@ public sealed class PoisonService : IPoisonService, ISessionClosedListener
         public int LastDamage { get; set; }
 
         public string? Timer { get; set; }
+
+        public MobileEntity? Source { get; init; }
     }
 }

@@ -115,8 +115,6 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
                 // Before the packets that show it: a criminal that comes back is grey from the first one.
                 _crimes?.Restore(character);
                 _murders?.Restore(character);
-                // A poison it logged out with takes its hits again.
-                _poison?.Resume(character);
 
                 // Its rows are as its last save left them: what another player took or merged since stays out, and
                 // is not shown on the character either.
@@ -146,7 +144,12 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
 
         // After the sequence: the client must know where it stands before it is shown the others.
         if (!await context.RunOnGameLoopAsync(
-                session => _view.Entered(character, session.SessionId, session.ClientVersion, session.AccountType),
+                session =>
+                {
+                    _view.Entered(character, session.SessionId, session.ClientVersion, session.AccountType);
+                    // A poison it logged out with takes its hits again, its green bar shown once the client knows it.
+                    _poison?.Resume(character);
+                },
                 cancellationToken
             ))
         {

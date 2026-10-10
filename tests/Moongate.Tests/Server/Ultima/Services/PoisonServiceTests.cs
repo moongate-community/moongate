@@ -51,7 +51,8 @@ public sealed class PoisonServiceTests : IAsyncLifetime
             _fixture.Sectors,
             _speech,
             new CombatConfig { DisplayDamageNumbers = true },
-            _random
+            _random,
+            _fixture.Mobiles
         );
     }
 
@@ -185,6 +186,81 @@ public sealed class PoisonServiceTests : IAsyncLifetime
     public void AnUnknownLevel_IsRefused(int level)
     {
         Assert.Equal(PoisonResultType.Refused, _poison.Apply(_aria, level));
+    }
+
+    [Fact]
+    public void AMobileThatLeftTheWorld_TicksNoMore_AndNothingIsSentOfIt()
+    {
+        _poison.Apply(_aria, 1);
+        _fixture.Sender.Sent.Clear();
+        _fixture.Mobiles.LeaveWorld(_aria.Id);
+
+        Fire();
+
+        Assert.Empty(_fixture.Sender.Sent);
+        Assert.Single(_timers.Unregistered);
+    }
+
+    [Fact]
+    public void APoisonTakenAwayElsewhere_AsByDeath_StopsTheTicks()
+    {
+        _poison.Apply(_aria, 1);
+        _aria.RemoveProp(PoisonService.LevelProp);
+
+        Fire();
+
+        Assert.Equal(100, _aria.Hits);
+        Assert.Single(_timers.Unregistered);
+    }
+
+    [Fact]
+    public void TheCount_IsSaved_SoComingBackDoesNotStartItAgain()
+    {
+        _poison.Apply(_aria, 0);
+
+        for (var tick = 0; tick < 9; tick++)
+        {
+            Fire();
+        }
+
+        _poison.OnSessionClosed(_session);
+        _poison.Resume(_aria);
+        Fire();
+        Fire();
+
+        Assert.Null(_poison.LevelOf(_aria));
+    }
+
+    [Fact]
+    public void AHiddenMobile_IsNotSeenToLookIll()
+    {
+        _aria.Hidden = true;
+
+        _poison.Apply(_aria, 1);
+
+        Assert.DoesNotContain(_speech.SaidTo, said => said.Player == _boris);
+        Assert.Contains(_speech.SaidTo, said => said.Player == _aria);
+    }
+
+    [Fact]
+    public void APoisonThatKills_NamesWhoPoisoned()
+    {
+        _aria.Hits = 5;
+        _poison.Apply(_aria, 3, _boris);
+
+        Fire();
+
+        Assert.Equal((_aria, _boris), Assert.Single(_death.Killed));
+    }
+
+    [Fact]
+    public void IsPoisoned_ReadsTheSavedLevel_AndACorruptOneIsNot()
+    {
+        Assert.False(PoisonService.IsPoisoned(_aria));
+        _aria.SetProp(PoisonService.LevelProp, 2L);
+        Assert.True(PoisonService.IsPoisoned(_aria));
+        _aria.SetProp(PoisonService.LevelProp, "green");
+        Assert.False(PoisonService.IsPoisoned(_aria));
     }
 
     private void Fire()

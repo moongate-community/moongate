@@ -156,6 +156,8 @@ public sealed class DeathService : IDeathService
             return false;
         }
 
+        EndPoison(mobile);
+
         // The dead are wanted no more: a body that still falls is not a criminal for the next guard.
         if (mobile.Criminal)
         {
@@ -287,6 +289,12 @@ public sealed class DeathService : IDeathService
 
     // A player dies where it stands, at once: the corpse with its gear and what its backpack held, then the ghost in
     // its place. The backpack, the hair and what cannot be lost stay with it.
+    private static void EndPoison(MobileEntity mobile)
+    {
+        mobile.RemoveProp(PoisonService.LevelProp);
+        mobile.RemoveProp(PoisonService.TicksProp);
+    }
+
     private bool KillPlayer(MobileEntity player, MobileEntity? killer)
     {
         if (_state is null ||
@@ -296,6 +304,9 @@ public sealed class DeathService : IDeathService
         {
             return false;
         }
+
+        // Death ends a poison at once: a quick resurrection does not bring it back.
+        EndPoison(player);
 
         // Read before the pardon: a criminal or a murderer is no innocent to loot.
         var innocent = !player.IsMurderer && !player.Criminal;

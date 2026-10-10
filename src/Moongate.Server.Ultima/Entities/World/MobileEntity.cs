@@ -23,6 +23,10 @@ namespace Moongate.Server.Ultima.Entities.World;
 [Table(Name = "world.mobiles")]
 public class MobileEntity : IMoongateEntity
 {
+    // The props of a poison (see PoisonService): an NPC's are not saved.
+    private const string PoisonLevelProp = "poison.level";
+    private const string PoisonTicksProp = "poison.ticks";
+
     /// <summary>
     ///     The reported kills from which a player is a murderer, as ModernUO.
     /// </summary>
@@ -461,6 +465,13 @@ public class MobileEntity : IMoongateEntity
             )
         ];
         copy.Props = Props is null ? null : new Dictionary<string, object?>(Props);
+
+        // An NPC comes back well: nothing would tick its poison again.
+        if (IsNpc && copy.Props is not null)
+        {
+            copy.Props.Remove(PoisonLevelProp);
+            copy.Props.Remove(PoisonTicksProp);
+        }
 
         return copy;
     }

@@ -67,6 +67,19 @@ public sealed class WorldViewServiceTests
         Assert.Equal(aria.Id, IncomingTo(BorisSession));
     }
 
+    [Fact]
+    public void Entered_APoisonedMobileAround_ComesWithItsGreenBar()
+    {
+        var boris = Enter(3, 1500, 1628, BorisSession);
+        boris.SetProp(PoisonService.LevelProp, 2L);
+        ClearSent();
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        var bar = Assert.Single(_sender.Sent.OfType<HealthBarStatusPacket>(), packet => packet.Serial == boris.Id.Value);
+        Assert.Equal((HealthBarType.Poison, 3), (bar.Kind, bar.Level));
+    }
+
     // A hidden mobile is on no player's screen; the staff sees it, with the flag that greys it out.
     [Fact]
     public void Entered_AHiddenMobileAround_IsShownToTheStaffOnly()

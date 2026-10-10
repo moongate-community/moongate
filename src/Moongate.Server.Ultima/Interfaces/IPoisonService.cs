@@ -12,9 +12,9 @@ public interface IPoisonService : ISessionClosedListener
 {
     /// <summary>
     ///     Poisons the mobile at <paramref name="level" />: a stronger poison replaces a weaker one and starts its count
-    ///     again; an equal or weaker one changes nothing.
+    ///     again; an equal or weaker one changes nothing. A poison that kills names <paramref name="source" /> as the killer.
     /// </summary>
-    PoisonResultType Apply(MobileEntity mobile, int level);
+    PoisonResultType Apply(MobileEntity mobile, int level, MobileEntity? source = null);
 
     /// <summary>
     ///     Ends the mobile's poison; false when it was not poisoned.

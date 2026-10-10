@@ -131,6 +131,24 @@ public sealed class DeathServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void Kill_EndsThePoison_OfAnNpcAndOfAPlayer()
+    {
+        _orc.SetProp("poison.level", 2L);
+        _aria.SetProp("poison.level", 1L);
+        _aria.SetProp("poison.ticks", 4L);
+
+        _aria.Body = 0x0190;
+        _serials.Serials.Enqueue(new Serial(CorpseSerial + 1));
+
+        Assert.True(_death.Kill(_orc));
+        Assert.True(_death.Kill(_aria));
+
+        Assert.False(_orc.TryGetProp<long>("poison.level", out _));
+        Assert.False(_aria.TryGetProp<long>("poison.level", out _));
+        Assert.False(_aria.TryGetProp<long>("poison.ticks", out _));
+    }
+
+    [Fact]
     public void Kill_AnNpc_LeavesItsCorpseWhereItStood_WithItsBodyItsFacingItsHueAndItsName()
     {
         Assert.True(_death.Kill(_orc));

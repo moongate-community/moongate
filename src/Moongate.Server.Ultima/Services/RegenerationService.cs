@@ -109,7 +109,7 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
         // is left alone.
         // Nor does a poisoned mobile: the poison takes them.
         if ((_config.HungerEnabled && !mobile.IsNpc && mobile.Hunger <= 0 && !IsStaff(mobile)) ||
-            mobile.Props?.ContainsKey(PoisonService.LevelProp) == true)
+            PoisonService.IsPoisoned(mobile))
         {
             clock.HitsAt = 0;
         }

@@ -35,4 +35,18 @@ public sealed class MobileEntityBonusTests
         Assert.Equal((0, 0, 50, 40), (saved.StrengthBonus, saved.DexterityBonus, saved.Hits, saved.Stamina));
         Assert.Equal((60, 45), (player.Hits, player.Stamina));
     }
+
+    [Fact]
+    public void ASnapshotOfAnNpc_LeavesItsPoisonOut_ForNothingResumesIt()
+    {
+        var orc = new MobileEntity { Id = new Serial(0x100), TemplateId = "orc" };
+        orc.SetProp("poison.level", 2L);
+        orc.SetProp("vega.mood", "calm");
+
+        var saved = orc.Snapshot();
+
+        Assert.False(saved.TryGetProp<long>("poison.level", out _));
+        Assert.Equal("calm", saved.GetProp<string>("vega.mood"));
+        Assert.True(orc.TryGetProp<long>("poison.level", out _));
+    }
 }

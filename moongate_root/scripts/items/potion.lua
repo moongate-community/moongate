@@ -149,10 +149,12 @@ local function cure(chances)
         apply = function(user)
             local level = mobile.poison_level(user)
 
+            -- The glow and the sound of a cure, whether it works or not.
+            effect.on(user, CURE_EFFECT)
+            mobile.play_sound(user, CURE_SOUND)
+
             if level and potion.chance() < (chances[level] or 0) and mobile.cure(user) then
                 mobile.message_cliloc(user, CURED)
-                effect.on(user, CURE_EFFECT)
-                mobile.play_sound(user, CURE_SOUND)
             else
                 mobile.message_cliloc(user, NOT_STRONG_ENOUGH)
             end
@@ -176,10 +178,10 @@ local EFFECTS = {
     poisonpotion = poison(1),
     greaterpoisonpotion = poison(2),
     deadlypoisonpotion = poison(3),
-    -- The chance against lesser (0), regular (1), greater (2) and deadly (3) poison.
+    -- The chance against lesser (0), regular (1), greater (2), deadly (3) and lethal (4) poison.
     lessercurepotion = cure({ [0] = 0.75, [1] = 0.50, [2] = 0.15 }),
     curepotion = cure({ [0] = 1.00, [1] = 0.75, [2] = 0.50, [3] = 0.15 }),
-    greatercurepotion = cure({ [0] = 1.00, [1] = 1.00, [2] = 1.00, [3] = 0.75 }),
+    greatercurepotion = cure({ [0] = 1.00, [1] = 1.00, [2] = 1.00, [3] = 0.75, [4] = 0.25 }),
 }
 
 local function tell(user, message)

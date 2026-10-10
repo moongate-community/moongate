@@ -36,19 +36,20 @@ heal potions are refused ("You can not heal yourself in your current state.").
 
 The first tick comes after 3.5 seconds, and half the ticks repeat the damage of the last. A stronger poison replaces a
 weaker one; a weaker one changes nothing. The poison wears off ("The poison seems to have worn off."), is cured, or
-kills; death ends it. It is saved with the character: logging out does not end it, it starts again on the next login.
-A level 4, lethal, is there for monsters.
+kills; death ends it at once. It is saved with the character with the ticks it has done: logging out does not end it,
+it goes on at the next login. An NPC's poison is not saved. A level 4, lethal, is there for monsters. A hidden poisoned
+player is not seen to look ill. Clients older than 7.0 do not draw the green bar.
 
 ## Cure
 
 A cure potion cures the poison by a chance; it is used up either way ("That potion was not strong enough to cure your
 ailment!"), and refused when the drinker is not poisoned ("You are not poisoned.").
 
-| Cure | Lesser | Regular | Greater | Deadly |
-| --- | --- | --- | --- | --- |
-| Lesser cure | 75% | 50% | 15% | 0% |
-| Cure | 100% | 75% | 50% | 15% |
-| Greater cure | 100% | 100% | 100% | 75% |
+| Cure | Lesser | Regular | Greater | Deadly | Lethal |
+| --- | --- | --- | --- | --- | --- |
+| Lesser cure | 75% | 50% | 15% | 0% | 0% |
+| Cure | 100% | 75% | 50% | 15% | 0% |
+| Greater cure | 100% | 100% | 100% | 75% | 25% |
 
 Scripts poison and cure with `mobile.poison(user, 2)`, `mobile.cure(user)` and `mobile.poison_level(user)`.
 
