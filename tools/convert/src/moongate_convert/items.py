@@ -26,6 +26,8 @@ DYE_TUB_GRAPHIC = 0x0FAB
 # The four piles of ore: UOX3 types them by their graphic, in itemtypes.dfn, not in their block.
 ORE_GRAPHICS = (0x19B7, 0x19B8, 0x19B9, 0x19BA)
 # What a carpenter works wood with: the chisels, dovetail saws, planes, saws, draw knife, froe and inshave, not the nails.
+# What a smith forges with at an anvil: the smith's hammers, the sledge hammers and the tongs.
+SMITHING_TOOL_GRAPHICS = frozenset({0x13E3, 0x13E4, 0x0FB4, 0x0FB5, 0x0FBB, 0x0FBC})
 CARPENTRY_TOOL_GRAPHICS = frozenset(
     {0x1026, 0x1027, 0x1028, 0x1029, 0x102C, 0x102D, 0x1030, 0x1031, 0x1032, 0x1033, 0x1034, 0x1035, 0x10E4, 0x10E5, 0x10E6}
 )
@@ -215,6 +217,9 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     elif kind == AXE_TYPE:
         # What UOX3 chops a tree with: scripts/items/axe.lua.
         template.script_id = "axe"
+    elif graphic in SMITHING_TOOL_GRAPHICS:
+        # What UOX3's crafting tool script opens blacksmithing with: scripts/items/smithing_tool.lua.
+        template.script_id = "smithing_tool"
     elif graphic in CARPENTRY_TOOL_GRAPHICS:
         # What UOX3's crafting tool script opens carpentry with: scripts/items/carpentry_tool.lua.
         template.script_id = "carpentry_tool"

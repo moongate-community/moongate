@@ -695,3 +695,21 @@ def test_the_carpentry_tools_get_the_carpentry_tool_script_by_their_graphic(uox_
     assert by_name["saw"]["script_id"] == "carpentry_tool"
     assert by_name["froe"]["script_id"] == "carpentry_tool"
     assert "script_id" not in by_name["nails"]
+
+
+def test_the_smithing_tools_get_the_smithing_tool_script_by_their_graphic(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[0x13e3]\n{\nname=smith's hammer\nid=0x13e3\n}\n"
+        "[0x0fbb]\n{\nname=tongs\nid=0x0fbb\n}\n"
+        "[0x0fb4]\n{\nname=sledge hammer\nid=0x0fb4\n}\n"
+        "[0x0faf]\n{\nname=anvil\nid=0x0faf\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a smith forges with at an anvil: scripts/items/smithing_tool.lua. An anvil is no tool.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert [by_name[name].get("script_id") for name in ("smith's hammer", "tongs", "sledge hammer", "anvil")] == [
+        "smithing_tool", "smithing_tool", "smithing_tool", None
+    ]
