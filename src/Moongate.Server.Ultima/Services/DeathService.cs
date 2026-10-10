@@ -387,6 +387,33 @@ public sealed class DeathService : IDeathService
             return ResurrectResultType.CannotBeRaised;
         }
 
+        var born = props.Where(prop => prop.Key.StartsWith(CorpseProps.Kept + CorpseProps.SpawnProps, StringComparison.Ordinal))
+            .ToDictionary(prop => prop.Key[CorpseProps.Kept.Length..], prop => prop.Value);
+
+        // The corpse of a bonded pet: its owner and its pet props come back, when the owner has room for it.
+        if (props.GetValueOrDefault(CorpseProps.PetOwner) is long or int)
+        {
+            var owner = Convert.ToInt64(props[CorpseProps.PetOwner]);
+
+            // The count of the followers is made afresh: a pet raised a moment ago may not be in it yet.
+            if (owner is <= 0 or > uint.MaxValue ||
+                !_mobiles.TryGet(new Serial((uint)owner), out var master) ||
+                _pets is null ||
+                !FitsAfresh(_pets.Value, master, template))
+            {
+                _raising.Remove(serial);
+
+                return ResurrectResultType.CannotBeRaised;
+            }
+
+            born[MountProps.Owner] = owner;
+
+            foreach (var prop in props.Where(prop => prop.Key.StartsWith(CorpseProps.Kept + CorpseProps.PetProps, StringComparison.Ordinal)))
+            {
+                born[prop.Key[CorpseProps.Kept.Length..]] = prop.Value;
+            }
+        }
+
         raising = new(
             template,
             map,
@@ -398,11 +425,17 @@ public sealed class DeathService : IDeathService
                 long value => (int)(value & ByteMask),
                 _          => null
             },
-            props.Where(prop => prop.Key.StartsWith(CorpseProps.Kept + CorpseProps.SpawnProps, StringComparison.Ordinal))
-                .ToDictionary(prop => prop.Key[CorpseProps.Kept.Length..], prop => prop.Value)
+            born
         );
 
         return ResurrectResultType.Raised;
+    }
+
+    private static bool FitsAfresh(IPetService pets, MobileEntity master, string template)
+    {
+        pets.Changed(master.Id);
+
+        return pets.Followers(master) + pets.SlotsOf(template) <= pets.MaxFollowers;
     }
 
     // On the game loop: who was born takes the name and the facing of who died, rises, and the corpse is gone. False
@@ -425,6 +458,17 @@ public sealed class DeathService : IDeathService
         if (raising.Direction is { } direction && Enum.IsDefined((DirectionType)(direction & DirectionMask)))
         {
             npc.Direction = (DirectionType)(direction & DirectionMask);
+        }
+
+        // A pet comes back weak, as a player does, and is one follower more for its owner.
+        if (raising.Props?.ContainsKey(MountProps.Owner) == true)
+        {
+            _state?.SetStats(npc, new MobileStatsChange { Hits = Math.Min(ResurrectedHits, npc.HitsMax), Mana = 0 });
+
+            if (npc.GetProp(MountProps.Owner, 0L) is > 0 and var master && master <= uint.MaxValue)
+            {
+                _pets?.Value.Changed(new Serial((uint)master));
+            }
         }
 
         // Shown again as who it was: it was born with a name and a facing of its template.
@@ -583,6 +627,20 @@ public sealed class DeathService : IDeathService
             if (key.StartsWith(CorpseProps.SpawnProps, StringComparison.Ordinal))
             {
                 corpse.SetProp(CorpseProps.Kept + key, value);
+            }
+        }
+
+        // A bonded pet is raised again as its owner's: the owner, and what makes it that pet, are kept.
+        if (mobile.IsNpc && mobile.GetProp(MountProps.PetBonded, false) && mobile.GetProp(MountProps.Owner, 0L) > 0)
+        {
+            corpse.SetProp(CorpseProps.PetOwner, mobile.GetProp(MountProps.Owner, 0L));
+
+            foreach (var (key, value) in mobile.Props ?? [])
+            {
+                if (key.StartsWith(CorpseProps.PetProps, StringComparison.Ordinal))
+                {
+                    corpse.SetProp(CorpseProps.Kept + key, value);
+                }
             }
         }
 

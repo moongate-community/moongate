@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"12380d420f3dc3c30e41dac8c781f6c756cba4c3c8bb3764aa8459c57413d958","title":"Combattimento"} -->
+<!-- translation: {"sourceHash":"7b5a853037b57d5b2ec9fd979f6d90dcf811c53da14c9b2f14a9eb04c70e31aa","title":"Combattimento"} -->
 
 # Combattimento
 

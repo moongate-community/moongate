@@ -38,7 +38,7 @@ saved, and forgotten when it dies: after a restart, or once no player is near en
 from wandering. The numbers (16, 32, the times) are constants at the top of the file.
 
 **The town guards go for the monsters**, as ModernUO's: `guard.lua` counts as wanted any NPC whose
-`npc.script_id` is `monster` that stands in a guarded region, as a criminal. The guard appears beside it, strikes it
+`npc.script_id` is `monster` that stands in a guarded region, as a criminal, unless it is dead or tamed. The guard appears beside it, strikes it
 and kills it with one blow.
 
 ## guard.lua
@@ -46,8 +46,9 @@ and kills it with one blow.
 The distribution's `scripts/mobiles/guard.lua` is the script of the town guards: the ones that stand in
 the towns by their spawn, and the ones a player calls by saying "guards" (see
 [`ultima.crime`](../server-configuration.md)). A template takes it with `script_id = "guard"`; `guard`,
-`m_guard` and `f_guard` do. The server has no combat yet: a guard kills a criminal that is an NPC with
-one blow, as ModernUO's does, and only stands on one that is a player, since players do not die yet. A
+`m_guard` and `f_guard` do. A guard kills a criminal that is an NPC with
+one blow, as ModernUO's does, and only stands on one that is a player: the script spares players, though players
+can die now. A
 guard is in one of two states:
 
 | State | What it does | It ends when |
@@ -148,7 +149,7 @@ switches its graphic silently.
 
 `scripts/items/food.lua` is the script of what can be eaten, as ModernUO's `Food`: the converted
 food templates carry `script_id = "food"`. Double clicking a piece eats one: the player's hunger rises
-by the item's prop `food.fill` (3 without it), 20 at most; it gets 6 to 8 points of stamina back, makes
+by the item's prop `food.fill` (3 without it), 20 at most; it gets 6 to 8 points of stamina back, plus one more for each 5 points of the fill, makes
 the sound and, with a body of the `Human` kind (`mobile.body_type`), the gesture of eating, and reads how full it feels
 in the language of its client (messages 500868 to 500872). A full player reads "You are simply too full
 to eat any more!" (500867) and eats nothing.
@@ -213,7 +214,7 @@ their base): see [Lumberjacking](../lumberjacking.md). The axe must be in the ha
 (`item.worn_by`). The place picked must be a tree within 2 tiles: `target.pick_location` gives the `graphic` of the
 static that was picked, and the script holds the graphics that are trees. The character swings one to three times
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have wood left (`harvest.amount`), the
-Lumberjacking skill is tried between 0 and 100 (`skill.check`), and a cut that works takes from the place
+Lumberjacking skill is tried between the bounds of the kind of wood of the place (`skill.check`; see below), and a cut that works takes from the place
 (`harvest.take`) and gives 10 logs (`item.give`). The constants at the top of the script are the range, the swings
 and the logs; the trees are in `scripts/common/trees.lua`, shared with `scripts/items/blade.lua`, the script of the knives, daggers and swords (`script_id = "blade"`), which hacks one kindling off a tree. Picked onto logs in the backpack, the axe saws the stack into boards (`item.template`, `item.consume`, then `item.give`). A place is of one kind of wood, the vein of its area (`harvest.vein`): `scripts/common/woods.lua` holds the logs and boards of each kind, the Lumberjacking it asks for (`mobile.skills`) and the bounds its cut is tried between, shared with carpentry, and the table `FINDS` what a master finds with the logs. Who is chopping is kept in memory by serial: a restart frees everyone.
 
@@ -268,6 +269,10 @@ as ModernUO's classic Healing. Double click it, pick who it is for and wait: the
   keeps the bandage.
 - **A ghost:** it needs 80 points of Healing and of Anatomy and a chance of (Healing − 68) / 50; then the ghost
   is asked in the gump of the ankhs whether to come back, and it costs a tenth of its fame, as at an ankh.
+- **A bonded pet's corpse:** it needs 80 points of Veterinary and of Animal Lore and a chance of (Veterinary − 68) / 50,
+  the wait is the one of a ghost (5 seconds more), and the owner must be the healer or within 3 tiles of the corpse;
+  the pet is born again where the corpse lies, with its owner, loyalty and bond, and 10 hit points. The corpse of a
+  pet that was not bonded cannot be bandaged.
 - **Skills:** both are tried for a rise after a healing, whether the roll worked or not, and after a raise that
   worked.
 
@@ -287,7 +292,8 @@ Hiding or being shown again clears the steps.
 - **The check** runs from -20 to 80 points, each raised by twice the armor rating. A success reads "You begin to move
   quietly." (502730); a failure reads "You fail in your attempt to move unnoticed." (502731) and shows the player.
   The skill waits 10 seconds either way.
-- **Not there yet:** the rules of Stealth of the later versions (the steps cost by armor, sneaking by a mount).
+- **Mounted:** a rider is refused with "You cannot stealth while mounted." (500837).
+- **Not there yet:** the rules of Stealth of the later versions (the steps cost by armor).
 
 ## snooping.lua
 
@@ -345,7 +351,7 @@ and the skill of the weapon (Wrestling for fists) is tried from -25 to 25 points
 
 A bow or a crossbow cannot practice on it ("You can't practice ranged weapons on this."), the weapon must reach it (a
 tile, `combat.range`), a dummy that still swings makes the player wait, and a skill at 25 reads "Your skill cannot
-improve any further by simply practicing with a dummy.". There is no check for a mounted player: mounts are not built.
+improve any further by simply practicing with a dummy.". There is no check for a mounted player: the script lets a rider practice.
 
 ## archery_butte.lua
 
@@ -458,7 +464,7 @@ scripts are replaced by hand needs it too, or its bankers and its bank checks st
 teleports the player to the props `teleport.x`, `teleport.y` and `teleport.z` with
 `mobile.teleport`, shows a puff of smoke where the player left (prop `source_effect`) and
 arrived (prop `dest_effect`), then plays the prop `sound_id` there when the teleporter has one. The prop
-`active = false` turns a teleporter off. Only players travel, unless the prop `creatures` is true: then an NPC that steps on it travels too. A teleporter with the prop `teleport.map`, a `MapType`
+`active = false` turns a teleporter off, and the prop `deny_mounted` makes it refuse a rider ("You must dismount before proceeding.", 1077252). Only players travel, unless the prop `creatures` is true: then an NPC that steps on it travels too. A teleporter with the prop `teleport.map`, a `MapType`
 number, takes the player to that map: the client changes map, then gets the season when it differs
 from the one it shows, the light, the weather and the music of the place; when the map is not loaded nothing happens. The template has `visibility = "game_master"`: a ground item is sent only to
 the accounts its visibility allows, so players walk onto a teleporter they never see.
@@ -494,7 +500,7 @@ between two offers, and a ghost met during the wait is offered when it is over. 
 client text 501222 and a murderer (red) with 501223, and a player of negative karma is told 501224 and offered all
 the same. An evil healer, whose template id starts with `evil` (`evilhealer`, `evilwhealer`), refuses
 nobody and says nothing. A healer of a
-template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think. A healer with a shop sells and buys as a vendor does, through `scripts/common/shop.lua`: bandages, potions, ginseng and garlic.
+template ending with `whealer`, a wandering one, takes a step with `npc.wander` every fourth think. A healer with a shop sells and buys as a vendor does, through `scripts/common/shop.lua`: bandages, potions, ginseng and garlic. It also teaches the skills it has, through `scripts/common/training.lua` (see [Trainers](../skills.md#trainers)).
 
 ## ethereal_mount.lua
 
@@ -519,13 +525,13 @@ changed since it was shown is shown again.
 `scripts/common/pet_orders.lua` is what `common/creature.lua` runs for a creature that has an `owner`: `think` follows the
 order in the prop `pet.order` (`follow`, `come`, `stay` or `guard`; `follow` when it has none), and `listen`, from the
 `on_speech` of the creature scripts, reads the words of the owner (`SpeechKeywordType.PetCome`, `AllStay` and the others)
-within 14 tiles. The "all" words are carried out by the first pet that asks `pet.attend(owner)`, for every pet of the owner
-within reach; `kill` asks for a target with `target.pick`; `release` opens the gump `pet_release`
+within 14 tiles. Of the "all" words only `all kill` is carried out by the first pet that asks `pet.attend(owner)`, for every pet of the owner
+within reach, since there is one cursor; every other "all" order is obeyed by each pet on its own. `kill` asks for a target with `target.pick`; `release` opens the gump `pet_release`
 (`templates/gumps/pet_release.xml`), whose Release button calls `pet.release` after checking the pet is still the player's and
 within 14 tiles. Every order but `release` first rolls `pet.obey(owner, pet)` (the chance is `pet.control_chance`): a pet that
 refuses growls and fidgets and does not take the order. `feed(serial, giver, given)` is what the creature scripts return from
 `on_drag_drop`: the owner's food goes to `pet.feed`, which takes the stack and raises the loyalty (`pet.loyalty`); food the
-creature does not eat is given back. See [Animal taming](../animal-taming.md#what-you-can-tell-it) and
+creature does not eat is given back. The food can also bond the pet (the owner is told 1049666). See [Animal taming](../animal-taming.md#what-you-can-tell-it) and
 [loyalty, food and obedience](../animal-taming.md#loyalty-food-and-obedience).
 
 ## animal_taming.lua
@@ -609,7 +615,7 @@ slots, filled by two functions: `tools` draws the sidebar, a button for each ent
 `tools` in the script, and `panel` draws the panel of the selected one (`args.tool`, the first when
 none or an unknown one is given). A click on the sidebar opens the gump again on that tool.
 
-There are three tools, the weather, the season and the time. The weather panel reads `world.weather_profile` and `world.weather` and
+There are four tools, the weather, the season, the time and the events. The weather panel reads `world.weather_profile` and `world.weather` and
 has a button for each kind, `none`, `rain`, `snow` and `storm`, that calls `world.set_weather` on the
 player, tells it `The weather of temperate is now storm until the next hour.` and opens the gump again.
 The season panel reads `world.season_here` and the season of the map the player stands on
@@ -618,8 +624,8 @@ The season panel reads `world.season_here` and the season of the map the player 
 is now winter.` and open the gump again. The time panel reads `world.time`, `world.moon`,
 `world.light_here` and `world.global_light` and has a button for each of four light levels and one for
 `auto`, that call `world.set_global_light` or `world.clear_global_light` and tell the player `The
-global light is now 26.`. Staff only: the slots are empty for anyone else, and every
-button checks `world.is_staff` again.
+global light is now 26.`. The events panel (an entry with `admin = true`, so only for the administrators) reads `schedule.events` and has `auto`, `on` and `off` buttons for each event, that call `schedule.set_event`, tell the player `Halloween is now off.` and open the gump again. Staff only: the slots are empty for anyone else, and every
+button checks `world.is_staff` again, and `world.is_administrator` for the events.
 
 To add a tool, write a panel function with the signature `function(g, player)` and add
 `{ id = "...", title = "...", panel = ... }` to `tools`.
@@ -708,3 +714,71 @@ Its saved title, author and body remain fixed when another player reads it.
 item of the `readable_book` template `book.open` sends the client's book, its cover and every page,
 instead of the parchment ([books and parchments](../data-files/books.md#books-and-parchments)).
 The imported ModernUO texts use it: `book.give(player, "grammar_of_orcish")`.
+
+## bank_check.lua
+
+`scripts/items/bank_check.lua` is the script of the bank checks, which a banker writes for gold of the bank ("check 5000"). A
+double click on a check inside the open bank box turns it back into coins of the box, in piles of 60000. A box with room for
+part of the gold takes what fits and the check keeps the rest. Outside the bank box a check is only a piece of paper worth
+what its tooltip says. See [Bank](../bank.md).
+
+## snow_pile.lua
+
+`scripts/items/snow_pile.lua` is the snowball of the Christmas event. A double click on a pile in the backpack asks for a
+target; the snowball flies to a mobile that carries a pile too, hits it, and both read it. A player waits 5 seconds between
+two snowballs and cannot throw one while mounted. An item template uses it with `script_id = "snow_pile"`.
+
+## banker.lua
+
+`scripts/mobiles/banker.lua` is the script of the bankers. A player within 12 tiles says a word and the banker opens its bank
+box ("bank"), tells the balance ("balance"), hands out gold ("withdraw 500"), takes it ("deposit 500") or writes a bank check
+("check 5000"). The client turns most of these into speech keywords in any language; "deposit" is English only. Gold and
+checks dropped on the banker go into the bank (`on_drag_drop`). A banker does no business with a criminal. How much it hands
+out at one time is the setting `ultima.bank.max_withdraw`. See [Bank](../bank.md).
+
+## shopkeeper.lua
+
+`scripts/mobiles/shopkeeper.lua` is the script of the NPC vendors. A player picks Buy or Sell in the vendor's context menu,
+or says "vendor buy" or "vendor sell" within 4 tiles, and the shop window opens. What a vendor sells is its shop in
+`templates/shops`; the window, the prices and the purchase are the work of the server (the `vendor` module), not of the script.
+Vendors also teach skills (`common/training.lua`), and while the event `halloween` is on they answer "trick or treat"
+(`common/trick_or_treat.lua`). See [Vendors](../vendors.md).
+
+## common/guild.lua
+
+`scripts/common/guild.lua` is what the scripts of the guildmasters share. A player within 2 cells says the guildmaster's name
+and "join" or "member" to be told the price of its guild (500 gold), drops exactly that gold on it to join, and says its name
+and "resign" or "quit" to leave, a week after joining at the earliest. The server keeps the membership (the `npcguild`
+module). `guild.listen(serial, speaker, text, keywords)` handles the words and `guild.drop(serial, giver, item)` the gold.
+
+## common/holiday_decor.lua
+
+`scripts/common/holiday_decor.lua` puts the decorations of a holiday event around the center of the main towns, on Felucca and
+on Trammel. `place(event_id, templates)` runs when an event starts, `remove(event_id)` when it ends. The serials are kept in the
+world prop `holiday.<event_id>.items`, so the items go away even after a restart, and placing twice puts nothing twice.
+
+## common/trick_or_treat.lua
+
+`scripts/common/trick_or_treat.lua` is the Halloween game. While the event `halloween` is on (`data/schedule.toml`), a player
+who says "trick or treat" within 4 tiles of a shopkeeper gets a candy, or a trick. Each shopkeeper rests 5 to 10 minutes after
+answering, and one saying is answered by one shopkeeper only. `shopkeeper.lua` calls `listen` from its `on_speech`.
+
+## events/christmas.lua and events/halloween.lua
+
+The hooks of the seasonal events of `data/schedule.toml`: `on_start(id, name)` decorates the towns
+(`common/holiday_decor.lua`) and tells everybody, `on_end(id, name)` takes the decorations away and tells everybody. Halloween
+has only these two; the game itself is `common/trick_or_treat.lua`. Christmas also has `on_login(id, name, player)`: a
+character that logs in during the event gets a gift once (two piles of snow, a holiday candle and one decoration), and not
+again for 200 days. See [Schedule](../schedule.md).
+
+## gumps/go.lua
+
+`scripts/gumps/go.lua` is the script of the gump of the named places (`templates/gumps/go.xml`) that [`.go`](../commands/go.md)
+opens. `rows(g, player, args)` fills the "rows" slot with one level of `data/locations.toml`, the categories first and then the
+places, twelve per page. A category opens the gump one level down, a place takes the traveller there. Staff only: anyone else
+sees an empty gump.
+
+## definitions.lua
+
+There is no `definitions.lua` among the shipped scripts: the engine generates it at startup, for editor completion, from the
+modules, functions and enums that are registered (see [Writing a Lua module](../lua-modules.md)). Do not edit it.

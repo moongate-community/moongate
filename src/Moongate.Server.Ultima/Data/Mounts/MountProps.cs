@@ -62,6 +62,21 @@ public static class MountProps
     public const string PetKeptLoyalty = "pet_loyalty";
 
     /// <summary>
+    ///     Prop of a creature: true once it has bonded with its owner.
+    /// </summary>
+    public const string PetBonded = "pet.bonded";
+
+    /// <summary>
+    ///     Prop of a creature: the time, in seconds, when its owner first fed it a food it likes since it was tamed.
+    /// </summary>
+    public const string PetBondBegin = "pet.bond_begin";
+
+    /// <summary>
+    ///     Prop of a mount item: true when the creature was bonded when it was mounted.
+    /// </summary>
+    public const string PetKeptBonded = "pet_bonded";
+
+    /// <summary>
     ///     Prop of a creature: the spawn region it was taken out of when it was tamed, put back when it is let go.
     /// </summary>
     public const string PetRegion = "pet.region";

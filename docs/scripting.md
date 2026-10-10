@@ -51,7 +51,7 @@ The [Lua API reference](https://moongate.sh/lua/) has a page for each module, wi
 function's signature, parameters and return type; it is generated from the server's code.
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `vendor`, `trainer`, `effect`, `moongates`, `locations`, `jail`, `board` and `commands` in game and standalone modes.
+The Ultima plugin registers `dice`, `localization`, `npc`, `item`, `mobile`, `world`, `target`, `prompt`, `gump`, `bank`, `vendor`, `trainer`, `effect`, `moongates`, `locations`, `jail`, `board`, `commands`, `mount`, `stable`, `pet`, `hue_picker`, `skill`, `combat`, `npcguild`, `schedule`, `help`, `book`, `harvest` and `craft` in game and standalone modes.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -80,6 +80,18 @@ Some modules have a page that says more:
 | `jail` | [Jail](jail.md) and the [`jail` command](commands/jail.md) |
 | `board` | [Bulletin boards](bulletin-boards.md) |
 | `commands` | [Commands](commands.md): `commands.execute` runs one as the console, `commands.execute_as` as a player |
+| `skill` | [Skills](skills.md): `skill.check(mobile, skill, min, max)` tries a mobile at a skill, which may rise |
+| `combat` | `attack`, `stop`, `target`, `range`, `armor_rating`, `weapon`, `swing`, `spend_ammo`: starts and ends melee fights and tells whom a mobile fights; see [Combat](combat.md) |
+| `mount` | `ride_ethereal(player, statuette)`: puts a player on the mount of a statuette; see [Mounts](mounts.md) |
+| `stable` | `attend`, `pets`, `stable`, `claim`, `max_pets`, `fee`: leaves a player's pets in the stable and takes them back |
+| `pet` | `info`, `lore`, `corpse`, `followers`, `max_followers`, `tame`, `attend`, `release`, `loyalty`, `control_chance`, `obey`, `feed`: the creatures a player has tamed, and taming a wild one; see [Animal taming](animal-taming.md) |
+| `hue_picker` | `open(player, graphic, callback)`: shows the client's hue picker and runs the function with the hue picked |
+| `npcguild` | `of`, `member`, `quote`, `is_join_payment`, `join`, `resign`: the guild of a trade, as a guildmaster takes members |
+| `schedule` | `is_active`, `active`, `events`, `set_event`, `next`: the calendar of `data/schedule.toml` |
+| `help` | The help gump's needs: the wait of the I am stuck button, the nearest starting city, and the queue of requests for the game masters (`create_page`, `pages`, `take`, `answer`, `close`...) |
+| `book` | `give`, `write`, `open`: creates and reads personalized scrolls and books from `templates/books` |
+| `harvest` | `has`, `amount`, `vein`, `take`: what is gathered from the world and runs out by area, such as fish |
+| `craft` | `get`, `resource`: the crafts of `data/crafts`, their groups and recipes, and the resource lists they use |
 
 ## Where to read next
 

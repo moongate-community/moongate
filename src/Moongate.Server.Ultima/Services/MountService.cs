@@ -140,6 +140,11 @@ public sealed class MountService : IMountService
             item.SetProp(MountProps.PetKeptLoyalty, loyalty);
         }
 
+        if (pet.GetProp(MountProps.PetBonded, false))
+        {
+            item.SetProp(MountProps.PetKeptBonded, true);
+        }
+
         // Last: the creature goes only when the rider has its mount.
         if (!_npcs.Remove(pet.Id))
         {
@@ -255,6 +260,11 @@ public sealed class MountService : IMountService
         if (props is not null && item.TryGetProp<int>(MountProps.PetKeptLoyalty, out var kept))
         {
             props[MountProps.PetLoyalty] = kept;
+        }
+
+        if (props is not null && item.GetProp(MountProps.PetKeptBonded, false))
+        {
+            props[MountProps.PetBonded] = true;
         }
 
         // Off the loop: a new creature is saved first, to get its serial.

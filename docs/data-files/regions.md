@@ -129,8 +129,8 @@ teleport_out = true
 ```
 
 The server reads a region's type, music, season and weather for the players inside it.
-No system reads the guard, housing, logout and travel rules yet: they are loaded and
-validated only.
+The `guarded` flag is read too: by the guards, the texts of entering and leaving a guarded place, and the vendors. No
+system reads the housing, logout and travel rules yet: they are loaded and validated only.
 
 ## Validation at startup
 
@@ -143,7 +143,7 @@ The server stops when:
   coordinate fields, unknown fields, or non-integer height limits;
 - the second corner is not above the first on both X and Y, or, when both height
   limits are set, `z2` is not above `z1`;
-- a region's `weather` is not a profile of `weather.toml`;
+- a region's `weather` is not a profile of `weather.toml`, or the `weather` of a map in `maps.toml` is not one;
 - a name is used twice in the same file;
 - a `parent` is not a region of the same file, or the parents loop back.
 

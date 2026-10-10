@@ -180,6 +180,20 @@ public sealed class WorldModule
     }
 
     /// <summary>
+    ///     Gets whether <paramref name="player" /> is an administrator in the world, such as to let only them change
+    ///     what the administrator commands change; <c>world.is_administrator(user)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText: "Whether the player is an administrator; false for an NPC or a player not in the world, and for a game master."
+    )]
+    public bool IsAdministrator(long player)
+    {
+        return player is > 0 and <= uint.MaxValue &&
+               _sessions.TryGetByCharacterId(new Serial((uint)player), out var session) &&
+               session.AccountType >= AccountType.Administrator;
+    }
+
+    /// <summary>
     ///     Gets whether a player or an NPC stands on the tile <paramref name="x" />, <paramref name="y" /> of
     ///     <paramref name="map" />;
     ///     <c>world.is_occupied(MapType.Trammel, x, y)</c>.

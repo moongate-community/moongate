@@ -106,6 +106,8 @@ if (movementService.CheckMovement(MapType.Felucca, from, DirectionType.East,
 }
 ```
 
+- `TryGetSwimZ(map, x, y, out z)` finds where a swimmer can be placed at a cell: the highest water with room for a
+  person above it, so not under a dock or a bridge; it is false outside the map, on a map not loaded, or with no such water.
 - `MovementAbilityType.Walk` moves over land, statics and surfaces that are not
   water; `Swim` enters water; `Walk | Swim` does both. `PassDoors`, added to either,
   walks through doors: game masters and administrators have it.
@@ -184,7 +186,8 @@ A search runs to its end inside the call, on the game loop. Measured on the Tram
 steps 6.6 ms, and a search that found nothing took 11 to 12 ms, the 1,000 places of the cap.
 So a caller must not search again on every tick for a goal that was not reached: wait before
 trying again, as ModernUO's two seconds. `INpcPathService` does that for NPCs: it keeps the
-path each one walks and gives its next step (`Next`, then `Stepped` once the step was tried).
+path each one walks and gives its next step (`Next(npc, goal, range, ability)`, then `Stepped` once the step was tried;
+`Forget(npc)` drops the path of an NPC that was deleted).
 It searches only with no steps left or a changed goal, two seconds after the NPC's last
 search at the soonest, ten when that search did not reach the same goal, and for ten NPCs a
 second in the whole server; an NPC that may not search steps straight towards its goal. The Lua function

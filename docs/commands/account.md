@@ -26,7 +26,7 @@ Plugins can add commands through `RegisterCommand<TExecutor>`; see
 
 Every text a command shows to players, its description in `help` and the dispatcher's replies
 (unknown command, not available here, not allowed, failed) come from the message files
-in the server language (`ILocalizationService`, ids 30008–30049; see
+in the server language (`ILocalizationService`, ids 30008–30229; see
 [Localization](../localization.md#moongates-own-messages)). Command syntax, account
 types, sources and map names stay technical names, as the commands take them. On a
 login-only process, which has no message files, the texts are English. Operator-only

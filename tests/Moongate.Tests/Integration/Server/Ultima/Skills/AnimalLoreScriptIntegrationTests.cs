@@ -261,6 +261,23 @@ public sealed class AnimalLoreScriptIntegrationTests : IAsyncLifetime
         Assert.Equal([2, 1], gump.Layout.Entries.OfType<GumpButton>().Select(button => button.Page));
     }
 
+    [Theory, InlineData(true, 1049608), InlineData(false, 502006)]
+    public void ATamedHorse_ShowsWhetherItIsBondedOrJustTame(bool bonded, int cliloc)
+    {
+        _horse.SetProp(MountProps.Owner, (long)_aria.Id.Value);
+
+        if (bonded)
+        {
+            _horse.SetProp(MountProps.PetBonded, true);
+        }
+
+        Use();
+
+        var shown = Assert.Single(_gumps.Opened).Gump.Layout.Entries.OfType<GumpHtmlLocalized>().Select(entry => entry.Cliloc).ToList();
+        Assert.Contains(cliloc, shown);
+        Assert.DoesNotContain(bonded ? 502006 : 1049608, shown);
+    }
+
     [Fact]
     public void AWildHorse_ForSomeoneWithLoreOneHundred_IsWild()
     {

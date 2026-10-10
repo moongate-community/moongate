@@ -78,7 +78,7 @@ server that was off on that day (the hook runs at the next startup).
   a creature or an item stands there, when there is no floor, or when the floor is more than 8 levels away from the
   centre.
 - **What.** Halloween: jack o' lanterns, pumpkins, skulls on a pike, a pumpkin scarecrow, a black cat
-  statue, a ghoul statue. Christmas: snowy trees, topiaries, festive cacti, poinsettias. The pieces
+  statue, a ghoul statue, a leering jack o' lantern (`hw_leering_jack_o_lantern`). Christmas: snowy trees, topiaries, festive cacti, poinsettias. The pieces
   are the templates of `templates/items/misc/holiday_decorations.toml`, which cannot be lifted and
   never decay.
 - **How it is remembered.** The serials are kept in the world prop `holiday.<event>.items`, so a restart

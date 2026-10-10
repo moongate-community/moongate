@@ -16,7 +16,7 @@ sea = [
 ```
 
 A body not listed counts as `Empty`. The loader returns one `BodyContent` per body id,
-sorted by id, not one per entry. No system reads the body kinds yet.
+sorted by id, not one per entry. The combat, the NPC doors and the use requests read the body kinds.
 
 ## Validation at startup
 

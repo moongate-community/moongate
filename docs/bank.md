@@ -16,8 +16,8 @@ Bank container has 3 items.
 ```
 
 The first time, the bank box is made (template `bank_box` of `templates/items/bank.toml`, a metal
-chest graphic) and saved, then shown. The banker templates `banker`, `m_banker` and `f_banker` use
-the script, so every banker of the [spawns](spawns.md) answers.
+chest graphic) and saved, then shown. The banker templates `banker`, `m_banker`, `f_banker`, `gypsybanker`,
+`m_gypsybanker` and `f_gypsybanker` use the script, so every banker of the [spawns](spawns.md) answers.
 
 A banker also offers `Open Bank Box` in its [context menu](context-menus.md), from the same 12
 tiles: it opens the box as the word does, and a criminal gets the same refusal.
@@ -119,7 +119,8 @@ to a banker and it takes 5000 coins of your bank and puts a check in your bank b
   another double click goes on.
 - Anywhere else a double click says `That must be in your bank box to use it.`
 
-A game master makes a check of any worth with [`create_check`](commands/create_check.md).
+A game master makes a check of any worth with [`create_check`](commands/create_check.md), and gives gold to a mobile with
+[`add_gold`](commands/add_gold.md).
 
 A check is the item template `bank_check` of `templates/items/bank.toml`, with its worth in the
 prop `bank.worth`; its script is `scripts/items/bank_check.lua`. The name it shows is the
@@ -195,12 +196,14 @@ so without it every banker of a bank would face the same way for ever.
 | `bank.check(player, amount)` | Writes a check paid with the coins of the bank; a `BankResultType`. |
 | `bank.cash(player, check)` | Turns a check inside the bank box into coins; a `BankResultType`. |
 | `bank.worth(item)` | What a check is worth; nil for anything else. |
+| `bank.deposit_item(player, item)` | Puts a gold pile or a check, as dropped on a banker, into the bank box; a `BankResultType`. |
 | `bank.attend(player)` | True for the first banker that asks in the same moment. |
 | `npc.say_cliloc(npc, cliloc [, args [, affix]])` | The NPC says a text of the client, each player in its language; `affix` is written after it. |
 
 `BankResultType` is `Ok`, `NotEnoughGold`, `TooMuch`, `BackpackFull`, `BankFull`, `BadAmount`,
 `NoPlayer`, `NoBank` (the player never opened its bank), `Busy` (try again in a moment),
-`CheckTooSmall`, `CheckTooBig` or `NotInBank` (not a check, or not inside the player's bank box). The
+`CheckTooSmall`, `CheckTooBig`, `NotInBank` (not a check, or not inside the player's bank box) or `NotMoney` (`bank.deposit_item` was given
+something that is not gold or a check). The
 module does not check where the player stands nor who it is: the script does. See the
 [`bank` module](https://moongate.sh/lua/bank/).
 

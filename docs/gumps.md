@@ -40,7 +40,7 @@ the controls inside each `<page>` show on pages 1, 2, ... in order.
 | --- | --- |
 | `background` | A resizable background (`gump`, `width`, `height`) |
 | `alpha_region` | A see-through region |
-| `image`, `image_tiled` | A gump image (`gump`), with an optional `hue`, or repeated over a box |
+| `image`, `image_tiled` | A gump image (`gump`, `image` also takes an optional `hue`), or repeated over a box (`image_tiled`, with no hue) |
 | `item` | An item graphic (`item`, optional `hue`) |
 | `text` | A line of text (`hue`, `message`) |
 | `label_cropped` | Text cut to a box (`hue`, `message`) |
@@ -234,6 +234,10 @@ var choice = await templates.AskAsync(session, "decorate_confirm", new Dictionar
 `templates/gumps/go.xml`, the travel menu of [`.go`](commands/go.md), `templates/gumps/jail_sentence.xml`,
 the gump of [`.jail`](commands/jail.md), and `templates/gumps/gmtools.xml`, the tools of
 [`.gmtools`](commands/gmtools.md): a gump with two slots, a sidebar and a panel.
+
+The folder ships sixteen gumps in all. The others are `craft_menu.xml` (the crafting menu), `help_menu.xml`,
+`help_page_kind.xml`, `pages.xml` and `pages_detail.xml` (the help menu and the GM page queue), `pet_release.xml`,
+`stable_claim.xml`, `report_murder.xml`, `resurrect.xml` and the three `tutorial_*.xml` (greeting, list, name).
 
 The answer also carries `answer.Open`, the gump an `open` button names (null for any other
 button), and `answer.Bound`, the values of the controls with `bind` by name. `AskAsync` follows

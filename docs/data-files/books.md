@@ -2,7 +2,7 @@
 
 Put one plain-text document in `<root>/templates/books/<name>.toml`. The file
 `welcome_letter.toml` has id `welcome_letter`; subdirectories are allowed but
-filename stems must be unique. On this machine the server root is `~/moongate`.
+filename stems must be unique.
 
 The server loads these sources at startup. A GameMaster can create one with
 [`.book <template> [name=value ...]`](../commands/book.md). A script creates a personalized

@@ -3,9 +3,8 @@
 This is the one first-start sequence for Moongate. It applies whether you installed
 the release with [the Linux installer](installation.md), run the
 [container image](docker.md), or build from source. Moongate is under active
-development: characters enter the world, walk and see each other, and NPCs and
-items run Lua scripts, but combat, a built-in NPC AI and most gameplay are not
-implemented yet. See [Implementation status](implementation-status.md).
+development: characters enter the world, walk and see each other, fight, and NPCs and
+items run Lua scripts, but some gameplay is still missing. See [Implementation status](implementation-status.md).
 
 A server start needs a root, readable client files, the active role's PostgreSQL
 database and reviewed SQL, and a private Redis instance for realm leases and
@@ -20,7 +19,7 @@ one-use handoff tickets. The steps below prepare these dependencies.
 - A reachable Redis 7+ server with authentication and `maxmemory-policy noeviction`. Keep it on a private network.
 - Two free TCP ports in standalone mode: login defaults to 2593 and game to 2595. The
   UDP ping server uses port 12000 when it is free.
-- For a source build: Git and the .NET 10 SDK selected by `global.json`. Node.js is
+- For a source build: Git and the .NET 10 SDK (`global.json` only sets `rollForward` to `latestPatch` and refuses prerelease SDKs; it pins no version). Node.js is
   only needed to work on the documentation website.
 
 ## Where the commands live
@@ -207,11 +206,11 @@ All server-managed paths below are relative to `--root-directory`:
 | `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgctl` administration TLS identity: private server PFX and public PEM for client trust |
 | `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgctl init`; plugins ship their own under `plugins/` |
 | `data/` | Shard data files copied by `mgctl`, read at game and standalone startup; see [Shard data files](data-files.md) |
-| `templates/items/`, `loots/`, `mobiles/`, `npc_lists/`, `spawns/`, `decorations/`, `gumps/` | [Templates](templates.md) copied by `mgctl`, loaded at game and standalone startup |
+| `templates/items/`, `loots/`, `mobiles/`, `npc_lists/`, `spawns/`, `decorations/`, `gumps/`, `books/`, `shops/` | [Templates](templates.md) copied by `mgctl`, loaded at game and standalone startup |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `logs/errors/<id>.md` | The report of each exception the server logged, ready to paste into a GitHub issue |
 | `plugins/` | One assembly bundle per plugin directory |
-| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting/mobile-scripts.md) `mobiles/<script_id>.lua`, the [item scripts](scripting/item-scripts.md) `items/<script_id>.lua`, the Lua modules they share in `common/`, the gump scripts `gumps/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
+| `scripts/` | Lua source: an optional `init.lua`, the [mobile scripts](scripting/mobile-scripts.md) `mobiles/<script_id>.lua`, the [item scripts](scripting/item-scripts.md) `items/<script_id>.lua`, the Lua modules they share in `common/`, the gump scripts `gumps/<id>.lua`, the seasonal-event scripts `events/<id>.lua`, the skill scripts `skills/<id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
 | `moongate.pid` | Current process identifier |
 | `moongate.pid.lock` | Lock file used to exclude another instance |
 

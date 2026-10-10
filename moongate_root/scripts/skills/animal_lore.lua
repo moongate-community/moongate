@@ -50,6 +50,8 @@ local LORE_AND_KNOWLEDGE = 3001032
 local PREFERRED_FOODS = 1049563
 local NO_FOOD = 3000340
 local TAMING_SKILL = 1044095 -- Animal Taming
+local BONDED = 1049608 -- (bonded)
+local TAME = 502006 -- (tame)
 
 -- The skills it shows, by name, with their label.
 local COMBAT_SKILLS = {
@@ -212,6 +214,10 @@ local function show(user, creature, lore)
 
     g:background{ x = 0, y = 0, gump = 9200, width = 340, height = 470 }
     g:text{ x = 40, y = 25, hue = HEADER_HUE, text = npc.name(creature) or "" }
+    if lore.owner ~= 0 then
+        g:html{ x = 200, y = 25, width = 100, height = LINE, cliloc = lore.bonded and BONDED or TAME, color = LABEL_HUE }
+    end
+
     g:page()
     first_page(g, creature, lore)
     g:button{ x = 290, y = 435, up = 5601, down = 5603, page = 2 }

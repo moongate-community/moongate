@@ -26,13 +26,14 @@ public sealed class PetsConfigTests
     {
         var config = new PetsConfig();
 
-        Assert.Equal((60, 10, 10, 1, 3), (config.LoyaltyDrainMinutes, config.LoyaltyDrain, config.FoodGain, config.ObeyGain, config.DisobeyLoss));
+        Assert.Equal((60, 10, 10, 1, 3, 7), (config.LoyaltyDrainMinutes, config.LoyaltyDrain, config.FoodGain, config.ObeyGain, config.DisobeyLoss, config.BondingDays));
     }
 
     [Theory,
      InlineData("loyalty_drain_minutes", 0), InlineData("loyalty_drain_minutes", 1441),
      InlineData("loyalty_drain", 0), InlineData("loyalty_drain", 101),
-     InlineData("food_gain", 0), InlineData("obey_gain", -1), InlineData("disobey_loss", 101)]
+     InlineData("food_gain", 0), InlineData("obey_gain", -1), InlineData("disobey_loss", 101),
+     InlineData("bonding_days", -1), InlineData("bonding_days", 366)]
     public void Validate_ALoyaltyValueOutOfRange_NamesTheSetting(string name, int value)
     {
         var config = new PetsConfig();
@@ -43,6 +44,7 @@ public sealed class PetsConfigTests
             case "loyalty_drain": config.LoyaltyDrain = value; break;
             case "food_gain": config.FoodGain = value; break;
             case "obey_gain": config.ObeyGain = value; break;
+            case "bonding_days": config.BondingDays = value; break;
             default: config.DisobeyLoss = value; break;
         }
 

@@ -26,8 +26,8 @@ The bottom line shows the wood you work and how many boards of it you carry. Cha
 | Every resource in your backpack and its bags: not in the bank box, not a pile on your cursor | "You do not have sufficient wood to make that.", "You don't have enough cloth to make that." or "You don't have the components needed to make that." |
 | Not already making something | "You must wait to perform another action." |
 
-Nothing is taken when an attempt is refused. Everything is checked again at the second stroke: boards moved away
-meanwhile make nothing.
+Nothing is taken when an attempt is refused. The resources and the tool are checked again at the second stroke: boards moved away
+meanwhile make nothing. The skill and the kind of wood are checked at the start only.
 
 ## The chance
 

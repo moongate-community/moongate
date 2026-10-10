@@ -74,6 +74,12 @@ public interface IPetService
     PetFeedResultType Feed(MobileEntity player, MobileEntity creature, string? itemTemplate, int amount);
 
     /// <summary>
+    ///     Gets whether a creature has bonded with its owner: food from the owner, the right skill and
+    ///     <c>ultima.pets.bonding_days</c> of waiting. Only a bonded pet can be raised when it dies.
+    /// </summary>
+    bool IsBonded(MobileEntity creature);
+
+    /// <summary>
     ///     Gets the slots a creature of that mobile template counts for; 1 for one with no entry.
     /// </summary>
     int SlotsOf(string? templateId);

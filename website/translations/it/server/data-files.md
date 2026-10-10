@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a22e929a43e54c61b99eaec6000c418148bf357d166ac318849d6e6db6e43774","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"f41b8b82d0436bd41ef0e63132c027553157c2b22b39ac6f34dd623b008f7f82","title":"Panoramica"} -->
 
 # File dei dati dello shard
 
@@ -56,6 +56,8 @@ viene eseguito dopo di esso.
 | [`titles.toml`](data-files/titles.md) | `FameKarmaTitle` | dopo MOTD | Mostrato nel titolo del paperdoll |
 | [`templates/books/<name>.toml`](data-files/books.md) | `BookTemplate` | dopo i template oggetto | Pergamene personalizzate e libri nativi; gump delle pergamene, copertine/pagine dei libri e libri scrivibili |
 | [`templates/shops/<name>.toml`](data-files/shops.md) | `ShopDefinition` | dopo i template oggetto e mobile | Sì, tramite `IShopService`: cosa vende ogni venditore nella sua [finestra del negozio](vendors.md) |
+| [`taming.toml`](data-files/taming.md) | `TamingCreature` | facoltativo; dopo i template mobile | Sì, tramite `ITamingService`: le creature dell'[addomesticamento](animal-taming.md) |
+| [`pet_food.toml`](data-files/pet-food.md) | `PetFood` | facoltativo; dopo i template oggetto | Sì, tramite `IPetFoodService`: cosa mangiano gli animali dell'[addomesticamento](animal-taming.md) |
 | [`harvest.toml`](data-files/harvest.md) | `HarvestResource` | facoltativo; dopo i negozi | Sì, tramite `IHarvestService`: i pesci della [pesca](fishing.md), per zona |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | dopo template oggetto e template dei libri (ogni id referenziato deve esistere) | Sì, tramite `IStartingItemsService` |
 

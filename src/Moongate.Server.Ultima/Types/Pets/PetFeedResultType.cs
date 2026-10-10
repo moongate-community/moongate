@@ -21,6 +21,11 @@ public enum PetFeedResultType
     WrongFood = 2,
 
     /// <summary>
+    ///     It eats, and this food bonded it with its owner.
+    /// </summary>
+    Bonded = 4,
+
+    /// <summary>
     ///     It is not the player's pet, or not in the world.
     /// </summary>
     NotYours = 3

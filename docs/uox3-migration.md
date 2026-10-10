@@ -6,7 +6,9 @@ UOX3 NPCs, NPC lists, spawn regions and name lists into `MobileTemplate`, NPC li
 spawn TOML and `names.toml`. More commands convert ModernUO's
 [signs](#signs-of-modernuo), [teleporters](#teleporters-of-modernuo),
 [named places](#named-places-of-modernuo), [treasure chests](#treasure-chests-of-modernuo) and
-[spawners](#spawns-of-modernuo) and [book texts](book-content-import.md).
+[spawners](#spawns-of-modernuo) and [book texts](book-content-import.md). `uox-crafts` converts
+UOX3's create menus into `data/crafts`, and `modernuo-guildmasters`, `modernuo-taming` and
+`modernuo-vendors` convert ModernUO's guildmasters, tameable creatures and shops.
 The shapes it writes are described in [Loading TOML templates](templates.md#the-template-shapes);
 the server loads them at startup from `templates/`.
 
@@ -124,7 +126,7 @@ converted is a template too, id = its header: UOX3's magic items, journals and o
 variants (`[glacialstaff] get=0x0df1 name=glacial staff color=0x0480`) and single-target
 aliases. It keeps `item_id = 0`, which the server's loader fills from its `base_id`, and
 the chain is resolved over repeated passes, so a variant of a variant converts too. The
-shipped data has 9665 item templates this way; loot entries and NPC equipment that name
+shipped data has 9737 item templates this way; loot entries and NPC equipment that name
 such a block now resolve to it.
 
 ## Loot tables
@@ -208,7 +210,7 @@ random pick in UOX3) becomes a template whose `base_id` is the first target, and
 counted; a pair whose targets do not exist (`shepherd`) is skipped.
 
 Two known mistakes in UOX3's item data are corrected as the blocks are read
-(`UoxDataFixes`): `necro_sleeves` and `necro_leggings` name the leather gloves and a
+(`DATA_FIXES` in `tools/convert/src/moongate_convert/uox_data.py`): `necro_sleeves` and `necro_leggings` name the leather gloves and a
 leather tunic as their parents; they get the leather sleeves (`0x13cd`) and leggings
 (`0x13cb`).
 

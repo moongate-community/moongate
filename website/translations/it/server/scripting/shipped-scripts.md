@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"2674bb60fec962db9c7a31d443e242f07b83fea1af980915e37c13c58ec26237","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"ef5478d9802908939ab7990ef240fe43b2460b8c51795723e073d934cbb74ac9","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -190,10 +190,10 @@ di `data/skills.toml`.
 ## animal_lore.lua
 
 `scripts/skills/animal_lore.lua` è l'abilità Animal Lore: `on_use` dice "What animal should I look at?" (500328), dà un
-cursore, e rifiuta una creatura fuori portata o fuori vista (500446, 1049654), una che non è un animale (`mobile.body_type`; una creatura morta ha lasciato il mondo) e, in base all'abilità, una creatura non
-addomesticata sotto i 100 punti o non addomesticabile sotto i 110. La prova è `skill.check(user, "animal_lore", 0, 120)`; una riuscita costruisce un
-gump di due pagine con `gump.create` da `pet.lore`, `mobile.stats` e `mobile.skills`, con tutte le etichette in clilocs del client. Vedi
-[Domatura degli animali](../animal-taming.md#animal-lore).
+cursore e rifiuta una creatura fuori portata o fuori vista (500446, 1049654), una che non è un animale (`mobile.body_type`; una creatura morta ha lasciato il mondo) e, in base all'abilità, una creatura non
+addomesticata sotto i 100 punti o non addomesticabile sotto i 110. Il controllo è `skill.check(user, "animal_lore", 0, 120)`; se riesce costruisce un
+gump a due pagine con `gump.create` da `pet.lore`, `mobile.stats` e `mobile.skills`, con tutte le etichette prese dai cliloc del client. Vedi
+[Animal taming](../animal-taming.md#animal-lore).
 
 ## pickaxe.lua e ore.lua
 
@@ -519,15 +519,15 @@ cambiato da quando è stato mostrato viene mostrato di nuovo.
 ## pet_orders.lua e pet_release.lua
 
 `scripts/common/pet_orders.lua` è ciò che `common/creature.lua` esegue per una creatura che ha un `owner`: `think` segue
-l'ordine nella proprietà `pet.order` (`follow`, `come`, `stay` o `guard`; `follow` se non ne ha), e `listen`, dall'
-`on_speech` degli script delle creature, legge le parole del padrone (`SpeechKeywordType.PetCome`, `AllStay` e le altre)
-entro 14 caselle. Le parole "all" vengono eseguite dal primo animale che chiede `pet.attend(owner)`, per ogni animale del padrone
+l'ordine nella prop `pet.order` (`follow`, `come`, `stay` o `guard`; `follow` se non ne ha), e `listen`, dall'
+`on_speech` degli script delle creature, legge le parole del proprietario (`SpeechKeywordType.PetCome`, `AllStay` e le altre)
+entro 14 tile. Le parole "all" sono eseguite dal primo animale che chiama `pet.attend(owner)`, per ogni animale del proprietario
 a portata; `kill` chiede un bersaglio con `target.pick`; `release` apre il gump `pet_release`
-(`templates/gumps/pet_release.xml`), il cui pulsante Release chiama `pet.release` dopo aver controllato che l'animale sia ancora del giocatore e
-entro 14 caselle. Ogni ordine tranne `release` tira prima `pet.obey(owner, pet)` (la probabilità è `pet.control_chance`): un animale che
-rifiuta ringhia, si agita e non esegue l'ordine. `feed(serial, giver, given)` è ciò che gli script delle creature restituiscono da
-`on_drag_drop`: il cibo del padrone va a `pet.feed`, che prende la pila e alza la lealtà (`pet.loyalty`); il cibo che la
-creatura non mangia viene restituito. Vedi [Domatura degli animali](../animal-taming.md#what-you-can-tell-it) e
+(`templates/gumps/pet_release.xml`), il cui pulsante Release chiama `pet.release` dopo aver verificato che l'animale sia ancora del giocatore e
+entro 14 tile. Ogni ordine tranne `release` tira prima `pet.obey(owner, pet)` (la probabilità è `pet.control_chance`): un animale che
+rifiuta ringhia e si agita e non esegue l'ordine. `feed(serial, giver, given)` è ciò che gli script delle creature restituiscono da
+`on_drag_drop`: il cibo del proprietario va a `pet.feed`, che prende la pila e aumenta la lealtà (`pet.loyalty`); il cibo che la
+creatura non mangia viene restituito. Il cibo può anche legare l'animale (al proprietario viene detto 1049666). Vedi [Animal taming](../animal-taming.md#what-you-can-tell-it) e
 [lealtà, cibo e obbedienza](../animal-taming.md#loyalty-food-and-obedience).
 
 ## animal_taming.lua
@@ -611,7 +611,7 @@ slot, riempiti da due funzioni: `tools` disegna la barra laterale, un pulsante p
 `tools` nello script, e `panel` disegna il pannello di quello selezionato (`args.tool`, il primo quando
 non viene fornito o è sconosciuto). Un clic sulla barra laterale riapre il gump su quello strumento.
 
-Ci sono tre strumenti, meteo, stagione e ora. Il pannello meteo legge `world.weather_profile` e `world.weather` e
+Ci sono quattro strumenti, meteo, stagione, ora ed eventi. Il pannello meteo legge `world.weather_profile` e `world.weather` e
 ha un pulsante per ciascun tipo, `none`, `rain`, `snow` e `storm`, che chiama `world.set_weather` sul
 giocatore, gli dice `The weather of temperate is now storm until the next hour.` e riapre il gump.
 Il pannello stagione legge `world.season_here` e la stagione della mappa del giocatore
@@ -620,8 +620,8 @@ Il pannello stagione legge `world.season_here` e la stagione della mappa del gio
 is now winter.` e riaprono il gump. Il pannello ora legge `world.time`, `world.moon`,
 `world.light_here` e `world.global_light` e ha un pulsante per ciascuno di quattro livelli di luce e uno per
 `auto`, che chiamano `world.set_global_light` o `world.clear_global_light` e dicono al giocatore `The
-global light is now 26.`. Solo staff: gli slot sono vuoti per chiunque altro, e ogni
-pulsante ricontrolla `world.is_staff`.
+global light is now 26.`. Il pannello eventi (una voce con `admin = true`, quindi solo per gli amministratori) legge `schedule.events` e ha pulsanti `auto`, `on` e `off` per ogni evento, che chiamano `schedule.set_event`, dicono al giocatore `Halloween is now off.` e riaprono il gump. Solo staff: gli slot sono vuoti per chiunque altro, e ogni
+pulsante ricontrolla `world.is_staff`, e `world.is_administrator` per gli eventi.
 
 Per aggiungere uno strumento, scrivi una funzione pannello con firma `function(g, player)` e aggiungi
 `{ id = "...", title = "...", panel = ... }` a `tools`.

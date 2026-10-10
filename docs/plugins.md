@@ -185,18 +185,24 @@ service takes a lower priority than the services that depend on it. Built-in val
 
 | Priority | Service |
 | --- | --- |
+| -1000 | `RedisConnectionService` (every mode) |
 | -900 | `TimerWheelService` |
 | -800 | `IGameLoopService` (`GameLoopService`) |
 | -10 | `IUltimaDataService` (`UltimaDataService`) |
 | -5 | `IDataLoaderService` (`DataLoaderService`; game and standalone) |
 | -4 | `IMapService` (`MapService`), `IMultiService` (`MultiService`); game and standalone, see [Client files and world queries](world-queries.md) |
+| -3 | `IStartingItemsService` |
 | 0 (default) | `ISessionService`, `IEventBusService`, `IPluginLoaderService`, `ICommandSystemService`, and any registration that omits `priority` |
+| 10 to 12 | The Ultima game services: `IItemService`, `INpcService`, `IWorldPropsService` (10); `ILightService`, `IWeatherService`, `ISeasonService`, `IMusicService`, `IRegionAnnouncer`, `ItemDecayService` (11); regeneration, hunger, crime, murder, combat, guards, jail, bulletin boards, help pages, pet loyalty (12), and others |
 | 40 | `IWorldSaveService` (`WorldSaveService`), `IConnectionService` |
 | 50 | `IPacketSendService` |
+| 55 | `IBookAttachmentService` |
 | 60 | `IPacketDispatchService` |
 | 70 | `IScriptEngine` (`LuaScriptEngineService`) |
+| 75 to 76 | The Lua script services that need the engine bound: `NpcScriptService`, `IItemScriptService`, `IGumpScriptService`, `IEventScriptService`, `ISkillScriptService` (75); `IScheduleService`, `ISeasonalEventService`, `IItemTimerService` (76) |
 | 100 | `IGameServerService` |
-| 110 | `IApiServerService` (`ApiServerService`; listener disabled by default) |
+| 105 | `RedisRealmRegistrationService` |
+| 110 | `IAdminApiService` (`AdminGrpcHostService`, from the admin plugin; listener disabled by default) |
 | 900 | `IDiagnosticService` (`DiagnosticService`) |
 | 1000 | `IConsoleInputService` (`ConsoleInputService`) |
 
@@ -348,8 +354,12 @@ startup validation belongs in a startup service.
 
 ## Console commands
 
-For the built-in `echo`, `help`, `script`, and `account` commands, see
-[Server commands](commands.md).
+For the built-in commands (`echo`, `help`, `script`, `console`, `uptime`, `version`,
+`sql_backup` and `account`, plus the Ultima plugin's), see [Server commands](commands.md).
+A command registered with `CommandSourceType.InGame` can also be typed in game with a
+leading dot, as `.shutdown`: the Ultima plugin registers, among others, `shutdown`, `save`,
+`broadcast`, `spawn`, `add`, `set`, `remove`, `hide`, `unhide`, `resurrect`, `weather`,
+`season`, `time`, `go`, `gmtools`, `jail`, `pages` and `moongate`.
 
 A command is a class implementing `ICommandExecutor`, registered with
 `RegisterCommand<T>(name, description, source, minimumAccountType, descriptionMessage)` as in
@@ -395,8 +405,8 @@ The built-in Ultima plugin registers the `account` command:
 `account create <username> <password> [Regular|GameMaster|Administrator]`.
 The level defaults to `Regular`; the interactive prompt masks the password token
 and the command awaits `IAccountService.CreateAccountAsync` before reporting an outcome.
-The registration also permits in-game administrators, though no in-game input is
-wired yet. Its future input path must protect the password as the console does.
+The registration also permits in-game administrators, who type it with a leading dot; the
+`api-access` subcommand refuses in-game use.
 
 ## Deployment and loading
 

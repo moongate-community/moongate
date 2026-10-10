@@ -32,7 +32,8 @@ posts under the thread of that message; a reply to a reply goes under the same f
   taken out and the empty lines at the end dropped.
 - You wait between two posts on one board: [`thread_seconds`](#settings) between two new threads,
   [`reply_seconds`](#settings) after any post before a reply. Too soon, you read `You must wait
-  90 seconds before posting again.` and nothing is posted. Game masters and above do not wait.
+  90 seconds before posting again.` and nothing is posted. If the server is busy you read `The board is busy: post again in a
+  moment.` (message 30157): post again. Game masters and above do not wait.
   Removing your own post does not shorten the wait.
 - A reply to a message that was removed meanwhile becomes a new thread.
 

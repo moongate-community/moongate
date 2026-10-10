@@ -72,8 +72,8 @@ A pet is loyal to you from 0 to 100, and starts at 100. Time wears it down: ever
 released it. A pet in a stable or under you is not in the world, so it loses nothing; it keeps its loyalty there and comes back with it.
 
 Feed it: drag food on it, from two tiles or closer. It eats the whole stack when its creature eats that kind of food, and
-gains 10 loyalty for each item (`food_gain`), up to 100. A horse eats fruit, vegetables and bread; a dog or a cat, meat and
-fish. Food it does not eat is given back, and the pet shies away. The kinds each creature eats are the `food` of
+gains 10 loyalty for each item (`food_gain`), up to 100. A horse eats fruit, vegetables and bread; a cat, meat and fish;
+a dog, meat only. Food it does not eat is given back, and the pet shies away. The kinds each creature eats are the `food` of
 [`taming.toml`](data-files/taming.md), the items of each kind are in [`pet_food.toml`](data-files/pet-food.md).
 
 Orders can be refused. Every order but *release* rolls a chance, from your Animal Taming and Animal Lore against the skill
@@ -97,11 +97,34 @@ The creatures of [`data/taming.toml`](data-files/taming.md): about 75, with the 
 for. A game master can still give any creature that can be ridden with [`tame`](commands/tame.md),
 and ignores the limit.
 
+## Healing a pet
+
+A clean bandage on a wounded creature heals it with Veterinary and Animal Lore, as the healing does a person with Healing
+and Anatomy.
+
+## Bonding and raising a pet
+
+A pet bonds with its owner through food. The first food the owner gives it that it eats starts the count; the next one
+after a week (`[ultima.pets] bonding_days`, 7) bonds it: "Your pet has bonded with you!". The owner needs the Animal Taming
+the creature asks, unless it asks 29.1 or less. Releasing the pet, or taming it again, breaks the bond. A bonded pet stays
+bonded through the stable and under a rider; the count of a bond that is not finished starts again after them. The game
+master's `tame` gives a pet to its new owner without the bond.
+[Animal Lore](#animal-lore) shows *(bonded)* or *(tame)* by its name.
+
+A bonded pet that dies leaves a corpse that remembers its owner, its loyalty and its bond; a pet that was not bonded dies for
+good (the staff can still raise its corpse with `resurrect`, which brings back a wild creature). Use a clean bandage on the corpse: the healer needs 80 points of Veterinary and of Animal Lore, and succeeds with a
+chance of (Veterinary - 68) / 50; the owner is the healer or stands within 3 tiles of the corpse ("The pet's owner must be
+nearby"). The wait is the one of a ghost. The pet is born again where the corpse lies with 10 hit points, its owner, its
+loyalty and its bond, as a new creature; if its slots no longer fit the owner's followers it cannot be raised.
+The other ways to raise a pet (a spell, an ankh, the healers) are not built.
+
 ## Animal Lore
 
 Use the Animal Lore skill, pick a creature within 8 tiles and, if the skill check (from 0 to 120) passes, a gump of two
 pages tells what it is. The page shows the same whatever your skill is; the skill decides which creatures you may look
-at: a tamed one always, one that can be tamed from 100 points, any other animal or monster from 110. A creature farther
+at: a tamed one always, one that can be tamed from 100 points, any other animal or monster from 110. Under those
+points you read "At your skill level, you can only lore tamed creatures." or "... tamed or tameable creatures.", and "That's not an animal!" for
+what is no creature. A creature farther
 than 8 tiles or out of sight is refused first ("That is too far away", "You can no longer see the creature"). Failing reads that you
 can't think of anything you know offhand.
 
@@ -110,18 +133,20 @@ can't think of anything you know offhand.
 - Page 2: wrestling, tactics, magic resistance and anatomy, magery, evaluating intelligence and meditation (`---` under
   10 points), the kinds of food it eats and the Animal Taming it asks.
 
-The texts are the client's own. Each time you try to tame a creature, Animal Lore gets a try of its own, so it grows while
+The texts are the client's own. When the last roll of the taming is reached, Animal Lore gets a try of its own, so it grows while
 you tame. `pet.lore` also gives the slots of the creature, which the gump does not show. Resistances, elemental damage, regeneration, barding, pack instincts and bonding are not shown.
 
 ## For scripts
 
 The Lua module `pet`: `pet.info(creature)`, `pet.followers(player)`, `pet.max_followers()`, `pet.tame(player,
 creature)`, `pet.loyalty(creature)`, `pet.control_chance(player, creature)`, `pet.obey(player, creature)` and `pet.feed(player, creature,
-item)` and `pet.lore(creature)` (armor, damage, foods, loyalty and the taming data in one table); the skill scripts are
+item)` and `pet.release(player, creature)` (lets a pet go; true if it was yours), `pet.attend(player)` (true for the one pet that answers the
+"all" words of the owner now) and `pet.lore(creature)` (armor, damage, foods, loyalty, bond and the taming data in one table) and `pet.corpse(corpse)` (the owner a
+bonded pet's corpse remembers, and whether it fits their followers); the skill scripts are
 `scripts/skills/animal_taming.lua` and `scripts/skills/animal_lore.lua`.
 
 ## Not built yet
 
-Bonding; gold, metal and
+Raising a pet with a spell or an ankh; the friends of a pet; the bond count kept through the stable; gold, metal and
 leather as food; friend, transfer, drop and patrol; bringing the pets along when the owner
 travels by gate or spell; and the pets of a player who is offline stay where they were.

@@ -100,6 +100,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
         _items.Add([backpack, pouch, key, bank, banked]);
         var gm = await _fixture.AddAsync(3);
         await _fixture.Network.ExecuteOnLoopAsync(() => gm.Set(SessionKeys.AccountType, AccountType.GameMaster));
+        var administrator = await _fixture.AddAsync(4);
+        await _fixture.Network.ExecuteOnLoopAsync(() => administrator.Set(SessionKeys.AccountType, AccountType.Administrator)
+        );
     }
 
     [Theory,
@@ -107,6 +110,16 @@ public sealed class WorldModuleTests : IAsyncLifetime
      InlineData("return world.is_staff(2)", false),
      InlineData("return world.is_staff(0x100)", false)]
     public void IsStaff_TellsWhetherThePlayersAccountIsAGameMasterOrAbove(string chunk, bool expected)
+    {
+        Assert.Equal(expected, Run(chunk)[0].Read<bool>());
+    }
+
+    [Theory,
+     InlineData("return world.is_administrator(4)", true),
+     InlineData("return world.is_administrator(3)", false),
+     InlineData("return world.is_administrator(2)", false),
+     InlineData("return world.is_administrator(0x100)", false)]
+    public void IsAdministrator_TellsWhetherThePlayersAccountIsAnAdministrator(string chunk, bool expected)
     {
         Assert.Equal(expected, Run(chunk)[0].Read<bool>());
     }
@@ -220,9 +233,9 @@ public sealed class WorldModuleTests : IAsyncLifetime
     [Fact]
     public void Players_ListsTheCharactersInTheWorld()
     {
-        var result = Run("local all = world.players() table.sort(all) return #all, all[1], all[2]");
+        var result = Run("local all = world.players() table.sort(all) return #all, all[1], all[2], all[3]");
 
-        Assert.Equal([2, 2, 3], result.Select(value => value.Read<long>()));
+        Assert.Equal([3, 2, 3, 4], result.Select(value => value.Read<long>()));
     }
 
     [Fact]

@@ -89,7 +89,7 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x0B` | `DamagePacket` | Outgoing | Fixed 7 | — |
 | `0x12` | `TextCommandPacket` | Incoming | Variable | `TextCommandPacketHandler`: kind `0x24` [uses the skill](skills.md) whose number starts the text; the other kinds are ignored for now (Debug log) |
 | `0xB8`, `0xE1`, `0xF0` | `ProfileRequestPacket`, `ClientTypePacket`, `ProtocolExtensionPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip, `0x1A` sets the lock of a stat; the others are ignored for now |
+| `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip, `0x1A` sets the lock of a stat, `0x13` asks for the [context menu](context-menus.md) of a mobile or an item and `0x15` chooses one of its entries; the others are ignored for now |
 | `0xD6` | `QueryPropertiesPacket` | Incoming | Variable, at most 500 serials | `QueryPropertiesPacketHandler`: one `0xD6` per object the character sees |
 | `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
 | `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
@@ -102,6 +102,18 @@ mode, since the Enhanced Client sends it to the login server too:
 | `0x1B` | `LoginConfirmPacket` | Outgoing | Fixed 37 | — |
 | `0xBF` | `MapChangePacket` | Outgoing | Variable, 6 (subcommand `0x08`) | — |
 | `0xBF` | `StatLockInfoPacket` | Outgoing | Variable, 12 (subcommand `0x19`) | — |
+| `0xBF` | `DisplayContextMenuPacket` | Outgoing | Variable, minimum 12 (subcommand `0x14`) | — |
+| `0xD4` | `BookHeaderPacket` | Outgoing | Variable, minimum 17 | — |
+| `0x66` | `BookPagesPacket` | Outgoing | Variable, minimum 9 | — |
+| `0x66` | `BookPagesRequestPacket` | Incoming | Variable, minimum 7 | `BookEditPacketHandler`: a page request or an edit of a writable book |
+| `0xD4` | `BookHeaderChangePacket` | Incoming | Variable, minimum 7 | `BookEditPacketHandler`: changes title and author of a writable book |
+| `0x93` | `OldBookHeaderChangePacket` | Incoming | Fixed 99 | `BookEditPacketHandler`: the same change from clients that use the old packet |
+| `0x71` | `BulletinBoardDisplayPacket` | Outgoing | Variable, minimum 38 | — |
+| `0x71` | `BulletinBoardSummaryPacket` | Outgoing | Variable, minimum 22 | — |
+| `0x71` | `BulletinBoardMessagePacket` | Outgoing | Variable, minimum 24 | — |
+| `0x71` | `BulletinBoardRequestPacket` | Incoming | Variable, minimum 12 | `BulletinBoardRequestPacketHandler`: see [Bulletin boards](bulletin-boards.md) |
+| `0xCC` | `LocalizedMessageAffixPacket` | Outgoing | Variable, minimum 52 | — |
+| `0x38` | `PathfindPacket` | Outgoing | Fixed 7 | — |
 | `0xBC` | `SeasonChangePacket` | Outgoing | Fixed 3 | — |
 | `0x4F` | `GlobalLightLevelPacket` | Outgoing | Fixed 2 | — |
 | `0x4E` | `PersonalLightLevelPacket` | Outgoing | Fixed 6 | — |

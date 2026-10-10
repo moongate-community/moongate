@@ -37,16 +37,17 @@ The 23 skills a player uses directly carry ModernUO's waits:
 
 | `delay` | Skills |
 | --- | --- |
-| 30 | `begging`, `stealing`, `detecting_hidden`, `animal_taming` |
-| 10 | `hiding`, `stealth`, `poisoning`, `remove_trap`, `tracking`, `meditation` |
+| 30 | `begging`, `stealing`, `animal_taming` |
+| 10 | `detecting_hidden`, `hiding`, `stealth`, `poisoning`, `remove_trap`, `tracking`, `meditation` |
 | 1 | `anatomy`, `animal_lore`, `arms_lore`, `item_identification`, `taste_identification`, `evaluating_intelligence`, `forensic_evaluation`, `cartography`, `inscription`, `spirit_speak`, `peacemaking`, `provocation`, `discordance` |
 
 Where ModernUO's wait depends on the outcome (`meditation`, `spirit_speak`, `hiding`) the file has the
-usual one, and the script of the skill returns the others. Only `hiding` has a script so far: a
+usual one, and the script of the skill returns the others. Nine skills have a script so far, in `scripts/skills/`: a
 `delay` does nothing until the skill has one.
 
-The [skills](../skills.md) read `gain_factor` when a skill is gained and `delay` when it is used; the
-stat fields are not read yet.
+The [skills](../skills.md) read `gain_factor` when a skill is gained, `delay` when it is used, and
+`str_gain`, `dex_gain` and `int_gain` when a stat may rise; `str_scale`, `dex_scale`, `int_scale`,
+`primary_stat` and `secondary_stat` are not read yet.
 
 ## Validation at startup
 
