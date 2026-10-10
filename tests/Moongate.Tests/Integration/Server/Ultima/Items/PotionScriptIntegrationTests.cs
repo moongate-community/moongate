@@ -101,6 +101,7 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With<ItemTemplate>(
             new ItemTemplate { Id = "lesserhealpotion", ItemId = new Serial(0x0F0C), ScriptId = "potion", Stackable = true },
+            new ItemTemplate { Id = "0x0f0c_c_yellow_potion", ItemId = new Serial(0x0F0C), ScriptId = "potion", Stackable = true },
             new ItemTemplate { Id = "greaterhealpotion", ItemId = new Serial(0x0F0C), ScriptId = "potion", Stackable = true },
             new ItemTemplate { Id = "refreshmentpotion", ItemId = new Serial(0x0F0B), ScriptId = "potion", Stackable = true },
             new ItemTemplate { Id = "totalrefreshmentpotion", ItemId = new Serial(0x0F0B), ScriptId = "potion", Stackable = true },
@@ -175,6 +176,7 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
             end
             """
         );
+        _scripts.Write("common/potions.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "potions.lua")));
         _scripts.Write("common/crafting.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "crafting.lua")));
         _scripts.Write("common/woods.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "woods.lua")));
         _scripts.Write("common/smithy.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "smithy.lua")));
@@ -386,6 +388,17 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
 
         Assert.Equal(10, _aria.Hits);
         Assert.Empty(Made("0x0f0e_empty_bottle"));
+    }
+
+    [Fact]
+    public void APotionAsVendorsSellIt_WorksAsTheNamedOne()
+    {
+        (_aria.HitsMax, _aria.Hits) = (50, 10);
+
+        Drink(Carry("0x0f0c_c_yellow_potion", 0x0F0C, 1));
+
+        Assert.Empty(_errors);
+        Assert.Equal(40, _aria.Hits);
     }
 
     [Fact]
