@@ -40,9 +40,24 @@ public sealed class StubPacketSendService : IPacketSendService
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    ///     Gets the sessions that were asked to be disconnected, in order.
+    /// </summary>
+    public List<long> Disconnected { get; } = [];
+
+    /// <summary>
+    ///     Gets or sets the fault the task of a disconnection ends with, as a half dead socket would give.
+    /// </summary>
+    public Exception? DisconnectFailure { get; set; }
+
     public Task DisconnectAsync(long sessionId)
     {
-        return Task.CompletedTask;
+        lock (Disconnected)
+        {
+            Disconnected.Add(sessionId);
+        }
+
+        return DisconnectFailure is null ? Task.CompletedTask : Task.FromException(DisconnectFailure);
     }
 
     /// <summary>

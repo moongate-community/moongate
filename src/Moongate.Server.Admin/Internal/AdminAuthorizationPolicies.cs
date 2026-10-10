@@ -4,6 +4,8 @@ internal static class AdminAuthorizationPolicies
 {
     public const string Scheme = "MoongateAdmin";
     public const string AccountAdministration = "AccountAdministration";
+    public const string Moderation = "Moderation";
     public const string AdministratorRole = "Administrator";
+    public const string GameMasterRole = "GameMaster";
     public const string DependencyFailure = "MoongateAdminDependencyFailure";
 }

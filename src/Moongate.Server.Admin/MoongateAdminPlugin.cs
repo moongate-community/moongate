@@ -7,6 +7,7 @@ using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Admin;
 using Moongate.Server.Core.Interfaces.Plugins;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Interfaces;
 
@@ -52,7 +53,17 @@ public sealed class MoongateAdminPlugin : IMoongatePlugin
                             container.Resolve<IAdminLoginThrottle>(),
                             container.Resolve<IAdminServerInfoProvider>(),
                             (mode & ServerMode.Login) != 0 ? container.Resolve<IAccountService>() : null,
-                            (mode & ServerMode.Login) != 0 ? container.Resolve<IAccountAdminAccessService>() : null
+                            (mode & ServerMode.Login) != 0 ? container.Resolve<IAccountAdminAccessService>() : null,
+                            (mode & ServerMode.Game) != 0
+                                ? new AdminWorldServices(
+                                    container.Resolve<ISessionService>(),
+                                    container.Resolve<IMobileService>(),
+                                    container.Resolve<IPacketSendService>(),
+                                    container.Resolve<IBroadcastService>(),
+                                    container.Resolve<IWorldSaveService>(),
+                                    container.Resolve<ISqlBackupService>()
+                                )
+                                : null
                         )
                 );
             },

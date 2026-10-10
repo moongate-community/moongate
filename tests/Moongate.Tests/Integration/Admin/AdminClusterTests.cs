@@ -37,6 +37,14 @@ public sealed class AdminClusterTests
             headers
         );
         Assert.Equal(2, (await accounts.ListAccountsAsync(new(), headers)).Accounts.Count);
+        // The world is on the game host, and the login host does not have it.
+        Assert.Empty((await new AdminPlayers.AdminPlayersClient(fixture.GameChannel).ListOnlinePlayersAsync(new(), headers)).Players);
+        Assert.Equal(
+            StatusCode.Unimplemented,
+            (await Assert.ThrowsAsync<RpcException>(() =>
+                new AdminPlayers.AdminPlayersClient(fixture.LoginChannel).ListOnlinePlayersAsync(new(), headers).ResponseAsync
+            )).StatusCode
+        );
         Assert.Equal(
             StatusCode.Unimplemented,
             (await Assert.ThrowsAsync<RpcException>(() =>
