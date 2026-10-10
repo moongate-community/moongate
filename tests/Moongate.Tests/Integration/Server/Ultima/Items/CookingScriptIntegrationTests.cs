@@ -66,8 +66,9 @@ public sealed class CookingScriptIntegrationTests : IAsyncLifetime
     private const long Aria = 2;
 
     private const int Ingredients = 1;
-    private const int Baking = 2;
-    private const int Barbecue = 3;
+    private const int Preparation = 2;
+    private const int Baking = 3;
+    private const int Barbecue = 4;
 
     private const int NotAtAnOven = 1044493;
     private const int NotAtAFire = 1044487;
@@ -99,7 +100,10 @@ public sealed class CookingScriptIntegrationTests : IAsyncLifetime
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With<ItemTemplate>(
             new ItemTemplate { Id = "0x097f_skillet", ItemId = new Serial(0x097F), ScriptId = "cooking_tool" },
-            new ItemTemplate { Id = "0x1039_sack_of_flour", ItemId = new Serial(0x1039), Stackable = true },
+            new ItemTemplate { Id = "0x1045_sack_of_flour", ItemId = new Serial(0x1045), Stackable = true },
+            new ItemTemplate { Id = "0x0461_oven", ItemId = new Serial(0x0461) },
+            new ItemTemplate { Id = "0x09d0_apple", ItemId = new Serial(0x09D0), Stackable = true },
+            new ItemTemplate { Id = "unbaked_apple_pie", ItemId = new Serial(0x1042) },
             new ItemTemplate { Id = "0x103d_dough", ItemId = new Serial(0x103D), Stackable = true },
             new ItemTemplate { Id = "0x103b_bread_loaf", ItemId = new Serial(0x103B), Stackable = true },
             new ItemTemplate { Id = "0x097a_raw_fish_steak", ItemId = new Serial(0x097A), Stackable = true },
@@ -124,6 +128,18 @@ public sealed class CookingScriptIntegrationTests : IAsyncLifetime
                                 {
                                     Name = "Dough", Item = "0x103d_dough", SkillMin = 0, SkillMax = 100,
                                     Resources = [new() { Resource = "flour", Amount = 1 }]
+                                }
+                            ]
+                        },
+                        new()
+                        {
+                            Name = "Preparation",
+                            Recipe =
+                            [
+                                new()
+                                {
+                                    Name = "Unbaked apple pie", Item = "unbaked_apple_pie", SkillMin = 0, SkillMax = 100,
+                                    Resources = [new() { Resource = "0x103d_dough", Amount = 1 }, new() { Resource = "0x09d0_apple", Amount = 1 }]
                                 }
                             ]
                         },
@@ -154,7 +170,17 @@ public sealed class CookingScriptIntegrationTests : IAsyncLifetime
                     ]
                 }
             )
-            .With(new CraftResourceList { Id = "flour", Templates = ["0x1039_sack_of_flour"] })
+            .With(
+                new CraftResourceList
+                {
+                    Id = "flour",
+                    Templates =
+                    [
+                        "0x0a1e_bowl_of_flour", "0x1039_sack_of_flour", "0x103a_open_sack_of_flour", "0x1045_sack_of_flour",
+                        "0x1046_open_sack_of_flour"
+                    ]
+                }
+            )
     );
 
     private readonly ItemEntity _backpack = new()
@@ -331,9 +357,9 @@ public sealed class CookingScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void Dough_IsMadeAnywhere()
+    public void Dough_IsMadeAnywhere_FromTheClosedSackOfTheStartingItems()
     {
-        Carry("0x1039_sack_of_flour", 0x1039, 1);
+        Carry("0x1045_sack_of_flour", 0x1045, 1);
 
         Call("make", Aria, Ingredients, 1);
         Fire(1.25);
@@ -380,6 +406,51 @@ public sealed class CookingScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Single(Made("0x097b_fish_steak"));
+    }
+
+    [Fact]
+    public void AnApplePie_IsPreparedAnywhere()
+    {
+        Carry("0x103d_dough", 0x103D, 1);
+        Carry("0x09d0_apple", 0x09D0, 1);
+
+        Call("make", Aria, Preparation, 1);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Single(Made("unbaked_apple_pie"));
+    }
+
+    [Fact]
+    public void TheOvenGoneBeforeTheSecondStroke_BakesNothing()
+    {
+        var oven = Ground("0x0461_oven", 0x0461, 11, 10);
+        var dough = Carry("0x103d_dough", 0x103D, 1);
+
+        Call("make", Aria, Baking, 1);
+        _items.Remove([oven.Id]);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([NotAtAnOven], Told());
+        Assert.Equal(1, Left(dough));
+        Assert.Empty(Made("0x103b_bread_loaf"));
+    }
+
+    [Fact]
+    public void MakeLast_OfBread_AwayFromTheOven_IsRefused()
+    {
+        var oven = Ground("0x0461_oven", 0x0461, 11, 10);
+        Carry("0x103d_dough", 0x103D, 2);
+        Call("make", Aria, Baking, 1);
+        Fire(1.25);
+        _items.Remove([oven.Id]);
+
+        Call("last", Aria);
+
+        Assert.Empty(_errors);
+        Assert.Equal(NotAtAnOven, Told().Last());
+        Assert.Single(Made("0x103b_bread_loaf"));
     }
 
     public async Task DisposeAsync()
@@ -456,6 +527,15 @@ public sealed class CookingScriptIntegrationTests : IAsyncLifetime
         var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = amount };
         item.PutInContainer(_backpack.Id, new Point2D(70, 70));
         _items.Add([item]);
+
+        return item;
+    }
+
+    private ItemEntity Ground(string template, int graphic, int x, int y)
+    {
+        var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = 1 };
+        _items.Add([item]);
+        _items.PlaceOnGround(item, _aria.Map, new Point3D(x, y, 0));
 
         return item;
     }

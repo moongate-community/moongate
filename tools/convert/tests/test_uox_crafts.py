@@ -654,6 +654,10 @@ COOKING_ITEMS = """
 [[item]]
 id = "0x1039_sack_of_flour"
 [[item]]
+id = "0x1045_sack_of_flour"
+[[item]]
+id = "0x103a_open_sack_of_flour"
+[[item]]
 id = "0x103d_dough"
 [[item]]
 id = "sweet_dough"
@@ -682,7 +686,7 @@ def test_cooking_takes_the_dough_or_pie_uox3_tells_apart_by_hue_and_more(tmp_pat
     source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
     source.mkdir()
     items.mkdir()
-    (source / "resources.dfn").write_text("[RESOURCE FLOUR]\n{\nID=0x1039\n}\n[RESOURCE RAWMEAT]\n{\nID=0x09f1\nID=0x1607\n}\n")
+    (source / "resources.dfn").write_text("[RESOURCE FLOUR]\n{\nID=0x103a\n}\n[RESOURCE RAWMEAT]\n{\nID=0x09f1\nID=0x1607\n}\n")
     (source / "cooking.dfn").write_text(COOKING)
     (items / "all.toml").write_text(COOKING_ITEMS)
     output, error = io.StringIO(), io.StringIO()
@@ -699,6 +703,25 @@ def test_cooking_takes_the_dough_or_pie_uox3_tells_apart_by_hue_and_more(tmp_pat
     meat_pie, pizza, chicken_leg = cooking["group"][1]["recipe"]
     # The raw chicken leg is in UOX3's list of raw meat: a chicken leg is not cooked from ribs.
     assert chicken_leg["resources"] == [{"resource": "0x1607_raw_chicken_leg", "amount": 1}]
+
+    # UOX3 opens a closed sack of flour by a script; here a closed sack is flour as it is.
+    flour = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}["flour"]
+    assert flour == ["0x1039_sack_of_flour", "0x103a_open_sack_of_flour", "0x1045_sack_of_flour"]
+
     # An unbaked pie is told apart by MORE, and a resource without an amount is one; UOX3 bakes the sausage pizza from the quiche: it takes the uncooked pizza.
     assert meat_pie["resources"] == [{"resource": "unbaked_meat_pie", "amount": 1}]
     assert pizza["resources"] == [{"resource": "uncooked_sausage_pizza", "amount": 1}]
+
+
+def test_a_resource_fix_naming_no_template_stops_the_conversion(tmp_path, monkeypatch):
+    monkeypatch.setitem(crafts.RESOURCE_FIXES, ("cooking", "sausage pizza", "0x1042"), "no_such_pizza")
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE FLOUR]\n{\nID=0x103a\n}\n[RESOURCE RAWMEAT]\n{\nID=0x09f1\nID=0x1607\n}\n")
+    (source / "cooking.dfn").write_text(COOKING)
+    (items / "all.toml").write_text(COOKING_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 2
+    assert "no_such_pizza" in error.getvalue()

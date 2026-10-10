@@ -705,6 +705,13 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(["Ingredients", "Preparation", "Baking", "Barbecue"], cooking.Group.Select(group => group.Name));
         Assert.Equal(31, cooking.Group.Sum(group => group.Recipe.Count));
         Assert.All(new[] { "0x097f_skillet", "0x103e_sifter", "0x1043_rolling_pin" }, id => Assert.Equal("cooking_tool", byId[id].ScriptId));
+        // What baking and barbecue make is eaten; a closed sack of flour, bought or made, is flour.
+        Assert.All(
+            cooking.Group.Where(group => group.Name is "Baking" or "Barbecue").SelectMany(group => group.Recipe),
+            recipe => Assert.Equal("food", byId[recipe.Item].ScriptId)
+        );
+        Assert.Contains("0x1039_sack_of_flour", lists.Single(list => list.Id == "flour").Templates);
+        Assert.Contains("0x1045_sack_of_flour", lists.Single(list => list.Id == "flour").Templates);
     }
 
     [Fact]

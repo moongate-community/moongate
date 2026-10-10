@@ -50,26 +50,29 @@ ITEM_FIXES = {
     "0x1bfb": "0x1bfb_crossbow_bolt",
 }
 
-# The resources UOX3 tells apart by hue and MORE, which Moongate's templates tell apart by id, by the recipe's name and the
-# resource's graphic. UOX3 bakes the pizzas from the quiche and the meat pie: they take the uncooked pizzas. A raw cut
+# The resources UOX3 tells apart by hue and MORE, which Moongate's templates tell apart by id, by the craft's skill, the
+# recipe's name and the resource's graphic. UOX3 bakes the pizzas from the quiche and the meat pie: they take the uncooked pizzas. A raw cut
 # is in UOX3's list of raw meat: each one cooks its own cut.
 RESOURCE_FIXES = {
-    ("cake mix", "0x103d"): "sweet_dough",
-    ("cookie mix", "0x103d"): "sweet_dough",
-    ("muffin", "0x103d"): "sweet_dough",
-    ("cake", "0x103f"): "cake_mix",
-    ("baked quiche", "0x1042"): "unbaked_quiche",
-    ("baked meat pie", "0x1042"): "unbaked_meat_pie",
-    ("sausage pizza", "0x1042"): "uncooked_sausage_pizza",
-    ("cheese pizza", "0x1042"): "uncooked_cheese_pizza",
-    ("baked fruit pie", "0x1042"): "unbaked_fruit_pie",
-    ("baked peach cobbler", "0x1042"): "unbaked_peach_cobbler",
-    ("baked apple pie", "0x1042"): "unbaked_apple_pie",
-    ("baked pumpkin pie", "0x1042"): "unbaked_pumpkin_pie",
-    ("chicken leg", "0x1607"): "0x1607_raw_chicken_leg",
-    ("leg of lamb", "0x1609"): "0x1609_raw_leg_of_lamb",
-    ("cut of ribs", "0x09f1"): "0x09f1_cut_of_raw_ribs",
+    ("cooking", "cake mix", "0x103d"): "sweet_dough",
+    ("cooking", "cookie mix", "0x103d"): "sweet_dough",
+    ("cooking", "muffin", "0x103d"): "sweet_dough",
+    ("cooking", "cake", "0x103f"): "cake_mix",
+    ("cooking", "baked quiche", "0x1042"): "unbaked_quiche",
+    ("cooking", "baked meat pie", "0x1042"): "unbaked_meat_pie",
+    ("cooking", "sausage pizza", "0x1042"): "uncooked_sausage_pizza",
+    ("cooking", "cheese pizza", "0x1042"): "uncooked_cheese_pizza",
+    ("cooking", "baked fruit pie", "0x1042"): "unbaked_fruit_pie",
+    ("cooking", "baked peach cobbler", "0x1042"): "unbaked_peach_cobbler",
+    ("cooking", "baked apple pie", "0x1042"): "unbaked_apple_pie",
+    ("cooking", "baked pumpkin pie", "0x1042"): "unbaked_pumpkin_pie",
+    ("cooking", "chicken leg", "0x1607"): "0x1607_raw_chicken_leg",
+    ("cooking", "leg of lamb", "0x1609"): "0x1609_raw_leg_of_lamb",
+    ("cooking", "cut of ribs", "0x09f1"): "0x09f1_cut_of_raw_ribs",
 }
+
+# The graphics a resource list counts beyond UOX3's: the closed sacks of flour, which UOX3 opens by a script first.
+LIST_EXTRAS = {"flour": [0x1039, 0x1045]}
 
 # The groups whose names UOX3 misspells.
 GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
@@ -161,10 +164,10 @@ def _resource_lists(path: Path, templates: list[str], error: TextIO) -> tuple[di
 
         name = parts[1].lower()
         found: list[str] = []
+        ids = [trim(value) for key, _, value in (entry.partition("=") for entry in block.entries) if trim(key).upper() == "ID"]
 
-        for entry in block.entries:
-            key, _, value = entry.partition("=")
-            graphic = dfn.uox_number(trim(value)) if trim(key).upper() == "ID" else None
+        for value in ids + [f"0x{extra:04x}" for extra in LIST_EXTRAS.get(name, [])]:
+            graphic = dfn.uox_number(value)
 
             if graphic is None or (name == "wood" and graphic in NOT_WOOD):
                 continue
@@ -302,8 +305,11 @@ def _recipe(
         what, amount = (value.split() + ["1"])[:2]
         graphic = dfn.uox_number(what) if what.lower().startswith("0x") else None
 
-        if (name.lower(), what.lower()) in RESOURCE_FIXES:
-            resource = RESOURCE_FIXES[(name.lower(), what.lower())]
+        if (craft_skill, name.lower(), what.lower()) in RESOURCE_FIXES:
+            resource = RESOURCE_FIXES[(craft_skill, name.lower(), what.lower())]
+
+            if resource not in templates:
+                raise ConversionError(f"the recipe {name} is fixed to take {resource}, which is no item template")
         elif graphic is None:
             resource = what.lower()
 

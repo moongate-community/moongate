@@ -1,8 +1,8 @@
-<!-- translation: {"sourceHash":"718fc9b94003166bcaeb44000d1d025d5c96fb27d014cc44104e7b7d2192d742","title":"Cucina"} -->
+<!-- translation: {"sourceHash":"dd540d3e46c897dca20bf99d20836076f41d58e5803b617098985eac33211bd9","title":"Cucina"} -->
 
 # Cucina
 
-Un cuoco trasforma il grano in farina, farina e acqua in impasto, l'impasto in pane, torte e pizze, e carne e pesce crudi
+Un cuoco trasforma farina e acqua in impasto, l'impasto in pane, torte e pizze, e carne e pesce crudi
 in pasti. Le regole sono quelle di ogni mestiere: vedi [Falegnameria](carpentry.md) per la probabilità, i fallimenti, gli oggetti
 eccezionali, il marchio del creatore, gli attrezzi che si consumano e Make last.
 
@@ -30,7 +30,8 @@ colpo.
 
 UOX3 distingue l'impasto dolce dall'impasto, e le torte crude l'una dall'altra, per colore e per un numero nascosto; il
 convertitore usa invece i loro template. Inoltre cuoce ogni pizza dalla sua pizza cruda, e ogni taglio crudo
-(coscia di pollo, cosciotto d'agnello, costine) dal suo taglio, dove UOX3 accetta qualsiasi carne cruda.
+(coscia di pollo, cosciotto d'agnello, costine) dal suo taglio, dove UOX3 accetta qualsiasi carne cruda. Un sacco di farina chiuso, comprato da un
+fornaio o da un mugnaio o tra gli oggetti iniziali, conta come farina così com'è: UOX3 prima lo apre.
 
 ## Cambiare le regole
 
@@ -47,7 +48,9 @@ mattarelli.
 
 ## Non ancora
 
-Una brocca d'acqua si consuma, non resta vuota. I mulini per la farina, e le ricette delle ere successive.
+Una brocca d'acqua si consuma, non resta vuota, e un sacco o una ciotola di farina finisce intero in un impasto, dove UOX3 dà a un
+sacco venti usi. Il grano non si può ancora ottenere, quindi la ricetta Sack of flour lo aspetta. I mulini per la farina, e le ricette delle
+ere successive.
 
 ## Vedi anche
 

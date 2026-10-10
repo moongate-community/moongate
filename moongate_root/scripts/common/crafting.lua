@@ -37,8 +37,9 @@
 --
 --   A craft may ask to stand near things (the table NEEDS): blacksmithing an
 --   anvil and a forge within 2 tiles, the baking of cooking an oven and its
---   barbecue a fire, checked when the attempt starts and at its second stroke. Make last starts again the last recipe the
---   player started with that craft.
+--   barbecue a fire, checked when the attempt starts and at its second
+--   stroke. Make last starts again the last recipe the player started with
+--   that craft.
 --
 -- Functions:
 --   crafting.open(user, tool, craft_id, notice)   opens the crafting gump

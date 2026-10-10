@@ -1,6 +1,6 @@
 # Cooking
 
-A cook turns wheat into flour, flour and water into dough, dough into bread, pies and pizzas, and raw meat and fish
+A cook turns flour and water into dough, dough into bread, pies and pizzas, and raw meat and fish
 into meals. The rules are the ones of every craft: see [Carpentry](carpentry.md) for the chance, failures, exceptional
 items, the maker's mark, tools that wear out and Make last.
 
@@ -28,7 +28,8 @@ stroke.
 
 UOX3 tells sweet dough from dough, and the unbaked pies from one another, by their colour and a hidden number; the
 converter names their templates instead. It also bakes each pizza from its own uncooked pizza, and cooks each raw cut
-(chicken leg, leg of lamb, ribs) from its own cut, where UOX3 takes any raw meat.
+(chicken leg, leg of lamb, ribs) from its own cut, where UOX3 takes any raw meat. A closed sack of flour, bought from a
+baker or a miller or in the starting items, counts as flour as it is: UOX3 opens it first.
 
 ## Change the rules
 
@@ -45,7 +46,9 @@ pins.
 
 ## Not yet
 
-A pitcher of water is used up, not left empty. Flour mills, and the recipes of later eras.
+A pitcher of water is used up, not left empty, and a sack or bowl of flour goes whole into one dough, where UOX3 gives a
+sack twenty uses. Wheat cannot be had yet, so the recipe Sack of flour waits for it. Flour mills, and the recipes of
+later eras.
 
 ## See also
 
