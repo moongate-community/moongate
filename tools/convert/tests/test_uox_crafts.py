@@ -455,11 +455,15 @@ id = "0x0de1_kindling"
 [[item]]
 id = "0x13b2_bow"
 [[item]]
-id = "0x1bd4_shafts"
+id = "0x1bd4_shaft"
 [[item]]
-id = "0x1bd1_feathers"
+id = "0x1bd4_5_shaft"
+[[item]]
+id = "0x1bd1_feather"
 [[item]]
 id = "0x0f3f_arrow"
+[[item]]
+id = "0x0f3f_5"
 """
 
 
@@ -483,7 +487,8 @@ def test_fletching_takes_the_bows_of_its_root_and_the_menus_of_the_fletching_too
     assert [recipe["name"] for recipe in fletching["group"][1]["recipe"]] == ["Shaft"]
     arrow = fletching["group"][2]["recipe"][0]
     assert (arrow["name"], arrow["item"]) == ("Arrow", "0x0f3f_arrow")
-    assert arrow["resources"] == [{"resource": "0x1bd4_shafts", "amount": 1}, {"resource": "0x1bd1_feathers", "amount": 1}]
+    # The stacks of five shafts or arrows share the graphic: the recipe makes and takes the single one.
+    assert arrow["resources"] == [{"resource": "0x1bd4_shaft", "amount": 1}, {"resource": "0x1bd1_feather", "amount": 1}]
 
 
 TINKERING = """

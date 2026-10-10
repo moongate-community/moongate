@@ -40,8 +40,14 @@ NAME_FIXES = {"Magincian Throne": "Magician Throne", "one shaft": "Shaft", "one 
 # The main skill lines UOX3 gets wrong, by the craft's skill and the recipe's name (lower case): the whole SKILL= value.
 SKILL_FIXES = {("tinkering", "scales"): "37 638 1140", ("tinkering", "heating stand"): "37 643 1140"}
 
-# The items UOX3 makes in place of the one a recipe is named for: the tinker's tools, not the 10-stone tool kit.
-ITEM_FIXES = {"0x1eb9": "0x1ebc_tinker's_tools"}
+# The items UOX3 makes in place of the one a recipe is named for (the tinker's tools, not the 10-stone tool kit), and the
+# single shaft, arrow and bolt among the stacks that share their graphic.
+ITEM_FIXES = {
+    "0x1eb9": "0x1ebc_tinker's_tools",
+    "0x1bd4": "0x1bd4_shaft",
+    "0x0f3f": "0x0f3f_arrow",
+    "0x1bfb": "0x1bfb_crossbow_bolt",
+}
 
 # The groups whose names UOX3 misspells.
 GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
