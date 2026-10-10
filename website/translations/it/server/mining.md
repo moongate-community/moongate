@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"814e403afc4a2932570fb6b0430f1d1bc9390f15f32af241d52bf8b1b03e034f","title":"Estrazione e fusione"} -->
+<!-- translation: {"sourceHash":"b93b3972e3006c840a52a623c44a940aa5f91bf97e747a147942a5fc477a368d","title":"Estrazione e fusione"} -->
 
 # Estrazione e fusione
 
@@ -17,6 +17,7 @@ doppio clic nel frattempo non fa nulla.
 
 | Leggi | Perché |
 | --- | --- |
+| `You can't mine while riding.` | Sei su una [cavalcatura](mounts.md): scendi prima |
 | `You can't mine there.` | Il luogo non è roccia: erba, sabbia, una strada, o uno statico che non è il pavimento di una grotta |
 | `You can't mine that.` | Hai scelto un oggetto o qualcuno |
 | `That is too far away.` | La roccia è a più di 2 caselle |
@@ -81,7 +82,8 @@ Una root creata prima che l'estrazione esistesse ha bisogno di tre cose. Esegui 
 risorsa `ore` al tuo `data/harvest.toml`, e gli script ai template: `script_id = "pickaxe"` ai
 picconi e alle pale di `templates/items/skills/tools/mining.toml`, `script_id = "ore"` ai quattro mucchi di
 minerale di ferro di `templates/items/skills/resources/mining.toml`. Oppure copia i tre file dalla distribuzione:
-`mgctl init` non sostituisce mai un file che potresti aver modificato.
+`mgctl init` non sostituisce mai un file che potresti aver modificato. `scripts/items/ore.lua` ora legge le forge da
+`scripts/common/smithy.lua`: copialo insieme.
 
 ## Non ancora
 

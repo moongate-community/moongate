@@ -73,3 +73,15 @@ Players who have a container on the ground open do not see it change until they 
 
 The timers are kept in the props `timer.<name>`, which `item.set_prop` refuses; splitting a stack leaves
 them with the part that is lifted.
+
+## set_rarity
+
+A reward chest that makes one of its prizes rare:
+
+```lua
+local prize = item.give(user, "0x13ff")
+
+if prize then
+    item.set_rarity(prize, "rare")
+end
+```

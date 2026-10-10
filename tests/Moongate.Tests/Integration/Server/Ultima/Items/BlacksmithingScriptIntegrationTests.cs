@@ -38,6 +38,9 @@ using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Bank;
 using Moongate.Tests.TestSupport.Ultima.Containers;
+using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Tests.TestSupport.Ultima.Maps;
+using Moongate.Server.Ultima.Interfaces.Items;
 using Moongate.Tests.TestSupport.Ultima.Death;
 using Moongate.Tests.TestSupport.Ultima.Effects;
 using Moongate.Tests.TestSupport.Ultima.Gumps;
@@ -53,28 +56,24 @@ using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
-namespace Moongate.Tests.Integration.Server.Ultima.Gumps;
+namespace Moongate.Tests.Integration.Server.Ultima.Items;
 
 /// <summary>
-///     The shipped crafting gump (<c>templates/gumps/craft_menu.xml</c>, <c>scripts/gumps/craft_menu.lua</c>), with the
-///     real Lua engine, the shipped crafting engine and the craft service.
+///     The shipped <c>scripts/items/smithing_tool.lua</c> with the crafting engine: blacksmithing at an anvil and a forge.
 /// </summary>
-public sealed class CraftGumpIntegrationTests : IAsyncLifetime
+public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
 {
     private const long Aria = 2;
 
-    private const int Stool = 1;
-    private const int Lute = 2;
+    private const int Gloves = 1;
 
     private const int InBackpack = 1062334;
     private const int Created = 1044154;
-    private const int FailedAndLost = 1044043;
-    private const int NoSkill = 1044153;
-    private const int NoWood = 1044351;
-    private const int NoCloth = 1044287;
-    private const int StrangeWood = 1072652;
-    private const int Busy = 500119;
-    private const int Sound = 0x023D;
+    private const int Exceptional = 1044155;
+    private const int Marked = 1044156;
+    private const int NoMetal = 1044037;
+    private const int NotAtTheForge = 1044267;
+    private const int Sound = 0x002A;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -92,18 +91,18 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
     private readonly StubMovementService _movement = new();
     private readonly StubItemSerialPool _serials = new();
     private readonly StubContainerCapacityService _capacity = new();
-    private readonly ItemService _items;
-    private readonly RecordingGumpService _gumps = new();
+    private readonly StubInventoryMutationGuard _guard = new();
+    private readonly SettableClock _time = new();
+    private readonly FakeMapService _map = new(32, 32, MapType.Trammel);
+    private ItemService _items = null!;
 
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
-            new ItemTemplate { Id = "0x1034_saw", ItemId = new Serial(0x1034), ScriptId = "carpentry_tool" },
-            new ItemTemplate { Id = "0x1bd7_board", ItemId = new Serial(0x1BD7), Stackable = true },
-            new ItemTemplate { Id = "0x1bda_board", ItemId = new Serial(0x1BDA), Stackable = true },
-            new ItemTemplate { Id = "oak_board", ItemId = new Serial(0x1BD7), Stackable = true },
-            new ItemTemplate { Id = "0x175d_cloth", ItemId = new Serial(0x175D), Stackable = true },
-            new ItemTemplate { Id = "0x0a2b", ItemId = new Serial(0x0A2B) },
-            new ItemTemplate { Id = "0x0eb3_lute", ItemId = new Serial(0x0EB3) }
+            new ItemTemplate { Id = "0x13e3", ItemId = new Serial(0x13E3), ScriptId = "smithing_tool" },
+            new ItemTemplate { Id = "0x1bf2_iron_ingot", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "0x0faf_anvil", ItemId = new Serial(0x0FAF) },
+            new ItemTemplate { Id = "0x0fb1_forge", ItemId = new Serial(0x0FB1) },
+            new ItemTemplate { Id = "0x13eb_ringmail_gloves", ItemId = new Serial(0x13EB) }
         )
     );
 
@@ -112,53 +111,25 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
             .With(
                 new CraftDefinition
                 {
-                    Id = "carpentry", Name = "Carpentry", Skill = "carpentry", Sound = Sound,
+                    Id = "blacksmithing", Name = "Blacksmithing", Skill = "blacksmithy", Sound = Sound,
                     Group =
                     [
                         new()
                         {
-                            Name = "Chairs",
+                            Name = "Ringmail",
                             Recipe =
                             [
                                 new()
                                 {
-                                    Name = "Stool", Item = "0x0a2b", SkillMin = 11, SkillMax = 36,
-                                    Resources = [new() { Resource = "wood", Amount = 9 }]
+                                    Name = "Ringmail gloves", Item = "0x13eb_ringmail_gloves", SkillMin = 12.2, SkillMax = 37.2,
+                                    Resources = [new() { Resource = "metal", Amount = 10 }]
                                 }
                             ]
-                        },
-                        new()
-                        {
-                            Name = "Musical items",
-                            Recipe =
-                            [
-                                new()
-                                {
-                                    Name = "Lute", Item = "0x0eb3_lute", SkillMin = 68.4, SkillMax = 93.4,
-                                    Resources = [new() { Resource = "wood", Amount = 25 }, new() { Resource = "cloth", Amount = 10 }],
-                                    Skills = [new() { Skill = "musicianship", Min = 45, Max = 70 }]
-                                }
-                            ]
-                        },
-                        new()
-                        {
-                            Name = "Many",
-                            Recipe = Enumerable.Range(1, 12)
-                                .Select(index => new CraftRecipe
-                                    {
-                                        Name = $"Crate {index}", Item = "0x0a2b", SkillMin = 0, SkillMax = 10,
-                                        Resources = [new() { Resource = "wood", Amount = 1 }]
-                                    }
-                                )
-                                .ToList()
                         }
                     ]
                 }
             )
-            .With(
-                new CraftResourceList { Id = "wood", Templates = ["0x1bd7_board", "0x1bda_board"] },
-                new CraftResourceList { Id = "cloth", Templates = ["0x175d_cloth"] }
-            )
+            .With(new CraftResourceList { Id = "metal", Templates = ["0x1bf2_iron_ingot"] })
     );
 
     private readonly ItemEntity _backpack = new()
@@ -167,8 +138,8 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
     private readonly ItemEntity _bank = new()
         { Id = new Serial(0x40000003), TemplateId = "backpack", ItemId = 0x0E7C, Amount = 1 };
 
-    private readonly ItemEntity _saw = new()
-        { Id = new Serial(0x40000002), TemplateId = "0x1034_saw", ItemId = 0x1034, Amount = 1 };
+    private readonly ItemEntity _hammer = new()
+        { Id = new Serial(0x40000002), TemplateId = "0x13e3", ItemId = 0x13E3, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
     private LuaScriptEngineService _engine = null!;
@@ -177,25 +148,26 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
     private readonly HashSet<string> _fired = [];
     private uint _next = 0x40000050;
 
-    public CraftGumpIntegrationTests()
-    {
-        _items = TestItems.Create(_sectors);
-    }
 
     public async Task InitializeAsync()
     {
         _fixture = await BroadcastFixture.CreateAsync();
+        // The sectors world.items_in_range reads: an anvil on the ground must be found there.
+        _items = TestItems.Create(_fixture.Sectors);
         await _fixture.AddAsync((int)Aria);
         Assert.True(_fixture.Mobiles.TryGet(new Serial((uint)Aria), out _aria!));
         _aria.AccountId = new Serial(0x42);
 
-        // At the most of the stool, so it never fails unless a test lowers the skill.
-        Skill(360);
+        // At the most of the gloves, so it never fails unless a test lowers the skill; in a smithy at 10, 10.
+        Skill(372);
+        _aria.Location = new Point3D(10, 10, 0);
 
         _backpack.Equip(new Serial((uint)Aria), LayerType.Backpack);
         _bank.Equip(new Serial((uint)Aria), LayerType.Bank);
-        _saw.PutInContainer(_backpack.Id, new Point2D(10, 10));
-        _items.Add([_backpack, _bank, _saw]);
+        _hammer.PutInContainer(_backpack.Id, new Point2D(10, 10));
+        // A saw that has been used already: no draw of its uses in the tests that are not about it.
+        _hammer.SetProp("uses_remaining", 50L);
+        _items.Add([_backpack, _bank, _hammer]);
 
         for (uint serial = 0x40000100; serial < 0x40000110; serial++)
         {
@@ -203,16 +175,43 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         }
 
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
-        // No exceptional item and the most uses unless a test says otherwise: the rolls are the test's.
+        // The gump is drawn by another test: here opening it only says so, with the notice it would show.
         _scripts.Write(
-            "items/carpentry_tool.lua",
-            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "carpentry_tool.lua")) +
-            "\nrequire(\"common.crafting\").roll = function() return 0.999 end\n"
+            "items/smithing_tool.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "smithing_tool.lua")) +
+            """
+
+            local crafting_for_tests = require("common.crafting")
+
+            crafting_for_tests.open = function(user, tool, craft_id, notice)
+                mobile.message(user, "opened " .. tostring(notice or ""))
+            end
+
+            function smithing_tool.make(serial, user, group, recipe)
+                crafting_for_tests.make(user, serial, "blacksmithing", group, recipe)
+            end
+
+            function smithing_tool.pick(serial, user, kind)
+                crafting_for_tests.set_kind(user, kind)
+            end
+
+            function smithing_tool.last(serial, user)
+                crafting_for_tests.make_last(user, serial, "blacksmithing")
+            end
+
+            function smithing_tool.make_in(serial, user, craft_id, group, recipe)
+                crafting_for_tests.make(user, serial, craft_id, group, recipe)
+            end
+
+            -- The rolls of the script are the test's: the ones queued, then a high one, which is no exceptional item.
+            crafting_for_tests.roll = function() return 0.999 end
+
+            function smithing_tool.set_rolls(serial, ...)
+                local rolls = { ... }
+                crafting_for_tests.roll = function() return table.remove(rolls, 1) or 0.999 end
+            end
+            """
         );
-        _scripts.Write("gumps/craft_menu.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "gumps", "craft_menu.lua")));
-        var gumpTemplates =
-            (await new GumpsLoader(new DirectoriesConfig(root, ["templates"])).LoadDataAsync()).Entities.ToArray();
-        GumpScriptService? gumpScripts = null;
         _scripts.Write("common/crafting.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "crafting.lua")));
         _scripts.Write("common/woods.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "woods.lua")));
         _scripts.Write("common/smithy.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "smithy.lua")));
@@ -222,8 +221,7 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
             HookInterval = 100, WriteDefinitions = false
         };
         var data = new StubDataLoaderService().With(
-            new SkillContent { Id = SkillType.Carpentry, GainFactor = 1.0, Delay = 1 },
-            new SkillContent { Id = SkillType.Musicianship, GainFactor = 1.0, Delay = 1 }
+            new SkillContent { Id = SkillType.Blacksmithy, GainFactor = 1.0, Delay = 1 }
         );
 
         _container.RegisterMoongateEventBus();
@@ -255,6 +253,9 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IItemSerialPool>(_serials);
         _container.RegisterInstance<ITileDataService>(new FakeTileDataService());
         _container.RegisterInstance<IContainerCapacityService>(_capacity);
+        _container.RegisterInstance<IInventoryMutationGuard>(_guard);
+        _container.RegisterInstance<TimeProvider>(_time);
+        _container.RegisterInstance<IMapService>(_map);
         _container.Register<IItemHandlingService, ItemHandlingService>(Reuse.Singleton);
         _container.RegisterInstance<ICraftService>(_crafts);
         _container.RegisterInstance<IClockService>(new StubClockService());
@@ -270,12 +271,6 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<EffectModule>();
         _container.AddScriptModule<CraftModule>();
-        _container.AddScriptModule<GumpModule>();
-        _container.RegisterInstance<IGumpService>(_gumps);
-        _container.RegisterInstance<IGumpTemplateService>(
-            new GumpTemplateService(_gumps, new StubDataLoaderService().With(gumpTemplates), _loop, _fixture.Sessions)
-        );
-        _container.RegisterDelegate<IGumpScriptService>(_ => gumpScripts!);
         _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -297,165 +292,173 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         await _engine.StartAsync();
         _itemScripts = new(_engine, _templates, _loop, options);
         await _itemScripts.StartAsync();
-        gumpScripts = new GumpScriptService(_engine, _loop, options);
-        await gumpScripts.StartAsync();
     }
 
     [Fact]
-    public void TheTool_OpensTheGump_WithTheGroupsOfTheCraft_AndTheRecipesOfTheFirst()
+    public void TheHammer_InTheBackpack_OpensTheGumpOfBlacksmithing()
     {
-        var built = Use();
+        Run(_hammer);
 
         Assert.Empty(_errors);
-        Assert.Contains("CARPENTRY", built.Strings);
-        Assert.Contains("Chairs", built.Strings);
-        Assert.Contains("Musical items", built.Strings);
-        Assert.Contains("Stool", built.Strings);
-        Assert.DoesNotContain("Lute", built.Strings);
+        Assert.Single(Opened());
     }
 
     [Fact]
-    public void AGroup_ShowsItsRecipes()
+    public void AwayFromAnAnvilAndAForge_NothingIsForged_AndNothingTaken()
     {
-        var built = Use();
+        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
 
-        Click(built, "Musical items");
-
-        var musical = Last();
-        Assert.Empty(_errors);
-        Assert.Contains("Lute", musical.Strings);
-        Assert.DoesNotContain("Stool", musical.Strings);
-    }
-
-    [Fact]
-    public void ALongGroup_IsPagedByTen()
-    {
-        var built = Use();
-
-        Click(built, "Many");
-
-        var many = Last();
-        Assert.Empty(_errors);
-        Assert.Contains("Crate 1", many.Strings);
-        Assert.Contains("Crate 12", many.Strings);
-        // The second page starts at the eleventh.
-        Assert.True(many.Layout.IndexOf("{ page 2 }", StringComparison.Ordinal) <
-                    many.Layout.IndexOf(Cropped(many, "Crate 11"), StringComparison.Ordinal));
-        Assert.True(many.Layout.IndexOf("{ page 2 }", StringComparison.Ordinal) >
-                    many.Layout.IndexOf(Cropped(many, "Crate 10"), StringComparison.Ordinal));
-    }
-
-    [Fact]
-    public void TheInfoPage_ShowsTheGraphicTheResourcesTheSkillsAndTheChance()
-    {
-        Skill(235);
-        Carry("0x1bd7_board", 0x1BD7, 12);
-        var built = Use();
-
-        Click(built, "Stool", rightmost: true);
-
-        var info = Last();
-        Assert.Empty(_errors);
-        // Halfway from 11 to 36: three chances in four.
-        Assert.Contains("Chance: 75%", info.Strings);
-        Assert.Contains("9 wood (12)", info.Strings);
-        Assert.Contains("carpentry 11.0 - 36.0", info.Strings);
-        Assert.Contains("{ tilepic", info.Layout);
-        Assert.Contains("2603", info.Layout);
-    }
-
-    [Fact]
-    public void TheMakeButton_StartsAnAttempt()
-    {
-        Carry("0x1bd7_board", 0x1BD7, 9);
-        var built = Use();
-
-        Click(built, "Stool");
+        Make();
 
         Assert.Empty(_errors);
-        Assert.Contains(_timers.Timers, timer => Math.Abs(timer.Interval.TotalSeconds - 1.25) < 0.001);
-    }
-
-    [Fact]
-    public void TheWoodLine_ShowsTheKindAndItsCount_AndChangingItPicksAKindTheSkillAllows()
-    {
-        Skill(650);
-        Carry("oak_board", 0x1BD7, 9);
-        var built = Use();
-
-        Assert.Contains("Wood: plain (0)", built.Strings);
-
-        Click(built, "Change");
-        Click(Last(), "oak (9)");
-
-        Assert.Empty(_errors);
-        Assert.Contains("Wood: oak (9)", Last().Strings);
-
-        Click(Last(), "Change");
-        Click(Last(), "yew (0)");
-
-        Assert.Contains("Wood: oak (9)", Last().Strings);
-        Assert.Contains(StrangeWood, Told());
-    }
-
-    [Fact]
-    public void TheNotice_IsShown()
-    {
-        Carry("0x1bd7_board", 0x1BD7, 9);
-        var built = Use();
-
-        Click(built, "Stool");
-        Fire(1.25);
-
-        Assert.Empty(_errors);
-        Assert.Contains("You create the item.", Last().Strings);
-    }
-
-    [Fact]
-    public void MakeLast_MakesTheLastRecipeAgain_OrSaysThereIsNoneYet()
-    {
-        var boards = Carry("0x1bd7_board", 0x1BD7, 18);
-        var built = Use();
-
-        Click(built, "Make last");
-
-        Assert.Contains(1044165, Told());
+        Assert.Equal([NotAtTheForge], Told());
+        Assert.Equal(20, ingots.Amount);
         Assert.Empty(_timers.Timers);
-
-        Click(Last(), "Stool");
-        Fire(1.25);
-        Click(Last(), "Make last");
-        Fire(1.25);
-
-        // Two stools: 18 boards less 9 twice.
-        Assert.Empty(_errors);
-        Assert.Equal(0, _items.TryGet(boards.Id, out var left) ? left.Amount : 0);
-        Assert.Equal(2, Told().Count(cliloc => cliloc == 1044154));
     }
 
     [Fact]
-    public void Exit_ClosesWithoutAnError()
+    public void AForgeWithoutAnAnvil_IsNotEnough()
     {
-        var built = Use();
-        var count = _gumps.Opened.Count;
+        _map.AddStatic(11, 10, 0x0FB1, 0);
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
 
-        Click(built, "Exit");
+        Make();
 
-        Assert.Empty(_errors);
-        Assert.Equal(count, _gumps.Opened.Count);
+        Assert.Equal([NotAtTheForge], Told());
     }
 
     [Fact]
-    public void AButton_OfAToolNoLongerInTheBackpack_DoesNothing()
+    public void AnAnvilOnTheGround_AndAForgeOfTheMap_WithinTwoTiles_LetTheSmithForge()
     {
-        Carry("0x1bd7_board", 0x1BD7, 9);
-        var built = Use();
-        _items.PlaceOnGround(_saw, _aria.Map, _aria.Location);
+        Ground("0x0faf_anvil", 0x0FAF, 12, 10);
+        _map.AddStatic(10, 8, 0x1985, 0);
+        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
 
-        Click(built, "Stool");
+        Make();
+        Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Empty(_timers.Timers);
+        Assert.Equal([Created], Told());
+        Assert.Equal(10, ingots.Amount);
+        Assert.Single(Made("0x13eb_ringmail_gloves"));
+    }
+
+    [Fact]
+    public void AnAnvilThreeTilesAway_IsTooFar()
+    {
+        Ground("0x0faf_anvil", 0x0FAF, 13, 10);
+        _map.AddStatic(11, 10, 0x0FB1, 0);
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
+
+        Make();
+
+        Assert.Equal([NotAtTheForge], Told());
+    }
+
+    [Fact]
+    public void TheAnvilGoneBeforeTheSecondStroke_ForgesNothing()
+    {
+        var anvil = Ground("0x0faf_anvil", 0x0FAF, 11, 10);
+        _map.AddStatic(11, 11, 0x0FB1, 0);
+        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
+
+        Make();
+        _items.Remove([anvil.Id]);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([NotAtTheForge], Told());
+        Assert.Equal(20, ingots.Amount);
+        Assert.Empty(Made("0x13eb_ringmail_gloves"));
+    }
+
+    [Fact]
+    public void WithoutIngots_SaysSo()
+    {
+        AtTheForge();
+
+        Make();
+
+        Assert.Equal([NoMetal], Told());
+    }
+
+    [Theory]
+    // At the most of the gloves an exceptional pair is uncommon; made at 100 it bears the mark and is rare.
+    [InlineData(372, Exceptional, "Uncommon")]
+    [InlineData(1000, Marked, "Rare")]
+    public void AnExceptionalPiece_TakesARarityFromItsQuality(int tenths, int told, string rarity)
+    {
+        AtTheForge();
+        Skill(tenths);
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+        Rolls(0.0);
+
+        Make();
+        Fire(1.25);
+
+        var gloves = Assert.Single(Made("0x13eb_ringmail_gloves"));
+        Assert.Empty(_errors);
+        Assert.Equal([told], Told());
+        Assert.Equal(Enum.Parse<ItemRarityType>(rarity), gloves.Rarity);
+    }
+
+    [Fact]
+    public void ARegularPiece_KeepsItsRarity()
+    {
+        AtTheForge();
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+
+        Make();
+        Fire(1.25);
+
+        Assert.Equal(ItemRarityType.Common, Assert.Single(Made("0x13eb_ringmail_gloves")).Rarity);
+    }
+
+    [Fact]
+    public void AKindOfWoodPickedForCarpentry_DoesNotStopTheSmith()
+    {
+        AtTheForge();
+        SetSkill(SkillType.Carpentry, 650);
+        Call("pick", Aria, "oak");
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+
+        Make();
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([Created], Told());
+    }
+
+    [Fact]
+    public void AnAnvilOnAnotherFloor_IsNoAnvil()
+    {
+        Ground("0x0faf_anvil", 0x0FAF, 11, 10, 30);
+        _map.AddStatic(9, 10, 0x0FB1, 0);
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+
+        Make();
+
+        Assert.Equal([NotAtTheForge], Told());
+    }
+
+    [Fact]
+    public void TheForgeAndTheIngotsGoneBeforeTheSecondStroke_SayTheForge_AndNeitherTryNorWear()
+    {
+        var anvil = Ground("0x0faf_anvil", 0x0FAF, 11, 10);
+        _map.AddStatic(11, 11, 0x0FB1, 0);
+        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+        Skill(200);
+
+        Make();
+        _items.Remove([anvil.Id]);
+        _items.MoveToContainer(ingots, _bank.Id, new Point2D(5, 5));
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([NotAtTheForge], Told());
+        Assert.Equal(0, _random.Rolls);
+        Assert.True(_hammer.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(50, left);
     }
 
     public async Task DisposeAsync()
@@ -465,66 +468,54 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         _scripts.Dispose();
     }
 
+    private void AtTheForge()
+    {
+        Ground("0x0faf_anvil", 0x0FAF, 11, 10);
+        _map.AddStatic(9, 10, 0x0FB1, 0);
+    }
+
     private void Skill(int tenths)
     {
-        _aria.Skills.RemoveAll(known => known.Skill == SkillType.Carpentry);
-        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Carpentry, Base = tenths });
-        _state.Skills.RemoveAll(known => known.Skill == SkillType.Carpentry);
-        _state.Skills.Add(new MobileSkill { Skill = SkillType.Carpentry, Base = tenths });
+        SetSkill(SkillType.Blacksmithy, tenths);
     }
 
-    // Double clicks the saw and gives the gump it opened.
-    private GumpBuildResult Use()
+    // The skill service reads the mobile, the mobile module the state service: both hold the same.
+    private void SetSkill(SkillType skill, int tenths)
+    {
+        _aria.Skills.RemoveAll(known => known.Skill == skill);
+        _aria.Skills.Add(new MobileSkill { Skill = skill, Base = tenths });
+        _state.Skills.RemoveAll(known => known.Skill == skill);
+        _state.Skills.Add(new MobileSkill { Skill = skill, Base = tenths });
+    }
+
+    private void Make()
+    {
+        Call("make", Aria, 1, Gloves);
+    }
+
+    private void Rolls(params double[] rolls)
+    {
+        Call("set_rolls", rolls.Cast<object?>().ToArray());
+    }
+
+    private void Call(string function, params object?[] args)
     {
         _loop.DeferTryPost = true;
-        _itemScripts.Run(_saw, "on_use", Aria);
-        Drain();
+        _itemScripts.Run(_hammer, function, args);
 
-        return Last();
+        while (_loop.Deferred.Count > 0)
+        {
+            _loop.RunDeferred();
+        }
+
+        _loop.DeferTryPost = false;
     }
 
-    private GumpBuildResult Last()
+    private void Run(ItemEntity tool)
     {
-        return _gumps.Opened[^1].Gump.Layout.Build();
-    }
-
-    // Presses the button on the row of a text: the nearest one before it, or the rightmost one after it.
-    private void Click(GumpBuildResult built, string text, bool rightmost = false)
-    {
-        var index = built.Strings.ToList().IndexOf(text);
-        Assert.True(index >= 0, $"The gump does not show {text}.");
-        var label = System.Text.RegularExpressions.Regex.Match(
-            built.Layout,
-            $@"\{{ (?:croppedtext|text) (-?\d+) (-?\d+) (?:\d+ \d+ )?\d+ {index} \}}"
-        );
-        Assert.True(label.Success, $"No label for {text}.");
-        var (x, y) = (int.Parse(label.Groups[1].Value), int.Parse(label.Groups[2].Value));
-        var buttons = System.Text.RegularExpressions.Regex.Matches(built.Layout, @"\{ button (-?\d+) (-?\d+) \d+ \d+ 1 0 (\d+) \}")
-            .Where(match => Math.Abs(int.Parse(match.Groups[2].Value) - y) <= 4)
-            .Where(match => rightmost ? int.Parse(match.Groups[1].Value) > x : int.Parse(match.Groups[1].Value) < x)
-            .OrderBy(match => int.Parse(match.Groups[1].Value))
-            .ToList();
-        Assert.NotEmpty(buttons);
-        var id = int.Parse(buttons[^1].Groups[3].Value);
-        var opened = _gumps.Opened.Last(gump => gump.Gump.Layout.Build().Layout == built.Layout);
-
         _loop.DeferTryPost = true;
-        opened.Gump.OnResponse(
-            _fixture.Sessions.GetAll().First(session => session.CharacterId == _aria.Id),
-            new GumpResponse { ButtonId = id, Switches = new HashSet<int>(), Texts = new Dictionary<int, string>() }
-        );
-        Drain();
-    }
+        _itemScripts.Run(tool, "on_use", Aria);
 
-    private static string Cropped(GumpBuildResult built, string text)
-    {
-        var index = built.Strings.ToList().IndexOf(text);
-
-        return System.Text.RegularExpressions.Regex.Match(built.Layout, $@"\{{ croppedtext -?\d+ -?\d+ \d+ \d+ \d+ {index} \}}").Value;
-    }
-
-    private void Drain()
-    {
         while (_loop.Deferred.Count > 0)
         {
             _loop.RunDeferred();
@@ -542,7 +533,13 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         _fired.Add(timer.Id);
         _loop.DeferTryPost = true;
         _timers.Fire(timer.Id);
-        Drain();
+
+        while (_loop.Deferred.Count > 0)
+        {
+            _loop.RunDeferred();
+        }
+
+        _loop.DeferTryPost = false;
     }
 
     private ItemEntity Carry(string template, int graphic, int amount)
@@ -554,9 +551,41 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         return item;
     }
 
+    private ItemEntity Ground(string template, int graphic, int x, int y, int z = 0)
+    {
+        var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = 1 };
+        _items.Add([item]);
+        _items.PlaceOnGround(item, _aria.Map, new Point3D(x, y, z));
+
+        return item;
+    }
+
+    // The items of a template made from the serials the pool gives.
+    private List<ItemEntity> Made(string template)
+    {
+        var made = new List<ItemEntity>();
+
+        for (uint serial = 0x40000100; serial < 0x40000110; serial++)
+        {
+            if (_items.TryGet(new Serial(serial), out var item) && item.TemplateId == template)
+            {
+                made.Add(item);
+            }
+        }
+
+        return made;
+    }
+
     private List<int> Told()
     {
         return _speech.ToldClilocs.Where(told => told.Player == _aria).Select(told => told.Cliloc).ToList();
+    }
+
+    private List<string> Opened()
+    {
+        return _speech.Told.Where(told => told.Player == _aria && told.Text.StartsWith("opened", StringComparison.Ordinal))
+            .Select(told => told.Text.TrimEnd())
+            .ToList();
     }
 
     private static string RepositoryRoot()

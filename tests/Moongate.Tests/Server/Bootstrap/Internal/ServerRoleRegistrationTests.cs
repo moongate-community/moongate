@@ -185,6 +185,10 @@ public sealed class ServerRoleRegistrationTests
 
         Assert.NotNull(handling.GetType().GetField("_templates", flags)!.GetValue(handling));
         Assert.NotNull(handling.GetType().GetField("_tiles", flags)!.GetValue(handling));
+
+        // world.statics reads the map: without it a smith could never find the anvil of a smithy.
+        var world = container.Resolve<Moongate.Server.Ultima.Modules.WorldModule>();
+        Assert.NotNull(world.GetType().GetField("_maps", flags)!.GetValue(world));
     }
 
     [Fact]

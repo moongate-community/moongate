@@ -25,7 +25,15 @@ namespace Moongate.Server.Ultima.Data.Combat;
 /// <param name="Speed">
 ///     The speed of the weapon: a swing takes 15000 / ((stamina + 100) * speed) seconds.
 /// </param>
-public sealed record WeaponInfo(SkillType Skill, WeaponType? Type, bool TwoHanded, int DamageMin, int DamageMax, int Speed)
+public sealed record WeaponInfo(
+    SkillType Skill,
+    WeaponType? Type,
+    bool TwoHanded,
+    int DamageMin,
+    int DamageMax,
+    int Speed,
+    ItemQualityType Quality = ItemQualityType.Regular
+)
 {
     /// <summary>
     ///     Gets how far the weapon reaches, in cells: 1 for a weapon fought from beside the target.

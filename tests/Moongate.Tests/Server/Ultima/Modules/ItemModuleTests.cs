@@ -6,20 +6,21 @@ using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Server.Ultima.Data.Internal.Items;
 using Moongate.Server.Ultima.Data.Items;
-using Moongate.Server.Ultima.Entities.World;
-using Moongate.Tests.TestSupport.Ultima.Tiles;
-using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
@@ -493,6 +494,30 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.Equal("a strange brew", result[2].Read<string>());
         Assert.Equal(("a strange brew", new Hue(0x26)), (_ground.Name, _ground.Hue));
         Assert.Equal(2, _view.Calls.Count(call => call.StartsWith("Appeared", StringComparison.Ordinal)));
+    }
+
+    [Fact]
+    public async Task SetRarityAndSetProp_OfAnItemOnACursor_AreRefused()
+    {
+        // Shown again where it was lifted from, it would be drawn there while the player holds it.
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == new Serial(2));
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(_sword.Id)));
+
+        var result = Run($"return item.set_rarity({_sword.Id.Value}, 'rare'), item.set_prop({_sword.Id.Value}, 'mark', 1)");
+
+        Assert.Equal([false, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal(ItemRarityType.Common, _sword.Rarity);
+    }
+
+    [Fact]
+    public void SetRarity_ChangesTheRarity_AndShowsTheNewTooltip_AnUnknownOneIsRefused()
+    {
+        var result = Run($"return item.set_rarity({_potions.Id.Value}, 'rare'), item.set_rarity({_potions.Id.Value}, 'mythic')");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.False(result[1].Read<bool>());
+        Assert.Equal(ItemRarityType.Rare, _potions.Rarity);
+        Assert.Contains(_fixture.Sender.Sent.OfType<PropertyListInfoPacket>(), packet => packet.Serial == _potions.Id);
     }
 
     [Fact]

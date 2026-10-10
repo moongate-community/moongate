@@ -1,6 +1,7 @@
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Timing;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Maps;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Data.Sessions;
@@ -28,6 +29,7 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 
 public sealed class WorldModuleTests : IAsyncLifetime
 {
+    private readonly FakeMapService _maps = new(64, 64);
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly SettableClock _time = new();
     private readonly WorldPropsService _props = new(new RecordingDataAccess<WorldStateEntity>());
@@ -190,6 +192,27 @@ public sealed class WorldModuleTests : IAsyncLifetime
         );
 
         Assert.Equal([1, 0x100, 0, 0], result.Select(value => value.Read<long>()));
+    }
+
+    [Fact]
+    public void Statics_ListsTheStaticsOfTheMapAround_WithinTheRange()
+    {
+        _maps.AddStatic(10, 10, 0x0FAF, 0).AddStatic(12, 10, 0x0FB1, 5).AddStatic(14, 10, 0x0FB1, 0);
+
+        var result = Run(
+            """
+            local near = world.statics("Felucca", 10, 10, 2)
+            local graphics = {}
+            for _, s in ipairs(near) do graphics[#graphics + 1] = s.graphic .. "@" .. s.x .. "," .. s.y .. "," .. s.z end
+            table.sort(graphics)
+            return table.concat(graphics, " "), #world.statics("Felucca", 10, 10, 0), #world.statics("Trammel", 10, 10, 2),
+                   #world.statics("Felucca", 0, 0, 2), #world.statics("Felucca", 10, 10, 19)
+            """
+        );
+
+        // The forge three tiles away is out of range; another map has none; a corner of the map is cut, not an error.
+        Assert.Equal("4015@10,10,0 4017@12,10,5", result[0].Read<string>());
+        Assert.Equal([1, 0, 0, 0], result[1..].Select(value => value.Read<int>()));
     }
 
     [Fact]
@@ -531,7 +554,8 @@ public sealed class WorldModuleTests : IAsyncLifetime
                 _time,
                 _props,
                 _light,
-                _speech
+                _speech,
+                _maps
             )
         );
         binder.BindEnum(state, typeof(MapType));

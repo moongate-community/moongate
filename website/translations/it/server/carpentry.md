@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"598a650eaa4b31fc1b9fb8686b31f1d9b28f55c5e3955bf1c48e81cf673f9607","title":"Falegnameria"} -->
+<!-- translation: {"sourceHash":"a1291500e045924b9652226373d964c82b63493eb7e3d379f8cb8f0bffd05aff","title":"Falegnameria"} -->
 
 # Falegnameria
 
@@ -28,8 +28,8 @@ La riga in basso mostra il legno che lavori e quante assi di quel tipo porti. Ch
 | Ogni materiale nello zaino e nelle sue borse: non nella cassetta in banca, non una pila sul cursore | "You do not have sufficient wood to make that.", "You don't have enough cloth to make that." oppure "You don't have the components needed to make that." |
 | Non stai già creando qualcosa | "You must wait to perform another action." |
 
-Quando un tentativo viene rifiutato non si toglie nulla. Al secondo colpo si ricontrolla tutto: assi spostate nel
-frattempo non creano nulla.
+Quando un tentativo viene rifiutato non si toglie nulla. I materiali e l'attrezzo si ricontrollano al secondo colpo: assi spostate nel
+frattempo non creano nulla. L'abilità e il tipo di legno si controllano solo all'inizio.
 
 ## La probabilità
 
@@ -46,7 +46,8 @@ alla certezza al massimo. Uno sgabello chiede da 11 a 36: a 23,5 la probabilità
 Una riuscita è eccezionale tanto spesso quanto la sua probabilità meno sei decimi: al massimo di una ricetta quattro volte su dieci, mai
 con una probabilità di sei decimi o meno. Un oggetto che si unisce a una pila che porti non è mai eccezionale. Leggi "You create an exceptional quality item." e il suo tooltip dice exceptional.
 Creato con 100 di Carpentry, un oggetto eccezionale porta anche il tuo marchio: "You create an exceptional quality item and affix
-your maker's mark.", e il suo tooltip dice crafted by con il tuo nome.
+your maker's mark.", e il suo tooltip dice crafted by con il tuo nome. Un oggetto eccezionale è non comune, uno con il marchio raro,
+e un bastone eccezionale colpisce più forte in combattimento, come dice il [fabbro](blacksmithing.md).
 
 ## Gli attrezzi si consumano
 
@@ -104,7 +105,7 @@ sono esclusi. Lo è anche la ricetta delle assi, che l'ascia sega già.
 ## Root esistenti
 
 `mgctl init` non sostituisce mai un file che potresti aver modificato. Copia dalla distribuzione `data/crafts/`,
-`scripts/common/crafting.lua`, `scripts/common/woods.lua`, `scripts/items/carpentry_tool.lua`,
+`scripts/common/crafting.lua`, `scripts/common/woods.lua`, `scripts/common/smithy.lua` (lo legge il motore), `scripts/items/carpentry_tool.lua`,
 `scripts/items/axe.lua` (ora legge `woods.lua`), `templates/gumps/craft_menu.xml`, `scripts/gumps/craft_menu.lua`,
 e `templates/items/skills/tools/carpenty.toml`, oppure dai `script_id = "carpentry_tool"` ai tuoi attrezzi da falegname.
 

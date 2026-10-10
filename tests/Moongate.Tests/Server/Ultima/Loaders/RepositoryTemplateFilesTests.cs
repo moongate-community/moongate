@@ -639,7 +639,8 @@ public sealed class RepositoryTemplateFilesTests
         var data = new StubDataLoaderService().With(items);
         var lists = (await new CraftResourcesLoader(directories, data).LoadDataAsync()).Entities.ToArray();
         data.With(lists);
-        var craft = Assert.Single((await new CraftsLoader(directories, data).LoadDataAsync()).Entities);
+        var crafts = (await new CraftsLoader(directories, data).LoadDataAsync()).Entities.ToDictionary(craft => craft.Id);
+        var craft = crafts["carpentry"];
 
         Assert.Equal(("carpentry", "carpentry", 0x023D), (craft.Id, craft.Skill, craft.Sound));
         Assert.Equal(
@@ -652,6 +653,20 @@ public sealed class RepositoryTemplateFilesTests
         var byId = items.ToDictionary(item => item.Id);
         Assert.All(new[] { "0x1034_saw", "0x1028_dovetail_saw", "0x10e5_froe" }, id => Assert.Equal("carpentry_tool", byId[id].ScriptId));
         Assert.NotEqual("carpentry_tool", byId["0x102e_nails"].ScriptId);
+
+        // Blacksmithing: every era's groups, 66 recipes of iron; the hammers, sledges and tongs carry its tool script.
+        var smithing = crafts["blacksmithing"];
+        Assert.Equal(("blacksmithy", 0x002A), (smithing.Skill, smithing.Sound));
+        Assert.Equal(
+            ["Ringmail", "Chainmail", "Platemail", "Helmets", "Shields", "Bladed", "AOS Weapons", "Axes", "Polearms", "Bashing", "SE Weapons"],
+            smithing.Group.Select(group => group.Name)
+        );
+        Assert.Equal(66, smithing.Group.Sum(group => group.Recipe.Count));
+        Assert.All(
+            new[] { "0x13e3", "0x13e4", "0x0fb4", "0x0fb5", "0x0fbb_tongs", "0x0fbc_tongs" },
+            id => Assert.Equal("smithing_tool", byId[id].ScriptId)
+        );
+        Assert.NotEqual("smithing_tool", byId["0x0faf_anvil"].ScriptId);
     }
 
     [Fact]

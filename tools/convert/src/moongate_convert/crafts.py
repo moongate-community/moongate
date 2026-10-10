@@ -11,11 +11,14 @@ from typing import TextIO
 from . import dfn, tomlout
 from .textutil import read_lines, trim
 
-# The crafts this converter knows: the UOX3 file name -> (the name shown, the skill, the root submenu of its menus).
-CRAFTS: dict[str, tuple[str, str, int]] = {"carpentry": ("Carpentry", "carpentry", 19)}
+# The crafts this converter knows: the UOX3 file name -> (the craft's id, the name shown, the skill, the root submenu).
+CRAFTS: dict[str, tuple[str, str, str, int]] = {
+    "carpentry": ("carpentry", "Carpentry", "carpentry", 19),
+    "smithing": ("blacksmithing", "Blacksmithing", "blacksmithy", 1),
+}
 
-# The sound UOX3 plays for every recipe of a craft.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D}
+# The sound UOX3 plays for every recipe of a craft, by the craft's id.
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A}
 
 # The groups that make deeds, which mean nothing until houses exist.
 SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons"}
@@ -25,12 +28,12 @@ SKIPPED_ITEMS = {"0x1bd7"}
 
 NAME_FIXES = {"Magincian Throne": "Magician Throne"}
 
-# UOX3's skill numbers are the client's skill ids: the names of data/skills.toml.
+# UOX3's skill numbers are the client's skill ids: the names of data/skills.toml (a test checks them).
 SKILL_NAMES: dict[int, str] = {
     0: "alchemy", 1: "anatomy", 2: "animal_lore", 3: "item_identification", 4: "arms_lore", 5: "parrying", 6: "begging",
-    7: "blacksmithing", 8: "bowcraft_fletching", 9: "peacemaking", 10: "camping", 11: "carpentry", 12: "cartography", 13: "cooking",
+    7: "blacksmithy", 8: "bowcraft_fletching", 9: "peacemaking", 10: "camping", 11: "carpentry", 12: "cartography", 13: "cooking",
     14: "detecting_hidden", 15: "discordance", 16: "evaluating_intelligence", 17: "healing", 18: "fishing", 19: "forensic_evaluation",
-    20: "herding", 21: "hiding", 22: "provocation", 23: "inscription", 24: "lockpicking", 25: "magery", 26: "magic_resistance",
+    20: "herding", 21: "hiding", 22: "provocation", 23: "inscription", 24: "lockpicking", 25: "magery", 26: "resisting_spells",
     27: "tactics", 28: "snooping", 29: "musicianship", 30: "poisoning", 31: "archery", 32: "spirit_speak", 33: "stealing",
     34: "tailoring", 35: "animal_taming", 36: "taste_identification", 37: "tinkering", 38: "tracking", 39: "veterinary",
     40: "swordsmanship", 41: "mace_fighting", 42: "fencing", 43: "wrestling", 44: "lumberjacking", 45: "mining", 46: "meditation",
@@ -58,8 +61,12 @@ def run(source: Path, items: Path, destination: Path, output: TextIO, error: Tex
 
     try:
         templates = _template_ids(items)
-        lists = _resource_lists(source / RESOURCES_FILE, templates, error)
-        crafts = {name: _craft(source / f"{name}.dfn", name, lists, templates) for name in CRAFTS if (source / f"{name}.dfn").is_file()}
+        lists, list_of_graphic = _resource_lists(source / RESOURCES_FILE, templates, error)
+        crafts = {
+            CRAFTS[name][0]: _craft(source / f"{name}.dfn", name, lists, list_of_graphic, templates)
+            for name in CRAFTS
+            if (source / f"{name}.dfn").is_file()
+        }
     except (ConversionError, OSError, tomllib.TOMLDecodeError) as exception:
         error.write(f"Crafts conversion failed: {exception}\n")
 
@@ -95,8 +102,10 @@ def _resolve(value: str, templates: list[str]) -> list[str]:
     return sorted(template for template in templates if template.startswith(key + "_"))
 
 
-def _resource_lists(path: Path, templates: list[str], error: TextIO) -> dict[str, list[str]]:
+def _resource_lists(path: Path, templates: list[str], error: TextIO) -> tuple[dict[str, list[str]], dict[int, str]]:
+    """The lists by name, and the first list each graphic belongs to."""
     lists: dict[str, list[str]] = {}
+    list_of_graphic: dict[int, str] = {}
 
     for block in dfn.parse(read_lines(path)):
         parts = block.header.split()
@@ -114,6 +123,8 @@ def _resource_lists(path: Path, templates: list[str], error: TextIO) -> dict[str
             if graphic is None or (name == "wood" and graphic in NOT_WOOD):
                 continue
 
+            list_of_graphic.setdefault(graphic, name)
+
             found.extend(template for template in _resolve(f"0x{graphic:04x}", templates) if template not in found)
 
         if found:
@@ -121,7 +132,7 @@ def _resource_lists(path: Path, templates: list[str], error: TextIO) -> dict[str
         else:
             error.write(f"The resource list {name} has no template: left out\n")
 
-    return lists
+    return lists, {graphic: name for graphic, name in list_of_graphic.items() if name in lists}
 
 
 def _blocks(path: Path) -> dict[str, dfn.DfnBlock]:
@@ -140,32 +151,53 @@ def _values(block: dfn.DfnBlock, tag: str) -> list[str]:
     return values
 
 
-def _craft(path: Path, name: str, lists: dict[str, list[str]], templates: list[str]) -> dict:
-    title, skill, root = CRAFTS[name]
+def _craft(path: Path, name: str, lists: dict[str, list[str]], list_of_graphic: dict[int, str], templates: list[str]) -> dict:
+    craft_id, title, skill, root = CRAFTS[name]
     blocks = _blocks(path)
     groups: list[dict] = []
+    seen = {str(root)}
 
-    for menu in _values(blocks[f"SUBMENU {root}"], "MENU"):
-        entry = blocks[f"MENUENTRY {menu}"]
-        group_name = entry.fields["NAME"]
+    # UOX3 nests its menus (Blacksmithing, Armor, Ringmail): a menu that holds recipes is a group, in the order they are
+    # met; a menu already walked, such as the "Previous Menu" links, is not followed again.
+    def walk(menu: str) -> None:
+        for entry_number in _values(blocks[f"SUBMENU {menu}"], "MENU"):
+            entry = blocks.get(f"MENUENTRY {entry_number}")
 
-        if group_name.lower() in SKIPPED_GROUPS:
-            continue
+            # A link back to a menu with no entry of its own leads nowhere new.
+            if entry is None:
+                continue
 
-        recipes = []
+            submenu = entry.fields["SUBMENU"]
+            group_name = entry.fields["NAME"]
 
-        for number in _values(blocks[f"SUBMENU {entry.fields['SUBMENU']}"], "ITEM"):
-            recipe = _recipe(blocks[f"ITEM {number}"], skill, lists, templates)
+            if submenu in seen or group_name.lower() in SKIPPED_GROUPS:
+                continue
 
-            if recipe is not None:
-                recipes.append(recipe)
+            seen.add(submenu)
+            recipes = []
 
-        groups.append({"name": group_name, "recipes": recipes})
+            for number in _values(blocks[f"SUBMENU {submenu}"], "ITEM"):
+                recipe = _recipe(blocks[f"ITEM {number}"], skill, lists, list_of_graphic, templates)
 
-    return {"name": title, "skill": skill, "sound": SOUNDS[name], "groups": groups}
+                if recipe is not None:
+                    recipes.append(recipe)
+
+            if recipes:
+                groups.append({"name": group_name, "recipes": recipes})
+
+            walk(submenu)
+
+    try:
+        walk(str(root))
+    except KeyError as missing:
+        raise ConversionError(f"{path.name} names {missing.args[0]}, which it does not have") from missing
+
+    return {"name": title, "skill": skill, "sound": SOUNDS[craft_id], "groups": groups}
 
 
-def _recipe(block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], templates: list[str]) -> dict | None:
+def _recipe(
+    block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], list_of_graphic: dict[int, str], templates: list[str]
+) -> dict | None:
     name = block.fields.get("NAME", block.header)
     added = block.fields["ADDITEM"].split(",")[0].strip()
 
@@ -203,6 +235,9 @@ def _recipe(block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], 
                 raise ConversionError(f"the recipe {name} names the resource list {what}, which has no template")
         elif graphic in NOT_WOOD:
             resource = "wood"
+        elif graphic in list_of_graphic:
+            # UOX3 names some ingots and cloth by their graphic: they are the list, so the player reads which one lacks.
+            resource = list_of_graphic[graphic]
         else:
             found = _resolve(what, templates)
 
@@ -213,7 +248,10 @@ def _recipe(block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], 
 
         resources.append((resource, int(amount)))
 
-    return {"name": NAME_FIXES.get(name, name), "item": item[0], "skills": skills, "resources": resources}
+    shown = NAME_FIXES.get(name, name)
+
+    # The gump shows it as a title: UOX3 writes some in lower case.
+    return {"name": shown[:1].upper() + shown[1:], "item": item[0], "skills": skills, "resources": resources}
 
 
 def _write_lists(lists: dict[str, list[str]]) -> str:

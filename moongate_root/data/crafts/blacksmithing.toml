@@ -1,0 +1,587 @@
+# ==============================================================================
+# Moongate - data/crafts/blacksmithing.toml
+#
+# What it is for:
+#   The recipes of blacksmithing, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+# ==============================================================================
+
+id = "blacksmithing"
+name = "Blacksmithing"
+skill = "blacksmithy"
+sound = 0x002A
+
+[[group]]
+name = "Ringmail"
+
+[[group.recipe]]
+name = "Ringmail gloves"
+item = "0x13f2"
+skill_min = 12.0
+skill_max = 62.0
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Ringmail sleeves"
+item = "0x13ee"
+skill_min = 16.9
+skill_max = 67.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "Ringmail leggings"
+item = "0x13f0"
+skill_min = 19.4
+skill_max = 69.4
+resources = [{ resource = "metal", amount = 16 }]
+skills = []
+
+[[group.recipe]]
+name = "Ringmail tunic"
+item = "0x13ec"
+skill_min = 21.9
+skill_max = 72.0
+resources = [{ resource = "metal", amount = 18 }]
+skills = []
+
+[[group]]
+name = "Chainmail"
+
+[[group.recipe]]
+name = "Chainmail coif"
+item = "0x13bb"
+skill_min = 14.5
+skill_max = 65.0
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Chainmail leggings"
+item = "0x13be"
+skill_min = 36.7
+skill_max = 87.0
+resources = [{ resource = "metal", amount = 18 }]
+skills = []
+
+[[group.recipe]]
+name = "Chainmail tunic"
+item = "0x13bf"
+skill_min = 39.1
+skill_max = 90.0
+resources = [{ resource = "metal", amount = 20 }]
+skills = []
+
+[[group]]
+name = "Platemail"
+
+[[group.recipe]]
+name = "Platemail gorget"
+item = "0x1413"
+skill_min = 56.4
+skill_max = 106.4
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Platemail gloves"
+item = "0x1414"
+skill_min = 58.9
+skill_max = 108.7
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Platemail arms"
+item = "0x1410"
+skill_min = 66.3
+skill_max = 116.3
+resources = [{ resource = "metal", amount = 18 }]
+skills = []
+
+[[group.recipe]]
+name = "Platemail legs"
+item = "0x1411"
+skill_min = 68.8
+skill_max = 118.8
+resources = [{ resource = "metal", amount = 20 }]
+skills = []
+
+[[group.recipe]]
+name = "Platemail"
+item = "0x1415"
+skill_min = 75.0
+skill_max = 125.0
+resources = [{ resource = "metal", amount = 25 }]
+skills = []
+
+[[group.recipe]]
+name = "Plate armor"
+item = "0x1c04"
+skill_min = 44.1
+skill_max = 94.0
+resources = [{ resource = "metal", amount = 20 }]
+skills = []
+
+[[group]]
+name = "Helmets"
+
+[[group.recipe]]
+name = "Helmet"
+item = "0x140a"
+skill_min = 37.9
+skill_max = 88.0
+resources = [{ resource = "metal", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Bascinet"
+item = "0x140c"
+skill_min = 8.3
+skill_max = 58.0
+resources = [{ resource = "metal", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Norse helm"
+item = "0x140e"
+skill_min = 37.9
+skill_max = 88.0
+resources = [{ resource = "metal", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Close helm"
+item = "0x1408"
+skill_min = 37.9
+skill_max = 88.0
+resources = [{ resource = "metal", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Plate helm"
+item = "0x1419"
+skill_min = 62.6
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 15 }]
+skills = []
+
+[[group]]
+name = "Shields"
+
+[[group.recipe]]
+name = "Buckler"
+item = "0x1b73"
+skill_min = 0.0
+skill_max = 10.0
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Bronze shield"
+item = "0x1b72"
+skill_min = 0.0
+skill_max = 15.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Metal shield"
+item = "0x1b7b"
+skill_min = 0.0
+skill_max = 20.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "Kite shield"
+item = "0x1b78"
+skill_min = 0.0
+skill_max = 25.0
+resources = [{ resource = "metal", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Metal kite shield"
+item = "0x1b74"
+skill_min = 4.6
+skill_max = 35.0
+resources = [{ resource = "metal", amount = 16 }]
+skills = []
+
+[[group.recipe]]
+name = "Heater shield"
+item = "0x1b76"
+skill_min = 24.3
+skill_max = 75.0
+resources = [{ resource = "metal", amount = 18 }]
+skills = []
+
+[[group]]
+name = "Bladed"
+
+[[group.recipe]]
+name = "Dagger"
+item = "0x0f51"
+skill_min = 0.0
+skill_max = 50.0
+resources = [{ resource = "metal", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Cutlass"
+item = "0x1441"
+skill_min = 24.3
+skill_max = 74.0
+resources = [{ resource = "metal", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Katana"
+item = "0x13ff"
+skill_min = 44.1
+skill_max = 94.0
+resources = [{ resource = "metal", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Kryss"
+item = "0x1401"
+skill_min = 36.7
+skill_max = 87.0
+resources = [{ resource = "metal", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Scimitar"
+item = "0x13b6"
+skill_min = 31.7
+skill_max = 82.0
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Broadsword"
+item = "0x0f5e"
+skill_min = 35.4
+skill_max = 85.0
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Longsword"
+item = "0x0f61"
+skill_min = 28.0
+skill_max = 78.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Viking sword"
+item = "0x13b9"
+skill_min = 24.3
+skill_max = 75.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group]]
+name = "AOS Weapons"
+
+[[group.recipe]]
+name = "Scythe"
+item = "0x26c4"
+skill_min = 39.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "Bone harvester"
+item = "0x26c5"
+skill_min = 33.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Scepter"
+item = "0x26c6"
+skill_min = 21.4
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Bladed staff"
+item = "0x26c7"
+skill_min = 40.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Pike"
+item = "0x26c8"
+skill_min = 47.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Double bladed staff"
+item = "0x26c9"
+skill_min = 45.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 16 }]
+skills = []
+
+[[group.recipe]]
+name = "Lance"
+item = "0x26ca"
+skill_min = 48.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 20 }]
+skills = []
+
+[[group.recipe]]
+name = "Crescent blade"
+item = "0x26cb"
+skill_min = 45.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group]]
+name = "Axes"
+
+[[group.recipe]]
+name = "Battle axe"
+item = "0x0f47"
+skill_min = 30.5
+skill_max = 80.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "Axe"
+item = "0x0f49"
+skill_min = 34.2
+skill_max = 84.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "Executioner's axe"
+item = "0x0f45"
+skill_min = 34.2
+skill_max = 84.0
+resources = [{ resource = "metal", amount = 16 }]
+skills = []
+
+[[group.recipe]]
+name = "Two handed axe"
+item = "0x1443"
+skill_min = 33.0
+skill_max = 83.0
+resources = [{ resource = "metal", amount = 16 }]
+skills = []
+
+[[group.recipe]]
+name = "Double axe"
+item = "0x0f4b"
+skill_min = 29.3
+skill_max = 80.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Large battle axe"
+item = "0x13fb"
+skill_min = 28.0
+skill_max = 78.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "War axe"
+item = "0x13b0"
+skill_min = 39.1
+skill_max = 89.0
+resources = [{ resource = "metal", amount = 16 }]
+skills = []
+
+[[group]]
+name = "Polearms"
+
+[[group.recipe]]
+name = "Short spear"
+item = "0x1403"
+skill_min = 45.3
+skill_max = 95.0
+resources = [{ resource = "metal", amount = 6 }]
+skills = []
+
+[[group.recipe]]
+name = "Spear"
+item = "0x0f62"
+skill_min = 49.0
+skill_max = 99.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "War fork"
+item = "0x1405"
+skill_min = 37.9
+skill_max = 88.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Bardiche"
+item = "0x0f4d"
+skill_min = 45.3
+skill_max = 95.0
+resources = [{ resource = "metal", amount = 18 }]
+skills = []
+
+[[group.recipe]]
+name = "Halberd"
+item = "0x143f"
+skill_min = 49.0
+skill_max = 99.0
+resources = [{ resource = "metal", amount = 20 }]
+skills = []
+
+[[group]]
+name = "Bashing"
+
+[[group.recipe]]
+name = "Mace"
+item = "0x0f5c"
+skill_min = 14.5
+skill_max = 64.0
+resources = [{ resource = "metal", amount = 6 }]
+skills = []
+
+[[group.recipe]]
+name = "Maul"
+item = "0x143b"
+skill_min = 19.4
+skill_max = 70.0
+resources = [{ resource = "metal", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "War mace"
+item = "0x1407"
+skill_min = 28.0
+skill_max = 78.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "War hammer"
+item = "0x1439"
+skill_min = 34.2
+skill_max = 84.0
+resources = [{ resource = "metal", amount = 16 }]
+skills = []
+
+[[group.recipe]]
+name = "Hammer pick"
+item = "0x143d"
+skill_min = 25.6
+skill_max = 76.0
+resources = [{ resource = "metal", amount = 18 }]
+skills = []
+
+[[group]]
+name = "SE Weapons"
+
+[[group.recipe]]
+name = "No-dachi"
+item = "0x27ed"
+skill_min = 75.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 18 }]
+skills = []
+
+[[group.recipe]]
+name = "Tessen"
+item = "0x27ee"
+skill_min = 85.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 16 }, { resource = "cloth", amount = 10 }]
+skills = [{ skill = "tailoring", min = 50.0, max = 112.0 }]
+
+[[group.recipe]]
+name = "Wakizashi"
+item = "0x27ef"
+skill_min = 50.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Tetsubo"
+item = "0x27f1"
+skill_min = 75.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Lajatang"
+item = "0x27f2"
+skill_min = 80.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 25 }]
+skills = []
+
+[[group.recipe]]
+name = "Daisho"
+item = "0x27f4"
+skill_min = 60.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Tekagi"
+item = "0x27f6"
+skill_min = 55.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Kama"
+item = "0x27f8"
+skill_min = 40.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "Sai"
+item = "0x27fa"
+skill_min = 50.0
+skill_max = 112.0
+resources = [{ resource = "metal", amount = 12 }]
+skills = []

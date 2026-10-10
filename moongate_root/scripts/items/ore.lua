@@ -24,6 +24,8 @@
 --   on_use(serial, user)   the player user double clicks the pile serial
 -- ==============================================================================
 
+local smithy = require("common.smithy")
+
 ore = {}
 
 -- How far the forge may be, in tiles.
@@ -49,19 +51,8 @@ local TOO_FAR = 500446        -- That is too far away.
 local NOT_A_FORGE = "That is not a forge."
 local NO_ROOM = "You have no room in your backpack for the ingots: the metal is lost."
 
--- The graphics of the forges, alone or as a range.
-local FORGES = {
-    { 0x0FB1, 0x0FB1 }, { 0x197A, 0x19A9 }, { 0x2DD8, 0x2DD8 },
-}
-
 local function is_forge(graphic)
-    for _, range in ipairs(FORGES) do
-        if graphic >= range[1] and graphic <= range[2] then
-            return true
-        end
-    end
-
-    return false
+    return smithy.is_forge(graphic)
 end
 
 -- The most a stack holds: more ingots than that are given as several stacks.

@@ -1,9 +1,11 @@
-<!-- translation: {"sourceHash":"c32756e7c1c8991a880e8bb932d5cb7fe17208c962cfedc59d5295ab28d576d4","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"b07a773c61ac9bc5bf67b118bacf7c41185f0ae9accebc62424ee1347400087f","title":"Mestieri"} -->
 
 # Mestieri
 
-`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`), e
-`resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole.
+`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml` e `blacksmithing.toml`), e
+`resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole e
+[Fabbro](../blacksmithing.md). Ciò a cui un mestiere deve stare vicino, come l'incudine e la forgia del fabbro, non è un dato:
+è la tabella `NEEDS` di `scripts/common/crafting.lua`.
 
 ## Un mestiere
 
@@ -62,7 +64,7 @@ templates = ["0x1bd7_board", "0x1bda_board"]
 Il server si ferma all'avvio, indicando il file, per: un id che non è un identificatore in minuscolo o è usato due volte, un'abilità
 sconosciuta, un gruppo o una ricetta senza nome, un oggetto o materiale che non è né un template di oggetto né un elenco, una
 quantità sotto 1, una ricetta che non richiede nulla, limiti di abilità fuori da 0 a 150 o il minimo sopra il massimo, oppure un elenco
-senza template o che ne nomina uno inesistente. Senza la cartella non si può creare nulla.
+senza template o che ne nomina uno inesistente, un mestiere senza nome, senza `[[group]]` o con un gruppo senza ricette. Senza la cartella non si può creare nulla.
 
 ## Da dove vengono i file
 
@@ -74,4 +76,5 @@ uv run --project tools/convert moongate-convert uox-crafts --source <UOX3>/data/
 ```
 
 Il convertitore esclude i gruppi che creano deed e la ricetta delle assi, trasforma i decimi di abilità di UOX3 in
-punti, e conta come legno solo le assi.
+punti, e conta come legno solo le assi. UOX3 annida i suoi menu (Blacksmithing, Armor, Ringmail): ogni menu che contiene
+ricette diventa un gruppo, nell'ordine in cui i menu si incontrano. Il nome di una ricetta inizia con la maiuscola.

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0e0a282e83c4ec8f6c283cca64f7d34a419ecbebafbc443c1fb7f129ec32deef","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"ef5478d9802908939ab7990ef240fe43b2460b8c51795723e073d934cbb74ac9","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -229,6 +229,15 @@ crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), c
 (passando il colore del tipo di legno a `item.give`, oppure `item.set_hue` ai piedi). Una riuscita può essere eccezionale (`crafting.roll`, le proprietà `quality`, `crafter_id`, `crafter_name`), e ogni tentativo la cui abilità viene provata toglie un uso all'attrezzo (la proprietà `uses_remaining`, estratta tra 25 e 75, `item.delete` all'ultimo). Chi sta creando, il gruppo e il legno scelti da ogni giocatore e l'ultima ricetta iniziata da ciascuno (`crafting.make_last`) sono tenuti in memoria.
 `scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` sugli attrezzi da falegname) apre il gump di creazione
 dallo zaino; il gump è `templates/gumps/craft_menu.xml` con `scripts/gumps/craft_menu.lua`, uno per tutti i mestieri.
+
+## smithing_tool.lua e common/smithy.lua
+
+`scripts/items/smithing_tool.lua` è lo script dei martelli da fabbro, delle mazze e delle tenaglie
+(`script_id = "smithing_tool"`): apre il gump di creazione del fabbro (vedi [Fabbro](../blacksmithing.md)),
+con le regole di `crafting.lua`. `scripts/common/smithy.lua` contiene le grafiche delle incudini e delle forge e
+le trova entro una distanza da un giocatore, tra gli elementi fissi della mappa (`world.statics`) e gli oggetti a terra
+(`world.items_in_range`, `item.item_id`); la tabella `NEEDS` del motore chiede al fabbro un'incudine e una forgia entro
+2 caselle, e `ore.lua` legge le sue forge da lì.
 
 ## fishing_pole.lua
 

@@ -80,6 +80,44 @@ public sealed class CombatGearServiceTests
         );
     }
 
+    [Theory]
+    [InlineData(2L, ItemQualityType.Exceptional)]
+    [InlineData(0L, ItemQualityType.Low)]
+    [InlineData(null, ItemQualityType.Regular)]
+    public void WeaponOf_IsOfTheQualityOfTheItem(long? quality, ItemQualityType expected)
+    {
+        var sword = Wear("longsword");
+
+        if (quality is { } value)
+        {
+            sword.SetProp("quality", value);
+        }
+
+        Assert.Equal(expected, _gear.WeaponOf(_aria)!.Quality);
+    }
+
+    [Fact]
+    public void ArmorAt_AnExceptionalPiece_GivesEightMore_ALowOneEightLess()
+    {
+        Wear("plate_tunic").SetProp("quality", 2L);
+        Wear("plate_helm").SetProp("quality", 0L);
+
+        Assert.Equal(38, _gear.ArmorAt(_aria, ArmorZoneType.Chest));
+        Assert.Equal(32, _gear.ArmorAt(_aria, ArmorZoneType.Head));
+    }
+
+    [Fact]
+    public void WithGear_AnExceptionalWeapon_ShowsItsDamageAFifthHigher()
+    {
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 1000 });
+        Wear("longsword").SetProp("quality", 2L);
+
+        var status = _gear.WithGear(new MobileStatusInfo { Serial = Aria, Name = "Aria" }, _aria);
+
+        // 5 and 33 with tactics 100 (+50%), then strength 100 (+20%) and quality (+20%): 10 and 69
+        Assert.Equal((10, 69), (status.DamageMin, status.DamageMax));
+    }
+
     [Fact]
     public void WeaponOf_NothingInTheHands_IsNull()
     {
@@ -300,11 +338,13 @@ public sealed class CombatGearServiceTests
         Assert.Equal((0, 0, 7), (status.DamageMin, status.DamageMax, status.PhysicalResistance));
     }
 
-    private void Wear(string template, Serial? wearer = null)
+    private ItemEntity Wear(string template, Serial? wearer = null)
     {
         var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = 1, Amount = 1 };
         item.Equip(wearer ?? Aria, LayerOf(template));
         _items.Add([item]);
+
+        return item;
     }
 
     private static LayerType LayerOf(string template)

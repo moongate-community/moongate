@@ -632,7 +632,8 @@ public sealed class CombatService : ICombatService
             attacker.Strength,
             Points(attacker, SkillType.Anatomy),
             // One who fells trees hits harder with an axe; the skill is not tried, it grows on trees.
-            weapon?.Type == WeaponType.Axe ? Points(attacker, SkillType.Lumberjacking) : 0
+            weapon?.Type == WeaponType.Axe ? Points(attacker, SkillType.Lumberjacking) : 0,
+            weapon?.Quality ?? ItemQualityType.Regular
         );
         // As ModernUO's classic: a player hit, or a hit by an NPC, does half; a player hitting an NPC does all.
         var halved = !target.IsNpc || attacker.IsNpc;

@@ -80,7 +80,8 @@ A root made before mining existed needs three things. Run `mgctl init`, which ad
 resource `ore` to your `data/harvest.toml`, and the scripts to the templates: `script_id = "pickaxe"` to the
 pickaxes and the shovels of `templates/items/skills/tools/mining.toml`, `script_id = "ore"` to the four piles of
 iron ore of `templates/items/skills/resources/mining.toml`. Or copy the three files from the distribution:
-`mgctl init` never replaces a file you may have changed.
+`mgctl init` never replaces a file you may have changed. `scripts/items/ore.lua` now reads the forges from
+`scripts/common/smithy.lua`: copy it with it.
 
 ## Not yet
 

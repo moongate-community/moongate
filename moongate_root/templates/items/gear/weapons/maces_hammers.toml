@@ -28,6 +28,7 @@ base_id = "base_item"
 item_id = 5091
 name = "smith's hammer"
 rarity = "common"
+script_id = "smithing_tool"
 movable = true
 layer = "one_handed"
 weapon_type = "mace"
@@ -44,6 +45,7 @@ id = "0x13e4"
 base_id = "0x13e3_lbr"
 item_id = 5092
 rarity = "common"
+script_id = "smithing_tool"
 weapon_type = "mace"
 
 [[item]]
@@ -76,6 +78,7 @@ base_id = "base_item"
 item_id = 4020
 name = "sledge hammer"
 rarity = "common"
+script_id = "smithing_tool"
 movable = true
 layer = "one_handed"
 weapon_type = "mace"
@@ -92,6 +95,7 @@ id = "0x0fb5"
 base_id = "0x0fb4_lbr"
 item_id = 4021
 rarity = "common"
+script_id = "smithing_tool"
 weapon_type = "mace"
 
 [[item]]

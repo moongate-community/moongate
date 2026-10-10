@@ -32,14 +32,20 @@
 --   A tool lasts 25 to 75 uses, drawn the first time it is used (its prop
 --   uses_remaining); every attempt whose skill is tried takes one, and the
 --   last one breaks it. An item that joins a stack the player carries is
---   never exceptional: the stack is not. Make last starts again the last recipe the
+--   never exceptional: the stack is not. An exceptional item is uncommon, a
+--   marked one rare.
+--
+--   A craft may ask to stand near things (the table NEEDS): blacksmithing an
+--   anvil and a forge within 2 tiles, checked when the attempt starts and at
+--   its second stroke. Make last starts again the last recipe the
 --   player started with that craft.
 --
 -- Functions:
 --   crafting.open(user, tool, craft_id, notice)   opens the crafting gump
 --   crafting.make(user, tool, craft_id, group, recipe)   one attempt
 --   crafting.kind(user) / crafting.set_kind(user, id)   the wood picked
---   crafting.group(user) / crafting.set_group(user, index)   the group shown
+--   crafting.group(user, craft_id) / crafting.set_group(user, index, craft_id)   the group shown, by craft
+--   crafting.takes_wood(recipe) / crafting.works_wood(craft)   whether wood is taken
 --   crafting.templates(resource, kind)   the templates that count
 --   crafting.count(user, templates)   how many units the player carries
 --   crafting.chance(user, craft, recipe)   the chance, 0 to 1
@@ -56,6 +62,7 @@
 -- ==============================================================================
 
 local woods = require("common.woods")
+local smithy = require("common.smithy")
 
 local crafting = {}
 
@@ -78,6 +85,8 @@ local EXCEPTIONAL = 1044155   -- You create an exceptional quality item.
 local MARKED = 1044156        -- You create an exceptional quality item and affix your maker's mark.
 local WORN_OUT = 1044038      -- You have worn out your tool!
 local NOTHING_YET = 1044165   -- You haven't made anything yet.
+local NO_METAL = 1044037      -- You do not have sufficient metal to make that.
+local NOT_AT_FORGE = 1044267  -- You must be near an anvil and a forge to smith items.
 
 -- How much better than sure a success must be to be exceptional, and the skill that marks it.
 local EXCEPTIONAL_MARGIN = 0.6
@@ -93,6 +102,8 @@ local NOTICES = {
     [EXCEPTIONAL] = "You create an exceptional quality item.",
     [MARKED] = "You create an exceptional quality item and affix your maker's mark.",
     [NOTHING_YET] = "You haven't made anything yet.",
+    [NO_METAL] = "You do not have sufficient metal to make that.",
+    [NOT_AT_FORGE] = "You must be near an anvil and a forge to smith items.",
     [FAILED] = "You failed to create the item, and some of your materials are lost.",
     [NO_SKILL] = "You don't have the required skills to attempt this item.",
     [NO_WOOD] = "You do not have sufficient wood to make that.",
@@ -101,7 +112,23 @@ local NOTICES = {
     [STRANGE_WOOD] = "You cannot work this strange and unusual wood.",
 }
 
-local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH }
+local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH, metal = NO_METAL }
+
+-- What a craft asks to stand near, by its id: a test of the player, and the client text when it fails.
+local NEEDS = {
+    blacksmithing = { test = smithy.at_anvil_and_forge, missing = NOT_AT_FORGE },
+}
+
+-- The client text of what the player is not near for that craft; nil when nothing is missing.
+local function not_near(user, craft_id)
+    local need = NEEDS[craft_id]
+
+    if need and not need.test(user) then
+        return need.missing
+    end
+
+    return nil
+end
 
 local AT_YOUR_FEET = "Your backpack is full: the item is at your feet."
 local NOT_MADE = "The item could not be made."
@@ -178,12 +205,37 @@ function crafting.set_kind(user, id, craft_skill)
     return true
 end
 
-function crafting.group(user)
-    return groups[user] or 1
+-- The group each player shows, by craft.
+function crafting.group(user, craft_id)
+    return (groups[user] or {})[craft_id or ""] or 1
 end
 
-function crafting.set_group(user, index)
-    groups[user] = index
+function crafting.set_group(user, index, craft_id)
+    groups[user] = groups[user] or {}
+    groups[user][craft_id or ""] = index
+end
+
+function crafting.takes_wood(recipe)
+    for _, resource in ipairs(recipe.resources) do
+        if resource.resource == "wood" then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- Whether any recipe of the craft takes wood: its gump shows the wood picked.
+function crafting.works_wood(craft)
+    for _, group in ipairs(craft.groups) do
+        for _, recipe in ipairs(group.recipes) do
+            if crafting.takes_wood(recipe) then
+                return true
+            end
+        end
+    end
+
+    return false
 end
 
 function crafting.templates(resource, kind)
@@ -323,7 +375,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
         return
     end
 
-    local lacking = missing(user, recipe, kind)
+    local lacking = not_near(user, craft_id) or missing(user, recipe, kind)
 
     if lacking then
         mobile.message_cliloc(user, lacking)
@@ -420,11 +472,13 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
     if not joined and crafting.roll() < chance - EXCEPTIONAL_MARGIN then
         item.set_prop(made, "quality", EXCEPTIONAL_QUALITY)
+        item.set_rarity(made, "uncommon")
         outcome = EXCEPTIONAL
 
         if marks then
             item.set_prop(made, "crafter_id", user)
             item.set_prop(made, "crafter_name", mobile.name(user))
+            item.set_rarity(made, "rare")
             outcome = MARKED
         end
     end
@@ -459,7 +513,8 @@ function crafting.make(user, tool, craft_id, group, index)
         return
     end
 
-    local wood = woods.by_id(kind)
+    -- The wood picked counts only for a recipe that takes wood: a smith forges whatever a carpenter picked.
+    local wood = crafting.takes_wood(recipe) and woods.by_id(kind)
 
     if wood and points(user, craft.skill) < wood.carpentry then
         mobile.message_cliloc(user, STRANGE_WOOD)
@@ -468,7 +523,7 @@ function crafting.make(user, tool, craft_id, group, index)
         return
     end
 
-    local lacking = missing(user, recipe, kind)
+    local lacking = not_near(user, craft_id) or missing(user, recipe, kind)
 
     if lacking then
         mobile.message_cliloc(user, lacking)

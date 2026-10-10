@@ -124,3 +124,25 @@ A splash on the water, heard by the players around the place:
 ```lua
 world.play_sound(MapType.Trammel, 1496, 1640, -5, 0x364)
 ```
+
+## statics
+
+Whether a player stands within 2 tiles of an anvil that is part of the map:
+
+```lua
+local function near_an_anvil(user)
+    local here = mobile.location(user)
+
+    if not here then
+        return false
+    end
+
+    for _, static in ipairs(world.statics(here.map, here.x, here.y, 2)) do
+        if static.graphic == 0x0FAF or static.graphic == 0x0FB0 then
+            return true
+        end
+    end
+
+    return false
+end
+```

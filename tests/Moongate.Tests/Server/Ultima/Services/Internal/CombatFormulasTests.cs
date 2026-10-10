@@ -1,5 +1,6 @@
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Combat;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Tests.TestSupport.Randomness;
 
 namespace Moongate.Tests.Server.Ultima.Services.Internal;
@@ -37,6 +38,15 @@ public sealed class CombatFormulasTests
     public void HitChance_NegativeSkillsAreKeptAboveTheirFloor()
     {
         Assert.Equal(0.1 / (0.1 * 2), CombatFormulas.HitChance(-100, -100), 6);
+    }
+
+    [Theory]
+    [InlineData(ItemQualityType.Exceptional, 12)]
+    [InlineData(ItemQualityType.Low, 8)]
+    [InlineData(ItemQualityType.Regular, 10)]
+    public void ScaleDamage_OfAWeaponOfAQuality_IsAFifthHigherOrLower(ItemQualityType quality, int expected)
+    {
+        Assert.Equal(expected, CombatFormulas.ScaleDamage(10, 50, 0, 0, quality: quality));
     }
 
     [Theory]
