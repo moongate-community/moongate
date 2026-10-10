@@ -151,7 +151,7 @@ See all of them in [Commands](commands.md).
   tools such as axe, pickaxe and fishing pole, ore and forge, ethereal mounts, treasure chests, training dummies),
   11 mobile scripts (`wander.lua`, `monster.lua`, `guard.lua`, `banker.lua`, `shopkeeper.lua`, `healer.lua`, `stablemaster.lua`,
   animals and the cats Orione and Vega), 9 skill scripts, 13 gump scripts, 14 shared helpers in `common/`, the Halloween and
-  Christmas events. `definitions.lua` is generated at startup and not shipped. `potion.lua` only consumes the item.
+  Christmas events. `definitions.lua` is generated at startup and not shipped. `potion.lua` drinks heal, refresh, strength, agility and night sight potions.
 - Hooks scripts can implement include `on_use`, `on_speech`, `on_think`, `on_spawn`, `on_death`, `on_mobile_killed`,
   `on_mobile_in_range`, `on_drop`, `on_equip`, `on_login` and `on_timer`.
 - Not yet: timers on mobiles, and events for attacks, hits and damage.

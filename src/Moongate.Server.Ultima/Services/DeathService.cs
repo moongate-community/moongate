@@ -212,7 +212,7 @@ public sealed class DeathService : IDeathService
         _state.SetDead(player, false);
         _state.SetStats(
             player,
-            new MobileStatsChange { Hits = Math.Min(ResurrectedHits, player.HitsMax), Stamina = player.StaminaMax, Mana = 0 }
+            new MobileStatsChange { Hits = Math.Min(ResurrectedHits, player.EffectiveHitsMax), Stamina = player.EffectiveStaminaMax, Mana = 0 }
         );
 
         foreach (var shroud in _items.GetWorn(player.Id).Where(item => item.TemplateId == ShroudTemplate).ToArray())
@@ -463,7 +463,7 @@ public sealed class DeathService : IDeathService
         // A pet comes back weak, as a player does, and is one follower more for its owner.
         if (raising.Props?.ContainsKey(MountProps.Owner) == true)
         {
-            _state?.SetStats(npc, new MobileStatsChange { Hits = Math.Min(ResurrectedHits, npc.HitsMax), Mana = 0 });
+            _state?.SetStats(npc, new MobileStatsChange { Hits = Math.Min(ResurrectedHits, npc.EffectiveHitsMax), Mana = 0 });
 
             if (npc.GetProp(MountProps.Owner, 0L) is > 0 and var master && master <= uint.MaxValue)
             {

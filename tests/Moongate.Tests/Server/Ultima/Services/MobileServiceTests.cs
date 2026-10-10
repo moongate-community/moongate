@@ -411,6 +411,18 @@ public sealed class MobileServiceTests
     }
 
     [Fact]
+    public void GetStatus_ShowsTheStatsAndMaximumsWithTheirBonuses()
+    {
+        var aria = Aria();
+        aria.StrengthBonus = 10;
+        aria.DexterityBonus = 20;
+
+        var status = new MobileService(new StubMovementService(), TestSectors.Create()).GetStatus(aria);
+
+        Assert.Equal((72, 71, 40, 42), (status.Strength, status.HitsMax, status.Dexterity, status.StaminaMax));
+    }
+
+    [Fact]
     public void GetStatus_ShowsTheDamageOfThePlayersFists_WithItsTacticsStrengthAndAnatomy()
     {
         var aria = Aria();

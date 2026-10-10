@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"eedaab906a944b94f2b53230d586ba4d226917a08b33ddc5f544ab49e4a5bfe1","title":"Script degli oggetti"} -->
+<!-- translation: {"sourceHash":"2f9e9f5c73c24da38a956bb6414c3381ec56e65ccdede2d40a31951d3e094666","title":"Script degli oggetti"} -->
 
 # Script degli oggetti
 
@@ -21,6 +21,8 @@ script_id = "potion"
 | Funzione | Quando |
 | --- | --- |
 | `on_use(serial, user)` | Un giocatore fa doppio clic sull'oggetto, trasportato (indossato o nei propri contenitori) oppure a terra entro 2 caselle (il `use_range` del template) e visibile; più lontano, il giocatore legge "È troppo lontano." e non viene eseguito nulla. Gli oggetti dentro un contenitore a terra non possono ancora essere usati: il giocatore legge "È troppo lontano.". Un `on_use` assente, oppure che genera un errore, lascia proseguire l'azione predefinita. Restituisci `true` per interrompere l'azione predefinita, come l'apertura di un contenitore; non restituire nulla per lasciarla proseguire. Un handler che chiama `wait` conta come gestito; dopo l'attesa l'oggetto potrebbe essersi spostato, quindi controllalo di nuovo, per esempio `item.owner(serial) == user`. |
+| `on_ghost_use(serial, user)` | Un giocatore morto fa doppio clic sull'oggetto (l'ankh lo usa). Senza di esso il giocatore legge che i morti non possono usarlo. |
+| `on_npc_use(serial, npc)` | Un NPC che cammina verso un luogo trova l'oggetto sulla sua strada e può usarlo; una porta si apre (fino a tre tentativi). Restituisci `true` quando l'ha fatto. |
 | `on_move_over(serial, mobile)` | Un giocatore è entrato nella casella dell'oggetto, a terra all'altezza del giocatore, fino a 14 unità sopra i piedi, oppure sotto di essi e abbastanza alto da raggiungerli (la regola di ModernUO). Viene eseguito dopo che il passo è stato confermato e mostrato ai giocatori vicini; un NPC esegue invece `on_npc_move_over`. Una volta che uno script ha spostato il giocatore fuori dalla casella, gli altri oggetti della casella non vengono eseguiti. Arrivare tramite teletrasporto non lo attiva, quindi due teletrasporti che puntano l'uno all'altro non creano un ciclo. |
 | `on_npc_move_over(serial, npc)` | Un NPC è entrato nella casella dell'oggetto, con la stessa regola sull'altezza. Viene eseguito al turno del game loop successivo al passo, quindi l'NPC potrebbe essersi già spostato: controlla dove si trova |
 | `on_speech(serial, speaker, text, keywords, type)` | Un giocatore ha pronunciato `text` a portata d'orecchio dall'oggetto a terra (i comandi non vengono ascoltati): 15 caselle a voce normale o come emote, 1 casella per un sussurro, 18 per un urlo. `speaker` è il seriale del giocatore; `keywords` sono le parole chiave del parlato individuate dal client, un array di numeri; `type` è il modo in cui è stato detto, come `SpeechType.Whisper`. Ogni oggetto a terra con script nel raggio viene interrogato, dopo gli NPC, quindi uno script controlla il proprio raggio e le parole. Può chiamare `wait`. |
@@ -63,8 +65,8 @@ end
 ```
 
 Lo script agisce sul proprio oggetto con il modulo `item`, passando il suo seriale; `user` è
-il seriale del giocatore. Il file `scripts/items/potion.lua` della distribuzione viene copiato nella directory radice da `mgctl`; nessun
-template lo usa ancora:
+il seriale del giocatore. Uno script di oggetto minimo, come è nato `scripts/items/potion.lua` della distribuzione; quello completo
+è descritto in [Pozioni](../potions.md):
 
 ```lua
 potion = {}

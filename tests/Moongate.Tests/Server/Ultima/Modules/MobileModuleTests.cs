@@ -22,6 +22,11 @@ using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Services.Sessions;
+using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
@@ -39,6 +44,15 @@ public sealed class MobileModuleTests
     private readonly ItemService _items = TestItems.Create();
     private readonly StubMusicService _music = new();
     private readonly RecordingLightService _light = new();
+    private readonly RecordingTimerService _timers = new();
+
+    private readonly ItemTemplateService _templates = new(
+        new StubDataLoaderService().With<ItemTemplate>(
+            new ItemTemplate { Id = "longsword", ItemId = new Serial(0x0F61), WeaponType = WeaponType.Sword },
+            new ItemTemplate { Id = "halberd", ItemId = new Serial(0x143E), WeaponType = WeaponType.PoleArm },
+            new ItemTemplate { Id = "buckler", ItemId = new Serial(0x1B73) }
+        )
+    );
 
     private readonly RegionService _regions = new(
         new StubDataLoaderService().With(
@@ -127,6 +141,77 @@ public sealed class MobileModuleTests
         Assert.Equal([17, 96, 50, 58], result[..4].Select(value => value.Read<int>()));
         Assert.Equal(LuaValue.Nil, result[4]);
     }
+
+    [Fact]
+    public void Stats_CountTheTimedBonuses_AndGiveTheBaseToo()
+    {
+        _orc.StrengthBonus = 10;
+
+        var result = Run("local stats = mobile.stats(256) return stats.strength, stats.hits_max, stats.base_strength, stats.base_hits_max");
+
+        // An NPC keeps its own maximum: only the strength rises.
+        Assert.Equal([106, 58, 96, 58], result.Select(value => value.Read<int>()));
+    }
+
+    [Fact]
+    public void AddStatBonus_RaisesTheStatForAWhile_AndASecondIsRefused()
+    {
+        var result = Run(
+            "return mobile.add_stat_bonus(256, 'strength', 10, 120), mobile.add_stat_bonus(256, 'strength', 10, 120), mobile.stat_bonus(256, 'strength'), mobile.add_stat_bonus(256, 'wisdom', 10, 120), mobile.add_stat_bonus(999, 'dexterity', 10, 120)"
+        );
+
+        Assert.Equal([true, false], result[..2].Select(value => value.Read<bool>()));
+        Assert.Equal(10, result[2].Read<int>());
+        Assert.Equal([false, false], result[3..].Select(value => value.Read<bool>()));
+        Assert.Equal(TimeSpan.FromSeconds(120), Assert.Single(_timers.Timers).Interval);
+    }
+
+    [Fact]
+    public void NightSight_IsGivenOnce()
+    {
+        var result = Run(
+            "return mobile.set_night_sight(256, 13, 900), mobile.set_night_sight(256, 13, 900), mobile.has_night_sight(256), mobile.has_night_sight(2)"
+        );
+
+        Assert.Equal([true, false, true, false], result.Select(value => value.Read<bool>()));
+    }
+
+    [Fact]
+    public void HasFreeHand_IsFalseWithATwoHandedWeapon_OrAWeaponAndAShield()
+    {
+        Assert.True(Run("return mobile.has_free_hand(256)")[0].Read<bool>());
+
+        Wear("longsword", 0x0F61, LayerType.OneHanded);
+        Assert.True(Run("return mobile.has_free_hand(256)")[0].Read<bool>());
+
+        Wear("buckler", 0x1B73, LayerType.TwoHanded);
+        Assert.False(Run("return mobile.has_free_hand(256)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void HasFreeHand_IsFalseWithATwoHandedWeaponAlone()
+    {
+        Wear("halberd", 0x143E, LayerType.TwoHanded);
+
+        Assert.False(Run("return mobile.has_free_hand(256)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void HasFreeHand_WithoutTemplatesToTell_TakesWhatIsInTheTwoHandedLayerForAWeapon()
+    {
+        Wear("buckler", 0x1B73, LayerType.TwoHanded);
+
+        Assert.False(Run("return mobile.has_free_hand(256)", templates: false)[0].Read<bool>());
+    }
+
+    private void Wear(string template, int graphic, LayerType layer)
+    {
+        var item = new ItemEntity { Id = new Serial(_nextWorn++), TemplateId = template, ItemId = graphic, Amount = 1 };
+        item.Equip(_orc.Id, layer);
+        _items.Add([item]);
+    }
+
+    private uint _nextWorn = 0x40000500;
 
     [Fact]
     public void BackpackRegionAndLight_ComeFromTheWorld()
@@ -731,7 +816,7 @@ public sealed class MobileModuleTests
         Assert.Empty(_state.Flags);
     }
 
-    private LuaValue[] Run(string chunk)
+    private LuaValue[] Run(string chunk, bool templates = true)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
@@ -755,7 +840,9 @@ public sealed class MobileModuleTests
                 new StubWeightService { CarriedStones = 37, MaximumStones = 215 },
                 _crimes,
                 _death,
-                mounts: _mounts
+                mounts: _mounts,
+                bonuses: new StatBonusService(_state, new SessionService(new StubGameLoop()), new StubPacketSendService(), _timers, _mobiles),
+                templates: templates ? _templates : null
             )
         );
 

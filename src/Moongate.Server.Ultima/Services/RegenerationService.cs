@@ -94,7 +94,7 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
         }
 
         // Nothing to give back: the three waits start again when a bar drops.
-        if (mobile.Hits >= mobile.HitsMax && mobile.Mana >= mobile.ManaMax && mobile.Stamina >= mobile.StaminaMax)
+        if (mobile.Hits >= mobile.EffectiveHitsMax && mobile.Mana >= mobile.ManaMax && mobile.Stamina >= mobile.EffectiveStaminaMax)
         {
             clock.HitsAt = clock.ManaAt = clock.StaminaAt = 0;
 
@@ -115,7 +115,7 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
         {
             var hits = Due(
                 mobile.Hits,
-                mobile.HitsMax,
+                mobile.EffectiveHitsMax,
                 clock.HitsAt,
                 now,
                 Seconds(mobile, HitsProp, _config.HitsSeconds),
@@ -155,7 +155,7 @@ public sealed class RegenerationService : IRegenerationService, IMoongateStartup
         {
             var stamina = Due(
                 mobile.Stamina,
-                mobile.StaminaMax,
+                mobile.EffectiveStaminaMax,
                 clock.StaminaAt,
                 now,
                 Seconds(mobile, StaminaProp, _config.StaminaSeconds),

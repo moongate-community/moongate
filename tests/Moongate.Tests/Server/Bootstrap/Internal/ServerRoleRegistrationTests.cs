@@ -440,9 +440,10 @@ public sealed class ServerRoleRegistrationTests
                 ],
                 listeners.Take(4)
             );
-            // The announcer of places, then the scripts last.
-            Assert.Same(container.Resolve<IRegionAnnouncer>(), listeners[4]);
-            Assert.IsType<RegionEventPublisher>(Assert.Single(listeners.Skip(5)));
+            // Night sight over the light, the announcer of places, then the scripts last.
+            Assert.Same(container.Resolve<IStatBonusService>(), listeners[4]);
+            Assert.Same(container.Resolve<IRegionAnnouncer>(), listeners[5]);
+            Assert.IsType<RegionEventPublisher>(Assert.Single(listeners.Skip(6)));
             Assert.NotNull(container.Resolve<IMobileService>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
@@ -518,7 +519,8 @@ public sealed class ServerRoleRegistrationTests
             // The host registers the event bus; this test container does not.
             container.RegisterMoongateEventBus();
             var listeners = container.ResolveMany<ISessionClosedListener>().ToList();
-            Assert.Equal(8, listeners.Count);
+            Assert.Equal(9, listeners.Count);
+            Assert.Contains(listeners, listener => listener is StatBonusService);
             Assert.Contains(listeners, listener => listener is HuePickerService);
             Assert.Contains(listeners, listener => listener is PromptService);
             Assert.Contains(listeners, listener => listener is BankService);

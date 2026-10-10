@@ -84,3 +84,34 @@ function guide.on_speech(serial, speaker, text)
     end
 end
 ```
+
+## add_stat_bonus
+
+A shrine that makes a player stronger for two minutes, once at a time:
+
+```lua
+if not mobile.add_stat_bonus(user, "strength", 10, 120) then
+    mobile.message_cliloc(user, 502173) -- You are already under a similar effect.
+end
+```
+
+## set_night_sight
+
+A torch-bearer's blessing that lets a player see in the dark for twenty minutes:
+
+```lua
+if not mobile.set_night_sight(user, 13, 1200) then
+    mobile.message(user, "You already have night sight.")
+end
+```
+
+## has_free_hand
+
+Refuses to drink with both hands full:
+
+```lua
+if not mobile.has_free_hand(user) then
+    mobile.message_cliloc(user, 502172) -- You must have a free hand to drink a potion.
+    return true
+end
+```

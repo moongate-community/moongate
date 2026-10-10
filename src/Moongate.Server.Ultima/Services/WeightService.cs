@@ -59,7 +59,7 @@ public sealed class WeightService : IWeightService
 
     public int MaxCarried(MobileEntity mobile)
     {
-        return BaseCarried + (int)(CarriedPerStrength * mobile.Strength);
+        return BaseCarried + (int)(CarriedPerStrength * mobile.EffectiveStrength);
     }
 
     public bool Holds(ItemEntity container, ItemEntity item)

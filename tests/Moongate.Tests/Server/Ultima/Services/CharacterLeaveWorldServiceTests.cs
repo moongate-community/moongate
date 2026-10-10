@@ -16,6 +16,8 @@ using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.World;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -188,6 +190,23 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         Assert.NotSame(_aria, saved);
         Assert.Equal((_aria.Id, new Point3D(1497, 1628, 12)), (saved.Id, saved.Location));
         Assert.Same(saved, Assert.Single(_left).Character);
+    }
+
+    [Fact]
+    public async Task OnSessionClosed_EndsTheTimedBonuses_BeforeTheSave_SoNoHitAboveTheMaximumIsWritten()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var bonuses = new RecordingStatBonusService();
+        var service = Service(bonuses);
+        (_aria.HitsMax, _aria.StrengthBonus, _aria.Hits) = (50, 10, 60);
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(Timeout);
+
+        Assert.Equal([_aria], bonuses.Ended);
+        var saved = Assert.Single(_world.Mobiles.Upserted);
+        Assert.Equal(50, saved.Hits);
     }
 
     [Fact]
@@ -445,7 +464,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         return (backpack, coin, ground);
     }
 
-    private CharacterLeaveWorldService Service()
+    private CharacterLeaveWorldService Service(IStatBonusService? bonuses = null)
     {
         _events.RegisterMoongateEventBus();
         var bus = _events.Resolve<IMoongateEventBus>();
@@ -460,7 +479,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
             }
         );
 
-        return new(_mobiles, _items, _view, _world, bus);
+        return new(_mobiles, _items, _view, _world, bus, bonuses: bonuses);
     }
 
     public void Dispose()

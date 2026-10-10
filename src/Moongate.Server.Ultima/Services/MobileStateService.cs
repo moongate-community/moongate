@@ -72,9 +72,9 @@ public sealed class MobileStateService : IMobileStateService
             return false;
         }
 
-        var health = (mobile.Hits, mobile.HitsMax);
+        var health = (mobile.Hits, mobile.EffectiveHitsMax);
         var mana = (mobile.Mana, mobile.ManaMax);
-        var stamina = (mobile.Stamina, mobile.StaminaMax);
+        var stamina = (mobile.Stamina, mobile.EffectiveStaminaMax);
         // What only the whole status shows.
         var others = (mobile.Strength, mobile.Dexterity, mobile.Intelligence, mobile.Fame, mobile.Karma);
         mobile.Strength = change.Strength ?? mobile.Strength;
@@ -84,9 +84,9 @@ public sealed class MobileStateService : IMobileStateService
         mobile.ManaMax = change.ManaMax ?? mobile.ManaMax;
         mobile.StaminaMax = change.StaminaMax ?? mobile.StaminaMax;
         // A lowered maximum takes what is above it.
-        mobile.Hits = Math.Clamp(change.Hits ?? mobile.Hits, 0, mobile.HitsMax);
+        mobile.Hits = Math.Clamp(change.Hits ?? mobile.Hits, 0, mobile.EffectiveHitsMax);
         mobile.Mana = Math.Clamp(change.Mana ?? mobile.Mana, 0, mobile.ManaMax);
-        mobile.Stamina = Math.Clamp(change.Stamina ?? mobile.Stamina, 0, mobile.StaminaMax);
+        mobile.Stamina = Math.Clamp(change.Stamina ?? mobile.Stamina, 0, mobile.EffectiveStaminaMax);
         mobile.Fame = change.Fame ?? mobile.Fame;
         mobile.Karma = change.Karma ?? mobile.Karma;
 
@@ -104,9 +104,9 @@ public sealed class MobileStateService : IMobileStateService
             }
             else
             {
-                if (health != (mobile.Hits, mobile.HitsMax))
+                if (health != (mobile.Hits, mobile.EffectiveHitsMax))
                 {
-                    _sender.TrySend(own.SessionId, new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.HitsMax));
+                    _sender.TrySend(own.SessionId, new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.EffectiveHitsMax));
                 }
 
                 if (mana != (mobile.Mana, mobile.ManaMax))
@@ -114,17 +114,17 @@ public sealed class MobileStateService : IMobileStateService
                     _sender.TrySend(own.SessionId, new MobileManaPacket(mobile.Id, mobile.Mana, mobile.ManaMax));
                 }
 
-                if (stamina != (mobile.Stamina, mobile.StaminaMax))
+                if (stamina != (mobile.Stamina, mobile.EffectiveStaminaMax))
                 {
-                    _sender.TrySend(own.SessionId, new MobileStaminaPacket(mobile.Id, mobile.Stamina, mobile.StaminaMax));
+                    _sender.TrySend(own.SessionId, new MobileStaminaPacket(mobile.Id, mobile.Stamina, mobile.EffectiveStaminaMax));
                 }
             }
         }
 
-        if (health != (mobile.Hits, mobile.HitsMax))
+        if (health != (mobile.Hits, mobile.EffectiveHitsMax))
         {
             // Never the real numbers: a share of 100.
-            var bar = new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.HitsMax, true);
+            var bar = new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.EffectiveHitsMax, true);
 
             foreach (var session in Around(mobile))
             {
@@ -432,6 +432,26 @@ public sealed class MobileStateService : IMobileStateService
     }
 
     // The sessions of the players who see the mobile, its own left out.
+    public void SendHits(MobileEntity mobile)
+    {
+        if (!_mobiles.IsInWorld(mobile.Id))
+        {
+            return;
+        }
+
+        if (_sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(own.SessionId, new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.EffectiveHitsMax));
+        }
+
+        var bar = new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.EffectiveHitsMax, true);
+
+        foreach (var session in Around(mobile))
+        {
+            _sender.TrySend(session.SessionId, bar);
+        }
+    }
+
     private IEnumerable<GameSession> Around(MobileEntity mobile)
     {
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, _world.ViewRange))

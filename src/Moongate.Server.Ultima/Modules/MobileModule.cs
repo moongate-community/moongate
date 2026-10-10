@@ -17,6 +17,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Modules.Internal;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -54,6 +55,9 @@ public sealed class MobileModule
     private readonly ISessionService? _sessions;
     private readonly IPacketSendService? _sender;
 
+    private readonly IStatBonusService? _bonuses;
+    private readonly IItemTemplateService? _templates;
+
     public MobileModule(
         IMobileService mobiles,
         ITeleportService teleports,
@@ -70,10 +74,14 @@ public sealed class MobileModule
         IDeathService? death = null,
         ISessionService? sessions = null,
         IPacketSendService? sender = null,
-        IMountService? mounts = null
+        IMountService? mounts = null,
+        IStatBonusService? bonuses = null,
+        IItemTemplateService? templates = null
     )
     {
         _mounts = mounts;
+        _bonuses = bonuses;
+        _templates = templates;
         _sessions = sessions;
         _sender = sender;
         _death = death;
@@ -195,7 +203,7 @@ public sealed class MobileModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "The mobile's numbers as a table: body, strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma; nil for a mobile not in the world. Read only; change them with mobile.set_stats."
+        "The mobile's numbers as a table: body, strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma, base_strength, base_dexterity, base_hits_max, base_stamina_max; nil for a mobile not in the world. Strength, dexterity and the maximums count the timed bonuses (mobile.add_stat_bonus); the base_ ones are what mobile.set_stats sets. Read only; change them with mobile.set_stats."
     )]
     public LuaTable? Stats(long serial)
     {
@@ -206,17 +214,21 @@ public sealed class MobileModule
 
         var table = new LuaTable();
         table["body"] = mobile.Body;
-        table["strength"] = mobile.Strength;
-        table["dexterity"] = mobile.Dexterity;
+        table["strength"] = mobile.EffectiveStrength;
+        table["dexterity"] = mobile.EffectiveDexterity;
         table["intelligence"] = mobile.Intelligence;
         table["hits"] = mobile.Hits;
-        table["hits_max"] = mobile.HitsMax;
+        table["hits_max"] = mobile.EffectiveHitsMax;
         table["mana"] = mobile.Mana;
         table["mana_max"] = mobile.ManaMax;
         table["stamina"] = mobile.Stamina;
-        table["stamina_max"] = mobile.StaminaMax;
+        table["stamina_max"] = mobile.EffectiveStaminaMax;
         table["fame"] = mobile.Fame;
         table["karma"] = mobile.Karma;
+        table["base_strength"] = mobile.Strength;
+        table["base_dexterity"] = mobile.Dexterity;
+        table["base_hits_max"] = mobile.HitsMax;
+        table["base_stamina_max"] = mobile.StaminaMax;
 
         return table;
     }
@@ -1015,6 +1027,89 @@ public sealed class MobileModule
         var tenths = Math.Round(points * TenthsPerPoint, MidpointRounding.AwayFromZero);
 
         return double.IsFinite(tenths) && tenths is >= int.MinValue and <= int.MaxValue ? (int)tenths : null;
+    }
+
+    /// <summary>
+    ///     Raises a stat for a while, as a strength potion does; <c>mobile.add_stat_bonus(user, "strength", 10, 120)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Raises the mobile's 'strength' or 'dexterity' by amount for seconds, as a strength or an agility potion does: a player's maximum hits or stamina rise with it (an NPC's stay), and when the time is up both go back and what is above the new maximum is lost. The bonus is never saved and ends when the player leaves. False when it has a bonus of that stat already, for an unknown stat or mobile, or an amount or a time that is not positive."
+    )]
+    public bool AddStatBonus(long serial, string stat, int amount, int seconds)
+    {
+        return _bonuses is not null &&
+               TryGetMobile(serial, out var mobile) &&
+               EnumNameUtils.TryParse<StatBonusType>(stat, out var type) &&
+               Enum.IsDefined(type) &&
+               _bonuses.TryAddBonus(mobile, type, amount, TimeSpan.FromSeconds(seconds));
+    }
+
+    /// <summary>
+    ///     The bonus of a stat the mobile is under; <c>mobile.stat_bonus(user, "strength")</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText: "The bonus of 'strength' or 'dexterity' the mobile is under; 0 for none, an unknown stat or mobile."
+    )]
+    public int StatBonus(long serial, string stat)
+    {
+        return _bonuses is not null &&
+               TryGetMobile(serial, out var mobile) &&
+               EnumNameUtils.TryParse<StatBonusType>(stat, out var type) &&
+               Enum.IsDefined(type)
+            ? _bonuses.Bonus(mobile, type)
+            : 0;
+    }
+
+    /// <summary>
+    ///     Lets a player see in the dark for a while; <c>mobile.set_night_sight(user, 13, 1200)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Gives the player a personal light of level (0 to 30, more is brighter) for seconds, as a night sight potion does; it ends when the time is up or the player leaves. False when it has night sight already, for an unknown mobile, a level out of range or a time that is not positive."
+    )]
+    public bool SetNightSight(long serial, int level, int seconds)
+    {
+        return _bonuses is not null &&
+               TryGetMobile(serial, out var mobile) &&
+               _bonuses.TrySetNightSight(mobile, level, TimeSpan.FromSeconds(seconds));
+    }
+
+    /// <summary>
+    ///     Whether the mobile has night sight; <c>mobile.has_night_sight(user)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the mobile has night sight; false for an unknown mobile.")]
+    public bool HasNightSight(long serial)
+    {
+        return _bonuses is not null && TryGetMobile(serial, out var mobile) && _bonuses.HasNightSight(mobile);
+    }
+
+    /// <summary>
+    ///     Whether the mobile has a hand free to drink or use something; <c>mobile.has_free_hand(user)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the mobile has a hand free, as drinking a potion needs: not when it holds a two-handed weapon, nor a one-handed weapon with a shield. False for an unknown mobile."
+    )]
+    public bool HasFreeHand(long serial)
+    {
+        if (!TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        var one = _items?.GetWornAt(mobile.Id, LayerType.OneHanded);
+        var two = _items?.GetWornAt(mobile.Id, LayerType.TwoHanded);
+
+        // A weapon in the two-handed layer takes both hands; a shield there takes one. Without templates to tell, it is
+        // taken for a weapon.
+        if (two is not null &&
+            (_templates is null || (_templates.TryGet(two.TemplateId, out var held) && held.WeaponType is not null)))
+        {
+            return false;
+        }
+
+        return one is null || two is null;
     }
 
     private bool TryGetMobile(long serial, [NotNullWhen(true)] out MobileEntity? mobile)

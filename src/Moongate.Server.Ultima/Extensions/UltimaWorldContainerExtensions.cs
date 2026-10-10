@@ -126,6 +126,8 @@ public static class UltimaWorldContainerExtensions
         container.Register<IStableService, StableService>(Reuse.Singleton);
         container.Register<IHuePickerService, HuePickerService>(Reuse.Singleton);
         container.Register<IMapDisplayService, MapDisplayService>(Reuse.Singleton);
+        container.Register<IStatBonusService, StatBonusService>(Reuse.Singleton);
+        container.RegisterMapping<ISessionClosedListener, IStatBonusService>();
         container.RegisterMapping<ISessionClosedListener, IHuePickerService>();
         container.RegisterMapping<ISessionClosedListener, IVendorService>();
         container.RegisterMapping<ISessionClosedListener, ITrainingService>();
@@ -199,6 +201,8 @@ public static class UltimaWorldContainerExtensions
         // the weather: the listeners run in this order, so those already follow the new region when it resends them.
         container.AddMoongateService<ISeasonService, SeasonService>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<ISeasonService>(), Reuse.Singleton);
+        // After the light and the season: a player's night sight is sent again over them.
+        container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IStatBonusService>(), Reuse.Singleton);
         container.AddMoongateService<IRegionAnnouncer, RegionAnnouncer>(11);
         container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IRegionAnnouncer>(), Reuse.Singleton);
         // Last: the scripts hear of the change once the light, the weather and the season of the place were sent.

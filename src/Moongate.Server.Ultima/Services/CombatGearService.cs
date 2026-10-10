@@ -106,11 +106,11 @@ public sealed class CombatGearService : ICombatGearService
         return status with
         {
             DamageMin = Math.Max(
-                CombatFormulas.ScaleDamage(min, tactics, mobile.Strength, anatomy, lumberjacking, quality),
+                CombatFormulas.ScaleDamage(min, tactics, mobile.EffectiveStrength, anatomy, lumberjacking, quality),
                 1
             ),
             DamageMax = Math.Max(
-                CombatFormulas.ScaleDamage(max, tactics, mobile.Strength, anatomy, lumberjacking, quality),
+                CombatFormulas.ScaleDamage(max, tactics, mobile.EffectiveStrength, anatomy, lumberjacking, quality),
                 1
             ),
             // Before AOS the client shows the armor rating where the physical resistance goes.

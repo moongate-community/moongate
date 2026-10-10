@@ -121,6 +121,12 @@ public interface IMobileStateService
     void SendStatus(GameSession session, MobileEntity target);
 
     /// <summary>
+    ///     Sends the health bar of the mobile again: the numbers to its own player, a share of 100 to those around, as
+    ///     when a timed bonus raised or lowered its maximum.
+    /// </summary>
+    void SendHits(MobileEntity mobile);
+
+    /// <summary>
     ///     Sends the session the skills of its character, as the skill window asks them.
     /// </summary>
     void SendSkills(GameSession session, MobileEntity character);

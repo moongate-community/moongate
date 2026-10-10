@@ -340,31 +340,6 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task TheShippedPotionScript_DrinksOnePotionAndTellsThePlayer()
-    {
-        _scripts.Write("items/potion.lua", File.ReadAllText(ShippedScript("items/potion.lua")));
-        using var engine = NewEngine();
-        await engine.StartAsync();
-        var scripts = new ItemScriptService(
-            engine,
-            new ItemTemplateService(
-                new StubDataLoaderService().With(new ItemTemplate { Id = "potion", ScriptId = "potion" })
-            ),
-            _loop,
-            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
-        );
-        await scripts.StartAsync();
-
-        var result = scripts.Run(_potions, "on_use", 2L);
-
-        Assert.Empty(_errors);
-        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
-        Assert.Equal(2, _potions.Amount);
-        var label = Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>());
-        Assert.Equal((SpeechType.Label, "You drink the potion."), (label.Type, label.Text));
-    }
-
-    [Fact]
     public async Task AScriptThatReturnsFalse_RefusesTheMove_AnythingElseLetsItFollow()
     {
         _scripts.Write(
