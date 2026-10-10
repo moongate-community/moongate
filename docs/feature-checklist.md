@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**272 systems:** ✅ 89 done, 🟡 62 partly done, ❌ 121 not built yet.
+**272 systems:** ✅ 90 done, 🟡 62 partly done, ❌ 120 not built yet.
 
 **Coverage: 33%** of the systems done, **44%** counting a partly done system as half.
 
@@ -115,7 +115,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Crafting engine: menus, recipes, resources, quality | 🟡 | The crafting gump, recipes in [`data/crafts`](data-files/crafts.md), resources counted across the backpack and its bags, the chance and the kinds of wood, exceptional items and the maker's mark, tools that wear out and make last, shared by every craft; see [Carpentry](carpentry.md). An exceptional item changes nothing but its tooltip yet; no repair |
 | The crafts: blacksmithing, tailoring, carpentry, tinkering, alchemy, cooking, inscription, fletching, cartography | 🟡 | [Carpentry](carpentry.md): a tool in the backpack opens the crafting gump, 42 recipes from UOX3 in [`data/crafts`](data-files/crafts.md), made from plain boards or a kind of wood that colours the item; one chance in two at the least skill, sure at the most, half of the materials lost on a failure. Exceptional items with the maker's mark at 100, tools that wear out, make last. The engine is shared by the crafts to come; no other craft yet |
 | Repairing and enhancing items | ❌ | |
-| Taming and animal lore | ❌ | |
+| Taming and animal lore | ✅ | [Animal Taming](animal-taming.md) tames about 75 creatures with a try of three or four times; [Animal Lore](animal-taming.md#animal-lore) opens a two-page gump on a creature: stats, armor, damage, loyalty, skills, the food it eats and the taming it asks. Veterinary is its own row |
 | Healing and veterinary | 🟡 | The clean [bandage](scripting/shipped-scripts.md#bandagelua) heals a player or a creature (Healing and Anatomy, Veterinary and Animal Lore) and raises a ghost; no poison, no bleeding, no pets |
 | Lockpicking, remove trap | 🟡 | The [lockpick](scripting/shipped-scripts.md#lockpicklua-and-treasure_chestlua) picks a locked item (the dungeon treasure chests are made locked); no trap, so no remove trap. Doors lock and open with their key |
 | Snooping and stealing | 🟡 | [Snooping](scripting/shipped-scripts.md#snoopinglua) opens the backpack of another mobile on a double click; no stealing |
@@ -141,7 +141,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Water and amphibious creatures | ✅ | They spawn on water and swim |
 | AI types (vendor, guard, healer, animal, monster, caster) | ❌ | |
 | Pathfinding, following and fleeing | 🟡 | A* path search; a script walks an NPC to a place or after someone with `npc.walk_to`, through the closed doors it opens and around locked ones and furniture. Hurt creatures run from a fight (20% of their hit points, 10% for animals) and scared animals from a blow; an NPC that wanders opens no door, and mobiles do not block a path. A script makes a player's own client walk to a spot with `mobile.pathfind_to` (packet 0x38) |
-| Pets and followers: commands, loyalty, bonding | 🟡 | The [Animal Taming](animal-taming.md) skill tames about 75 creatures of the data, with a limit of 5 followers shown in the status window. A pet follows its owner and obeys come, follow, stay, stop, guard, kill, attack and release, alone or with *all*, unless its low loyalty or the owner's skill makes it refuse. Loyalty falls with time, food dropped on a pet restores it, and at 0 it goes wild. No Animal Lore, bonding or hunger beyond that |
+| Pets and followers: commands, loyalty, bonding | 🟡 | The [Animal Taming](animal-taming.md) skill tames about 75 creatures of the data, with a limit of 5 followers shown in the status window. A pet follows its owner and obeys come, follow, stay, stop, guard, kill, attack and release, alone or with *all*, unless its low loyalty or the owner's skill makes it refuse. Loyalty falls with time, food dropped on a pet restores it, and at 0 it goes wild. No bonding or hunger beyond that |
 | Mounts | 🟡 | [Mounts](mounts.md): a game master gives a horse, llama or ostard with [`tame`](commands/tame.md); its owner double clicks it to ride and double clicks self to get off, or dies, and rides twice as fast. A rider cannot mine, fish or use Stealth, and a teleporter can refuse it. The [stable](mounts.md#the-stable) of the animal trainers keeps the pets of a player, and the [ethereal statuettes](mounts.md#ethereal-mounts) give a mount with no creature. A rider swings with the mounted attack animations. No bola |
 | Script events for NPCs (speech, range, damage) | 🟡 | Speech and range; no combat events |
 | Name pools | ✅ | Name lists by kind and gender |
