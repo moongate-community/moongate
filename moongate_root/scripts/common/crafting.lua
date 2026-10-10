@@ -654,6 +654,8 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
     end
 
     local outcome = SUCCESS_TEXT[craft_id] or CREATED
+    -- A success text that says the item is in the backpack is not said of one at the feet: the player was told where it is.
+    local says_backpack = at_feet and SUCCESS_TEXT[craft_id] ~= nil
 
     if not joined and not plain and not NO_QUALITY[craft_id] and crafting.roll() < chance - EXCEPTIONAL_MARGIN then
         item.set_prop(made, "quality", EXCEPTIONAL_QUALITY)
@@ -668,14 +670,18 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
         end
     end
 
-    mobile.message_cliloc(user, outcome)
+    if says_backpack and outcome == SUCCESS_TEXT[craft_id] then
+        outcome = nil
+    else
+        mobile.message_cliloc(user, outcome)
+    end
 
     if SUCCESS_SOUND[craft_id] then
         mobile.play_sound(user, SUCCESS_SOUND[craft_id])
     end
 
     if wear(user, tool, free) then
-        crafting.open(user, tool, craft_id, NOTICES[outcome])
+        crafting.open(user, tool, craft_id, outcome == nil and AT_YOUR_FEET or NOTICES[outcome])
     end
 end
 

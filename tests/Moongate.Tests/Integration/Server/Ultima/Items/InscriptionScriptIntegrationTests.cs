@@ -304,6 +304,28 @@ public sealed class InscriptionScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AFullBackpack_PutsTheScrollAtTheFeet_AndDoesNotSayItIsInTheBackpack()
+    {
+        Book("clumsy");
+        Carry("0x0f7b_blood_moss", 0x0F7B, 1);
+        Carry("0x0f88_nightshade", 0x0F88, 1);
+        Carry(BlankScroll, 0x0E34, 1);
+        _capacity.HasRoomResult = false;
+
+        Make("clumsy");
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        var scroll = Assert.Single(Made(ClumsyScroll));
+        Assert.True(_items.IsLyingOnGround(scroll));
+        Assert.DoesNotContain(Inscribed, Told());
+        Assert.Contains(
+            _speech.Told,
+            told => told.Player == _aria && told.Text.Contains("at your feet", StringComparison.Ordinal)
+        );
+    }
+
+    [Fact]
     public void ASpellThatIsInNoBook_IsRefusedBeforeAnythingIsSpent()
     {
         Book("heal");
