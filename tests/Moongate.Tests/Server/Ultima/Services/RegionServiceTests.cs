@@ -4,6 +4,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Regions;
@@ -147,6 +148,34 @@ public sealed class RegionServiceTests
         Assert.Null(service.Current(aria.Id));
         Assert.Null(service.Current(orc.Id));
         Assert.Single(_log.Events);
+    }
+
+    [Fact]
+    public void AllowsTravel_IsRefusedWhenAnyRegionCoveringThePlaceBlocksIt_NotOnlyTheOneThatApplies()
+    {
+        var town = Region("Britain", 50, Area(1400, 1500, 1700, 1800));
+        var zone = Region("Zone", 0, Area(0, 0, 4000, 4000));
+        zone.TeleportIn = false;
+        zone.RecallOut = false;
+        var service = Service(town, zone);
+        var inTown = new Point3D(1500, 1600, 0);
+
+        Assert.False(service.AllowsTravel(MapType.Trammel, inTown, RegionTravelType.TeleportIn));
+        Assert.False(service.AllowsTravel(MapType.Trammel, inTown, RegionTravelType.RecallOut));
+        Assert.True(service.AllowsTravel(MapType.Trammel, inTown, RegionTravelType.TeleportOut));
+        Assert.True(service.AllowsTravel(MapType.Trammel, inTown, RegionTravelType.RecallIn));
+    }
+
+    [Fact]
+    public void AllowsTravel_IsTrueOutsideEveryRegion_AndOnAnotherMap()
+    {
+        var zone = Region("Zone", 0, Area(0, 0, 100, 100));
+        zone.TeleportIn = false;
+        var service = Service(zone);
+
+        Assert.True(service.AllowsTravel(MapType.Trammel, new Point3D(500, 500, 0), RegionTravelType.TeleportIn));
+        Assert.True(service.AllowsTravel(MapType.Felucca, new Point3D(50, 50, 0), RegionTravelType.TeleportIn));
+        Assert.False(service.AllowsTravel(MapType.Trammel, new Point3D(50, 50, 0), RegionTravelType.TeleportIn));
     }
 
     private RegionService Tracked(params RegionContent[] regions)

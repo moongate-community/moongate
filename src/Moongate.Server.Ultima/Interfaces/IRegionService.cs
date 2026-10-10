@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Data.Regions;
+using Moongate.Server.Ultima.Types.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
@@ -17,6 +18,12 @@ public interface IRegionService
     ///     region.
     /// </summary>
     RegionContent? Find(MapType map, Point3D location);
+
+    /// <summary>
+    ///     Gets whether a travel rule lets a mobile through the place: false when any region covering it switches the
+    ///     rule off, not only the one that applies there; true outside every region.
+    /// </summary>
+    bool AllowsTravel(MapType map, Point3D location, RegionTravelType rule);
 
     /// <summary>
     ///     Gets the region the player stands in; null outside every region or for a mobile that is not a player in the

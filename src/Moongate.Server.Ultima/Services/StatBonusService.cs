@@ -61,6 +61,28 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
         return true;
     }
 
+    public bool TryAddBuff(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration)
+    {
+        if (amount <= 0 || duration <= TimeSpan.Zero)
+        {
+            return false;
+        }
+
+        if (_bonuses.TryGetValue((mobile.Id, stat), out var current))
+        {
+            // The stronger buff of the stat wins, the one that is there already when it is as strong.
+            if (current.Amount >= amount)
+            {
+                return false;
+            }
+
+            _timers.UnregisterTimer(current.Timer);
+            _bonuses.Remove((mobile.Id, stat));
+        }
+
+        return TryAddBonus(mobile, stat, amount, duration);
+    }
+
     public bool TryAddCurse(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration)
     {
         if (amount <= 0 || duration <= TimeSpan.Zero)

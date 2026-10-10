@@ -46,6 +46,33 @@ public sealed class StatBonusServiceTests : IAsyncLifetime
         Assert.Equal(20, _aria.DexterityBonus);
     }
 
+    [Fact]
+    public void ABuff_ReplacesAWeakerBonusOfTheStat_AndIsRefusedWhenTheOneThereIsAsStrong()
+    {
+        Assert.True(_bonuses.TryAddBuff(_aria, StatBonusType.Strength, 5, TimeSpan.FromSeconds(60)));
+        Assert.False(_bonuses.TryAddBuff(_aria, StatBonusType.Strength, 5, TimeSpan.FromSeconds(60)));
+        Assert.False(_bonuses.TryAddBuff(_aria, StatBonusType.Strength, 3, TimeSpan.FromSeconds(60)));
+        Assert.Equal(5, _aria.StrengthBonus);
+
+        var first = Assert.Single(_timers.Timers);
+        Assert.True(_bonuses.TryAddBuff(_aria, StatBonusType.Strength, 8, TimeSpan.FromSeconds(90)));
+
+        // The weaker one is gone with its timer: the stat is moved by the new one alone.
+        Assert.Equal((8, 58), (_aria.StrengthBonus, _aria.EffectiveHitsMax));
+        Assert.DoesNotContain(first, _timers.Timers);
+        Assert.Equal(TimeSpan.FromSeconds(90), Assert.Single(_timers.Timers).Interval);
+    }
+
+    [Fact]
+    public void ABuff_AddsUpWithACurse_AndAPotionBonusIsStillRefusedUnderIt()
+    {
+        _bonuses.TryAddCurse(_aria, StatBonusType.Strength, 4, TimeSpan.FromSeconds(30));
+
+        Assert.True(_bonuses.TryAddBuff(_aria, StatBonusType.Strength, 10, TimeSpan.FromSeconds(60)));
+        Assert.Equal(6, _aria.StrengthBonus);
+        Assert.False(_bonuses.TryAddBonus(_aria, StatBonusType.Strength, 20, TimeSpan.FromSeconds(60)));
+    }
+
     [Theory]
     [InlineData(0, 120)]
     [InlineData(10, 0)]

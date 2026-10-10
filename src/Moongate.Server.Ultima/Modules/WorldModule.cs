@@ -1,6 +1,7 @@
 using Lua;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Utils;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
@@ -218,6 +219,22 @@ public sealed class WorldModule
     public bool IsGuarded(MapType map, int x, int y, int z)
     {
         return z is >= sbyte.MinValue and <= sbyte.MaxValue && _regions.Find(map, new Point3D(x, y, z))?.Guarded == true;
+    }
+
+    /// <summary>
+    ///     Gets whether a travel rule lets a mobile through a place, as Teleport and Recall ask;
+    ///     <c>world.travel_allowed(here.map, x, y, z, "teleport_in")</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the travel rule ('recall_in', 'recall_out', 'gate_in', 'gate_out', 'mark', 'teleport_in' or 'teleport_out') lets a mobile through the place x, y, z of the map: false when any region covering the place switches it off, true outside every region. False also for an unknown rule or a z outside -128 to 127."
+    )]
+    public bool TravelAllowed(MapType map, int x, int y, int z, string rule)
+    {
+        return z is >= sbyte.MinValue and <= sbyte.MaxValue &&
+               EnumNameUtils.TryParse<RegionTravelType>(rule, out var type) &&
+               Enum.IsDefined(type) &&
+               _regions.AllowsTravel(map, new Point3D(x, y, z), type);
     }
 
     /// <summary>

@@ -45,7 +45,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
             },
             new RegionContent
             {
-                Map = MapType.Trammel, Name = "Covetous",
+                Map = MapType.Trammel, Name = "Covetous", TeleportIn = false, RecallOut = false,
                 Areas = [new RegionAreaContent { X1 = 2400, Y1 = 400, X2 = 2600, Y2 = 600 }]
             }
         )
@@ -168,6 +168,19 @@ public sealed class WorldModuleTests : IAsyncLifetime
      InlineData("return world.is_guarded(MapType.Trammel, 2500, 500, 0)", false),
      InlineData("return world.is_guarded(MapType.Trammel, 1496, 1628, 300)", false)]
     public void IsGuarded_TellsWhetherTheRegionOfThePlaceHasGuards(string chunk, bool expected)
+    {
+        Assert.Equal(expected, Run(chunk)[0].Read<bool>());
+    }
+
+    [Theory]
+    [InlineData("return world.travel_allowed(MapType.Trammel, 2500, 500, 0, 'teleport_in')", false)]
+    [InlineData("return world.travel_allowed(MapType.Trammel, 2500, 500, 0, 'recall_out')", false)]
+    [InlineData("return world.travel_allowed(MapType.Trammel, 2500, 500, 0, 'teleport_out')", true)]
+    [InlineData("return world.travel_allowed(MapType.Trammel, 1500, 1600, 0, 'teleport_in')", true)]
+    [InlineData("return world.travel_allowed(MapType.Trammel, 3000, 3000, 0, 'teleport_in')", true)]
+    [InlineData("return world.travel_allowed(MapType.Trammel, 2500, 500, 0, 'nothing')", false)]
+    [InlineData("return world.travel_allowed(MapType.Trammel, 2500, 500, 300, 'teleport_in')", false)]
+    public void TravelAllowed_TellsWhetherNoRegionOfThePlaceSwitchesTheRuleOff(string chunk, bool expected)
     {
         Assert.Equal(expected, Run(chunk)[0].Read<bool>());
     }

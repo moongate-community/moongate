@@ -18,6 +18,11 @@ public sealed class RecordingStatBonusService : IStatBonusService
         return false;
     }
 
+    public bool TryAddBuff(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration)
+    {
+        return false;
+    }
+
     public bool TryAddCurse(MobileEntity mobile, StatBonusType stat, int amount, TimeSpan duration)
     {
         return false;
