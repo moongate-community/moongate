@@ -38,7 +38,7 @@
 --   A recipe may name a spell (data/crafts, field spell) the crafter must have in a
 --   spellbook it wears or carries, and a mana cost (field mana): both are checked
 --   at the start and again at the second stroke, with nothing taken when one is
---   lacking. The mana is paid once, by a try that is made, a failure included.
+--   lacking. The mana is paid once, by a success only: a failure takes none.
 --   A craft may ask to stand near things (the table NEEDS): blacksmithing an
 --   anvil and a forge within 2 tiles, the baking of cooking an oven and its
 --   barbecue a fire, checked when the attempt starts and at its second
@@ -157,6 +157,11 @@ local MATERIALS = {
 -- map is drawn where the cartographer stands.
 local MADE = {
     cartography = "common.cartography",
+}
+
+-- The crafts whose failure loses one unit of every resource, as the scroll ruined with its blank scroll, not the half.
+local FAIL_LOSES_ALL = {
+    inscription = true,
 }
 
 -- The crafts whose stackable items do not wear the tool: UOX3 made arrows and shafts by the fifty for one use.
@@ -455,7 +460,7 @@ local function missing(user, recipe, kind)
     return nil
 end
 
--- Takes the mana of a recipe, once, for a try that was made; a recipe with no mana takes none.
+-- Takes the mana of a recipe, once, for a success; a recipe with no mana takes none.
 local function pay_mana(user, recipe)
     local cost = recipe.mana or 0
     local stats = cost > 0 and mobile.stats(user)
@@ -554,14 +559,16 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
 
     if not passed then
         for index, resource in ipairs(recipe.resources) do
-            -- At least one unit of the first: a failure that takes nothing would be a free try of the skill.
+            -- Half of each, at least one unit of the first (of every one, for a craft that ruins the whole try): a
+            -- failure that takes nothing would be a free try of the skill.
             local lost = math.floor(resource.amount / 2)
 
-            take(user, crafting.templates(resource.resource, kind), index == 1 and math.max(1, lost) or lost)
-        end
+            if index == 1 or FAIL_LOSES_ALL[craft_id] then
+                lost = math.max(1, lost)
+            end
 
-        -- The mana goes on a failure too: the try was made.
-        pay_mana(user, recipe)
+            take(user, crafting.templates(resource.resource, kind), lost)
+        end
 
         local failed = FAILED_TEXT[craft_id] or FAILED
         mobile.message_cliloc(user, failed)
@@ -624,7 +631,7 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
         end
     end
 
-    -- Item and resources are taken: the try is made, and the mana goes with it, once.
+    -- Item and resources are taken: the mana goes with them, once, for a success only.
     pay_mana(user, recipe)
 
     if at_feet then

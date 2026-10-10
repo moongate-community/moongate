@@ -402,7 +402,7 @@ public sealed class InscriptionScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void AFailure_RuinsHalfTheMaterials_AndTakesTheManaAllTheSame()
+    public void AFailure_RuinsOneOfEveryResourceTheBlankScrollToo_AndTakesNoMana()
     {
         Skill(0);
         _random.Doubles(0.99);
@@ -416,9 +416,9 @@ public sealed class InscriptionScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Empty(Made(ClumsyScroll));
-        // One unit of the first resource at the least, none of the others of one unit.
-        Assert.Equal((1, 2, 2), (Left(moss), Left(shade), Left(blank)));
-        Assert.Equal(26, _aria.Mana);
+        // One unit of every resource, the blank scroll too: the scroll is ruined. The mana is paid by a success only.
+        Assert.Equal((1, 1, 1), (Left(moss), Left(shade), Left(blank)));
+        Assert.Equal(30, _aria.Mana);
         Assert.Equal([Ruined], Told());
     }
 
