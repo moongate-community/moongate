@@ -86,6 +86,25 @@ public sealed class MapItemPropsTests
     }
 
     [Fact]
+    public void TryGetArea_KeepsAnAreaSetByHandDrawable()
+    {
+        MapItemProps.SetArea(_map, new(10, 20, 110, 120, 300, 300, 1));
+        _map.SetProp(MapItemProps.WidthProp, 70000L);
+        _map.SetProp(MapItemProps.X2Prop, -4L);
+
+        Assert.True(MapItemProps.TryGetArea(_map, null, out var area));
+        Assert.Equal((0, 800), (area.X2, area.Width));
+    }
+
+    [Fact]
+    public void WorldToPixel_OfTheFarEdge_StaysOnTheDrawing()
+    {
+        var area = new MapArea(100, 100, 300, 300, 200, 200, 0);
+
+        Assert.Equal((199, 199), MapItemProps.WorldToPixel(area, 300, 300));
+    }
+
+    [Fact]
     public void WorldToPixel_ScalesTheTileIntoTheDrawing()
     {
         var world = new MapArea(0, 0, 5120, 4096, 200, 200, 0);

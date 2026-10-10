@@ -43,6 +43,8 @@ public sealed class MapDisplayServiceTests : IAsyncDisposable
 
     private readonly ItemEntity _map = new() { Id = new Serial(0x40000002), TemplateId = "map", ItemId = 0x14EC, Amount = 1 };
 
+    private readonly StubItemHandlingService _handling = new();
+
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
     private MapDisplayService _maps = null!;
@@ -58,6 +60,7 @@ public sealed class MapDisplayServiceTests : IAsyncDisposable
     {
         await StartAsync();
         MapItemProps.SetPins(_map, [(10, 20), (30, 40)]);
+        Modern();
         var shown = false;
 
         await OnLoopAsync(() => shown = _maps.Display(_session, _map));
@@ -177,7 +180,8 @@ public sealed class MapDisplayServiceTests : IAsyncDisposable
         await HandleAsync(MapCommandType.ToggleEditable);
 
         Assert.False(MapItemProps.IsEditable(_map));
-        Assert.Empty(_sender.Sent);
+        // Each refused toggle puts the lock of the window back.
+        Assert.Equal(["56:7:False:0:0", "56:7:False:0:0"], _sender.Sent.Select(Describe));
     }
 
     [Fact]
@@ -189,6 +193,74 @@ public sealed class MapDisplayServiceTests : IAsyncDisposable
         await HandleAsync(MapCommandType.ToggleEditable);
 
         Assert.False(MapItemProps.IsEditable(_map));
+    }
+
+    [Fact]
+    public async Task Display_ToAClientThatHasNotToldItsVersion_SendsTheOldDetails()
+    {
+        await StartAsync();
+
+        await OnLoopAsync(() => _maps.Display(_session, _map));
+
+        Assert.Equal("90", Describe(_sender.Sent[0]));
+    }
+
+    [Fact]
+    public async Task Display_OfAFeluccaMap_ToAPlayerInTrammel_DrawsTrammel()
+    {
+        await StartAsync();
+        Modern();
+        MapItemProps.SetArea(_map, Area with { Facet = 0 });
+
+        await OnLoopAsync(() => _maps.Display(_session, _map));
+
+        Assert.Equal(1, Assert.IsType<MapDetailsPacket>(_sender.Sent[0]).Area.Facet);
+    }
+
+    [Fact]
+    public async Task AToggleFromAPlayerWhoMayNotChangeTheMap_IsAnsweredNo()
+    {
+        await StartAsync();
+        MapItemProps.SetProtected(_map, true);
+
+        await HandleAsync(MapCommandType.ToggleEditable);
+
+        Assert.Equal(["56:7:False:0:0"], _sender.Sent.Select(Describe));
+    }
+
+    [Fact]
+    public async Task AMapOnTheCursor_OrAGhost_ChangesNothing()
+    {
+        await StartAsync();
+        MapItemProps.SetEditable(_map, true);
+        _handling.Held.Add(_map);
+
+        await HandleAsync(MapCommandType.AddPin, 0, 10, 20);
+        Assert.Empty(MapItemProps.GetPins(_map));
+
+        _handling.Held.Clear();
+        _aria.AccountId = new Serial(0x42);
+        _aria.Body = 0x0192;
+        await HandleAsync(MapCommandType.AddPin, 0, 10, 20);
+        Assert.Empty(MapItemProps.GetPins(_map));
+    }
+
+    [Fact]
+    public async Task AFlagSetByHandToText_ReadsAsNo_AndDoesNotThrow()
+    {
+        await StartAsync();
+        _map.SetProp(MapItemProps.EditableProp, "yes");
+        _map.SetProp(MapItemProps.ProtectedProp, "maybe");
+
+        await HandleAsync(MapCommandType.AddPin, 0, 10, 20);
+
+        Assert.False(MapItemProps.IsEditable(_map));
+        Assert.False(MapItemProps.IsProtected(_map));
+    }
+
+    private void Modern()
+    {
+        _session.NetworkSession.SetClientVersion(ClientVersion.Parse("7.0.15.1"));
     }
 
     private static string Describe(IOutgoingPacket packet)
@@ -219,7 +291,7 @@ public sealed class MapDisplayServiceTests : IAsyncDisposable
         _map.PutInContainer(_backpack.Id, new Point2D(10, 10));
         _items.Add([_backpack, _map]);
         MapItemProps.SetArea(_map, Area);
-        _maps = new(_items, _templates, _mobiles, _sender);
+        _maps = new(_items, _templates, _mobiles, _sender, _handling);
     }
 
     private Task OnLoopAsync(Action action)

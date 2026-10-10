@@ -70,8 +70,26 @@ public sealed class MapModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetBounds_OfCornersBothOffTheWorld_IsFalse()
+    {
+        Assert.False(Run($"return map.set_bounds({Map}, 6000, 100, 7000, 400, 200, 200, 0)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void SetPins_OffTheDrawing_OrOnAMapWithNoArea_IsFalse()
+    {
+        Assert.False(Run($"return map.set_pins({Map}, {{ {{ x = 10, y = 20 }} }})")[0].Read<bool>());
+
+        Run($"map.set_bounds({Map}, 100, 200, 300, 400, 200, 200, 1)");
+        Assert.False(Run($"return map.set_pins({Map}, {{ {{ x = 200, y = 20 }} }})")[0].Read<bool>());
+        Assert.False(Run($"return map.set_pins({Map}, {{ {{ x = -1, y = 20 }} }})")[0].Read<bool>());
+        Assert.Empty(MapItemProps.GetPins(_map));
+    }
+
+    [Fact]
     public void Pins_GoAndComeBack_AndMoreThanFiftyAreRefused()
     {
+        Run($"map.set_bounds({Map}, 100, 200, 300, 400, 200, 200, 1)");
         Assert.True(Run($"return map.set_pins({Map}, {{ {{ x = 10, y = 20 }}, {{ x = 30, y = 40 }} }})")[0].Read<bool>());
 
         var pins = Run($"local p = map.pins({Map}) return #p, p[1].x, p[1].y, p[2].x, p[2].y");

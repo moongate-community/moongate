@@ -5,7 +5,9 @@
 --   The item script of the maps, with script_id = "map_item": double clicked in
 --   the backpack or on the ground within 2 tiles, it opens the map on the area
 --   it shows, its own or the one of its preset template, with the course of
---   pins plotted on it. A blank map, with no area yet, does not open.
+--   pins plotted on it. A blank map, with no area yet, appears to be blank;
+--   a map of Ilshenar, Malas, Tokuno or Ter Mur needs a client of 7.0.13 or
+--   newer, and the player is told so.
 --
 -- Functions:
 --   map_item.on_use(serial, user)   opens the map for the player
@@ -15,6 +17,8 @@ map_item = {}
 
 local REACH = 2
 local TOO_FAR = 500446 -- That is too far away.
+local BLANK = 500208   -- It appears to be blank.
+local OLD_CLIENT = "You must have client 7.0.13.0 or higher to display this map."
 
 function map_item.on_use(serial, user)
     if item.owner(serial) ~= user and not item.in_range(serial, user, REACH) then
@@ -23,7 +27,13 @@ function map_item.on_use(serial, user)
         return true
     end
 
-    map.display(user, serial)
+    if not map.display(user, serial) then
+        if map.bounds(serial) == nil then
+            mobile.message_cliloc(user, BLANK)
+        else
+            mobile.message(user, OLD_CLIENT)
+        end
+    end
 
     return true
 end

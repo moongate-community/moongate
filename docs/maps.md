@@ -10,8 +10,8 @@ The client draws the land itself: the server tells it only the corners of the ar
 facet.
 
 The 33 preset maps (the small and large world, Britain, Minoc, Britain to Trinsic, the worlds of Ilshenar, Malas, Tokuno
-and Ter Mur, and the others) open on the area UOX3 gives them. A blank map, or a crafted map not drawn yet, has no area
-and does not open.
+and Ter Mur, and the others) open on the area UOX3 gives them. A blank map, or a crafted map not drawn yet, has no area:
+"It appears to be blank.". A map of Felucca opened in Trammel is drawn as Trammel, the same land.
 
 ## Plot a course
 
@@ -20,7 +20,8 @@ and does not open.
 3. Press the lock again when the course is done.
 
 A course holds at most 50 pins and is kept with the map. Only a map in your backpack or within 2 tiles can be changed,
-and never one a script protected. Clients older than 7.0.13 show maps of Felucca and Trammel only.
+and never one a script protected, one held on the cursor, or by a ghost. Clients older than 7.0.13, and a client that
+has not told its version yet, show maps of Felucca and Trammel only; a map of another facet tells them so.
 
 ## For scripts
 
@@ -36,7 +37,8 @@ map.display(user, serial)
 
 A map keeps its data in item props: `map.x1`, `map.y1`, `map.x2`, `map.y2`, `map.width`, `map.height`, `map.facet`,
 `map.pins` (pixels of the drawing, `x,y;x,y`), `map.editable` and `map.protected`. A preset map without them takes
-its area from the tags of its template, `map_x1` to `map_facet`.
+its area from the tags of its template, `map_x1` to `map_facet`. The course keeps its pixels when the area changes:
+clear it or set it again.
 
 ## Existing roots
 
@@ -46,7 +48,8 @@ its area from the tags of its template, `map_x1` to `map_facet`.
 
 ## Not yet
 
-Cartography, treasure maps, SOS bottles and indecipherable maps.
+Cartography, treasure maps, SOS bottles and indecipherable maps. Inserting and removing pins has not been tried with a
+client yet.
 
 ## See also
 

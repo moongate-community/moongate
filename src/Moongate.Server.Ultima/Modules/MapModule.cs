@@ -59,16 +59,20 @@ public sealed class MapModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Sets the area a map item shows: its north-west corner x1, y1 and south-east corner x2, y2 in tiles (kept within 0 to 5119 and 0 to 4095), the size of its drawing in pixels (1 to 800, 200 for a small map) and the facet (0 Felucca, 1 Trammel, 2 Ilshenar, 3 Malas, 4 Tokuno, 5 Ter Mur). False for an unknown or held item, corners not north-west of each other, no drawing or an unknown facet."
+        "Sets the area a map item shows: its north-west corner x1, y1 and south-east corner x2, y2 in tiles (kept within 0 to 5119 and 0 to 4095), the size of its drawing in pixels (1 to 800, 200 for a small map) and the facet (0 Felucca, 1 Trammel, 2 Ilshenar, 3 Malas, 4 Tokuno, 5 Ter Mur). The course keeps its pixels: clear or set it again after changing the area. False for an unknown or held item, corners not north-west of each other, no drawing or an unknown facet."
     )]
     public bool SetBounds(long serial, int x1, int y1, int x2, int y2, int width, int height, int facet)
     {
-        if (x1 >= x2 || y1 >= y2 || width < 1 || height < 1 || facet is < 0 or > LastFacet || !TryGetFree(serial, out var map))
+        var area = MapItemProps.Clamp(new(x1, y1, x2, y2, width, height, facet));
+
+        // Compared once kept in the world: corners both off its edge would make an area of no tiles.
+        if (area.X1 >= area.X2 || area.Y1 >= area.Y2 || width < 1 || height < 1 || facet is < 0 or > LastFacet ||
+            !TryGetFree(serial, out var map))
         {
             return false;
         }
 
-        MapItemProps.SetArea(map, new(x1, y1, x2, y2, width, height, facet));
+        MapItemProps.SetArea(map, area);
 
         return true;
     }
@@ -133,11 +137,11 @@ public sealed class MapModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Replaces the course of a map item with an array of { x, y } in pixels of its drawing; an empty array clears it. False for an unknown or held item, more than 50 pins, or a pin without numbers x and y."
+        "Replaces the course of a map item with an array of { x, y } in pixels of its drawing (0 to width - 1, 0 to height - 1); an empty array clears it. False for an unknown or held item, one with no area, more than 50 pins, or a pin without numbers x and y or off the drawing."
     )]
     public bool SetPins(long serial, LuaTable pins)
     {
-        if (pins.ArrayLength > MapItemProps.MaxPins || !TryGetFree(serial, out var map))
+        if (pins.ArrayLength > MapItemProps.MaxPins || !TryGetFree(serial, out var map) || !TryGetArea(map, out var area))
         {
             return false;
         }
@@ -149,6 +153,11 @@ public sealed class MapModule
             if (!pins[index].TryRead<LuaTable>(out var pin) ||
                 !pin["x"].TryRead<double>(out var x) ||
                 !pin["y"].TryRead<double>(out var y))
+            {
+                return false;
+            }
+
+            if (!(x >= 0 && x < area.Width && y >= 0 && y < area.Height))
             {
                 return false;
             }

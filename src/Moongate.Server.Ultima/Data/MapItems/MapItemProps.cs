@@ -37,7 +37,8 @@ public static class MapItemProps
             TryGetNumber(item, WidthProp, out var width) &&
             TryGetNumber(item, HeightProp, out var height))
         {
-            area = new(x1, y1, x2, y2, width, height, TryGetNumber(item, FacetProp, out var facet) ? facet : 0);
+            // A prop set by hand is kept on the world and the drawing the packets can carry.
+            area = Clamp(new(x1, y1, x2, y2, width, height, TryGetNumber(item, FacetProp, out var facet) ? facet : 0));
 
             return true;
         }
@@ -52,7 +53,7 @@ public static class MapItemProps
             TryGetTag(tags, "map_width", out width) &&
             TryGetTag(tags, "map_height", out height))
         {
-            area = new(x1, y1, x2, y2, width, height, TryGetTag(tags, "map_facet", out var facet) ? facet : 0);
+            area = Clamp(new(x1, y1, x2, y2, width, height, TryGetTag(tags, "map_facet", out var facet) ? facet : 0));
 
             return true;
         }
@@ -65,13 +66,30 @@ public static class MapItemProps
 
     public static void SetArea(ItemEntity item, MapArea area)
     {
-        item.SetProp(X1Prop, (long)Math.Clamp(area.X1, 0, MaxWorldX));
-        item.SetProp(Y1Prop, (long)Math.Clamp(area.Y1, 0, MaxWorldY));
-        item.SetProp(X2Prop, (long)Math.Clamp(area.X2, 0, MaxWorldX));
-        item.SetProp(Y2Prop, (long)Math.Clamp(area.Y2, 0, MaxWorldY));
-        item.SetProp(WidthProp, (long)Math.Clamp(area.Width, 1, MaxDrawing));
-        item.SetProp(HeightProp, (long)Math.Clamp(area.Height, 1, MaxDrawing));
+        area = Clamp(area);
+        item.SetProp(X1Prop, (long)area.X1);
+        item.SetProp(Y1Prop, (long)area.Y1);
+        item.SetProp(X2Prop, (long)area.X2);
+        item.SetProp(Y2Prop, (long)area.Y2);
+        item.SetProp(WidthProp, (long)area.Width);
+        item.SetProp(HeightProp, (long)area.Height);
         item.SetProp(FacetProp, (long)area.Facet);
+    }
+
+    /// <summary>
+    ///     The area kept within the world (0 to 5119, 0 to 4095) and a drawing of 1 to 800 pixels.
+    /// </summary>
+    public static MapArea Clamp(MapArea area)
+    {
+        return new(
+            Math.Clamp(area.X1, 0, MaxWorldX),
+            Math.Clamp(area.Y1, 0, MaxWorldY),
+            Math.Clamp(area.X2, 0, MaxWorldX),
+            Math.Clamp(area.Y2, 0, MaxWorldY),
+            Math.Clamp(area.Width, 1, MaxDrawing),
+            Math.Clamp(area.Height, 1, MaxDrawing),
+            area.Facet
+        );
     }
 
     public static IReadOnlyList<(int X, int Y)> GetPins(ItemEntity item)
@@ -118,7 +136,7 @@ public static class MapItemProps
 
     public static bool IsEditable(ItemEntity item)
     {
-        return item.TryGetProp<bool>(EditableProp, out var editable) && editable;
+        return TryGetFlag(item, EditableProp);
     }
 
     public static void SetEditable(ItemEntity item, bool editable)
@@ -128,7 +146,7 @@ public static class MapItemProps
 
     public static bool IsProtected(ItemEntity item)
     {
-        return item.TryGetProp<bool>(ProtectedProp, out var guarded) && guarded;
+        return TryGetFlag(item, ProtectedProp);
     }
 
     public static void SetProtected(ItemEntity item, bool guarded)
@@ -141,7 +159,11 @@ public static class MapItemProps
         var width = Math.Max(1, area.X2 - area.X1);
         var height = Math.Max(1, area.Y2 - area.Y1);
 
-        return ((x - area.X1) * area.Width / width, (y - area.Y1) * area.Height / height);
+        // The far edge is the last pixel of the drawing, where the client can still move the pin.
+        return (
+            Math.Clamp((x - area.X1) * area.Width / width, 0, area.Width - 1),
+            Math.Clamp((y - area.Y1) * area.Height / height, 0, area.Height - 1)
+        );
     }
 
     private static bool TryGetNumber(ItemEntity item, string key, out int value)
@@ -160,6 +182,19 @@ public static class MapItemProps
             return true;
         }
         catch (Exception exception) when (exception is InvalidCastException or FormatException or OverflowException)
+        {
+            return false;
+        }
+    }
+
+    // A flag set by hand to text that is no bool reads as false.
+    private static bool TryGetFlag(ItemEntity item, string key)
+    {
+        try
+        {
+            return item.TryGetProp<bool>(key, out var flag) && flag;
+        }
+        catch (Exception exception) when (exception is InvalidCastException or FormatException)
         {
             return false;
         }

@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Scripting.Data.Config;
 using Moongate.Scripting.Data.Events;
 using Moongate.Scripting.Extensions.Scripts;
@@ -35,6 +36,7 @@ namespace Moongate.Tests.Integration.Server.Ultima.Items;
 public sealed class MapScriptIntegrationTests : IAsyncLifetime
 {
     private const int TooFarCliloc = 500446;
+    private const int BlankCliloc = 500208;
 
     private static readonly Point3D Spot = new(1400, 1600, 0);
 
@@ -51,7 +53,13 @@ public sealed class MapScriptIntegrationTests : IAsyncLifetime
         Id = new Serial(0x40000010), TemplateId = "britainmap", ItemId = 0x14EC, Amount = 1
     };
 
+    private readonly ItemEntity _blank = new()
+    {
+        Id = new Serial(0x40000011), TemplateId = "0x14ec_blank_map", ItemId = 0x14EC, Amount = 1
+    };
+
     private BroadcastFixture _fixture = null!;
+    private Moongate.Server.Core.Data.Sessions.GameSession _session = null!;
     private LuaScriptEngineService _engine = null!;
     private ItemScriptService _itemScripts = null!;
     private MobileEntity _aria = null!;
@@ -60,13 +68,15 @@ public sealed class MapScriptIntegrationTests : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _fixture = await BroadcastFixture.CreateAsync();
-        await _fixture.AddAsync(2);
+        _session = await _fixture.AddAsync(2);
+        _session.NetworkSession.SetClientVersion(ClientVersion.Parse("7.0.15.1"));
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out _aria!));
         _aria.Map = MapType.Trammel;
         _aria.Location = Spot;
         _items = TestItems.Create(_fixture.Sectors);
         _map.PlaceOnGround(MapType.Trammel, new Point3D(1402, 1600, 0));
-        _items.Add([_map]);
+        _blank.PlaceOnGround(MapType.Trammel, new Point3D(1401, 1600, 0));
+        _items.Add([_map, _blank]);
 
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
         _scripts.Write("items/map_item.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "map_item.lua")));
@@ -77,6 +87,7 @@ public sealed class MapScriptIntegrationTests : IAsyncLifetime
         };
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
+                new ItemTemplate { Id = "0x14ec_blank_map", ItemId = new Serial(0x14EC), ScriptId = "map_item" },
                 new ItemTemplate
                 {
                     Id = "britainmap", ItemId = new Serial(0x14EC), ScriptId = "map_item",
@@ -133,13 +144,13 @@ public sealed class MapScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void APresetMap_OpensOnItsArea()
+    public void APresetMap_OpensOnItsArea_DrawnAsTheFacetThePlayerStandsOn()
     {
         _itemScripts.Run(_map, "on_use", 2L);
 
         Assert.Empty(_errors);
         var details = Assert.Single(_fixture.Sender.Sent.OfType<MapDetailsPacket>());
-        Assert.Equal(new MapArea(1092, 1396, 1736, 1924, 200, 200, 0), details.Area);
+        Assert.Equal(new MapArea(1092, 1396, 1736, 1924, 200, 200, 1), details.Area);
     }
 
     [Fact]
@@ -152,6 +163,29 @@ public sealed class MapScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Empty(_fixture.Sender.Sent.OfType<MapDetailsPacket>());
         Assert.Equal([(_aria, TooFarCliloc, "")], _speech.ToldClilocs);
+    }
+
+    [Fact]
+    public void ABlankMap_AppearsToBeBlank()
+    {
+        _itemScripts.Run(_blank, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_fixture.Sender.Sent.OfType<MapDetailsPacket>());
+        Assert.Equal([(_aria, BlankCliloc, "")], _speech.ToldClilocs);
+    }
+
+    [Fact]
+    public void AMapOfMalas_OnAnOldClient_TellsThePlayerWhy()
+    {
+        _session.NetworkSession.SetClientVersion(ClientVersion.Parse("6.0.14.2"));
+        MapItemProps.SetArea(_map, new MapArea(520, 0, 2580, 2050, 400, 400, 3));
+
+        _itemScripts.Run(_map, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Empty(_fixture.Sender.Sent.OfType<OldMapDetailsPacket>());
+        Assert.Contains(_speech.Told, told => told.Player == _aria && told.Text.Contains("7.0.13", StringComparison.Ordinal));
     }
 
     private static string RepositoryRoot()

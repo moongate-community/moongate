@@ -795,3 +795,12 @@ def test_a_preset_map_gets_its_area_and_the_map_script(uox_workspace):
     assert by_name["malas map"]["tags"]["map_facet"] == "3"
     # A crafted map is drawn by its cartographer: no area of its own, the script all the same.
     assert by_name["city map"]["script_id"] == "map_item" and "map_x1" not in by_name["city map"]["tags"]
+
+
+def test_a_blank_map_gets_the_map_script_so_it_says_it_is_blank(uox_workspace):
+    uox_workspace.write_source("items.dfn", "[0x14ec]\n{\nname=blank map\nid=0x14ec\n}\n")
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["blank map"]["script_id"] == "map_item"

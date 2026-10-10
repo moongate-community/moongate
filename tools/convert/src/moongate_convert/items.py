@@ -277,6 +277,10 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     if name:
         template.name = name
 
+    # A blank map says it is blank when it is opened: scripts/items/map_item.lua.
+    if template.script_id is None and (template.name or "").lower() == BLANK_MAP:
+        template.script_id = "map_item"
+
     # UOX3 reads COLOR and COLOUR as one tag.
     hue = HueSpec.try_parse(fields.get("color") if "color" in fields else fields.get("colour"))
 
@@ -512,6 +516,7 @@ PRESET_MAPS: dict[str, tuple[int, int, int, int, int, int, int]] = {
     "33": (400, 400, 260, 2780, 1280, 4090, 5),
 }
 CRAFTED_MAP = "50"
+BLANK_MAP = "blank map"
 PRESET_MAP_FIELDS = ("map_width", "map_height", "map_x1", "map_y1", "map_x2", "map_y2", "map_facet")
 
 

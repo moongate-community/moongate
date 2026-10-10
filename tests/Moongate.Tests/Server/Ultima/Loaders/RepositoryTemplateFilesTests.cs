@@ -1077,6 +1077,8 @@ public sealed class RepositoryTemplateFilesTests
         // A crafted map waits for its cartographer: the script, but no area.
         Assert.Equal("map_item", templates["craftedcitymap"].ScriptId);
         Assert.False(templates["craftedcitymap"].Tags!.ContainsKey("map_x1"));
+        // A blank map says it is blank.
+        Assert.Equal("map_item", templates["0x14ec_blank_map"].ScriptId);
     }
 
     [Fact]

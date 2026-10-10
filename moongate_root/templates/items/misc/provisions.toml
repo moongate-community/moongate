@@ -16,6 +16,7 @@ base_id = "base_item"
 item_id = 5356
 name = "blank map"
 rarity = "common"
+script_id = "map_item"
 weight = 1.0
 buy_price = 75
 sell_price = 37

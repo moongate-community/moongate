@@ -8,6 +8,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.MapItems;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -27,18 +28,21 @@ public sealed class MapDisplayService : IMapDisplayService
     private readonly IItemTemplateService _templates;
     private readonly IMobileService _mobiles;
     private readonly IPacketSendService _sender;
+    private readonly IItemHandlingService _handling;
 
     public MapDisplayService(
         IItemService items,
         IItemTemplateService templates,
         IMobileService mobiles,
-        IPacketSendService sender
+        IPacketSendService sender,
+        IItemHandlingService handling
     )
     {
         _items = items;
         _templates = templates;
         _mobiles = mobiles;
         _sender = sender;
+        _handling = handling;
     }
 
     public bool Display(GameSession session, ItemEntity map)
@@ -48,11 +52,20 @@ public sealed class MapDisplayService : IMapDisplayService
             return false;
         }
 
-        var old = session.ClientVersion is { } version && version < ClientVersion.Version70130;
+        // A client that has not told its version yet gets the packet every client knows.
+        var old = session.ClientVersion is not { } version || version < ClientVersion.Version70130;
 
         if (old && area.Facet > LastOldFacet)
         {
             return false;
+        }
+
+        var found = TryGetPlayer(session, out var player);
+
+        // Felucca and Trammel share their land: a map of the one is drawn as the facet the player stands on.
+        if (area.Facet == (int)MapType.Felucca && found && player.Map == MapType.Trammel)
+        {
+            area = area with { Facet = (int)MapType.Trammel };
         }
 
         var serial = map.Id.Value;
@@ -64,7 +77,7 @@ public sealed class MapDisplayService : IMapDisplayService
             _sender.TrySend(session.SessionId, new MapCommandPacket(serial, MapCommandType.AddPin, false, x, y));
         }
 
-        var editable = MapItemProps.IsEditable(map) && TryGetPlayer(session, out var player) && CanEdit(player, map);
+        var editable = MapItemProps.IsEditable(map) && found && CanEdit(player, map);
         _sender.TrySend(session.SessionId, new MapCommandPacket(serial, MapCommandType.EditableAnswer, editable, 0, 0));
 
         return true;
@@ -74,9 +87,19 @@ public sealed class MapDisplayService : IMapDisplayService
     {
         if (!_items.TryGet(new Serial(packet.Serial), out var map) ||
             !TryGetArea(map, out var area) ||
-            !TryGetPlayer(session, out var player) ||
-            !CanEdit(player, map))
+            !TryGetPlayer(session, out var player))
         {
+            return;
+        }
+
+        if (!CanEdit(player, map))
+        {
+            // The lock of the client's window turns at once: it is put back.
+            if (packet.Command == MapCommandType.ToggleEditable)
+            {
+                _sender.TrySend(session.SessionId, new MapCommandPacket(map.Id.Value, MapCommandType.EditableAnswer, false, 0, 0));
+            }
+
             return;
         }
 
@@ -142,10 +165,11 @@ public sealed class MapDisplayService : IMapDisplayService
         return session.CharacterId.IsValid && _mobiles.TryGet(session.CharacterId, out player!);
     }
 
-    // In the player's own backpack, or on the ground within reach; never a protected or a fixed map.
+    // A living player, with the map in its own backpack or on the ground within reach; never a protected, a fixed map
+    // or one held on a cursor.
     private bool CanEdit(MobileEntity player, ItemEntity map)
     {
-        if (MapItemProps.IsProtected(map) || map.Movable == false)
+        if (player.IsDead || MapItemProps.IsProtected(map) || map.Movable == false || _handling.IsHeld(map))
         {
             return false;
         }
