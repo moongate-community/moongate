@@ -103,7 +103,6 @@ public sealed class InscriptionScriptIntegrationTests : IAsyncLifetime
     private ItemTemplateService _templates = null!;
     private CraftService _crafts = null!;
     private CraftDefinition _craft = null!;
-    private SpellbookService _books = null!;
 
     private readonly ItemEntity _backpack = new()
         { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
