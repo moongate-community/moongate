@@ -33,6 +33,8 @@ CARPENTRY_TOOL_GRAPHICS = frozenset(
 TINKERING_TOOL_GRAPHICS = frozenset({0x1EB8, 0x1EB9, 0x1EBA, 0x1EBB, 0x1EBC})
 # What a tailor sews with: the sewing kit, not the scissors.
 TAILORING_TOOL_GRAPHICS = frozenset({0x0F9D})
+# What a bowyer works with: the fletcher's tools.
+FLETCHING_TOOL_GRAPHICS = frozenset({0x1022, 0x1023})
 # What a smith forges with at an anvil: the smith's hammers, the sledge hammers and the tongs.
 SMITHING_TOOL_GRAPHICS = frozenset({0x13E3, 0x13E4, 0x0FB4, 0x0FB5, 0x0FBB, 0x0FBC})
 TWO_HANDED = 2
@@ -228,6 +230,9 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     elif graphic in TINKERING_TOOL_GRAPHICS:
         # What UOX3's crafting tool script opens tinkering with: scripts/items/tinkering_tool.lua.
         template.script_id = "tinkering_tool"
+    elif graphic in FLETCHING_TOOL_GRAPHICS:
+        # What a bowyer works with: scripts/items/fletching_tool.lua.
+        template.script_id = "fletching_tool"
     elif graphic in TAILORING_TOOL_GRAPHICS:
         # What UOX3's crafting tool script opens tailoring with: scripts/items/tailoring_tool.lua.
         template.script_id = "tailoring_tool"

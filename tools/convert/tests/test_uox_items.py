@@ -731,6 +731,16 @@ def test_the_sewing_kits_get_the_tailoring_tool_script_but_not_the_scissors(uox_
     assert "script_id" not in by_name["scissors"]
 
 
+def test_the_fletcher_tools_get_the_fletching_tool_script(uox_workspace):
+    uox_workspace.write_source("items.dfn", "[0x1022]\n{\nname=fletcher's tools\nid=0x1022\n}\n")
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a bowyer works with: scripts/items/fletching_tool.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["fletcher's tools"]["script_id"] == "fletching_tool"
+
+
 def test_the_tinker_tools_get_the_tinkering_tool_script(uox_workspace):
     uox_workspace.write_source(
         "items.dfn",
