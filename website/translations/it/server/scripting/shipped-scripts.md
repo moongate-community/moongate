@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0f2cd38e39fecc5036873b12543f9b9bc8f257bb2d24bb8fe0834242b002187b","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"205388d4e09dbbea34f86665f35f39eeb0617d019c607db9db10d33bf690b017","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -246,6 +246,12 @@ le trova entro una distanza da un giocatore, tra gli elementi fissi della mappa 
 
 `scripts/items/tailoring_tool.lua` è lo script dei kit da cucito (`script_id = "tailoring_tool"`): dallo zaino
 apre il gump di creazione della sartoria (vedi [Sartoria](../tailoring.md)), con le regole di `crafting.lua`.
+
+## tinkering_tool.lua
+
+`scripts/items/tinkering_tool.lua` è lo script degli attrezzi da tinker e delle cassette degli attrezzi (`script_id = "tinkering_tool"`):
+dallo zaino apre il gump di creazione della meccanica (vedi [Meccanica](../tinkering.md)), con le regole di
+`crafting.lua` e il metallo scelto.
 
 ## fishing_pole.lua
 
