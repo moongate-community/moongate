@@ -99,6 +99,7 @@ export const contentEntries = [
   { source: 'docs/cooking.md', slug: 'server/cooking', title: 'Cooking', group: 'Scripting and content' },
   { source: 'docs/maps.md', slug: 'server/maps', title: 'Maps', group: 'Scripting and content' },
   { source: 'docs/cartography.md', slug: 'server/cartography', title: 'Cartography', group: 'Scripting and content' },
+  { source: 'docs/potions.md', slug: 'server/potions', title: 'Potions', group: 'Scripting and content' },
   { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },

@@ -277,6 +277,12 @@ within 2 tiles it opens the map on its area with the `map` module (see [Maps](..
 it opens the crafting gump of cartography (see [Cartography](../cartography.md)); a map made is drawn by
 `scripts/common/cartography.lua`.
 
+## potion.lua
+
+`scripts/items/potion.lua` is the script of the potions a player drinks (`script_id = "potion"`): heal, refresh,
+strength, agility and night sight, chosen by the template in its table `EFFECTS`; it checks the reach and a free hand,
+and leaves an empty bottle (see [Potions](../potions.md)).
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,

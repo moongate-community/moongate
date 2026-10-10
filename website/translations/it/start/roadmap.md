@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"5f12271922fb18223fb15938bc40567e66c1f64ff5bbb05107f8614db219738e","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"63b9fc149c0283bcae9d7498f2ed9471645ed4f3094e2a358956135022041185","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -94,7 +94,7 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | --- | --- | --- | --- | --- |
 | 1.1 | ✅ | **Rigenerazione** di punti vita, mana e stamina; fame e sete, cibo che si mangia e bevande che si bevono | Nulla dipende da altro; visibile nel primo combattimento | |
 | 1.2 | ✅ | **Uso, verifica e incremento delle abilità**; incremento delle statistiche; limiti e blocchi. Un'[abilità](skills.md) viene usata dal client, verificata da `skill.check`, incrementata entro il limite dell'abilità e quello totale e impostata in aumento, diminuzione o bloccata dalla finestra delle abilità; una verifica riuscita aumenta forza, destrezza e intelligenza secondo la regola classica di ModernUO, fino a 100 ciascuna e 225 complessivi, con i loro blocchi. Hiding è il primo script di abilità; gli altri arrivano con i rispettivi sistemi | La progressione del gioco; ogni sistema successivo chiama la verifica delle abilità | UOX3 `skills.dfn` (61 abilità: pesi delle statistiche, curve di incremento), ModernUO `skills.json` |
-| 1.3 | ❌ | **Effetti temporanei**: un meccanismo per veleno, maledizioni, benedizioni, polymorph, nascondersi; la barra dei buff li mostra | Magia, pozioni e combattimento ne hanno bisogno | |
+| 1.3 | 🟡 | **Effetti temporanei**: un meccanismo per veleno, maledizioni, benedizioni, polymorph, nascondersi; la barra dei buff li mostra. Fatto: bonus di statistiche e visione notturna | Magia, pozioni e combattimento ne hanno bisogno | |
 | 1.4 | ✅ | **Contenitori a terra**, con limiti di oggetti e peso; peso e sovraccarico: un contenitore a terra si apre, gli oggetti entrano ed escono, fino a 125 e al suo limite di stone; un giocatore trasporta 40 stone e 3.5 per punto di forza, e muoversi sovraccarichi o correre costa stamina | Cadaveri, venditori, forzieri e case ne hanno bisogno | |
 | 1.5 | 🟡 | **Menu contestuali e menu classici**. Completato: richiesta di testo (`prompt.ask`) e [menu contestuali](context-menus.md) con le voci del server e quelle che aggiunge uno script Lua | Venditori, animali, creazione e gilde si aprono tramite essi | |
 | 1.6 | ✅ | **Campi di combattimento degli oggetti** nei template e nel convertitore: danno, velocità, armatura, punti vita, requisito di forza | Il combattimento li legge; ora il convertitore li legge da UOX3 | UOX3 `items/gear/` |
@@ -130,7 +130,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 | 4.2 | ❌ | **Scambio sicuro** tra giocatori | Economia dei giocatori | |
 | 4.3 | ❌ | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebook** | Il modo in cui i giocatori viaggiano; richiede le regole delle regioni di 3.5 | |
-| 4.5 | ❌ | **Pozioni ed effetti alchemici** | Piccolo quando esistono effetti temporanei e incantesimi | |
+| 4.5 | 🟡 | **Pozioni ed effetti alchemici**. Fatto: [cura, rinvigorimento, forza, agilità e visione notturna](potions.md); poi veleno e antidoti, poi esplosione | Piccolo quando esistono effetti temporanei e incantesimi | |
 
 ## Fase 5: professioni
 

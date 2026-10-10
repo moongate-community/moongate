@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b1799dc299a4328c9137627550ed13f9622b6d7d208a87710fd5fa5a30003eaa","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"4a468d8179564b5e86c743d78e0d9fd4564d02c0d25dec5f4de928678faa2957","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -276,6 +276,12 @@ entro 2 caselle apre la mappa sulla sua area con il modulo `map` (vedi [Mappe](.
 `scripts/items/cartography_tool.lua` è lo script delle penne (`script_id = "cartography_tool"`): dallo zaino
 apre il gump di creazione della cartografia (vedi [Cartografia](../cartography.md)); una mappa creata viene disegnata da
 `scripts/common/cartography.lua`.
+
+## potion.lua
+
+`scripts/items/potion.lua` è lo script delle pozioni che un giocatore beve (`script_id = "potion"`): cura, rinvigorimento,
+forza, agilità e visione notturna, scelte dal template nella sua tabella `EFFECTS`; controlla la distanza e una mano libera,
+e lascia una bottiglia vuota (vedi [Pozioni](../potions.md)).
 
 ## fishing_pole.lua
 

@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**271 systems:** ✅ 91 done, 🟡 67 partly done, ❌ 113 not built yet.
+**271 systems:** ✅ 91 done, 🟡 68 partly done, ❌ 112 not built yet.
 
 **Coverage: 34%** of the systems done, **46%** counting a partly done system as half.
 
@@ -184,7 +184,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Doors | ✅ | Open and close; linked double doors; a closed door blocks the way, staff walks through; humans and monsters walking to a place open the ones that are not locked |
 | Locks and keys | ✅ | Locked doors open for a player carrying their key |
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
-| Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. A sample potion is drunk and used up, with no effect yet |
+| Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. [Potions](potions.md) of heal, refresh, strength, agility and night sight are drunk, with a free hand, and leave a bottle; no poison, cure or explosion yet |
 | Books | 🟡 | Staff [`.book`](commands/book.md) creation and readable scrolls from [TOML text templates](data-files/books.md), frozen recipient variables and saved title/author/body and [once-only letter attachments](data-files/books.md#letter-attachments); [62 lore books in eight languages](book-content-import.md), which open the client's own [book](data-files/books.md#books-and-parchments) with its cover and pages; [books a player writes in](data-files/books.md#books-a-player-writes-in), one for every new character; copying and signing a book are not built |
 | Maps and treasure maps | 🟡 | [Maps](maps.md) open on their area, with a course of up to 50 pins; the 33 preset maps; a `map` Lua module; [cartography](cartography.md) draws them. No treasure maps or SOS yet |
 | Runes, recall and gates | ❌ | |
@@ -347,7 +347,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Buff bar | ❌ | |
 | Walk sequence and speed checks | ✅ | |
 | Weight and overloading | ✅ | What a mobile carries and may carry (40 and 3.5 a point of strength) is counted and shown; an overloaded player tires at every step |
-| Timed effects (buffs and debuffs) | ❌ | |
+| Timed effects (buffs and debuffs) | 🟡 | Strength and dexterity bonuses and night sight, for a time, never saved; no poison, curses or buff bar yet |
 | Text prompts and input | ✅ | The Unicode prompt (0xC2), from scripts with the `prompt` module |
 | Visual effects: moving, lightning, particles | ✅ | From scripts with the `effect` module; particles for the Enhanced Client |
 | Sounds and music | ✅ | Sounds from scripts, thunder and region music |

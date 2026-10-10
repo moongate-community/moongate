@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e325138fc6efcff44b2de3427b55c9410712a4dfe74bd0872737e894dd5c0409","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"785f882d73f429ac0b469855b438c34d7d1f481593dc3d744305fb790b721482","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,7 +9,7 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**271 sistemi:** ✅ 91 completati, 🟡 67 parzialmente completati, ❌ 113 non ancora realizzati.
+**271 sistemi:** ✅ 91 completati, 🟡 68 parzialmente completati, ❌ 112 non ancora realizzati.
 
 **Copertura: 34%** dei sistemi completati, **46%** contando un sistema parzialmente completato come metà.
 
@@ -186,7 +186,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Porte | ✅ | Apertura e chiusura; porte doppie collegate; una porta chiusa blocca il passaggio, lo staff la attraversa; umani e mostri che camminano verso un luogo aprono quelle non a chiave |
 | Serrature e chiavi | ✅ | Le porte chiuse a chiave si aprono per un giocatore che porta la loro chiave |
 | Luci | ✅ | Accensione e spegnimento; i lampioni si accendono di notte |
-| Pozioni e cibo | 🟡 | Il cibo si mangia: fame, stamina, suono e gesto. Le bevande si bevono a sorsi, lasciando una brocca o un bicchiere vuoto; nessun riempimento, nessuna ubriachezza. Una pozione di esempio viene bevuta e consumata, senza ancora alcun effetto |
+| Pozioni e cibo | 🟡 | Il cibo si mangia: fame, stamina, suono e gesto. Le bevande si bevono a sorsi, lasciando una brocca o un bicchiere vuoto; nessun riempimento, nessuna ubriachezza. Le [pozioni](potions.md) di cura, rinvigorimento, forza, agilità e visione notturna si bevono, con una mano libera, e lasciano una bottiglia; ancora niente veleno, antidoti o esplosioni |
 | Libri | 🟡 | Creazione da parte dello staff con [`.book`](commands/book.md) e pergamene leggibili da [template di testo TOML](data-files/books.md), variabili del destinatario congelate, titolo/autore/testo salvati e [allegati alle lettere ritirabili una sola volta](data-files/books.md#letter-attachments); [62 libri di lore in otto lingue](book-content-import.md), che aprono il [libro](data-files/books.md#books-and-parchments) del client con copertina e pagine; [libri in cui il giocatore scrive](data-files/books.md#books-a-player-writes-in), uno per ogni nuovo personaggio; copia e firma dei libri non realizzate |
 | Mappe e mappe del tesoro | 🟡 | Le [mappe](maps.md) si aprono sulla loro area, con un percorso fino a 50 puntine; le 33 mappe pronte; un modulo Lua `map`; la [cartografia](cartography.md) le disegna. Niente mappe del tesoro o SOS per ora |
 | Rune, recall e portali | ❌ | |
@@ -349,7 +349,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Barra dei buff | ❌ | |
 | Controlli della sequenza e della velocità di camminata | ✅ | |
 | Peso e sovraccarico | ✅ | Ciò che un mobile trasporta e può trasportare (40 e 3.5 per punto di forza) viene conteggiato e mostrato; un giocatore sovraccarico si stanca a ogni passo |
-| Effetti temporanei (buff e debuff) | ❌ | |
+| Effetti temporanei (buff e debuff) | 🟡 | Bonus di forza e destrezza e visione notturna, a tempo, mai salvati; ancora niente veleno, maledizioni o barra dei buff |
 | Richieste di testo e input | ✅ | Prompt Unicode (0xC2), dagli script con il modulo `prompt` |
 | Effetti visivi: movimento, fulmini, particelle | ✅ | Dagli script con il modulo `effect`; particelle per l'Enhanced Client |
 | Suoni e musica | ✅ | Suoni dagli script, tuoni e musica delle regioni |

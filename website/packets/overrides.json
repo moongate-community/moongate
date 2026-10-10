@@ -1006,7 +1006,7 @@
       }
     ],
     "notes": "Sets the light level for one mobile.",
-    "handler": "CharacterEnterWorldService: sends personal light during world entry."
+    "handler": "CharacterEnterWorldService: sends personal light 0 during world entry; StatBonusService: night sight, and 0 when it ends."
   },
   "0x4F:outgoing": {
     "category": "World",

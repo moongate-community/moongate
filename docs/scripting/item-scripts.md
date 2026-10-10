@@ -63,8 +63,8 @@ end
 ```
 
 The script acts on its item with the `item` module, passing its serial; `user` is
-the serial of the player. The distribution's `scripts/items/potion.lua`, copied into the root by `mgctl`; no
-template uses it yet:
+the serial of the player. A minimal item script, as the distribution's `scripts/items/potion.lua` began; the full one
+is described in [Potions](../potions.md):
 
 ```lua
 potion = {}
