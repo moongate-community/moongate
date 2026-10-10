@@ -35,8 +35,9 @@ TINKERING_TOOL_GRAPHICS = frozenset({0x1EB8, 0x1EB9, 0x1EBA, 0x1EBB, 0x1EBC})
 TAILORING_TOOL_GRAPHICS = frozenset({0x0F9D})
 # What an alchemist grinds reagents with: the mortar and pestle.
 ALCHEMY_TOOL_GRAPHICS = frozenset({0x0E9B})
-# What a cartographer draws with: the pens and ink (inscription will share them).
-CARTOGRAPHY_TOOL_GRAPHICS = frozenset({0x0FBF, 0x0FC0})
+# What a cartographer draws with and a scribe writes with: the pens and ink. The mapmaker's pen is a cartographer's, the rest
+# a scribe's.
+PEN_GRAPHICS = frozenset({0x0FBF, 0x0FC0})
 # What a cook works with: the skillets, the flour sifter and the rolling pin.
 COOKING_TOOL_GRAPHICS = frozenset({0x097F, 0x09E2, 0x103E, 0x1043})
 # What a bowyer works with: the fletcher's tools.
@@ -240,9 +241,12 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     elif graphic in ALCHEMY_TOOL_GRAPHICS:
         # What an alchemist grinds with: scripts/items/alchemy_tool.lua.
         template.script_id = "alchemy_tool"
-    elif graphic in CARTOGRAPHY_TOOL_GRAPHICS:
+    elif graphic in PEN_GRAPHICS and "mapmaker" in item_id.lower():
         # What a cartographer draws with: scripts/items/cartography_tool.lua.
         template.script_id = "cartography_tool"
+    elif graphic in PEN_GRAPHICS:
+        # What a scribe writes with: scripts/items/inscription_tool.lua.
+        template.script_id = "inscription_tool"
     elif graphic in COOKING_TOOL_GRAPHICS:
         # What a cook works with: scripts/items/cooking_tool.lua.
         template.script_id = "cooking_tool"

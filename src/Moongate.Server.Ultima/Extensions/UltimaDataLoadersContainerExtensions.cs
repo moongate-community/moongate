@@ -73,15 +73,15 @@ public static class UltimaDataLoadersContainerExtensions
         container.AddUltimaDataLoader<ShopsLoader, ShopDefinition>(26);
         container.AddUltimaDataLoader<HarvestLoader, HarvestResource>(27);
         container.AddUltimaDataLoader<ScheduleLoader, ScheduleFile>(28);
-        // Crafts name item templates, and the resource lists load before the crafts that name them.
-        container.AddUltimaDataLoader<CraftResourcesLoader, CraftResourceList>(29);
-        container.AddUltimaDataLoader<CraftsLoader, CraftDefinition>(30);
+        // After the item templates, which the reagents and the scrolls of the spells name; before the crafts, which name spells.
+        container.AddUltimaDataLoader<SpellsLoader, SpellDefinition>(29);
+        // Crafts name item templates and spells, and the resource lists load before the crafts that name them.
+        container.AddUltimaDataLoader<CraftResourcesLoader, CraftResourceList>(30);
+        container.AddUltimaDataLoader<CraftsLoader, CraftDefinition>(31);
         // After the mobile templates, which the creatures name.
-        container.AddUltimaDataLoader<TamingLoader, TamingCreature>(31);
+        container.AddUltimaDataLoader<TamingLoader, TamingCreature>(32);
         // After the item templates, which the kinds of food name.
-        container.AddUltimaDataLoader<PetFoodLoader, PetFood>(32);
-        // After the item templates, which the reagents and the scrolls of the spells name.
-        container.AddUltimaDataLoader<SpellsLoader, SpellDefinition>(33);
+        container.AddUltimaDataLoader<PetFoodLoader, PetFood>(33);
 
         return container;
     }

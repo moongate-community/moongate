@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a0c7c81db196b5cf4c06b14420496ad4db953ff886236b2ebed81877f7b91bdf","title":"Cartografia"} -->
+<!-- translation: {"sourceHash":"80abf5f8b26eb726c5a78c1fbf87969faec4e3422a70b72533e160b300cfccc3","title":"Cartografia"} -->
 
 # Cartografia
 
@@ -9,7 +9,7 @@ percorso di puntine come ogni [mappa](maps.md).
 
 ## Come disegnare una mappa
 
-1. Porta una penna da cartografo, o penna e inchiostro, e delle mappe vuote nello zaino.
+1. Porta una penna da cartografo e delle mappe vuote nello zaino.
 2. Fai doppio clic sulla penna. Si apre il gump di creazione della cartografia.
 3. Premi il pulsante prima di una ricetta, e resta dove vuoi il centro della mappa: viene disegnata dove ti trovi quando è
    finita, 1,25 secondi dopo.
@@ -31,8 +31,9 @@ I numeri di abilità di UOX3 sono sbagliati di una cifra o oltre ogni abilità: 
 ## Cambiare le regole
 
 - Le ricette sono [`data/crafts/cartography.toml`](data-files/crafts.md).
-- Le penne sono i template con `script_id = "cartography_tool"` (`scripts/items/cartography_tool.lua`); come si disegna una mappa
-  è `scripts/common/cartography.lua`.
+- La penna è il template con `script_id = "cartography_tool"` (`scripts/items/cartography_tool.lua`); come si disegna una mappa
+  è `scripts/common/cartography.lua`. Penna e inchiostro è di uno scriba: apre [Inscription](inscription.md).
+  Il cartografo vende la penna da cartografo (`mapmakerspen`) e la ricompra; uno scriba e un mago vendono penna e inchiostro.
 
 ## Root esistenti
 
@@ -44,7 +45,7 @@ you made." e il server registra il motivo.
 
 ## Non ancora
 
-L'iscrizione, che condividerà le penne; le mappe del tesoro.
+Le mappe del tesoro.
 
 ## Vedi anche
 

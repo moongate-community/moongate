@@ -5,7 +5,9 @@
 --   The item script of the test bags for the staff, with
 --   script_id = "test_kit" (templates/items/test_kits.toml): ".add
 --   test_kit_alchemy" gives a bag that fills, the first time it is opened,
---   with what is needed to try a craft, a potion or the spells of the first
+--   with what is needed to try a craft (inscription takes a pen and ink, blank
+--   scrolls, the reagents and a full spellbook; set the skill with ".set skill
+--   inscription 100" and magery for the mana), a potion or the spells of the first
 --   to eighth circles: the tool, the materials and the items to use, or a full
 --   spellbook, the reagents, some scrolls and four recall runes (marked with
 --   ".mark_rune"). Then it is a bag like any other. The skill
@@ -77,6 +79,12 @@ local KITS = {
         { "0x1f6a_summon_earth_elemental_scroll", 3 }, { "0x1f6b_summon_fire_elemental_scroll", 3 },
         { "0x1f6c_summon_water_elemental_scroll", 3 },
         { "recall_rune", 4 },
+    },
+    test_kit_inscription = {
+        { "0x0fc0_pen_and_ink", 1 }, { "0x0e34_a_blank_scroll", 100 }, { "spellbook_full", 1 },
+        { "0x0f7a_black_pearl", 50 }, { "0x0f7b_blood_moss", 50 }, { "0x0f84_garlic", 50 }, { "0x0f85_ginseng", 50 },
+        { "0x0f86_mandrake_root", 50 }, { "0x0f88_nightshade", 50 }, { "0x0f8c_sulfurous_ash", 50 },
+        { "0x0f8d_spider_silk", 50 },
     },
     test_kit_cooking = {
         { "0x097f_skillet", 1 }, { "0x1039_sack_of_flour", 5 }, { "0x0ff8_pitcher_of_water", 5 },

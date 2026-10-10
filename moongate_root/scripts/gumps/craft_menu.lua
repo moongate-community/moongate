@@ -6,7 +6,7 @@
 --   scripts/common/crafting.lua opens for a craft. On the left the groups of
 --   the craft; on the right the recipes of the group picked, ten a page, each
 --   with a button that makes it and one that shows its page (the item, what it
---   takes, the skills and the player's chance). Below, the kind of wood or metal picked and
+--   takes, the skills, the mana and the player's chance). Below, the kind of wood or metal picked and
 --   how much of it the player carries, with a button to change it, a
 --   button that makes the last recipe again, and the text of what happened
 --   last. A button of a tool that is no longer in the
@@ -148,6 +148,11 @@ local function info_page(g, player, args, craft, group, group_index)
 
     for _, other in ipairs(recipe.skills) do
         label(g, RECIPES_X, y, RECIPE_WIDTH, string.format("%s %.1f - %.1f", other.skill, other.min, other.max))
+        y = y + ROW
+    end
+
+    if (recipe.mana or 0) > 0 then
+        label(g, RECIPES_X, y, RECIPE_WIDTH, "Mana: " .. recipe.mana)
         y = y + ROW
     end
 

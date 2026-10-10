@@ -115,3 +115,7 @@ templates = ["0x0f86_10_mandrake_root", "0x0f86_mandrake_root"]
 [[resource]]
 id = "spider_silk"
 templates = ["0x0f8d_10_spider_silk", "0x0f8d_spider_silk"]
+
+[[resource]]
+id = "blank_scrolls"
+templates = ["0x0e34_a_blank_scroll"]

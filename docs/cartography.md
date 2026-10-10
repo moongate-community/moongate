@@ -7,7 +7,7 @@ course of pins as every [map](maps.md) does.
 
 ## How to draw a map
 
-1. Carry a mapmaker's pen, or pen and ink, and blank maps in your backpack.
+1. Carry a mapmaker's pen and blank maps in your backpack.
 2. Double click the pen. The crafting gump of cartography opens.
 3. Press the button before a recipe, and stay where you want the map centred: it is drawn where you stand when it is
    finished, 1.25 seconds later.
@@ -29,8 +29,9 @@ UOX3's skill numbers are off by a digit or past any skill: the converter writes 
 ## Change the rules
 
 - The recipes are [`data/crafts/cartography.toml`](data-files/crafts.md).
-- The pens are the templates with `script_id = "cartography_tool"` (`scripts/items/cartography_tool.lua`); how a map
-  is drawn is `scripts/common/cartography.lua`.
+- The pen is the template with `script_id = "cartography_tool"` (`scripts/items/cartography_tool.lua`); how a map
+  is drawn is `scripts/common/cartography.lua`. The pen and ink is a scribe's: it opens [Inscription](inscription.md).
+  The mapmaker sells the mapmaker's pen (`mapmakerspen`) and buys it back; a scribe and a mage sell the pen and ink.
 
 ## Existing roots
 
@@ -42,7 +43,7 @@ you made." and the server logs why.
 
 ## Not yet
 
-Inscription, which will share the pens; treasure maps.
+Treasure maps.
 
 ## See also
 

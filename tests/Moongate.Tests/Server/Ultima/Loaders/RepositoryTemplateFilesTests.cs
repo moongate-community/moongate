@@ -640,6 +640,7 @@ public sealed class RepositoryTemplateFilesTests
         var data = new StubDataLoaderService().With(items);
         var lists = (await new CraftResourcesLoader(directories, data).LoadDataAsync()).Entities.ToArray();
         data.With(lists);
+        data.With((await new SpellsLoader(directories, data).LoadDataAsync()).Entities.ToArray());
         var crafts = (await new CraftsLoader(directories, data).LoadDataAsync()).Entities.ToDictionary(craft => craft.Id);
         var craft = crafts["carpentry"];
 
@@ -720,9 +721,22 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(8, maps.Count);
         Assert.Equal((10.0, 70.0), (maps[0].SkillMin, maps[0].SkillMax));
         Assert.All(maps.Skip(3), recipe => Assert.Equal((39.5, 99.5), (recipe.SkillMin, recipe.SkillMax)));
-        Assert.All(new[] { "mapmakerspen", "0x0fc0_pen_and_ink" }, id => Assert.Equal("cartography_tool", byId[id].ScriptId));
+        Assert.Equal("cartography_tool", byId["mapmakerspen"].ScriptId);
+        // The pen and ink is a scribe's: it opens inscription.
+        Assert.Equal("inscription_tool", byId["0x0fc0_pen_and_ink"].ScriptId);
         Assert.Contains("0x14ec_blank_map", lists.Single(list => list.Id == "maps").Templates);
         Assert.DoesNotContain("0x0e34_a_blank_scroll", lists.Single(list => list.Id == "maps").Templates);
+
+        // Inscription: a scroll for each of the 64 spells in the eight circles, each a scroll template made from the reagents
+        // of its spell and a blank scroll, with the mana of its circle.
+        var inscription = crafts["inscription"];
+        var scrolls = inscription.Group.SelectMany(group => group.Recipe).ToList();
+        Assert.Equal(8, inscription.Group.Count);
+        Assert.Equal(64, scrolls.Count);
+        Assert.All(scrolls, recipe => Assert.Equal("blank_scrolls", recipe.Resources[^1].Resource));
+        Assert.All(scrolls, recipe => Assert.True(recipe.Mana > 0 && recipe.Spell.Length > 0, recipe.Name));
+        Assert.Equal(("Clumsy", 0.0, 40.1, 4), (scrolls[0].Name, scrolls[0].SkillMin, scrolls[0].SkillMax, scrolls[0].Mana));
+        Assert.Equal("0x0e34_a_blank_scroll", lists.Single(list => list.Id == "blank_scrolls").Templates.Single());
 
         // Alchemy: twenty potions in eight groups, each in an empty bottle, as the plain potions vendors sell; a reagent
         // counts one by one and by the ten.
@@ -909,6 +923,39 @@ public sealed class RepositoryTemplateFilesTests
                 $"{line.Item} is bought at {line.Price} but sold from {lowestBuy[line.Item]}"
             )
         );
+    }
+
+    [Fact]
+    public async Task ShippedShops_SellTheMapmakersPenToTheMapmaker_AndThePenAndInkToTheScribeAndTheMage()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
+            .LoadDataAsync()).Entities.ToArray();
+        var shops = (await new ShopsLoader(directories, new StubDataLoaderService().With(items).With(mobiles))
+            .LoadDataAsync()).Entities;
+        var scripts = items.ToDictionary(template => template.Id, template => template.ScriptId);
+
+        string[] ScriptsSoldBy(string shopId, bool buy)
+        {
+            var shop = shops.Single(candidate => candidate.Id == shopId);
+
+            return (buy ? shop.Buy : shop.Sell).Select(line => scripts[line.Item] ?? "").ToArray();
+        }
+
+        // The cartographer's pen opens cartography, so the mapmaker both sells and buys it, and no pen and ink.
+        Assert.Contains("cartography_tool", ScriptsSoldBy("mapmaker", true));
+        Assert.Contains("cartography_tool", ScriptsSoldBy("mapmaker", false));
+        Assert.DoesNotContain("inscription_tool", ScriptsSoldBy("mapmaker", true));
+        // The scribe's pen opens inscription: the scribe and the mage sell it.
+        Assert.Contains("inscription_tool", ScriptsSoldBy("scribe", true));
+        Assert.Contains("inscription_tool", ScriptsSoldBy("mage", true));
     }
 
     [Fact]

@@ -164,10 +164,13 @@ def _crafts_options(command: argparse.ArgumentParser) -> None:
     command.add_argument(
         "--destination", required=True, type=Path, help="the crafts folder (data/crafts): resources.toml and a .toml a craft, replacing those of a previous run"
     )
+    command.add_argument(
+        "--spells", type=Path, help="data/spells.toml: with it the craft of inscription is written too, a scroll for each spell of the book"
+    )
 
 
 def _crafts(arguments: argparse.Namespace, output: TextIO, error: TextIO) -> int:
-    return crafts.run(arguments.source, arguments.items, arguments.destination, output, error)
+    return crafts.run(arguments.source, arguments.items, arguments.destination, output, error, arguments.spells)
 
 
 def _spells_options(command: argparse.ArgumentParser) -> None:

@@ -2,6 +2,7 @@ using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
 using Moongate.Server.Ultima.Data.Crafts;
+using Moongate.Server.Ultima.Data.Spells;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Utils;
@@ -14,12 +15,13 @@ namespace Moongate.Server.Ultima.Loaders;
 ///     Loads the crafts of <c>data/crafts</c>, one a file, all but <c>resources.toml</c>. The folder may be missing: no
 ///     craft then. Skill names are kept in the snake_case form scripts read them by. A bad or repeated id, a craft
 ///     without a name or groups, a group without recipes, an unknown skill, a group or recipe without a name, an item or resource that is
-///     neither an item template nor a resource list, an amount below 1, a recipe without resources, or skill bounds
-///     outside 0 to 150 or the least above the most stop the server at startup, naming the file.
+///     neither an item template nor a resource list, an amount below 1, a recipe without resources, a spell that is
+///     no key of a spell in <c>data/spells.toml</c> or a mana below 0, or skill bounds outside 0 to 150 (the least of the main skill from -50) or the least above the most stop the server at startup, naming the file.
 /// </summary>
 public class CraftsLoader : IDataLoader<CraftDefinition>
 {
     private const double MaxSkill = 150;
+    private const double MinSkill = -50;
     private const string ResourcesFile = "resources.toml";
 
     private readonly ILogger _logger = Log.ForContext<CraftsLoader>();
@@ -55,6 +57,9 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
         var lists = _dataLoaderService.GetEntities<CraftResourceList>()
             .Select(list => list.Id)
             .ToHashSet(StringComparer.Ordinal);
+        var spells = _dataLoaderService.GetEntities<SpellDefinition>()
+            .Select(spell => spell.Key)
+            .ToHashSet(StringComparer.Ordinal);
         var crafts = new Dictionary<string, CraftDefinition>(StringComparer.Ordinal);
 
         foreach (var path in Directory.EnumerateFiles(craftsDirectoryPath, "*.toml")
@@ -63,7 +68,7 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
         {
             var craft = await TomlUtils.DeserializeFromFileAsync<CraftDefinition>(path, null, cancellationToken) ??
                         new CraftDefinition();
-            Check(craft, path, items, lists);
+            Check(craft, path, items, lists, spells);
 
             if (!crafts.TryAdd(craft.Id, craft))
             {
@@ -76,7 +81,13 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
         return new() { Entities = crafts.Values.ToList() };
     }
 
-    private static void Check(CraftDefinition craft, string path, HashSet<string> items, HashSet<string> lists)
+    private static void Check(
+        CraftDefinition craft,
+        string path,
+        HashSet<string> items,
+        HashSet<string> lists,
+        HashSet<string> spells
+    )
     {
         if (!ScriptIdUtils.IsValid(craft.Id))
         {
@@ -109,12 +120,18 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
 
             foreach (var recipe in group.Recipe)
             {
-                CheckRecipe(recipe, path, items, lists);
+                CheckRecipe(recipe, path, items, lists, spells);
             }
         }
     }
 
-    private static void CheckRecipe(CraftRecipe recipe, string path, HashSet<string> items, HashSet<string> lists)
+    private static void CheckRecipe(
+        CraftRecipe recipe,
+        string path,
+        HashSet<string> items,
+        HashSet<string> lists,
+        HashSet<string> spells
+    )
     {
         if (string.IsNullOrWhiteSpace(recipe.Name))
         {
@@ -128,9 +145,24 @@ public class CraftsLoader : IDataLoader<CraftDefinition>
             throw Invalid(path, $"{where} makes '{recipe.Item}', which is not an item template");
         }
 
-        if (!AreBounds(recipe.SkillMin, recipe.SkillMax))
+        if (recipe.SkillMin < MinSkill || !AreBounds(Math.Max(recipe.SkillMin, 0), recipe.SkillMax) || recipe.SkillMin > recipe.SkillMax)
         {
-            throw Invalid(path, $"{where} has skill bounds outside 0 to {MaxSkill} or the least above the most");
+            throw Invalid(path, $"{where} has skill bounds outside {MinSkill} to {MaxSkill} or the least above the most");
+        }
+
+        if (recipe.Mana < 0)
+        {
+            throw Invalid(path, $"{where} takes {recipe.Mana} mana");
+        }
+
+        if (recipe.Spell.Length > 0 && !ScriptIdUtils.IsValid(recipe.Spell))
+        {
+            throw Invalid(path, $"{where} names the spell '{recipe.Spell}', which {ScriptIdUtils.Rule}");
+        }
+
+        if (recipe.Spell.Length > 0 && !spells.Contains(recipe.Spell))
+        {
+            throw Invalid(path, $"{where} names the spell '{recipe.Spell}', which is not in data/spells.toml");
         }
 
         if (recipe.Resources.Count == 0)

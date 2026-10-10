@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"540ee5db9d218befe0a050d72f8c13720c48b6fdfe443c2cd7640fe5d24268d6","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"afaf0a95b70eb02bbf899dae87f91a9224ad352b704bb75b7d7c5f1e0fa775b8","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -277,6 +277,12 @@ entro 2 caselle apre la mappa sulla sua area con il modulo `map` (vedi [Mappe](.
 apre il gump di creazione della cartografia (vedi [Cartografia](../cartography.md)); una mappa creata viene disegnata da
 `scripts/common/cartography.lua`.
 
+## inscription_tool.lua
+
+`scripts/items/inscription_tool.lua` è lo script di penna e inchiostro (`script_id = "inscription_tool"`): dallo zaino
+apre il gump di creazione dell'inscription (vedi [Inscription](../inscription.md)). `scripts/common/crafting.lua`
+chiede il libro e il mana di una ricetta con i moduli `spell` e `mobile`.
+
 ## potion.lua
 
 `scripts/items/potion.lua` è lo script delle pozioni che un giocatore beve (`script_id = "potion"`): cura, rinvigorimento,
@@ -295,7 +301,7 @@ oggetto, comprese le pozioni semplici dei venditori, per `potion.lua` ed `explos
 `script_id = "test_kit"`): `.add test_kit_alchemy` dà una sacca che si riempie, la prima volta che si apre, con l'attrezzo, i
 materiali e gli oggetti per provare un mestiere, le pozioni o gli incantesimi di Magery; poi è una sacca normale. Le sacche
 sono `test_kit_alchemy`, `test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`,
-`test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking` e `test_kit_magery` (un libro completo, 20 di ogni reagente,
+`test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking`, `test_kit_inscription` (penna e inchiostro, 100 pergamene vuote, 50 di ogni reagente e un libro completo) e `test_kit_magery` (un libro completo, 20 di ogni reagente,
 tre pergamene per ogni incantesimo costruito dei primi quattro cerchi e due rune di richiamo); la tabella `KITS` dice cosa contiene ognuna. L'abilità si imposta a
 parte, come `.set skill alchemy 100`.
 

@@ -24,6 +24,21 @@ CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "alchemy": ("alchemy", "Alchemy", "alchemy", 89),
 }
 
+# Inscription is built from data/spells.toml, not from a UOX3 menu: the craft's id, the name shown, the skill and the sound.
+INSCRIPTION = ("inscription", "Inscription", "inscription", 0x0249)
+
+# The circles of Magery, which are the groups of its gump.
+CIRCLE_NAMES = ["First Circle", "Second Circle", "Third Circle", "Fourth Circle", "Fifth Circle", "Sixth Circle", "Seventh Circle", "Eighth Circle"]
+
+# What a circle asks of a scribe: the window of Inscription it is tried in (one in two at the least, sure at the most) and the
+# mana. The windows are those of UOX3's inscribe.dfn, written for that rule of one in two at the least; its first circle
+# starts at 1.1, here at 0 so that a scribe with no skill at all can still try.
+INSCRIPTION_WINDOWS = [(0.0, 40.1), (6.1, 50.1), (16.1, 60.1), (26.1, 70.1), (36.1, 80.1), (46.1, 90.1), (66.1, 110.1), (76.1, 120.1)]
+INSCRIPTION_MANA = [4, 6, 9, 11, 14, 20, 40, 50]
+
+# The list of what a scribe writes on, and the template in it.
+BLANK_SCROLLS = ("blank_scrolls", ["0x0e34_a_blank_scroll"])
+
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
 SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055, "cooking": 0x0057, "cartography": 0x0249, "alchemy": 0x0242}
 
@@ -138,8 +153,9 @@ class ConversionError(Exception):
     """A recipe or a list the converter cannot write."""
 
 
-def run(source: Path, items: Path, destination: Path, output: TextIO, error: TextIO) -> int:
-    """Converts the resource lists and every known craft of ``source`` (UOX3's ``dfndata/create``) into ``destination``."""
+def run(source: Path, items: Path, destination: Path, output: TextIO, error: TextIO, spells: Path | None = None) -> int:
+    """Converts the resource lists and every known craft of ``source`` (UOX3's ``dfndata/create``) into ``destination``; with
+    ``spells`` (``data/spells.toml``) also the scrolls a scribe writes, as the craft of inscription."""
     source, items, destination = (Path(os.path.abspath(path)) for path in (source, items, destination))
 
     if not (source / RESOURCES_FILE).is_file():
@@ -155,6 +171,16 @@ def run(source: Path, items: Path, destination: Path, output: TextIO, error: Tex
             for name in CRAFTS
             if (source / f"{name}.dfn").is_file()
         }
+
+        if spells is not None:
+            crafts[INSCRIPTION[0]] = _inscription(Path(os.path.abspath(spells)), lists, templates)
+        else:
+            # The craft of inscription is not rebuilt, but its list of blank scrolls stays: the file of an earlier run names it.
+            if all(template in templates for template in BLANK_SCROLLS[1]):
+                lists[BLANK_SCROLLS[0]] = BLANK_SCROLLS[1]
+
+            if (destination / f"{INSCRIPTION[0]}.toml").is_file():
+                error.write(f"{INSCRIPTION[0]}.toml was not rebuilt: pass --spells with data/spells.toml to write it\n")
     except (ConversionError, OSError, tomllib.TOMLDecodeError) as exception:
         error.write(f"Crafts conversion failed: {exception}\n")
 
@@ -222,6 +248,66 @@ def _resource_lists(path: Path, templates: list[str], error: TextIO) -> tuple[di
             error.write(f"The resource list {name} has no template: left out\n")
 
     return lists, {graphic: name for graphic, name in list_of_graphic.items() if name in lists}
+
+
+def _inscription(path: Path, lists: dict[str, list[str]], templates: list[str]) -> dict:
+    """The craft of inscription from the spells of data/spells.toml: a scroll a spell, in the groups of its circles, taking the
+    reagents of the spell and a blank scroll. Adds the list of blank scrolls (and any list of a reagent) to ``lists``."""
+    craft_id, title, skill, sound = INSCRIPTION
+
+    if not path.is_file():
+        raise ConversionError(f"the spells file {path} is missing")
+
+    spells = tomllib.loads(path.read_text(encoding="utf-8")).get("spell", [])
+    lists[BLANK_SCROLLS[0]] = BLANK_SCROLLS[1]
+
+    if any(template not in templates for template in BLANK_SCROLLS[1]):
+        raise ConversionError(f"the blank scroll {BLANK_SCROLLS[1][0]} is no item template")
+
+    groups: list[dict] = [{"name": name, "recipes": []} for name in CIRCLE_NAMES]
+
+    for spell in sorted((spell for spell in spells if spell.get("enabled", True)), key=lambda spell: spell["id"]):
+        circle = spell["circle"]
+
+        if not 1 <= circle <= len(CIRCLE_NAMES):
+            raise ConversionError(f"the spell {spell['key']} is of the circle {circle}, which is none")
+
+        if spell["scroll"] not in templates:
+            raise ConversionError(f"the scroll {spell['scroll']} of the spell {spell['key']} is no item template")
+
+        resources = [(_reagent_list(reagent["template"], lists, templates), reagent["amount"]) for reagent in spell["reagents"]]
+        resources.append((BLANK_SCROLLS[0], 1))
+        low, high = INSCRIPTION_WINDOWS[circle - 1]
+        groups[circle - 1]["recipes"].append(
+            {
+                "name": spell["name"],
+                "item": spell["scroll"],
+                "skills": [(skill, low, high)],
+                "resources": resources,
+                "spell": spell["key"],
+                "mana": INSCRIPTION_MANA[circle - 1],
+            }
+        )
+
+    return {"name": title, "skill": skill, "sound": sound, "groups": [group for group in groups if group["recipes"]]}
+
+
+def _reagent_list(template: str, lists: dict[str, list[str]], templates: list[str]) -> str:
+    """The resource list a reagent counts by: the list that holds it, or the one it and its stacks of ten make; the template
+    itself when it has none."""
+    for name, held in lists.items():
+        if template in held:
+            return name
+
+    found = _resolve(template[:6], templates)
+    stacked = _one_item_in_stacks(found)
+
+    if stacked is not None and template in found:
+        lists[stacked] = sorted(found)
+
+        return stacked
+
+    return template
 
 
 def _blocks(path: Path) -> dict[str, dfn.DfnBlock]:
@@ -456,10 +542,12 @@ def _write_craft(name: str, craft: dict) -> str:
         "#   [[group.recipe]]",
         "#     name          as the gump shows it",
         "#     item          the item template made",
-        "#     skill_min     the least of the main skill to try it: the chance is half",
+        "#     skill_min     the least of the main skill to try it: the chance is half; below zero, always tried",
         "#     skill_max     the skill at which it never fails",
         "#     resources     what it takes: a list of resources.toml or an item template, and the amount",
         "#     skills        other skills it asks for, with their least and most",
+        "#     spell         the key of a spell (data/spells.toml) the crafter must have in a spellbook it carries; left out for none",
+        "#     mana          the mana a try takes, spent on a failure too; left out for none",
         "# ==============================================================================",
         "",
         f"id = {tomlout.basic(name)}",
@@ -487,5 +575,8 @@ def _write_craft(name: str, craft: dict) -> str:
                 f"resources = [{resources}]",
                 f"skills = [{skills}]",
             ]
+
+            if "spell" in recipe:
+                lines += [f"spell = {tomlout.basic(recipe['spell'])}", f"mana = {recipe['mana']}"]
 
     return "\n".join(lines) + "\n"

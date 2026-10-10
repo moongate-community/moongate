@@ -1,0 +1,692 @@
+# ==============================================================================
+# Moongate - data/crafts/inscription.toml
+#
+# What it is for:
+#   The recipes of inscription, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half; below zero, always tried
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+#     spell         the key of a spell (data/spells.toml) the crafter must have in a spellbook it carries; left out for none
+#     mana          the mana a try takes, spent on a failure too; left out for none
+# ==============================================================================
+
+id = "inscription"
+name = "Inscription"
+skill = "inscription"
+sound = 0x0249
+
+[[group]]
+name = "First Circle"
+
+[[group.recipe]]
+name = "Clumsy"
+item = "0x1f2e_clumsy_scroll"
+skill_min = 0.0
+skill_max = 40.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "clumsy"
+mana = 4
+
+[[group.recipe]]
+name = "Create Food"
+item = "0x1f2f_create_food_scroll"
+skill_min = 0.0
+skill_max = 40.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "create_food"
+mana = 4
+
+[[group.recipe]]
+name = "Feeblemind"
+item = "0x1f30_feeblemind_scroll"
+skill_min = 0.0
+skill_max = 40.1
+resources = [{ resource = "ginseng", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "feeblemind"
+mana = 4
+
+[[group.recipe]]
+name = "Heal"
+item = "0x1f31_heal_scroll"
+skill_min = 0.0
+skill_max = 40.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "heal"
+mana = 4
+
+[[group.recipe]]
+name = "Magic Arrow"
+item = "0x1f32_magic_arrow_scroll"
+skill_min = 0.0
+skill_max = 40.1
+resources = [{ resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "magic_arrow"
+mana = 4
+
+[[group.recipe]]
+name = "Night Sight"
+item = "0x1f33_night_sight_scroll"
+skill_min = 0.0
+skill_max = 40.1
+resources = [{ resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "night_sight"
+mana = 4
+
+[[group.recipe]]
+name = "Reactive Armor"
+item = "0x1f2d_reactive_armor_scroll"
+skill_min = 0.0
+skill_max = 40.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "reactive_armor"
+mana = 4
+
+[[group.recipe]]
+name = "Weaken"
+item = "0x1f34_weaken_scroll"
+skill_min = 0.0
+skill_max = 40.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "weaken"
+mana = 4
+
+[[group]]
+name = "Second Circle"
+
+[[group.recipe]]
+name = "Agility"
+item = "0x1f35_agility_scroll"
+skill_min = 6.1
+skill_max = 50.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "agility"
+mana = 6
+
+[[group.recipe]]
+name = "Cunning"
+item = "0x1f36_cunning_scroll"
+skill_min = 6.1
+skill_max = 50.1
+resources = [{ resource = "mandrake_root", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "cunning"
+mana = 6
+
+[[group.recipe]]
+name = "Cure"
+item = "0x1f37_cure_scroll"
+skill_min = 6.1
+skill_max = 50.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "cure"
+mana = 6
+
+[[group.recipe]]
+name = "Harm"
+item = "0x1f38_harm_scroll"
+skill_min = 6.1
+skill_max = 50.1
+resources = [{ resource = "nightshade", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "harm"
+mana = 6
+
+[[group.recipe]]
+name = "Magic Trap"
+item = "0x1f39_magic_trap_scroll"
+skill_min = 6.1
+skill_max = 50.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "magic_trap"
+mana = 6
+
+[[group.recipe]]
+name = "Magic Untrap"
+item = "0x1f3a_magic_untrap_scroll"
+skill_min = 6.1
+skill_max = 50.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "magic_untrap"
+mana = 6
+
+[[group.recipe]]
+name = "Protection"
+item = "0x1f3b_protection_scroll"
+skill_min = 6.1
+skill_max = 50.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "protection"
+mana = 6
+
+[[group.recipe]]
+name = "Strength"
+item = "0x1f3c_strength_scroll"
+skill_min = 6.1
+skill_max = 50.1
+resources = [{ resource = "mandrake_root", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "strength"
+mana = 6
+
+[[group]]
+name = "Third Circle"
+
+[[group.recipe]]
+name = "Bless"
+item = "0x1f3d_bless_scroll"
+skill_min = 16.1
+skill_max = 60.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "bless"
+mana = 9
+
+[[group.recipe]]
+name = "Fireball"
+item = "0x1f3e_fireball_scroll"
+skill_min = 16.1
+skill_max = 60.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "fireball"
+mana = 9
+
+[[group.recipe]]
+name = "Magic Lock"
+item = "0x1f3f_magic_lock_scroll"
+skill_min = 16.1
+skill_max = 60.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "garlic", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "magic_lock"
+mana = 9
+
+[[group.recipe]]
+name = "Poison"
+item = "0x1f40_poison_scroll"
+skill_min = 16.1
+skill_max = 60.1
+resources = [{ resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "poison"
+mana = 9
+
+[[group.recipe]]
+name = "Telekinesis"
+item = "0x1f41_telekinisis_scroll"
+skill_min = 16.1
+skill_max = 60.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "telekinesis"
+mana = 9
+
+[[group.recipe]]
+name = "Teleport"
+item = "0x1f42_teleport_scroll"
+skill_min = 16.1
+skill_max = 60.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "teleport"
+mana = 9
+
+[[group.recipe]]
+name = "Unlock"
+item = "0x1f43_unlock_scroll"
+skill_min = 16.1
+skill_max = 60.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "unlock"
+mana = 9
+
+[[group.recipe]]
+name = "Wall of Stone"
+item = "0x1f44_wall_of_stone_scroll"
+skill_min = 16.1
+skill_max = 60.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "garlic", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "wall_of_stone"
+mana = 9
+
+[[group]]
+name = "Fourth Circle"
+
+[[group.recipe]]
+name = "Arch Cure"
+item = "0x1f45_archcure_scroll"
+skill_min = 26.1
+skill_max = 70.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "arch_cure"
+mana = 11
+
+[[group.recipe]]
+name = "Arch Protection"
+item = "0x1f46_archprotection_scroll"
+skill_min = 26.1
+skill_max = 70.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "arch_protection"
+mana = 11
+
+[[group.recipe]]
+name = "Curse"
+item = "0x1f47_curse_scroll"
+skill_min = 26.1
+skill_max = 70.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "curse"
+mana = 11
+
+[[group.recipe]]
+name = "Fire Field"
+item = "0x1f48_fire_field_scroll"
+skill_min = 26.1
+skill_max = 70.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "fire_field"
+mana = 11
+
+[[group.recipe]]
+name = "Greater Heal"
+item = "0x1f49_greater_heal_scroll"
+skill_min = 26.1
+skill_max = 70.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "greater_heal"
+mana = 11
+
+[[group.recipe]]
+name = "Lightning"
+item = "0x1f4a_lightning_scroll"
+skill_min = 26.1
+skill_max = 70.1
+resources = [{ resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "lightning"
+mana = 11
+
+[[group.recipe]]
+name = "Mana Drain"
+item = "0x1f4b_mana_drain_scroll"
+skill_min = 26.1
+skill_max = 70.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "mana_drain"
+mana = 11
+
+[[group.recipe]]
+name = "Recall"
+item = "0x1f4c_recall_scroll"
+skill_min = 26.1
+skill_max = 70.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "recall"
+mana = 11
+
+[[group]]
+name = "Fifth Circle"
+
+[[group.recipe]]
+name = "Blade Spirits"
+item = "0x1f4d_blade_spirits_scroll"
+skill_min = 36.1
+skill_max = 80.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "blade_spirits"
+mana = 14
+
+[[group.recipe]]
+name = "Dispel Field"
+item = "0x1f4e_dispel_field_scroll"
+skill_min = 36.1
+skill_max = 80.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "garlic", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "dispel_field"
+mana = 14
+
+[[group.recipe]]
+name = "Incognito"
+item = "0x1f4f_incognito_scroll"
+skill_min = 36.1
+skill_max = 80.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "garlic", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "incognito"
+mana = 14
+
+[[group.recipe]]
+name = "Magic Reflection"
+item = "0x1f50_magic_reflection_scroll"
+skill_min = 36.1
+skill_max = 80.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "magic_reflection"
+mana = 14
+
+[[group.recipe]]
+name = "Mind Blast"
+item = "0x1f51_mind_blast_scroll"
+skill_min = 36.1
+skill_max = 80.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "mind_blast"
+mana = 14
+
+[[group.recipe]]
+name = "Paralyze"
+item = "0x1f52_paralyze_scroll"
+skill_min = 36.1
+skill_max = 80.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "paralyze"
+mana = 14
+
+[[group.recipe]]
+name = "Poison Field"
+item = "0x1f53_poison_field_scroll"
+skill_min = 36.1
+skill_max = 80.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "poison_field"
+mana = 14
+
+[[group.recipe]]
+name = "Summon Creature"
+item = "0x1f54_summon_creature_scroll"
+skill_min = 36.1
+skill_max = 80.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "summon_creature"
+mana = 14
+
+[[group]]
+name = "Sixth Circle"
+
+[[group.recipe]]
+name = "Dispel"
+item = "0x1f55_dispel_scroll"
+skill_min = 46.1
+skill_max = 90.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "dispel"
+mana = 20
+
+[[group.recipe]]
+name = "Energy Bolt"
+item = "0x1f56_energy_bolt_scroll"
+skill_min = 46.1
+skill_max = 90.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "energy_bolt"
+mana = 20
+
+[[group.recipe]]
+name = "Explosion"
+item = "0x1f57_explosion_scroll"
+skill_min = 46.1
+skill_max = 90.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "explosion"
+mana = 20
+
+[[group.recipe]]
+name = "Invisibility"
+item = "0x1f58_invisibility_scroll"
+skill_min = 46.1
+skill_max = 90.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "invisibility"
+mana = 20
+
+[[group.recipe]]
+name = "Mark"
+item = "0x1f59_mark_scroll"
+skill_min = 46.1
+skill_max = 90.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "mark"
+mana = 20
+
+[[group.recipe]]
+name = "Mass Curse"
+item = "0x1f5a_mass_curse_scroll"
+skill_min = 46.1
+skill_max = 90.1
+resources = [{ resource = "garlic", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "mass_curse"
+mana = 20
+
+[[group.recipe]]
+name = "Paralyze Field"
+item = "0x1f5b_paralyze_field_scroll"
+skill_min = 46.1
+skill_max = 90.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "paralyze_field"
+mana = 20
+
+[[group.recipe]]
+name = "Reveal"
+item = "0x1f5c_reveal_scroll"
+skill_min = 46.1
+skill_max = 90.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "reveal"
+mana = 20
+
+[[group]]
+name = "Seventh Circle"
+
+[[group.recipe]]
+name = "Chain Lightning"
+item = "0x1f5d_chain_lightning_scroll"
+skill_min = 66.1
+skill_max = 110.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "chain_lightning"
+mana = 40
+
+[[group.recipe]]
+name = "Energy Field"
+item = "0x1f5e_energy_field_scroll"
+skill_min = 66.1
+skill_max = 110.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "energy_field"
+mana = 40
+
+[[group.recipe]]
+name = "Flame Strike"
+item = "0x1f5f_flamestrike_scroll"
+skill_min = 66.1
+skill_max = 110.1
+resources = [{ resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "flame_strike"
+mana = 40
+
+[[group.recipe]]
+name = "Gate Travel"
+item = "0x1f60_gate_travel_scroll"
+skill_min = 66.1
+skill_max = 110.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "gate_travel"
+mana = 40
+
+[[group.recipe]]
+name = "Mana Vampire"
+item = "0x1f61_mana_vampire_scroll"
+skill_min = 66.1
+skill_max = 110.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "mana_vampire"
+mana = 40
+
+[[group.recipe]]
+name = "Mass Dispel"
+item = "0x1f62_mass_dispel_scroll"
+skill_min = 66.1
+skill_max = 110.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "garlic", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "mass_dispel"
+mana = 40
+
+[[group.recipe]]
+name = "Meteor Swarm"
+item = "0x1f63_meteor_storm_scroll"
+skill_min = 66.1
+skill_max = 110.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "meteor_swarm"
+mana = 40
+
+[[group.recipe]]
+name = "Polymorph"
+item = "0x1f64_polymorph_scroll"
+skill_min = 66.1
+skill_max = 110.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "polymorph"
+mana = 40
+
+[[group]]
+name = "Eighth Circle"
+
+[[group.recipe]]
+name = "Earthquake"
+item = "0x1f65_earthquake_scroll"
+skill_min = 76.1
+skill_max = 120.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "earthquake"
+mana = 50
+
+[[group.recipe]]
+name = "Energy Vortex"
+item = "0x1f66_energy_vortex_scroll"
+skill_min = 76.1
+skill_max = 120.1
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "nightshade", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "energy_vortex"
+mana = 50
+
+[[group.recipe]]
+name = "Resurrection"
+item = "0x1f67_resurrection_scroll"
+skill_min = 76.1
+skill_max = 120.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "garlic", amount = 1 }, { resource = "ginseng", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "resurrection"
+mana = 50
+
+[[group.recipe]]
+name = "Summon Air Elemental"
+item = "0x1f68_summon_air_elemental_scroll"
+skill_min = 76.1
+skill_max = 120.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "summon_air_elemental"
+mana = 50
+
+[[group.recipe]]
+name = "Summon Daemon"
+item = "0x1f69_summon_daemon_scroll"
+skill_min = 76.1
+skill_max = 120.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "summon_daemon"
+mana = 50
+
+[[group.recipe]]
+name = "Summon Earth Elemental"
+item = "0x1f6a_summon_earth_elemental_scroll"
+skill_min = 76.1
+skill_max = 120.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "summon_earth_elemental"
+mana = 50
+
+[[group.recipe]]
+name = "Summon Fire Elemental"
+item = "0x1f6b_summon_fire_elemental_scroll"
+skill_min = 76.1
+skill_max = 120.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "sulfurous_ash", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "summon_fire_elemental"
+mana = 50
+
+[[group.recipe]]
+name = "Summon Water Elemental"
+item = "0x1f6c_summon_water_elemental_scroll"
+skill_min = 76.1
+skill_max = 120.1
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "mandrake_root", amount = 1 }, { resource = "spider_silk", amount = 1 }, { resource = "blank_scrolls", amount = 1 }]
+skills = []
+spell = "summon_water_elemental"
+mana = 50

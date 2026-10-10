@@ -454,3 +454,26 @@ def test_a_bolt_is_the_single_crossbow_bolt_not_a_stack_template_of_its_graphic(
     [shop] = workspace.shop("bowyer")
     # The bolts a bowyer sells stack with the ones a player makes.
     assert "0x1bfb_crossbow_bolt" in [line["item"] for line in shop["buy"]]
+
+
+def test_the_mapmakers_pen_is_its_own_template_not_the_scribes_pen_it_shares_a_graphic_pair_with(workspace):
+    _prepare_bowyer(
+        workspace,
+        '[[item]]\nid = "0x0fc0_pen_and_ink"\n[[item]]\nid = "mapmakerspen"\n[[item]]\nid = "0x13b1_t2a"\n',
+    )
+    workspace.write(
+        "UOContent/Mobiles/Vendors/SBInfo/SBBowyer.cs",
+        BOWYER_SHOP.replace(
+            "Add(new GenericBuyInfo(typeof(Torch), 8, 20, 0xF6B, 0));", "Add(new GenericBuyInfo(typeof(MapmakersPen), 8, 20, 0x0FBF, 0));"
+        ).replace("Add(typeof(Bow), 17);", "Add(typeof(Bow), 17);\n                Add(typeof(MapmakersPen), 4);"),
+    )
+    workspace.write(
+        "UOContent/Items/Tools/MapmakersPen.cs",
+        "namespace Server.Items\n{\n    [Flippable(0x0FBF, 0x0FC0)]\n    public partial class MapmakersPen : Item\n    {\n    }\n}\n",
+    )
+
+    assert workspace.run() == 0, workspace.error
+
+    [shop] = workspace.shop("bowyer")
+    assert [line["item"] for line in shop["buy"] if "pen" in line["item"]] == ["mapmakerspen"]
+    assert [line["item"] for line in shop["sell"] if "pen" in line["item"]] == ["mapmakerspen"]
