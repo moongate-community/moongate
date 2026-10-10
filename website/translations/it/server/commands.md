@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"669330ca13ece02b5ff25421845addf94c31348c36ad51a36c8d3fb4044a1312","title":"Panoramica"} -->
+<!-- translation: {"sourceHash":"fee4c4383765c9a3732a29959e39fd322d7dd692fa8f26af674bcd88207d4bff","title":"Panoramica"} -->
 
 # Comandi del server
 
@@ -48,9 +48,9 @@ ruolo è la modalità del server che registra il comando: `Login`, `Game` o entr
 | [`set`](commands/set.md) | `set <hits\|mana\|stamina\|hunger\|thirst\|criminal> <value>`, poi seleziona un mobile | No | Sì | GameMaster | Game |
 | [`add`](commands/add.md) | `add <template>`, poi seleziona un punto | No | Sì | GameMaster | Game |
 | [`remove`](commands/remove.md) | `remove`, poi seleziona un NPC o un oggetto a terra | No | Sì | GameMaster | Game |
-| [`kill`](commands/kill.md) | `kill`, poi seleziona un NPC | No | Sì | GameMaster | Game |
+| [`kill`](commands/kill.md) | `kill`, poi seleziona un NPC o un giocatore | No | Sì | GameMaster | Game |
 | [`tame`](commands/tame.md) | `tame [name]`, poi seleziona una creatura | No | Sì | GameMaster | Game |
-| [`resurrect`](commands/resurrect.md) | `resurrect`, poi seleziona un cadavere | No | Sì | GameMaster | Game |
+| [`resurrect`](commands/resurrect.md) | `resurrect`, poi seleziona un cadavere o un fantasma | No | Sì | GameMaster | Game |
 | [`animate`](commands/animate.md) | `animate <action>`, poi seleziona un mobile | No | Sì | GameMaster | Game |
 | [`where`](commands/where.md) | `where`, poi seleziona qualsiasi cosa | No | Sì | GameMaster | Game |
 | [`go`](commands/go.md) | `go [<x>,<y>,<z> [map] \| <place>]` | No | Sì | GameMaster | Game |
@@ -74,6 +74,9 @@ ruolo è la modalità del server che registra il comando: `Login`, `Game` o entr
 | [`book`](commands/book.md) | `book <template> [name=value ...]` | No | Sì | GameMaster | Game |
 | [`create_check`](commands/create_check.md) | `create_check <1..2000000000>` | No | Sì | GameMaster | Game |
 | [`add_gold`](commands/add_gold.md) | `add_gold <1..60000>`, poi seleziona un mobile | No | Sì | GameMaster | Game |
+| [`mark_rune`](commands/mark_rune.md) | `mark_rune`, poi seleziona una runa di richiamo | No | Sì | GameMaster | Game |
+| [`add_spell`](commands/add_spell.md) | `add_spell <key \| number \| circle N \| all>`, poi seleziona un libro o un mobile | No | Sì | GameMaster | Game |
+| [`add_reagents`](commands/add_reagents.md) | `add_reagents <key \| number \| circle N \| all> [amount]` | No | Sì | GameMaster | Game |
 
 ### Da uno script
 
@@ -99,9 +102,9 @@ commands.execute_as(player, "go", "britain")  -- as that player wrote it in game
 
 ### In base a chi li usa
 
-- **Tutti:** `help`, `echo`, `time`.
-- **Game master:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `tame`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
-  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`.
+- **Tutti:** `help`, `echo`, `time`, `version`, `uptime`.
+- **Game master:** `character`, `spawn`, `add`, `set`, `remove`, `kill`, `tame`, `resurrect`, `animate`, `where`, `go`, `gmtools`, `pages`, `jail`, `hide`, `unhide`, `moongate`, `fame`, `karma`, `globallight`,
+  `weather`, `music`, `season`, `spawns`, `gump`, `lock`, `unlock`, `key`, `book`, `create_check`, `add_gold`, `mark_rune`, `add_spell`, `add_reagents`.
 - **Amministratori:** `account`, `save`, `sql_backup`, `broadcast`, `shutdown`, `event`, `decorate`,
   `initial_spawn`, più tutto ciò che
   usa un game master.

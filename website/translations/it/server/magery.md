@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e6019f352c84280f3ea03305a4a12320ab1a877ddab5f8bd28027cd5f3e4d55a","title":"Magery"} -->
+<!-- translation: {"sourceHash":"9184c4374396463dff337f8866148935e338c7c2bce9113fd1397024de4dcb57","title":"Magery"} -->
 
 # Magery
 
@@ -277,7 +277,8 @@ usano. Una morte termina anche una paralisi e una Magic Reflection.
 
 `.add test_kit_magery` dà una sacca che, alla prima apertura, si riempie con un libro completo, 20 di ogni reagente, tre
 pergamene per ogni incantesimo costruito e quattro rune di richiamo. L'abilità si imposta a parte con
-`.set skill magery 100`, e una runa si segna con `.mark_rune`.
+`.set skill magery 100`, una runa si segna con `.mark_rune`, e un libro o uno zaino si riempiono dal catalogo con
+[`.add_spell`](commands/add_spell.md) e [`.add_reagents`](commands/add_reagents.md).
 
 ## Cambiare le regole
 
@@ -314,4 +315,6 @@ liberare le mani al lancio, i capelli di Incognito.
 - [Pozioni](potions.md)
 - [Abilità](skills.md)
 - [`.mark_rune`](commands/mark_rune.md)
+- [`.add_spell`](commands/add_spell.md)
+- [`.add_reagents`](commands/add_reagents.md)
 - [spells.toml](data-files/spells.md)

@@ -267,7 +267,8 @@ think after one; Incognito and Polymorph use it. A death also ends a paralysis a
 
 `.add test_kit_magery` gives a bag that fills when first opened with a full spellbook, 20 of each reagent, three
 scrolls of each spell that is built, and four recall runes. Set the skill apart with
-`.set skill magery 100`, and mark a rune with `.mark_rune`.
+`.set skill magery 100`, mark a rune with `.mark_rune`, and fill a book or a backpack from the catalog with
+[`.add_spell`](commands/add_spell.md) and [`.add_reagents`](commands/add_reagents.md).
 
 ## Change the rules
 
@@ -304,4 +305,6 @@ hands on a cast, the hair of Incognito.
 - [Potions](potions.md)
 - [Skills](skills.md)
 - [`.mark_rune`](commands/mark_rune.md)
+- [`.add_spell`](commands/add_spell.md)
+- [`.add_reagents`](commands/add_reagents.md)
 - [spells.toml](data-files/spells.md)
