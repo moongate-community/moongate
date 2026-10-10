@@ -30,7 +30,7 @@ AOS Weapons, Axes, Polearms, Bashing and SE Weapons. A few of them:
 | Longsword | 28 to 78 | 12 metal |
 | War hammer | 34.2 to 84 | 16 metal |
 
-The page of each recipe in the gump shows its numbers. Metal is iron ingots; the tessen takes cloth and Tailoring too.
+The page of each recipe in the gump shows its numbers. Metal is the ingots of the metal picked (iron by default: see [Metals](#metals)); the tessen takes cloth and Tailoring too.
 
 ## Metals
 

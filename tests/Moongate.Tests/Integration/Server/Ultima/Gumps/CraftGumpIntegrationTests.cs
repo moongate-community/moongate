@@ -98,6 +98,9 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
             new ItemTemplate { Id = "0x1034_saw", ItemId = new Serial(0x1034), ScriptId = "carpentry_tool" },
+            new ItemTemplate { Id = "0x13e3", ItemId = new Serial(0x13E3), ScriptId = "smithing_tool" },
+            new ItemTemplate { Id = "0x1bf2_iron_ingot", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ingot_copper", ItemId = new Serial(0x1BF2), Stackable = true },
             new ItemTemplate { Id = "0x1bd7_board", ItemId = new Serial(0x1BD7), Stackable = true },
             new ItemTemplate { Id = "0x1bda_board", ItemId = new Serial(0x1BDA), Stackable = true },
             new ItemTemplate { Id = "oak_board", ItemId = new Serial(0x1BD7), Stackable = true },
@@ -153,11 +156,24 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
                                 .ToList()
                         }
                     ]
+                },
+                new CraftDefinition
+                {
+                    Id = "blacksmithing", Name = "Blacksmithing", Skill = "blacksmithy", Sound = 0x2A,
+                    Group =
+                    [
+                        new()
+                        {
+                            Name = "Ringmail",
+                            Recipe = [new() { Name = "Ring", Item = "0x0a2b", SkillMin = 0, SkillMax = 10, Resources = [new() { Resource = "metal", Amount = 1 }] }]
+                        }
+                    ]
                 }
             )
             .With(
                 new CraftResourceList { Id = "wood", Templates = ["0x1bd7_board", "0x1bda_board"] },
-                new CraftResourceList { Id = "cloth", Templates = ["0x175d_cloth"] }
+                new CraftResourceList { Id = "cloth", Templates = ["0x175d_cloth"] },
+                new CraftResourceList { Id = "metal", Templates = ["0x1bf2_iron_ingot"] }
             )
     );
 
@@ -169,6 +185,9 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
 
     private readonly ItemEntity _saw = new()
         { Id = new Serial(0x40000002), TemplateId = "0x1034_saw", ItemId = 0x1034, Amount = 1 };
+
+    private readonly ItemEntity _hammer = new()
+        { Id = new Serial(0x40000004), TemplateId = "0x13e3", ItemId = 0x13E3, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
     private LuaScriptEngineService _engine = null!;
@@ -195,7 +214,8 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
         _backpack.Equip(new Serial((uint)Aria), LayerType.Backpack);
         _bank.Equip(new Serial((uint)Aria), LayerType.Bank);
         _saw.PutInContainer(_backpack.Id, new Point2D(10, 10));
-        _items.Add([_backpack, _bank, _saw]);
+        _hammer.PutInContainer(_backpack.Id, new Point2D(20, 10));
+        _items.Add([_backpack, _bank, _saw, _hammer]);
 
         for (uint serial = 0x40000100; serial < 0x40000110; serial++)
         {
@@ -204,6 +224,7 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
 
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
         // No exceptional item and the most uses unless a test says otherwise: the rolls are the test's.
+        _scripts.Write("items/smithing_tool.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "smithing_tool.lua")));
         _scripts.Write(
             "items/carpentry_tool.lua",
             await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "carpentry_tool.lua")) +
@@ -397,6 +418,28 @@ public sealed class CraftGumpIntegrationTests : IAsyncLifetime
 
         Assert.Contains("Wood: oak (9)", Last().Strings);
         Assert.Contains(StrangeWood, Told());
+        // The page of the kinds stays, and says why.
+        Assert.Contains("You cannot work this strange and unusual wood.", Last().Strings);
+        Assert.Contains("yew (0)", Last().Strings);
+    }
+
+    [Fact]
+    public void TheGumpOfASmith_ShowsTheMetal_AndListsTheMetals()
+    {
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 7);
+        _loop.DeferTryPost = true;
+        _itemScripts.Run(_hammer, "on_use", Aria);
+        Drain();
+
+        Assert.Empty(_errors);
+        Assert.Contains("BLACKSMITHING", Last().Strings);
+        Assert.Contains("Metal: iron (7)", Last().Strings);
+
+        Click(Last(), "Change");
+
+        Assert.Contains("copper (0)", Last().Strings);
+        Assert.Contains("valorite (0)", Last().Strings);
+        Assert.DoesNotContain("oak (0)", Last().Strings);
     }
 
     [Fact]
