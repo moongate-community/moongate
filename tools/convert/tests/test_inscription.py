@@ -82,17 +82,19 @@ def test_a_scroll_for_each_enabled_spell_in_the_groups_of_its_circles(tmp_path):
     assert [recipe["spell"] for group in craft["group"] for recipe in group["recipe"]] == ["clumsy", "fireball", "summon_water_elemental"]
 
 
-def test_the_windows_and_the_mana_are_the_classic_tables_by_circle(tmp_path):
+def test_the_windows_are_those_of_the_classic_data_file_by_circle_and_the_mana_those_of_the_circle(tmp_path):
     _, _, _, destination = convert(tmp_path)
 
     craft = tomllib.loads((destination / "inscription.toml").read_text(encoding="utf-8"))
     by_spell = {recipe["spell"]: recipe for group in craft["group"] for recipe in group["recipe"]}
 
-    assert (by_spell["clumsy"]["skill_min"], by_spell["clumsy"]["skill_max"], by_spell["clumsy"]["mana"]) == (-25.0, 25.0, 4)
-    assert (by_spell["fireball"]["skill_min"], by_spell["fireball"]["skill_max"], by_spell["fireball"]["mana"]) == (3.5, 53.5, 9)
+    # The windows of UOX3's inscribe.dfn, which are written for the rule that the chance is one in two at the least.
+    # The first circle starts at 0: a scribe with no skill at all can still try, as the classic shards allow.
+    assert (by_spell["clumsy"]["skill_min"], by_spell["clumsy"]["skill_max"], by_spell["clumsy"]["mana"]) == (0.0, 40.1, 4)
+    assert (by_spell["fireball"]["skill_min"], by_spell["fireball"]["skill_max"], by_spell["fireball"]["mana"]) == (16.1, 60.1, 9)
     water = by_spell["summon_water_elemental"]
-    assert (water["skill_min"], water["skill_max"], water["mana"]) == (75.0, 125.0, 50)
-    assert crafts.INSCRIPTION_SKILL[:2] == [-25.0, -10.8] and crafts.INSCRIPTION_MANA == [4, 6, 9, 11, 14, 20, 40, 50]
+    assert (water["skill_min"], water["skill_max"], water["mana"]) == (76.1, 120.1, 50)
+    assert crafts.INSCRIPTION_WINDOWS[1] == (6.1, 50.1) and crafts.INSCRIPTION_MANA == [4, 6, 9, 11, 14, 20, 40, 50]
 
 
 def test_a_recipe_takes_the_reagents_of_its_spell_by_list_and_one_blank_scroll(tmp_path):
@@ -119,6 +121,20 @@ def test_without_the_spells_file_no_inscription_is_written(tmp_path):
     assert not (destination / "inscription.toml").exists()
 
 
+def test_without_the_spells_file_the_list_of_blank_scrolls_is_still_written_and_the_old_craft_is_reported(tmp_path):
+    (tmp_path / "crafts").mkdir()
+    (tmp_path / "crafts" / "inscription.toml").write_text("# a craft of an earlier run\n", encoding="utf-8")
+
+    code, _, error, destination = convert(tmp_path, None)
+
+    lists = {entry["id"] for entry in tomllib.loads((destination / "resources.toml").read_text(encoding="utf-8"))["resource"]}
+
+    assert code == 0
+    # The inscription.toml of an earlier run names that list: it is kept, and the run says it was not rebuilt.
+    assert "blank_scrolls" in lists
+    assert "--spells" in error
+
+
 def test_a_scroll_that_is_no_template_stops_the_conversion(tmp_path):
     code, _, error, destination = convert(tmp_path, SPELLS.replace("0x1f3e_fireball_scroll", "0x9999_nothing"))
 
@@ -139,6 +155,6 @@ def test_the_shipped_craft_ties_every_recipe_to_a_spell_and_its_scroll():
         spell = spells[recipe["spell"]]
         assert recipe["item"] == spell["scroll"]
         assert recipe["mana"] == crafts.INSCRIPTION_MANA[spell["circle"] - 1]
-        assert recipe["skill_min"] == crafts.INSCRIPTION_SKILL[spell["circle"] - 1]
+        assert (recipe["skill_min"], recipe["skill_max"]) == crafts.INSCRIPTION_WINDOWS[spell["circle"] - 1]
         assert recipe["resources"][-1] == {"resource": "blank_scrolls", "amount": 1}
         assert sum(resource["amount"] for resource in recipe["resources"][:-1]) == sum(reagent["amount"] for reagent in spell["reagents"])

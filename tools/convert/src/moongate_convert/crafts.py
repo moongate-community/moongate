@@ -30,10 +30,10 @@ INSCRIPTION = ("inscription", "Inscription", "inscription", 0x0249)
 # The circles of Magery, which are the groups of its gump.
 CIRCLE_NAMES = ["First Circle", "Second Circle", "Third Circle", "Fourth Circle", "Fifth Circle", "Sixth Circle", "Seventh Circle", "Eighth Circle"]
 
-# What a circle asks of a scribe, by the classic tables: the least of Inscription to try it (a first circle scroll is always
-# tried) and the mana. A window is fifty points long.
-INSCRIPTION_SKILL = [-25.0, -10.8, 3.5, 17.8, 32.1, 46.4, 60.7, 75.0]
-INSCRIPTION_WINDOW = 50.0
+# What a circle asks of a scribe: the window of Inscription it is tried in (one in two at the least, sure at the most) and the
+# mana. The windows are those of UOX3's inscribe.dfn, written for that rule of one in two at the least; its first circle
+# starts at 1.1, here at 0 so that a scribe with no skill at all can still try.
+INSCRIPTION_WINDOWS = [(0.0, 40.1), (6.1, 50.1), (16.1, 60.1), (26.1, 70.1), (36.1, 80.1), (46.1, 90.1), (66.1, 110.1), (76.1, 120.1)]
 INSCRIPTION_MANA = [4, 6, 9, 11, 14, 20, 40, 50]
 
 # The list of what a scribe writes on, and the template in it.
@@ -174,6 +174,13 @@ def run(source: Path, items: Path, destination: Path, output: TextIO, error: Tex
 
         if spells is not None:
             crafts[INSCRIPTION[0]] = _inscription(Path(os.path.abspath(spells)), lists, templates)
+        else:
+            # The craft of inscription is not rebuilt, but its list of blank scrolls stays: the file of an earlier run names it.
+            if all(template in templates for template in BLANK_SCROLLS[1]):
+                lists[BLANK_SCROLLS[0]] = BLANK_SCROLLS[1]
+
+            if (destination / f"{INSCRIPTION[0]}.toml").is_file():
+                error.write(f"{INSCRIPTION[0]}.toml was not rebuilt: pass --spells with data/spells.toml to write it\n")
     except (ConversionError, OSError, tomllib.TOMLDecodeError) as exception:
         error.write(f"Crafts conversion failed: {exception}\n")
 
@@ -270,12 +277,12 @@ def _inscription(path: Path, lists: dict[str, list[str]], templates: list[str]) 
 
         resources = [(_reagent_list(reagent["template"], lists, templates), reagent["amount"]) for reagent in spell["reagents"]]
         resources.append((BLANK_SCROLLS[0], 1))
-        low = INSCRIPTION_SKILL[circle - 1]
+        low, high = INSCRIPTION_WINDOWS[circle - 1]
         groups[circle - 1]["recipes"].append(
             {
                 "name": spell["name"],
                 "item": spell["scroll"],
-                "skills": [(skill, low, low + INSCRIPTION_WINDOW)],
+                "skills": [(skill, low, high)],
                 "resources": resources,
                 "spell": spell["key"],
                 "mana": INSCRIPTION_MANA[circle - 1],

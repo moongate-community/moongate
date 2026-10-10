@@ -734,7 +734,7 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(64, scrolls.Count);
         Assert.All(scrolls, recipe => Assert.Equal("blank_scrolls", recipe.Resources[^1].Resource));
         Assert.All(scrolls, recipe => Assert.True(recipe.Mana > 0 && recipe.Spell.Length > 0, recipe.Name));
-        Assert.Equal(("Clumsy", -25.0, 25.0, 4), (scrolls[0].Name, scrolls[0].SkillMin, scrolls[0].SkillMax, scrolls[0].Mana));
+        Assert.Equal(("Clumsy", 0.0, 40.1, 4), (scrolls[0].Name, scrolls[0].SkillMin, scrolls[0].SkillMax, scrolls[0].Mana));
         Assert.Equal("0x0e34_a_blank_scroll", lists.Single(list => list.Id == "blank_scrolls").Templates.Single());
 
         // Alchemy: twenty potions in eight groups, each in an empty bottle, as the plain potions vendors sell; a reagent
