@@ -262,13 +262,6 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.JailDescription
         );
-        container.RegisterCommand<LastOnlineCommand>(
-            "lastonline",
-            "Shows when a character was last online, in the world or not: lastonline <name>.",
-            CommandSourceType.Console | CommandSourceType.InGame,
-            AccountType.GameMaster,
-            CommandMessages.LastOnlineDescription
-        );
         container.RegisterCommand<MoongateCommand>(
             "moongate",
             "Puts at your feet a moongate to a place of your map or of another: moongate <x>,<y>,<z> [map].",

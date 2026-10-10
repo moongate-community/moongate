@@ -258,11 +258,6 @@ public class MobileEntity : IMoongateEntity
     public DateTime? ShortTermDecayAt { get; set; }
 
     /// <summary>
-    ///     When the character last left the world, in UTC; null until its first logout after this was recorded.
-    /// </summary>
-    public DateTime? LastOnlineAt { get; set; }
-
-    /// <summary>
     ///     Whether the mobile is hidden: the players do not see it, the staff does.
     /// </summary>
     public bool Hidden { get; set; }

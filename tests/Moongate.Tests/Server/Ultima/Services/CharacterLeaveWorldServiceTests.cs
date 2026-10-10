@@ -191,24 +191,6 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task OnSessionClosed_RecordsWhenTheCharacterLeft()
-    {
-        await using var fixture = await SessionFixture.CreateAsync();
-        var session = await SessionWithCharacterAsync(fixture);
-        var clock = new Moongate.Tests.TestSupport.Timing.SettableClock
-            { Now = new(2026, 10, 10, 12, 30, 0, TimeSpan.Zero) };
-        var service = Service(clock);
-
-        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
-        await service.StopAsync().WaitAsync(Timeout);
-
-        Assert.Equal(
-            new DateTime(2026, 10, 10, 12, 30, 0, DateTimeKind.Utc),
-            Assert.Single(_world.Mobiles.Upserted).LastOnlineAt
-        );
-    }
-
-    [Fact]
     public async Task OnSessionClosed_TellsTheWorldViewWhileTheCharacterIsStillInTheWorld()
     {
         await using var fixture = await SessionFixture.CreateAsync();
@@ -463,7 +445,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         return (backpack, coin, ground);
     }
 
-    private CharacterLeaveWorldService Service(TimeProvider? time = null)
+    private CharacterLeaveWorldService Service()
     {
         _events.RegisterMoongateEventBus();
         var bus = _events.Resolve<IMoongateEventBus>();
@@ -478,7 +460,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
             }
         );
 
-        return new(_mobiles, _items, _view, _world, bus, time: time);
+        return new(_mobiles, _items, _view, _world, bus);
     }
 
     public void Dispose()

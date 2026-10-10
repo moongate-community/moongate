@@ -31,7 +31,6 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
     private readonly IMoongateEventBus _events;
     private readonly IInventoryReservationService? _reservations;
     private readonly Moongate.Server.Core.Interfaces.Services.IGameLoopService? _loop;
-    private readonly TimeProvider _time;
 
     public CharacterLeaveWorldService(
         IMobileService mobiles,
@@ -40,11 +39,9 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         IWorldTransactionService world,
         IMoongateEventBus events,
         IInventoryReservationService? reservations = null,
-        Moongate.Server.Core.Interfaces.Services.IGameLoopService? loop = null,
-        TimeProvider? time = null
+        Moongate.Server.Core.Interfaces.Services.IGameLoopService? loop = null
     )
     {
-        _time = time ?? TimeProvider.System;
         _reservations = reservations;
         _loop = loop;
         _mobiles = mobiles;
@@ -160,7 +157,6 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
             _view.ContainedItemAppeared(fromChest, chest, character.Id);
         }
 
-        character.LastOnlineAt = _time.GetUtcNow().UtcDateTime;
         var snapshot = character.Snapshot();
         var carried = _items.GetOwnedBy(character.Id);
         var items = carried.Select(item => item.Snapshot()).ToList();
