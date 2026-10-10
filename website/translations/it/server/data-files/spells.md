@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"29cfc1edf232f82596ea04d5c14c82d598673ad49d0127ed779607934c807bbf","title":"Incantesimi"} -->
+<!-- translation: {"sourceHash":"ecfec58c795979cdf3cf1db63d98843d9fa4d15c6bf92e63b8a6e92dfd56656e","title":"Incantesimi"} -->
 
 # Incantesimi
 
@@ -44,6 +44,7 @@ enabled = true
 | `harmful` | L'incantesimo ferisce o maledice: il suo cursore è quello dannoso. |
 | `resistable` | Resisting Spells può indebolirlo. |
 | `reflectable` | Magic Reflection può rimandarlo indietro. |
+| `cast_delay_scale` | Quante volte il ritardo di lancio del suo cerchio impiega l'incantesimo, sopra 0 e al massimo 10; 1 se omesso. Blade Spirits e Summon Creature hanno 4, perché il gioco classico li rallentava. |
 | `sound` | Il suono dell'incantesimo, 0 per nessuno. |
 | `effect`, `effect_duration` | La grafica riprodotta sul bersaglio e per quanto, 0 per nessuna. |
 | `projectile`, `projectile_speed` | La grafica che vola dal lanciatore al bersaglio e quanto veloce, 0 per nessuna. |

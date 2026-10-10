@@ -198,6 +198,15 @@ if mobile.is_paralyzed(who) then mobile.release_paralysis(who) end
 mobile.release_paralysis(who)
 ```
 
+## set_frozen
+
+A freeze set by a script is the script's own: it ends a paralysis that was running, so the time of that paralysis does not
+lift it later:
+
+```lua
+mobile.set_frozen(statue, true)  -- stays frozen until a script or a command frees it
+```
+
 ## disguise
 
 The options may name a body, a hue, a name or the id of a list of names; what is left out stays. The mobile gets its own

@@ -326,14 +326,17 @@ of the spell with `scroll` true for a cast from a scroll. The scripts built are 
 `scripts/common/magic.lua` is what they share: the chance a target resists, the damage scalar, the curse and the buff
 with their time, the armor of a Protection, the refusal of a heal, the effect and the sound of a spell, and, for the
 spells that hit a place, who they may hit (`valid_indirect`, `indirect_targets`), the damage that is done later
-(`harm_after`) and the chance of a Dispel. `scripts/common/field.lua` puts down the line of pieces of a field.
+(`harm_after`), the chance of a Dispel, and `aggress`, which makes the caster the aggressor of the target and knows the
+spell that Magic Reflection turned back (`info.reflected`, `info.reflector`): the caster is then its own target and hurts
+itself with no crime. `scripts/common/field.lua` puts down the line of pieces of a field.
 
 ## common/summon.lua
 
 `scripts/common/summon.lua` is what the spells that call a creature share:
-`summon.create(caster, template, place, seconds, sound)` asks for the creature with `npc.spawn` and, once it is there,
-makes it a follower of the caster (the prop `owner`, the pet order `guard`), sets `summon.until`, `summon.difficulty` and
-`summon.focus`, and starts the timer that sends it away. `summon.refuse` and `summon.refuse_template` say, with the cliloc 1049645, that the followers of the caster
+`summon.create(caster, template, place, seconds, sound, uncontrollable)` asks for the creature with `npc.spawn` and, once
+it is there, makes it a follower of the caster (the prop `owner`, the pet order `guard`), sets `summon.until`,
+`summon.difficulty` and `summon.focus`, and starts the timer that sends it away; with `uncontrollable` it gets the prop
+`pet.uncontrollable`, and `common/pet_orders.lua` lets it hear no word and take no food (a blade spirit, an energy vortex). `summon.refuse` and `summon.refuse_template` say, with the cliloc 1049645, that the followers of the caster
 have no room for it (`pet.followers`, `pet.slots_of`). `summon.tick` is called by `common/creature.lua` on every think of
 a creature: it sends away one whose time is up or whose master is dead, gone or let it go. `summon.dismiss` takes it away
 in a puff (`effect.at`, `npc.delete`); a Dispel uses it. A summoned creature that dies leaves no corpse (the `on_death` of

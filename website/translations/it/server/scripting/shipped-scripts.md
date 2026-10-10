@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"0c5ad5130e4d1557533c776e357a0f4dd6f91fc3d90f393e7f90226b72d68fed","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"540ee5db9d218befe0a050d72f8c13720c48b6fdfe443c2cd7640fe5d24268d6","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -326,15 +326,18 @@ i dati dell'incantesimo con `scroll` vero per un lancio da pergamena. Gli script
 `scripts/common/magic.lua` è ciò che condividono: la probabilità che un bersaglio resista, il fattore del danno, la
 maledizione e il potenziamento con la loro durata, l'armatura di Protection, il rifiuto di una cura, l'effetto e il suono
 di un incantesimo e, per gli incantesimi che colpiscono un punto, chi possono colpire (`valid_indirect`,
-`indirect_targets`), il danno che arriva dopo (`harm_after`) e la probabilità di un Dispel. `scripts/common/field.lua`
+`indirect_targets`), il danno che arriva dopo (`harm_after`), la probabilità di un Dispel e `aggress`, che rende il lanciatore l'aggressore del bersaglio e conosce
+l'incantesimo che Magic Reflection ha rimandato indietro (`info.reflected`, `info.reflector`): il lanciatore è allora il
+suo stesso bersaglio e si ferisce da sé, senza crimine. `scripts/common/field.lua`
 mette a terra la fila di pezzi di un campo.
 
 ## common/summon.lua
 
 `scripts/common/summon.lua` è ciò che condividono gli incantesimi che chiamano una creatura:
-`summon.create(caster, template, place, seconds, sound)` chiede la creatura con `npc.spawn` e, quando c'è, ne fa un seguace
-del lanciatore (la proprietà `owner`, l'ordine di animale `guard`), imposta `summon.until`, `summon.difficulty` e
-`summon.focus`, e avvia il timer che la manda via. `summon.refuse` e `summon.refuse_template` dicono, con il cliloc 1049645, che i seguaci del
+`summon.create(caster, template, place, seconds, sound, uncontrollable)` chiede la creatura con `npc.spawn` e, quando c'è,
+ne fa un seguace del lanciatore (la proprietà `owner`, l'ordine di animale `guard`), imposta `summon.until`,
+`summon.difficulty` e `summon.focus`, e avvia il timer che la manda via; con `uncontrollable` riceve la proprietà
+`pet.uncontrollable`, e `common/pet_orders.lua` le fa non sentire parole e non prendere cibo (uno spirito di lama, un vortice di energia). `summon.refuse` e `summon.refuse_template` dicono, con il cliloc 1049645, che i seguaci del
 lanciatore non hanno posto per lei (`pet.followers`, `pet.slots_of`). `summon.tick` è chiamato da `common/creature.lua` a
 ogni pensiero di una creatura: manda via quella il cui tempo è scaduto o il cui padrone è morto, se n'è andato o l'ha
 lasciata. `summon.dismiss` la porta via in uno sbuffo (`effect.at`, `npc.delete`); lo usa un Dispel. Una creatura evocata che

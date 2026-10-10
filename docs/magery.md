@@ -156,14 +156,14 @@ against disturbance, a longer Fire Field) are not built.
 
 | Spell | Reagents | What it does |
 | --- | --- | --- |
-| Blade Spirits | black pearl, mandrake root, nightshade | A blade spirit is called at the place picked: it fights for the caster for 80 to 119 seconds. Refused in a guarded town, at a place that is blocked and when the followers do not have room for it |
+| Blade Spirits | black pearl, mandrake root, nightshade | A blade spirit is called at the place picked: it fights for the caster for 80 to 119 seconds, counts for one follower and obeys no order. Refused in a guarded town, at a place that is blocked and when the followers do not have room for it |
 | Dispel Field |  black pearl, garlic, sulfurous ash, spider silk  | A piece of a field of the spells, or a gate of Gate Travel (and the gate at its other end), goes away in a puff. A plain moongate is "too chaotic"; anything else cannot be dispelled |
 | Incognito | blood moss, garlic, nightshade | A random skin hue and a random name of the caster's sex for 1.2 seconds a point of Magery (at most 144); the hair and the beard stay as they are. Ended by the time, or by a death |
-| Magic Reflection | garlic, mandrake root, spider silk | The caster is wrapped in a reflection that turns back, once, the first harmful spell that can be reflected and is aimed at it: the spell reaches its caster, from the one it was aimed at. It has no time, a second cast is refused, and a death ends it |
+| Magic Reflection | garlic, mandrake root, spider silk | The caster is wrapped in a reflection that turns back, once, the first harmful spell that can be reflected and is aimed at it: the spell reaches its caster, who stays its caster and is hurt, cursed or frozen by its own spell, with no crime for it. It has no time, a second cast is refused, and a death ends it |
 | Mind Blast | black pearl, mandrake root, nightshade, sulfurous ash | After half a second, half the gap between the highest and the lowest stat of the target (each at most 150), scaled as Magic Arrow, at most 45; half of it when the target resists |
 | Paralyze | garlic, mandrake root, spider silk | The target is frozen for 7 seconds and a fifth of a second a point of Magery (27 at 100), three quarters of it when it resists. It cannot step, turn or cast; its own cast is ruined. A target already frozen is told so and nothing is spent |
 | Poison Field | black pearl, nightshade, spider silk | Five pieces of poison across the way, for 20 seconds: whoever steps onto one or stands in it is poisoned at the regular level once a second. Refused in a guarded town |
-| Summon Creature | blood moss, mandrake root, spider silk | A polar bear, a brown bear, a black bear, a horse, a walrus, a chicken, a scorpion, a giant serpent, a llama, an alligator, a grey wolf, a slime, an eagle, a gorilla, a snow leopard, a pig, a hind or a rabbit, picked at random, beside the caster, for as many seconds as the Magery has points. Counts for two followers |
+| Summon Creature | blood moss, mandrake root, spider silk | A polar bear, a brown bear, a black bear, a horse, a walrus, a chicken, a scorpion, a giant serpent, a llama, an alligator, a grey wolf, a slime, an eagle, a gorilla, a snow leopard, a pig, a hind or a rabbit, picked at random, beside the caster, for as many seconds as the Magery has points. It is refused unless two follower slots are free; the animal then counts for its own slots, as when it is tamed. The caster cannot keep it by riding it or stabling it |
 
 ## The sixth circle
 
@@ -172,7 +172,7 @@ against disturbance, a longer Fire Field) are not built.
 | Dispel | garlic, mandrake root, sulfurous ash | A summoned creature is undone, in a puff, with the chance (50 + 100 a point of Magery above its difficulty / twice its focus) per cent. One that holds out is told so to the caster and the caster is its aggressor. What is no summon cannot be dispelled |
 | Energy Bolt | black pearl, nightshade | A bolt flies to the target and, half a second later, does 24 to 41 damage, scaled as Fireball |
 | Explosion | blood moss, mandrake root | Two and a half seconds after the cast, 23 to 44 damage to the target if it is alive still, scaled as Fireball |
-| Invisibility | blood moss, nightshade | The target is hidden, as by the Hiding skill, for 1.2 seconds a point of Magery, and may walk while it lasts; running, a blow or a cast shows it. Its fight is stopped. Refused for staff and for an invulnerable creature, such as a vendor |
+| Invisibility | blood moss, nightshade | The target is hidden, as by the Hiding skill, for 1.2 seconds a point of Magery; it has no steps of Stealth, so the first step it takes, a blow or a cast shows it. Its fight is stopped. Refused for staff and for an invulnerable creature, such as a vendor |
 | Mark | black pearl, blood moss, mandrake root | The recall rune in the backpack is marked with the place of the caster, as [`.mark_rune`](commands/mark_rune.md) does. Refused for what is no rune, a rune that is not in the backpack and a region with the `mark` flag off |
 | Mass Curse | garlic, mandrake root, nightshade, sulfurous ash | Curse on everyone within two tiles of the place picked |
 | Paralyze Field | black pearl, ginseng, spider silk | Five pieces across the way, for 20 seconds: whoever steps onto one is frozen for 7 seconds and a fifth of a second a point of Magery. Refused in a guarded town |
@@ -196,12 +196,12 @@ against disturbance, a longer Fire Field) are not built.
 | Spell | Reagents | What it does |
 | --- | --- | --- |
 | Earthquake | blood moss, ginseng, mandrake root, sulfurous ash | Everyone within one tile and a fifteenth of the Magery of the caster loses six tenths of its hits, at once: at least 10 for a creature that is no player, at most 75. Refused in a guarded town |
-| Energy Vortex | black pearl, blood moss, mandrake root, nightshade | A vortex is called at the place picked: it fights for the caster for 80 to 119 seconds. Counts for two followers |
-| Resurrection | blood moss, garlic, ginseng | The ghost of a player within one tile of the caster is asked to come back to life (the gump of the ankhs and the healers), with the cost they have |
+| Energy Vortex | black pearl, blood moss, mandrake root, nightshade | A vortex is called at the place picked: it fights for the caster for 80 to 119 seconds. Counts for one follower and obeys no order |
+| Resurrection | blood moss, garlic, ginseng | The ghost of a player within one tile of the caster is asked to come back to life (the gump of the ankhs and the healers), with the cost they have; at its answer the place is asked again, and a ghost that no longer fits where it lies stays a ghost ("Thou can not be resurrected there!") |
 | Summon Air Elemental, Summon Earth Elemental | blood moss, mandrake root, spider silk | An elemental beside the caster, for as many seconds as the Magery has points. Counts for two followers |
 | Summon Water Elemental | blood moss, mandrake root, spider silk | As above, for three followers |
 | Summon Fire Elemental |  blood moss, mandrake root, sulfurous ash, spider silk  | As above, for four followers |
-| Summon Daemon |  blood moss, mandrake root, sulfurous ash, spider silk  | A daemon, as above, for four followers; it costs the caster 70 points of karma |
+| Summon Daemon |  blood moss, mandrake root, sulfurous ash, spider silk  | A daemon, as above, for five followers; it costs the caster 70 points of karma |
 
 ### Summoned creatures
 
@@ -210,44 +210,57 @@ A summoned creature is made from a mobile template (`bladespirit_summon`, `energ
 follower of the caster: it has the prop `owner` and counts for the `control_slots` of its template, so the spells that call
 one are refused, before anything is spent, when the followers of the caster do not have room for it (a tame animal counts
 as before). It has the order `guard` of a pet: it stays near the caster and fights whoever fights it or the caster, and the
-caster's words (stay, come, release...) rule it. It goes away in a puff when its time is up, when its master dies, leaves the
+caster's words (stay, come, release...) rule it, but for a blade spirit and an energy vortex, which no one commands (the
+prop `pet.uncontrollable`: they hear no word and take no food). It goes away in a puff when its time is up, when its master dies, leaves the
 game or lets it go, and when a Dispel undoes it; one that is killed leaves no corpse. The time is the prop `summon.until`, so
-a creature that was saved goes away at the right time after a restart, at its first think near a player.
+a creature that was saved goes away at the right time after a restart, at its first think near a player. The mount and
+the stable refuse a summoned creature (the prop `summon.until`), so a horse or a llama of Summon Creature is a loan of the
+spell and never a pet to keep.
 
 ### Area spells
 
-Chain Lightning, Meteor Swarm, Mass Curse, Earthquake, Mass Dispel and the fields of poison and paralysis spare the caster,
-the dead, the invulnerable, the caster's own creatures and a player that looks innocent (blue), unless the caster is a
-murderer; a creature with a blue name that no player owns is not spared. The caster is the aggressor of each that is hurt,
+Chain Lightning, Meteor Swarm, Mass Curse, Earthquake and Mass Dispel spare the caster, the dead, the invulnerable, the
+caster's own creatures and a player that looks innocent (blue), unless the caster is a murderer; a creature with a blue
+name that no player owns is not spared. The fields of poison and paralysis spare the dead, the invulnerable, the caster's
+own creatures and a player that looks innocent too, but the caster itself is hit by them when it steps on a piece, as in
+the classic game. The caster is the aggressor of each that is hurt,
 as for a blow. They are refused, before anything is spent, when nothing is there to touch ("This spell won't work on that!")
 and, but for Mass Dispel, in a guarded town.
 
 ### Paralysis and disguise
 
 Paralyze, Paralyze Field and Mana Vampire use two states of a mobile. `mobile.paralyze(who, seconds)` freezes it, which a
-frozen mobile cannot undo by walking and a cast cannot begin; the end time is kept with the mobile and a player that logs
-in after a restart is freed at the right moment. `mobile.disguise(who, { name, name_list, body, hue }, seconds)` replaces
-what it looks like and gives it back when the time is up, at a death, or at login after a restart; Incognito and Polymorph
-use it. A death also ends a paralysis and a Magic Reflection.
+frozen mobile cannot undo by walking and a cast cannot begin, and a frozen fighter keeps its fight but cannot swing; the
+end time is kept with the mobile and a player that logs in after a restart, or an NPC at its first think, is freed at the
+right moment. As in the classic game any damage (a poison's too) ends a paralysis, and so do Clumsy, Weaken, Feeblemind,
+Curse, Poison, Mana Drain and Mana Vampire aimed at the paralyzed. `mobile.set_frozen` takes the freeze over: it ends the
+paralysis that was running without freeing the mobile, so a staff freeze is not lifted by the time of a paralysis. `mobile.disguise(who, { name, name_list, body, hue }, seconds)` replaces
+what it looks like and gives it back when the time is up, at a death, at login after a restart or, for an NPC, at its first
+think after one; Incognito and Polymorph use it. A death also ends a paralysis and a Magic Reflection.
 
 ### Simplified in the fifth to eighth circles
 
-- Magic Reflection is the classic single use of the first days: it turns back one spell, then it is gone. The spell reaches
-  its caster as if the one reflecting had cast it, and the one reflecting is its aggressor.
+- Magic Reflection is the classic single use of the first days: it turns back one spell, then it is gone. The caster is
+  the aggressor of the one wearing it, as it was aimed at it, and then its own spell reaches it: it takes the damage, the
+  curse or the paralysis itself, by its own skills, as if it had hurt itself, with no one to blame. A Mana Vampire turned
+  back drains the caster into itself, which moves nothing.
 - Polymorph casts twice: the first cast opens the list, the second, after the pick, is the cast. Incognito does not change
   the hair or the beard.
-- Invisibility is the hidden state of the Hiding skill with a long allowance of steps; after a restart a hidden player is
-  shown by its first step.
+- Invisibility is the hidden state of the Hiding skill: with no steps of Stealth, the first step shows the target; after a
+  restart a hidden player is shown by its first step.
 - Gate Travel does not ask for a fight in progress (the engine has no combat heat), a sigil or a runebook, and tells the
   caster "You are not allowed to travel there." for a place a region forbids a gate into.
-- The cast of the summons, Blade Spirits and Energy Vortex takes the delay of its circle: the classic game made it four or
-  five times longer.
-- Chain Lightning, Mass Curse and the other area spells spare the caster, which the classic game of the first days did not
-  for some of them.
-- A summon, a Chain Lightning, an Earthquake and the like that find no one to affect are refused before anything is spent.
-  The classic game spent the mana.
-- A summoned creature's followers are counted by the `control_slots` of the template, which UOX3 says (a blade spirit 2, a
-  vortex 2, an air and an earth elemental 2, a water one 3, a fire one 4, a daemon 4).
+- In the classic game of the first days only Blade Spirits and Summon Creature took four times the delay of their circle,
+  and they do here (`cast_delay_scale` in [`data/spells.toml`](data-files/spells.md)); Energy Vortex and the elementals
+  cast at the delay of their circle.
+- A simplification: the area spells (Chain Lightning, Meteor Swarm, Mass Curse, Earthquake and Mass Dispel) always spare
+  the caster. In the classic game of the first days Meteor Swarm and Earthquake spared it, but Chain Lightning and Mass
+  Curse hit it too when it stood within reach.
+- A simplification: a summon, a Chain Lightning, an Earthquake and the like that find no one to affect are refused before
+  anything is spent. The classic game took the mana and the reagents before it looked for targets.
+- A summoned creature's followers are counted by the `control_slots` of the template: the classic game of the first days
+  says a blade spirit 1, an energy vortex 1, an air and an earth elemental 2, a water one 3, a fire one 4, a daemon 5,
+  and the converter writes them whatever UOX3's data says.
 
 ## Try it
 
@@ -270,7 +283,7 @@ scrolls of each spell that is built, and four recall runes. Set the skill apart 
 
 `mgctl init` never replaces a file you may have changed. Copy from the distribution `data/spells.toml`,
 `scripts/spells/`, `scripts/common/magic.lua`, `scripts/common/field.lua`, `scripts/common/summon.lua`,
-`scripts/common/creature.lua`, `scripts/items/spellbook.lua`, `scripts/items/spell_scroll.lua`,
+`scripts/common/creature.lua`, `scripts/common/pet_orders.lua`, `scripts/items/spellbook.lua`, `scripts/items/spell_scroll.lua`,
 `scripts/items/magic_field.lua`, `scripts/items/moongate.lua`, `scripts/items/test_kit.lua`,
 `scripts/gumps/resurrect.lua`, `scripts/gumps/polymorph_forms.lua`, `templates/gumps/resurrect.xml`,
 `templates/gumps/polymorph_forms.xml`, `templates/items/magic/misc_magic.toml`, `templates/items/magic/scrolls.toml`,
@@ -281,7 +294,7 @@ new messages of `data/messages`. A book already made keeps what it holds; a new
 ## Not yet
 
 Magic Lock, Unlock, Magic Trap and Magic Untrap, inscription (writing scrolls), wands, an NPC that casts, clearing the
-hands on a cast, the longer delay of the summons, the hair of Incognito.
+hands on a cast, the hair of Incognito.
 
 ## See also
 
