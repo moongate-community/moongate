@@ -174,6 +174,18 @@ public sealed class PetModule
     }
 
     /// <summary>
+    ///     Gets how many followers a creature of a mobile template counts for; <c>pet.slots_of("airele_summon")</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "How many followers a creature of the mobile template counts for once a player owns it: its entry in data/taming.toml, else the control_slots of its template, else 1."
+    )]
+    public int SlotsOf(string template)
+    {
+        return _pets.SlotsOf(template);
+    }
+
+    /// <summary>
     ///     Makes a creature the player's own; <c>pet.tame(who, creature)</c>.
     /// </summary>
     [ScriptFunction(

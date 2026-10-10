@@ -31,6 +31,7 @@ public sealed class PetService : IPetService
     private readonly ITamingService _taming;
     private readonly PetsConfig _config;
     private readonly IPetFoodService? _food;
+    private readonly IMobileTemplateService? _templates;
     private readonly Func<double> _roll;
     private readonly TimeProvider _time;
     private readonly Lazy<IMobileStateService>? _state;
@@ -48,7 +49,8 @@ public sealed class PetService : IPetService
         Lazy<IMobileStateService>? state = null,
         ISessionService? sessions = null,
         IPetFoodService? food = null,
-        Func<double>? roll = null
+        Func<double>? roll = null,
+        IMobileTemplateService? templates = null
     )
     {
         _mobiles = mobiles;
@@ -56,6 +58,7 @@ public sealed class PetService : IPetService
         _taming = taming;
         _config = config;
         _food = food;
+        _templates = templates;
         _roll = roll ?? Random.Shared.NextDouble;
         _time = time ?? TimeProvider.System;
         _state = state;
@@ -254,7 +257,18 @@ public sealed class PetService : IPetService
 
     public int SlotsOf(string? templateId)
     {
-        return templateId is not null && _taming.TryGet(templateId, out var creature) ? creature.Slots : 1;
+        if (templateId is null)
+        {
+            return 1;
+        }
+
+        if (_taming.TryGet(templateId, out var creature))
+        {
+            return creature.Slots;
+        }
+
+        // A creature a spell summons has no taming entry: its template says what it counts for.
+        return _templates?.TryGet(templateId, out var template) == true ? template.ControlSlots ?? 1 : 1;
     }
 
     public PetResultType TryTame(MobileEntity player, MobileEntity creature)

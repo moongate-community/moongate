@@ -80,7 +80,8 @@ public interface IPetService
     bool IsBonded(MobileEntity creature);
 
     /// <summary>
-    ///     Gets the slots a creature of that mobile template counts for; 1 for one with no entry.
+    ///     Gets the slots a creature of that mobile template counts for: its entry in the taming data, else the
+    ///     <c>control_slots</c> of the template, else 1.
     /// </summary>
     int SlotsOf(string? templateId);
 

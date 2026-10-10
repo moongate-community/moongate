@@ -18,6 +18,7 @@ public class MobileTemplate
     private const int MaximumSkillValue = 120; // A skill goes up to 120 with bonuses.
     private const int MaximumResistance = 100;
     private const int MaximumPercent = 100;
+    private const int MaximumControlSlots = 10;
     private const int MaximumHue = ushort.MaxValue;
 
     /// <summary>
@@ -201,6 +202,13 @@ public class MobileTemplate
     public int? FleeAt { get; set; }
 
     /// <summary>
+    ///     How many followers the creature counts for once a player owns it, from 1 to 10, as UOX3's
+    ///     <c>CONTROLSLOTS</c>: the summoned creatures of Magery have it, the tamable ones take theirs from
+    ///     <c>data/taming.toml</c>. Unset: 1.
+    /// </summary>
+    public int? ControlSlots { get; set; }
+
+    /// <summary>
     ///     The hue of the blood the creature leaves when it is hit, 0 for the red of blood; -1 for one that does not
     ///     bleed, such as the undead and the golems, as ServUO's <c>BloodHue</c> and Source-X's <c>BLOODCOLOR</c>.
     ///     Unset:
@@ -298,6 +306,11 @@ public class MobileTemplate
         if (FleeAt is < -1 or > MaximumPercent)
         {
             throw Invalid("flee_at", "must be from -1 to 100");
+        }
+
+        if (ControlSlots is < 1 or > MaximumControlSlots)
+        {
+            throw Invalid("control_slots", "must be from 1 to 10");
         }
 
         if (ScriptId is not null && !ScriptIdUtils.IsValid(ScriptId))

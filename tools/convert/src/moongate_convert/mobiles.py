@@ -59,6 +59,12 @@ _SCRIPT_IDS = IgnoreCaseDict(
         "wraith": "monster",
         "spectre": "monster",
         "lich": "monster",
+        # The creatures the spells of Magery summon: they fight for their master through the pet orders.
+        "airele-summon": "monster",
+        "earthele-summon": "monster",
+        "firele-summon": "monster",
+        "waterele-summon": "monster",
+        "daemon-summon": "monster",
     }
 )
 
@@ -135,6 +141,7 @@ class Mobile:
     script_id: str | None = None
     npc_guild: str | None = None
     flee_at: int | None = None
+    control_slots: int | None = None
     blood_hue: int | None = None
     visibility: str | None = None
     movement: str | None = None
@@ -426,6 +433,13 @@ def _apply_numbers(block: DfnBlock, template: Mobile, context: BuildContext) -> 
 
             if flee_at is not None and (flee_at == -1 or 1 <= flee_at <= 100):
                 template.flee_at = flee_at
+        elif key == "CONTROLSLOTS" and block.header.lower().endswith("-summon"):
+            # The creatures the spells of Magery summon count for these followers (1 to 10, else left out); the tamable
+            # ones take their slots from data/taming.toml.
+            slots = dfn.uox_number(value)
+
+            if slots is not None and 1 <= slots <= 10:
+                template.control_slots = slots
         elif key == "FLAG":
             template.notoriety = _NOTORIETY.get(upper_invariant(value), template.notoriety)
         elif key in ("CUSTOMINTTAG", "CUSTOMSTRINGTAG"):
@@ -630,7 +644,7 @@ def _scalar(value: object) -> str:
 _PLAIN_FIELDS = [
     "id", "base_id", "comment", "name", "name_list", "title", "body", "gender", "race", "skin_hue", "hair", "hair_hue", "beard",
     "beard_hue", "strength", "dexterity", "intelligence", "hits", "mana", "stamina", "damage", "armor", "notoriety", "karma", "fame",
-    "loot", "gold", "script_id", "npc_guild", "flee_at", "blood_hue", "visibility", "movement",
+    "loot", "gold", "script_id", "npc_guild", "flee_at", "control_slots", "blood_hue", "visibility", "movement",
 ]  # fmt: skip
 
 

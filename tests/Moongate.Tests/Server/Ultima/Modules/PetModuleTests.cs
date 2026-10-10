@@ -94,6 +94,16 @@ public sealed class PetModuleTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SlotsOf_IsWhatTheTemplateCountsFor_AndOneForANameThatIsNone()
+    {
+        _pets.Slots["airele_summon"] = 2;
+
+        var result = Run("return pet.slots_of('airele_summon'), pet.slots_of('cat')");
+
+        Assert.Equal([2, 1], result.Select(value => (int)value.Read<double>()));
+    }
+
+    [Fact]
     public void Release_AsksThePetService()
     {
         Assert.True(Run("return pet.release(2, 0x100)")[0].Read<bool>());
