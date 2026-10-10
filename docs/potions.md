@@ -87,6 +87,8 @@ or stamina they held above the base maximums. An NPC's maximums do not rise with
 Scripts give them with `mobile.add_stat_bonus(user, "strength", 10, 120)` and
 `mobile.set_night_sight(user, 13, 1200)`; `mobile.stats` gives both the values with the bonuses and the `base_` ones.
 
+Potions are made by [alchemy](alchemy.md); the plain potions vendors sell and loot drops work as the named ones.
+
 ## Change the rules
 
 - The potions are `scripts/items/potion.lua`: the table `EFFECTS` maps a template to its effect.

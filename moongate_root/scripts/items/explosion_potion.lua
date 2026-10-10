@@ -19,6 +19,8 @@
 --   explosion_potion.random(low, high)      the roll of the damage, math.random
 -- ==============================================================================
 
+local potions = require("common.potions")
+
 explosion_potion = {}
 
 explosion_potion.random = math.random
@@ -100,7 +102,7 @@ local function blast(fuse, here, direct)
     world.play_sound(here.map, here.x, here.y, here.z, EXPLOSION_SOUND)
     effect.at(here.map, here.x, here.y, here.z, EXPLOSION_EFFECT)
 
-    local range = DAMAGE[fuse.template]
+    local range = DAMAGE[fuse.kind]
     local attacker = blamed(fuse.thrower)
     -- Alchemy strengthens the potion that was thrown, not those it sets off.
     local bonus = direct and attacker and alchemy(attacker) or 0
@@ -126,9 +128,9 @@ end
 
 -- Goes off; false when the potion cannot be used up now, as one held on a cursor.
 explode = function(serial, thrower, direct)
-    local fuse = fuses[serial] or { thrower = thrower, template = item.template(serial) }
+    local fuse = fuses[serial] or { thrower = thrower, template = item.template(serial), kind = potions.kind(serial) }
 
-    if not DAMAGE[fuse.template or ""] then
+    if not DAMAGE[fuse.kind or ""] then
         return true
     end
 
@@ -340,7 +342,7 @@ local function arm_one(serial, user, id)
 end
 
 function explosion_potion.on_use(serial, user)
-    if not DAMAGE[item.template(serial) or ""] then
+    if not DAMAGE[potions.kind(serial) or ""] then
         return true
     end
 
@@ -365,7 +367,10 @@ function explosion_potion.on_use(serial, user)
         return true
     end
 
-    local fuse = { id = id, thrower = user, template = item.template(armed), count = COUNT_FROM, serial = armed }
+    local fuse = {
+        id = id, thrower = user, template = item.template(armed), kind = potions.kind(armed), count = COUNT_FROM,
+        serial = armed,
+    }
     fuses[armed] = fuse
     mobile.message_cliloc(user, THROW_IT_NOW)
     timer.after(FIRST_COUNT, function()

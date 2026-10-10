@@ -797,3 +797,92 @@ def test_cartography_has_the_classic_numbers_names_by_facet_and_takes_blank_maps
     # A blank map, as vendors sell it, is a map to draw on; a blank scroll is the scribe's.
     lists = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}
     assert lists["maps"] == ["0x14eb_map", "0x14ec_blank_map"]
+
+
+ALCHEMY = """
+[SUBMENU 89]
+{
+MENU=93
+}
+[MENUENTRY 93]
+{
+NAME=Healing Potions
+SUBMENU=93
+}
+[SUBMENU 93]
+{
+ITEM=298
+ITEM=299
+}
+[ITEM 298]
+{
+NAME=Lesser Heal
+RESOURCE=0x0f85 1
+SKILL=0 0 500
+ADDITEM=0x0F0C
+}
+[ITEM 299]
+{
+NAME=Heal
+RESOURCE=0x0f85 3
+SKILL=0 151 650
+ADDITEM=0x0F0C-b
+}
+"""
+
+ALCHEMY_ITEMS = """
+[[item]]
+id = "0x0f85_ginseng"
+[[item]]
+id = "0x0f85_10_ginseng"
+[[item]]
+id = "0x0f0c_yellow_potion"
+[[item]]
+id = "0x0f0c_b_yellow_potion"
+[[item]]
+id = "0x0f0e_empty_bottle"
+"""
+
+
+def test_alchemy_makes_the_potions_vendors_sell_each_in_an_empty_bottle(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("")
+    (source / "alchemy.dfn").write_text(ALCHEMY)
+    (items / "all.toml").write_text(ALCHEMY_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 0, error.getvalue()
+
+    alchemy = tomllib.loads((destination / "alchemy.toml").read_text())
+    assert (alchemy["name"], alchemy["skill"], alchemy["sound"]) == ("Alchemy", "alchemy", 0x0242)
+    lesser, heal = alchemy["group"][0]["recipe"]
+    # UOX3 names the plain potion by its graphic, the stronger one with a letter after a dash.
+    assert (lesser["item"], heal["item"]) == ("0x0f0c_yellow_potion", "0x0f0c_b_yellow_potion")
+    # Ginseng is sold one by one and ten at a time: both are the reagent, a list of its own.
+    assert heal["resources"] == [{"resource": "ginseng", "amount": 3}, {"resource": "bottles", "amount": 1}]
+    lists = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}
+    assert lists["ginseng"] == ["0x0f85_10_ginseng", "0x0f85_ginseng"]
+    # The bottles a potion is poured in: a list, so another empty bottle can join it.
+    assert lists["bottles"] == ["0x0f0e_empty_bottle"]
+    assert (heal["skill_min"], heal["skill_max"]) == (15.1, 65.0)
+
+
+def test_a_stack_list_never_replaces_a_list_of_another_kind(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE GINSENG]\n{\nID=0x0f85\n}\n")
+    (source / "alchemy.dfn").write_text(ALCHEMY.replace("RESOURCE=0x0f85 3", "RESOURCE=0x0f86 3"))
+    (items / "all.toml").write_text(ALCHEMY_ITEMS + '[[item]]\nid = "0x0f86_ginseng"\n[[item]]\nid = "0x0f86_10_ginseng"\n')
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 2
+    assert "ginseng" in error.getvalue()
+
+
+def test_a_name_that_starts_with_a_number_is_no_stack():
+    assert crafts._one_item_in_stacks(["0x1234_3_wise_men", "0x1234_wise_men"]) == "wise_men"
+    # Two templates both with a number and no single one: no stack of one item.
+    assert crafts._one_item_in_stacks(["0x1234_3_wise_men", "0x1234_5_wise_men"]) is None

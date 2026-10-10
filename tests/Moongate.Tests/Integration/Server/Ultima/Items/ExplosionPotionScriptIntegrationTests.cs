@@ -97,6 +97,7 @@ public sealed class ExplosionPotionScriptIntegrationTests : IAsyncLifetime
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With<ItemTemplate>(
             new ItemTemplate { Id = "explosionpotion", ItemId = new Serial(0x0F0D), ScriptId = "explosion_potion", Stackable = true },
+            new ItemTemplate { Id = "0x0f0d_b_purple_potion", ItemId = new Serial(0x0F0D), ScriptId = "explosion_potion", Stackable = true },
             new ItemTemplate { Id = "greaterexplosionpotion", ItemId = new Serial(0x0F0D), ScriptId = "explosion_potion", Stackable = true }
         )
     );
@@ -151,6 +152,7 @@ public sealed class ExplosionPotionScriptIntegrationTests : IAsyncLifetime
             explosion_potion.random = function(low, high) return high end
             """
         );
+        _scripts.Write("common/potions.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "potions.lua")));
         _scripts.Write("common/crafting.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "crafting.lua")));
         _scripts.Write("common/woods.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "woods.lua")));
         _scripts.Write("common/smithy.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "smithy.lua")));
@@ -270,7 +272,7 @@ public sealed class ExplosionPotionScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.Equal(0, Left(potion));
-        var landed = Assert.Single(Made("explosionpotion").Where(item => item.GroundLocation is not null));
+        var landed = Assert.Single(Made("explosionpotion"), item => item.GroundLocation is not null);
         Assert.Equal(new Point3D(13, 14, 0), landed.GroundLocation);
 
         Countdown();
@@ -394,7 +396,7 @@ public sealed class ExplosionPotionScriptIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.False(_items.TryGet(potion.Id, out _));
-        Assert.Single(Made("explosionpotion").Where(item => item.GroundLocation == new Point3D(13, 14, 0)));
+        Assert.Single(Made("explosionpotion"), item => item.GroundLocation == new Point3D(13, 14, 0));
     }
 
     [Fact]
@@ -444,6 +446,18 @@ public sealed class ExplosionPotionScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal(0, Left(potion));
         Assert.NotEmpty(_combat.Harmed);
+    }
+
+    [Fact]
+    public void AnExplosionPotionAsVendorsSellIt_GoesOffAsTheNamedOne()
+    {
+        var potion = Carry("0x0f0d_b_purple_potion", 0x0F0D, 1);
+
+        Use(potion);
+        Countdown();
+
+        Assert.Empty(_errors);
+        Assert.Contains((_aria, _aria, 20), _combat.Harmed.Select(harm => (harm.Attacker, harm.Target, harm.Damage)));
     }
 
     private void Use(ItemEntity potion)

@@ -19,6 +19,8 @@
 --   potion.chance()               the roll of a cure, 0 to 1, math.random
 -- ==============================================================================
 
+local potions = require("common.potions")
+
 potion = {}
 
 potion.random = math.random
@@ -220,7 +222,7 @@ local function leave_bottle(user)
 end
 
 function potion.on_use(serial, user)
-    local effect_of = EFFECTS[item.template(serial) or ""]
+    local effect_of = EFFECTS[potions.kind(serial) or ""]
 
     if not effect_of then
         return true

@@ -4,6 +4,7 @@ base_id = "base_item"
 item_id = 3739
 name = "mortar & pestle"
 rarity = "common"
+script_id = "alchemy_tool"
 weight = 1.0
 buy_price = 9
 sell_price = 4
