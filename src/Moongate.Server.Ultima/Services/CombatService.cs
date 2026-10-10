@@ -65,6 +65,8 @@ public sealed class CombatService : ICombatService
     private const double Tenth = 10.0;
     private const double PassiveMinimum = 0;
     private const double PassiveMaximum = 100;
+    private const int ReactiveBasePercent = 10;
+    private const double ReactivePointsPerPercent = 4.0;
     private const int ReactiveSound = 0x1F1;
     private const int ReactiveEffect = 0x374A;
     private const int ReactiveEffectSpeed = 10;
@@ -571,7 +573,22 @@ public sealed class CombatService : ICombatService
             return;
         }
 
-        var damage = Reflect(attacker, target, DamageOf(attacker, target, weapon), now);
+        var damage = DamageOf(attacker, target, weapon);
+        var attackerFell = false;
+
+        // Only a melee blow of someone that can be hurt goes back: not an arrow, and not a guard's.
+        if (!IsRanged(weapon) && attacker.Notoriety != NotorietyType.Invulnerable)
+        {
+            damage = Reflect(attacker, target, damage, now, out attackerFell);
+        }
+
+        // An attacker that fell to its own blow is a ghost: it keeps no fight with the target, and strikes no more.
+        if (attackerFell || attacker.IsDead || !_mobiles.IsInWorld(attacker.Id))
+        {
+            Wound(null, target, damage, now, false);
+
+            return;
+        }
 
         if (Wound(attacker, target, damage, now))
         {
@@ -579,9 +596,17 @@ public sealed class CombatService : ICombatService
         }
     }
 
-    // Reactive Armor: a part of the blow of someone at arm's length goes back to it, and the target is spared that much.
-    private int Reflect(MobileEntity attacker, MobileEntity target, int damage, DateTimeOffset now)
+    private static bool IsRanged(WeaponInfo? weapon)
     {
+        return weapon is { Type: { } kind } && kind.Projectile != 0;
+    }
+
+    // Reactive Armor: a part of the melee blow of someone at arm's length goes back to it, as much as 10 per cent and a
+    // quarter of a point of the Magery of the wearer, when it is hit; the target is spared that much.
+    private int Reflect(MobileEntity attacker, MobileEntity target, int damage, DateTimeOffset now, out bool attackerFell)
+    {
+        attackerFell = false;
+
         if (!IsMagicActive(target, MagicProps.ReactiveUntil, now) ||
             attacker.Map != target.Map ||
             Math.Max(
@@ -592,7 +617,8 @@ public sealed class CombatService : ICombatService
             return damage;
         }
 
-        var reflected = (int)(damage * Math.Clamp(target.GetProp(MagicProps.ReactivePercent, 0L), 0L, 100L) / 100);
+        var percent = (int)(ReactiveBasePercent + Points(target, SkillType.Magery) / ReactivePointsPerPercent);
+        var reflected = damage * percent / 100;
 
         if (reflected <= 0)
         {
@@ -606,7 +632,7 @@ public sealed class CombatService : ICombatService
             attacker.Location,
             new EffectOptions { Graphic = ReactiveEffect, Speed = ReactiveEffectSpeed, Duration = ReactiveEffectDuration }
         );
-        Wound(null, attacker, reflected, now, false);
+        attackerFell = Wound(null, attacker, reflected, now, false);
 
         return damage - reflected;
     }

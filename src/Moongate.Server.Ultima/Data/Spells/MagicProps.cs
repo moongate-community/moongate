@@ -2,7 +2,7 @@ namespace Moongate.Server.Ultima.Data.Spells;
 
 /// <summary>
 ///     The props of a mobile that the spells of Magery set and the fight reads: how much armor a protection adds and until
-///     when, and how much of a melee blow Reactive Armor sends back and until when. A time is whole seconds since 1970, as
+///     when, and until when Reactive Armor sends a part of a melee blow back (as much as the Magery of its wearer gives). A time is whole seconds since 1970, as
 ///     <c>world.now()</c> gives.
 /// </summary>
 public static class MagicProps
@@ -21,9 +21,4 @@ public static class MagicProps
     ///     Prop of a mobile: the time, in seconds since 1970, Reactive Armor lasts to.
     /// </summary>
     public const string ReactiveUntil = "magic.reactive_until";
-
-    /// <summary>
-    ///     Prop of a mobile: the percent of a melee blow Reactive Armor sends back to whoever struck it.
-    /// </summary>
-    public const string ReactivePercent = "magic.reactive_percent";
 }

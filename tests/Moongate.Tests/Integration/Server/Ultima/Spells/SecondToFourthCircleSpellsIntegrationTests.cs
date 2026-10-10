@@ -446,11 +446,9 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         var now = _time.GetUtcNow().ToUnixTimeSeconds();
-        // 25 + 100 / 2 seconds, 10 + 100 / 4 per cent.
-        Assert.Equal(
-            (now + 75, 35L),
-            (_bran.GetProp<long>("magic.reactive_until"), _bran.GetProp<long>("magic.reactive_percent"))
-        );
+        // 25 + 100 / 2 seconds; the percent is read from the Magery of the wearer when it is hit.
+        Assert.Equal(now + 75, _bran.GetProp<long>("magic.reactive_until"));
+        Assert.False(_bran.TryGetProp<long>("magic.reactive_percent", out _));
         Assert.Equal(26, _aria.Mana);
 
         _time.Advance(TimeSpan.FromSeconds(2));
