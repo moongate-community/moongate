@@ -100,7 +100,8 @@ public sealed class TailoringScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "0x1766_cut_cloth", ItemId = new Serial(0x1766), Stackable = true },
             new ItemTemplate { Id = "0x1081_cut_up_leather", ItemId = new Serial(0x1081), Stackable = true },
             new ItemTemplate { Id = "0x1517_shirt", ItemId = new Serial(0x1517) },
-            new ItemTemplate { Id = "0x13c6_leather_gloves", ItemId = new Serial(0x13C6) }
+            new ItemTemplate { Id = "0x13c6_leather_gloves", ItemId = new Serial(0x13C6) },
+            new ItemTemplate { Id = "0x1078_pile_of_hides", ItemId = new Serial(0x1078), Stackable = true }
         )
     );
 
@@ -134,7 +135,7 @@ public sealed class TailoringScriptIntegrationTests : IAsyncLifetime
             )
             .With(
                 new CraftResourceList { Id = "cloth", Templates = ["0x1766_cut_cloth"] },
-                new CraftResourceList { Id = "leather", Templates = ["0x1081_cut_up_leather"] }
+                new CraftResourceList { Id = "leather", Templates = ["0x1078_pile_of_hides", "0x1081_cut_up_leather"] }
             )
     );
 
@@ -333,6 +334,20 @@ public sealed class TailoringScriptIntegrationTests : IAsyncLifetime
 
         Assert.Equal([told], Told());
         Assert.Empty(_timers.Timers);
+    }
+
+    [Fact]
+    public void LeatherGloves_AreSewnFromAPileOfHidesToo()
+    {
+        var hides = Carry("0x1078_pile_of_hides", 0x1078, 10);
+
+        Make(Gloves);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([Created], Told());
+        Assert.Equal(0, _items.TryGet(hides.Id, out var left) ? left.Amount : 0);
+        Assert.Single(Made("0x13c6_leather_gloves"));
     }
 
     public async Task DisposeAsync()

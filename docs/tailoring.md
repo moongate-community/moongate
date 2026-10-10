@@ -1,6 +1,6 @@
 # Tailoring
 
-A tailor sews clothes, footwear and leather armor from cloth, leather and bones. The rules are the ones of every craft:
+A tailor sews clothes, footwear and leather armor from cloth and leather. The rules are the ones of every craft:
 see [Carpentry](carpentry.md) for the chance, failures, exceptional items, the maker's mark, tools that wear out and
 Make last.
 
@@ -11,8 +11,8 @@ Make last.
 3. Press the button before a recipe, or open its page to see the cloth or leather it takes, the skills and your
    chance.
 
-A recipe whose cloth, leather or bones you lack answers "You don't have enough cloth to make that.", "You do not have
-sufficient leather to make that." or "You do not have enough bones to make that." and takes nothing.
+A recipe whose cloth or leather you lack answers "You don't have enough cloth to make that." or "You do not have
+sufficient leather to make that." and takes nothing.
 
 ## The recipes
 
@@ -30,7 +30,8 @@ sufficient leather to make that." or "You do not have enough bones to make that.
 | Female Armor | Leather shorts | 62.2 to 112 | 8 leather |
 
 Cloth is any of the folded and cut cloth; leather is cut leather or piles of hides. An exceptional piece of leather
-armor gives 8 more armor, as [blacksmithing](blacksmithing.md#exceptional-weapons-and-armor) says.
+armor gives 8 more armor, as [blacksmithing](blacksmithing.md#exceptional-weapons-and-armor) says; so does an exceptional hat or
+suit that has an armor rating of its own, such as the wizard's hat.
 
 ## Change the rules
 
@@ -46,7 +47,8 @@ or give `script_id = "tailoring_tool"` to your sewing kits.
 
 ## Not yet
 
-Kinds of leather (spined, horned, barbed) and coloured cloth to pick, cutting cloth and hides with scissors, dyeing what
+Bone armor and short pants, which UOX3 lists in no menu; kinds of leather (spined, horned, barbed, which the runic kits
+would work) and coloured cloth to pick; cutting cloth and hides with scissors, dyeing what
 is made, and spinning wool and flax into cloth.
 
 ## See also
