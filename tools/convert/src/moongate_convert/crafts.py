@@ -27,7 +27,7 @@ SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailori
 # The groups that make deeds, which mean nothing until houses exist.
 SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons", "traps"}
 
-# What an axe already does: logs sawn into boards, and kindling.
+# What a player already gets elsewhere: boards from an axe, kindling hacked off a tree with a blade.
 SKIPPED_ITEMS = {"0x1bd7", "0x0de1"}
 
 # The crafts whose root menu holds recipes of its own: the name of the group they form, first.

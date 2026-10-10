@@ -67,8 +67,10 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
 
     private const int Weapons = 1;
     private const int Arrows = 2;
+    private const int Shafts = 3;
     private const int Bow = 1;
     private const int Arrow = 1;
+    private const int Shaft = 1;
 
     private const int Created = 1044154;
     private const int NoWood = 1044351;
@@ -101,6 +103,7 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "0x1022_fletcher's_tools", ItemId = new Serial(0x1022), ScriptId = "fletching_tool" },
             new ItemTemplate { Id = "0x1bd7_board", ItemId = new Serial(0x1BD7), Stackable = true },
             new ItemTemplate { Id = "ash_board", ItemId = new Serial(0x1BD7), Stackable = true },
+            new ItemTemplate { Id = "oak_board", ItemId = new Serial(0x1BD7), Stackable = true },
             new ItemTemplate { Id = "0x1bd4_shaft", ItemId = new Serial(0x1BD4), Stackable = true },
             new ItemTemplate { Id = "0x1bd1_feather", ItemId = new Serial(0x1BD1), Stackable = true },
             new ItemTemplate { Id = "0x0f3f_arrow", ItemId = new Serial(0x0F3F), Stackable = true },
@@ -137,6 +140,18 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
                                 {
                                     Name = "Arrow", Item = "0x0f3f_arrow", SkillMin = 0, SkillMax = 40,
                                     Resources = [new() { Resource = "0x1bd4_shaft", Amount = 1 }, new() { Resource = "0x1bd1_feather", Amount = 1 }]
+                                }
+                            ]
+                        },
+                        new()
+                        {
+                            Name = "Shafts",
+                            Recipe =
+                            [
+                                new()
+                                {
+                                    Name = "Shaft", Item = "0x1bd4_shaft", SkillMin = 0, SkillMax = 40,
+                                    Resources = [new() { Resource = "wood", Amount = 1 }]
                                 }
                             ]
                         }
@@ -358,6 +373,43 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Single(Made("0x0f3f_arrow"));
         Assert.Equal(2, Left(feathers));
+    }
+
+    [Fact]
+    public void Arrows_AreNeverExceptional_JoinOneStack_AndDoNotWearTheTool()
+    {
+        Carry("0x1bd4_shaft", 0x1BD4, 2);
+        Carry("0x1bd1_feather", 0x1BD1, 2);
+        // Rolls that would make anything else exceptional, at the skill that marks it.
+        Rolls(0.0, 0.0, 0.0, 0.0);
+
+        Call("make", Aria, Arrows, Arrow);
+        Fire(1.25);
+        Call("make", Aria, Arrows, Arrow);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        var arrows = Assert.Single(Made("0x0f3f_arrow"));
+        Assert.Equal(2, arrows.Amount);
+        Assert.False(arrows.TryGetProp<int>("quality", out _));
+        Assert.False(arrows.TryGetProp<long>("crafter_id", out _));
+        Assert.True(_tools.TryGetProp<int>("uses_remaining", out var left));
+        Assert.Equal(50, left);
+    }
+
+    [Fact]
+    public void AShaft_FromOak_IsOak_AndStacksOnlyWithOakShafts()
+    {
+        var oak = Carry("oak_board", 0x1BD7, 1);
+        oak.Hue = new Hue(0x7DA);
+        Call("pick", Aria, "oak");
+
+        Call("make", Aria, Shafts, Shaft);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal(0, Left(oak));
+        Assert.Equal(new Hue(0x7DA), Assert.Single(Made("0x1bd4_shaft")).Hue);
     }
 
     public async Task DisposeAsync()

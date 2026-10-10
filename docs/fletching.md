@@ -12,6 +12,9 @@ items, the maker's mark, tools that wear out and Make last.
    for as much Bowcraft/Fletching as it asks Carpentry of a carpenter, and colours the bow.
 4. Press the button before a recipe, or open its page. Make last repeats it: an arrow is made one at a time.
 
+Shafts, arrows and bolts stack, so they are never exceptional nor marked, and making them does not wear the tool.
+They take the colour of the wood picked: oak shafts stack only with oak shafts.
+
 ## The recipes
 
 9 recipes in four groups, converted from UOX3:
@@ -29,7 +32,7 @@ items, the maker's mark, tools that wear out and Make last.
 | Crossbow Bolts | Bolt | 0 to 70 | 1 shaft, 1 feather |
 
 UOX3's batches of five, twenty and fifty are left out: Make last makes them one after the other. Kindling is left out
-too: an [axe](lumberjacking.md) already cuts it from logs.
+too: a blade already hacks it off a tree (see [Lumberjacking](lumberjacking.md)).
 
 ## Change the rules
 
@@ -45,7 +48,8 @@ too: an [axe](lumberjacking.md) already cuts it from logs.
 
 ## Not yet
 
-Making a number of arrows at once, and the bows of later eras.
+Making a number of arrows at once, and the bows of later eras. Feathers come only from the fletcher's starting
+items: no vendor sells them and birds cannot be carved yet.
 
 ## See also
 

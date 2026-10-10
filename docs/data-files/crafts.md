@@ -78,4 +78,4 @@ points, and counts only boards as wood. UOX3 nests its menus (Blacksmithing, Arm
 recipes becomes a group, in the order the menus are met. A recipe's name starts with a capital, and a second recipe of
 the same name (a spoon facing the other way) is told apart with a number: "Spoon 2". The tinker's tools recipe makes
 the tinker's tools, not UOX3's 10-stone tool kit. A root menu's own recipes (the bows) form a first group, a second root
-(the arrows and bolts of the fletching tool) is walked after it, and UOX3's batches of five or more are left out.
+(the arrows and bolts of the fletching tool) is walked after it, and UOX3's batches (five, twenty, fifty) are left out.

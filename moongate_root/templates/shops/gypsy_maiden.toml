@@ -34,7 +34,7 @@ hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x1bfb_20"
+item = "0x1bfb_crossbow_bolt"
 price = 5
 amount = 20
 hue = 0
@@ -355,7 +355,7 @@ hue = 0
 name = ""
 
 [[shop.sell]]
-item = "0x1bfb_20"
+item = "0x1bfb_crossbow_bolt"
 price = 2
 amount = 1
 hue = 0

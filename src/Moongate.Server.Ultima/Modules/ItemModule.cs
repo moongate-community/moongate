@@ -292,6 +292,19 @@ public sealed class ItemModule
     }
 
     /// <summary>
+    ///     Tells whether the items of a template stack, as the item factory decides; <c>item.is_stackable(template)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the items of a template stack: the template's stackable, else the tiledata of its graphic. False for an unknown template."
+    )]
+    public bool IsStackable(string template)
+    {
+        return _tiles is not null && _templates is not null && _templates.TryGet(template, out var found) &&
+               found.EffectiveStackable(_tiles);
+    }
+
+    /// <summary>
     ///     Takes <paramref name="amount" /> units off the item, deleting it at 0; <c>item.consume(serial, 1)</c>.
     /// </summary>
     [ScriptFunction(
