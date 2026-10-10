@@ -1,0 +1,46 @@
+# ==============================================================================
+# Moongate - templates/items/magic/fields.toml
+#
+# What it is for:
+#   The pieces of the fields the spells of Magery raise: a wall of stone, and a
+#   field of fire along the east-west or the north-south line. scripts/spells/
+#   wall_of_stone.lua and fire_field.lua put them down, five or three at a time,
+#   and scripts/items/magic_field.lua takes them away when their time is up and
+#   burns whoever stands in a field of fire.
+#
+# Fields:
+#   id, base_id, item_id, name   as every item template
+#   movable    false: nobody picks a piece up
+#   script_id  magic_field: the script that ends the field and burns
+#   decays     false: the script ends the field, not the decay service
+# ==============================================================================
+
+[[item]]
+id = "magic_wall_of_stone"
+base_id = "base_item"
+item_id = 0x0082
+name = "a wall of stone"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"
+
+[[item]]
+id = "magic_fire_field_ew"
+base_id = "base_item"
+item_id = 0x398C
+name = "a field of fire"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"
+
+[[item]]
+id = "magic_fire_field_ns"
+base_id = "base_item"
+item_id = 0x3996
+name = "a field of fire"
+rarity = "common"
+movable = false
+decays = false
+script_id = "magic_field"

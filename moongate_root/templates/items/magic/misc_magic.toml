@@ -244,3 +244,16 @@ sell_price = 11
 decays = true
 loot_type = "newbied"
 hue = 1121
+
+# The rune Recall carries its caster to: unmarked it holds no place; a marked one has the props rune.marked (true), rune.x,
+# rune.y, rune.z and rune.map (a MapType number), set by the staff command .mark_rune and by the Mark spell.
+[[item]]
+id = "recall_rune"
+base_id = "base_item"
+item_id = 0x1F14
+name = "a recall rune"
+rarity = "common"
+weight = 1.0
+buy_price = 18
+sell_price = 9
+decays = true
