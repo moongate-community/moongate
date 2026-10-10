@@ -286,6 +286,10 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
     if template.script_id is None and item_id.lower() in POTION_TEMPLATES:
         template.script_id = "potion"
 
+    # What a player throws: scripts/items/explosion_potion.lua.
+    if template.script_id is None and item_id.lower() in EXPLOSION_POTIONS:
+        template.script_id = "explosion_potion"
+
     # A blank map says it is blank when it is opened: scripts/items/map_item.lua.
     if template.script_id is None and (template.name or "").lower() == BLANK_MAP:
         template.script_id = "map_item"
@@ -526,8 +530,7 @@ PRESET_MAPS: dict[str, tuple[int, int, int, int, int, int, int]] = {
 }
 CRAFTED_MAP = "50"
 BLANK_MAP = "blank map"
-# The potions scripts/items/potion.lua knows: heal, refresh, strength, agility, night sight, poison and cure. Explosion
-# potions are thrown, and wait for throwing.
+# The potions scripts/items/potion.lua knows: heal, refresh, strength, agility, night sight, poison and cure.
 POTION_TEMPLATES = frozenset(
     {
         "lesserhealpotion", "healpotion", "greaterhealpotion", "refreshmentpotion", "totalrefreshmentpotion",
@@ -536,6 +539,9 @@ POTION_TEMPLATES = frozenset(
         "curepotion", "greatercurepotion",
     }
 )
+
+# The potions a player throws, scripts/items/explosion_potion.lua.
+EXPLOSION_POTIONS = frozenset({"lesserexplosionpotion", "explosionpotion", "greaterexplosionpotion"})
 PRESET_MAP_FIELDS = ("map_width", "map_height", "map_x1", "map_y1", "map_x2", "map_y2", "map_facet")
 
 

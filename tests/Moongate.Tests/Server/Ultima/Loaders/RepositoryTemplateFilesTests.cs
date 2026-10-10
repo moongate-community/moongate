@@ -1106,8 +1106,11 @@ public sealed class RepositoryTemplateFilesTests
             },
             id => Assert.Equal("potion", templates[id].ScriptId)
         );
-        // Explosion potions are thrown, and come with throwing; a drunk potion leaves this bottle.
-        Assert.True(string.IsNullOrEmpty(templates["explosionpotion"].ScriptId));
+        // Explosion potions are thrown, by their own script; a drunk potion leaves this bottle.
+        Assert.All(
+            new[] { "lesserexplosionpotion", "explosionpotion", "greaterexplosionpotion" },
+            id => Assert.Equal("explosion_potion", templates[id].ScriptId)
+        );
         Assert.True(templates.ContainsKey("0x0f0e_empty_bottle"));
     }
 
