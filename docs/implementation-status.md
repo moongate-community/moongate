@@ -146,12 +146,12 @@ See all of them in [Commands](commands.md).
 - Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
-- Mobile and item scripts are bound from their templates by `script_id`. The root ships 82 Lua files in `scripts/`:
+- Mobile and item scripts are bound from their templates by `script_id`. The root ships 81 Lua files in `scripts/`:
   32 item scripts (doors, lights, teleporters and moongates, clocks, books and scrolls, bulletin boards, food and drink, dyes,
   tools such as axe, pickaxe and fishing pole, ore and forge, ethereal mounts, treasure chests, training dummies),
   11 mobile scripts (`wander.lua`, `monster.lua`, `guard.lua`, `banker.lua`, `shopkeeper.lua`, `healer.lua`, `stablemaster.lua`,
   animals and the cats Orione and Vega), 9 skill scripts, 13 gump scripts, 14 shared helpers in `common/`, the Halloween and
-  Christmas events and `definitions.lua`. `potion.lua` only consumes the item.
+  Christmas events. `definitions.lua` is generated at startup and not shipped. `potion.lua` only consumes the item.
 - Hooks scripts can implement include `on_use`, `on_speech`, `on_think`, `on_spawn`, `on_death`, `on_mobile_killed`,
   `on_mobile_in_range`, `on_drop`, `on_equip`, `on_login` and `on_timer`.
 - Not yet: timers on mobiles, and events for attacks, hits and damage.

@@ -162,7 +162,7 @@ Call `AddUltimaDataLoader<TLoader, TEntity>` from a plugin's `Register`, the sam
 place services and metric providers are registered:
 
 ```csharp
-container.AddUltimaDataLoader<ItemTemplatesLoader, ItemTemplate>(priority: 0);
+container.AddUltimaDataLoader<ItemTemplatesLoader, ItemTemplate>(12);
 ```
 
 The loader is a singleton, reachable both by its concrete type and as

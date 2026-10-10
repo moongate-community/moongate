@@ -49,7 +49,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Skills | 🟡 | Stored, shown in the skill window and set by scripts; [used, checked and gained](skills.md), with the locks of the skill window (up, down, locked). The stat locks of the status window work too |
 | Hit points, mana and stamina regeneration | ✅ | A point at a time, ModernUO's classic rates; mana by intelligence and Meditation; rates per mobile from scripts |
 | Titles | 🟡 | Fame and karma titles in the paperdoll; no skill titles |
-| Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); karma falls with each murder count; a healer takes a tenth of the fame of who it raises; nothing else gains or loses them |
+| Fame and karma | 🟡 | Set by staff (`.fame`, `.karma`); karma falls with each murder count; raising a ghost (an ankh, a healer or a bandage) takes a tenth of its fame; nothing else gains or loses them |
 | Notoriety (innocent, criminal, murderer) | 🟡 | Name colour from the mobile template, grey while the mobile is a criminal, red from five reported kills |
 | Crimes, criminal timer and murder counts | 🟡 | The criminal flag with its timer, saved with the mobile; attacking an innocent or looting the corpse of one makes a criminal. A victim reports its killers in a gump: kills and short-term murders, five make a red murderer, forgotten with time (8 and 40 hours). No theft or other crimes yet |
 | Hunger and thirst | ✅ | Both from 0 to 20 and dropping with time: a starving player gets no hit points back, a parched one no stamina; food is eaten, drinks are drunk a sip at a time |

@@ -185,15 +185,15 @@ service takes a lower priority than the services that depend on it. Built-in val
 
 | Priority | Service |
 | --- | --- |
+| -1000 | `RedisConnectionService` (every mode) |
 | -900 | `TimerWheelService` |
 | -800 | `IGameLoopService` (`GameLoopService`) |
-| -1000 | `RedisConnectionService` (realm and handoff roles) |
 | -10 | `IUltimaDataService` (`UltimaDataService`) |
 | -5 | `IDataLoaderService` (`DataLoaderService`; game and standalone) |
 | -4 | `IMapService` (`MapService`), `IMultiService` (`MultiService`); game and standalone, see [Client files and world queries](world-queries.md) |
 | -3 | `IStartingItemsService` |
 | 0 (default) | `ISessionService`, `IEventBusService`, `IPluginLoaderService`, `ICommandSystemService`, and any registration that omits `priority` |
-| 10 to 12 | The Ultima game services: `IItemService`, `INpcService`, `IWorldPropsService` (10); `ILightService`, `IWeatherService`, `ISeasonService` (11); regeneration, hunger, crime, murder, combat, guards, jail, bulletin boards, help pages (12) |
+| 10 to 12 | The Ultima game services: `IItemService`, `INpcService`, `IWorldPropsService` (10); `ILightService`, `IWeatherService`, `ISeasonService`, `IMusicService`, `IRegionAnnouncer`, `ItemDecayService` (11); regeneration, hunger, crime, murder, combat, guards, jail, bulletin boards, help pages, pet loyalty (12), and others |
 | 40 | `IWorldSaveService` (`WorldSaveService`), `IConnectionService` |
 | 50 | `IPacketSendService` |
 | 55 | `IBookAttachmentService` |
