@@ -21,12 +21,20 @@
 --   four, else medium or small. A forge turns it into ingots
 --   (scripts/items/ore.lua). The tool does not wear out.
 --
+--   A place is of one metal, a vein of the resource, drawn again each time its
+--   ore is back (scripts/common/metals.lua): iron, or dull copper up to
+--   valorite. A metal asks for a Mining skill; one who has it digs its ore one
+--   dig in two, tried between the bounds of the metal, and iron the other. One
+--   who lacks it digs iron.
+--
 -- Functions:
 --   on_use(serial, user)   the player user double clicks the tool serial
 --
 -- What it keeps:
 --   Who is digging, in memory by serial, not saved: a restart frees everyone.
 -- ==============================================================================
+
+local metals = require("common.metals")
 
 pickaxe = {}
 
@@ -53,7 +61,8 @@ local NO_METAL = 503040       -- There is no metal here to mine.
 local GONE = 503042           -- Someone has gotten to the metal before you.
 local FAILED = 503043         -- You loosen some rocks but fail to find any useable ore.
 local NO_ROOM = 1010481       -- Your backpack is full, so the ore you mined is lost.
-local DUG = 1007072           -- the text for the iron ore put into the backpack
+-- How often a place of a metal gives iron all the same.
+local IRON_INSTEAD = 0.5
 
 -- The piles of iron ore a dig gives, each up to its share of the rolls: small, the two medium ones, large.
 local PILES = {
@@ -105,6 +114,18 @@ local function has_tool(tool, user)
     return item.owner(tool) == user or item.in_range(tool, user, 2)
 end
 
+-- The metal a dig of the place gives the player: its own for one who has the skill of it, one dig in two; else iron.
+local function metal_for(user, map, x, y)
+    local metal = metals.by_id(harvest.vein(RESOURCE, map, x, y))
+
+    if not metal or metal == metals.iron or (mobile.skills(user).mining or 0) < metal.mining or
+        pickaxe.roll() < IRON_INSTEAD then
+        return metals.iron
+    end
+
+    return metal
+end
+
 -- The swing landed.
 local function finish(tool, user, map, x, y)
     digging[user] = nil
@@ -115,7 +136,7 @@ local function finish(tool, user, map, x, y)
         return
     end
 
-    -- Drawn before the place is checked, so the rolls come in one order whatever follows.
+    -- Drawn first, before the place is checked; the rolls of the metal and of the pile follow only when they count.
     local sound = DIG_SOUNDS[math.min(math.floor(pickaxe.roll() * #DIG_SOUNDS) + 1, #DIG_SOUNDS)]
 
     if not near(here, map, x, y) then
@@ -133,20 +154,27 @@ local function finish(tool, user, map, x, y)
         return
     end
 
-    if not skill.check(user, "mining", 0, 100) then
+    local metal = metal_for(user, map, x, y)
+
+    if not skill.check(user, "mining", metal.min, metal.max) then
         mobile.message_cliloc(user, FAILED)
 
         return
     end
 
-    local roll = pickaxe.roll()
-    local pile = PILES[#PILES]
+    -- Iron comes in piles of four sizes; another metal in one.
+    local pile = { template = metal.ore }
 
-    for _, each in ipairs(PILES) do
-        if roll < each.upto then
-            pile = each
+    if metal == metals.iron then
+        local roll = pickaxe.roll()
+        pile = PILES[#PILES]
 
-            break
+        for _, each in ipairs(PILES) do
+            if roll < each.upto then
+                pile = each
+
+                break
+            end
         end
     end
 
@@ -159,7 +187,7 @@ local function finish(tool, user, map, x, y)
         return
     end
 
-    mobile.message_cliloc(user, DUG)
+    mobile.message_cliloc(user, metal.dug)
 end
 
 -- The player picked where to dig.
