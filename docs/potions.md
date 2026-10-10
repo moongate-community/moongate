@@ -19,7 +19,7 @@ up, such as one held on the cursor, does nothing.
 A second strength (or agility) potion while the first lasts is refused: "You are already under a similar effect.";
 so is a second night sight. When a bonus ends, the hit points or stamina above the new maximum go.
 
-Explosion potions are not drunk: they will be thrown.
+Explosion potions are thrown, not drunk: see [Explosion](#explosion).
 
 ## Poison
 
@@ -53,6 +53,28 @@ ailment!"), and refused when the drinker is not poisoned ("You are not poisoned.
 
 Scripts poison and cure with `mobile.poison(user, 2)`, `mobile.cure(user)` and `mobile.poison_level(user)`.
 
+## Explosion
+
+An explosion potion is not drunk but thrown. Double click it in the backpack or within 1 tile: one potion of the stack is
+armed ("You should throw it now!"), a cursor opens, and a countdown 3, 2, 1 runs over whoever holds it, the first number
+after 0.75 seconds, then one a second. At 0 it explodes where it is: in the hand, at its holder.
+
+Throw it within 10 tiles and in sight ("That is too far away.", "Target cannot be seen." keep it in the hand, armed;
+double click it again to aim). It flies a tenth of a second a tile and the countdown goes on where it lands.
+
+The blast hurts every living mobile within 2 tiles, the thrower too, with the rules of a blow: harming an innocent that
+was not fighting the thrower makes it a criminal, and a death names it as the killer. The other explosion potions within 2
+tiles go off with it.
+
+| Potion | Damage |
+| --- | --- |
+| Lesser explosion | 5 to 10 |
+| Explosion | 10 to 20 |
+| Greater explosion | 15 to 30 |
+
+The thrower's Alchemy adds a tenth of its points; a blast does at most 40. Scripts hurt the same way with
+`combat.harm(target, damage, attacker)`.
+
 ## Bonuses and night sight
 
 A stat bonus is added to the base stat: the status shows the sum, combat damage and the weight a player can carry use
@@ -66,7 +88,8 @@ Scripts give them with `mobile.add_stat_bonus(user, "strength", 10, 120)` and
 ## Change the rules
 
 - The potions are `scripts/items/potion.lua`: the table `EFFECTS` maps a template to its effect.
-- The templates with `script_id = "potion"` are the ten above, in `templates/items/magic/potions.toml`.
+- The templates with `script_id = "potion"` are the potions above, in `templates/items/magic/potions.toml`; the
+  explosion potions have `script_id = "explosion_potion"` (`scripts/items/explosion_potion.lua`).
 
 ## Existing roots
 
@@ -76,7 +99,7 @@ night sight potions.
 
 ## Not yet
 
-Explosion (slice 3), alchemy, poisoned weapons and the Poisoning skill, poisonous monsters, bandages that cure, the buff
+Alchemy, poisoned weapons and the Poisoning skill, poisonous monsters, bandages that cure, the buff
 bar, potion kegs.
 
 ## See also

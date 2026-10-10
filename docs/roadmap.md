@@ -128,7 +128,7 @@ Vendors need only phase 1, so they can be built in parallel with phases 2 and 3.
 | 4.2 | ❌ | **Secure trade** between players | Player economy | |
 | 4.3 | ❌ | **Spell casting and Magery**: spellbooks, reagents, scrolls, words of power, the 64 spells | Half of all characters cast | UOX3 `spells.dfn` (mana, reagents, delay, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebooks** | The way players travel; needs the region rules of 3.5 | |
-| 4.5 | 🟡 | **Potions and alchemy effects**. Done: [heal, refresh, strength, agility, night sight, poison and cure](potions.md); next explosion | Small once timed effects and spells exist | |
+| 4.5 | 🟡 | **Potions and alchemy effects**. Done: [heal, refresh, strength, agility, night sight, poison, cure and explosion](potions.md); next the alchemy craft | Small once timed effects and spells exist | |
 
 ## Phase 5: professions
 

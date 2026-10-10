@@ -23,3 +23,14 @@ The serial of whom a mobile fights, nil when it fights no one:
 ```lua
 local target = combat.target(npc_serial)
 ```
+
+## harm
+
+A trap that burns whoever steps on it, with no one to blame:
+
+```lua
+function fire_trap.on_step(serial, user)
+    combat.harm(user, 15)
+    return true
+end
+```
