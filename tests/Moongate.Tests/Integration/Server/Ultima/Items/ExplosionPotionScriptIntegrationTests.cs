@@ -71,6 +71,7 @@ public sealed class ExplosionPotionScriptIntegrationTests : IAsyncLifetime
     private const int TooFar = 500446;
     private const int ThrowItNow = 500236;
     private const int ExplosionSound = 0x307;
+    private const int CannotSee = 500237;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -259,18 +260,18 @@ public sealed class ExplosionPotionScriptIntegrationTests : IAsyncLifetime
     [Fact]
     public void AThrownPotion_LandsWhereItWasThrown_AndExplodesThere()
     {
-        var orc = Npc(0x200, 15, 10);
-        _targets.Result = TargetResult.ForLocation(_aria.Map, new Point3D(15, 11, 0));
+        var orc = Npc(0x200, 14, 14);
+        _targets.Result = TargetResult.ForLocation(_aria.Map, new Point3D(13, 14, 0));
         var potion = Carry("explosionpotion", 0x0F0D, 1);
 
         Use(potion);
-        // Five tiles of flight, a tenth of a second each.
+        // Five tiles of flight (three across, four down), a tenth of a second each.
         Fire(0.5);
 
         Assert.Empty(_errors);
         Assert.Equal(0, Left(potion));
         var landed = Assert.Single(Made("explosionpotion").Where(item => item.GroundLocation is not null));
-        Assert.Equal(new Point3D(15, 11, 0), landed.GroundLocation);
+        Assert.Equal(new Point3D(13, 14, 0), landed.GroundLocation);
 
         Countdown();
 
@@ -332,6 +333,117 @@ public sealed class ExplosionPotionScriptIntegrationTests : IAsyncLifetime
         Countdown();
 
         Assert.Contains((_aria, _aria, 40), _combat.Harmed.Select(harm => (harm.Attacker, harm.Target, harm.Damage)));
+    }
+
+    [Fact]
+    public void APotionHeldOnACursor_AtZero_GoesOffOnceItIsLetGo()
+    {
+        var potion = Carry("explosionpotion", 0x0F0D, 1);
+        Use(potion);
+        _guard.Allowed = false;
+
+        Countdown();
+
+        Assert.Empty(_combat.Harmed);
+        Assert.Equal(1, Left(potion));
+
+        _guard.Allowed = true;
+        Fire(0.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal(0, Left(potion));
+        Assert.NotEmpty(_combat.Harmed);
+    }
+
+    [Fact]
+    public void AStackHeldOnACursor_ArmsNothing()
+    {
+        var stack = Carry("explosionpotion", 0x0F0D, 3);
+        _guard.Allowed = false;
+
+        Use(stack);
+
+        Assert.Empty(_errors);
+        Assert.Equal(3, Left(stack));
+        Assert.Empty(Made("explosionpotion"));
+    }
+
+    [Fact]
+    public void AThrowerWhoLeft_StillHurtsThoseAround_WithNoOneToBlame()
+    {
+        var orc = Npc(0x200, 14, 14);
+        _targets.Result = TargetResult.ForLocation(_aria.Map, new Point3D(13, 14, 0));
+        Use(Carry("explosionpotion", 0x0F0D, 1));
+        Fire(0.5);
+        _fixture.Mobiles.LeaveWorld(_aria.Id);
+
+        Countdown();
+
+        Assert.Empty(_errors);
+        Assert.Contains(((MobileEntity?)null, orc, 20), _combat.Harmed.Select(harm => (harm.Attacker, harm.Target, harm.Damage)));
+    }
+
+    [Fact]
+    public void APotionOnTheGround_IsArmedInTheBackpack_AndCanBeThrown()
+    {
+        var potion = Ground("explosionpotion", 0x0F0D, 11, 10);
+        _targets.Result = TargetResult.ForLocation(_aria.Map, new Point3D(13, 14, 0));
+
+        Use(potion);
+        Fire(0.5);
+
+        Assert.Empty(_errors);
+        Assert.False(_items.TryGet(potion.Id, out _));
+        Assert.Single(Made("explosionpotion").Where(item => item.GroundLocation == new Point3D(13, 14, 0)));
+    }
+
+    [Fact]
+    public void AThrowOutOfSight_IsRefused()
+    {
+        _sight.Allow = false;
+        _targets.Result = TargetResult.ForLocation(_aria.Map, new Point3D(13, 14, 0));
+        var potion = Carry("explosionpotion", 0x0F0D, 1);
+
+        Use(potion);
+
+        Assert.Equal(CannotSee, Told().Last());
+        Assert.Equal(1, Left(potion));
+    }
+
+    [Fact]
+    public void ACountdownThatEndsInFlight_GoesOffWhereThePotionLands()
+    {
+        var orc = Npc(0x200, 14, 14);
+        var potion = Carry("explosionpotion", 0x0F0D, 1);
+        Use(potion);
+        Fire(0.75);
+        Fire(1.0);
+        Fire(1.0);
+        // Thrown just before 0: the potion is still in the air at 0.
+        _targets.Result = TargetResult.ForLocation(_aria.Map, new Point3D(13, 14, 0));
+        Use(potion);
+        Fire(1.0);
+
+        Assert.Empty(_combat.Harmed);
+
+        Fire(0.5);
+
+        Assert.Empty(_errors);
+        Assert.Contains(_combat.Harmed, harm => harm.Target == orc);
+    }
+
+    [Fact]
+    public void APotionArmedBeforeARestart_IsArmedAfresh()
+    {
+        var potion = Carry("explosionpotion", 0x0F0D, 1);
+        potion.SetProp("explosion.armed", 12345L);
+
+        Use(potion);
+        Countdown();
+
+        Assert.Empty(_errors);
+        Assert.Equal(0, Left(potion));
+        Assert.NotEmpty(_combat.Harmed);
     }
 
     private void Use(ItemEntity potion)

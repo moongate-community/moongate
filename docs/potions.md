@@ -56,15 +56,17 @@ Scripts poison and cure with `mobile.poison(user, 2)`, `mobile.cure(user)` and `
 ## Explosion
 
 An explosion potion is not drunk but thrown. Double click it in the backpack or within 1 tile: one potion of the stack is
-armed ("You should throw it now!"), a cursor opens, and a countdown 3, 2, 1 runs over whoever holds it, the first number
-after 0.75 seconds, then one a second. At 0 it explodes where it is: in the hand, at its holder.
+armed in the backpack ("You should throw it now!"), a cursor opens, and a countdown 3, 2, 1 runs over whoever holds it, seen
+by those around, the first number after 0.75 seconds, then one a second. At 0 it explodes where it is: in the hand, at its
+holder; one held on a cursor goes off as soon as it is let go.
 
 Throw it within 10 tiles and in sight ("That is too far away.", "Target cannot be seen." keep it in the hand, armed;
 double click it again to aim). It flies a tenth of a second a tile and the countdown goes on where it lands.
 
 The blast hurts every living mobile within 2 tiles, the thrower too, with the rules of a blow: harming an innocent that
 was not fighting the thrower makes it a criminal, and a death names it as the killer. The other explosion potions within 2
-tiles go off with it.
+tiles go off with it, without the thrower's Alchemy. A thrower who left the game is blamed for nothing, and one's own
+pets are no innocents to a blast nor turn on their master.
 
 | Potion | Damage |
 | --- | --- |
@@ -93,9 +95,9 @@ Scripts give them with `mobile.add_stat_bonus(user, "strength", 10, 120)` and
 
 ## Existing roots
 
-`mgctl init` never replaces a file you may have changed. Copy from the distribution `scripts/items/potion.lua` and
-`templates/items/magic/potions.toml`, or give `script_id = "potion"` to your heal, refresh, strength, agility and
-night sight potions.
+`mgctl init` never replaces a file you may have changed. Copy from the distribution `scripts/items/potion.lua`,
+`scripts/items/explosion_potion.lua` and `templates/items/magic/potions.toml`, or give `script_id = "potion"` to the
+potions a player drinks and `script_id = "explosion_potion"` to the explosion potions.
 
 ## Not yet
 

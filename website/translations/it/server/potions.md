@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a7fc4a2dbeeae12ff728906a7385e5e58436eb88f2c2ce9d3423fb6b84f2cf97","title":"Pozioni"} -->
+<!-- translation: {"sourceHash":"eb1a2dd72e85c56665d1a5e3efe3786881f895c79b7d89f7f3f71d426c336940","title":"Pozioni"} -->
 
 # Pozioni
 
@@ -58,15 +58,17 @@ Gli script avvelenano e curano con `mobile.poison(user, 2)`, `mobile.cure(user)`
 ## Esplosione
 
 Una pozione esplosiva non si beve ma si lancia. Fai doppio clic su di essa nello zaino o entro 1 casella: una pozione della pila viene
-innescata ("You should throw it now!"), si apre un cursore, e un conto alla rovescia 3, 2, 1 scorre sopra chi la tiene, il primo numero
-dopo 0,75 secondi, poi uno al secondo. A 0 esplode dove si trova: in mano, sopra chi la tiene.
+innescata nello zaino ("You should throw it now!"), si apre un cursore, e un conto alla rovescia 3, 2, 1 scorre sopra chi la tiene, visto
+da chi è vicino, il primo numero dopo 0,75 secondi, poi uno al secondo. A 0 esplode dove si trova: in mano, sopra chi la
+tiene; una tenuta sul cursore esplode appena viene lasciata.
 
 Lanciala entro 10 caselle e in vista ("That is too far away.", "Target cannot be seen." la lasciano in mano, innescata;
 fai di nuovo doppio clic per mirare). Vola un decimo di secondo per casella e il conto alla rovescia continua dove atterra.
 
 L'esplosione ferisce ogni mobile vivo entro 2 caselle, anche chi la lancia, con le regole di un colpo: ferire un innocente che
 non stava combattendo con chi lancia lo rende criminale, e una morte lo indica come uccisore. Le altre pozioni esplosive entro 2
-caselle esplodono con essa.
+caselle esplodono con essa, senza l'Alchemy di chi lancia. Chi lancia e poi esce dal gioco non viene incolpato di nulla, e i propri
+animali non sono innocenti per un'esplosione né si rivoltano contro il padrone.
 
 | Pozione | Danno |
 | --- | --- |
@@ -95,9 +97,9 @@ Gli script li danno con `mobile.add_stat_bonus(user, "strength", 10, 120)` e
 
 ## Root esistenti
 
-`mgctl init` non sostituisce mai un file che potresti aver modificato. Copia dalla distribuzione `scripts/items/potion.lua` e
-`templates/items/magic/potions.toml`, oppure dai `script_id = "potion"` alle tue pozioni di cura, rinvigorimento, forza, agilità e
-visione notturna.
+`mgctl init` non sostituisce mai un file che potresti aver modificato. Copia dalla distribuzione `scripts/items/potion.lua`,
+`scripts/items/explosion_potion.lua` e `templates/items/magic/potions.toml`, oppure dai `script_id = "potion"` alle
+pozioni che si bevono e `script_id = "explosion_potion"` alle pozioni esplosive.
 
 ## Non ancora
 
