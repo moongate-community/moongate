@@ -16,6 +16,7 @@ base_id = "base_item"
 item_id = 7866
 name = "a taxidermy kit"
 rarity = "common"
+script_id = "tinkering_tool"
 weight = 1.0
 buy_price = 90000
 sell_price = 45000

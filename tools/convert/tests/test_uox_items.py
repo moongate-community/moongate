@@ -729,3 +729,18 @@ def test_the_sewing_kits_get_the_tailoring_tool_script_but_not_the_scissors(uox_
     by_name = {item.get("name"): item for item in uox_workspace.items().values()}
     assert by_name["sewing kit"]["script_id"] == "tailoring_tool"
     assert "script_id" not in by_name["scissors"]
+
+
+def test_the_tinker_tools_get_the_tinkering_tool_script(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[0x1ebc]\n{\nname=tinker's tools\nid=0x1ebc\n}\n"
+        "[0x1eb8]\n{\nname=tool kit\nid=0x1eb8\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a tinker works with: scripts/items/tinkering_tool.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["tinker's tools"]["script_id"] == "tinkering_tool"
+    assert by_name["tool kit"]["script_id"] == "tinkering_tool"

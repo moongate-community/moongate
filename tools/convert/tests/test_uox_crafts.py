@@ -357,3 +357,11 @@ def test_the_crafts_the_converter_knows_and_their_sounds():
     # Each craft: its id, the name its gump shows, its skill and the root menu of UOX3's file.
     assert crafts.CRAFTS["tailoring"] == ("tailoring", "Tailoring", "tailoring", 39)
     assert crafts.SOUNDS["tailoring"] == 0x0248
+
+
+def test_tinkering_is_known_its_traps_left_out_and_its_misspelt_group_fixed():
+    assert crafts.CRAFTS["tinkering"] == ("tinkering", "Tinkering", "tinkering", 59)
+    assert crafts.SOUNDS["tinkering"] == 0x023B
+    # The traps of tinkering arm containers, which cannot be trapped yet; UOX3's file lacks their menu too.
+    assert "traps" in crafts.SKIPPED_GROUPS
+    assert crafts.GROUP_FIXES["Miscellaneuos"] == "Miscellaneous"

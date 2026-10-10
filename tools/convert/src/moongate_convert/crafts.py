@@ -16,18 +16,22 @@ CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "carpentry": ("carpentry", "Carpentry", "carpentry", 19),
     "smithing": ("blacksmithing", "Blacksmithing", "blacksmithy", 1),
     "tailoring": ("tailoring", "Tailoring", "tailoring", 39),
+    "tinkering": ("tinkering", "Tinkering", "tinkering", 59),
 }
 
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248}
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B}
 
 # The groups that make deeds, which mean nothing until houses exist.
-SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons"}
+SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons", "traps"}
 
 # What an axe already does: logs sawn into boards.
 SKIPPED_ITEMS = {"0x1bd7"}
 
 NAME_FIXES = {"Magincian Throne": "Magician Throne"}
+
+# The groups whose names UOX3 misspells.
+GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
 
 # UOX3's skill numbers are the client's skill ids: the names of data/skills.toml (a test checks them).
 SKILL_NAMES: dict[int, str] = {
@@ -184,7 +188,7 @@ def _craft(path: Path, name: str, lists: dict[str, list[str]], list_of_graphic: 
                     recipes.append(recipe)
 
             if recipes:
-                groups.append({"name": group_name, "recipes": recipes})
+                groups.append({"name": GROUP_FIXES.get(group_name, group_name), "recipes": recipes})
 
             walk(submenu)
 
