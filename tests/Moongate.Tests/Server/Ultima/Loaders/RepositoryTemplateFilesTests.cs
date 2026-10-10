@@ -667,6 +667,16 @@ public sealed class RepositoryTemplateFilesTests
             id => Assert.Equal("smithing_tool", byId[id].ScriptId)
         );
         Assert.NotEqual("smithing_tool", byId["0x0faf_anvil"].ScriptId);
+
+        // Tailoring: eight groups, 50 recipes of cloth, leather and bones; the sewing kit sews, the scissors do not.
+        var tailoring = crafts["tailoring"];
+        Assert.Equal(
+            ["Hats", "Shirts", "Pants", "Miscellaneous", "Footwear", "Leather Armor", "Studded Armor", "Female Armor"],
+            tailoring.Group.Select(group => group.Name)
+        );
+        Assert.Equal(50, tailoring.Group.Sum(group => group.Recipe.Count));
+        Assert.Equal("tailoring_tool", byId["0x0f9d_sewing_kit"].ScriptId);
+        Assert.NotEqual("tailoring_tool", byId["0x0f9e_scissors"].ScriptId);
     }
 
     [Fact]
