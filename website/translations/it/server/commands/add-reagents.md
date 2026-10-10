@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"f649f2f685d616cb2f4e6bd8f56d050d778ef620b591e176ff008b1f6aa6db59","title":"add_reagents"} -->
+<!-- translation: {"sourceHash":"30901df6fc3734f891e06b55c66220a71c01e0ab61a81ea5b0ed2d569011277f","title":"add_reagents"} -->
 
 # add_reagents
 
@@ -22,7 +22,7 @@ Solo in gioco; non c'è nessun cursore di selezione. I reagenti sono quelli che 
 - L'incantesimo si indica come in [`add_spell`](add_spell.md): per chiave, per numero, `circle N` o `all`. Con `all` ottieni
   gli otto reagenti classici.
 - Una pila si unisce alla pila dello stesso tipo che hai già nello zaino, come farebbe un rilascio.
-- Una pila per cui lo zaino non ha spazio viene messa a terra ai tuoi piedi, e il comando lo dice:
+- Una pila per cui lo zaino non ha spazio, per numero di oggetti o per peso, viene messa a terra ai tuoi piedi, e il comando lo dice:
   `20 of each did not fit the backpack and lie at your feet: garlic.`
 - Un incantesimo o un cerchio sconosciuto, o una quantità fuori da 1 a 1000, riceve risposta prima che venga creato
   qualcosa.

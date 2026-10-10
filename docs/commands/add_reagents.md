@@ -20,7 +20,7 @@ from 1 to 1000. A reagent that several spells use is given once. The command ans
 - The spell is named as in [`add_spell`](add_spell.md): by key, by number, `circle N` or `all`. With `all` you get the eight
   classic reagents.
 - A stack joins the stack of its kind already in your backpack, as a drop would.
-- A stack the backpack has no room for is put on the ground at your feet, and the command says so:
+- A stack the backpack has no room for, by items or by weight, is put on the ground at your feet, and the command says so:
   `20 of each did not fit the backpack and lie at your feet: garlic.`
 - An unknown spell or circle, or an amount outside 1 to 1000, is answered before anything is made.
 
