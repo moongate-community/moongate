@@ -32,6 +32,8 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
     private readonly IInventoryReservationService? _reservations;
     private readonly Moongate.Server.Core.Interfaces.Services.IGameLoopService? _loop;
 
+    private readonly IStatBonusService? _bonuses;
+
     public CharacterLeaveWorldService(
         IMobileService mobiles,
         IItemService items,
@@ -39,9 +41,11 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         IWorldTransactionService world,
         IMoongateEventBus events,
         IInventoryReservationService? reservations = null,
-        Moongate.Server.Core.Interfaces.Services.IGameLoopService? loop = null
+        Moongate.Server.Core.Interfaces.Services.IGameLoopService? loop = null,
+        IStatBonusService? bonuses = null
     )
     {
+        _bonuses = bonuses;
         _reservations = reservations;
         _loop = loop;
         _mobiles = mobiles;
@@ -157,6 +161,10 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
             _view.ContainedItemAppeared(fromChest, chest, character.Id);
         }
 
+        // Timed bonuses are never saved: they end before the save, and no hit above the base maximum is written.
+        _bonuses?.EndAll(character);
+        character.Hits = Math.Min(character.Hits, character.EffectiveHitsMax);
+        character.Stamina = Math.Min(character.Stamina, character.EffectiveStaminaMax);
         var snapshot = character.Snapshot();
         var carried = _items.GetOwnedBy(character.Id);
         var items = carried.Select(item => item.Snapshot()).ToList();

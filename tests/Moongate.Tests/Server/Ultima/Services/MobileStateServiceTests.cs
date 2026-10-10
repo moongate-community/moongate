@@ -148,6 +148,7 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     [Fact]
     public void SetStats_HitsAndStamina_ReachTheMaximumWithTheBonusesOnTop()
     {
+        _aria.AccountId = new Serial(0x42);
         _aria.StrengthBonus = 10;
         _aria.DexterityBonus = 5;
 

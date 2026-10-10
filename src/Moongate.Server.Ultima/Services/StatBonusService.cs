@@ -3,6 +3,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
@@ -26,7 +27,7 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
     private readonly ITimerService _timers;
     private readonly IMobileService _mobiles;
     private readonly Dictionary<(Serial Mobile, StatBonusType Stat), string> _bonuses = [];
-    private readonly Dictionary<Serial, string> _nightSight = [];
+    private readonly Dictionary<Serial, (string Timer, int Level)> _nightSight = [];
 
     public StatBonusService(
         IMobileStateService state,
@@ -53,6 +54,7 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
         SetBonus(mobile, stat, amount);
         _bonuses[(mobile.Id, stat)] = _timers.RegisterTimer(BonusTimer, duration, () => EndBonus(mobile, stat));
         ShowStatus(mobile);
+        _state.SendHits(mobile);
 
         return true;
     }
@@ -69,7 +71,7 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
             return false;
         }
 
-        _nightSight[mobile.Id] = _timers.RegisterTimer(NightSightTimer, duration, () => EndNightSight(mobile));
+        _nightSight[mobile.Id] = (_timers.RegisterTimer(NightSightTimer, duration, () => EndNightSight(mobile)), level);
         SendLight(mobile, level);
 
         return true;
@@ -80,29 +82,60 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
         return _nightSight.ContainsKey(mobile.Id);
     }
 
+    public void EndAll(MobileEntity mobile)
+    {
+        Forget(mobile.Id);
+        mobile.StrengthBonus = 0;
+        mobile.DexterityBonus = 0;
+        mobile.Hits = Math.Min(mobile.Hits, mobile.EffectiveHitsMax);
+        mobile.Stamina = Math.Min(mobile.Stamina, mobile.EffectiveStaminaMax);
+    }
+
+    // The player may have left the world already: its effects are found by its serial alone.
     public void OnSessionClosed(GameSession session)
     {
-        if (!session.CharacterId.IsValid || !_mobiles.TryGet(session.CharacterId, out var mobile))
+        if (!session.CharacterId.IsValid)
         {
             return;
         }
 
+        if (_mobiles.TryGet(session.CharacterId, out var mobile))
+        {
+            EndAll(mobile);
+        }
+        else
+        {
+            Forget(session.CharacterId);
+        }
+    }
+
+    // The client may lose its personal light with the region or the map: it is sent again.
+    public void RegionChanged(MobileEntity player, RegionContent? previous, RegionContent? current)
+    {
+        if (_nightSight.TryGetValue(player.Id, out var light))
+        {
+            SendLight(player, light.Level);
+        }
+    }
+
+    public void Left(Serial player)
+    {
+    }
+
+    private void Forget(Serial mobile)
+    {
         foreach (var stat in Enum.GetValues<StatBonusType>())
         {
-            if (_bonuses.TryGetValue((mobile.Id, stat), out var timer))
+            if (_bonuses.Remove((mobile, stat), out var timer))
             {
                 _timers.UnregisterTimer(timer);
-                _bonuses.Remove((mobile.Id, stat));
-                SetBonus(mobile, stat, 0);
             }
         }
 
-        if (_nightSight.Remove(mobile.Id, out var light))
+        if (_nightSight.Remove(mobile, out var light))
         {
-            _timers.UnregisterTimer(light);
+            _timers.UnregisterTimer(light.Timer);
         }
-
-        Clamp(mobile);
     }
 
     private void EndBonus(MobileEntity mobile, StatBonusType stat)
@@ -115,6 +148,7 @@ public sealed class StatBonusService : IStatBonusService, ISessionClosedListener
         SetBonus(mobile, stat, 0);
         Clamp(mobile);
         ShowStatus(mobile);
+        _state.SendHits(mobile);
     }
 
     private void EndNightSight(MobileEntity mobile)

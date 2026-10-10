@@ -105,16 +105,17 @@ public class MobileEntity : IMoongateEntity
     public int EffectiveDexterity => Dexterity + DexterityBonus;
 
     /// <summary>
-    ///     Gets the most hit points with the strength bonus: a player's maximum is its strength.
+    ///     Gets the most hit points with the strength bonus: a player's maximum is its strength. An NPC's maximum is its
+    ///     own: a bonus does not raise it.
     /// </summary>
     [Column(IsIgnore = true)]
-    public int EffectiveHitsMax => HitsMax + StrengthBonus;
+    public int EffectiveHitsMax => HitsMax + (IsNpc ? 0 : StrengthBonus);
 
     /// <summary>
-    ///     Gets the most stamina with the dexterity bonus: a player's maximum is its dexterity.
+    ///     Gets the most stamina with the dexterity bonus: a player's maximum is its dexterity; an NPC's is its own.
     /// </summary>
     [Column(IsIgnore = true)]
-    public int EffectiveStaminaMax => StaminaMax + DexterityBonus;
+    public int EffectiveStaminaMax => StaminaMax + (IsNpc ? 0 : DexterityBonus);
 
     /// <summary>
     ///     The item id of the hair style; 0 means no hair.
@@ -441,6 +442,11 @@ public class MobileEntity : IMoongateEntity
         copy.WarMode = false;
         copy.LastMovedAt = null;
         copy.Criminal = false;
+        // Timed bonuses are not saved: neither are the hits and stamina they held above the base maximums.
+        copy.StrengthBonus = 0;
+        copy.DexterityBonus = 0;
+        copy.Hits = Math.Min(Hits, HitsMax);
+        copy.Stamina = Math.Min(Stamina, StaminaMax);
 
         // Only a character keeps its time: an NPC comes back innocent.
         if (IsNpc)

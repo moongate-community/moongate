@@ -149,7 +149,8 @@ public sealed class MobileModuleTests
 
         var result = Run("local stats = mobile.stats(256) return stats.strength, stats.hits_max, stats.base_strength, stats.base_hits_max");
 
-        Assert.Equal([106, 68, 96, 58], result.Select(value => value.Read<int>()));
+        // An NPC keeps its own maximum: only the strength rises.
+        Assert.Equal([106, 58, 96, 58], result.Select(value => value.Read<int>()));
     }
 
     [Fact]
@@ -193,6 +194,14 @@ public sealed class MobileModuleTests
         Wear("halberd", 0x143E, LayerType.TwoHanded);
 
         Assert.False(Run("return mobile.has_free_hand(256)")[0].Read<bool>());
+    }
+
+    [Fact]
+    public void HasFreeHand_WithoutTemplatesToTell_TakesWhatIsInTheTwoHandedLayerForAWeapon()
+    {
+        Wear("buckler", 0x1B73, LayerType.TwoHanded);
+
+        Assert.False(Run("return mobile.has_free_hand(256)", templates: false)[0].Read<bool>());
     }
 
     private void Wear(string template, int graphic, LayerType layer)
@@ -807,7 +816,7 @@ public sealed class MobileModuleTests
         Assert.Empty(_state.Flags);
     }
 
-    private LuaValue[] Run(string chunk)
+    private LuaValue[] Run(string chunk, bool templates = true)
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
@@ -833,7 +842,7 @@ public sealed class MobileModuleTests
                 _death,
                 mounts: _mounts,
                 bonuses: new StatBonusService(_state, new SessionService(new StubGameLoop()), new StubPacketSendService(), _timers, _mobiles),
-                templates: _templates
+                templates: templates ? _templates : null
             )
         );
 

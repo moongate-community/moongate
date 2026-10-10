@@ -25,6 +25,7 @@ public sealed class StatBonusServiceTests : IAsyncLifetime
         _fixture = await BroadcastFixture.CreateAsync();
         _session = await _fixture.AddAsync(2);
         Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out _aria!));
+        _aria.AccountId = new Serial(0x42);
         (_aria.Strength, _aria.HitsMax, _aria.Hits, _aria.Dexterity, _aria.StaminaMax, _aria.Stamina) = (50, 50, 50, 40, 40, 40);
         _bonuses = new(_state, _fixture.Sessions, _fixture.Sender, _timers, _fixture.Mobiles);
     }
@@ -90,6 +91,51 @@ public sealed class StatBonusServiceTests : IAsyncLifetime
         Assert.Equal(0, _aria.StrengthBonus);
         Assert.False(_bonuses.HasNightSight(_aria));
         Assert.Equal(2, _timers.Unregistered.Count);
+    }
+
+    [Fact]
+    public void Leaving_AfterTheCharacterLeftTheWorld_StillEndsItsEffects_SoTheNextLoginCanDrinkAgain()
+    {
+        _bonuses.TryAddBonus(_aria, StatBonusType.Strength, 10, TimeSpan.FromMinutes(2));
+        _bonuses.TrySetNightSight(_aria, 13, TimeSpan.FromMinutes(20));
+        _fixture.Mobiles.LeaveWorld(_aria.Id);
+
+        _bonuses.OnSessionClosed(_session);
+
+        Assert.Equal(2, _timers.Unregistered.Count);
+        Assert.True(_bonuses.TryAddBonus(_aria, StatBonusType.Strength, 10, TimeSpan.FromMinutes(2)));
+        Assert.True(_bonuses.TrySetNightSight(_aria, 13, TimeSpan.FromMinutes(20)));
+    }
+
+    [Fact]
+    public void ABonusShowsTheNewBarToThoseAround_WhenItStartsAndEnds()
+    {
+        _bonuses.TryAddBonus(_aria, StatBonusType.Strength, 10, TimeSpan.FromMinutes(2));
+        _timers.Fire(_timers.Timers[0].Id);
+
+        Assert.Equal([_aria, _aria], _state.HitsSent);
+    }
+
+    [Fact]
+    public void NightSight_IsSentAgain_WhenThePlayerChangesRegion()
+    {
+        _bonuses.TrySetNightSight(_aria, 13, TimeSpan.FromMinutes(20));
+
+        _bonuses.RegionChanged(_aria, null, null);
+
+        Assert.Equal([13, 13], _fixture.Sender.Sent.OfType<PersonalLightLevelPacket>().Select(packet => packet.Level));
+    }
+
+    [Fact]
+    public void EndAll_TakesTheBonusesAway_AndTheHitsAboveTheMaximum()
+    {
+        _bonuses.TryAddBonus(_aria, StatBonusType.Strength, 10, TimeSpan.FromMinutes(2));
+        _aria.Hits = 60;
+
+        _bonuses.EndAll(_aria);
+
+        Assert.Equal((0, 50), (_aria.StrengthBonus, _aria.Hits));
+        Assert.Single(_timers.Unregistered);
     }
 
     public async Task DisposeAsync()

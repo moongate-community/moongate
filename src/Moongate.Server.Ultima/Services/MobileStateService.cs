@@ -432,6 +432,26 @@ public sealed class MobileStateService : IMobileStateService
     }
 
     // The sessions of the players who see the mobile, its own left out.
+    public void SendHits(MobileEntity mobile)
+    {
+        if (!_mobiles.IsInWorld(mobile.Id))
+        {
+            return;
+        }
+
+        if (_sessions.TryGetByCharacterId(mobile.Id, out var own))
+        {
+            _sender.TrySend(own.SessionId, new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.EffectiveHitsMax));
+        }
+
+        var bar = new MobileHitsPacket(mobile.Id, mobile.Hits, mobile.EffectiveHitsMax, true);
+
+        foreach (var session in Around(mobile))
+        {
+            _sender.TrySend(session.SessionId, bar);
+        }
+    }
+
     private IEnumerable<GameSession> Around(MobileEntity mobile)
     {
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, _world.ViewRange))

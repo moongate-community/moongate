@@ -130,6 +130,13 @@ public sealed class RecordingMobileStateService : IMobileStateService
 
     public List<(GameSession Session, MobileEntity Target)> Statuses { get; } = [];
 
+    public List<MobileEntity> HitsSent { get; } = [];
+
+    public void SendHits(MobileEntity mobile)
+    {
+        HitsSent.Add(mobile);
+    }
+
     public void SendStatus(GameSession session, MobileEntity target)
     {
         Statuses.Add((session, target));

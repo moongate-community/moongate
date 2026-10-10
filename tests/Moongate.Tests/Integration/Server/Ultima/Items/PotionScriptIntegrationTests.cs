@@ -104,7 +104,10 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "greateragilitypotion", ItemId = new Serial(0x0F08), ScriptId = "potion", Stackable = true },
             new ItemTemplate { Id = "nightsightpotion", ItemId = new Serial(0x0F06), ScriptId = "potion", Stackable = true },
             new ItemTemplate { Id = "0x0f0e_empty_bottle", ItemId = new Serial(0x0F0E), Stackable = true },
-            new ItemTemplate { Id = "halberd", ItemId = new Serial(0x143E), WeaponType = WeaponType.PoleArm }
+            new ItemTemplate { Id = "halberd", ItemId = new Serial(0x143E), WeaponType = WeaponType.PoleArm },
+            new ItemTemplate { Id = "longsword", ItemId = new Serial(0x0F61), WeaponType = WeaponType.Sword },
+            new ItemTemplate { Id = "buckler", ItemId = new Serial(0x1B73) },
+            new ItemTemplate { Id = "pouch", ItemId = new Serial(0x0E79) }
         )
     );
 
@@ -352,6 +355,99 @@ public sealed class PotionScriptIntegrationTests : IAsyncLifetime
 
         Assert.Equal(1, Left(far));
         Assert.Equal(TooFar, Told().Last());
+    }
+
+    [Fact]
+    public void APotionThatCannotBeUsedUp_GivesNothing()
+    {
+        (_aria.HitsMax, _aria.Hits) = (50, 10);
+        var potion = Carry("greaterhealpotion", 0x0F0C, 1);
+        _guard.Allowed = false;
+
+        Drink(potion);
+
+        Assert.Equal(10, _aria.Hits);
+        Assert.Empty(Made("0x0f0e_empty_bottle"));
+    }
+
+    [Fact]
+    public void TheHealDelay_IsSharedByEveryHealPotion()
+    {
+        (_aria.HitsMax, _aria.Hits) = (50, 10);
+        Drink(Carry("lesserhealpotion", 0x0F0C, 1));
+        _aria.Hits = 10;
+
+        var greater = Carry("greaterhealpotion", 0x0F0C, 1);
+        Drink(greater);
+
+        Assert.Equal(1, Left(greater));
+        Assert.Equal(HealWait, Told().Last());
+    }
+
+    [Fact]
+    public void AShieldAlone_LeavesAHandFree_AWeaponAndAShieldDoNot()
+    {
+        (_aria.HitsMax, _aria.Hits) = (50, 10);
+        WearItem("buckler", 0x1B73, LayerType.TwoHanded);
+        var potions = Carry("lesserhealpotion", 0x0F0C, 2);
+
+        Drink(potions);
+        Assert.Equal(1, Left(potions));
+
+        WearItem("longsword", 0x0F61, LayerType.OneHanded);
+        _aria.Hits = 10;
+        Drink(potions);
+
+        Assert.Equal(1, Left(potions));
+        Assert.Equal(NoFreeHand, Told().Last());
+    }
+
+    [Fact]
+    public void APotionInABagOnTheGroundWithinATile_IsDrunk()
+    {
+        _aria.StaminaMax = 100;
+        _aria.Stamina = 10;
+        var bag = new ItemEntity { Id = new Serial(_next++), TemplateId = "pouch", ItemId = 0x0E79, Amount = 1 };
+        _items.Add([bag]);
+        _items.PlaceOnGround(bag, _aria.Map, new Point3D(11, 10, 0));
+        var potion = new ItemEntity { Id = new Serial(_next++), TemplateId = "totalrefreshmentpotion", ItemId = 0x0F0B, Amount = 1 };
+        potion.PutInContainer(bag.Id, new Point2D(20, 20));
+        _items.Add([potion]);
+
+        Drink(potion);
+
+        Assert.Empty(_errors);
+        Assert.Equal(100, _aria.Stamina);
+    }
+
+    [Fact]
+    public void WithAFullBackpack_TheBottleIsLeftAtTheFeet()
+    {
+        _aria.StaminaMax = 100;
+        _aria.Stamina = 10;
+        var potion = Carry("refreshmentpotion", 0x0F0B, 1);
+        _capacity.HasRoomResult = false;
+
+        Drink(potion);
+
+        Assert.Empty(_errors);
+        var bottle = Assert.Single(Made("0x0f0e_empty_bottle"));
+        Assert.Equal(_aria.Location, bottle.GroundLocation);
+    }
+
+    [Fact]
+    public void NightSight_LastsFifteenToThirtyNineMinutes()
+    {
+        Drink(Carry("nightsightpotion", 0x0F06, 1));
+
+        Assert.Equal(TimeSpan.FromMinutes(39), _timers.Timers.Single(timer => timer.Name == "night_sight").Interval);
+    }
+
+    private void WearItem(string template, int graphic, LayerType layer)
+    {
+        var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = 1 };
+        item.Equip(_aria.Id, layer);
+        _items.Add([item]);
     }
 
     private void Drink(ItemEntity potion)

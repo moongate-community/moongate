@@ -5,14 +5,16 @@
 --   The item script of the potions a player drinks, with script_id = "potion":
 --   heal (3-10, 6-20, 9-30 hits, then 10 seconds before another heal potion),
 --   refresh (a quarter of the stamina, a total one all of it), strength and
---   agility (+10, greater +20, for 2 minutes) and night sight (15 to 25
---   minutes). Drinking needs the potion in the backpack or within 1 tile and a
---   free hand; one potion goes, an empty bottle comes back. The effect is
---   chosen by the potion's template.
+--   agility (+10, greater +20, for 2 minutes) and night sight (15 to 39
+--   minutes). Drinking needs the potion in the backpack or within 1 tile (in a
+--   bag on the ground too) and a free hand; one potion goes, then its effect,
+--   and an empty bottle comes back, at the feet when the backpack is full. The
+--   effect is chosen by the potion's template: each has a check, which may
+--   refuse it, and what it does.
 --
 -- Functions:
 --   potion.on_use(serial, user)   drinks the potion
---   potion.random(low, high)      the roll of a heal, math.random
+--   potion.random(low, high)      the roll of a heal and of night sight, math.random
 -- ==============================================================================
 
 potion = {}
@@ -38,59 +40,82 @@ local NIGHT_LEVEL = 13
 local NIGHT_EFFECT = 0x376A
 local NIGHT_SOUND = 0x1E3
 
--- When each player may drink a heal potion again.
+-- When each player may drink a heal potion again: one more second, so the wait is never under ten.
 local heal_ready = {}
 
-local function heal(low, high)
-    return function(user)
-        local stats = mobile.stats(user)
+local function full_health(user)
+    local stats = mobile.stats(user)
 
-        if stats.hits >= stats.hits_max then
-            return FULL_HEALTH
-        end
-
-        if (heal_ready[user] or 0) > world.now() then
-            return HEAL_WAIT
-        end
-
-        heal_ready[user] = world.now() + HEAL_DELAY
-        mobile.set_stats(user, { hits = math.min(stats.hits + potion.random(low, high), stats.hits_max) })
+    if stats.hits >= stats.hits_max then
+        return FULL_HEALTH
     end
+
+    local ready = heal_ready[user]
+
+    if ready and ready > world.now() then
+        return HEAL_WAIT
+    end
+
+    heal_ready[user] = nil
+end
+
+local function heal(low, high)
+    return {
+        check = full_health,
+        apply = function(user)
+            local stats = mobile.stats(user)
+            heal_ready[user] = world.now() + HEAL_DELAY + 1
+            mobile.set_stats(user, { hits = math.min(stats.hits + potion.random(low, high), stats.hits_max) })
+        end,
+    }
 end
 
 local function refresh(share)
-    return function(user)
-        local stats = mobile.stats(user)
+    return {
+        check = function(user)
+            local stats = mobile.stats(user)
 
-        if stats.stamina >= stats.stamina_max then
-            return FULL_STAMINA
-        end
-
-        mobile.set_stats(user, { stamina = math.min(stats.stamina + math.floor(stats.stamina_max * share), stats.stamina_max) })
-    end
+            if stats.stamina >= stats.stamina_max then
+                return FULL_STAMINA
+            end
+        end,
+        apply = function(user)
+            local stats = mobile.stats(user)
+            local gain = math.floor(stats.stamina_max * share)
+            mobile.set_stats(user, { stamina = math.min(stats.stamina + gain, stats.stamina_max) })
+        end,
+    }
 end
 
 local function bonus(stat, amount)
-    return function(user)
-        if not mobile.add_stat_bonus(user, stat, amount, BONUS_SECONDS) then
-            return SIMILAR_EFFECT
+    return {
+        check = function(user)
+            if mobile.stat_bonus(user, stat) > 0 then
+                return SIMILAR_EFFECT
+            end
+        end,
+        apply = function(user)
+            mobile.add_stat_bonus(user, stat, amount, BONUS_SECONDS)
+            effect.on(user, BONUS_EFFECT)
+            mobile.play_sound(user, BONUS_SOUND)
+        end,
+    }
+end
+
+local night_sight = {
+    check = function(user)
+        if mobile.has_night_sight(user) then
+            return HAS_NIGHT_SIGHT
         end
+    end,
+    apply = function(user)
+        mobile.set_night_sight(user, NIGHT_LEVEL, potion.random(15, 39) * 60)
+        effect.on(user, NIGHT_EFFECT)
+        mobile.play_sound(user, NIGHT_SOUND)
+    end,
+}
 
-        effect.on(user, BONUS_EFFECT)
-        mobile.play_sound(user, BONUS_SOUND)
-    end
-end
-
-local function night_sight(user)
-    if not mobile.set_night_sight(user, NIGHT_LEVEL, potion.random(15, 25) * 60) then
-        return HAS_NIGHT_SIGHT
-    end
-
-    effect.on(user, NIGHT_EFFECT)
-    mobile.play_sound(user, NIGHT_SOUND)
-end
-
--- What each potion does, by its template: nothing returned is drunk, a client text is a refusal.
+-- What each potion does, by its template.
 local EFFECTS = {
     lesserhealpotion = heal(3, 10),
     healpotion = heal(6, 20),
@@ -112,25 +137,41 @@ local function tell(user, message)
     end
 end
 
-local function drink(serial, user)
-    mobile.play_sound(user, DRINK_SOUND)
+-- The item on the ground the potion is in, or the potion itself: a potion in a bag within a tile is in reach.
+local function ground_root(serial)
+    local root = serial
 
-    if mobile.body_type(user) == BodyType.Human and not mobile.is_mounted(user) then
-        mobile.animate(user, HumanAnimationType.Eat)
+    while item.container(root) do
+        root = item.container(root)
     end
 
-    item.consume(serial, 1)
-    item.give(user, BOTTLE)
+    return root
+end
+
+local function within_reach(serial, user)
+    return item.owner(serial) == user or item.in_range(ground_root(serial), user, REACH)
+end
+
+local function leave_bottle(user)
+    if item.give(user, BOTTLE) then
+        return
+    end
+
+    local here = mobile.location(user)
+
+    if here then
+        item.create(BOTTLE, here.map, here.x, here.y, here.z)
+    end
 end
 
 function potion.on_use(serial, user)
-    local apply = EFFECTS[item.template(serial) or ""]
+    local effect_of = EFFECTS[item.template(serial) or ""]
 
-    if not apply then
+    if not effect_of then
         return true
     end
 
-    if item.owner(serial) ~= user and not item.in_range(serial, user, REACH) then
+    if not within_reach(serial, user) then
         mobile.message_cliloc(user, TOO_FAR)
 
         return true
@@ -142,7 +183,7 @@ function potion.on_use(serial, user)
         return true
     end
 
-    local refusal = apply(user)
+    local refusal = effect_of.check(user)
 
     if refusal then
         tell(user, refusal)
@@ -150,7 +191,19 @@ function potion.on_use(serial, user)
         return true
     end
 
-    drink(serial, user)
+    -- Used up first: a potion that cannot be, such as one held on a cursor, does nothing.
+    if not item.consume(serial, 1) then
+        return true
+    end
+
+    effect_of.apply(user)
+    mobile.play_sound(user, DRINK_SOUND)
+
+    if mobile.body_type(user) == BodyType.Human and not mobile.is_mounted(user) then
+        mobile.animate(user, HumanAnimationType.Eat)
+    end
+
+    leave_bottle(user)
 
     return true
 end

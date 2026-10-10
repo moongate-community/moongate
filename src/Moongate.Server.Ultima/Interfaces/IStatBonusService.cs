@@ -7,7 +7,7 @@ namespace Moongate.Server.Ultima.Interfaces;
 ///     Keeps the timed effects a mobile is under, such as the bonus of a strength potion or the night sight of a night
 ///     sight potion: they end when their time is up or when the player leaves, and they are never saved.
 /// </summary>
-public interface IStatBonusService
+public interface IStatBonusService : IRegionChangeListener
 {
     /// <summary>
     ///     Raises a stat by <paramref name="amount" /> for <paramref name="duration" />; false when the mobile has a bonus of
@@ -30,4 +30,10 @@ public interface IStatBonusService
     ///     Gets whether the mobile has night sight.
     /// </summary>
     bool HasNightSight(MobileEntity mobile);
+
+    /// <summary>
+    ///     Ends every timed effect of the mobile at once, with the hits and stamina above the base maximums, as the player
+    ///     leaves: before its save, so none of them is written.
+    /// </summary>
+    void EndAll(MobileEntity mobile);
 }

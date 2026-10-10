@@ -1034,7 +1034,7 @@ public sealed class MobileModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Raises the mobile's 'strength' or 'dexterity' by amount for seconds, as a strength or an agility potion does: its maximum hits or stamina rise with it, and when the time is up both go back and what is above the new maximum is lost. The bonus is never saved and ends when the player leaves. False when it has a bonus of that stat already, for an unknown stat or mobile, or an amount or a time that is not positive."
+        "Raises the mobile's 'strength' or 'dexterity' by amount for seconds, as a strength or an agility potion does: a player's maximum hits or stamina rise with it (an NPC's stay), and when the time is up both go back and what is above the new maximum is lost. The bonus is never saved and ends when the player leaves. False when it has a bonus of that stat already, for an unknown stat or mobile, or an amount or a time that is not positive."
     )]
     public bool AddStatBonus(long serial, string stat, int amount, int seconds)
     {
@@ -1101,8 +1101,10 @@ public sealed class MobileModule
         var one = _items?.GetWornAt(mobile.Id, LayerType.OneHanded);
         var two = _items?.GetWornAt(mobile.Id, LayerType.TwoHanded);
 
-        // A weapon in the two-handed layer takes both hands; a shield there takes one.
-        if (two is not null && _templates is not null && _templates.TryGet(two.TemplateId, out var held) && held.WeaponType is not null)
+        // A weapon in the two-handed layer takes both hands; a shield there takes one. Without templates to tell, it is
+        // taken for a weapon.
+        if (two is not null &&
+            (_templates is null || (_templates.TryGet(two.TemplateId, out var held) && held.WeaponType is not null)))
         {
             return false;
         }
