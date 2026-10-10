@@ -128,7 +128,7 @@ The server looks every ten seconds for the sentences that are over.
 Sentences are kept in the table `world.jail_sentences` and written by the world save, so a
 restart forgets none.
 
-Nothing is forbidden in jail yet: spells, skills and travel do not exist. The cells are closed
+A prisoner cannot use a skill: it reads "You may not use skills in jail." (the staff is never held to it). Spells and travel do not exist yet. The cells are closed
 rooms with no door, and the region is [dim](server-configuration.md).
 
 ## The release
@@ -241,7 +241,7 @@ for _, cell in ipairs(jail.cells()) do
 end
 ```
 
-`jail.release(serial)` ends a sentence early and `jail.sentence(serial)` reads one. A sentence
+`jail.max_days()` gives the longest sentence in days (`ultima.jail.max_days`); `jail.send` refuses more with `BadDays`. `jail.release(serial)` ends a sentence early and `jail.sentence(serial)` reads one. A sentence
 that waits for its player to log in has `pending` set, in `jail.sentence` and in the cell kept for
 it, and `seconds_left` is then its whole length. `jail.send` answers `JailResultType.Pending` for a
 player who is offline, and only for one that `.jail <name>` found: a script cannot jail any serial
@@ -252,7 +252,7 @@ script [`jail_sentence.lua`](scripting/shipped-scripts.md#jail_sentencelua) does
 
 ## What it does not do yet
 
-- Forbid anything in jail: there are no spells, skills or recall to forbid.
+- Forbid spells or recall in jail: they do not exist yet. Skills are forbidden.
 - Keep a record of past sentences: the reason lives with the sentence and on its note.
 - Jail a whole account: a sentence is of one character.
 

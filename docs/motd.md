@@ -28,9 +28,9 @@ Variable names are English `snake_case` and use the `${name}` syntax.
 
 ## Validation and failures
 
-The game role loads and validates the file at startup. A missing file logs one warning and sends no MOTD. Malformed TOML, a missing `lines` array, invalid variable names, and unknown variables stop startup; errors include the file path and the line index when applicable. Empty or whitespace-only entries are skipped. Text outside a complete `${...}` token is literal.
+The game role loads and validates the file at startup. A missing file logs one warning and sends no MOTD. Malformed TOML, a missing `lines` array, invalid variable names, unknown variables, an entry that is not a string, an entry with a NUL character, and an entry that cannot fit a Unicode speech line stop startup; errors include the file path and the line index when applicable. Empty or whitespace-only entries are skipped. Text outside a complete `${...}` token is literal.
 
-A plugin resolver that fails, or a rendered line that cannot fit a Unicode speech packet, skips that line and logs a warning without recording the rendered text. Later lines are still sent. If the character's original session closes or is replaced, delivery stops.
+A plugin resolver that fails, or a line that grows beyond a Unicode speech packet once its variables are replaced, skips that line and logs a warning without recording the rendered text. Later lines are still sent. If the character's original session closes or is replaced, delivery stops.
 
 ## Plugin variables
 

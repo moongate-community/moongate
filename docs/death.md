@@ -1,10 +1,9 @@
 # Death and resurrection
 
 An NPC can die: it falls where it stands, leaves its corpse with what it carried, and is gone from
-the world. Nothing fights yet, so an NPC dies when a game master kills it with
+the world. An NPC dies when its hit points are gone in a [fight](combat.md), when a game master kills it with
 [`.kill`](commands/kill.md), a script calls `mobile.kill`, or a [town
-guard](scripting/shipped-scripts.md#guardlua) reaches it while it is a criminal, or something fights it
-to no hit points. A [player dies too](#death-of-a-player), and stays as a ghost.
+guard](scripting/shipped-scripts.md#guardlua) reaches it while it is a criminal. A [player dies too](#death-of-a-player), and stays as a ghost.
 
 ## What happens
 
@@ -53,6 +52,7 @@ in the place of the amount, as the client expects of the corpse graphic.
 | `corpse.spawn.region`, `corpse.spawn.x1` … | What its spawn region gave who died: the region and the four corners of its home |
 | `corpse.killer` | The serial of who killed it, when someone did |
 | `corpse.worn` | What who died wore that went into the corpse, as `serial:layer` pairs split by commas |
+| `corpse.pet_owner`, `corpse.pet.*` | The owner of a bonded pet that died and the props of the pet (loyalty, bond) that go with it; see [Animal taming](animal-taming.md#bonding-and-raising-a-pet) |
 | `corpse.hair`, `corpse.hair_hue` | The hair graphic of who died and its hue, when it had hair |
 | `corpse.beard`, `corpse.beard_hue` | The same for its beard |
 
@@ -90,8 +90,8 @@ gargoyle body without one dies with one of the four voices of its gender (`0x15A
 mobile.kill(orc, user)
 ```
 
-`mobile.kill` is false for a player, for a mobile that is not in the world and for an NPC that is
-already dying.
+`mobile.kill` kills a player too, who stays as a ghost. It is false for a mobile that is not in the world, a
+player that is dead already, a body without a ghost and an NPC that is already dying.
 
 The script of the NPC may define `on_death`, which runs after the corpse exists and before the NPC
 is removed, so the NPC can still be read. Killed by `.kill`, it runs at once. Killed by a script
@@ -146,7 +146,7 @@ A player dies when something takes its last hit point (a fight, `.kill`, `mobile
 1. The players around hear its death sound; a criminal is pardoned.
 2. Its corpse lies where it stood, as an NPC's, with what it wore and what lay in its backpack, except what
    cannot move and the newbied and blessed items. The backpack, hair and beard stay with the player.
-3. Everyone around sees it die (`0xAF`); the player's own client gets the death status (`0x2C`).
+3. A rider is dismounted first: its horse stands where it falls. Everyone around sees it die (`0xAF`); the player's own client gets the death status (`0x2C`).
 4. War mode is off and hit points, stamina and mana are 0.
 5. The player takes the ghost body and puts on a **death shroud** (`death_shroud`, outer torso layer, cannot be
    taken off).
@@ -173,6 +173,8 @@ A ghost:
   and only to a ghost that comes near: it must leave and come back to be offered again. A ghost met while the healer waits for its turn is offered when the wait is over, which ModernUO does not do. The ghost of a game master is offered too. A criminal is
   refused ("Thou art a criminal. I shall not resurrect thee."), and one of negative karma is told it has strayed
   and offered all the same. It costs nothing, and the ghost may answer from up to 8 cells away.
+- A clean bandage on a ghost, from a healer with 80 points of Healing and Anatomy (a chance of (Healing - 68) / 50), asks the ghost
+  the same way; the wait is 5 seconds longer than for a wound.
 - A game master with [`.resurrect`](commands/resurrect.md), a script with `mobile.resurrect(serial)`.
 
 A resurrection by ankh or healer costs a tenth of the player's **fame**, as ModernUO; `.resurrect` and
@@ -225,5 +227,5 @@ players and the criminals too, as ModernUO's before AOS. The data places none ye
   list is kept in memory: a restart forgets it.
 - Whether the spot is free for a body (ModernUO's `Map.CanFit`) is not checked when an ankh or a healer raises a
   ghost.
-- Carving, fame and karma, looting as a crime, loot shared among those who fought.
+- Carving, fame and karma, loot shared among those who fought.
 - Summoned creatures that leave no corpse, and bones.

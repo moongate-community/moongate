@@ -14,6 +14,7 @@ second double click meanwhile answers "You are already fishing."
 
 | You read | Why |
 | --- | --- |
+| `You can't fish while riding!` | You are on a [mount](mounts.md): get off first |
 | `You need water to fish in!` | What you picked is not water: dry land, an item or someone |
 | `You need to be closer to the water to fish!` | The water is more than 4 tiles away or out of sight, or you walked away before the result |
 | `The fish don't seem to be biting here.` | The place has no fish left: try elsewhere, or come back later |
@@ -55,7 +56,7 @@ A root made before fishing existed needs two things. Run `mgctl init`, which add
 ## Not yet
 
 Magic fish and big fish, deep water and what comes from it (special nets, messages in a bottle, sea serpents),
-cutting a fish into steaks, bait, and the rule against fishing while riding, which waits for mounts.
+cutting a fish into steaks and bait.
 
 ## See also
 

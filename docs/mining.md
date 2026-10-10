@@ -15,6 +15,7 @@ double click meanwhile does nothing.
 
 | You read | Why |
 | --- | --- |
+| `You can't mine while riding.` | You are on a [mount](mounts.md): get off first |
 | `You can't mine there.` | The place is no rock: grass, sand, a road, or a static that is no cave floor |
 | `You can't mine that.` | You picked an item or someone |
 | `That is too far away.` | The rock is more than 2 tiles away |

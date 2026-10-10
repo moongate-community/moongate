@@ -1,7 +1,7 @@
 # Combat
 
 A player fights an NPC with its fists, as ModernUO's classic (pre-AOS) combat does; the NPC fights back and
-dies when its hit points are gone. This is the first slice: weapons and armor of items, parry, the combat events of Lua come later.
+dies when its hit points are gone. Weapons and armor of items are built; parry and the combat events of Lua are not.
 
 ## Starting a fight
 
@@ -80,7 +80,10 @@ and nobody fights it.
 ## The NPC fights back
 
 An NPC that is hit, or missed, and fights no one, fights the one who swings, at its own pace. One that fights
-another keeps at it. A player that is hit does not fight back by itself: it clicks. The monsters of
+another keeps at it. An NPC with the prop `combat.passive` set to true never answers a blow: the animals of
+`scared_animal.lua` run instead. A creature that fights runs when its hit points fall under its `flee_at` percent (20 for a
+monster, 10 for an animal unless the template says; -1 never), see [`creature.lua`](scripting/shipped-scripts.md#commoncreaturelua).
+The `archerguard` template is a town guard that shoots. A player that is hit does not fight back by itself: it clicks. The monsters of
 [`monster.lua`](scripting/shipped-scripts.md#monsterlua) go for a player and, beside it, `combat.attack` it.
 
 ## Settings
@@ -92,7 +95,7 @@ another keeps at it. A player that is hit does not fight back by itself: it clic
 ## Lua
 
 The `combat` module: `combat.attack(attacker, target)`, `combat.stop(mobile)`, `combat.target(mobile)` and
-`combat.range(mobile)`; and, for what practices on a dummy or a butte, `combat.weapon(mobile)` (the skill, whether it is
+`combat.range(mobile)`; `combat.armor_rating(mobile)` (the armor rating of what it wears, as the status shows it; 0 for none); and, for what practices on a dummy or a butte, `combat.weapon(mobile)` (the skill, whether it is
 a bow, its range, its projectile and ammunition), `combat.swing(mobile, x, y)` (turns and plays the swing, no fight)
 and `combat.spend_ammo(mobile)` (takes an arrow or a bolt).
 
@@ -114,6 +117,8 @@ the sounds and the swing of its kind:
 A weapon with no kind, which UOX3 does not list, is fought with Wrestling and sounds as fists. The defender's hit
 skill is the one of its own weapon, Wrestling when it holds none. A bow, a crossbow and a thrown weapon are read and
 **not** fought with yet: such a player fights with its fists. An NPC fights with its template, whatever it wears.
+
+A rider swings with the actions of a mount (one hand, two hands, bow or crossbow) instead of the ones of a walker; see [mounts](mounts.md#fighting-from-the-saddle).
 
 The armor rating of the whole player, which the status window shows, is the armor of each part weighted by the share
 of the blows it takes (rounded), and the damage shown there is the weapon's, with the bonuses. The numbers are those of UOX3's
@@ -146,7 +151,7 @@ the status window shows), and with these differences, as ModernUO and UOX3 have 
 
 Parry (a shield counts for nothing yet), a quiver (ammunition is taken from the backpack), special moves, durability (`max_hits` is kept, not used), the
 strength a weapon or armor asks for (`strength_required` is kept, not used), aggressor
-lists beyond the target, bandages and the combat events of Lua (`attack`, `hit`, `miss`,
+lists beyond the target and the combat events of Lua (`attack`, `hit`, `miss`,
 `get_hit`).
 
 ## See also

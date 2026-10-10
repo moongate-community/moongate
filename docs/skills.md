@@ -1,28 +1,34 @@
 # Skills
 
 A player uses a skill from its skill window or a macro; a script tries a mobile at a skill with
-`skill.check`, and the try may raise the skill. This is the first slice: one skill is shipped,
-[Hiding](scripting/shipped-scripts.md#hidinglua), and the rest of the game calls the same check as
-it is built.
+`skill.check`, and the try may raise the skill. Nine skills ship a script
+(`scripts/skills/`): Hiding, Stealth, Snooping, Detecting Hidden, Anatomy, Animal Lore, Animal Taming, Evaluating
+Intelligence and Forensic Evaluation; see [Hiding](scripting/shipped-scripts.md#hidinglua) and the other skill
+scripts there. The rest of the game calls the same check as it is built.
 
 ## Using a skill
 
 The client sends a text command (packet `0x12`, kind `0x24`) whose text starts with the number of
 the skill, as `21 0` for Hiding.
 
-1. A prisoner of the [jail](jail.md) reads "You may not use skills in jail." (message 30168); the
+1. A dead character is refused with a message (cliloc 1019048), the staff included.
+2. A prisoner of the [jail](jail.md) reads "You may not use skills in jail." (message 30168); the
    staff is never refused.
-2. A character still waiting after its last skill reads "You must wait a few moments to use
+3. A character still waiting after its last skill reads "You must wait a few moments to use
    another skill." (cliloc 500118), once a second at most.
-3. The script of the skill runs: `on_use(user)` of the table named after the skill in
+4. The script of the skill runs: `on_use(user)` of the table named after the skill in
    `scripts/skills/<skill>.lua`, with the names of `data/skills.toml` (`hiding`, `animal_lore`).
-4. A skill without a script answers "That skill cannot be used directly." (500014), and asks no
+5. A skill without a script answers "That skill cannot be used directly." (500014), and asks no
    wait.
-5. The character then waits before another skill: the number `on_use` returns, in seconds from 0 to
+6. The character then waits before another skill: the number `on_use` returns, in seconds from 0 to
    3600; when it returns none, the `delay` of the skill in
    [`data/skills.toml`](data-files/skills.md); one second when the file gives none either. An
    `on_use` that calls `wait()` is still running when the wait is set: it asks the `delay` of the
    skill, 10 seconds at least, and what it returns later is not read.
+
+A skill script may define other functions that the server calls from elsewhere: `on_snoop(user, owner, container)` in `snooping.lua` runs when a player double clicks someone else's container, instead of opening it.
+
+`animal_taming` has `delay = 30.0` in the toml, but its script always returns 1 second, so that value is never used.
 
 The wait is of the character and one for all its skills, as in ModernUO. It is not saved: it does
 not outlive a restart.
@@ -127,12 +133,12 @@ adds the three columns.
 
 ## Trainers
 
-A vendor or a healer teaches the skills it has at 60.0 or more, as ModernUO's trainers do. The skills are those of its
+A vendor, a healer or a stablemaster teaches the skills it has at 60.0 or more, as ModernUO's trainers do. The skills are those of its
 mobile template, so a vendor teaches whichever skills rolled that high. Bankers do not teach: gold dropped on them is
 deposited.
 
 - **Ask.** The context menu of the NPC has a *Train* entry for each skill it teaches and the player knows less of, from
-  8 tiles. Saying *train* within 4 tiles, alive, has the NPC list the skills it teaches, or say it has nothing to teach.
+  8 tiles (12 for the stablemaster). Saying *train* within 4 tiles, alive, has the NPC list the skills it teaches, or say it has nothing to teach.
 - **Price.** The NPC teaches up to a third of its own value, 42.0 at most and never above the player's cap for the skill.
   Picking an entry makes it say the price: 1 gold for each tenth of a point, so 10 gold for a whole point (420 gold for
   42.0), and that for less it teaches less. The quote lasts until it is paid, another one is given, or the session ends.
@@ -144,8 +150,7 @@ deposited.
   locked down, which give way in the order of the skills; the player is dead. A gold drop that can no longer teach
   gets the same answer, and the quote is dropped.
 
-A script gives an NPC these lessons with the `trainer` module and `common/training.lua`; `shopkeeper.lua` and
-`healer.lua` already do. `trainer.skills(npc, player)` lists the skills, `trainer.quote(npc, player, skill)` quotes a
+A script gives an NPC these lessons with the `trainer` module and `common/training.lua`; `shopkeeper.lua`, `healer.lua` and `stablemaster.lua` already do. `trainer.skills(npc, player)` lists the skills, `trainer.quote(npc, player, skill)` quotes a
 price and `trainer.pay(npc, giver, item)` takes the gold, which is what an `on_drag_drop` answers.
 
 ## Guildmasters
@@ -167,7 +172,7 @@ a week after joining. The miner's guildmaster names no guild in ModernUO, so it 
 effect yet: nothing reads it. The age and the playing time ModernUO asks of a new member are not kept.
 
 The template field `npc_guild` (`blacksmiths`, `thieves`...) makes an NPC a guildmaster, and the `npcguild` Lua module
-(`of`, `member`, `quote`, `join`, `resign`) with `common/guild.lua` gives its script the words and the gold.
+(`of`, `member`, `quote`, `is_join_payment`, `join`, `resign`) with `common/guild.lua` gives its script the words and the gold.
 
 ## See also
 

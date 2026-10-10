@@ -15,7 +15,7 @@ A player opens the window in one of two ways, from as far as the vendor can be r
 
 A template that inherits `basevendor` runs the script, but only those with a shop sell: the menu of a vendor offers
 *Buy* only when its shop sells something and *Sell* only when it buys something, as in ModernUO, and a vendor with no
-shop (an animal trainer, a shipwright, a rancher, a guildmaster) offers neither and does not answer the words. A vendor opens the window only when it has a [shop](data-files/shops.md) with goods in stock, is in the world, is no
+shop (a shipwright, a rancher, a guildmaster that has none in `templates/shops`) offers neither and does not answer the words. A vendor opens the window only when it has a [shop](data-files/shops.md) with goods in stock, is in the world, is no
 more than 10 tiles away, is in sight, and the player is alive. A murderer in a guarded place is refused by the vendor's
 voice (cliloc 501522).
 
@@ -103,6 +103,8 @@ that opens the window:
 vendor.open_buy(npc, player)
 ```
 
+The other functions of the `vendor` module: `vendor.open_sell(npc, player)` offers the list of what the player carries that the vendor buys; `vendor.open_buy_once(npc, speaker)` and `vendor.open_sell_once(npc, speaker)` are for words the player said: they do nothing when another vendor opened a window for that player within half a second, so several vendors side by side do not all answer.
+
 A script of a vendor that has its own, such as `banker.lua` or `healer.lua`, can call it too: the healers keep a shop this way, through `scripts/common/shop.lua`, which holds the *Buy* and *Sell* entries and the words for any script. See
 [Lua modules](lua-modules.md).
 
@@ -112,7 +114,7 @@ Vendors also teach the skills they have: see [Trainers](skills.md#trainers).
 
 ## Limits
 
-- Skill trainers, pets, bulk order deeds, the price scalar of towns, player vendors and the gold a vendor holds are
+- Pets for sale, bulk order deeds, the price scalar of towns, player vendors and the gold a vendor holds are
   not built.
 - The shops shipped with the server hold the lines of ModernUO that have an item template. The converter reports the
-  others: weapons and a few other goods have no template yet, so those vendors sell less than in ModernUO.
+  others: a few goods have no template yet, so some vendors sell less than in ModernUO.

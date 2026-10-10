@@ -39,7 +39,7 @@ These classes register converters:
 
 | Who | Converters |
 | --- | --- |
-| `MoongateUltimaPlugin.Register` | `Serial`, `Point2D`, `Point3D`, `HueSpec`, `Rectangle2D`, and the `EnumValueSpec` and `RangeValueSpec` factories |
+| `MoongateUltimaPlugin.Register` | `Serial`, `Point2D`, `Point3D`, `HueSpec`, `Rectangle2D`, `DiceSpec`, and the `EnumValueSpec` and `RangeValueSpec` factories |
 | Tests | none globally; each test passes its own options with the converter it checks |
 
 A registered converter also covers the nullable form of its type: `go_location` in
@@ -394,7 +394,7 @@ flags = "impassable|surface"     # TileFlagType.Impassable | TileFlagType.Surfac
 
 Spaces around the names are ignored. A combination is split into the largest named
 parts, so `DirectionType.SouthEast | DirectionType.Running` is written as
-`"running|south_east"`, not as single bits. Zero is written as the name of the zero
+`"south_east|running"` (the parts follow the order of the values), not as single bits. Zero is written as the name of the zero
 member when there is one (`"none"`), and as an empty string otherwise; an empty string
 reads as zero for a flags enum only. A plain enum rejects `|`.
 

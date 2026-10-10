@@ -3,7 +3,8 @@
 `starting_cities.toml` lists the cities a new character can start in. The game
 server sends them with the character list (packet 0xA9) right after the game login.
 The client sends back the index of the chosen city, so the order of the entries
-matters.
+matters. The help module reads the same cities to send a stuck player ("I am stuck")
+to the nearest one.
 
 ```toml
 [[starting_city]]

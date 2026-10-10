@@ -32,12 +32,13 @@ calendar is then empty.
 The server stops at startup, naming the file and the entry, when:
 
 - a key is unknown, or an `id` is missing, repeated (tasks and events share the namespace) or not
-  `[a-z0-9_]+` of at most 40 characters;
+  `[a-z][a-z0-9_]*` of at most 40 characters (it starts with a letter);
 - `when.every` is not `hour`, `day` or `week`, `at` is not a valid `HH:MM` (or `:MM` for `hour`), or
   `days` names a day that is not `mon` to `sun`;
 - the `action` is unknown, a `broadcast` has both `message` and `text` or none, a `lua` task has no
   `script`, or `warnings` are not descending seconds from 1 to 86400;
-- an event has a `from` or `to` that is not a real `MM-dd` date.
+- `warnings` are set on a task that is not the shutdown, or a `text` is longer than 200 characters;
+- an event has a `name` of fewer than 1 or more than 60 characters, `days` without `every = "week"`, or a `from` or `to` that is not a real `MM-dd` date.
 
 ## See also
 

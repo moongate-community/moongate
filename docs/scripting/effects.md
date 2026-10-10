@@ -33,7 +33,7 @@ A function returns `false` and plays nothing for a value out of range, an option
 type (`speed = "9"`, `explodes = 1`), an option it does not know, and an effect with neither a
 graphic nor a particle. An argument of the wrong type raises an error, as for every module. A classic client draws no particles: it gets the graphic, and
 nothing for an effect made of particles only; a moving effect with the graphic `1`, ModernUO's
-placeholder, counts as one. A lightning bolt has no graphic and is always sent. Effects are not sequenced: chain them with
+placeholder, counts as one. A lightning bolt, `effect.lightning(serial, hue = 0)`, has no graphic and is always sent. Effects are not sequenced: chain them with
 `timer` calls.
 
 `effect.at` plays an effect graphic that stays at a point of a map, such as the smoke of a teleport:

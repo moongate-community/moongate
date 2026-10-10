@@ -308,7 +308,7 @@ item.RemoveProp(ItemPropKeys.Charges);
 ```
 
 `ItemPropKeys` names the keys the server reads (`loot_type`, `charges`, `durability`,
-`max_durability`, `quality`, `crafter_id`, `crafter_name`, `uses_remaining`); scripts may use any other key. `quality` holds
+`max_durability`, `quality`, `crafter_id`, `crafter_name`, `uses_remaining`, `label_number`, `bank.worth`); scripts may use any other key. `quality` holds
 an `ItemQualityType` (`Low`, `Regular`, `Exceptional`, as ModernUO); an item without it is
 `Regular`. A prop holds a
 string, a number, a bool or an enum; anything else is rejected when set. The column gives
@@ -343,8 +343,8 @@ account create <username> <password> [Regular|GameMaster|Administrator]
 
 The level defaults to `Regular`. The interactive console masks the password while
 typing, and command output never repeats it. The command is also registered for
-in-game administrators, but no in-game command input is wired yet; that input must
-protect the password before exposing this command. Usernames and passwords must each
+in-game administrators, who type it with a leading dot (see [Server commands](commands.md)); the `api-access` subcommand
+refuses in-game use. Usernames and passwords must each
 be one token because the command system separates arguments on spaces.
 
 The username index is case-sensitive, matching the service's lookup. Concurrent

@@ -71,7 +71,7 @@ Double click the axe in your hands and pick the logs in your backpack instead of
 
 ## Kindling
 
-Double click a knife, a dagger or a sword you carry and pick a tree within 2 tiles: you hack one kindling off it, at once and with no skill tried. The place must have wood left, and each kindling takes one cut of it, as a cut of an axe does: a place gives a few, then none until its wood is back. Picking anything else answers "You can't use a bladed item on that!"
+Double click a bladed weapon you carry (a knife, a dagger, a sword, a fencing blade, a pole arm or a practice weapon: whatever has `script_id = "blade"`) and pick a tree within 2 tiles: you hack one kindling off it, at once and with no skill tried. The place must have wood left, and each kindling takes one cut of it, as a cut of an axe does: a place gives a few, then none until its wood is back. Picking anything else answers "You can't use a bladed item on that!"
 
 ## Axes in a fight
 
@@ -96,7 +96,7 @@ as trees). See [Shipped scripts](scripting/shipped-scripts.md#axelua). A templat
 A root made before lumberjacking existed needs two things. Run `mgctl init`, which adds the script. Then add the
 resource `wood` to your `data/harvest.toml` and `script_id = "axe"` to the axe bases of
 `templates/items/gear/weapons/axes.toml`, or copy both files from the distribution: `mgctl init` never replaces
-a file you may have changed. For boards and kindling, copy `scripts/items/axe.lua` again if you had it already, and give `script_id = "blade"` to your knives, daggers and swords, or copy the files of `templates/items/gear/weapons` from the distribution. For the kinds of wood and the rare finds, copy `templates/items/woods.toml`, `scripts/items/axe.lua`, `scripts/common/trees.lua` and `scripts/common/woods.lua`, and add the `[[resource.vein]]` of the wood to your `data/harvest.toml`: without the veins every place is of plain wood, and without the templates a cut gives plain logs.
+a file you may have changed. For boards and kindling, copy `scripts/items/axe.lua` again if you had it already, and give `script_id = "blade"` to your bladed weapons, or copy the files of `templates/items/gear/weapons` from the distribution. For the kinds of wood and the rare finds, copy `templates/items/woods.toml`, `scripts/items/axe.lua`, `scripts/common/trees.lua` and `scripts/common/woods.lua`, and add the `[[resource.vein]]` of the wood to your `data/harvest.toml`: without the veins every place is of plain wood, and without the templates a cut gives plain logs.
 
 ## Not yet
 
