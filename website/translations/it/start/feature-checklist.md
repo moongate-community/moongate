@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"91bf14a5431c39f7e3ee80e93f3099be94d3eccae901041c873b0749a10e643d","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"49ec4c76b4377b7de8e760581e9c3af7d5f11093bcf549ebf9daa4bc53abc132","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -372,4 +372,4 @@ Sistemi assenti dalla maggior parte degli emulatori:
   il resto, dalla multa e dalla nota di rilascio a fine pena al pane e all'acqua nella
   cella.
 - Plugin che aggiungono servizi, comandi, moduli Lua, metriche, entità e le proprie impostazioni.
-- Immagini Docker e un esempio con più realm.
+- Immagini Docker, un esempio con più realm e un [chart Helm](kubernetes.md) per Kubernetes.

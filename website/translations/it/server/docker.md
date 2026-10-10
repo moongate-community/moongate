@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"8b0a791a2d2b1dbbbfae79f36878f18354d6c01970bc6aeb9a3460e80ada1913","title":"Eseguire con Docker"} -->
+<!-- translation: {"sourceHash":"d63b8fb127e770b8ace24e5ecb709403d9c59d2433b03927019424e6b0ebc2b0","title":"Eseguire con Docker"} -->
 
 # Eseguire con Docker
 
@@ -190,6 +190,10 @@ Vedi [Migrare da UOX3](uox3-migration.md) per comportamento e limiti attuali del
 
 Vedi [Primo avvio](getting-started.md), [Configurazione](server-configuration.md) e
 [Diagnostica](diagnostics.md) per le operazioni a livello server.
+
+## Kubernetes
+
+Il [chart Helm](kubernetes.md) esegue la stessa topologia con login e realm su Kubernetes ed è pubblicato su GitHub Container Registry a ogni rilascio.
 
 ## Endpoint di amministrazione privato
 

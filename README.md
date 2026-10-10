@@ -80,6 +80,8 @@ Every release publishes a `linux/amd64` image to
 See [Run with Docker](docs/docker.md) for first-start configuration, persistent
 storage, Docker Compose, logs, and upgrades.
 
+To run on Kubernetes, use the [Helm chart](docs/kubernetes.md).
+
 ## Build from source
 
 ```sh

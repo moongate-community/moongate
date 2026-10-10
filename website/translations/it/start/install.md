@@ -1,9 +1,9 @@
-<!-- translation: {"sourceHash":"550ab2035434c19946614d1b1dd2013f37d3d0348bcd4e396f04a46dc7fb0ea6","title":"Installare su Linux"} -->
+<!-- translation: {"sourceHash":"62263ae94d0d70b8893d81057e307eef0cbe931f6fdf92cadaad92f2b93fb037","title":"Installare su Linux"} -->
 
 # Installare su Linux
 
 Questa pagina installa il binario del server rilasciato. Per eseguire invece il container pubblicato, usa
-[Eseguire con Docker](docker.md); per compilare dai sorgenti, usa [Primo avvio](getting-started.md).
+[Eseguire con Docker](docker.md) o [su Kubernetes](kubernetes.md); per compilare dai sorgenti, usa [Primo avvio](getting-started.md).
 
 ## Installazione
 
