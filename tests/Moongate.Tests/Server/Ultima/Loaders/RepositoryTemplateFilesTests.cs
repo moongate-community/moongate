@@ -1167,6 +1167,19 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task EveryTestKit_HoldsShippedTemplates_AndHasABag()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+        var script = await File.ReadAllTextAsync(Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "items", "test_kit.lua"));
+        var kits = Regex.Matches(script, "^    (test_kit_[a-z]+) = \\{", RegexOptions.Multiline).Select(match => match.Groups[1].Value).ToList();
+        var contents = Regex.Matches(script, "\\{ \"([^\"]+)\", \\d+ \\}").Select(match => match.Groups[1].Value).ToList();
+
+        Assert.NotEmpty(kits);
+        Assert.All(kits, kit => Assert.Equal("test_kit", templates[kit].ScriptId));
+        Assert.All(contents, template => Assert.True(templates.ContainsKey(template), template));
+    }
+
+    [Fact]
     public async Task ShippedJailChestsAndNote_AreWhatTheJailNeeds()
     {
         TomlUtils.AddTomlConverter(new Point3DTomlConverter());

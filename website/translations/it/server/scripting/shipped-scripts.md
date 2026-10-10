@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"34b45d63f98597e667a107d092d8c7518ca77d8584a1aa05f0734ad6e7ab36bb","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"3d8fc3ebdcc03b91f7240cc9da9e4b66ed98b847f76c74c7dc5e73cbbf9a52f9","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -288,6 +288,15 @@ e lascia una bottiglia vuota (vedi [Pozioni](../potions.md)).
 `scripts/items/alchemy_tool.lua` è lo script di mortaio e pestello (`script_id = "alchemy_tool"`): dallo zaino
 apre il gump di creazione dell'alchimia (vedi [Alchimia](../alchemy.md)). `scripts/common/potions.lua` dice quale pozione è un
 oggetto, comprese le pozioni semplici dei venditori, per `potion.lua` ed `explosion_potion.lua`.
+
+## test_kit.lua
+
+`scripts/items/test_kit.lua` è lo script delle sacche di prova per lo staff (`templates/items/test_kits.toml`,
+`script_id = "test_kit"`): `.add test_kit_alchemy` dà una sacca che si riempie, la prima volta che si apre, con l'attrezzo, i
+materiali e gli oggetti per provare un mestiere o le pozioni; poi è una sacca normale. Le sacche sono `test_kit_alchemy`,
+`test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`, `test_kit_tinkering`,
+`test_kit_fletching` e `test_kit_cooking`; la tabella `KITS` dice cosa contiene ognuna. L'abilità si imposta a parte, come
+`.set skill alchemy 100`.
 
 ## fishing_pole.lua
 
