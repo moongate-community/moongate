@@ -20,5 +20,17 @@ expect_error "duplicate server index" "duplicate serverIndex" -f ci/two-realms.y
 expect_error "realm id must be a DNS label" "realms.*id" -f ci/external.yaml --set 'realms[0].id=Realm_1'
 expect_error "ping on two realms" "ping" -f ci/two-realms.yaml --set 'realms[0].ping.enabled=true' --set 'realms[1].ping.enabled=true'
 
+# Task 2: secret
+expect_absent "external secret: the chart renders no Secret" "kind: Secret" -f ci/external.yaml
+expect_error "no secret and no bundled dependencies" "existingSecret" -f ci/external.yaml --set secrets.existingSecret=
+expect_error "existing secret with bundled dependencies" "existingSecret" -f ci/bundled.yaml --set secrets.existingSecret=x
+expect_contains "bundled: runtime url of accounts" "accounts-runtime-url:" -f ci/bundled.yaml
+expect_contains "bundled: runtime url of a realm" "realm-1-runtime-url:" -f ci/bundled.yaml
+expect_contains "bundled: schema url of a realm" "realm-1-schema-url:" -f ci/bundled.yaml
+expect_contains "bundled: redis string" "redis-connection-string:" -f ci/bundled.yaml
+expect_contains "bundled: handoff secret" "handoff-secret:" -f ci/bundled.yaml
+expect_contains "bundled: generated secret kept on uninstall" "helm.sh/resource-policy: keep" -f ci/bundled.yaml
+expect_contains "bundled: database host" "@t-moongate-postgresql:5432/moongate_realm_1" -f ci/bundled.yaml
+
 # TASK-MARKER: assertions of the next tasks are appended above this line.
 exit $status
