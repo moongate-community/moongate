@@ -5766,5 +5766,58 @@
     ],
     "notes": "The area a map item shows, with its facet, for clients 7.0.13 and newer.",
     "handler": "MapDisplayService: sent when a map opens."
+  },
+  "0x17:outgoing": {
+    "category": "Mobiles",
+    "tags": [
+      "Mobiles",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "12"
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the mobile"
+      },
+      {
+        "offset": "7",
+        "name": "Bars",
+        "type": "ushort",
+        "size": "2",
+        "description": "1"
+      },
+      {
+        "offset": "9",
+        "name": "Kind",
+        "type": "ushort",
+        "size": "2",
+        "description": "1 green (poison), 2 yellow"
+      },
+      {
+        "offset": "11",
+        "name": "Level",
+        "type": "byte",
+        "size": "1",
+        "description": "The poison level plus one; 0 turns the colour off"
+      }
+    ],
+    "notes": "Turns a colour of a mobile's health bar on or off.",
+    "handler": "PoisonService: green while a mobile is poisoned, sent to it and the players around on poisoning, each tick, cure and end."
   }
 }

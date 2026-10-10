@@ -19,7 +19,38 @@ up, such as one held on the cursor, does nothing.
 A second strength (or agility) potion while the first lasts is refused: "You are already under a similar effect.";
 so is a second night sight. When a bonus ends, the hit points or stamina above the new maximum go.
 
-Poison and cure potions, and explosion potions, are not drunk yet: they come with poison and with throwing.
+Explosion potions are not drunk: they will be thrown.
+
+## Poison
+
+A poison potion poisons whoever drinks it, at its level: lesser, regular, greater or deadly. A poisoned mobile loses
+hits every few seconds, its health bar turns green, it gets no hits back, and those around read that it looks ill;
+heal potions are refused ("You can not heal yourself in your current state.").
+
+| Level | Damage a tick | Every | Ticks |
+| --- | --- | --- | --- |
+| Lesser | 1 and 2.5% of the hits, 4 to 26 | 3 s | 10 |
+| Regular | 1 and 3.125%, 5 to 26 | 3 s | 10 |
+| Greater | 1 and 6.25%, 6 to 26 | 3 s | 10 |
+| Deadly | 1 and 12.5%, 7 to 26 | 4 s | 10 |
+
+The first tick comes after 3.5 seconds, and half the ticks repeat the damage of the last. A stronger poison replaces a
+weaker one; a weaker one changes nothing. The poison wears off ("The poison seems to have worn off."), is cured, or
+kills; death ends it. It is saved with the character: logging out does not end it, it starts again on the next login.
+A level 4, lethal, is there for monsters.
+
+## Cure
+
+A cure potion cures the poison by a chance; it is used up either way ("That potion was not strong enough to cure your
+ailment!"), and refused when the drinker is not poisoned ("You are not poisoned.").
+
+| Cure | Lesser | Regular | Greater | Deadly |
+| --- | --- | --- | --- | --- |
+| Lesser cure | 75% | 50% | 15% | 0% |
+| Cure | 100% | 75% | 50% | 15% |
+| Greater cure | 100% | 100% | 100% | 75% |
+
+Scripts poison and cure with `mobile.poison(user, 2)`, `mobile.cure(user)` and `mobile.poison_level(user)`.
 
 ## Bonuses and night sight
 
@@ -44,7 +75,8 @@ night sight potions.
 
 ## Not yet
 
-Poison and cure (slice 2), explosion (slice 3), alchemy, the buff bar, potion kegs.
+Explosion (slice 3), alchemy, poisoned weapons and the Poisoning skill, poisonous monsters, bandages that cure, the buff
+bar, potion kegs.
 
 ## See also
 
