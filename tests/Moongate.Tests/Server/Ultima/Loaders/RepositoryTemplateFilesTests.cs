@@ -688,9 +688,40 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(59, tinkering.Group.Sum(group => group.Recipe.Count));
         Assert.All(new[] { "0x1ebc_tinker's_tools", "0x1eb8_tool_kit" }, id => Assert.Equal("tinkering_tool", byId[id].ScriptId));
         Assert.NotEqual("tinkering_tool", byId["taxidermykit"].ScriptId);
+
         var recipes = tinkering.Group.SelectMany(group => group.Recipe).ToList();
         Assert.Equal("0x1ebc_tinker's_tools", recipes.Single(recipe => recipe.Name == "Tinker's tools").Item);
         Assert.Equal(recipes.Count, recipes.Select(recipe => recipe.Name).Distinct().Count());
+
+        // Bowcraft and fletching: the bows of its root, then shafts, arrows and bolts; the fletcher's tools work.
+        var fletching = crafts["fletching"];
+        Assert.Equal("bowcraft_fletching", fletching.Skill);
+        Assert.Equal(["Weapons", "Shafts", "Arrows", "Crossbow Bolts"], fletching.Group.Select(group => group.Name));
+        Assert.Equal(9, fletching.Group.Sum(group => group.Recipe.Count));
+        Assert.All(new[] { "0x1022_fletcher's_tools", "0x1023_fletcher's_tools" }, id => Assert.Equal("fletching_tool", byId[id].ScriptId));
+
+        // Cooking: ingredients, preparation, baking and barbecue, 31 recipes; the skillets, sifter and rolling pin work.
+        var cooking = crafts["cooking"];
+        Assert.Equal(["Ingredients", "Preparation", "Baking", "Barbecue"], cooking.Group.Select(group => group.Name));
+        Assert.Equal(31, cooking.Group.Sum(group => group.Recipe.Count));
+        Assert.All(new[] { "0x097f_skillet", "0x103e_sifter", "0x1043_rolling_pin" }, id => Assert.Equal("cooking_tool", byId[id].ScriptId));
+        // What baking and barbecue make is eaten; a closed sack of flour, bought or made, is flour.
+        Assert.All(
+            cooking.Group.Where(group => group.Name is "Baking" or "Barbecue").SelectMany(group => group.Recipe),
+            recipe => Assert.Equal("food", byId[recipe.Item].ScriptId)
+        );
+        Assert.Contains("0x1039_sack_of_flour", lists.Single(list => list.Id == "flour").Templates);
+        Assert.Contains("0x1045_sack_of_flour", lists.Single(list => list.Id == "flour").Templates);
+
+        // Cartography: eight maps with the classic numbers; the pens draw them, a blank map is what they are drawn on.
+        var cartography = crafts["cartography"];
+        var maps = cartography.Group.Single().Recipe;
+        Assert.Equal(8, maps.Count);
+        Assert.Equal((10.0, 70.0), (maps[0].SkillMin, maps[0].SkillMax));
+        Assert.All(maps.Skip(3), recipe => Assert.Equal((39.5, 99.5), (recipe.SkillMin, recipe.SkillMax)));
+        Assert.All(new[] { "mapmakerspen", "0x0fc0_pen_and_ink" }, id => Assert.Equal("cartography_tool", byId[id].ScriptId));
+        Assert.Contains("0x14ec_blank_map", lists.Single(list => list.Id == "maps").Templates);
+        Assert.DoesNotContain("0x0e34_a_blank_scroll", lists.Single(list => list.Id == "maps").Templates);
     }
 
     [Fact]
@@ -1040,6 +1071,24 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(35, fillable.Count);
         Assert.All(fillable, table => Assert.NotEmpty(table.Entries));
         Assert.Equal(338, fillable.Sum(table => table.Entries.Count));
+    }
+
+    [Fact]
+    public async Task ShippedPresetMaps_OpenWithTheMapScript_OnTheirArea()
+    {
+        var directories = Directories();
+        var templates = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+        var presets = templates.Values.Where(template => template.Tags?.ContainsKey("map_x1") == true).ToArray();
+
+        Assert.Equal(33, presets.Length);
+        Assert.All(presets, preset => Assert.Equal("map_item", preset.ScriptId));
+        Assert.Equal("1092", templates["britainmap"].Tags!["map_x1"]);
+        Assert.Equal("3", templates["malasmap"].Tags!["map_facet"]);
+        // A crafted map waits for its cartographer: the script, but no area.
+        Assert.Equal("map_item", templates["craftedcitymap"].ScriptId);
+        Assert.False(templates["craftedcitymap"].Tags!.ContainsKey("map_x1"));
+        // A blank map says it is blank.
+        Assert.Equal("map_item", templates["0x14ec_blank_map"].ScriptId);
     }
 
     [Fact]

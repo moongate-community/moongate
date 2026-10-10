@@ -373,6 +373,124 @@ def test_a_skill_line_uox3_got_wrong_is_fixed():
     assert crafts.SKILL_FIXES[("tinkering", "heating stand")] == "37 643 1140"
 
 
+BOWCRAFT = """
+[SUBMENU 49]
+{
+ITEM=190
+MENU=50
+ITEM=191
+}
+[MENUENTRY 49]
+{
+NAME=Previous Menu
+SUBMENU=49
+}
+[MENUENTRY 50]
+{
+NAME=Shafts
+SUBMENU=50
+}
+[SUBMENU 50]
+{
+ITEM=194
+ITEM=195
+MENU=49
+}
+[SUBMENU 51]
+{
+MENU=52
+}
+[MENUENTRY 52]
+{
+NAME=Arrows
+SUBMENU=52
+}
+[SUBMENU 52]
+{
+ITEM=198
+}
+[ITEM 190]
+{
+NAME=kindling
+RESOURCE=WOOD 1
+SKILL=8 0 500
+ADDITEM=0x0de1
+}
+[ITEM 191]
+{
+NAME=bow
+RESOURCE=WOOD 7
+SKILL=8 300 700
+ADDITEM=0x13b2
+}
+[ITEM 194]
+{
+NAME=one shaft
+RESOURCE=WOOD 1
+SKILL=8 0 400
+ADDITEM=0x1bd4
+}
+[ITEM 195]
+{
+NAME=five shafts
+RESOURCE=WOOD 5
+SKILL=8 0 400
+ADDITEM=0x1bd4,5
+}
+[ITEM 198]
+{
+NAME=one arrow
+RESOURCE=0x1bd4 1
+RESOURCE=0x1bd1 1
+SKILL=8 0 400
+ADDITEM=0x0f3f
+}
+"""
+
+BOWCRAFT_ITEMS = """
+[[item]]
+id = "0x1bd7_board"
+[[item]]
+id = "0x0de1_kindling"
+[[item]]
+id = "0x13b2_bow"
+[[item]]
+id = "0x1bd4_shaft"
+[[item]]
+id = "0x1bd4_5_shaft"
+[[item]]
+id = "0x1bd1_feather"
+[[item]]
+id = "0x0f3f_arrow"
+[[item]]
+id = "0x0f3f_5"
+"""
+
+
+def test_fletching_takes_the_bows_of_its_root_and_the_menus_of_the_fletching_tool(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE WOOD]\n{\nID=0x1bd7\n}\n")
+    (source / "bowcraft.dfn").write_text(BOWCRAFT)
+    (items / "all.toml").write_text(BOWCRAFT_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 0, error.getvalue()
+
+    fletching = tomllib.loads((destination / "fletching.toml").read_text())
+    assert (fletching["name"], fletching["skill"], fletching["sound"]) == ("Bowcraft and Fletching", "bowcraft_fletching", 0x0055)
+    # The root's own recipes are the bows; UOX3 opens arrows and bolts from the fletching tool, a second root.
+    assert [group["name"] for group in fletching["group"]] == ["Weapons", "Shafts", "Arrows"]
+    # Kindling is what an axe already makes; a batch of five is the recipe of one made five times.
+    assert [recipe["name"] for recipe in fletching["group"][0]["recipe"]] == ["Bow"]
+    assert [recipe["name"] for recipe in fletching["group"][1]["recipe"]] == ["Shaft"]
+    arrow = fletching["group"][2]["recipe"][0]
+    assert (arrow["name"], arrow["item"]) == ("Arrow", "0x0f3f_arrow")
+    # The stacks of five shafts or arrows share the graphic: the recipe makes and takes the single one.
+    assert arrow["resources"] == [{"resource": "0x1bd4_shaft", "amount": 1}, {"resource": "0x1bd1_feather", "amount": 1}]
+
+
 TINKERING = """
 [SUBMENU 59]
 {
@@ -465,3 +583,217 @@ def test_tinkering_fixes_what_uox3_writes_wrong(tmp_path):
     assert (spoon["name"], other_spoon["name"]) == ("Spoon", "Spoon 2")
     scales = tinkering["group"][1]["recipe"][0]
     assert (scales["skill_min"], scales["skill_max"]) == (63.8, 114.0)
+
+
+COOKING = """
+[SUBMENU 750]
+{
+MENU=2001
+MENU=2003
+}
+[MENUENTRY 2001]
+{
+NAME=Ingredients
+SUBMENU=2001
+}
+[MENUENTRY 2003]
+{
+NAME=Baking
+SUBMENU=2003
+}
+[SUBMENU 2001]
+{
+ITEM=1501
+ITEM=1503
+}
+[SUBMENU 2003]
+{
+ITEM=1605
+ITEM=1606
+ITEM=1651
+}
+[ITEM 1501]
+{
+NAME=dough
+RESOURCE=FLOUR 1
+SKILL=13 0 1000
+ADDITEM=0x103d
+}
+[ITEM 1503]
+{
+NAME=cake mix
+RESOURCE=FLOUR 1
+RESOURCE=0x103d 1 0x96
+SKILL=13 0 1000
+ADDITEM=cake_mix
+}
+[ITEM 1605]
+{
+NAME=baked meat pie
+RESOURCE=0x1042
+SKILL=13 0 1000
+ADDITEM=baked_meat_pie
+}
+[ITEM 1651]
+{
+NAME=chicken leg
+RESOURCE=0x1607
+SKILL=13 0 1000
+ADDITEM=0x1608
+}
+[ITEM 1606]
+{
+NAME=sausage pizza
+RESOURCE=0x1042 1 0x0
+SKILL=13 0 1000
+ADDITEM=sausage_pizza
+}
+"""
+
+COOKING_ITEMS = """
+[[item]]
+id = "0x1039_sack_of_flour"
+[[item]]
+id = "0x1045_sack_of_flour"
+[[item]]
+id = "0x103a_open_sack_of_flour"
+[[item]]
+id = "0x103d_dough"
+[[item]]
+id = "sweet_dough"
+[[item]]
+id = "cake_mix"
+[[item]]
+id = "0x1042_unbaked_pie"
+[[item]]
+id = "unbaked_meat_pie"
+[[item]]
+id = "uncooked_sausage_pizza"
+[[item]]
+id = "baked_meat_pie"
+[[item]]
+id = "sausage_pizza"
+[[item]]
+id = "0x1607_raw_chicken_leg"
+[[item]]
+id = "0x1608_chicken_leg"
+[[item]]
+id = "0x09f1_cut_of_raw_ribs"
+"""
+
+
+def test_cooking_takes_the_dough_or_pie_uox3_tells_apart_by_hue_and_more(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE FLOUR]\n{\nID=0x103a\n}\n[RESOURCE RAWMEAT]\n{\nID=0x09f1\nID=0x1607\n}\n")
+    (source / "cooking.dfn").write_text(COOKING)
+    (items / "all.toml").write_text(COOKING_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 0, error.getvalue()
+
+    cooking = tomllib.loads((destination / "cooking.toml").read_text())
+    assert (cooking["name"], cooking["skill"], cooking["sound"]) == ("Cooking", "cooking", 0x0057)
+    assert [group["name"] for group in cooking["group"]] == ["Ingredients", "Baking"]
+    dough, cake_mix = cooking["group"][0]["recipe"]
+    assert dough["item"] == "0x103d_dough"
+    # Sweet dough is dough of hue 0x96 in UOX3; Moongate has a template of its own.
+    assert cake_mix["resources"] == [{"resource": "flour", "amount": 1}, {"resource": "sweet_dough", "amount": 1}]
+    meat_pie, pizza, chicken_leg = cooking["group"][1]["recipe"]
+    # The raw chicken leg is in UOX3's list of raw meat: a chicken leg is not cooked from ribs.
+    assert chicken_leg["resources"] == [{"resource": "0x1607_raw_chicken_leg", "amount": 1}]
+
+    # UOX3 opens a closed sack of flour by a script; here a closed sack is flour as it is.
+    flour = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}["flour"]
+    assert flour == ["0x1039_sack_of_flour", "0x103a_open_sack_of_flour", "0x1045_sack_of_flour"]
+
+    # An unbaked pie is told apart by MORE, and a resource without an amount is one; UOX3 bakes the sausage pizza from the quiche: it takes the uncooked pizza.
+    assert meat_pie["resources"] == [{"resource": "unbaked_meat_pie", "amount": 1}]
+    assert pizza["resources"] == [{"resource": "uncooked_sausage_pizza", "amount": 1}]
+
+
+def test_a_resource_fix_naming_no_template_stops_the_conversion(tmp_path, monkeypatch):
+    monkeypatch.setitem(crafts.RESOURCE_FIXES, ("cooking", "sausage pizza", "0x1042"), "no_such_pizza")
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE FLOUR]\n{\nID=0x103a\n}\n[RESOURCE RAWMEAT]\n{\nID=0x09f1\nID=0x1607\n}\n")
+    (source / "cooking.dfn").write_text(COOKING)
+    (items / "all.toml").write_text(COOKING_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 2
+    assert "no_such_pizza" in error.getvalue()
+
+
+CARTOGRAPHY = """
+[SUBMENU 80]
+{
+ITEM=2000
+ITEM=2003
+ITEM=2004
+}
+[ITEM 2000]
+{
+NAME=local map
+RESOURCE=MAPS 1
+SKILL=12 0 50
+ADDITEM=craftedlocalmap
+}
+[ITEM 2003]
+{
+NAME=world map
+RESOURCE=MAPS 1
+SKILL=12 980 1500
+ADDITEM=largeworldmap
+}
+[ITEM 2004]
+{
+NAME=world map
+RESOURCE=MAPS 1
+SKILL=12 980 1500
+ADDITEM=ilshenarmap
+}
+"""
+
+CARTOGRAPHY_ITEMS = """
+[[item]]
+id = "0x0e34_a_blank_scroll"
+[[item]]
+id = "0x14eb_map"
+[[item]]
+id = "0x14ec_blank_map"
+[[item]]
+id = "craftedlocalmap"
+[[item]]
+id = "largeworldmap"
+[[item]]
+id = "ilshenarmap"
+"""
+
+
+def test_cartography_has_the_classic_numbers_names_by_facet_and_takes_blank_maps(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE MAPS]\n{\nID=0x14eb\nID=0x0e34\n}\n")
+    (source / "cartography.dfn").write_text(CARTOGRAPHY)
+    (items / "all.toml").write_text(CARTOGRAPHY_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 0, error.getvalue()
+
+    cartography = tomllib.loads((destination / "cartography.toml").read_text())
+    assert (cartography["name"], cartography["skill"], cartography["sound"]) == ("Cartography", "cartography", 0x0249)
+    # The root menu holds the recipes themselves.
+    [group] = cartography["group"]
+    assert group["name"] == "Maps"
+    local, world, ilshenar = group["recipe"]
+    # UOX3 writes 0 to 5 for the local map and 98 to 150 for the world maps: the classic numbers instead.
+    assert (local["name"], local["skill_min"], local["skill_max"]) == ("Local map", 10.0, 70.0)
+    assert (world["name"], world["skill_min"], world["skill_max"]) == ("World map", 39.5, 99.5)
+    assert ilshenar["name"] == "World map of Ilshenar"
+    # A blank map, as vendors sell it, is a map to draw on; a blank scroll is the scribe's.
+    lists = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}
+    assert lists["maps"] == ["0x14eb_map", "0x14ec_blank_map"]

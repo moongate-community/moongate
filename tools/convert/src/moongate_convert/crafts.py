@@ -17,24 +17,84 @@ CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "smithing": ("blacksmithing", "Blacksmithing", "blacksmithy", 1),
     "tailoring": ("tailoring", "Tailoring", "tailoring", 39),
     "tinkering": ("tinkering", "Tinkering", "tinkering", 59),
+    "bowcraft": ("fletching", "Bowcraft and Fletching", "bowcraft_fletching", 49),
+    "cooking": ("cooking", "Cooking", "cooking", 750),
+    "cartography": ("cartography", "Cartography", "cartography", 80),
 }
 
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B}
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055, "cooking": 0x0057, "cartography": 0x0249}
 
 # The groups that make deeds, which mean nothing until houses exist.
 SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons", "traps"}
 
-# What an axe already does: logs sawn into boards.
-SKIPPED_ITEMS = {"0x1bd7"}
+# What a player already gets elsewhere: boards from an axe, kindling hacked off a tree with a blade.
+SKIPPED_ITEMS = {"0x1bd7", "0x0de1"}
 
-NAME_FIXES = {"Magincian Throne": "Magician Throne"}
+# The crafts whose root menu holds recipes of its own: the name of the group they form, first.
+ROOT_GROUPS = {"fletching": "Weapons", "cartography": "Maps"}
+
+# The menus UOX3 opens from a second tool (arrows and bolts from the fletching tool), walked after the root.
+EXTRA_ROOTS = {"fletching": ["51"]}
+
+NAME_FIXES = {"Magincian Throne": "Magician Throne", "one shaft": "Shaft", "one arrow": "Arrow", "one bolt": "Bolt"}
 
 # The main skill lines UOX3 gets wrong, by the craft's skill and the recipe's name (lower case): the whole SKILL= value.
-SKILL_FIXES = {("tinkering", "scales"): "37 638 1140", ("tinkering", "heating stand"): "37 643 1140"}
+SKILL_FIXES = {
+    ("tinkering", "scales"): "37 638 1140",
+    ("tinkering", "heating stand"): "37 643 1140",
+    # UOX3's cartography is off by a digit (a local map from 0 to 5) or past any skill (world maps to 150): the classic
+    # numbers.
+    ("cartography", "local map"): "12 100 700",
+    ("cartography", "city map"): "12 250 850",
+    ("cartography", "sea chart"): "12 350 950",
+    ("cartography", "world map"): "12 395 995",
+}
 
-# The items UOX3 makes in place of the one a recipe is named for: the tinker's tools, not the 10-stone tool kit.
-ITEM_FIXES = {"0x1eb9": "0x1ebc_tinker's_tools"}
+# The names of the recipes UOX3 names alike, by the item they make: the world maps of each facet.
+NAMES_BY_ITEM = {
+    "ilshenarmap": "World map of Ilshenar",
+    "malasmap": "World map of Malas",
+    "tokunomap": "World map of Tokuno",
+    "termurmap": "World map of Ter Mur",
+}
+
+# The items UOX3 makes in place of the one a recipe is named for (the tinker's tools, not the 10-stone tool kit), and the
+# single shaft, arrow and bolt among the stacks that share their graphic.
+ITEM_FIXES = {
+    "0x1eb9": "0x1ebc_tinker's_tools",
+    "0x1bd4": "0x1bd4_shaft",
+    "0x0f3f": "0x0f3f_arrow",
+    "0x1bfb": "0x1bfb_crossbow_bolt",
+}
+
+# The resources UOX3 tells apart by hue and MORE, which Moongate's templates tell apart by id, by the craft's skill, the
+# recipe's name and the resource's graphic. UOX3 bakes the pizzas from the quiche and the meat pie: they take the uncooked pizzas. A raw cut
+# is in UOX3's list of raw meat: each one cooks its own cut.
+RESOURCE_FIXES = {
+    ("cooking", "cake mix", "0x103d"): "sweet_dough",
+    ("cooking", "cookie mix", "0x103d"): "sweet_dough",
+    ("cooking", "muffin", "0x103d"): "sweet_dough",
+    ("cooking", "cake", "0x103f"): "cake_mix",
+    ("cooking", "baked quiche", "0x1042"): "unbaked_quiche",
+    ("cooking", "baked meat pie", "0x1042"): "unbaked_meat_pie",
+    ("cooking", "sausage pizza", "0x1042"): "uncooked_sausage_pizza",
+    ("cooking", "cheese pizza", "0x1042"): "uncooked_cheese_pizza",
+    ("cooking", "baked fruit pie", "0x1042"): "unbaked_fruit_pie",
+    ("cooking", "baked peach cobbler", "0x1042"): "unbaked_peach_cobbler",
+    ("cooking", "baked apple pie", "0x1042"): "unbaked_apple_pie",
+    ("cooking", "baked pumpkin pie", "0x1042"): "unbaked_pumpkin_pie",
+    ("cooking", "chicken leg", "0x1607"): "0x1607_raw_chicken_leg",
+    ("cooking", "leg of lamb", "0x1609"): "0x1609_raw_leg_of_lamb",
+    ("cooking", "cut of ribs", "0x09f1"): "0x09f1_cut_of_raw_ribs",
+}
+
+# The graphics a resource list counts beyond UOX3's: the closed sacks of flour, which UOX3 opens by a script first, and
+# the blank map vendors sell.
+LIST_EXTRAS = {"flour": [0x1039, 0x1045], "maps": [0x14EC]}
+
+# The graphics a resource list leaves out of UOX3's: the blank scroll is what a scribe writes on, not a map.
+LIST_SKIPS = {"maps": [0x0E34]}
 
 # The groups whose names UOX3 misspells.
 GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
@@ -126,12 +186,12 @@ def _resource_lists(path: Path, templates: list[str], error: TextIO) -> tuple[di
 
         name = parts[1].lower()
         found: list[str] = []
+        ids = [trim(value) for key, _, value in (entry.partition("=") for entry in block.entries) if trim(key).upper() == "ID"]
 
-        for entry in block.entries:
-            key, _, value = entry.partition("=")
-            graphic = dfn.uox_number(trim(value)) if trim(key).upper() == "ID" else None
+        for value in ids + [f"0x{extra:04x}" for extra in LIST_EXTRAS.get(name, [])]:
+            graphic = dfn.uox_number(value)
 
-            if graphic is None or (name == "wood" and graphic in NOT_WOOD):
+            if graphic is None or (name == "wood" and graphic in NOT_WOOD) or graphic in LIST_SKIPS.get(name, []):
                 continue
 
             list_of_graphic.setdefault(graphic, name)
@@ -185,21 +245,33 @@ def _craft(path: Path, name: str, lists: dict[str, list[str]], list_of_graphic: 
                 continue
 
             seen.add(submenu)
-            recipes = []
-
-            for number in _values(blocks[f"SUBMENU {submenu}"], "ITEM"):
-                recipe = _recipe(blocks[f"ITEM {number}"], skill, lists, list_of_graphic, templates)
-
-                if recipe is not None:
-                    recipes.append(recipe)
+            recipes = recipes_of(submenu)
 
             if recipes:
                 groups.append({"name": GROUP_FIXES.get(group_name, group_name), "recipes": recipes})
 
             walk(submenu)
 
+    def recipes_of(menu: str) -> list[dict]:
+        recipes = []
+
+        for number in _values(blocks[f"SUBMENU {menu}"], "ITEM"):
+            recipe = _recipe(blocks[f"ITEM {number}"], skill, lists, list_of_graphic, templates)
+
+            if recipe is not None:
+                recipes.append(recipe)
+
+        return recipes
+
     try:
+        if craft_id in ROOT_GROUPS:
+            groups.append({"name": ROOT_GROUPS[craft_id], "recipes": recipes_of(str(root))})
+
         walk(str(root))
+
+        for extra in EXTRA_ROOTS.get(craft_id, []):
+            seen.add(extra)
+            walk(extra)
     except KeyError as missing:
         raise ConversionError(f"{path.name} names {missing.args[0]}, which it does not have") from missing
 
@@ -220,9 +292,11 @@ def _recipe(
     block: dfn.DfnBlock, craft_skill: str, lists: dict[str, list[str]], list_of_graphic: dict[int, str], templates: list[str]
 ) -> dict | None:
     name = block.fields.get("NAME", block.header)
-    added = block.fields["ADDITEM"].split(",")[0].strip()
+    added, _, count = block.fields["ADDITEM"].partition(",")
+    added = added.strip()
 
-    if added.lower() in SKIPPED_ITEMS:
+    # A batch (five shafts) is the recipe of one made five times: Make last repeats it.
+    if added.lower() in SKIPPED_ITEMS or count.strip() not in ("", "1"):
         return None
 
     item = _resolve(added, templates)
@@ -250,10 +324,15 @@ def _recipe(
     resources = []
 
     for value in _values(block, "RESOURCE"):
-        what, amount = value.split()[:2]
+        what, amount = (value.split() + ["1"])[:2]
         graphic = dfn.uox_number(what) if what.lower().startswith("0x") else None
 
-        if graphic is None:
+        if (craft_skill, name.lower(), what.lower()) in RESOURCE_FIXES:
+            resource = RESOURCE_FIXES[(craft_skill, name.lower(), what.lower())]
+
+            if resource not in templates:
+                raise ConversionError(f"the recipe {name} is fixed to take {resource}, which is no item template")
+        elif graphic is None:
             resource = what.lower()
 
             if resource not in lists:
@@ -273,7 +352,7 @@ def _recipe(
 
         resources.append((resource, int(amount)))
 
-    shown = NAME_FIXES.get(name, name)
+    shown = NAMES_BY_ITEM.get(added.lower(), NAME_FIXES.get(name, name))
 
     # The gump shows it as a title: UOX3 writes some in lower case.
     return {"name": shown[:1].upper() + shown[1:], "item": item[0], "skills": skills, "resources": resources}

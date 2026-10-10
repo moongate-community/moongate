@@ -83,8 +83,13 @@ public sealed class StubItemHandlingService : IItemHandlingService
         Refreshed.Add(item.TemplateId ?? "");
     }
 
+    /// <summary>
+    ///     Gets the items a test says a player holds on its cursor.
+    /// </summary>
+    public HashSet<ItemEntity> Held { get; } = [];
+
     public bool IsHeld(ItemEntity item)
     {
-        return false;
+        return Held.Contains(item);
     }
 }

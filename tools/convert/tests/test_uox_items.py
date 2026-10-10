@@ -731,6 +731,31 @@ def test_the_sewing_kits_get_the_tailoring_tool_script_but_not_the_scissors(uox_
     assert "script_id" not in by_name["scissors"]
 
 
+def test_the_cooking_tools_get_the_cooking_tool_script(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[0x097f]\n{\nname=skillet\nid=0x097f\n}\n"
+        "[0x103e]\n{\nname=sifter\nid=0x103e\n}\n"
+        "[0x1043]\n{\nname=rolling pin\nid=0x1043\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a cook works with: scripts/items/cooking_tool.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert [by_name[name].get("script_id") for name in ("skillet", "sifter", "rolling pin")] == ["cooking_tool"] * 3
+
+
+def test_the_fletcher_tools_get_the_fletching_tool_script(uox_workspace):
+    uox_workspace.write_source("items.dfn", "[0x1022]\n{\nname=fletcher's tools\nid=0x1022\n}\n")
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a bowyer works with: scripts/items/fletching_tool.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["fletcher's tools"]["script_id"] == "fletching_tool"
+
+
 def test_the_tinker_tools_get_the_tinkering_tool_script(uox_workspace):
     uox_workspace.write_source(
         "items.dfn",
@@ -747,3 +772,45 @@ def test_the_tinker_tools_get_the_tinkering_tool_script(uox_workspace):
     assert by_name["tool kit"]["script_id"] == "tinkering_tool"
     # The taxidermy kit shares a tool kit's graphic but stuffs trophies: no tinkering with it.
     assert "script_id" not in by_name["a taxidermy kit"]
+
+
+def test_a_preset_map_gets_its_area_and_the_map_script(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[britainmap]\n{\nname=britain map\nid=0x14ec\ncustominttag=Map 3\n}\n"
+        "[malasmap]\n{\nname=malas map\nid=0x14ec\ncustominttag=Map 31\n}\n"
+        "[craftedcitymap]\n{\nname=city map\nid=0x14ec\ncustominttag=Map 50\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What opens a map: scripts/items/map_item.lua, on the area UOX3's preset table gives it.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    britain = by_name["britain map"]
+    assert britain["script_id"] == "map_item"
+    assert {key: britain["tags"][key] for key in britain["tags"] if key.startswith("map_")} == {
+        "map_x1": "1092", "map_y1": "1396", "map_x2": "1736", "map_y2": "1924", "map_width": "200", "map_height": "200",
+        "map_facet": "0",
+    }
+    assert by_name["malas map"]["tags"]["map_facet"] == "3"
+    # A crafted map is drawn by its cartographer: no area of its own, the script all the same.
+    assert by_name["city map"]["script_id"] == "map_item" and "map_x1" not in by_name["city map"]["tags"]
+
+
+def test_a_blank_map_gets_the_map_script_so_it_says_it_is_blank(uox_workspace):
+    uox_workspace.write_source("items.dfn", "[0x14ec]\n{\nname=blank map\nid=0x14ec\n}\n")
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["blank map"]["script_id"] == "map_item"
+
+
+def test_the_pens_get_the_cartography_tool_script(uox_workspace):
+    uox_workspace.write_source("items.dfn", "[0x0fc0]\n{\nname=pen and ink\nid=0x0fc0\n}\n")
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a cartographer draws with: scripts/items/cartography_tool.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["pen and ink"]["script_id"] == "cartography_tool"

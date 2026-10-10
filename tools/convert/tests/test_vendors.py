@@ -437,3 +437,20 @@ def test_a_graphic_of_materials_only_is_bought_as_the_plain_piece_of_the_other_g
     [shop] = workspace.shop("bowyer")
     assert [(line["item"], line["price"]) for line in shop["buy"]] == [("0x1408_lbr", 18)]
     assert "only material templates" not in workspace.output
+
+
+def test_a_bolt_is_the_single_crossbow_bolt_not_a_stack_template_of_its_graphic(workspace):
+    _prepare_bowyer(
+        workspace,
+        '[[item]]\nid = "0x1bfb_20"\n[[item]]\nid = "0x1bfb_crossbow_bolt"\n[[item]]\nid = "0x13b1_t2a"\n',
+    )
+    workspace.write(
+        "UOContent/Mobiles/Vendors/SBInfo/SBBowyer.cs",
+        BOWYER_SHOP.replace("Add(new GenericBuyInfo(typeof(Torch), 8, 20, 0xF6B, 0));", "Add(new GenericBuyInfo(typeof(Bolt), 2, 20, 0x1BFB, 0));"),
+    )
+
+    assert workspace.run() == 0, workspace.error
+
+    [shop] = workspace.shop("bowyer")
+    # The bolts a bowyer sells stack with the ones a player makes.
+    assert "0x1bfb_crossbow_bolt" in [line["item"] for line in shop["buy"]]

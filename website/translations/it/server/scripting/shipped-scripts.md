@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"205388d4e09dbbea34f86665f35f39eeb0617d019c607db9db10d33bf690b017","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"b1799dc299a4328c9137627550ed13f9622b6d7d208a87710fd5fa5a30003eaa","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -252,6 +252,30 @@ apre il gump di creazione della sartoria (vedi [Sartoria](../tailoring.md)), con
 `scripts/items/tinkering_tool.lua` è lo script degli attrezzi da tinker e delle cassette degli attrezzi (`script_id = "tinkering_tool"`):
 dallo zaino apre il gump di creazione della meccanica (vedi [Meccanica](../tinkering.md)), con le regole di
 `crafting.lua` e il metallo scelto.
+
+## fletching_tool.lua
+
+`scripts/items/fletching_tool.lua` è lo script degli attrezzi da fletcher (`script_id = "fletching_tool"`): dallo
+zaino apre il gump di creazione di archi e frecce (vedi [Archi e frecce](../fletching.md)), con le
+regole di `crafting.lua` e il legno scelto.
+
+## cooking_tool.lua
+
+`scripts/items/cooking_tool.lua` è lo script delle padelle, dei setacci per la farina e dei mattarelli
+(`script_id = "cooking_tool"`): dallo zaino apre il gump di creazione della cucina (vedi [Cucina](../cooking.md)),
+con le regole di `crafting.lua` e i forni e fuochi di `scripts/common/heat.lua`.
+
+## map_item.lua
+
+`scripts/items/map_item.lua` è lo script delle mappe (`script_id = "map_item"`): dallo zaino o da terra
+entro 2 caselle apre la mappa sulla sua area con il modulo `map` (vedi [Mappe](../maps.md)); più lontano dice
+"That is too far away.".
+
+## cartography_tool.lua
+
+`scripts/items/cartography_tool.lua` è lo script delle penne (`script_id = "cartography_tool"`): dallo zaino
+apre il gump di creazione della cartografia (vedi [Cartografia](../cartography.md)); una mappa creata viene disegnata da
+`scripts/common/cartography.lua`.
 
 ## fishing_pole.lua
 

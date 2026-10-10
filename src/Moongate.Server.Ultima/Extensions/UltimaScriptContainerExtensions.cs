@@ -43,6 +43,7 @@ public static class UltimaScriptContainerExtensions
         container.AddScriptModule<PetModule>();
         container.AddScriptModule<TargetModule>();
         container.AddScriptModule<HuePickerModule>();
+        container.AddScriptModule<MapModule>();
         container.AddScriptModule<SkillModule>();
         container.AddScriptModule<CombatModule>();
         container.AddScriptModule<PromptModule>();

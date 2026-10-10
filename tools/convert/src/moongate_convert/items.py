@@ -33,6 +33,12 @@ CARPENTRY_TOOL_GRAPHICS = frozenset(
 TINKERING_TOOL_GRAPHICS = frozenset({0x1EB8, 0x1EB9, 0x1EBA, 0x1EBB, 0x1EBC})
 # What a tailor sews with: the sewing kit, not the scissors.
 TAILORING_TOOL_GRAPHICS = frozenset({0x0F9D})
+# What a cartographer draws with: the pens and ink (inscription will share them).
+CARTOGRAPHY_TOOL_GRAPHICS = frozenset({0x0FBF, 0x0FC0})
+# What a cook works with: the skillets, the flour sifter and the rolling pin.
+COOKING_TOOL_GRAPHICS = frozenset({0x097F, 0x09E2, 0x103E, 0x1043})
+# What a bowyer works with: the fletcher's tools.
+FLETCHING_TOOL_GRAPHICS = frozenset({0x1022, 0x1023})
 # What a smith forges with at an anvil: the smith's hammers, the sledge hammers and the tongs.
 SMITHING_TOOL_GRAPHICS = frozenset({0x13E3, 0x13E4, 0x0FB4, 0x0FB5, 0x0FBB, 0x0FBC})
 TWO_HANDED = 2
@@ -229,6 +235,15 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
         # The taxidermy kit shares a tool kit's graphic but stuffs trophies: no tinkering with it.
         # What UOX3's crafting tool script opens tinkering with: scripts/items/tinkering_tool.lua.
         template.script_id = "tinkering_tool"
+    elif graphic in CARTOGRAPHY_TOOL_GRAPHICS:
+        # What a cartographer draws with: scripts/items/cartography_tool.lua.
+        template.script_id = "cartography_tool"
+    elif graphic in COOKING_TOOL_GRAPHICS:
+        # What a cook works with: scripts/items/cooking_tool.lua.
+        template.script_id = "cooking_tool"
+    elif graphic in FLETCHING_TOOL_GRAPHICS:
+        # What a bowyer works with: scripts/items/fletching_tool.lua.
+        template.script_id = "fletching_tool"
     elif graphic in TAILORING_TOOL_GRAPHICS:
         # What UOX3's crafting tool script opens tailoring with: scripts/items/tailoring_tool.lua.
         template.script_id = "tailoring_tool"
@@ -266,6 +281,10 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
 
     if name:
         template.name = name
+
+    # A blank map says it is blank when it is opened: scripts/items/map_item.lua.
+    if template.script_id is None and (template.name or "").lower() == BLANK_MAP:
+        template.script_id = "map_item"
 
     # UOX3 reads COLOR and COLOUR as one tag.
     hue = HueSpec.try_parse(fields.get("color") if "color" in fields else fields.get("colour"))
@@ -358,6 +377,7 @@ def _apply_base_fields(block: DfnBlock, template: ItemTemplate) -> None:
 
     _apply_combat_fields(block, template)
     _apply_tags(block, template)
+    _apply_map_preset(template)
 
 
 def _apply_combat_fields(block: DfnBlock, template: ItemTemplate) -> None:
@@ -461,6 +481,61 @@ def _apply_tags(block: DfnBlock, template: ItemTemplate) -> None:
                 template.tags = {}
 
             template.tags[parts[0]] = parts[1]
+
+
+# UOX3's preset maps by their Map tag: width, height, then the north-west and south-east corners, then the facet. The tag
+# 50 is a crafted map, drawn by its cartographer.
+PRESET_MAPS: dict[str, tuple[int, int, int, int, int, int, int]] = {
+    "1": (200, 200, 0, 0, 5119, 4095, 0),
+    "2": (400, 400, 0, 0, 5119, 4095, 0),
+    "3": (200, 200, 1092, 1396, 1736, 1924, 0),
+    "4": (200, 200, 256, 1792, 1736, 2560, 0),
+    "5": (200, 200, 1024, 1280, 2304, 3072, 0),
+    "6": (200, 200, 2500, 1900, 3000, 2400, 0),
+    "7": (200, 200, 2560, 1792, 3840, 2560, 0),
+    "8": (200, 200, 2560, 1792, 3840, 3072, 0),
+    "9": (200, 200, 1088, 3572, 1528, 4056, 0),
+    "10": (200, 200, 3530, 2022, 3818, 2298, 0),
+    "11": (200, 200, 3328, 1792, 3840, 2304, 0),
+    "12": (200, 200, 2360, 356, 2706, 702, 0),
+    "13": (200, 200, 0, 256, 2304, 3072, 0),
+    "14": (200, 200, 2467, 572, 2878, 746, 0),
+    "15": (200, 200, 4156, 808, 4732, 1528, 0),
+    "16": (200, 200, 3328, 768, 4864, 1536, 0),
+    "17": (200, 200, 3446, 1030, 3832, 1424, 0),
+    "18": (200, 200, 3328, 1024, 3840, 2304, 0),
+    "19": (200, 200, 3582, 2456, 3770, 2742, 0),
+    "20": (200, 200, 2714, 3329, 3100, 3639, 0),
+    "21": (200, 200, 2560, 2560, 3840, 3840, 0),
+    "22": (200, 200, 524, 2064, 960, 2452, 0),
+    "23": (200, 200, 1792, 2630, 2118, 2952, 0),
+    "24": (200, 200, 1792, 1792, 3072, 3072, 0),
+    "25": (200, 200, 256, 1792, 2304, 4095, 0),
+    "26": (200, 200, 2636, 592, 3064, 1012, 0),
+    "27": (200, 200, 2636, 592, 3840, 1536, 0),
+    "28": (200, 200, 236, 741, 766, 1269, 0),
+    "29": (200, 200, 0, 512, 1792, 2048, 0),
+    "30": (400, 400, 0, 0, 1448, 1430, 4),
+    "31": (400, 400, 520, 0, 2580, 2050, 3),
+    "32": (400, 400, 130, 136, 1927, 1468, 2),
+    "33": (400, 400, 260, 2780, 1280, 4090, 5),
+}
+CRAFTED_MAP = "50"
+BLANK_MAP = "blank map"
+PRESET_MAP_FIELDS = ("map_width", "map_height", "map_x1", "map_y1", "map_x2", "map_y2", "map_facet")
+
+
+def _apply_map_preset(template: ItemTemplate) -> None:
+    """A map with UOX3's Map tag opens with scripts/items/map_item.lua; a preset one carries its area as tags."""
+    tag = (template.tags or {}).get("Map")
+
+    if tag is None or (tag not in PRESET_MAPS and tag != CRAFTED_MAP):
+        return
+
+    template.script_id = "map_item"
+
+    for field, value in zip(PRESET_MAP_FIELDS, PRESET_MAPS.get(tag, ())):
+        template.tags[field] = str(value)
 
 
 # --- loot ---

@@ -1,0 +1,286 @@
+# ==============================================================================
+# Moongate - data/crafts/cooking.toml
+#
+# What it is for:
+#   The recipes of cooking, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+# ==============================================================================
+
+id = "cooking"
+name = "Cooking"
+skill = "cooking"
+sound = 0x0057
+
+[[group]]
+name = "Ingredients"
+
+[[group.recipe]]
+name = "Sack of flour"
+item = "0x1039_sack_of_flour"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x1ebd_#", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Dough"
+item = "0x103d_dough"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "flour", amount = 1 }, { resource = "water", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Sweet dough"
+item = "sweet_dough"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "0x09ec_jar_honey", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Cake mix"
+item = "cake_mix"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "flour", amount = 1 }, { resource = "sweet_dough", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Cookie mix"
+item = "0x103f_cookie_mix"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x09ec_jar_honey", amount = 1 }, { resource = "sweet_dough", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Preparation"
+
+[[group.recipe]]
+name = "Unbaked quiche"
+item = "unbaked_quiche"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "0x09b5_eggs", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Unbaked meat pie"
+item = "unbaked_meat_pie"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "rawmeat", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Unbaked sausage pizza"
+item = "uncooked_sausage_pizza"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "sausages", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Uncooked cheese pizza"
+item = "uncooked_cheese_pizza"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "0x097e_wheel_of_cheese", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Unbaked fruit pie"
+item = "unbaked_fruit_pie"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "0x0994_pear", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Unbaked peach cobbler"
+item = "unbaked_peach_cobbler"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "0x09d2_peach", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Unbaked apple pie"
+item = "unbaked_apple_pie"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "0x09d0_apple", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Unbaked pumpkin pie"
+item = "unbaked_pumpkin_pie"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }, { resource = "pumpkins", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Baking"
+
+[[group.recipe]]
+name = "Bread loaf"
+item = "0x103b_bread_loaf"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103d_dough", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Pan of cookies"
+item = "0x160b_pan_of_cookies"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x103f_cookie_mix", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Cake"
+item = "0x09e9_cake"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "cake_mix", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Muffin"
+item = "0x09ea_muffin"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "sweet_dough", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Baked quiche"
+item = "baked_quiche"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "unbaked_quiche", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Baked meat pie"
+item = "baked_meat_pie"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "unbaked_meat_pie", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Sausage pizza"
+item = "sausage_pizza"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "uncooked_sausage_pizza", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Cheese pizza"
+item = "cheese_pizza"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "uncooked_cheese_pizza", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Baked fruit pie"
+item = "baked_fruit_pie"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "unbaked_fruit_pie", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Baked peach cobbler"
+item = "baked_peach_cobbler"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "unbaked_peach_cobbler", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Baked apple pie"
+item = "baked_apple_pie"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "unbaked_apple_pie", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Baked pumpkin pie"
+item = "baked_pumpkin_pie"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "unbaked_pumpkin_pie", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Barbecue"
+
+[[group.recipe]]
+name = "Cooked bird"
+item = "0x09b7_cooked_bird"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "rawbirds", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Chicken leg"
+item = "0x1608_chicken_leg"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x1607_raw_chicken_leg", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Fish steak"
+item = "0x097b_fish_steak"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x097a_raw_fish_steak", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Fried eggs"
+item = "0x09b6_fried_eggs"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x09b5_eggs", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Leg of lamb"
+item = "0x160a_leg_of_lamb"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x1609_raw_leg_of_lamb", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Cut of ribs"
+item = "0x09f2_cooked_ribs"
+skill_min = 0.0
+skill_max = 100.0
+resources = [{ resource = "0x09f1_cut_of_raw_ribs", amount = 1 }]
+skills = []

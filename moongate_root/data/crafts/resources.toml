@@ -54,7 +54,7 @@ templates = ["0x0e42_wooden_chest", "0x0e43_wooden_chest"]
 
 [[resource]]
 id = "flour"
-templates = ["0x0a1e_bowl_of_flour", "0x103a_open_sack_of_flour", "0x1046_open_sack_of_flour"]
+templates = ["0x0a1e_bowl_of_flour", "0x1039_sack_of_flour", "0x103a_open_sack_of_flour", "0x1045_sack_of_flour", "0x1046_open_sack_of_flour"]
 
 [[resource]]
 id = "water"
@@ -78,4 +78,4 @@ templates = ["0x09b9_raw_bird", "0x09ba_raw_bird"]
 
 [[resource]]
 id = "maps"
-templates = ["0x0e34_a_blank_scroll", "0x14eb_map"]
+templates = ["0x14eb_map", "0x14ec_blank_map"]
