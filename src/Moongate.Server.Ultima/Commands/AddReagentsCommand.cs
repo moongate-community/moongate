@@ -5,8 +5,11 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Commands.Internal;
+using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services.Internal;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Commands;
 
@@ -30,6 +33,8 @@ public sealed class AddReagentsCommand : ICommandExecutor
     private readonly IMobileService _mobiles;
     private readonly IGameLoopService _loop;
     private readonly ILocalizationService? _localization;
+    private readonly IWeightService? _weight;
+    private readonly IFatigueService? _fatigue;
 
     public AddReagentsCommand(
         ISpellCatalogService catalog,
@@ -39,7 +44,9 @@ public sealed class AddReagentsCommand : ICommandExecutor
         IWorldViewService view,
         IMobileService mobiles,
         IGameLoopService loop,
-        ILocalizationService? localization = null
+        ILocalizationService? localization = null,
+        IWeightService? weight = null,
+        IFatigueService? fatigue = null
     )
     {
         _catalog = catalog;
@@ -50,6 +57,8 @@ public sealed class AddReagentsCommand : ICommandExecutor
         _mobiles = mobiles;
         _loop = loop;
         _localization = localization;
+        _weight = weight;
+        _fatigue = fatigue;
     }
 
     public async Task ExecuteAsync(CommandContext context)
@@ -102,11 +111,16 @@ public sealed class AddReagentsCommand : ICommandExecutor
                     return;
                 }
 
+                var backpack = _items.GetWornAt(gm.Id, LayerType.Backpack);
+
                 foreach (var template in reagents)
                 {
-                    var name = _templates.TryGet(template, out var found) ? found.Name ?? template : template;
+                    var known = _templates.TryGet(template, out var found);
+                    var name = known ? found!.Name ?? template : template;
 
-                    if (_handling.Give(gm, template, amount) is not null)
+                    // Give counts the items of the backpack but not its stones: a stack the backpack would hold
+                    // too heavy lies at the feet, as one that does not fit by count.
+                    if (Fits(backpack, found, amount) && _handling.Give(gm, template, amount) is not null)
                     {
                         kept.Add(name);
                     }
@@ -117,6 +131,12 @@ public sealed class AddReagentsCommand : ICommandExecutor
                         _view.ItemAppeared(pile);
                         dropped.Add(name);
                     }
+                }
+
+                // The status bar shows the weight of the backpack as it is now.
+                if (kept.Count > 0)
+                {
+                    _fatigue?.LoadChanged(session, gm, false);
                 }
             }
         );
@@ -155,6 +175,22 @@ public sealed class AddReagentsCommand : ICommandExecutor
                 )
             );
         }
+    }
+
+    // Whether a stack of the template, weighed as a pile of its graphic, keeps the backpack within its stones.
+    private bool Fits(ItemEntity? backpack, ItemTemplate? template, int amount)
+    {
+        if (_weight is null || backpack is null)
+        {
+            return true;
+        }
+
+        var probe = new ItemEntity
+        {
+            TemplateId = template?.Id ?? string.Empty, ItemId = (int)(template?.ItemId.Value ?? 0), Amount = amount
+        };
+
+        return _weight.Holds(backpack, [probe]);
     }
 
     private string Describe(SpellSelection.Failure failure, string detail)

@@ -97,6 +97,43 @@ public sealed class SpellbookServiceTests : IAsyncLifetime
         Assert.False(_books.Add(empty, 4));
     }
 
+    [Fact]
+    public void AddMany_ToTheOpenersOwnBook_WritesOnce_AndOpensItOnce()
+    {
+        var book = Book("spellbook", _backpack.Id);
+
+        var added = _books.Add(book, Enumerable.Range(1, 64), _session);
+
+        Assert.Equal(64, added);
+        Assert.Equal(ulong.MaxValue, _books.GetSpells(book));
+        Assert.Single(_fixture.Sender.Sent.OfType<DisplayContainerPacket>());
+        var content = Assert.Single(_fixture.Sender.Sent.OfType<ContainerContentPacket>());
+        Assert.Equal(64, content.Items.Count);
+    }
+
+    [Fact]
+    public void AddMany_ToABookOfSomeoneElse_SendsTheSpellsButNeverOpensTheBook()
+    {
+        var book = Book("spellbook", _backpack.Id);
+
+        Assert.Equal(2, _books.Add(book, [1, 4, 4, 0, 65]));
+
+        Assert.Empty(_fixture.Sender.Sent.OfType<DisplayContainerPacket>());
+        var content = Assert.Single(_fixture.Sender.Sent.OfType<ContainerContentPacket>());
+        Assert.Equal([1, 4], content.Items.Select(entry => entry.Amount));
+    }
+
+    [Fact]
+    public void AddMany_OnlyWhatTheBookLacks_IsCounted_AndNothingIsSentWhenNoneIsNew()
+    {
+        var book = Book("spellbook1", _backpack.Id);
+
+        Assert.Equal(0, _books.Add(book, [1, 2, 3], _session));
+
+        Assert.Empty(_fixture.Sender.Sent);
+        Assert.Equal(0, _books.Add(Scroll(ClumsyScroll), [1], _session));
+    }
+
     [Theory]
     [InlineData(0)]
     [InlineData(65)]

@@ -71,6 +71,19 @@ public interface ISpellbookService
     bool Add(ItemEntity book, int spellId);
 
     /// <summary>
+    ///     Puts all the spells in the book at once and sends the book to its owner once, not once for each spell. The owner
+    ///     gets the book opened (the gump and its spells) only when it is the one who asked, <paramref name="opener" />;
+    ///     any other owner gets only the new list of spells, so a closed book is never opened on someone's screen.
+    /// </summary>
+    /// <param name="book">The spellbook.</param>
+    /// <param name="spellIds">The client numbers, 1 to 64; a number outside it or one the book holds is not counted.</param>
+    /// <param name="opener">The session whose screen may be shown the open book, or null for none.</param>
+    /// <returns>
+    ///     How many spells were new; 0, with nothing sent, for an item that is no spellbook or when none was.
+    /// </returns>
+    int Add(ItemEntity book, IEnumerable<int> spellIds, GameSession? opener = null);
+
+    /// <summary>
     ///     Gets whether the mobile wears the book or carries it in its backpack, not in a bag inside it.
     /// </summary>
     bool IsCarriedBy(MobileEntity mobile, ItemEntity book);

@@ -88,6 +88,16 @@ public sealed class AddSpellCommandTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AllTheSpells_GoToTheBookInOneBatch_ShownToTheOneWhoAsked()
+    {
+        await RunAsync("all");
+
+        var batch = Assert.Single(_books.Batches);
+        Assert.Equal((_book, _session), (batch.Book, batch.Opener));
+        Assert.Equal([1, 2, 9, 10, 17], batch.Spells.Order());
+    }
+
+    [Fact]
     public async Task ASpellTheBookHolds_IsZeroNew()
     {
         _books.Add(_book, 1);

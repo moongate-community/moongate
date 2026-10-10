@@ -63,6 +63,30 @@ public sealed class StubSpellbookService : ISpellbookService
     }
 
     /// <summary>
+    ///     The batches <see cref="Add(ItemEntity, IEnumerable{int}, GameSession?)" /> took: the book, the numbers asked
+    ///     for and the session that may see it opened.
+    /// </summary>
+    public List<(ItemEntity Book, int[] Spells, GameSession? Opener)> Batches { get; } = [];
+
+    public int Add(ItemEntity book, IEnumerable<int> spellIds, GameSession? opener = null)
+    {
+        var asked = spellIds.ToArray();
+        Batches.Add((book, asked, opener));
+
+        if (!IsSpellbook(book))
+        {
+            return 0;
+        }
+
+        if (!Books.TryGetValue(book.Id.Value, out var spells))
+        {
+            Books[book.Id.Value] = spells = [];
+        }
+
+        return asked.Count(spell => spell is >= 1 and <= 64 && spells.Add(spell));
+    }
+
+    /// <summary>
     ///     What <see cref="IsCarriedBy" /> answers, when a test sets it; else a book is carried when it is in
     ///     <see cref="Carried" />.
     /// </summary>

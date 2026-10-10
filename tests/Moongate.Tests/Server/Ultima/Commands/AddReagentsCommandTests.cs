@@ -11,6 +11,8 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Core.Geometry;
 using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Weight;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -27,6 +29,8 @@ public sealed class AddReagentsCommandTests : IAsyncLifetime
     private readonly ItemService _items = TestItems.Create();
     private readonly StubItemHandlingService _handling = new();
     private readonly RecordingWorldViewService _view = new();
+    private readonly StubWeightService _weight = new();
+    private readonly RecordingFatigueService _fatigue = new();
 
     private readonly SpellCatalogService _catalog;
     private readonly ItemTemplateService _templates;
@@ -143,6 +147,34 @@ public sealed class AddReagentsCommandTests : IAsyncLifetime
         );
     }
 
+    [Fact]
+    public async Task AStackTooHeavyForTheBackpack_LiesAtTheFeet_AndNothingIsGiven()
+    {
+        var backpack = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        backpack.Equip(new Serial(2), LayerType.Backpack);
+        _items.Add([backpack]);
+        _weight.HoldsResult = false;
+
+        var context = await RunAsync("agility", "40");
+
+        Assert.Empty(_handling.Given);
+        Assert.Single(_view.Calls);
+        Assert.Empty(_fatigue.Loads);
+        Assert.Equal(
+            "40 of each did not fit the backpack and lie at your feet: blood moss.",
+            Assert.Single(context.Output).Text
+        );
+    }
+
+    [Fact]
+    public async Task WhatIsGiven_ShowsTheNewWeightOnTheStatusBarOnce()
+    {
+        await RunAsync("clumsy");
+
+        var load = Assert.Single(_fatigue.Loads);
+        Assert.Equal((new Serial(2), false), (load.Mobile.Id, load.Warn));
+    }
+
     [Theory]
     [InlineData("0")]
     [InlineData("1001")]
@@ -214,7 +246,7 @@ public sealed class AddReagentsCommandTests : IAsyncLifetime
 
     private AddReagentsCommand Command(ILocalizationService? localization)
     {
-        return new(_catalog, _templates, _handling, _items, _view, _fixture.Mobiles, _fixture.Network.Loop, localization);
+        return new(_catalog, _templates, _handling, _items, _view, _fixture.Mobiles, _fixture.Network.Loop, localization, _weight, _fatigue);
     }
 
     public async Task DisposeAsync()

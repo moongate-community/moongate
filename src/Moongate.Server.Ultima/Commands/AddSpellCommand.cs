@@ -104,13 +104,8 @@ public sealed class AddSpellCommand : ICommandExecutor
 
                 isBook = true;
 
-                foreach (var spell in spells)
-                {
-                    if (_books.Add(book, spell.Id))
-                    {
-                        added++;
-                    }
-                }
+                // One write and one re-send for all the spells, not one for each.
+                added = _books.Add(book, spells.Select(spell => spell.Id), session);
 
                 held = BitOperations.PopCount(_books.GetSpells(book));
             }

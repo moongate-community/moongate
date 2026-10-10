@@ -1,3 +1,4 @@
+using System.Numerics;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -96,6 +97,53 @@ public sealed class SpellbookService : ISpellbookService
         return true;
     }
 
+    public int Add(ItemEntity book, IEnumerable<int> spellIds, GameSession? opener = null)
+    {
+        if (!IsSpellbook(book))
+        {
+            return 0;
+        }
+
+        var held = GetSpells(book);
+        var mask = held;
+
+        foreach (var spellId in spellIds)
+        {
+            if (spellId is >= 1 and <= SpellCount)
+            {
+                mask |= Bit(spellId);
+            }
+        }
+
+        var added = BitOperations.PopCount(mask & ~held);
+
+        if (added == 0)
+        {
+            return 0;
+        }
+
+        book.SetProp(ISpellbookService.SpellsProp, unchecked((long)mask));
+
+        if (_items.GetOwner(book) is { } owner &&
+            _sessions.GetAll().FirstOrDefault(session => session.CharacterId == owner) is { } owned)
+        {
+            if (opener is not null && owned.SessionId == opener.SessionId)
+            {
+                Open(owned, book);
+            }
+            else
+            {
+                SendSpells(owned, book);
+            }
+        }
+        else
+        {
+            _handling.Refresh(book);
+        }
+
+        return added;
+    }
+
     public ItemEntity? FindCarried(MobileEntity mobile, int spellId)
     {
         ItemEntity? Pick(IEnumerable<ItemEntity> candidates)
@@ -117,19 +165,6 @@ public sealed class SpellbookService : ISpellbookService
 
     public void Open(GameSession session, ItemEntity book)
     {
-        var mask = GetSpells(book);
-        var entries = new List<ContainerItemEntry>();
-
-        for (var index = 0; index < SpellCount; index++)
-        {
-            if ((mask & (1UL << index)) != 0)
-            {
-                entries.Add(
-                    new(new(FakeSerialBase - (uint)index), 0, index + 1, 0, 0, 0, book.Id, default)
-                );
-            }
-        }
-
         // The client may never have been told about the book: the contents of a pack reach it when the pack is opened.
         if (book.MobileId is not null && book.Layer is not null)
         {
@@ -144,7 +179,7 @@ public sealed class SpellbookService : ISpellbookService
             session.SessionId,
             new DisplayContainerPacket(book.Id, ISpellbookService.BookGump, session.UsesHighSeasContainers())
         );
-        _sender.TrySend(session.SessionId, ContainerContentPacket.Of(entries, session.UsesContainerGrid()));
+        SendSpells(session, book);
     }
 
     public bool TryOpen(GameSession session, MobileEntity player, ItemEntity book)
@@ -194,6 +229,25 @@ public sealed class SpellbookService : ISpellbookService
 
         return book.ContainerId is { } container &&
                _items.GetWornAt(mobile.Id, LayerType.Backpack)?.Id == container;
+    }
+
+    // The spells the book holds, as the fake items the client reads them from.
+    private void SendSpells(GameSession session, ItemEntity book)
+    {
+        var mask = GetSpells(book);
+        var entries = new List<ContainerItemEntry>();
+
+        for (var index = 0; index < SpellCount; index++)
+        {
+            if ((mask & (1UL << index)) != 0)
+            {
+                entries.Add(
+                    new(new(FakeSerialBase - (uint)index), 0, index + 1, 0, 0, 0, book.Id, default)
+                );
+            }
+        }
+
+        _sender.TrySend(session.SessionId, ContainerContentPacket.Of(entries, session.UsesContainerGrid()));
     }
 
     private static ulong Bit(int spellId)
