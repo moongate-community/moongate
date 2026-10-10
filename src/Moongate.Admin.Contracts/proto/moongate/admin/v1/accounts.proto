@@ -1,6 +1,7 @@
 syntax = "proto3";
 package moongate.admin.v1;
 option csharp_namespace = "Moongate.Admin.Contracts.V1";
+import "google/protobuf/empty.proto";
 import "moongate/admin/v1/common.proto";
 message ListAccountsRequest { uint32 page_size = 1; uint32 after_account_id = 2; }
 message ListAccountsResponse { repeated AccountSummary accounts = 1; uint32 next_after_account_id = 2; }
@@ -10,7 +11,18 @@ message CreateAccountRequest {
   optional AccountType account_type = 3;
   bool can_access_api = 4;
 }
+// Only the fields that are sent change; at least one must be sent.
+message UpdateAccountAccessRequest {
+  uint32 account_id = 1;
+  optional AccountType account_type = 2;
+  optional bool can_access_api = 3;
+  optional bool is_locked = 4;
+}
+// current_password is required when the account is the caller's own, and ignored for another account.
+message ChangeAccountPasswordRequest { uint32 account_id = 1; string new_password = 2; string current_password = 3; }
 service AdminAccounts {
   rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
   rpc CreateAccount(CreateAccountRequest) returns (AccountSummary);
+  rpc UpdateAccountAccess(UpdateAccountAccessRequest) returns (AccountSummary);
+  rpc ChangeAccountPassword(ChangeAccountPasswordRequest) returns (google.protobuf.Empty);
 }

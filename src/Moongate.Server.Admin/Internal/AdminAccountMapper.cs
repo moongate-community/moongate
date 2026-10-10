@@ -25,6 +25,32 @@ internal static class AdminAccountMapper
         }
     }
 
+    public static void ValidatePassword(string password)
+    {
+        if (string.IsNullOrWhiteSpace(password) || password.Contains('\0') || Encoding.UTF8.GetByteCount(password) > 1024)
+        {
+            throw new RpcException(new(StatusCode.InvalidArgument, "Invalid account password format."));
+        }
+    }
+
+    public static AccountAccessPatch ToAccessPatch(UpdateAccountAccessRequest request)
+    {
+        return new()
+        {
+            IsLocked = request.HasIsLocked ? request.IsLocked : null,
+            CanAccessApi = request.HasCanAccessApi ? request.CanAccessApi : null,
+            AccountType = !request.HasAccountType
+                ? null
+                : request.AccountType switch
+                {
+                    AccountType.Regular => DomainAccountType.Regular,
+                    AccountType.GameMaster => DomainAccountType.GameMaster,
+                    AccountType.Administrator => DomainAccountType.Administrator,
+                    _ => throw new RpcException(new(StatusCode.InvalidArgument, "Unknown account type."))
+                }
+        };
+    }
+
     public static AccountCreateOptions ToCreateOptions(CreateAccountRequest request)
     {
         ValidateCredentials(request.Username, request.Password);
