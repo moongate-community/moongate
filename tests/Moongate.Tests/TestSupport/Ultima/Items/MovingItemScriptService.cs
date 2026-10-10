@@ -27,6 +27,11 @@ public sealed class MovingItemScriptService : IItemScriptService
         return true;
     }
 
+    public bool Has(ItemEntity item, string function)
+    {
+        return true;
+    }
+
     public ScriptResult Run(ItemEntity item, string function, params object?[] args)
     {
         Runs++;

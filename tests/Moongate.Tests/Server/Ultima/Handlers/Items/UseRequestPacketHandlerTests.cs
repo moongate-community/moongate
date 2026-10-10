@@ -490,6 +490,63 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task UseFromAfar_AScriptedGroundItemFarAway_RunsItsOnUse()
+    {
+        var torch = new ItemEntity { Id = new(0x40000010), TemplateId = "torch", ItemId = 0x0F64, Amount = 1 };
+        torch.PlaceOnGround(MapType.Felucca, new Point3D(1010, 1000, 0));
+        _items.Add([torch]);
+        _scripts.Scripted.Add("torch");
+        _scripts.Result = ScriptResult.Completed([true]);
+        await StartAsync(Aria);
+
+        Assert.True(await UseFromAfarAsync(torch.Id));
+
+        Assert.Equal(["0x40000010 on_use 2"], _scripts.Calls);
+        Assert.DoesNotContain(_sender.Sent, packet => packet is LocalizedMessagePacket);
+    }
+
+    [Fact]
+    public async Task UseFromAfar_AContainerOnTheGroundFarAway_Opens()
+    {
+        var (chest, ruby) = GroundChest(1011);
+        await StartAsync(Aria);
+
+        Assert.True(await UseFromAfarAsync(chest.Id));
+
+        Assert.Equal(chest.Id, Assert.IsType<DisplayContainerPacket>(_sender.Sent[0]).Container);
+        Assert.Equal([ruby.Id], ((ContainerContentPacket)_sender.Sent[1]).Items.Select(item => item.Serial));
+    }
+
+    [Fact]
+    public async Task UseFromAfar_AnItemThatIsNeitherScriptedNorAContainer_IsRefused()
+    {
+        var stone = new ItemEntity { Id = new(0x40000012), TemplateId = "stone", ItemId = 0x1363, Amount = 1 };
+        stone.PlaceOnGround(MapType.Felucca, new Point3D(1005, 1000, 0));
+        _items.Add([stone]);
+        await StartAsync(Aria);
+
+        Assert.False(await UseFromAfarAsync(stone.Id));
+        Assert.Empty(_scripts.Calls);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task UseFromAfar_ScriptedItemWithNoOnUse_OrOneAnotherMobileCarries_IsRefused()
+    {
+        var torch = new ItemEntity { Id = new(0x40000010), TemplateId = "torch", ItemId = 0x0F64, Amount = 1 };
+        torch.PlaceOnGround(MapType.Felucca, new Point3D(1005, 1000, 0));
+        _items.Add([torch]);
+        _scripts.Scripted.Add("torch");
+        _scripts.Scripted.Add("other_backpack");
+        _scripts.NoFunctions.Add("on_use");
+        await StartAsync(Aria);
+
+        Assert.False(await UseFromAfarAsync(torch.Id));
+        Assert.False(await UseFromAfarAsync(_otherBackpack.Id));
+        Assert.Empty(_scripts.Calls);
+    }
+
+    [Fact]
     public async Task Handle_ABagInsideAContainerOnTheGround_Opens()
     {
         var (chest, ruby) = GroundChest(1001);
@@ -706,6 +763,22 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
     private Task UseAsync(Serial target)
     {
+        var handler = Handler();
+
+        return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
+    }
+
+    private async Task<bool> UseFromAfarAsync(Serial target)
+    {
+        var handler = Handler();
+        var used = false;
+        await _fixture.ExecuteOnLoopAsync(() => used = handler.UseFromAfar(_session, target));
+
+        return used;
+    }
+
+    private UseRequestPacketHandler Handler()
+    {
         var layouts = new ContainerLayoutService(
             new StubDataLoaderService().With(
                 new ContainerContent { Name = "backpack", Gump = 0x003C, Items = [BackpackGraphic], Default = true },
@@ -717,7 +790,8 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             new BodyContent { Body = new(401), Type = BodyType.Human },
             new BodyContent { Body = new(17), Type = BodyType.Monster }
         );
-        var handler = new UseRequestPacketHandler(
+
+        return new UseRequestPacketHandler(
             _items,
             _mobiles,
             bodies,
@@ -734,8 +808,6 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             _skillScripts,
             mounts: _mounts
         );
-
-        return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
     }
 
     // The classic bands this test needs, as titles.toml writes them: the rows from 10000 fame already say Lord or Lady.

@@ -57,6 +57,11 @@ public sealed class ItemScriptService : IItemScriptService, IMoongateStartupServ
         return ScriptOf(item) is not null;
     }
 
+    public bool Has(ItemEntity item, string function)
+    {
+        return _running && ScriptOf(item) is { } script && _engine.HasMember(script, function);
+    }
+
     public ScriptResult Run(ItemEntity item, string function, params object?[] args)
     {
         if (!_running || ScriptOf(item) is not { } script)

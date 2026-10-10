@@ -24,6 +24,8 @@ public sealed class SpellModule
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
     private readonly ISessionService _sessions;
+    // Lazy: the use handler runs the item scripts, whose engine builds this module.
+    private readonly Lazy<IUseService>? _uses;
 
     public SpellModule(
         ISpellCatalogService catalog,
@@ -31,9 +33,11 @@ public sealed class SpellModule
         Lazy<ISpellCastService> casts,
         IMobileService mobiles,
         IItemService items,
-        ISessionService sessions
+        ISessionService sessions,
+        Lazy<IUseService>? uses = null
     )
     {
+        _uses = uses;
         _catalog = catalog;
         _books = books;
         _casts = casts;
@@ -219,6 +223,35 @@ public sealed class SpellModule
         _casts.Value.Cancel(who);
 
         return true;
+    }
+
+    /// <summary>
+    ///     Whether an item can be used from afar, as Telekinesis asks; <c>spell.can_use_from_afar(user, item)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether the player could use the item from afar, as the Telekinesis spell does: it has an on_use in its script, or is a container the player carries or that lies on the ground. False for a player or an item that is none, an NPC, or an item another mobile carries."
+    )]
+    public bool CanUseFromAfar(long player, long item)
+    {
+        return _uses is not null && TryMobile(player, out var who) && TryItem(item, out var found) &&
+               _uses.Value.CanUseFromAfar(who, found);
+    }
+
+    /// <summary>
+    ///     Uses an item for a player from any distance; <c>spell.use_from_afar(user, door)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Uses the item for the player as a double click would, but from any distance and with no reach check: the on_use of its script runs, or a container is shown open. True when something was done; false for a player or an item that is none, an NPC (it has no client to show a container to), or an item that cannot be used from afar."
+    )]
+    public bool UseFromAfar(long player, long item)
+    {
+        return _uses is not null &&
+               TryMobile(player, out var who) &&
+               _sessions.TryGetByCharacterId(who.Id, out var session) &&
+               TryItem(item, out var found) &&
+               _uses.Value.UseFromAfar(session, found.Id);
     }
 
     private bool TrySpell(object spellRef, out SpellDefinition spell)

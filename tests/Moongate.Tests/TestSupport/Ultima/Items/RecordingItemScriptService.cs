@@ -34,6 +34,16 @@ public sealed class RecordingItemScriptService : IItemScriptService
         return Scripted.Contains(item.TemplateId);
     }
 
+    public bool Has(ItemEntity item, string function)
+    {
+        return HasScript(item) && !NoFunctions.Contains(function);
+    }
+
+    /// <summary>
+    ///     The functions a scripted item does not have, as <see cref="Has" /> answers.
+    /// </summary>
+    public HashSet<string> NoFunctions { get; } = [];
+
     public ScriptResult Run(ItemEntity item, string function, params object?[] args)
     {
         if (!HasScript(item))
