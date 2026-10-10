@@ -64,6 +64,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
     private readonly CombatConfig _config = new();
     private readonly ScriptedRandom _random = new();
     private readonly SettableClock _clock = new();
+    private ParalysisService _paralysis = null!;
 
     private BroadcastFixture _fixture = null!;
     private MobileEntity _aria = null!;
@@ -86,6 +87,7 @@ public sealed class CombatServiceTests : IAsyncLifetime
         };
         _orc.Skills.Add(new MobileSkill { Skill = SkillType.Tactics, Base = 500 });
         _fixture.Mobiles.EnterWorld(_orc);
+        _paralysis = new(_state, _timers, _clock);
         _combat = new(
             _fixture.Mobiles,
             _state,
@@ -122,7 +124,8 @@ public sealed class CombatServiceTests : IAsyncLifetime
             _ammo,
             _blood,
             _mounts,
-            _casts
+            _casts,
+            _paralysis
         );
     }
 
@@ -236,6 +239,48 @@ public sealed class CombatServiceTests : IAsyncLifetime
         // A blow from afar: no war mode, and the one who harms fights no one for it.
         Assert.DoesNotContain("war 2 True", _state.Flags);
         Assert.Null(_combat.TargetOf(_aria));
+    }
+
+    [Fact]
+    public void Harm_FreesAParalyzedTarget_ButADamageOfNothingDoesNot()
+    {
+        _paralysis.Paralyze(_orc, TimeSpan.FromSeconds(20));
+
+        _combat.Harm(_aria, _orc, 0);
+
+        Assert.True(_orc.Frozen);
+
+        _combat.Harm(_aria, _orc, 5);
+
+        Assert.False(_orc.Frozen);
+        Assert.False(_paralysis.IsParalyzed(_orc));
+    }
+
+    [Fact]
+    public void Aggress_OfAParalyzedTarget_KeepsItFrozen_ItIsNoDamage()
+    {
+        _paralysis.Paralyze(_orc, TimeSpan.FromSeconds(20));
+
+        Assert.True(_combat.Aggress(_aria, _orc));
+
+        Assert.True(_orc.Frozen);
+        Assert.True(_paralysis.IsParalyzed(_orc));
+    }
+
+    [Fact]
+    public void AParalyzedFighter_DoesNotSwing_UntilItIsFreed()
+    {
+        _combat.Attack(_orc, _aria);
+        _paralysis.Paralyze(_orc, TimeSpan.FromSeconds(20));
+
+        Tick();
+
+        Assert.Equal(30, _aria.Hits);
+
+        _paralysis.Release(_orc);
+        Tick();
+
+        Assert.True(_aria.Hits < 30);
     }
 
     [Fact]

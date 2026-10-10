@@ -28,8 +28,9 @@
 --                                      on the target, as data/spells.toml says
 --   magic.curse(caster, target, info, stat)   the whole of a stat curse such as
 --                                      Clumsy: the caster aggresses the target,
---                                      the target's own cast is disturbed, the
---                                      stat is lowered and the effect is shown;
+--                                      the target's own cast is disturbed, its
+--                                      paralysis ended, the stat is lowered and
+--                                      the effect is shown;
 --                                      nothing at all when the target cannot be
 --                                      harmed (combat.aggress is false)
 --   magic.curse_all(caster, target, info)   the same for the three stats at once,
@@ -314,8 +315,9 @@ function magic.curse(caster, target, info, stat)
         return
     end
 
-    -- A curse may ruin the spell its target is casting.
+    -- A curse may ruin the spell its target is casting, and frees a paralyzed target.
     spell.disturb(target)
+    mobile.release_paralysis(target)
     mobile.add_stat_curse(target, stat, magic.curse_offset(caster), magic.curse_seconds(caster))
     magic.show(info, target)
 end
@@ -343,6 +345,7 @@ function magic.curse_all(caster, target, info)
     end
 
     spell.disturb(target)
+    mobile.release_paralysis(target)
 
     for _, stat in ipairs(STATS) do
         mobile.add_stat_curse(target, stat, magic.curse_offset(caster), magic.curse_seconds(caster))

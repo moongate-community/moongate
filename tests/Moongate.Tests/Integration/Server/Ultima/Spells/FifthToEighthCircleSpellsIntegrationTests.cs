@@ -76,7 +76,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         "summon_creature", "dispel", "energy_bolt", "explosion", "invisibility", "mark", "mass_curse", "paralyze_field",
         "reveal", "chain_lightning", "energy_field", "flame_strike", "gate_travel", "mana_vampire", "mass_dispel",
         "meteor_swarm", "polymorph", "earthquake", "energy_vortex", "resurrection", "summon_air_elemental",
-        "summon_daemon", "curse", "summon_earth_elemental", "summon_fire_elemental", "summon_water_elemental"
+        "summon_daemon", "curse", "clumsy", "weaken", "feeblemind", "poison", "mana_drain", "summon_earth_elemental", "summon_fire_elemental", "summon_water_elemental"
     ];
 
     private static readonly string[] Summons =
@@ -1160,6 +1160,25 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         Assert.Equal(50, _bran.Mana);
         Assert.Equal(20, _aria.Mana);
         Assert.Contains(501783, ToldTo(_bran));
+    }
+
+    [Theory]
+    [InlineData("clumsy")]
+    [InlineData("weaken")]
+    [InlineData("feeblemind")]
+    [InlineData("curse")]
+    [InlineData("poison")]
+    [InlineData("mana_drain")]
+    public void ACurseAPoisonOrAManaDrain_FreesAParalyzedTarget(string key)
+    {
+        _paralysis.Paralyze(_bran, TimeSpan.FromSeconds(20));
+        Roll(pick: 0, roll: 0);
+
+        Cast(key);
+
+        Assert.Empty(_errors);
+        Assert.False(_bran.Frozen);
+        Assert.False(_paralysis.IsParalyzed(_bran));
     }
 
     [Fact]

@@ -98,6 +98,7 @@ public sealed class CombatService : ICombatService
     private readonly IBloodService? _blood;
     private readonly IMountService? _mounts;
     private readonly ISpellCastService? _casts;
+    private readonly IParalysisService? _paralysis;
     private string? _timerId;
 
     public CombatService(
@@ -124,9 +125,11 @@ public sealed class CombatService : ICombatService
         IAmmoService? ammo = null,
         IBloodService? blood = null,
         IMountService? mounts = null,
-        ISpellCastService? casts = null
+        ISpellCastService? casts = null,
+        IParalysisService? paralysis = null
     )
     {
+        _paralysis = paralysis;
         _casts = casts;
         _mounts = mounts;
         _ammo = ammo;
@@ -447,7 +450,8 @@ public sealed class CombatService : ICombatService
             return;
         }
 
-        if (!InReach(attacker, target) || now < fighter.NextSwingAt)
+        // A frozen fighter keeps the fight but cannot swing: a paralyzed one is helpless until it is freed.
+        if (attacker.Frozen || !InReach(attacker, target) || now < fighter.NextSwingAt)
         {
             return;
         }
@@ -677,6 +681,9 @@ public sealed class CombatService : ICombatService
         if (damage > 0)
         {
             _blood?.Splash(target);
+
+            // Any damage breaks a paralysis, as it did in the classic game.
+            _paralysis?.Release(target);
         }
 
         if (attacker is not null)
