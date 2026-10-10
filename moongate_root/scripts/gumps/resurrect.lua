@@ -7,7 +7,9 @@
 --   ModernUO's ResurrectGump does, with the sound and the sparkles of a
 --   resurrection, and it costs a tenth of its fame. A player with five short-term
 --   murders or more loses skills and stats too, as ModernUO's TryGiveStatLoss. The ghost may have walked
---   away, or been raised by someone else, while the gump was open.
+--   away, or been raised by someone else, while the gump was open; and the place is asked again at the
+--   answer: where a mobile or something impassable fills it now, the ghost is told "Thou can not be
+--   resurrected there!" (502391) and stays a ghost.
 --
 -- Functions:
 --   accept(player, response, args)  the Continue button; args.ankh is the ankh,
@@ -40,6 +42,9 @@ local rounding = 1e-6
 
 -- Client text: "That is too far away."
 local too_far_cliloc = 500446
+
+-- Client text: "Thou can not be resurrected there!"
+local cannot_there_cliloc = 502391
 
 local sound = 0x214
 
@@ -114,6 +119,16 @@ function resurrect.accept(player, response, args)
 
     if not in_reach(player, args) then
         mobile.message_cliloc(player, too_far_cliloc)
+
+        return
+    end
+
+    -- The place may have been filled since the question was asked: a ghost does not come back inside a wall or another
+    -- mobile.
+    local at = mobile.location(player)
+
+    if at and not world.can_fit(at.map, at.x, at.y, at.z, player, false) then
+        mobile.message_cliloc(player, cannot_there_cliloc)
 
         return
     end

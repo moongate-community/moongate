@@ -113,6 +113,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
     private readonly RecordingUseService _uses = new();
     private readonly RecordingGumpService _gumps = new();
     private readonly StubNpcService _npcService = new();
+    private readonly StubDeathService _death = new() { Kills = true };
     private readonly ItemEntity _backpack = new()
         { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
 
@@ -262,7 +263,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<IItemTimerService>(new LateItemTimerService(() => _itemTimers));
         _container.RegisterInstance<ILineOfSightService>(_sight);
         _container.RegisterInstance<IMovementService>(_movement);
-        _container.RegisterInstance<IDeathService>(new StubDeathService());
+        _container.RegisterInstance<IDeathService>(_death);
         _container.RegisterInstance<IEffectService>(_effects);
         _container.RegisterInstance<ICombatService>(_combat);
         _container.RegisterInstance<IStatBonusService>(_bonuses);
@@ -303,6 +304,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<GumpModule>();
         _container.AddScriptModule<DiceModule>();
         _container.RegisterScriptEnum<BodyType>();
+        _container.RegisterScriptEnum<Moongate.Server.Ultima.Types.Effects.EffectGraphicType>();
         _container.RegisterScriptEnum<MonsterAnimationType>();
         _container.RegisterScriptEnum<Moongate.Server.Ultima.Types.Speech.SpeechKeywordType>();
         _container.RegisterScriptEnum<PetObeyResultType>();
@@ -1371,6 +1373,32 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         Assert.Contains(_effects.On, shown => shown.Target == _bran.Id && shown.Options.Graphic == 0x376A);
     }
 
+    [Fact]
+    public void ResurrectionThatTheGhostAccepts_BringsItBack_AtAPlaceWhereItFits()
+    {
+        _bran.Body = 0x0192;
+        Place(_bran, new Point3D(11, 10, 0));
+
+        AcceptResurrection();
+
+        Assert.Empty(_errors);
+        Assert.Equal([_bran], _death.PlayersRaised);
+    }
+
+    [Fact]
+    public void ResurrectionThatTheGhostAccepts_WhenSomethingFillsItsPlaceMeanwhile_IsRefused()
+    {
+        _bran.Body = 0x0192;
+        Place(_bran, new Point3D(11, 10, 0));
+        Ground("wall", 0x0692, new Point3D(11, 10, 0));
+
+        AcceptResurrection();
+
+        Assert.Empty(_errors);
+        Assert.Empty(_death.PlayersRaised);
+        Assert.Contains(502391, ToldTo(_bran));
+    }
+
     [Theory]
     [InlineData(0, 501041)]
     [InlineData(1, 501042)]
@@ -1651,6 +1679,16 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
     }
 
     // Moves a mobile and tells the sectors, so that the places around it list it.
+    // The ghost of Bran answers yes to the question of the spell of Aria.
+    private void AcceptResurrection()
+    {
+        _engine.LoadFile("gumps/resurrect.lua");
+        var args = new Lua.LuaTable();
+        args["caster"] = (long)_aria.Id.Value;
+        _engine.CallMember("gumps/resurrect.lua", "resurrect", "accept", (long)_bran.Id.Value, 1L, args);
+        Drain();
+    }
+
     private void Place(MobileEntity who, Point3D place)
     {
         who.Location = place;

@@ -130,6 +130,12 @@ public sealed class HealerScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<TimeProvider>(time);
         _container.AddScriptModule<NpcModule>();
         _container.AddScriptModule<MobileModule>();
+        // The answer of the ghost asks whether it fits where it lies.
+        _container.RegisterInstance<IClockService>(new Moongate.Tests.TestSupport.Ultima.World.StubClockService());
+        _container.RegisterInstance<IRegionService>(
+            new RegionService(new StubDataLoaderService().With<Moongate.Server.Ultima.Data.Regions.RegionContent>())
+        );
+        _container.AddScriptModule<WorldModule>();
         _container.AddScriptModule<EffectModule>();
         _container.AddScriptModule<GumpModule>();
         _container.RegisterInstance<IVendorService>(_vendors);
