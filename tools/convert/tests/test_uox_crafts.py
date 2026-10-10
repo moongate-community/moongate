@@ -583,3 +583,145 @@ def test_tinkering_fixes_what_uox3_writes_wrong(tmp_path):
     assert (spoon["name"], other_spoon["name"]) == ("Spoon", "Spoon 2")
     scales = tinkering["group"][1]["recipe"][0]
     assert (scales["skill_min"], scales["skill_max"]) == (63.8, 114.0)
+
+
+COOKING = """
+[SUBMENU 750]
+{
+MENU=2001
+MENU=2003
+}
+[MENUENTRY 2001]
+{
+NAME=Ingredients
+SUBMENU=2001
+}
+[MENUENTRY 2003]
+{
+NAME=Baking
+SUBMENU=2003
+}
+[SUBMENU 2001]
+{
+ITEM=1501
+ITEM=1503
+}
+[SUBMENU 2003]
+{
+ITEM=1605
+ITEM=1606
+ITEM=1651
+}
+[ITEM 1501]
+{
+NAME=dough
+RESOURCE=FLOUR 1
+SKILL=13 0 1000
+ADDITEM=0x103d
+}
+[ITEM 1503]
+{
+NAME=cake mix
+RESOURCE=FLOUR 1
+RESOURCE=0x103d 1 0x96
+SKILL=13 0 1000
+ADDITEM=cake_mix
+}
+[ITEM 1605]
+{
+NAME=baked meat pie
+RESOURCE=0x1042
+SKILL=13 0 1000
+ADDITEM=baked_meat_pie
+}
+[ITEM 1651]
+{
+NAME=chicken leg
+RESOURCE=0x1607
+SKILL=13 0 1000
+ADDITEM=0x1608
+}
+[ITEM 1606]
+{
+NAME=sausage pizza
+RESOURCE=0x1042 1 0x0
+SKILL=13 0 1000
+ADDITEM=sausage_pizza
+}
+"""
+
+COOKING_ITEMS = """
+[[item]]
+id = "0x1039_sack_of_flour"
+[[item]]
+id = "0x1045_sack_of_flour"
+[[item]]
+id = "0x103a_open_sack_of_flour"
+[[item]]
+id = "0x103d_dough"
+[[item]]
+id = "sweet_dough"
+[[item]]
+id = "cake_mix"
+[[item]]
+id = "0x1042_unbaked_pie"
+[[item]]
+id = "unbaked_meat_pie"
+[[item]]
+id = "uncooked_sausage_pizza"
+[[item]]
+id = "baked_meat_pie"
+[[item]]
+id = "sausage_pizza"
+[[item]]
+id = "0x1607_raw_chicken_leg"
+[[item]]
+id = "0x1608_chicken_leg"
+[[item]]
+id = "0x09f1_cut_of_raw_ribs"
+"""
+
+
+def test_cooking_takes_the_dough_or_pie_uox3_tells_apart_by_hue_and_more(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE FLOUR]\n{\nID=0x103a\n}\n[RESOURCE RAWMEAT]\n{\nID=0x09f1\nID=0x1607\n}\n")
+    (source / "cooking.dfn").write_text(COOKING)
+    (items / "all.toml").write_text(COOKING_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 0, error.getvalue()
+
+    cooking = tomllib.loads((destination / "cooking.toml").read_text())
+    assert (cooking["name"], cooking["skill"], cooking["sound"]) == ("Cooking", "cooking", 0x0057)
+    assert [group["name"] for group in cooking["group"]] == ["Ingredients", "Baking"]
+    dough, cake_mix = cooking["group"][0]["recipe"]
+    assert dough["item"] == "0x103d_dough"
+    # Sweet dough is dough of hue 0x96 in UOX3; Moongate has a template of its own.
+    assert cake_mix["resources"] == [{"resource": "flour", "amount": 1}, {"resource": "sweet_dough", "amount": 1}]
+    meat_pie, pizza, chicken_leg = cooking["group"][1]["recipe"]
+    # The raw chicken leg is in UOX3's list of raw meat: a chicken leg is not cooked from ribs.
+    assert chicken_leg["resources"] == [{"resource": "0x1607_raw_chicken_leg", "amount": 1}]
+
+    # UOX3 opens a closed sack of flour by a script; here a closed sack is flour as it is.
+    flour = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}["flour"]
+    assert flour == ["0x1039_sack_of_flour", "0x103a_open_sack_of_flour", "0x1045_sack_of_flour"]
+
+    # An unbaked pie is told apart by MORE, and a resource without an amount is one; UOX3 bakes the sausage pizza from the quiche: it takes the uncooked pizza.
+    assert meat_pie["resources"] == [{"resource": "unbaked_meat_pie", "amount": 1}]
+    assert pizza["resources"] == [{"resource": "uncooked_sausage_pizza", "amount": 1}]
+
+
+def test_a_resource_fix_naming_no_template_stops_the_conversion(tmp_path, monkeypatch):
+    monkeypatch.setitem(crafts.RESOURCE_FIXES, ("cooking", "sausage pizza", "0x1042"), "no_such_pizza")
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE FLOUR]\n{\nID=0x103a\n}\n[RESOURCE RAWMEAT]\n{\nID=0x09f1\nID=0x1607\n}\n")
+    (source / "cooking.dfn").write_text(COOKING)
+    (items / "all.toml").write_text(COOKING_ITEMS)
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 2
+    assert "no_such_pizza" in error.getvalue()

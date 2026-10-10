@@ -36,9 +36,10 @@
 --   marked one rare.
 --
 --   A craft may ask to stand near things (the table NEEDS): blacksmithing an
---   anvil and a forge within 2 tiles, checked when the attempt starts and at
---   its second stroke. Make last starts again the last recipe the
---   player started with that craft.
+--   anvil and a forge within 2 tiles, the baking of cooking an oven and its
+--   barbecue a fire, checked when the attempt starts and at its second
+--   stroke. Make last starts again the last recipe the player started with
+--   that craft.
 --
 -- Functions:
 --   crafting.open(user, tool, craft_id, notice)   opens the crafting gump
@@ -66,6 +67,7 @@
 
 local woods = require("common.woods")
 local smithy = require("common.smithy")
+local heat = require("common.heat")
 local metals = require("common.metals")
 
 local crafting = {}
@@ -93,6 +95,8 @@ local NO_METAL = 1044037      -- You do not have sufficient metal to make that.
 local NO_LEATHER = 1044463    -- You do not have sufficient leather to make that.
 local NO_BONE = 1049063       -- You do not have enough bones to make that.
 local NOT_AT_FORGE = 1044267  -- You must be near an anvil and a forge to smith items.
+local NOT_AT_FIRE = 1044487   -- You must be near a fire source to cook.
+local NOT_AT_OVEN = 1044493   -- You must be near an oven to bake that.
 local NO_IDEA_METAL = 1044268 -- You have no idea how to work this metal.
 
 -- How much better than sure a success must be to be exceptional, and the skill that marks it.
@@ -113,6 +117,8 @@ local NOTICES = {
     [NO_LEATHER] = "You do not have sufficient leather to make that.",
     [NO_BONE] = "You do not have enough bones to make that.",
     [NOT_AT_FORGE] = "You must be near an anvil and a forge to smith items.",
+    [NOT_AT_FIRE] = "You must be near a fire source to cook.",
+    [NOT_AT_OVEN] = "You must be near an oven to bake that.",
     [NO_IDEA_METAL] = "You have no idea how to work this metal.",
     [FAILED] = "You failed to create the item, and some of your materials are lost.",
     [NO_SKILL] = "You don't have the required skills to attempt this item.",
@@ -136,11 +142,22 @@ local MATERIALS = {
 -- What a craft asks to stand near, by its id: a test of the player, and the client text when it fails.
 local NEEDS = {
     blacksmithing = { test = smithy.at_anvil_and_forge, missing = NOT_AT_FORGE },
+    -- Cooking asks it of some groups only: the doughs are mixed anywhere.
+    cooking = {
+        groups = {
+            Baking = { test = heat.at_oven, missing = NOT_AT_OVEN },
+            Barbecue = { test = heat.at_fire, missing = NOT_AT_FIRE },
+        },
+    },
 }
 
--- The client text of what the player is not near for that craft; nil when nothing is missing.
-local function not_near(user, craft_id)
+-- The client text of what the player is not near for that craft and group; nil when nothing is missing.
+local function not_near(user, craft_id, group)
     local need = NEEDS[craft_id]
+
+    if need and need.groups then
+        need = need.groups[group]
+    end
 
     if need and not need.test(user) then
         return need.missing
@@ -429,7 +446,7 @@ function crafting.carries(user, tool)
 end
 
 -- The second stroke: the result.
-local function finish(user, tool, craft_id, craft, recipe, kind)
+local function finish(user, tool, craft_id, craft, group, recipe, kind)
     busy[user] = nil
     -- A stackable item (arrows, shafts) is plain: no quality and no mark, so every one of its colour stacks.
     local plain = item.is_stackable(recipe.item)
@@ -440,7 +457,7 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
         return
     end
 
-    local lacking = not_near(user, craft_id) or missing(user, recipe, kind)
+    local lacking = not_near(user, craft_id, group) or missing(user, recipe, kind)
 
     if lacking then
         mobile.message_cliloc(user, lacking)
@@ -591,7 +608,7 @@ function crafting.make(user, tool, craft_id, group, index)
         return
     end
 
-    local lacking = not_near(user, craft_id) or missing(user, recipe, kind)
+    local lacking = not_near(user, craft_id, craft.groups[group].name) or missing(user, recipe, kind)
 
     if lacking then
         mobile.message_cliloc(user, lacking)
@@ -607,7 +624,7 @@ function crafting.make(user, tool, craft_id, group, index)
     mobile.play_sound(user, craft.sound)
 
     timer.after(STROKE, function()
-        finish(user, tool, craft_id, craft, recipe, kind)
+        finish(user, tool, craft_id, craft, craft.groups[group].name, recipe, kind)
     end)
 end
 

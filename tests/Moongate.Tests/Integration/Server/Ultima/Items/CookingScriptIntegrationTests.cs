@@ -59,23 +59,22 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Integration.Server.Ultima.Items;
 
 /// <summary>
-///     The shipped <c>scripts/items/fletching_tool.lua</c> with the crafting engine: bows from boards, arrows from shafts and feathers.
+///     The shipped <c>scripts/items/cooking_tool.lua</c> with the crafting engine: cooking, baking at an oven and barbecue at a fire.
 /// </summary>
-public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
+public sealed class CookingScriptIntegrationTests : IAsyncLifetime
 {
     private const long Aria = 2;
 
-    private const int Weapons = 1;
-    private const int Arrows = 2;
-    private const int Shafts = 3;
-    private const int Bow = 1;
-    private const int Arrow = 1;
-    private const int Shaft = 1;
+    private const int Ingredients = 1;
+    private const int Preparation = 2;
+    private const int Baking = 3;
+    private const int Barbecue = 4;
 
+    private const int NotAtAnOven = 1044493;
+    private const int NotAtAFire = 1044487;
     private const int Created = 1044154;
-    private const int NoWood = 1044351;
     private const int NoComponents = 1044253;
-    private const int Sound = 0x0055;
+    private const int Sound = 0x0057;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -100,14 +99,15 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
 
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With<ItemTemplate>(
-            new ItemTemplate { Id = "0x1022_fletcher's_tools", ItemId = new Serial(0x1022), ScriptId = "fletching_tool" },
-            new ItemTemplate { Id = "0x1bd7_board", ItemId = new Serial(0x1BD7), Stackable = true },
-            new ItemTemplate { Id = "ash_board", ItemId = new Serial(0x1BD7), Stackable = true },
-            new ItemTemplate { Id = "oak_board", ItemId = new Serial(0x1BD7), Stackable = true },
-            new ItemTemplate { Id = "0x1bd4_shaft", ItemId = new Serial(0x1BD4), Stackable = true },
-            new ItemTemplate { Id = "0x1bd1_feather", ItemId = new Serial(0x1BD1), Stackable = true },
-            new ItemTemplate { Id = "0x0f3f_arrow", ItemId = new Serial(0x0F3F), Stackable = true },
-            new ItemTemplate { Id = "0x13b2", ItemId = new Serial(0x13B2) }
+            new ItemTemplate { Id = "0x097f_skillet", ItemId = new Serial(0x097F), ScriptId = "cooking_tool" },
+            new ItemTemplate { Id = "0x1045_sack_of_flour", ItemId = new Serial(0x1045), Stackable = true },
+            new ItemTemplate { Id = "0x0461_oven", ItemId = new Serial(0x0461) },
+            new ItemTemplate { Id = "0x09d0_apple", ItemId = new Serial(0x09D0), Stackable = true },
+            new ItemTemplate { Id = "unbaked_apple_pie", ItemId = new Serial(0x1042) },
+            new ItemTemplate { Id = "0x103d_dough", ItemId = new Serial(0x103D), Stackable = true },
+            new ItemTemplate { Id = "0x103b_bread_loaf", ItemId = new Serial(0x103B), Stackable = true },
+            new ItemTemplate { Id = "0x097a_raw_fish_steak", ItemId = new Serial(0x097A), Stackable = true },
+            new ItemTemplate { Id = "0x097b_fish_steak", ItemId = new Serial(0x097B), Stackable = true }
         )
     );
 
@@ -116,49 +116,71 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
             .With(
                 new CraftDefinition
                 {
-                    Id = "fletching", Name = "Bowcraft and Fletching", Skill = "bowcraft_fletching", Sound = Sound,
+                    Id = "cooking", Name = "Cooking", Skill = "cooking", Sound = Sound,
                     Group =
                     [
                         new()
                         {
-                            Name = "Weapons",
+                            Name = "Ingredients",
                             Recipe =
                             [
                                 new()
                                 {
-                                    Name = "Bow", Item = "0x13b2", SkillMin = 30, SkillMax = 70,
-                                    Resources = [new() { Resource = "wood", Amount = 7 }]
+                                    Name = "Dough", Item = "0x103d_dough", SkillMin = 0, SkillMax = 100,
+                                    Resources = [new() { Resource = "flour", Amount = 1 }]
                                 }
                             ]
                         },
                         new()
                         {
-                            Name = "Arrows",
+                            Name = "Preparation",
                             Recipe =
                             [
                                 new()
                                 {
-                                    Name = "Arrow", Item = "0x0f3f_arrow", SkillMin = 0, SkillMax = 40,
-                                    Resources = [new() { Resource = "0x1bd4_shaft", Amount = 1 }, new() { Resource = "0x1bd1_feather", Amount = 1 }]
+                                    Name = "Unbaked apple pie", Item = "unbaked_apple_pie", SkillMin = 0, SkillMax = 100,
+                                    Resources = [new() { Resource = "0x103d_dough", Amount = 1 }, new() { Resource = "0x09d0_apple", Amount = 1 }]
                                 }
                             ]
                         },
                         new()
                         {
-                            Name = "Shafts",
+                            Name = "Baking",
                             Recipe =
                             [
                                 new()
                                 {
-                                    Name = "Shaft", Item = "0x1bd4_shaft", SkillMin = 0, SkillMax = 40,
-                                    Resources = [new() { Resource = "wood", Amount = 1 }]
+                                    Name = "Bread loaf", Item = "0x103b_bread_loaf", SkillMin = 0, SkillMax = 100,
+                                    Resources = [new() { Resource = "0x103d_dough", Amount = 1 }]
+                                }
+                            ]
+                        },
+                        new()
+                        {
+                            Name = "Barbecue",
+                            Recipe =
+                            [
+                                new()
+                                {
+                                    Name = "Fish steak", Item = "0x097b_fish_steak", SkillMin = 0, SkillMax = 100,
+                                    Resources = [new() { Resource = "0x097a_raw_fish_steak", Amount = 1 }]
                                 }
                             ]
                         }
                     ]
                 }
             )
-            .With(new CraftResourceList { Id = "wood", Templates = ["0x1bd7_board"] })
+            .With(
+                new CraftResourceList
+                {
+                    Id = "flour",
+                    Templates =
+                    [
+                        "0x0a1e_bowl_of_flour", "0x1039_sack_of_flour", "0x103a_open_sack_of_flour", "0x1045_sack_of_flour",
+                        "0x1046_open_sack_of_flour"
+                    ]
+                }
+            )
     );
 
     private readonly ItemEntity _backpack = new()
@@ -168,7 +190,7 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
         { Id = new Serial(0x40000003), TemplateId = "backpack", ItemId = 0x0E7C, Amount = 1 };
 
     private readonly ItemEntity _tools = new()
-        { Id = new Serial(0x40000002), TemplateId = "0x1022_fletcher's_tools", ItemId = 0x1022, Amount = 1 };
+        { Id = new Serial(0x40000002), TemplateId = "0x097f_skillet", ItemId = 0x097F, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
     private LuaScriptEngineService _engine = null!;
@@ -206,8 +228,8 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
         // The gump is drawn by another test: here opening it only says so, with the notice it would show.
         _scripts.Write(
-            "items/fletching_tool.lua",
-            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "fletching_tool.lua")) +
+            "items/cooking_tool.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "cooking_tool.lua")) +
             """
 
             local crafting_for_tests = require("common.crafting")
@@ -216,26 +238,26 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
                 mobile.message(user, "opened " .. tostring(notice or ""))
             end
 
-            function fletching_tool.make(serial, user, group, recipe)
-                crafting_for_tests.make(user, serial, "fletching", group, recipe)
+            function cooking_tool.make(serial, user, group, recipe)
+                crafting_for_tests.make(user, serial, "cooking", group, recipe)
             end
 
-            function fletching_tool.pick(serial, user, kind, craft_id)
-                crafting_for_tests.set_kind(user, kind, craft_id or "fletching")
+            function cooking_tool.pick(serial, user, kind, craft_id)
+                crafting_for_tests.set_kind(user, kind, craft_id or "cooking")
             end
 
-            function fletching_tool.last(serial, user)
-                crafting_for_tests.make_last(user, serial, "fletching")
+            function cooking_tool.last(serial, user)
+                crafting_for_tests.make_last(user, serial, "cooking")
             end
 
-            function fletching_tool.make_in(serial, user, craft_id, group, recipe)
+            function cooking_tool.make_in(serial, user, craft_id, group, recipe)
                 crafting_for_tests.make(user, serial, craft_id, group, recipe)
             end
 
             -- The rolls of the script are the test's: the ones queued, then a high one, which is no exceptional item.
             crafting_for_tests.roll = function() return 0.999 end
 
-            function fletching_tool.set_rolls(serial, ...)
+            function cooking_tool.set_rolls(serial, ...)
                 local rolls = { ... }
                 crafting_for_tests.roll = function() return table.remove(rolls, 1) or 0.999 end
             end
@@ -252,7 +274,7 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
             HookInterval = 100, WriteDefinitions = false
         };
         var data = new StubDataLoaderService().With(
-            new SkillContent { Id = SkillType.BowcraftFletching, GainFactor = 1.0, Delay = 1 }
+            new SkillContent { Id = SkillType.Cooking, GainFactor = 1.0, Delay = 1 }
         );
 
         _container.RegisterMoongateEventBus();
@@ -326,7 +348,7 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void TheFletchersTools_InTheBackpack_OpenTheGumpOfBowcraft()
+    public void TheSkillet_InTheBackpack_OpensTheGumpOfCooking()
     {
         Run(_tools);
 
@@ -335,82 +357,100 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void ABow_IsMadeFromBoards_AndAnAshBowIsAsh()
+    public void Dough_IsMadeAnywhere_FromTheClosedSackOfTheStartingItems()
     {
-        Assert.Empty(Told());
-        Call("make", Aria, Weapons, Bow);
-        Assert.Equal([NoWood], Told());
+        Carry("0x1045_sack_of_flour", 0x1045, 1);
 
-        var boards = Carry("0x1bd7_board", 0x1BD7, 7);
-        Call("make", Aria, Weapons, Bow);
+        Call("make", Aria, Ingredients, 1);
         Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Single(Made("0x13b2"));
-        Assert.Equal(0, Left(boards));
-
-        var ash = Carry("ash_board", 0x1BD7, 7);
-        ash.Hue = new Hue(0x4A7);
-        Call("pick", Aria, "ash");
-        Call("make", Aria, Weapons, Bow);
-        Fire(1.25);
-
-        Assert.Empty(_errors);
-        Assert.Equal(new Hue(0x4A7), Made("0x13b2").Last().Hue);
+        Assert.Single(Made("0x103d_dough"));
     }
 
     [Fact]
-    public void AnArrow_TakesAShaftAndAFeather()
+    public void Bread_IsBakedOnlyAtAnOven()
     {
-        Carry("0x1bd4_shaft", 0x1BD4, 1);
-        Call("make", Aria, Arrows, Arrow);
+        var dough = Carry("0x103d_dough", 0x103D, 2);
 
-        Assert.Equal([NoComponents], Told());
+        Call("make", Aria, Baking, 1);
 
-        var feathers = Carry("0x1bd1_feather", 0x1BD1, 3);
-        Call("make", Aria, Arrows, Arrow);
+        Assert.Equal([NotAtAnOven], Told());
+        Assert.Equal(2, Left(dough));
+
+        // A campfire cooks, it does not bake.
+        _map.AddStatic(11, 10, 0x0DE3, 0);
+        Call("make", Aria, Baking, 1);
+        Assert.Equal([NotAtAnOven, NotAtAnOven], Told());
+
+        _map.AddStatic(10, 11, 0x0461, 0);
+        Call("make", Aria, Baking, 1);
         Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Single(Made("0x0f3f_arrow"));
-        Assert.Equal(2, Left(feathers));
+        Assert.Single(Made("0x103b_bread_loaf"));
     }
 
     [Fact]
-    public void Arrows_AreNeverExceptional_JoinOneStack_AndDoNotWearTheTool()
+    public void AFishSteak_IsCookedAtAFire()
     {
-        Carry("0x1bd4_shaft", 0x1BD4, 2);
-        Carry("0x1bd1_feather", 0x1BD1, 2);
-        // Rolls that would make anything else exceptional, at the skill that marks it.
-        Rolls(0.0, 0.0, 0.0, 0.0);
+        Carry("0x097a_raw_fish_steak", 0x097A, 1);
 
-        Call("make", Aria, Arrows, Arrow);
-        Fire(1.25);
-        Call("make", Aria, Arrows, Arrow);
+        Call("make", Aria, Barbecue, 1);
+
+        Assert.Equal([NotAtAFire], Told());
+
+        _map.AddStatic(11, 11, 0x0DE3, 0);
+        Call("make", Aria, Barbecue, 1);
         Fire(1.25);
 
         Assert.Empty(_errors);
-        var arrows = Assert.Single(Made("0x0f3f_arrow"));
-        Assert.Equal(2, arrows.Amount);
-        Assert.False(arrows.TryGetProp<int>("quality", out _));
-        Assert.False(arrows.TryGetProp<long>("crafter_id", out _));
-        Assert.True(_tools.TryGetProp<int>("uses_remaining", out var left));
-        Assert.Equal(50, left);
+        Assert.Single(Made("0x097b_fish_steak"));
     }
 
     [Fact]
-    public void AShaft_FromOak_IsOak_AndStacksOnlyWithOakShafts()
+    public void AnApplePie_IsPreparedAnywhere()
     {
-        var oak = Carry("oak_board", 0x1BD7, 1);
-        oak.Hue = new Hue(0x7DA);
-        Call("pick", Aria, "oak");
+        Carry("0x103d_dough", 0x103D, 1);
+        Carry("0x09d0_apple", 0x09D0, 1);
 
-        Call("make", Aria, Shafts, Shaft);
+        Call("make", Aria, Preparation, 1);
         Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Equal(0, Left(oak));
-        Assert.Equal(new Hue(0x7DA), Assert.Single(Made("0x1bd4_shaft")).Hue);
+        Assert.Single(Made("unbaked_apple_pie"));
+    }
+
+    [Fact]
+    public void TheOvenGoneBeforeTheSecondStroke_BakesNothing()
+    {
+        var oven = Ground("0x0461_oven", 0x0461, 11, 10);
+        var dough = Carry("0x103d_dough", 0x103D, 1);
+
+        Call("make", Aria, Baking, 1);
+        _items.Remove([oven.Id]);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.Equal([NotAtAnOven], Told());
+        Assert.Equal(1, Left(dough));
+        Assert.Empty(Made("0x103b_bread_loaf"));
+    }
+
+    [Fact]
+    public void MakeLast_OfBread_AwayFromTheOven_IsRefused()
+    {
+        var oven = Ground("0x0461_oven", 0x0461, 11, 10);
+        Carry("0x103d_dough", 0x103D, 2);
+        Call("make", Aria, Baking, 1);
+        Fire(1.25);
+        _items.Remove([oven.Id]);
+
+        Call("last", Aria);
+
+        Assert.Empty(_errors);
+        Assert.Equal(NotAtAnOven, Told().Last());
+        Assert.Single(Made("0x103b_bread_loaf"));
     }
 
     public async Task DisposeAsync()
@@ -422,10 +462,10 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
 
     private void Skill(int tenths)
     {
-        _aria.Skills.RemoveAll(known => known.Skill == SkillType.BowcraftFletching);
-        _aria.Skills.Add(new MobileSkill { Skill = SkillType.BowcraftFletching, Base = tenths });
-        _state.Skills.RemoveAll(known => known.Skill == SkillType.BowcraftFletching);
-        _state.Skills.Add(new MobileSkill { Skill = SkillType.BowcraftFletching, Base = tenths });
+        _aria.Skills.RemoveAll(known => known.Skill == SkillType.Cooking);
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Cooking, Base = tenths });
+        _state.Skills.RemoveAll(known => known.Skill == SkillType.Cooking);
+        _state.Skills.Add(new MobileSkill { Skill = SkillType.Cooking, Base = tenths });
     }
 
     private void Make(int recipe)
@@ -487,6 +527,15 @@ public sealed class FletchingScriptIntegrationTests : IAsyncLifetime
         var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = amount };
         item.PutInContainer(_backpack.Id, new Point2D(70, 70));
         _items.Add([item]);
+
+        return item;
+    }
+
+    private ItemEntity Ground(string template, int graphic, int x, int y)
+    {
+        var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = 1 };
+        _items.Add([item]);
+        _items.PlaceOnGround(item, _aria.Map, new Point3D(x, y, 0));
 
         return item;
     }

@@ -54,7 +54,7 @@ templates = ["0x0e42_wooden_chest", "0x0e43_wooden_chest"]
 
 [[resource]]
 id = "flour"
-templates = ["0x0a1e_bowl_of_flour", "0x103a_open_sack_of_flour", "0x1046_open_sack_of_flour"]
+templates = ["0x0a1e_bowl_of_flour", "0x1039_sack_of_flour", "0x103a_open_sack_of_flour", "0x1045_sack_of_flour", "0x1046_open_sack_of_flour"]
 
 [[resource]]
 id = "water"

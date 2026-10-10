@@ -1,9 +1,10 @@
 # Crafts
 
 `data/crafts` holds the crafts players make things with, one file a craft (`carpentry.toml`, `blacksmithing.toml`,
-`tailoring.toml`, `tinkering.toml` and `fletching.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
+`tailoring.toml`, `tinkering.toml`, `fletching.toml` and `cooking.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
 [Blacksmithing](../blacksmithing.md). What a craft must stand near, such as the anvil and the forge of blacksmithing, is not data:
-it is the table `NEEDS` of `scripts/common/crafting.lua`.
+it is the table `NEEDS` of `scripts/common/crafting.lua`, which may name it for some groups only (the oven of Baking, the
+fire of Barbecue).
 
 ## A craft
 

@@ -259,6 +259,12 @@ from the backpack it opens the crafting gump of tinkering (see [Tinkering](../ti
 backpack it opens the crafting gump of bowcraft and fletching (see [Bowcraft and fletching](../fletching.md)), with the
 rules of `crafting.lua` and the wood picked.
 
+## cooking_tool.lua
+
+`scripts/items/cooking_tool.lua` is the script of the skillets, flour sifters and rolling pins
+(`script_id = "cooking_tool"`): from the backpack it opens the crafting gump of cooking (see [Cooking](../cooking.md)),
+with the rules of `crafting.lua` and the ovens and fires of `scripts/common/heat.lua`.
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,
