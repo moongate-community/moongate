@@ -15,10 +15,11 @@ from .textutil import read_lines, trim
 CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "carpentry": ("carpentry", "Carpentry", "carpentry", 19),
     "smithing": ("blacksmithing", "Blacksmithing", "blacksmithy", 1),
+    "tailoring": ("tailoring", "Tailoring", "tailoring", 39),
 }
 
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A}
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248}
 
 # The groups that make deeds, which mean nothing until houses exist.
 SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons"}

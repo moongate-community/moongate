@@ -29,6 +29,8 @@ ORE_GRAPHICS = (0x19B7, 0x19B8, 0x19B9, 0x19BA)
 CARPENTRY_TOOL_GRAPHICS = frozenset(
     {0x1026, 0x1027, 0x1028, 0x1029, 0x102C, 0x102D, 0x1030, 0x1031, 0x1032, 0x1033, 0x1034, 0x1035, 0x10E4, 0x10E5, 0x10E6}
 )
+# What a tailor sews with: the sewing kit, not the scissors.
+TAILORING_TOOL_GRAPHICS = frozenset({0x0F9D})
 # What a smith forges with at an anvil: the smith's hammers, the sledge hammers and the tongs.
 SMITHING_TOOL_GRAPHICS = frozenset({0x13E3, 0x13E4, 0x0FB4, 0x0FB5, 0x0FBB, 0x0FBC})
 TWO_HANDED = 2
@@ -221,6 +223,9 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
         # The prospector's tool shares the sledge hammer's graphic but digs: no forging with it.
         # What UOX3's crafting tool script opens blacksmithing with: scripts/items/smithing_tool.lua.
         template.script_id = "smithing_tool"
+    elif graphic in TAILORING_TOOL_GRAPHICS:
+        # What UOX3's crafting tool script opens tailoring with: scripts/items/tailoring_tool.lua.
+        template.script_id = "tailoring_tool"
     elif graphic in CARPENTRY_TOOL_GRAPHICS:
         # What UOX3's crafting tool script opens carpentry with: scripts/items/carpentry_tool.lua.
         template.script_id = "carpentry_tool"
