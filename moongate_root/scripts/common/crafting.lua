@@ -38,7 +38,8 @@
 --   A craft may ask to stand near things (the table NEEDS): blacksmithing an
 --   anvil and a forge within 2 tiles, the baking of cooking an oven and its
 --   barbecue a fire, checked when the attempt starts and at its second
---   stroke. Make last starts again the last recipe the player started with
+--   stroke. A craft may also finish what it made (the table MADE): a map is
+--   drawn where the cartographer stands. Make last starts again the last recipe the player started with
 --   that craft.
 --
 -- Functions:
@@ -137,6 +138,12 @@ local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH, metal = NO_METAL, leather = 
 local MATERIALS = {
     wood = { module = woods, default = "plain", template = "boards", skill = "carpentry", cannot = STRANGE_WOOD, label = "Wood" },
     metal = { module = metals, default = "iron", template = "ingot", skill = "blacksmithy", cannot = NO_IDEA_METAL, label = "Metal" },
+}
+
+-- What a craft does to the item it made, by its id: the module, required when it is called, and its function draw. A
+-- map is drawn where the cartographer stands.
+local MADE = {
+    cartography = "common.cartography",
 }
 
 -- What a craft asks to stand near, by its id: a test of the player, and the client text when it fails.
@@ -549,6 +556,10 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
 
     if at_feet then
         mobile.message(user, AT_YOUR_FEET)
+    end
+
+    if MADE[craft_id] then
+        require(MADE[craft_id]).draw(user, made, recipe, points(user, craft.skill))
     end
 
     local outcome = CREATED

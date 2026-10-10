@@ -19,10 +19,11 @@ CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "tinkering": ("tinkering", "Tinkering", "tinkering", 59),
     "bowcraft": ("fletching", "Bowcraft and Fletching", "bowcraft_fletching", 49),
     "cooking": ("cooking", "Cooking", "cooking", 750),
+    "cartography": ("cartography", "Cartography", "cartography", 80),
 }
 
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055, "cooking": 0x0057}
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055, "cooking": 0x0057, "cartography": 0x0249}
 
 # The groups that make deeds, which mean nothing until houses exist.
 SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons", "traps"}
@@ -31,7 +32,7 @@ SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "co
 SKIPPED_ITEMS = {"0x1bd7", "0x0de1"}
 
 # The crafts whose root menu holds recipes of its own: the name of the group they form, first.
-ROOT_GROUPS = {"fletching": "Weapons"}
+ROOT_GROUPS = {"fletching": "Weapons", "cartography": "Maps"}
 
 # The menus UOX3 opens from a second tool (arrows and bolts from the fletching tool), walked after the root.
 EXTRA_ROOTS = {"fletching": ["51"]}
@@ -39,7 +40,24 @@ EXTRA_ROOTS = {"fletching": ["51"]}
 NAME_FIXES = {"Magincian Throne": "Magician Throne", "one shaft": "Shaft", "one arrow": "Arrow", "one bolt": "Bolt"}
 
 # The main skill lines UOX3 gets wrong, by the craft's skill and the recipe's name (lower case): the whole SKILL= value.
-SKILL_FIXES = {("tinkering", "scales"): "37 638 1140", ("tinkering", "heating stand"): "37 643 1140"}
+SKILL_FIXES = {
+    ("tinkering", "scales"): "37 638 1140",
+    ("tinkering", "heating stand"): "37 643 1140",
+    # UOX3's cartography is off by a digit (a local map from 0 to 5) or past any skill (world maps to 150): the classic
+    # numbers.
+    ("cartography", "local map"): "12 100 700",
+    ("cartography", "city map"): "12 250 850",
+    ("cartography", "sea chart"): "12 350 950",
+    ("cartography", "world map"): "12 395 995",
+}
+
+# The names of the recipes UOX3 names alike, by the item they make: the world maps of each facet.
+NAMES_BY_ITEM = {
+    "ilshenarmap": "World map of Ilshenar",
+    "malasmap": "World map of Malas",
+    "tokunomap": "World map of Tokuno",
+    "termurmap": "World map of Ter Mur",
+}
 
 # The items UOX3 makes in place of the one a recipe is named for (the tinker's tools, not the 10-stone tool kit), and the
 # single shaft, arrow and bolt among the stacks that share their graphic.
@@ -71,8 +89,9 @@ RESOURCE_FIXES = {
     ("cooking", "cut of ribs", "0x09f1"): "0x09f1_cut_of_raw_ribs",
 }
 
-# The graphics a resource list counts beyond UOX3's: the closed sacks of flour, which UOX3 opens by a script first.
-LIST_EXTRAS = {"flour": [0x1039, 0x1045]}
+# The graphics a resource list counts beyond UOX3's: the closed sacks of flour, which UOX3 opens by a script first, and
+# the blank map vendors sell.
+LIST_EXTRAS = {"flour": [0x1039, 0x1045], "maps": [0x14EC]}
 
 # The groups whose names UOX3 misspells.
 GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
@@ -330,7 +349,7 @@ def _recipe(
 
         resources.append((resource, int(amount)))
 
-    shown = NAME_FIXES.get(name, name)
+    shown = NAMES_BY_ITEM.get(added.lower(), NAME_FIXES.get(name, name))
 
     # The gump shows it as a title: UOX3 writes some in lower case.
     return {"name": shown[:1].upper() + shown[1:], "item": item[0], "skills": skills, "resources": resources}

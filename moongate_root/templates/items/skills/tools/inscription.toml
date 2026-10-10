@@ -17,6 +17,7 @@ base_id = "base_item"
 item_id = 4032
 name = "pen and ink"
 rarity = "common"
+script_id = "cartography_tool"
 weight = 1.0
 buy_price = 6
 sell_price = 3

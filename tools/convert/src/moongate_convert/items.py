@@ -33,6 +33,8 @@ CARPENTRY_TOOL_GRAPHICS = frozenset(
 TINKERING_TOOL_GRAPHICS = frozenset({0x1EB8, 0x1EB9, 0x1EBA, 0x1EBB, 0x1EBC})
 # What a tailor sews with: the sewing kit, not the scissors.
 TAILORING_TOOL_GRAPHICS = frozenset({0x0F9D})
+# What a cartographer draws with: the pens and ink (inscription will share them).
+CARTOGRAPHY_TOOL_GRAPHICS = frozenset({0x0FBF, 0x0FC0})
 # What a cook works with: the skillets, the flour sifter and the rolling pin.
 COOKING_TOOL_GRAPHICS = frozenset({0x097F, 0x09E2, 0x103E, 0x1043})
 # What a bowyer works with: the fletcher's tools.
@@ -233,6 +235,9 @@ def build_item(block: DfnBlock, id_by_header: IgnoreCaseDict[str], scripts: Scri
         # The taxidermy kit shares a tool kit's graphic but stuffs trophies: no tinkering with it.
         # What UOX3's crafting tool script opens tinkering with: scripts/items/tinkering_tool.lua.
         template.script_id = "tinkering_tool"
+    elif graphic in CARTOGRAPHY_TOOL_GRAPHICS:
+        # What a cartographer draws with: scripts/items/cartography_tool.lua.
+        template.script_id = "cartography_tool"
     elif graphic in COOKING_TOOL_GRAPHICS:
         # What a cook works with: scripts/items/cooking_tool.lua.
         template.script_id = "cooking_tool"

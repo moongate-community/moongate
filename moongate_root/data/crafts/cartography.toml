@@ -1,0 +1,93 @@
+# ==============================================================================
+# Moongate - data/crafts/cartography.toml
+#
+# What it is for:
+#   The recipes of cartography, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+# ==============================================================================
+
+id = "cartography"
+name = "Cartography"
+skill = "cartography"
+sound = 0x0249
+
+[[group]]
+name = "Maps"
+
+[[group.recipe]]
+name = "Local map"
+item = "craftedlocalmap"
+skill_min = 10.0
+skill_max = 70.0
+resources = [{ resource = "maps", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "City map"
+item = "craftedcitymap"
+skill_min = 25.0
+skill_max = 85.0
+resources = [{ resource = "maps", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "Sea chart"
+item = "craftedseachart"
+skill_min = 35.0
+skill_max = 95.0
+resources = [{ resource = "maps", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "World map"
+item = "largeworldmap"
+skill_min = 39.5
+skill_max = 99.5
+resources = [{ resource = "maps", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "World map of Ilshenar"
+item = "ilshenarmap"
+skill_min = 39.5
+skill_max = 99.5
+resources = [{ resource = "maps", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "World map of Malas"
+item = "malasmap"
+skill_min = 39.5
+skill_max = 99.5
+resources = [{ resource = "maps", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "World map of Tokuno"
+item = "tokunomap"
+skill_min = 39.5
+skill_max = 99.5
+resources = [{ resource = "maps", amount = 1 }]
+skills = []
+
+[[group.recipe]]
+name = "World map of Ter Mur"
+item = "termurmap"
+skill_min = 39.5
+skill_max = 99.5
+resources = [{ resource = "maps", amount = 1 }]
+skills = []
