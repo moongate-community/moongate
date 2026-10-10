@@ -731,6 +731,21 @@ def test_the_sewing_kits_get_the_tailoring_tool_script_but_not_the_scissors(uox_
     assert "script_id" not in by_name["scissors"]
 
 
+def test_the_cooking_tools_get_the_cooking_tool_script(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[0x097f]\n{\nname=skillet\nid=0x097f\n}\n"
+        "[0x103e]\n{\nname=sifter\nid=0x103e\n}\n"
+        "[0x1043]\n{\nname=rolling pin\nid=0x1043\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a cook works with: scripts/items/cooking_tool.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert [by_name[name].get("script_id") for name in ("skillet", "sifter", "rolling pin")] == ["cooking_tool"] * 3
+
+
 def test_the_fletcher_tools_get_the_fletching_tool_script(uox_workspace):
     uox_workspace.write_source("items.dfn", "[0x1022]\n{\nname=fletcher's tools\nid=0x1022\n}\n")
 

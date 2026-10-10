@@ -4,6 +4,7 @@ base_id = "base_item"
 item_id = 4163
 name = "rolling pin"
 rarity = "common"
+script_id = "cooking_tool"
 weight = 1.0
 
 [[item]]
@@ -12,6 +13,7 @@ base_id = "base_item"
 item_id = 2431
 name = "skillet"
 rarity = "common"
+script_id = "cooking_tool"
 weight = 1.0
 buy_price = 6
 sell_price = 3
@@ -22,6 +24,7 @@ id = "0x09e2"
 base_id = "0x097f_skillet"
 item_id = 2530
 rarity = "common"
+script_id = "cooking_tool"
 
 [[item]]
 id = "0x103e_sifter"
@@ -29,6 +32,7 @@ base_id = "base_item"
 item_id = 4158
 name = "sifter"
 rarity = "common"
+script_id = "cooking_tool"
 weight = 1.0
 buy_price = 6
 sell_price = 3
