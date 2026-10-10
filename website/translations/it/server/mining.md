@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"b93b3972e3006c840a52a623c44a940aa5f91bf97e747a147942a5fc477a368d","title":"Estrazione e fusione"} -->
+<!-- translation: {"sourceHash":"7288f6ad70e6c3c8c98148c9258a5345a1e3b39013850a6a3945535e786dbd84","title":"Estrazione e fusione"} -->
 
 # Estrazione e fusione
 
@@ -29,8 +29,8 @@ doppio clic nel frattempo non fa nulla.
 
 ## Che cosa ottieni
 
-La prova viene tirata sull'abilità Mining tra 0 e 100, quindi la probabilità di uno scavo riuscito è l'abilità stessa,
-e l'abilità può crescere a ogni prova. Uno scavo riuscito dà un mucchio di minerale di ferro, che si unisce al mucchio dello
+In un luogo di ferro la prova viene tirata sull'abilità Mining tra 0 e 100, quindi la probabilità di uno scavo riuscito è l'abilità stessa,
+e l'abilità può crescere a ogni prova (un altro metallo ha i suoi limiti: vedi [Metalli](#metals)). Uno scavo di ferro riuscito dà un mucchio di minerale di ferro, che si unisce al mucchio dello
 stesso tipo già nello zaino:
 
 | Mucchio | Quanto spesso | Lingotti in cui si fonde |
@@ -41,19 +41,43 @@ stesso tipo già nello zaino:
 
 L'attrezzo non si consuma.
 
+## Metalli
+
+Un luogo di roccia è di un solo metallo, estratto di nuovo ogni volta che il minerale ritorna: la stessa roccia può dare oro oggi e ferro
+domani. Circa metà dei luoghi è di ferro.
+
+| Metallo | Luoghi su mille | Mining richiesto | Lo scavo viene provato tra | Fuso tra |
+| --- | --- | --- | --- | --- |
+| Ferro | 496 | 0 | 0 e 100 | 25 e 75 |
+| Dull copper | 112 | 65 | 25 e 105 | 40 e 90 |
+| Shadow iron | 98 | 70 | 30 e 110 | 45 e 95 |
+| Copper | 84 | 75 | 35 e 115 | 50 e 100 |
+| Bronze | 70 | 80 | 40 e 120 | 55 e 105 |
+| Gold | 56 | 85 | 45 e 125 | 60 e 110 |
+| Agapite | 42 | 90 | 50 e 130 | 65 e 115 |
+| Verite | 28 | 95 | 55 e 135 | 70 e 120 |
+| Valorite | 14 | 99 | 59 e 139 | 74 e 124 |
+
+Chi ha il Mining del metallo ne scava il minerale uno scavo su due, e ferro l'altro; chi non ce l'ha scava sempre
+ferro. Il minerale di un metallo è un mucchio grande del suo colore, che si fonde in lingotti di quel metallo, due per ogni minerale, provato
+tra i limiti dell'ultima colonna. Il [fabbro](blacksmithing.md#metals) forgia con i lingotti di ogni metallo. Un minatore sotto la difficoltà di un metallo (il centro di quei limiti: 65 per il dull
+copper, 99 per la valorite) legge "You have no idea how to smelt this strange ore!" e non brucia nulla. Un singolo minerale di un metallo
+che non si fonde viene bruciato. Il minerale di un metallo arriva sempre come mucchio grande, a differenza delle quattro dimensioni del ferro: una scelta per
+avere un solo template per metallo, che dà un po' più metallo di quanto darebbe una dimensione estratta come per il ferro.
+
 ## Fusione
 
 1. Fai doppio clic su un mucchio di minerale, nello zaino o a terra entro 2 caselle. Leggi "Select the forge on which to
    smelt the ore, or another pile of ore with which to combine it."
 2. Scegli una forgia entro 2 caselle: una posata come oggetto, o una che fa parte della mappa.
 
-L'intero mucchio viene fuso in una volta. La prova viene tirata sull'abilità Mining tra 25 e 75: sotto 25 una fusione
-fallisce sempre, da 75 riesce sempre, e la prova può far crescere l'abilità.
+L'intero mucchio viene fuso in una volta. La prova viene tirata sull'abilità Mining tra 25 e 75 per il ferro (vedi [Metalli](#metals)
+per gli altri): sotto 25 una fusione fallisce sempre, da 75 riesce sempre, e la prova può far crescere l'abilità.
 
 | La fusione | Che cosa succede |
 | --- | --- |
-| Riesce | Il mucchio diventa lingotti di ferro nel tuo zaino, in base alla sua dimensione (la tabella sopra); un minerale piccolo dispari resta. Leggi "You smelt the ore removing the impurities and put the metal in your backpack." |
-| Fallisce | Metà del mucchio brucia, arrotondata per difetto. Un mucchio di un solo minerale invece rimpicciolisce: uno grande diventa medio, uno medio piccolo. Leggi "You burn away the impurities but are left with less useable metal." |
+| Riesce | Il mucchio diventa lingotti del suo metallo nel tuo zaino, in base alla sua dimensione (la tabella sopra); un minerale piccolo dispari resta. Leggi "You smelt the ore removing the impurities and put the metal in your backpack." |
+| Fallisce | Metà del mucchio brucia, arrotondata per difetto. Un mucchio di un solo minerale di ferro invece rimpicciolisce (un singolo minerale di un altro metallo brucia): uno grande diventa medio, uno medio piccolo. Leggi "You burn away the impurities but are left with less useable metal." |
 
 Un singolo minerale piccolo risponde "There is not enough metal-bearing ore in this pile to make an ingot." Scegliere
 qualcosa che non è una forgia risponde `That is not a forge.`, e una forgia a più di 2 caselle "That is too far
@@ -65,14 +89,15 @@ Ogni mappa è divisa in zone di 8 caselle per 8. Una zona contiene da 10 a 34 mi
 scavo riuscito ne toglie uno; una prova fallita non ne toglie. La zona torna piena, tutta in una volta, da 10 a 20 minuti dopo
 il primo minerale preso.
 
-Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno. I numeri sono la risorsa `ore` di
+Le zone sono tenute in memoria: dopo un riavvio ogni luogo è pieno, e il suo metallo viene estratto di nuovo. I numeri sono la risorsa `ore` di
 [`harvest.toml`](data-files/harvest.md).
 
 ## Cambiare le regole
 
 Le regole di uno scavo sono in `scripts/items/pickaxe.lua`: la distanza, il tempo, i mucchi e quanto spesso esce ciascuno,
 i terreni che sono roccia e gli statici che sono il pavimento di una grotta. Quelle di una fusione sono in
-`scripts/items/ore.lua`: la distanza, l'abilità, i lingotti di ogni mucchio e le grafiche che sono forge. Vedi
+`scripts/items/ore.lua`: la distanza, l'abilità, i lingotti di ogni mucchio; le forge sono in `scripts/common/smithy.lua`
+e i metalli (minerale, lingotti, Mining e limiti) in `scripts/common/metals.lua`. Vedi
 [Script forniti](scripting/shipped-scripts.md#pickaxelua-and-orelua). Un template scava con
 `script_id = "pickaxe"` e viene fuso con `script_id = "ore"`.
 
@@ -83,12 +108,12 @@ risorsa `ore` al tuo `data/harvest.toml`, e gli script ai template: `script_id =
 picconi e alle pale di `templates/items/skills/tools/mining.toml`, `script_id = "ore"` ai quattro mucchi di
 minerale di ferro di `templates/items/skills/resources/mining.toml`. Oppure copia i tre file dalla distribuzione:
 `mgctl init` non sostituisce mai un file che potresti aver modificato. `scripts/items/ore.lua` ora legge le forge da
-`scripts/common/smithy.lua`: copialo insieme.
+`scripts/common/smithy.lua`: copialo insieme. Per i metalli, copia `scripts/common/metals.lua`, `templates/items/metals.toml` e
+entrambi gli script di nuovo, e aggiungi le `[[resource.vein]]` del minerale al tuo `data/harvest.toml`: senza le vene ogni luogo è di ferro.
 
 ## Non ancora
 
-Gli altri otto metalli, dal rame opaco alla valorite, con una vena propria per ogni zona; unire due mucchi
-in uno; attrezzi che si consumano; sabbia, pietra e gemme; rifondere un oggetto di metallo in lingotti.
+Unire due mucchi in uno; attrezzi che si consumano; sabbia, pietra e gemme; rifondere un oggetto di metallo in lingotti.
 
 ## Vedi anche
 

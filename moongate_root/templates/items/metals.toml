@@ -1,0 +1,111 @@
+# ==============================================================================
+# Moongate - templates/items/metals.toml
+#
+# What it is for:
+#   The metals the converted item files do not have: the ore and the ingots of
+#   the eight metals a miner finds beside iron (dull copper, shadow iron,
+#   copper, bronze, gold, agapite, verite, valorite). scripts/items/pickaxe.lua
+#   gives the ore and scripts/items/ore.lua smelts it into the ingots, by these
+#   ids (scripts/common/metals.lua).
+#
+# Fields:
+#   base_id     the large pile of iron ore or the iron ingot it is one of
+#   name        the name shown
+#   hue         the colour of the metal
+# ==============================================================================
+
+[[item]]
+id = "ore_dull_copper"
+base_id = "0x19b9_iron_ore"
+name = "dull copper ore"
+hue = 0x973
+
+[[item]]
+id = "ingot_dull_copper"
+base_id = "0x1bf2_iron_ingot"
+name = "dull copper ingot"
+hue = 0x973
+
+[[item]]
+id = "ore_shadow_iron"
+base_id = "0x19b9_iron_ore"
+name = "shadow iron ore"
+hue = 0x966
+
+[[item]]
+id = "ingot_shadow_iron"
+base_id = "0x1bf2_iron_ingot"
+name = "shadow iron ingot"
+hue = 0x966
+
+[[item]]
+id = "ore_copper"
+base_id = "0x19b9_iron_ore"
+name = "copper ore"
+hue = 0x96D
+
+[[item]]
+id = "ingot_copper"
+base_id = "0x1bf2_iron_ingot"
+name = "copper ingot"
+hue = 0x96D
+
+[[item]]
+id = "ore_bronze"
+base_id = "0x19b9_iron_ore"
+name = "bronze ore"
+hue = 0x972
+
+[[item]]
+id = "ingot_bronze"
+base_id = "0x1bf2_iron_ingot"
+name = "bronze ingot"
+hue = 0x972
+
+[[item]]
+id = "ore_gold"
+base_id = "0x19b9_iron_ore"
+name = "gold ore"
+hue = 0x8A5
+
+[[item]]
+id = "ingot_gold"
+base_id = "0x1bf2_iron_ingot"
+name = "gold ingot"
+hue = 0x8A5
+
+[[item]]
+id = "ore_agapite"
+base_id = "0x19b9_iron_ore"
+name = "agapite ore"
+hue = 0x979
+
+[[item]]
+id = "ingot_agapite"
+base_id = "0x1bf2_iron_ingot"
+name = "agapite ingot"
+hue = 0x979
+
+[[item]]
+id = "ore_verite"
+base_id = "0x19b9_iron_ore"
+name = "verite ore"
+hue = 0x89F
+
+[[item]]
+id = "ingot_verite"
+base_id = "0x1bf2_iron_ingot"
+name = "verite ingot"
+hue = 0x89F
+
+[[item]]
+id = "ore_valorite"
+base_id = "0x19b9_iron_ore"
+name = "valorite ore"
+hue = 0x8AB
+
+[[item]]
+id = "ingot_valorite"
+base_id = "0x1bf2_iron_ingot"
+name = "valorite ingot"
+hue = 0x8AB

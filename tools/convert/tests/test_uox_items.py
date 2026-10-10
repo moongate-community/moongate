@@ -714,3 +714,36 @@ def test_the_smithing_tools_get_the_smithing_tool_script_by_their_graphic(uox_wo
     assert [by_name[name].get("script_id") for name in ("smith's hammer", "tongs", "sledge hammer", "anvil", "prospector's tool")] == [
         "smithing_tool", "smithing_tool", "smithing_tool", None, None
     ]
+
+
+def test_the_sewing_kits_get_the_tailoring_tool_script_but_not_the_scissors(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[0x0f9d]\n{\nname=sewing kit\nid=0x0f9d\n}\n"
+        "[0x0f9e]\n{\nname=scissors\nid=0x0f9e\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a tailor sews with: scripts/items/tailoring_tool.lua. Scissors cut, they do not sew.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["sewing kit"]["script_id"] == "tailoring_tool"
+    assert "script_id" not in by_name["scissors"]
+
+
+def test_the_tinker_tools_get_the_tinkering_tool_script(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[0x1ebc]\n{\nname=tinker's tools\nid=0x1ebc\n}\n"
+        "[0x1eb8]\n{\nname=tool kit\nid=0x1eb8\n}\n"
+        "[taxidermykit]\n{\nname=a taxidermy kit\nid=0x1eba\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # What a tinker works with: scripts/items/tinkering_tool.lua.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["tinker's tools"]["script_id"] == "tinkering_tool"
+    assert by_name["tool kit"]["script_id"] == "tinkering_tool"
+    # The taxidermy kit shares a tool kit's graphic but stuffs trophies: no tinkering with it.
+    assert "script_id" not in by_name["a taxidermy kit"]

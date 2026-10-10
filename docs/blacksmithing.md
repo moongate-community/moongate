@@ -30,7 +30,28 @@ AOS Weapons, Axes, Polearms, Bashing and SE Weapons. A few of them:
 | Longsword | 28 to 78 | 12 metal |
 | War hammer | 34.2 to 84 | 16 metal |
 
-The page of each recipe in the gump shows its numbers. Metal is iron ingots; the tessen takes cloth and Tailoring too.
+The page of each recipe in the gump shows its numbers. Metal is the ingots of the metal picked (iron by default: see [Metals](#metals)); the tessen takes cloth and Tailoring too.
+
+## Metals
+
+The bottom line of the gump shows the metal you work and how many ingots of it you carry; Change lists the metals.
+Iron is the default. Another metal, dug and smelted by a [miner](mining.md), asks for Blacksmithy and gives its colour
+to the item:
+
+| Metal | Blacksmithy it asks for |
+| --- | --- |
+| Iron | 0 |
+| Dull copper | 65 |
+| Shadow iron | 70 |
+| Copper | 75 |
+| Bronze | 80 |
+| Gold | 85 |
+| Agapite | 90 |
+| Verite | 95 |
+| Valorite | 99 |
+
+Picking a metal you cannot work answers "You have no idea how to work this metal." The metal picked counts for the
+ingots only, and is kept until a restart, apart from the wood picked for carpentry.
 
 ## Exceptional weapons and armor
 
@@ -49,7 +70,7 @@ tooltip shows the rarity in its colour.
 ## Existing roots
 
 `mgctl init` never replaces a file you may have changed. Copy from the distribution `data/crafts/blacksmithing.toml`,
-`scripts/common/crafting.lua`, `scripts/common/smithy.lua`, `scripts/items/smithing_tool.lua` and
+`scripts/common/crafting.lua`, `scripts/common/smithy.lua`, `scripts/common/metals.lua`, `scripts/items/smithing_tool.lua` and
 `scripts/items/ore.lua` (it now reads `smithy.lua`), and the files of the tools: `templates/items/skills/tools/blacksmithy.toml`,
 `templates/items/gear/weapons/maces_hammers.toml` and `templates/items/misc/bod_rewards_blacksmith.toml`, or give
 `script_id = "smithing_tool"` to your hammers, sledge hammers and tongs. Weapons and armor made exceptional before
@@ -57,7 +78,7 @@ this version grow stronger at once and keep the rarity they had.
 
 ## Not yet
 
-Coloured metals (dull copper to valorite), repair, smelting items back into ingots, and the special moves of the AOS and
+The armor bonus of coloured metals, repair, smelting items back into ingots, and the special moves of the AOS and
 SE weapons.
 
 ## See also

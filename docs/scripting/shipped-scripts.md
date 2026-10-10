@@ -202,10 +202,12 @@ two-page gump with `gump.create` from `pet.lore`, `mobile.stats` and `mobile.ski
 A dig picks a place (`target.pick_location`), which gives the `land` of the cell and the `graphic` of a static picked
 there: the script holds the lands that are rock and the statics that are a cave floor. The character swings
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), the place must have ore left (`harvest.amount`), the Mining
-skill is tried between 0 and 100 (`skill.check`), and a dig that works takes from the place (`harvest.take`) and gives
+skill is tried between the bounds of the place's metal (`skill.check`; 0 and 100 for iron), and a dig that works takes from the place (`harvest.take`) and gives
 a pile (`item.give`). A smelt picks a forge, an item (`item.item_id`, `item.in_range`) or a static, tries the skill
-between 25 and 75, and turns the pile into ingots (`item.consume`, then `item.give`) or burns half of it away; a single ore
-that fails gets smaller. A pile on a cursor is refused (`item.is_held`). The constants at the top of each script are its numbers and its lists.
+between 25 and 75, and turns the pile into ingots (`item.consume`, then `item.give`) or burns half of it away; a single iron ore
+that fails gets smaller, and a metal above the miner's skill is refused without a try. A pile on a cursor is refused (`item.is_held`). The metal of a place is the vein of its area
+(`harvest.vein`): `scripts/common/metals.lua` holds the ore and ingots of each metal, the Mining it asks for, the bounds of a dig
+and the difficulty of a smelt. The constants at the top of each script are its numbers and its lists.
 
 ## axe.lua
 
@@ -225,8 +227,9 @@ recipes with `craft.get` and the resource lists with `craft.resource`, counts an
 the player carries (`item.find`, `item.amount`, `item.consume`; a pile on the cursor is left out with `item.is_held`),
 plays the two strokes (`mobile.play_sound`, `timer.after`), tries the other skills of the recipe and then the main one
 between twice its least minus its most and its most (`skill.check`), so the chance is one in two at the least, and
-makes the item (`item.give`, else `item.create` at the player's feet), with the hue of the kind of wood
-(passing the hue of the kind of wood to `item.give`, or `item.set_hue` at the feet). A success may be exceptional (`crafting.roll`, the props `quality`, `crafter_id`, `crafter_name`), and every attempt whose skill is tried takes a use of the tool (the prop `uses_remaining`, drawn 25 to 75, `item.delete` at the last). Who is making something, the group and wood each player picked and the last recipe each started (`crafting.make_last`) are kept in memory.
+makes the item (`item.give`, else `item.create` at the player's feet), with the hue of the kind of wood or metal
+picked (passing it to `item.give`, or `item.set_hue` at the feet): the engine's table `MATERIALS` ties the resource `wood`
+to `scripts/common/woods.lua` and `metal` to `scripts/common/metals.lua`, and the kind picked is kept by craft. A success may be exceptional (`crafting.roll`, the props `quality`, `crafter_id`, `crafter_name`), and every attempt whose skill is tried takes a use of the tool (the prop `uses_remaining`, drawn 25 to 75, `item.delete` at the last). Who is making something, the group and the kind of wood or metal each player picked, by craft, and the last recipe each started (`crafting.make_last`) are kept in memory.
 `scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` on the carpentry tools) opens the crafting gump
 from the backpack; the gump is `templates/gumps/craft_menu.xml` with `scripts/gumps/craft_menu.lua`, one for every craft.
 
@@ -238,6 +241,17 @@ the rules being those of `crafting.lua`. `scripts/common/smithy.lua` holds the g
 finds them within a range of a player, among the statics of the map (`world.statics`) and the ground items
 (`world.items_in_range`, `item.item_id`); the engine's table `NEEDS` asks blacksmithing for an anvil and a forge within
 2 tiles, and `ore.lua` reads its forges from there.
+
+## tailoring_tool.lua
+
+`scripts/items/tailoring_tool.lua` is the script of the sewing kits (`script_id = "tailoring_tool"`): from the backpack it
+opens the crafting gump of tailoring (see [Tailoring](../tailoring.md)), with the rules of `crafting.lua`.
+
+## tinkering_tool.lua
+
+`scripts/items/tinkering_tool.lua` is the script of the tinker's tools and tool kits (`script_id = "tinkering_tool"`):
+from the backpack it opens the crafting gump of tinkering (see [Tinkering](../tinkering.md)), with the rules of
+`crafting.lua` and the metal picked.
 
 ## fishing_pole.lua
 

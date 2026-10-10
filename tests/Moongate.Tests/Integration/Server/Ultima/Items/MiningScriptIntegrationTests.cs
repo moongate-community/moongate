@@ -83,6 +83,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     private const int Smelted = 501988;
     private const int Burnt = 501990;
     private const int OreTooFar = 501976;
+    private const int StrangeOre = 501986;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -96,6 +97,9 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     private readonly RecordingMobileStateService _state = new() { Apply = true };
     private readonly StubTargetService _targets = new();
     private readonly ScriptedRandom _random = new();
+
+    // What the place draws when it fills: its ore above the least, then its metal among the 1000 of the weights.
+    private readonly ScriptedRandom _place = new();
     private readonly StubLineOfSightService _sight = new();
     private readonly RecordingEffectService _effects = new();
     private readonly StubMovementService _movement = new();
@@ -112,7 +116,23 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "0x19b8_iron_ore", ItemId = new Serial(0x19B8), ScriptId = "ore", Stackable = true },
             new ItemTemplate { Id = "0x19b9_iron_ore", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
             new ItemTemplate { Id = "0x19ba_iron_ore", ItemId = new Serial(0x19BA), ScriptId = "ore", Stackable = true },
-            new ItemTemplate { Id = "0x1bf2_iron_ingot", ItemId = new Serial(0x1BF2), Stackable = true }
+            new ItemTemplate { Id = "0x1bf2_iron_ingot", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ore_dull_copper", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
+            new ItemTemplate { Id = "ingot_dull_copper", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ore_shadow_iron", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
+            new ItemTemplate { Id = "ingot_shadow_iron", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ore_copper", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
+            new ItemTemplate { Id = "ingot_copper", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ore_bronze", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
+            new ItemTemplate { Id = "ingot_bronze", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ore_gold", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
+            new ItemTemplate { Id = "ingot_gold", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ore_agapite", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
+            new ItemTemplate { Id = "ingot_agapite", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ore_verite", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
+            new ItemTemplate { Id = "ingot_verite", ItemId = new Serial(0x1BF2), Stackable = true },
+            new ItemTemplate { Id = "ore_valorite", ItemId = new Serial(0x19B9), ScriptId = "ore", Stackable = true },
+            new ItemTemplate { Id = "ingot_valorite", ItemId = new Serial(0x1BF2), Stackable = true }
         )
     );
 
@@ -141,11 +161,20 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
             new StubDataLoaderService().With(
                 new HarvestResource
                 {
-                    Id = "ore", Area = 8, AmountMin = 10, AmountMax = 34, RespawnMinMinutes = 10, RespawnMaxMinutes = 20
+                    Id = "ore", Area = 8, AmountMin = 10, AmountMax = 34, RespawnMinMinutes = 10, RespawnMaxMinutes = 20,
+                    // The weights of the shipped data/harvest.toml: a place is of iron unless the test draws otherwise.
+                    Vein =
+                    [
+                        new() { Id = "iron", Weight = 496 }, new() { Id = "dull_copper", Weight = 112 },
+                        new() { Id = "shadow_iron", Weight = 98 }, new() { Id = "copper", Weight = 84 },
+                        new() { Id = "bronze", Weight = 70 }, new() { Id = "gold", Weight = 56 },
+                        new() { Id = "agapite", Weight = 42 }, new() { Id = "verite", Weight = 28 },
+                        new() { Id = "valorite", Weight = 14 }
+                    ]
                 }
             ),
             _time,
-            new ScriptedRandom()
+            _place
         );
     }
 
@@ -185,6 +214,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
         );
         _scripts.Write("items/ore.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "ore.lua")));
         _scripts.Write("common/smithy.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "smithy.lua")));
+        _scripts.Write("common/metals.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "metals.lua")));
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,
@@ -710,6 +740,148 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
         Assert.Equal(5, pile.Amount);
     }
 
+    [Theory]
+    [InlineData(496, "ore_dull_copper", 1007073)]
+    [InlineData(608, "ore_shadow_iron", 1007074)]
+    [InlineData(706, "ore_copper", 1007075)]
+    [InlineData(790, "ore_bronze", 1007076)]
+    [InlineData(860, "ore_gold", 1007077)]
+    [InlineData(916, "ore_agapite", 1007078)]
+    [InlineData(958, "ore_verite", 1007079)]
+    [InlineData(986, "ore_valorite", 1007080)]
+    public void Digging_InAVeinOfAMetal_AMasterGetsItsOre(int draw, string template, int text)
+    {
+        _place.Integers(0, draw);
+        // One swing; the metal is kept (half of the times it is not); the try passes.
+        Rolls(0.0, 0.5);
+        _random.Doubles(0.0);
+
+        Dig(_rock);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhereToDig, text], Told());
+        Assert.Equal((template, 1), Assert.Single(Carried().Select(item => (item.TemplateId, item.Amount))));
+    }
+
+    [Fact]
+    public void Digging_InAVeinOfAMetal_HalfOfTheDigsGiveIron()
+    {
+        _place.Integers(0, 496);
+        Rolls(0.0, 0.49, 0.9);
+
+        Dig(_rock);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhereToDig, Dug], Told());
+        Assert.Equal("0x19b9_iron_ore", Assert.Single(Carried()).TemplateId);
+    }
+
+    [Theory]
+    // Dull copper asks for 65, valorite for 99.
+    [InlineData(496, 649, "0x19b9_iron_ore")]
+    [InlineData(496, 650, "ore_dull_copper")]
+    [InlineData(986, 989, "0x19b9_iron_ore")]
+    [InlineData(986, 990, "ore_valorite")]
+    public void Digging_AMetal_AsksForItsMining_OneWhoLacksItGetsIron(int draw, int tenths, string template)
+    {
+        _place.Integers(0, draw);
+        Skill(tenths);
+        Rolls(0.0, 0.9, 0.9);
+        _random.Doubles(0.0);
+
+        Dig(_rock);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal(template, Assert.Single(Carried()).TemplateId);
+    }
+
+    [Theory]
+    [InlineData("ore_dull_copper", "ingot_dull_copper")]
+    [InlineData("ore_valorite", "ingot_valorite")]
+    public void Smelting_AnOreOfAMetal_GivesTheIngotsOfItsMetal(string ore, string ingot)
+    {
+        var pile = Pile(ore, 3);
+        // Valorite at 100 is tried between 74 and 124: the roll decides.
+        _random.Doubles(0.0);
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        // A large pile: two ingots an ore.
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge, Smelted], Told());
+        Assert.Equal(6, Assert.Single(Carried(), item => item.TemplateId == ingot).Amount);
+    }
+
+    [Theory]
+    // At its difficulty a metal is tried halfway: dull copper at 65 between 40 and 90, valorite at 99 between 74 and 124.
+    [InlineData("ore_dull_copper", 650)]
+    [InlineData("ore_valorite", 990)]
+    public void Smelting_AnOreOfAMetal_ThatFails_BurnsHalfOfIt(string ore, int tenths)
+    {
+        Skill(tenths);
+        var pile = Pile(ore, 4);
+        _random.Doubles(0.99);
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge, Burnt], Told());
+        Assert.Equal(2, pile.Amount);
+        Assert.DoesNotContain(Carried(), item => item.TemplateId.Contains("ingot", StringComparison.Ordinal));
+    }
+
+    [Theory]
+    // Dull copper is smelted from 65 Mining, valorite from 99: below, the ore is not even tried, nor burnt.
+    [InlineData("ore_dull_copper", 649)]
+    [InlineData("ore_valorite", 989)]
+    public void Smelting_AMetalAboveTheMinersSkill_IsRefused_AndNothingBurns(string ore, int tenths)
+    {
+        Skill(tenths);
+        var pile = Pile(ore, 4);
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge, StrangeOre], Told());
+        Assert.Equal(4, pile.Amount);
+        Assert.Equal(0, _random.Rolls);
+    }
+
+    [Fact]
+    public void Smelting_ASingleOreOfAMetalThatFails_IsBurntAway_AndBecomesNoIron()
+    {
+        Skill(650);
+        var pile = Pile("ore_dull_copper", 1);
+        _random.Doubles(0.99);
+
+        Smelt(pile, TargetResult.ForObject(_forge.Id));
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhichForge, Burnt], Told());
+        Assert.Empty(Carried());
+    }
+
+    [Fact]
+    public void Digging_AMetal_IsTriedBetweenItsOwnBounds_AndAFailureTakesNothing()
+    {
+        // Dull copper at 65 is tried between 25 and 105: one chance in two, where iron would give 65 in 100.
+        _place.Integers(0, 496);
+        Skill(650);
+        Rolls(0.0, 0.9);
+        _random.Doubles(0.55);
+
+        Dig(_rock);
+        Fire(0.9);
+
+        Assert.Empty(_errors);
+        Assert.Equal([WhereToDig, Failed], Told());
+        Assert.Empty(Carried());
+        Assert.Equal(10, _harvest.Amount("ore", MapType.Trammel, _rock.X, _rock.Y));
+    }
+
     public async Task DisposeAsync()
     {
         _engine.Dispose();
@@ -748,7 +920,8 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
     // A pile of ore in the backpack.
     private ItemEntity Pile(string template, int amount)
     {
-        var graphic = Convert.ToInt32(template[2..6], 16);
+        // An ore of a metal is a large pile of its colour.
+        var graphic = template.StartsWith("0x", StringComparison.Ordinal) ? Convert.ToInt32(template[2..6], 16) : 0x19B9;
         var pile = new ItemEntity { Id = new Serial(_nextPile++), TemplateId = template, ItemId = graphic, Amount = amount };
         pile.PutInContainer(_backpack.Id, new Point2D(60, 60));
         _items.Add([pile]);

@@ -1,0 +1,450 @@
+# ==============================================================================
+# Moongate - data/crafts/tailoring.toml
+#
+# What it is for:
+#   The recipes of tailoring, in the groups of its crafting gump. A
+#   player makes one with a tool of the craft, from the resources in the
+#   backpack; scripts/common/crafting.lua holds the rules.
+#
+# Fields:
+#   id, name        the craft, as scripts open it and as its gump shows it
+#   skill           the main skill of every recipe
+#   sound           played at each stroke
+#   [[group]]       a group of the gump: name
+#   [[group.recipe]]
+#     name          as the gump shows it
+#     item          the item template made
+#     skill_min     the least of the main skill to try it: the chance is half
+#     skill_max     the skill at which it never fails
+#     resources     what it takes: a list of resources.toml or an item template, and the amount
+#     skills        other skills it asks for, with their least and most
+# ==============================================================================
+
+id = "tailoring"
+name = "Tailoring"
+skill = "tailoring"
+sound = 0x0248
+
+[[group]]
+name = "Hats"
+
+[[group.recipe]]
+name = "Skullcap"
+item = "0x1543_skullcap"
+skill_min = 0.0
+skill_max = 52.0
+resources = [{ resource = "cloth", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Bandana"
+item = "0x153f_bandana"
+skill_min = 0.2
+skill_max = 52.0
+resources = [{ resource = "cloth", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Floppy hat"
+item = "0x1713_floppy_hat"
+skill_min = 6.2
+skill_max = 56.0
+resources = [{ resource = "cloth", amount = 11 }]
+skills = []
+
+[[group.recipe]]
+name = "Wide-brim hat"
+item = "0x1714_wide_brim_hat"
+skill_min = 6.2
+skill_max = 56.0
+resources = [{ resource = "cloth", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Cap"
+item = "0x1715_cap"
+skill_min = 6.2
+skill_max = 56.0
+resources = [{ resource = "cloth", amount = 11 }]
+skills = []
+
+[[group.recipe]]
+name = "Tall straw hat"
+item = "0x1716_tall_straw_hat"
+skill_min = 6.2
+skill_max = 56.0
+resources = [{ resource = "cloth", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Straw hat"
+item = "0x1717_straw_hat"
+skill_min = 6.2
+skill_max = 56.0
+resources = [{ resource = "cloth", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Wizard's hat"
+item = "0x1718_wizard's_hat"
+skill_min = 7.2
+skill_max = 57.0
+resources = [{ resource = "cloth", amount = 15 }]
+skills = []
+
+[[group.recipe]]
+name = "Bonnet"
+item = "0x1719_bonnet"
+skill_min = 6.2
+skill_max = 56.0
+resources = [{ resource = "cloth", amount = 11 }]
+skills = []
+
+[[group.recipe]]
+name = "Feathered hat"
+item = "0x171a_feathered_hat"
+skill_min = 6.2
+skill_max = 56.0
+resources = [{ resource = "cloth", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Tricorne hat"
+item = "0x171b_tricorne_hat"
+skill_min = 6.2
+skill_max = 56.0
+resources = [{ resource = "cloth", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Jester hat"
+item = "0x171c_jester_hat"
+skill_min = 7.2
+skill_max = 57.0
+resources = [{ resource = "cloth", amount = 15 }]
+skills = []
+
+[[group]]
+name = "Shirts"
+
+[[group.recipe]]
+name = "Doublet"
+item = "0x1f7b_doublet"
+skill_min = 0.1
+skill_max = 50.0
+resources = [{ resource = "cloth", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Shirt"
+item = "0x1517_shirt"
+skill_min = 20.7
+skill_max = 71.0
+resources = [{ resource = "cloth", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Fancy shirt"
+item = "0x1efd_fancy_shirt"
+skill_min = 24.8
+skill_max = 75.0
+resources = [{ resource = "cloth", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Tunic"
+item = "0x1fa1_tunic"
+skill_min = 0.1
+skill_max = 50.0
+resources = [{ resource = "cloth", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Surcoat"
+item = "0x1ffd_surcoat"
+skill_min = 8.2
+skill_max = 58.0
+resources = [{ resource = "cloth", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "Plain dress"
+item = "0x1f01_plain_dress"
+skill_min = 33.1
+skill_max = 83.0
+resources = [{ resource = "cloth", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Fancy dress"
+item = "0x1eff_fancy_dress"
+skill_min = 12.4
+skill_max = 63.0
+resources = [{ resource = "cloth", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Cloak"
+item = "0x1515_cloak"
+skill_min = 41.4
+skill_max = 92.0
+resources = [{ resource = "cloth", amount = 14 }]
+skills = []
+
+[[group.recipe]]
+name = "Robe"
+item = "0x1f03_robe"
+skill_min = 53.9
+skill_max = 102.0
+resources = [{ resource = "cloth", amount = 16 }]
+skills = []
+
+[[group.recipe]]
+name = "Jester suit"
+item = "0x1f9f_jester_suit"
+skill_min = 8.2
+skill_max = 58.0
+resources = [{ resource = "cloth", amount = 24 }]
+skills = []
+
+[[group]]
+name = "Pants"
+
+[[group.recipe]]
+name = "Long pants"
+item = "0x1539_long_pants"
+skill_min = 24.8
+skill_max = 75.0
+resources = [{ resource = "cloth", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Kilt"
+item = "0x1537_kilt"
+skill_min = 20.7
+skill_max = 71.0
+resources = [{ resource = "cloth", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Skirt"
+item = "0x1531_skirt"
+skill_min = 29.0
+skill_max = 79.0
+resources = [{ resource = "cloth", amount = 10 }]
+skills = []
+
+[[group]]
+name = "Miscellaneous"
+
+[[group.recipe]]
+name = "Body sash"
+item = "0x1541_body_sash"
+skill_min = 4.1
+skill_max = 54.0
+resources = [{ resource = "cloth", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Half apron"
+item = "0x153b_half_apron"
+skill_min = 20.7
+skill_max = 71.0
+resources = [{ resource = "cloth", amount = 6 }]
+skills = []
+
+[[group.recipe]]
+name = "Full apron"
+item = "0x153d_full_apron"
+skill_min = 29.0
+skill_max = 79.0
+resources = [{ resource = "cloth", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Oil cloth"
+item = "oilcloth"
+skill_min = 74.6
+skill_max = 125.0
+resources = [{ resource = "cloth", amount = 1 }]
+skills = []
+
+[[group]]
+name = "Footwear"
+
+[[group.recipe]]
+name = "Sandals"
+item = "0x170d_sandals"
+skill_min = 12.4
+skill_max = 62.0
+resources = [{ resource = "leather", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Shoes"
+item = "0x1710"
+skill_min = 16.5
+skill_max = 67.0
+resources = [{ resource = "leather", amount = 6 }]
+skills = []
+
+[[group.recipe]]
+name = "Boots"
+item = "0x170b_boots"
+skill_min = 33.1
+skill_max = 83.0
+resources = [{ resource = "leather", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Thigh boots"
+item = "0x1712"
+skill_min = 41.4
+skill_max = 92.0
+resources = [{ resource = "leather", amount = 10 }]
+skills = []
+
+[[group]]
+name = "Leather Armor"
+
+[[group.recipe]]
+name = "Leather gorget"
+item = "0x13c7"
+skill_min = 53.9
+skill_max = 104.0
+resources = [{ resource = "leather", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Leather cap"
+item = "0x1dba"
+skill_min = 6.8
+skill_max = 57.0
+resources = [{ resource = "leather", amount = 2 }]
+skills = []
+
+[[group.recipe]]
+name = "Leather gloves"
+item = "0x13c6"
+skill_min = 51.8
+skill_max = 102.0
+resources = [{ resource = "leather", amount = 3 }]
+skills = []
+
+[[group.recipe]]
+name = "Leather sleeves"
+item = "0x13c5"
+skill_min = 53.9
+skill_max = 104.0
+resources = [{ resource = "leather", amount = 4 }]
+skills = []
+
+[[group.recipe]]
+name = "Leather leggings"
+item = "0x13cb"
+skill_min = 66.3
+skill_max = 116.0
+resources = [{ resource = "leather", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Leather tunic"
+item = "0x13cc"
+skill_min = 70.5
+skill_max = 121.0
+resources = [{ resource = "leather", amount = 12 }]
+skills = []
+
+[[group]]
+name = "Studded Armor"
+
+[[group.recipe]]
+name = "Studded gorget"
+item = "0x13d6"
+skill_min = 78.8
+skill_max = 129.0
+resources = [{ resource = "leather", amount = 6 }]
+skills = []
+
+[[group.recipe]]
+name = "Studded gloves"
+item = "0x13d5"
+skill_min = 82.9
+skill_max = 133.0
+resources = [{ resource = "leather", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Studded sleeves"
+item = "0x13d4"
+skill_min = 87.1
+skill_max = 137.0
+resources = [{ resource = "leather", amount = 10 }]
+skills = []
+
+[[group.recipe]]
+name = "Studded leggings"
+item = "0x13da"
+skill_min = 91.2
+skill_max = 141.0
+resources = [{ resource = "leather", amount = 12 }]
+skills = []
+
+[[group.recipe]]
+name = "Studded tunic"
+item = "0x13db"
+skill_min = 95.4
+skill_max = 146.0
+resources = [{ resource = "leather", amount = 14 }]
+skills = []
+
+[[group]]
+name = "Female Armor"
+
+[[group.recipe]]
+name = "Leather shorts"
+item = "0x1c00"
+skill_min = 62.2
+skill_max = 112.0
+resources = [{ resource = "leather", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Leather skirt"
+item = "0x1c08"
+skill_min = 58.0
+skill_max = 108.0
+resources = [{ resource = "leather", amount = 6 }]
+skills = []
+
+[[group.recipe]]
+name = "Leather bustier"
+item = "0x1c0a"
+skill_min = 58.0
+skill_max = 108.0
+resources = [{ resource = "leather", amount = 6 }]
+skills = []
+
+[[group.recipe]]
+name = "Studded bustier"
+item = "0x1c0c"
+skill_min = 82.9
+skill_max = 133.0
+resources = [{ resource = "leather", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Female leather armor"
+item = "0x1c06"
+skill_min = 62.2
+skill_max = 112.0
+resources = [{ resource = "leather", amount = 8 }]
+skills = []
+
+[[group.recipe]]
+name = "Studded armor"
+item = "0x1c02"
+skill_min = 87.1
+skill_max = 137.0
+resources = [{ resource = "leather", amount = 10 }]
+skills = []

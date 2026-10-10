@@ -667,6 +667,66 @@ public sealed class RepositoryTemplateFilesTests
             id => Assert.Equal("smithing_tool", byId[id].ScriptId)
         );
         Assert.NotEqual("smithing_tool", byId["0x0faf_anvil"].ScriptId);
+
+        // Tailoring: eight groups, 50 recipes of cloth and leather; the sewing kits sew, the runic ones too, the scissors do not.
+        var tailoring = crafts["tailoring"];
+        Assert.Equal(
+            ["Hats", "Shirts", "Pants", "Miscellaneous", "Footwear", "Leather Armor", "Studded Armor", "Female Armor"],
+            tailoring.Group.Select(group => group.Name)
+        );
+        Assert.Equal(50, tailoring.Group.Sum(group => group.Recipe.Count));
+        Assert.Equal("tailoring_tool", byId["0x0f9d_sewing_kit"].ScriptId);
+        Assert.Equal("tailoring_tool", byId["spined_runic_sewing_kit"].ScriptId);
+        Assert.NotEqual("tailoring_tool", byId["0x0f9e_scissors"].ScriptId);
+
+        // Tinkering: seven groups (the traps left out), 59 recipes; the tinker's tools and tool kits work.
+        var tinkering = crafts["tinkering"];
+        Assert.Equal(
+            ["Tools", "Parts", "Utensils", "Jewelry", "Miscellaneous", "More Tools", "Candles"],
+            tinkering.Group.Select(group => group.Name)
+        );
+        Assert.Equal(59, tinkering.Group.Sum(group => group.Recipe.Count));
+        Assert.All(new[] { "0x1ebc_tinker's_tools", "0x1eb8_tool_kit" }, id => Assert.Equal("tinkering_tool", byId[id].ScriptId));
+        Assert.NotEqual("tinkering_tool", byId["taxidermykit"].ScriptId);
+        var recipes = tinkering.Group.SelectMany(group => group.Recipe).ToList();
+        Assert.Equal("0x1ebc_tinker's_tools", recipes.Single(recipe => recipe.Name == "Tinker's tools").Item);
+        Assert.Equal(recipes.Count, recipes.Select(recipe => recipe.Name).Distinct().Count());
+    }
+
+    [Fact]
+    public async Task ShippedMetals_AreThere_WithTheHueOfTheirMetal_AndTheVeinsTheScriptsKnow()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+        var metals = await File.ReadAllTextAsync(
+            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "common", "metals.lua")
+        );
+        var hues = new Dictionary<string, int>
+        {
+            ["dull_copper"] = 0x973, ["shadow_iron"] = 0x966, ["copper"] = 0x96D, ["bronze"] = 0x972, ["gold"] = 0x8A5,
+            ["agapite"] = 0x979, ["verite"] = 0x89F, ["valorite"] = 0x8AB
+        };
+
+        foreach (var (metal, hue) in hues)
+        {
+            var (ore, ingot) = (items["ore_" + metal], items["ingot_" + metal]);
+
+            Assert.Equal((0x19B9u, 0x1BF2u), (ore.ItemId.Value, ingot.ItemId.Value));
+            Assert.Equal(((int?)hue, (int?)hue), (ore.Hue?.Min, ingot.Hue?.Min));
+            Assert.Equal("ore", ore.ScriptId);
+            Assert.Equal(((bool?)true, (bool?)true), (ore.Stackable, ingot.Stackable));
+        }
+
+        // Every template the metals module names is shipped, and every vein of the ore but iron is a metal it knows.
+        var named = System.Text.RegularExpressions.Regex.Matches(metals, "\"((?:ore|ingot)_[a-z_]+|0x[0-9a-f]{4}_iron_(?:ore|ingot))\"")
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+        Assert.Equal(22, named.Length);
+        Assert.All(named, id => Assert.True(items.ContainsKey(id), id));
+        var veins = (await new HarvestLoader(directories).LoadDataAsync()).Entities.Single(resource => resource.Id == "ore").Vein;
+        Assert.Equal(1000, veins.Sum(vein => vein.Weight));
+        Assert.Equal("iron", veins[0].Id);
+        Assert.All(veins.Skip(1), vein => Assert.Contains($"{{ id = \"{vein.Id}\",", metals));
     }
 
     [Fact]
@@ -690,8 +750,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(4, piles.Length);
         Assert.All(piles, pile => Assert.Equal(("ore", true), (items[pile].ScriptId, items[pile].Stackable)));
 
+        // The ingots of iron are the first the metals module names.
         var ingot = System.Text.RegularExpressions.Regex
-            .Match(await File.ReadAllTextAsync(Path.Combine(scripts, "ore.lua")), "local INGOT = \"([^\"]+)\"")
+            .Match(await File.ReadAllTextAsync(Path.Combine(scripts, "..", "common", "metals.lua")), "ingot = \"([^\"]+)\"")
             .Groups[1]
             .Value;
         Assert.True(items[ingot].Stackable);

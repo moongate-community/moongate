@@ -59,22 +59,20 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Integration.Server.Ultima.Items;
 
 /// <summary>
-///     The shipped <c>scripts/items/smithing_tool.lua</c> with the crafting engine: blacksmithing at an anvil and a forge.
+///     The shipped <c>scripts/items/tinkering_tool.lua</c> with the crafting engine: tinkering from ingots and gems.
 /// </summary>
-public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
+public sealed class TinkeringScriptIntegrationTests : IAsyncLifetime
 {
     private const long Aria = 2;
 
-    private const int Gloves = 1;
+    private const int Gears = 1;
+    private const int Ring = 2;
+    private const int RoundCandle = 3;
 
-    private const int InBackpack = 1062334;
     private const int Created = 1044154;
-    private const int Exceptional = 1044155;
-    private const int Marked = 1044156;
     private const int NoMetal = 1044037;
-    private const int NotAtTheForge = 1044267;
-    private const int NoIdea = 1044268;
-    private const int Sound = 0x002A;
+    private const int NoComponents = 1044253;
+    private const int Sound = 0x023B;
 
     private readonly TemporaryScriptsDirectory _scripts = new();
     private readonly Container _container = new();
@@ -99,15 +97,14 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
 
     private readonly ItemTemplateService _templates = new(
         new StubDataLoaderService().With(
-            new ItemTemplate { Id = "0x13e3", ItemId = new Serial(0x13E3), ScriptId = "smithing_tool" },
+            new ItemTemplate { Id = "0x1ebc_tinker's_tools", ItemId = new Serial(0x1EBC), ScriptId = "tinkering_tool" },
             new ItemTemplate { Id = "0x1bf2_iron_ingot", ItemId = new Serial(0x1BF2), Stackable = true },
-            new ItemTemplate { Id = "0x0faf_anvil", ItemId = new Serial(0x0FAF) },
-            new ItemTemplate { Id = "0x0fb1_forge", ItemId = new Serial(0x0FB1) },
-            new ItemTemplate { Id = "0x13eb_ringmail_gloves", ItemId = new Serial(0x13EB) },
             new ItemTemplate { Id = "ingot_copper", ItemId = new Serial(0x1BF2), Stackable = true },
-            new ItemTemplate { Id = "ingot_valorite", ItemId = new Serial(0x1BF2), Stackable = true },
-            new ItemTemplate { Id = "0x1bd7_board", ItemId = new Serial(0x1BD7), Stackable = true },
-            new ItemTemplate { Id = "0x1db8_keg", ItemId = new Serial(0x1DB8) }
+            new ItemTemplate { Id = "0x0f26_diamond", ItemId = new Serial(0x0F26), Stackable = true },
+            new ItemTemplate { Id = "0x1053_gears", ItemId = new Serial(0x1053), Stackable = true },
+            new ItemTemplate { Id = "0x108a_ring", ItemId = new Serial(0x108A) },
+            new ItemTemplate { Id = "0x1422_beeswax", ItemId = new Serial(0x1422), Stackable = true },
+            new ItemTemplate { Id = "0x142f_candle", ItemId = new Serial(0x142F) }
         )
     );
 
@@ -116,44 +113,37 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
             .With(
                 new CraftDefinition
                 {
-                    Id = "blacksmithing", Name = "Blacksmithing", Skill = "blacksmithy", Sound = Sound,
+                    Id = "tinkering", Name = "Tinkering", Skill = "tinkering", Sound = Sound,
                     Group =
                     [
                         new()
                         {
-                            Name = "Ringmail",
+                            Name = "Parts",
                             Recipe =
                             [
                                 new()
                                 {
-                                    Name = "Ringmail gloves", Item = "0x13eb_ringmail_gloves", SkillMin = 12.2, SkillMax = 37.2,
-                                    Resources = [new() { Resource = "metal", Amount = 10 }]
+                                    Name = "Gears", Item = "0x1053_gears", SkillMin = 14.7, SkillMax = 65,
+                                    Resources = [new() { Resource = "metal", Amount = 2 }]
                                 },
                                 new()
                                 {
-                                    Name = "Keg", Item = "0x1db8_keg", SkillMin = 0, SkillMax = 10,
-                                    Resources = [new() { Resource = "metal", Amount = 2 }, new() { Resource = "wood", Amount = 3 }]
+                                    Name = "Weddingband", Item = "0x108a_ring", SkillMin = 41.8, SkillMax = 92,
+                                    Resources = [new() { Resource = "metal", Amount = 1 }, new() { Resource = "diamonds", Amount = 1 }]
+                                },
+                                new()
+                                {
+                                    Name = "Round candle", Item = "0x142f_candle", SkillMin = 37.1, SkillMax = 87,
+                                    Resources = [new() { Resource = "0x1422_beeswax", Amount = 2 }]
                                 }
                             ]
-                        }
-                    ]
-                },
-                new CraftDefinition
-                {
-                    Id = "carpentry", Name = "Carpentry", Skill = "carpentry", Sound = Sound,
-                    Group =
-                    [
-                        new()
-                        {
-                            Name = "Boxes",
-                            Recipe = [new() { Name = "Box", Item = "0x1db8_keg", SkillMin = 0, SkillMax = 10, Resources = [new() { Resource = "wood", Amount = 1 }] }]
                         }
                     ]
                 }
             )
             .With(
                 new CraftResourceList { Id = "metal", Templates = ["0x1bf2_iron_ingot"] },
-                new CraftResourceList { Id = "wood", Templates = ["0x1bd7_board"] }
+                new CraftResourceList { Id = "diamonds", Templates = ["0x0f26_diamond"] }
             )
     );
 
@@ -163,8 +153,8 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
     private readonly ItemEntity _bank = new()
         { Id = new Serial(0x40000003), TemplateId = "backpack", ItemId = 0x0E7C, Amount = 1 };
 
-    private readonly ItemEntity _hammer = new()
-        { Id = new Serial(0x40000002), TemplateId = "0x13e3", ItemId = 0x13E3, Amount = 1 };
+    private readonly ItemEntity _tools = new()
+        { Id = new Serial(0x40000002), TemplateId = "0x1ebc_tinker's_tools", ItemId = 0x1EBC, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
     private LuaScriptEngineService _engine = null!;
@@ -184,15 +174,15 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         _aria.AccountId = new Serial(0x42);
 
         // At the most of the gloves, so it never fails unless a test lowers the skill; in a smithy at 10, 10.
-        Skill(372);
+        Skill(1000);
         _aria.Location = new Point3D(10, 10, 0);
 
         _backpack.Equip(new Serial((uint)Aria), LayerType.Backpack);
         _bank.Equip(new Serial((uint)Aria), LayerType.Bank);
-        _hammer.PutInContainer(_backpack.Id, new Point2D(10, 10));
+        _tools.PutInContainer(_backpack.Id, new Point2D(10, 10));
         // A saw that has been used already: no draw of its uses in the tests that are not about it.
-        _hammer.SetProp("uses_remaining", 50L);
-        _items.Add([_backpack, _bank, _hammer]);
+        _tools.SetProp("uses_remaining", 50L);
+        _items.Add([_backpack, _bank, _tools]);
 
         for (uint serial = 0x40000100; serial < 0x40000110; serial++)
         {
@@ -202,8 +192,8 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         var root = Path.Combine(RepositoryRoot(), "moongate_root");
         // The gump is drawn by another test: here opening it only says so, with the notice it would show.
         _scripts.Write(
-            "items/smithing_tool.lua",
-            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "smithing_tool.lua")) +
+            "items/tinkering_tool.lua",
+            await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "tinkering_tool.lua")) +
             """
 
             local crafting_for_tests = require("common.crafting")
@@ -212,30 +202,26 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
                 mobile.message(user, "opened " .. tostring(notice or ""))
             end
 
-            function smithing_tool.make(serial, user, group, recipe)
-                crafting_for_tests.make(user, serial, "blacksmithing", group, recipe)
+            function tinkering_tool.make(serial, user, group, recipe)
+                crafting_for_tests.make(user, serial, "tinkering", group, recipe)
             end
 
-            function smithing_tool.pick(serial, user, kind, craft_id)
-                crafting_for_tests.set_kind(user, kind, craft_id or "blacksmithing")
+            function tinkering_tool.pick(serial, user, kind, craft_id)
+                crafting_for_tests.set_kind(user, kind, craft_id or "tinkering")
             end
 
-            function smithing_tool.kind_of(serial, user, craft_id)
-                mobile.message(user, "kind " .. crafting_for_tests.kind(user, craft_id))
+            function tinkering_tool.last(serial, user)
+                crafting_for_tests.make_last(user, serial, "tinkering")
             end
 
-            function smithing_tool.last(serial, user)
-                crafting_for_tests.make_last(user, serial, "blacksmithing")
-            end
-
-            function smithing_tool.make_in(serial, user, craft_id, group, recipe)
+            function tinkering_tool.make_in(serial, user, craft_id, group, recipe)
                 crafting_for_tests.make(user, serial, craft_id, group, recipe)
             end
 
             -- The rolls of the script are the test's: the ones queued, then a high one, which is no exceptional item.
             crafting_for_tests.roll = function() return 0.999 end
 
-            function smithing_tool.set_rolls(serial, ...)
+            function tinkering_tool.set_rolls(serial, ...)
                 local rolls = { ... }
                 crafting_for_tests.roll = function() return table.remove(rolls, 1) or 0.999 end
             end
@@ -251,7 +237,7 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
             HookInterval = 100, WriteDefinitions = false
         };
         var data = new StubDataLoaderService().With(
-            new SkillContent { Id = SkillType.Blacksmithy, GainFactor = 1.0, Delay = 1 }
+            new SkillContent { Id = SkillType.Tinkering, GainFactor = 1.0, Delay = 1 }
         );
 
         _container.RegisterMoongateEventBus();
@@ -325,248 +311,64 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void TheHammer_InTheBackpack_OpensTheGumpOfBlacksmithing()
+    public void TheTinkersTools_InTheBackpack_OpenTheGumpOfTinkering()
     {
-        Run(_hammer);
+        Run(_tools);
 
         Assert.Empty(_errors);
         Assert.Single(Opened());
     }
 
     [Fact]
-    public void AwayFromAnAnvilAndAForge_NothingIsForged_AndNothingTaken()
+    public void Gears_AreMadeFromIngots_AndCopperGearsAreCopper()
     {
-        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
+        var iron = Carry("0x1bf2_iron_ingot", 0x1BF2, 2);
 
-        Make();
-
-        Assert.Empty(_errors);
-        Assert.Equal([NotAtTheForge], Told());
-        Assert.Equal(20, ingots.Amount);
-        Assert.Empty(_timers.Timers);
-    }
-
-    [Fact]
-    public void AForgeWithoutAnAnvil_IsNotEnough()
-    {
-        _map.AddStatic(11, 10, 0x0FB1, 0);
-        Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
-
-        Make();
-
-        Assert.Equal([NotAtTheForge], Told());
-    }
-
-    [Fact]
-    public void AnAnvilOnTheGround_AndAForgeOfTheMap_WithinTwoTiles_LetTheSmithForge()
-    {
-        Ground("0x0faf_anvil", 0x0FAF, 12, 10);
-        _map.AddStatic(10, 8, 0x1985, 0);
-        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
-
-        Make();
+        Make(Gears);
         Fire(1.25);
 
         Assert.Empty(_errors);
         Assert.Equal([Created], Told());
-        Assert.Equal(10, ingots.Amount);
-        Assert.Single(Made("0x13eb_ringmail_gloves"));
-    }
+        Assert.Equal(0, Left(iron));
 
-    [Fact]
-    public void AnAnvilThreeTilesAway_IsTooFar()
-    {
-        Ground("0x0faf_anvil", 0x0FAF, 13, 10);
-        _map.AddStatic(11, 10, 0x0FB1, 0);
-        Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
-
-        Make();
-
-        Assert.Equal([NotAtTheForge], Told());
-    }
-
-    [Fact]
-    public void TheAnvilGoneBeforeTheSecondStroke_ForgesNothing()
-    {
-        var anvil = Ground("0x0faf_anvil", 0x0FAF, 11, 10);
-        _map.AddStatic(11, 11, 0x0FB1, 0);
-        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 20);
-
-        Make();
-        _items.Remove([anvil.Id]);
-        Fire(1.25);
-
-        Assert.Empty(_errors);
-        Assert.Equal([NotAtTheForge], Told());
-        Assert.Equal(20, ingots.Amount);
-        Assert.Empty(Made("0x13eb_ringmail_gloves"));
-    }
-
-    [Fact]
-    public void WithoutIngots_SaysSo()
-    {
-        AtTheForge();
-
-        Make();
-
-        Assert.Equal([NoMetal], Told());
-    }
-
-    [Theory]
-    // At the most of the gloves an exceptional pair is uncommon; made at 100 it bears the mark and is rare.
-    [InlineData(372, Exceptional, "Uncommon")]
-    [InlineData(1000, Marked, "Rare")]
-    public void AnExceptionalPiece_TakesARarityFromItsQuality(int tenths, int told, string rarity)
-    {
-        AtTheForge();
-        Skill(tenths);
-        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
-        Rolls(0.0);
-
-        Make();
-        Fire(1.25);
-
-        var gloves = Assert.Single(Made("0x13eb_ringmail_gloves"));
-        Assert.Empty(_errors);
-        Assert.Equal([told], Told());
-        Assert.Equal(Enum.Parse<ItemRarityType>(rarity), gloves.Rarity);
-    }
-
-    [Fact]
-    public void ARegularPiece_KeepsItsRarity()
-    {
-        AtTheForge();
-        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
-
-        Make();
-        Fire(1.25);
-
-        Assert.Equal(ItemRarityType.Common, Assert.Single(Made("0x13eb_ringmail_gloves")).Rarity);
-    }
-
-    [Fact]
-    public void AKindOfWoodPickedForCarpentry_DoesNotStopTheSmith()
-    {
-        AtTheForge();
-        SetSkill(SkillType.Carpentry, 650);
-        Call("pick", Aria, "oak", "carpentry");
-        Call("pick", Aria, "copper", "blacksmithing");
-        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
-        Call("kind_of", Aria, "carpentry");
-        Call("kind_of", Aria, "blacksmithing");
-
-        // Each craft keeps its own pick: oak for carpentry; copper was refused to a smith of 37.2, iron stays.
-        Assert.Equal(["kind oak", "kind iron"], Kinds());
-
-        Make();
-        Fire(1.25);
-
-        Assert.Empty(_errors);
-        Assert.Equal([NoIdea, Created], Told());
-    }
-
-    [Fact]
-    public void ARecipeOfMetalAndWood_TakesTheMetalPicked_AndPlainWood_AndTakesTheColourOfTheMetal()
-    {
-        AtTheForge();
-        Skill(1000);
         var copper = Carry("ingot_copper", 0x1BF2, 2);
         copper.Hue = new Hue(0x96D);
-        var boards = Carry("0x1bd7_board", 0x1BD7, 3);
-
         Call("pick", Aria, "copper");
-        Call("make", Aria, 1, 2);
+        Make(Gears);
         Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Equal([Created], Told());
-        Assert.Equal((0, 0), (Left(copper), Left(boards)));
-        Assert.Equal(new Hue(0x96D), Assert.Single(Made("0x1db8_keg")).Hue);
+        Assert.Equal(new Hue(0x96D), Made("0x1053_gears").Last().Hue);
     }
 
     [Fact]
-    public void ARecipeOfMetalAndWood_WithNothingPicked_TakesIronAndPlainWood()
+    public void ARing_AsksForADiamondToo()
     {
-        AtTheForge();
-        Carry("0x1bf2_iron_ingot", 0x1BF2, 2);
-        Carry("0x1bd7_board", 0x1BD7, 3);
+        Carry("0x1bf2_iron_ingot", 0x1BF2, 1);
 
-        Call("make", Aria, 1, 2);
+        Make(Ring);
+
+        Assert.Equal([NoComponents], Told());
+
+        Carry("0x0f26_diamond", 0x0F26, 1);
+        Make(Ring);
         Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Equal([Created], Told());
-        Assert.Single(Made("0x1db8_keg"));
+        Assert.Single(Made("0x108a_ring"));
     }
 
     [Fact]
-    public void AnAnvilOnAnotherFloor_IsNoAnvil()
+    public void ARoundCandle_IsMadeFromBeeswax_ATemplateNoListNames()
     {
-        Ground("0x0faf_anvil", 0x0FAF, 11, 10, 30);
-        _map.AddStatic(9, 10, 0x0FB1, 0);
-        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
+        var beeswax = Carry("0x1422_beeswax", 0x1422, 2);
 
-        Make();
-
-        Assert.Equal([NotAtTheForge], Told());
-    }
-
-    [Fact]
-    public void TheForgeAndTheIngotsGoneBeforeTheSecondStroke_SayTheForge_AndNeitherTryNorWear()
-    {
-        var anvil = Ground("0x0faf_anvil", 0x0FAF, 11, 10);
-        _map.AddStatic(11, 11, 0x0FB1, 0);
-        var ingots = Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
-        Skill(200);
-
-        Make();
-        _items.Remove([anvil.Id]);
-        _items.MoveToContainer(ingots, _bank.Id, new Point2D(5, 5));
+        Make(RoundCandle);
         Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.Equal([NotAtTheForge], Told());
-        Assert.Equal(0, _random.Rolls);
-        Assert.True(_hammer.TryGetProp<int>("uses_remaining", out var left));
-        Assert.Equal(50, left);
-    }
-
-    [Fact]
-    public void ACopperPiece_AsksForItsBlacksmithy_TakesCopperIngots_AndIsCopperColoured()
-    {
-        AtTheForge();
-        Skill(749);
-        var copper = Carry("ingot_copper", 0x1BF2, 10);
-        copper.Hue = new Hue(0x96D);
-        var iron = Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
-
-        Call("pick", Aria, "copper");
-
-        Assert.Equal([NoIdea], Told());
-
-        Skill(750);
-        Call("pick", Aria, "copper");
-        _random.Doubles(0.0);
-        Make();
-        Fire(1.25);
-
-        Assert.Empty(_errors);
-        Assert.Equal([NoIdea, Created], Told());
-        Assert.Equal((0, 10), (Left(copper), iron.Amount));
-        Assert.Equal(new Hue(0x96D), Assert.Single(Made("0x13eb_ringmail_gloves")).Hue);
-    }
-
-    [Fact]
-    public void WithoutIngotsOfTheMetalPicked_SaysTheMetalIsLacking()
-    {
-        AtTheForge();
-        Skill(1000);
-        Carry("0x1bf2_iron_ingot", 0x1BF2, 10);
-
-        Call("pick", Aria, "valorite");
-        Make();
-
-        Assert.Equal([NoMetal], Told());
+        Assert.Single(Made("0x142f_candle"));
+        Assert.Equal(0, Left(beeswax));
     }
 
     public async Task DisposeAsync()
@@ -576,29 +378,17 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         _scripts.Dispose();
     }
 
-    private void AtTheForge()
-    {
-        Ground("0x0faf_anvil", 0x0FAF, 11, 10);
-        _map.AddStatic(9, 10, 0x0FB1, 0);
-    }
-
     private void Skill(int tenths)
     {
-        SetSkill(SkillType.Blacksmithy, tenths);
+        _aria.Skills.RemoveAll(known => known.Skill == SkillType.Tinkering);
+        _aria.Skills.Add(new MobileSkill { Skill = SkillType.Tinkering, Base = tenths });
+        _state.Skills.RemoveAll(known => known.Skill == SkillType.Tinkering);
+        _state.Skills.Add(new MobileSkill { Skill = SkillType.Tinkering, Base = tenths });
     }
 
-    // The skill service reads the mobile, the mobile module the state service: both hold the same.
-    private void SetSkill(SkillType skill, int tenths)
+    private void Make(int recipe)
     {
-        _aria.Skills.RemoveAll(known => known.Skill == skill);
-        _aria.Skills.Add(new MobileSkill { Skill = skill, Base = tenths });
-        _state.Skills.RemoveAll(known => known.Skill == skill);
-        _state.Skills.Add(new MobileSkill { Skill = skill, Base = tenths });
-    }
-
-    private void Make()
-    {
-        Call("make", Aria, 1, Gloves);
+        Call("make", Aria, 1, recipe);
     }
 
     private void Rolls(params double[] rolls)
@@ -609,7 +399,7 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
     private void Call(string function, params object?[] args)
     {
         _loop.DeferTryPost = true;
-        _itemScripts.Run(_hammer, function, args);
+        _itemScripts.Run(_tools, function, args);
 
         while (_loop.Deferred.Count > 0)
         {
@@ -659,15 +449,6 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         return item;
     }
 
-    private ItemEntity Ground(string template, int graphic, int x, int y, int z = 0)
-    {
-        var item = new ItemEntity { Id = new Serial(_next++), TemplateId = template, ItemId = graphic, Amount = 1 };
-        _items.Add([item]);
-        _items.PlaceOnGround(item, _aria.Map, new Point3D(x, y, z));
-
-        return item;
-    }
-
     private int Left(ItemEntity stack)
     {
         return _items.TryGet(stack.Id, out var still) ? still.Amount : 0;
@@ -687,13 +468,6 @@ public sealed class BlacksmithingScriptIntegrationTests : IAsyncLifetime
         }
 
         return made;
-    }
-
-    private List<string> Kinds()
-    {
-        return _speech.Told.Where(told => told.Player == _aria && told.Text.StartsWith("kind", StringComparison.Ordinal))
-            .Select(told => told.Text)
-            .ToList();
     }
 
     private List<int> Told()

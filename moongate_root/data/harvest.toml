@@ -73,7 +73,8 @@ weight = 20
 id = "frostwood"
 weight = 10
 
-# The ore of the mountains and the caves: 10 to 34 in 8 by 8 tiles, back in 10 to 20 minutes.
+# The ore of the mountains and the caves: 10 to 34 in 8 by 8 tiles, back in 10 to 20 minutes. About half of the places
+# are of iron; the rarer the metal, the more Mining it asks to dig (scripts/common/metals.lua).
 [[resource]]
 id = "ore"
 area = 8
@@ -81,3 +82,39 @@ amount_min = 10
 amount_max = 34
 respawn_min_minutes = 10
 respawn_max_minutes = 20
+
+[[resource.vein]]
+id = "iron"
+weight = 496
+
+[[resource.vein]]
+id = "dull_copper"
+weight = 112
+
+[[resource.vein]]
+id = "shadow_iron"
+weight = 98
+
+[[resource.vein]]
+id = "copper"
+weight = 84
+
+[[resource.vein]]
+id = "bronze"
+weight = 70
+
+[[resource.vein]]
+id = "gold"
+weight = 56
+
+[[resource.vein]]
+id = "agapite"
+weight = 42
+
+[[resource.vein]]
+id = "verite"
+weight = 28
+
+[[resource.vein]]
+id = "valorite"
+weight = 14

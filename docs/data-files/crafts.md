@@ -1,7 +1,7 @@
 # Crafts
 
-`data/crafts` holds the crafts players make things with, one file a craft (`carpentry.toml` and `blacksmithing.toml`
-today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
+`data/crafts` holds the crafts players make things with, one file a craft (`carpentry.toml`, `blacksmithing.toml`,
+`tailoring.toml` and `tinkering.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
 [Blacksmithing](../blacksmithing.md). What a craft must stand near, such as the anvil and the forge of blacksmithing, is not data:
 it is the table `NEEDS` of `scripts/common/crafting.lua`.
 
@@ -36,7 +36,7 @@ skills = []
 | `name` | What the gump shows. |
 | `item` | The item template made. |
 | `skill_min` | The least of the main skill to try it: the chance there is one in two. 0 to 150. |
-| `skill_max` | The skill at which it never fails. Not below `skill_min`, at most 150. |
+| `skill_max` | The skill at which it never fails. Not below `skill_min`, at most 150. UOX3 sets some above 100 (the studded tunic, the skull with candle): those never become certain, nor exceptional below `skill_max - 60`. |
 | `resources` | What it takes: `resource` is a list of `resources.toml` or an item template, `amount` at least 1. At least one. |
 | `skills` | Other skills it asks for: `skill`, `min` (the least to try it) and `max`, which its try is measured against. |
 
@@ -54,8 +54,8 @@ templates = ["0x1bd7_board", "0x1bda_board"]
 | `id` | The name recipes give it, a lower-case identifier. Each list once. |
 | `templates` | The item templates that count for it, at least one. |
 
-`wood` is the plain boards: a kind of wood picked in the gump takes the boards of that kind instead, as
-`scripts/common/woods.lua` says.
+`wood` is the plain boards and `metal` the iron ingots: a kind of wood or metal picked in the gump takes the boards or
+ingots of that kind instead, as `scripts/common/woods.lua` and `scripts/common/metals.lua` say.
 
 ## Loading
 
@@ -75,4 +75,6 @@ uv run --project tools/convert moongate-convert uox-crafts --source <UOX3>/data/
 
 The converter leaves out the groups that make deeds and the recipe of boards, turns UOX3's tenths of skill into
 points, and counts only boards as wood. UOX3 nests its menus (Blacksmithing, Armor, Ringmail): each menu that holds
-recipes becomes a group, in the order the menus are met. A recipe's name starts with a capital.
+recipes becomes a group, in the order the menus are met. A recipe's name starts with a capital, and a second recipe of
+the same name (a spoon facing the other way) is told apart with a number: "Spoon 2". The tinker's tools recipe makes
+the tinker's tools, not UOX3's 10-stone tool kit.

@@ -43,9 +43,12 @@
 -- Functions:
 --   crafting.open(user, tool, craft_id, notice)   opens the crafting gump
 --   crafting.make(user, tool, craft_id, group, recipe)   one attempt
---   crafting.kind(user) / crafting.set_kind(user, id)   the wood picked
+--   crafting.kind(user, craft_id) / crafting.set_kind(user, id, craft_id)   the kind of wood or metal picked, by craft;
+--     set_kind gives false and the client text when the player cannot work it
+--   crafting.material_label(material)   "Wood" or "Metal", as the gump shows it
+--   crafting.material(craft) / crafting.kinds(craft)   the material a craft works in kinds, and its kinds
 --   crafting.group(user, craft_id) / crafting.set_group(user, index, craft_id)   the group shown, by craft
---   crafting.takes_wood(recipe) / crafting.works_wood(craft)   whether wood is taken
+--   crafting.takes(recipe, material)   whether a recipe takes that material
 --   crafting.templates(resource, kind)   the templates that count
 --   crafting.count(user, templates)   how many units the player carries
 --   crafting.chance(user, craft, recipe)   the chance, 0 to 1
@@ -63,6 +66,7 @@
 
 local woods = require("common.woods")
 local smithy = require("common.smithy")
+local metals = require("common.metals")
 
 local crafting = {}
 
@@ -86,7 +90,10 @@ local MARKED = 1044156        -- You create an exceptional quality item and affi
 local WORN_OUT = 1044038      -- You have worn out your tool!
 local NOTHING_YET = 1044165   -- You haven't made anything yet.
 local NO_METAL = 1044037      -- You do not have sufficient metal to make that.
+local NO_LEATHER = 1044463    -- You do not have sufficient leather to make that.
+local NO_BONE = 1049063       -- You do not have enough bones to make that.
 local NOT_AT_FORGE = 1044267  -- You must be near an anvil and a forge to smith items.
+local NO_IDEA_METAL = 1044268 -- You have no idea how to work this metal.
 
 -- How much better than sure a success must be to be exceptional, and the skill that marks it.
 local EXCEPTIONAL_MARGIN = 0.6
@@ -103,7 +110,10 @@ local NOTICES = {
     [MARKED] = "You create an exceptional quality item and affix your maker's mark.",
     [NOTHING_YET] = "You haven't made anything yet.",
     [NO_METAL] = "You do not have sufficient metal to make that.",
+    [NO_LEATHER] = "You do not have sufficient leather to make that.",
+    [NO_BONE] = "You do not have enough bones to make that.",
     [NOT_AT_FORGE] = "You must be near an anvil and a forge to smith items.",
+    [NO_IDEA_METAL] = "You have no idea how to work this metal.",
     [FAILED] = "You failed to create the item, and some of your materials are lost.",
     [NO_SKILL] = "You don't have the required skills to attempt this item.",
     [NO_WOOD] = "You do not have sufficient wood to make that.",
@@ -112,7 +122,15 @@ local NOTICES = {
     [STRANGE_WOOD] = "You cannot work this strange and unusual wood.",
 }
 
-local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH, metal = NO_METAL }
+local MISSING = { wood = NO_WOOD, cloth = NO_CLOTH, metal = NO_METAL, leather = NO_LEATHER, bone = NO_BONE }
+
+-- The materials a craft works in kinds, by the resource that takes them: the module of the kinds, the kind picked when
+-- none is, the field of a kind with its template, the field with the skill it asks of the craft, and the client
+-- text when the skill is lacking.
+local MATERIALS = {
+    wood = { module = woods, default = "plain", template = "boards", skill = "carpentry", cannot = STRANGE_WOOD, label = "Wood" },
+    metal = { module = metals, default = "iron", template = "ingot", skill = "blacksmithy", cannot = NO_IDEA_METAL, label = "Metal" },
+}
 
 -- What a craft asks to stand near, by its id: a test of the player, and the client text when it fails.
 local NEEDS = {
@@ -133,7 +151,7 @@ end
 local AT_YOUR_FEET = "Your backpack is full: the item is at your feet."
 local NOT_MADE = "The item could not be made."
 
--- Who is making something, until when; the wood and the group each player picked.
+-- Who is making something, until when; the kind of wood or metal and the group each player picked, by craft.
 local busy = {}
 local kinds = {}
 local groups = {}
@@ -179,28 +197,77 @@ function crafting.open(user, tool, craft_id, notice)
     gump.open(user, "craft_menu", { craft = craft_id, tool = tool, notice = notice })
 end
 
-function crafting.kind(user)
-    return kinds[user] or "plain"
-end
-
 local function points(user, skill)
     return (mobile.skills(user) or {})[skill] or 0
 end
 
-function crafting.set_kind(user, id, craft_skill)
-    local kind = woods.by_id(id)
+-- The material the recipes of a craft take in kinds ("wood", "metal"), or nil.
+function crafting.material(data)
+    for _, group in ipairs(data and data.groups or {}) do
+        for _, recipe in ipairs(group.recipes) do
+            for _, resource in ipairs(recipe.resources) do
+                if MATERIALS[resource.resource] then
+                    return resource.resource
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+-- The label of a material in the gump, such as "Wood".
+function crafting.material_label(material)
+    return MATERIALS[material] and MATERIALS[material].label
+end
+
+-- The kinds of the material of a craft, the default first, each with its id and name.
+function crafting.kinds(data)
+    local material = MATERIALS[crafting.material(data)]
+
+    if not material then
+        return {}
+    end
+
+    local list = { material.module.by_id(material.default) }
+
+    for _, kind in ipairs(material.module.kinds) do
+        list[#list + 1] = kind
+    end
+
+    return list
+end
+
+-- The kind a player picked for a craft; the material's default when none was picked.
+function crafting.kind(user, craft_id)
+    local material = MATERIALS[crafting.material(craft.get(craft_id or ""))]
+    local picked = (kinds[user] or {})[craft_id or ""]
+
+    -- A kind the material no longer knows, after its data changed, is the default again.
+    if picked and material and material.module.by_id(picked) then
+        return picked
+    end
+
+    return material and material.default or "plain"
+end
+
+function crafting.set_kind(user, id, craft_id)
+    local data = craft.get(craft_id or "")
+    local material = MATERIALS[crafting.material(data)]
+    local kind = material and material.module.by_id(id)
 
     if not kind then
         return false
     end
 
-    if points(user, craft_skill or "carpentry") < kind.carpentry then
-        mobile.message_cliloc(user, STRANGE_WOOD)
+    if points(user, data.skill) < (kind[material.skill] or 0) then
+        mobile.message_cliloc(user, material.cannot)
 
-        return false
+        return false, material.cannot
     end
 
-    kinds[user] = kind.id
+    kinds[user] = kinds[user] or {}
+    kinds[user][craft_id] = kind.id
 
     return true
 end
@@ -215,9 +282,10 @@ function crafting.set_group(user, index, craft_id)
     groups[user][craft_id or ""] = index
 end
 
-function crafting.takes_wood(recipe)
+-- Whether a recipe takes that material.
+function crafting.takes(recipe, material)
     for _, resource in ipairs(recipe.resources) do
-        if resource.resource == "wood" then
+        if resource.resource == material then
             return true
         end
     end
@@ -225,24 +293,13 @@ function crafting.takes_wood(recipe)
     return false
 end
 
--- Whether any recipe of the craft takes wood: its gump shows the wood picked.
-function crafting.works_wood(craft)
-    for _, group in ipairs(craft.groups) do
-        for _, recipe in ipairs(group.recipes) do
-            if crafting.takes_wood(recipe) then
-                return true
-            end
-        end
-    end
-
-    return false
-end
-
 function crafting.templates(resource, kind)
-    if resource == "wood" and kind and kind ~= "plain" then
-        local wood = woods.by_id(kind)
+    -- A kind of another material, such as the oak picked for a recipe that also takes metal, leaves this one plain.
+    local material = MATERIALS[resource]
+    local picked = material and kind and kind ~= material.default and material.module.by_id(kind)
 
-        return wood and { wood.boards } or {}
+    if picked then
+        return { picked[material.template] }
     end
 
     return craft.resource(resource) or { resource }
@@ -416,11 +473,12 @@ local function finish(user, tool, craft_id, craft, recipe, kind)
 
     local hue = 0
 
-    if kind ~= "plain" then
-        for _, resource in ipairs(recipe.resources) do
-            if resource.resource == "wood" then
-                hue = hue_of(user, crafting.templates("wood", kind))
-            end
+    -- The colour of the kind picked, from the stack it takes.
+    for _, resource in ipairs(recipe.resources) do
+        local material = MATERIALS[resource.resource]
+
+        if material and kind ~= material.default and material.module.by_id(kind) then
+            hue = hue_of(user, crafting.templates(resource.resource, kind))
         end
     end
 
@@ -504,7 +562,7 @@ function crafting.make(user, tool, craft_id, group, index)
         return
     end
 
-    local kind = crafting.kind(user)
+    local kind = crafting.kind(user, craft_id)
 
     if not skilled(user, craft, recipe) then
         mobile.message_cliloc(user, NO_SKILL)
@@ -513,12 +571,14 @@ function crafting.make(user, tool, craft_id, group, index)
         return
     end
 
-    -- The wood picked counts only for a recipe that takes wood: a smith forges whatever a carpenter picked.
-    local wood = crafting.takes_wood(recipe) and woods.by_id(kind)
+    -- The kind picked counts only for a recipe that takes its material, and asks for its skill.
+    local material_id = crafting.material(craft)
+    local material = MATERIALS[material_id]
+    local picked = material and crafting.takes(recipe, material_id) and material.module.by_id(kind)
 
-    if wood and points(user, craft.skill) < wood.carpentry then
-        mobile.message_cliloc(user, STRANGE_WOOD)
-        crafting.open(user, tool, craft_id, NOTICES[STRANGE_WOOD])
+    if picked and points(user, craft.skill) < (picked[material.skill] or 0) then
+        mobile.message_cliloc(user, material.cannot)
+        crafting.open(user, tool, craft_id, NOTICES[material.cannot])
 
         return
     end

@@ -93,6 +93,8 @@ export const contentEntries = [
   { source: 'docs/mining.md', slug: 'server/mining', title: 'Mining and smelting', group: 'Scripting and content' },
   { source: 'docs/carpentry.md', slug: 'server/carpentry', title: 'Carpentry', group: 'Scripting and content' },
   { source: 'docs/blacksmithing.md', slug: 'server/blacksmithing', title: 'Blacksmithing', group: 'Scripting and content' },
+  { source: 'docs/tailoring.md', slug: 'server/tailoring', title: 'Tailoring', group: 'Scripting and content' },
+  { source: 'docs/tinkering.md', slug: 'server/tinkering', title: 'Tinkering', group: 'Scripting and content' },
   { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },

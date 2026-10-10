@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"ef5478d9802908939ab7990ef240fe43b2460b8c51795723e073d934cbb74ac9","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"205388d4e09dbbea34f86665f35f39eeb0617d019c607db9db10d33bf690b017","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -202,10 +202,12 @@ gump a due pagine con `gump.create` da `pet.lore`, `mobile.stats` e `mobile.skil
 Uno scavo sceglie un luogo (`target.pick_location`), che dà il `land` della casella e la `graphic` di uno statico scelto
 lì: lo script contiene i terreni che sono roccia e gli statici che sono il pavimento di una grotta. Il personaggio colpisce
 (`mobile.animate`, `mobile.play_sound`, `timer.after`), nel luogo deve restare del minerale (`harvest.amount`), l'abilità
-Mining viene provata tra 0 e 100 (`skill.check`), e uno scavo riuscito toglie dal luogo (`harvest.take`) e dà
+Mining viene provata tra i limiti del metallo del luogo (`skill.check`; 0 e 100 per il ferro), e uno scavo riuscito toglie dal luogo (`harvest.take`) e dà
 un mucchio (`item.give`). Una fusione sceglie una forgia, un oggetto (`item.item_id`, `item.in_range`) o uno statico, prova l'abilità
-tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, poi `item.give`) oppure ne brucia metà; un singolo minerale
-che fallisce rimpicciolisce. Un mucchio su un cursore viene rifiutato (`item.is_held`). Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
+tra 25 e 75, e trasforma il mucchio in lingotti (`item.consume`, poi `item.give`) oppure ne brucia metà; un singolo minerale di ferro
+che fallisce rimpicciolisce, e un metallo sopra l'abilità del minatore viene rifiutato senza prova. Un mucchio su un cursore viene rifiutato (`item.is_held`). Il metallo di un luogo è la vena della sua zona
+(`harvest.vein`): `scripts/common/metals.lua` contiene minerale e lingotti di ogni metallo, il Mining richiesto, i limiti di uno scavo
+e la difficoltà di una fusione. Le costanti in cima a ogni script sono i suoi numeri e i suoi elenchi.
 
 ## axe.lua
 
@@ -225,8 +227,9 @@ ricette con `craft.get` e gli elenchi di materiali con `craft.resource`, conta e
 che il giocatore porta (`item.find`, `item.amount`, `item.consume`; una pila sul cursore è esclusa con `item.is_held`),
 esegue i due colpi (`mobile.play_sound`, `timer.after`), prova le altre abilità della ricetta e poi quella principale
 tra il doppio del minimo meno il massimo e il massimo (`skill.check`), così la probabilità al minimo è una su due, e
-crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), con il colore del tipo di legno
-(passando il colore del tipo di legno a `item.give`, oppure `item.set_hue` ai piedi). Una riuscita può essere eccezionale (`crafting.roll`, le proprietà `quality`, `crafter_id`, `crafter_name`), e ogni tentativo la cui abilità viene provata toglie un uso all'attrezzo (la proprietà `uses_remaining`, estratta tra 25 e 75, `item.delete` all'ultimo). Chi sta creando, il gruppo e il legno scelti da ogni giocatore e l'ultima ricetta iniziata da ciascuno (`crafting.make_last`) sono tenuti in memoria.
+crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), con il colore del tipo di legno o di metallo
+scelto (passandolo a `item.give`, oppure `item.set_hue` ai piedi): la tabella `MATERIALS` del motore lega la risorsa `wood`
+a `scripts/common/woods.lua` e `metal` a `scripts/common/metals.lua`, e il tipo scelto è ricordato per mestiere. Una riuscita può essere eccezionale (`crafting.roll`, le proprietà `quality`, `crafter_id`, `crafter_name`), e ogni tentativo la cui abilità viene provata toglie un uso all'attrezzo (la proprietà `uses_remaining`, estratta tra 25 e 75, `item.delete` all'ultimo). Chi sta creando, il gruppo e il tipo di legno o di metallo scelti da ogni giocatore, per mestiere, e l'ultima ricetta iniziata da ciascuno (`crafting.make_last`) sono tenuti in memoria.
 `scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` sugli attrezzi da falegname) apre il gump di creazione
 dallo zaino; il gump è `templates/gumps/craft_menu.xml` con `scripts/gumps/craft_menu.lua`, uno per tutti i mestieri.
 
@@ -238,6 +241,17 @@ con le regole di `crafting.lua`. `scripts/common/smithy.lua` contiene le grafich
 le trova entro una distanza da un giocatore, tra gli elementi fissi della mappa (`world.statics`) e gli oggetti a terra
 (`world.items_in_range`, `item.item_id`); la tabella `NEEDS` del motore chiede al fabbro un'incudine e una forgia entro
 2 caselle, e `ore.lua` legge le sue forge da lì.
+
+## tailoring_tool.lua
+
+`scripts/items/tailoring_tool.lua` è lo script dei kit da cucito (`script_id = "tailoring_tool"`): dallo zaino
+apre il gump di creazione della sartoria (vedi [Sartoria](../tailoring.md)), con le regole di `crafting.lua`.
+
+## tinkering_tool.lua
+
+`scripts/items/tinkering_tool.lua` è lo script degli attrezzi da tinker e delle cassette degli attrezzi (`script_id = "tinkering_tool"`):
+dallo zaino apre il gump di creazione della meccanica (vedi [Meccanica](../tinkering.md)), con le regole di
+`crafting.lua` e il metallo scelto.
 
 ## fishing_pole.lua
 

@@ -2,18 +2,23 @@
 -- Moongate - scripts/items/ore.lua
 --
 -- What it is for:
---   The item script of the piles of iron ore: a player double clicks a pile it
+--   The item script of the piles of ore: a player double clicks a pile it
 --   carries, or one lying within 2 tiles, picks a forge within 2 tiles, and the
---   whole pile is smelted into iron ingots. A template uses it with
---   script_id = "ore".
+--   whole pile is smelted into ingots of its metal (scripts/common/metals.lua).
+--   A template uses it with script_id = "ore".
 --
---   The Mining skill is tried between 25 and 75: below 25 a smelt always fails,
---   from 75 it always works, and the try may raise the skill.
+--   The Mining skill is tried 25 below and above the metal's difficulty: iron
+--   between 25 and 75, dull copper between 40 and 90, up to valorite between
+--   74 and 124; below that a smelt always fails, above it always works, and
+--   the try may raise the skill. A metal other than iron is not tried at all
+--   by a miner below its difficulty: "You have no idea how to smelt this
+--   strange ore!", and nothing burns.
 --     works   every ore of the pile becomes ingots, by the size of the pile:
 --             a large pile gives 2 ingots for each ore, a medium one 1, a small
 --             one 1 for every 2 ore (an odd one is left).
---     fails   half the pile is burnt away, rounded down; a pile of one ore gets
---             smaller instead: a large one becomes medium, a medium one small.
+--     fails   half the pile is burnt away, rounded down; a pile of one iron ore
+--             gets smaller instead: a large one becomes medium, a medium one
+--             small. A single ore of another metal is burnt away.
 --   A single small ore is too little to smelt. The ore is taken before the
 --   ingots are given, so a backpack with no room for them loses the metal, and a
 --   pile a player holds on its cursor is not smelted.
@@ -25,13 +30,15 @@
 -- ==============================================================================
 
 local smithy = require("common.smithy")
+local metals = require("common.metals")
 
 ore = {}
 
 -- How far the forge may be, in tiles.
 local RANGE = 2
 
-local INGOT = "0x1bf2_iron_ingot"
+-- How far below and above its difficulty a metal is tried.
+local SMELT_SPREAD = 25
 
 -- The graphics of the piles.
 local SMALL = 0x19B7
@@ -47,6 +54,7 @@ local ORE_TOO_FAR = 501976    -- The ore is too far away.
 local TOO_LITTLE = 501987     -- There is not enough metal-bearing ore in this pile to make an ingot.
 local SMELTED = 501988        -- You smelt the ore removing the impurities and put the metal in your backpack.
 local BURNT = 501990          -- You burn away the impurities but are left with less useable metal.
+local STRANGE_ORE = 501986    -- You have no idea how to smelt this strange ore!
 local TOO_FAR = 500446        -- That is too far away.
 local NOT_A_FORGE = "That is not a forge."
 local NO_ROOM = "You have no room in your backpack for the ingots: the metal is lost."
@@ -144,6 +152,7 @@ local function smelt(pile, user, picked)
         return
     end
 
+    local metal = metals.of_ore(item.template(pile)) or metals.iron
     local ingots, left = ingots_of(graphic, amount)
 
     if ingots < 1 then
@@ -152,7 +161,14 @@ local function smelt(pile, user, picked)
         return
     end
 
-    if not skill.check(user, "mining", 25, 75) then
+    -- A metal above the miner's skill is not even tried: nothing burns, and nothing is learnt from it.
+    if metal ~= metals.iron and (mobile.skills(user).mining or 0) < metal.smelt then
+        mobile.message_cliloc(user, STRANGE_ORE)
+
+        return
+    end
+
+    if not skill.check(user, "mining", metal.smelt - SMELT_SPREAD, metal.smelt + SMELT_SPREAD) then
         -- Half the pile is lost; a single ore gets smaller instead: it is taken, and a smaller one given.
         local lost = amount > 1 and amount - math.floor(amount / 2) or 1
 
@@ -162,7 +178,8 @@ local function smelt(pile, user, picked)
             return
         end
 
-        if amount == 1 then
+        -- Only iron comes in smaller piles: a single ore of another metal is simply gone.
+        if amount == 1 and metal == metals.iron then
             item.give(user, PILES[graphic == LARGE and MEDIUM or SMALL])
         end
 
@@ -184,7 +201,7 @@ local function smelt(pile, user, picked)
         local stack = math.min(ingots, MAX_STACK)
 
         -- A backpack with no room loses the metal, as it loses the ore of a dig.
-        if not item.give(user, INGOT, stack) then
+        if not item.give(user, metal.ingot, stack) then
             mobile.message(user, NO_ROOM)
 
             return
