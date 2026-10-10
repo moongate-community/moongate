@@ -2,15 +2,13 @@
 -- Moongate - scripts/spells/earthquake.lua
 --
 -- What it is for:
---   The eighth circle spell Earthquake: the ground shakes around the caster, and
---   everyone within one tile and a fifteenth of its Magery points (7 at 100)
---   loses six tenths of its hit points, at least 10 for a creature that is no
---   player and at most 75, at once and with no resisting. It does not hurt the
---   caster, the dead, the invulnerable, the caster's own creatures nor a player
---   that looks innocent (unless the caster is a murderer); the caster is the
---   aggressor of each. It is refused, before anything is spent, at a guarded
---   town and when there is no one around to hurt. Called by the spell service
---   with the caster, the target (none) and the data of the spell.
+--   The eighth circle spell Earthquake: the ground shakes around the caster, and everyone within one tile and a
+--   fifteenth of its Magery points (7 at 100) loses six tenths of its hit points, at least 10 for a creature
+--   that is no player and at most 75, at once and with no resisting. It does not hurt the caster, the dead, the
+--   invulnerable, the caster's own creatures nor a player that looks innocent (unless the caster is a
+--   murderer); the caster is the aggressor of each. It is refused, before anything is spent, at a guarded town
+--   and when there is no one around to hurt. Called by the spell service with the caster, the target (none) and
+--   the data of the spell.
 --
 -- Functions:
 --   earthquake.check(caster, target, info)   a cliloc number that refuses the

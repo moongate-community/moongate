@@ -2,15 +2,12 @@
 -- Moongate - scripts/spells/invisibility.lua
 --
 -- What it is for:
---   The sixth circle spell Invisibility: the target is hidden, as by the Hiding
---   skill, for 1.2 seconds a point of the caster's Magery, and may walk while it
---   lasts; running, or a swing, a spell or a harm of its own, shows it. Its
---   fight is stopped and it leaves war mode. A staff member, a creature that
---   is not a player's or a vendor (invulnerable) are refused, before anything
---   is spent: "This spell won't work on that!". The invisibility is saved with
---   the hidden state: after a restart a hidden player is shown by its first step.
---   Called by the spell service with the caster, the target
---   ({ kind = "mobile", serial }) and the data of the spell.
+--   The sixth circle spell Invisibility: the target is hidden, as by the Hiding skill, for 1.2 seconds a point
+--   of the caster's Magery, and may walk while it lasts; running, or a swing, a spell or a harm of its own,
+--   shows it. Its fight is stopped and it leaves war mode. A staff member and an invulnerable creature, such
+--   as a vendor, are refused, before anything is spent: "This spell won't work on that!". The hidden state is
+--   saved with the mobile: a player that is still hidden after a restart is shown by its first step. Called by
+--   the spell service with the caster, the target ({ kind = "mobile", serial }) and the data of the spell.
 --
 -- Functions:
 --   invisibility.check(caster, target, info)   a cliloc number that refuses the
@@ -40,7 +37,7 @@ end
 
 function invisibility.cast(caster, target, info)
     local who = target.serial
-    local seconds = math.floor(magic.points(caster, "magery") * PER_POINT)
+    local seconds = math.max(1, math.floor(magic.points(caster, "magery") * PER_POINT))
     local until_time = world.now() + seconds
 
     effect.on(who, PUFF, { speed = PUFF_SPEED, duration = PUFF_DURATION })

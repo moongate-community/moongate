@@ -2,12 +2,12 @@
 -- Moongate - scripts/spells/energy_vortex.lua
 --
 -- What it is for:
---   The eighth circle spell Energy Vortex: an energy vortex (energyvortex_summon) is called at the place picked and fights for the caster, by the pet order guard, for 80 to 119 seconds, or until it is dispelled or
---   killed. It counts for the control slots of its template as a follower. It is
---   refused, before anything is spent, when the caster has too many followers
---   for it, at a guarded town, and at a place where nothing can stand or a mobile
---   or an impassable item is. Called by the spell service with the caster, the
---   target ({ kind = "location", map, x, y, z }) and the data of the spell.
+--   The eighth circle spell Energy Vortex: an energy vortex (energyvortex_summon) is called at the place picked
+--   and fights for the caster, by the pet order guard, for 80 to 119 seconds, or until it is dispelled or
+--   killed. It counts for the control slots of its template as a follower. It is refused, before anything is
+--   spent, when the caster has too many followers for it, at a guarded town, and at a place where nothing can
+--   stand or a mobile or an impassable item is. Called by the spell service with the caster, the target ({ kind
+--   = "location", map, x, y, z }) and the data of the spell.
 --
 -- Functions:
 --   energy_vortex.check(caster, target, info)   a cliloc number that refuses the cast

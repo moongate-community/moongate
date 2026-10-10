@@ -2,15 +2,13 @@
 -- Moongate - scripts/spells/resurrection.lua
 --
 -- What it is for:
---   The eighth circle spell Resurrection: the ghost of a player the caster picks,
---   within one tile of it, is asked to come back to life, with the sparkles and
---   the sound of the spell; the question is the gump of the ankhs and the
---   healers (templates/gumps/resurrect.xml), and what a resurrection costs there
---   it costs here (scripts/gumps/resurrect.lua). The caster itself, one that is
---   alive, a creature that is no player, a ghost more than a tile away and a
---   place where nothing can stand are refused, before anything is spent, each
---   with its own message. Called by the spell service with the caster, the
---   target ({ kind = "mobile", serial }) and the data of the spell.
+--   The eighth circle spell Resurrection: the ghost of a player the caster picks, within one tile of it, is
+--   asked to come back to life, with the sparkles and the sound of the spell; the question is the gump of the
+--   ankhs and the healers (templates/gumps/resurrect.xml), and what a resurrection costs there it costs here
+--   (scripts/gumps/resurrect.lua). The caster itself, one that is alive, a creature that is no player, a ghost
+--   more than a tile away and a place where nothing can stand are refused, before anything is spent, each with
+--   its own message. Called by the spell service with the caster, the target ({ kind = "mobile", serial }) and
+--   the data of the spell.
 --
 -- Functions:
 --   resurrection.check(caster, target, info)   a cliloc number that refuses the

@@ -2,14 +2,12 @@
 -- Moongate - scripts/spells/mass_dispel.lua
 --
 -- What it is for:
---   The seventh circle spell Mass Dispel: every summoned creature within eight
---   tiles of the place picked gets the Dispel of the sixth circle (the chance
---   (50 + 100 a point of Magery above its difficulty / twice its focus) per
---   cent, each its own roll): one that is undone goes in a puff, one that holds
---   out shows it and the caster is its aggressor. It is refused, before
---   anything is spent, when there is no summoned creature there. Called by the
---   spell service with the caster, the target ({ kind = "location", map, x, y,
---   z }) and the data of the spell.
+--   The seventh circle spell Mass Dispel: every summoned creature within eight tiles of the place picked gets
+--   the Dispel of the sixth circle (the chance (50 + 100 a point of Magery above its difficulty / twice its
+--   focus) per cent, each its own roll): one that is undone goes in a puff, one that holds out shows it and the
+--   caster is its aggressor. It is refused, before anything is spent, when there is no summoned creature there.
+--   Called by the spell service with the caster, the target ({ kind = "location", map, x, y, z }) and the data
+--   of the spell.
 --
 -- Functions:
 --   mass_dispel.check(caster, target, info)   a cliloc number that refuses the

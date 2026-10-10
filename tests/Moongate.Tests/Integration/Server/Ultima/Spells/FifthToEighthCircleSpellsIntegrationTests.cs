@@ -120,6 +120,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
     private LuaScriptEngineService _engine = null!;
     private ItemScriptService _itemScripts = null!;
     private ItemTimerService _itemTimers = null!;
+    private NpcScriptService _npcScripts = null!;
     private ItemService _items = null!;
     private ItemTemplateService _templates = null!;
     private SpellCastService _casts = null!;
@@ -169,7 +170,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
 
         var mobileTemplates = new MobileTemplateService(
             new StubDataLoaderService().With(
-                Summons.Select(id => new MobileTemplate { Id = id, ControlSlots = SlotsOf(id) })
+                Summons.Select(id => new MobileTemplate { Id = id, ControlSlots = SlotsOf(id), ScriptId = "monster" })
                     .Concat(Animals.Select(id => new MobileTemplate { Id = id }))
                     .Append(new MobileTemplate { Id = "orc" })
                     .ToArray()
@@ -300,7 +301,12 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         _container.AddScriptModule<NpcModule>();
         _container.AddScriptModule<PetModule>();
         _container.AddScriptModule<GumpModule>();
+        _container.AddScriptModule<DiceModule>();
         _container.RegisterScriptEnum<BodyType>();
+        _container.RegisterScriptEnum<MonsterAnimationType>();
+        _container.RegisterScriptEnum<Moongate.Server.Ultima.Types.Speech.SpeechKeywordType>();
+        _container.RegisterScriptEnum<PetObeyResultType>();
+        _container.RegisterScriptEnum<PetFeedResultType>();
         _container.RegisterDelegate<IScriptEngine>(_ => _engine);
         _container.RegisterInstance<IDataLoaderService>(data);
         _container.Resolve<IMoongateEventBus>()
@@ -326,6 +332,8 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         await gumpScripts.StartAsync();
         var spellScripts = new SpellScriptService(_engine, _loop, options);
         await spellScripts.StartAsync();
+        _npcScripts = new(_engine, mobileTemplates, _loop, options);
+        await _npcScripts.StartAsync();
         _itemScripts = new(_engine, _templates, _loop, options);
         await _itemScripts.StartAsync();
         _itemTimers = new(_timers, new ItemTimerQueue(_time), _items, _itemScripts, _time);
@@ -648,6 +656,75 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         Assert.False(spirit.TryGetProp<long>("summon.until", out _));
         SpinWait.SpinUntil(() => _npcService.Removals.Count > 0, TimeSpan.FromSeconds(2));
         Assert.Equal([spirit.Id], _npcService.Removals);
+    }
+
+    [Fact]
+    public void ASummon_ThatThinksAfterItsTimeIsUp_GoesAwayInAPuff_AndItsMasterHasOneFollowerLess()
+    {
+        var spirit = Summoned(0x700, "bladespirit_summon", Aria, seconds: 10);
+        _time.Advance(TimeSpan.FromSeconds(11));
+
+        _npcScripts.Think(spirit);
+
+        Assert.Empty(_errors);
+        Assert.False(spirit.TryGetProp<long>("summon.until", out _));
+        Assert.Contains(_effects.At, shown => shown.Options.Graphic == 0x3728);
+        SpinWait.SpinUntil(() => _npcService.Removals.Count > 0, TimeSpan.FromSeconds(2));
+        Assert.Equal([spirit.Id], _npcService.Removals);
+    }
+
+    [Theory]
+    [InlineData("dead")]
+    [InlineData("gone")]
+    [InlineData("released")]
+    public void ASummon_WhoseMasterIsDeadGoneOrLetItGo_GoesAwayAtItsNextThink(string why)
+    {
+        var spirit = Summoned(0x700, "bladespirit_summon", Aria);
+
+        switch (why)
+        {
+            case "dead":
+                _aria.Body = 0x0192;
+
+                break;
+            case "gone":
+                _fixture.Mobiles.LeaveWorld(_aria.Id);
+
+                break;
+            default:
+                spirit.RemoveProp("owner");
+
+                break;
+        }
+
+        _npcScripts.Think(spirit);
+
+        Assert.Empty(_errors);
+        Assert.False(spirit.TryGetProp<long>("summon.until", out _));
+    }
+
+    [Fact]
+    public void ASummon_WhoseMasterIsThere_AndTimeIsLeft_StaysAtItsNextThink()
+    {
+        var spirit = Summoned(0x700, "bladespirit_summon", Aria);
+
+        _npcScripts.Think(spirit);
+
+        Assert.Empty(_errors);
+        Assert.True(spirit.TryGetProp<long>("summon.until", out _));
+        Assert.Empty(_npcService.Removals);
+    }
+
+    [Fact]
+    public void ASummon_ThatDies_LeavesNoCorpse()
+    {
+        var spirit = Summoned(0x700, "bladespirit_summon", Aria);
+        var corpse = Ground("corpse", 0x2006, spirit.Location);
+
+        _npcScripts.Run(spirit, "on_death", (long)corpse.Id.Value, 0L);
+
+        Assert.Empty(_errors);
+        Assert.False(_items.TryGet(corpse.Id, out _));
     }
 
     [Fact]
@@ -1415,10 +1492,12 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
             _scripts.Write($"items/{name}.lua", File.ReadAllText(Path.Combine(scripts, "items", name + ".lua")));
         }
 
-        foreach (var name in new[] { "field", "summon" })
+        foreach (var name in new[] { "field", "summon", "creature", "pet_orders" })
         {
             _scripts.Write($"common/{name}.lua", File.ReadAllText(Path.Combine(scripts, "common", name + ".lua")));
         }
+
+        _scripts.Write("mobiles/monster.lua", File.ReadAllText(Path.Combine(scripts, "mobiles", "monster.lua")));
 
         foreach (var name in new[] { "resurrect", "polymorph_forms" })
         {

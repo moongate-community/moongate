@@ -2,13 +2,11 @@
 -- Moongate - scripts/spells/energy_bolt.lua
 --
 -- What it is for:
---   The sixth circle spell Energy Bolt: a bolt flies to the target and, half a
---   second later, does 24 to 41 damage. A target that resists takes three
---   quarters of it; then it is scaled by the caster's Evaluating Intelligence
---   against the target's Resisting Spells, by the Magery of the caster, and
---   doubled against a monster or an animal. The caster is the aggressor of the
---   target. Called by the spell service with the caster, the target
---   ({ kind = "mobile", serial }) and the data of the spell.
+--   The sixth circle spell Energy Bolt: a bolt flies to the target and, half a second later, does 24 to 41
+--   damage. A target that resists takes three quarters of it; then it is scaled by the caster's Evaluating
+--   Intelligence against the target's Resisting Spells, by the Magery of the caster, and doubled against a
+--   monster or an animal. The caster is the aggressor of the target. Called by the spell service with the
+--   caster, the target ({ kind = "mobile", serial }) and the data of the spell.
 --
 -- Functions:
 --   energy_bolt.check(caster, target, info)   a cliloc number that refuses the

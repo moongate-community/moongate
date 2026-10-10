@@ -2,12 +2,11 @@
 -- Moongate - scripts/spells/dispel_field.lua
 --
 -- What it is for:
---   The fifth circle spell Dispel Field: the field piece the caster picks, a
---   wall of stone, a field of fire, poison, paralysis or energy, or a gate that
---   Gate Travel opened (and the gate at its other end), goes away in a puff. A
---   plain moongate is "too chaotic", and any other item cannot be dispelled; both
---   are refused before anything is spent. Called by the spell service with the
---   caster, the target ({ kind = "item", serial }) and the data of the spell.
+--   The fifth circle spell Dispel Field: the field piece the caster picks, a wall of stone, a field of fire,
+--   poison, paralysis or energy, or a gate that Gate Travel opened (and the gate at its other end), goes away
+--   in a puff. A plain moongate is "too chaotic", and any other item cannot be dispelled; both are refused
+--   before anything is spent. Called by the spell service with the caster, the target ({ kind = "item", serial
+--   }) and the data of the spell.
 --
 -- Functions:
 --   dispel_field.check(caster, target, info)   a cliloc number that refuses the

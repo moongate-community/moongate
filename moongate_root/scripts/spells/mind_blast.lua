@@ -2,14 +2,12 @@
 -- Moongate - scripts/spells/mind_blast.lua
 --
 -- What it is for:
---   The fifth circle spell Mind Blast: half a second after the cast the target
---   takes as much damage as the gap between its highest and its lowest stat
---   (Strength, Dexterity, Intelligence, each counted at 150 at most) is worth,
---   halved, scaled by the caster's Evaluating Intelligence against the target's
---   Resisting Spells, by the caster's Magery and doubled against a monster or an
---   animal, and at most 45. A target that resists takes half of it. The caster
---   is the aggressor of the target. Called by the spell service with the caster,
---   the target ({ kind = "mobile", serial }) and the data of the spell.
+--   The fifth circle spell Mind Blast: half a second after the cast the target takes as much damage as the gap
+--   between its highest and its lowest stat (Strength, Dexterity, Intelligence, each counted at 150 at most) is
+--   worth, halved, scaled by the caster's Evaluating Intelligence against the target's Resisting Spells, by the
+--   caster's Magery and doubled against a monster or an animal, and at most 45. A target that resists takes
+--   half of it. The caster is the aggressor of the target. Called by the spell service with the caster, the
+--   target ({ kind = "mobile", serial }) and the data of the spell.
 --
 -- Functions:
 --   mind_blast.check(caster, target, info)   a cliloc number that refuses the

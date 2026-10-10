@@ -2,12 +2,11 @@
 -- Moongate - scripts/spells/energy_field.lua
 --
 -- What it is for:
---   The seventh circle spell Energy Field: five pieces of energy are raised in a
---   line across the way from the caster to the place picked, for two seconds and
---   0.28 of a second a point of the caster's Magery (30 at 100 points). A piece
---   is a wall: nobody walks through it. It is refused, before anything is spent,
---   at a guarded town. Called by the spell service with the caster, the target
---   ({ kind = "location", map, x, y, z }) and the data of the spell.
+--   The seventh circle spell Energy Field: five pieces of energy are raised in a line across the way from the
+--   caster to the place picked, for two seconds and 0.28 of a second a point of the caster's Magery (30 at 100
+--   points). A piece is a wall: nobody walks through it. It is refused, before anything is spent, at a guarded
+--   town. Called by the spell service with the caster, the target ({ kind = "location", map, x, y, z }) and the
+--   data of the spell.
 --
 -- Functions:
 --   energy_field.check(caster, target, info)   a cliloc number that refuses the

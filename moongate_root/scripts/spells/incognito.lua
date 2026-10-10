@@ -2,13 +2,11 @@
 -- Moongate - scripts/spells/incognito.lua
 --
 -- What it is for:
---   The fifth circle spell Incognito: for 1.2 seconds a point of the caster's
---   Magery (at most 144) it has a random skin hue and a random name of its sex
---   (the lists male and female of data/names.toml), by mobile.disguise; when the
---   time is up, or the caster dies, its own come back. Its hair and beard are
---   not changed. A caster that is disguised already, by Incognito or by
---   Polymorph, is refused before anything is spent. Called by the spell service
---   with the caster, the target (none) and the data of the spell.
+--   The fifth circle spell Incognito: for 1.2 seconds a point of the caster's Magery (at most 144) it has a
+--   random skin hue and a random name of its sex (the lists male and female of data/names.toml), by
+--   mobile.disguise; when the time is up, or the caster dies, its own come back. Its hair and beard are not
+--   changed. A caster that is disguised already, by Incognito or by Polymorph, is refused before anything is
+--   spent. Called by the spell service with the caster, the target (none) and the data of the spell.
 --
 -- Functions:
 --   incognito.check(caster, target, info)   a cliloc number that refuses the

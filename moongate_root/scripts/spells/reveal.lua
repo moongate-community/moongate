@@ -2,12 +2,10 @@
 -- Moongate - scripts/spells/reveal.lua
 --
 -- What it is for:
---   The sixth circle spell Reveal: everyone hidden within 1 tile and a twentieth
---   of the caster's Magery points (6 at 100) of the place picked is shown, with
---   a puff and a sound, the staff that is hidden excepted. It is refused, before
---   anything is spent, when no one is hidden there. Called by the spell service
---   with the caster, the target ({ kind = "location", map, x, y, z }) and the
---   data of the spell.
+--   The sixth circle spell Reveal: everyone hidden within 1 tile and a twentieth of the caster's Magery points
+--   (6 at 100) of the place picked is shown, with a puff and a sound, the staff that is hidden excepted. It is
+--   refused, before anything is spent, when no one is hidden there. Called by the spell service with the
+--   caster, the target ({ kind = "location", map, x, y, z }) and the data of the spell.
 --
 -- Functions:
 --   reveal.check(caster, target, info)   a cliloc number that refuses the cast

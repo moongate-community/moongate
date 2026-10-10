@@ -2,14 +2,12 @@
 -- Moongate - scripts/spells/dispel.lua
 --
 -- What it is for:
---   The sixth circle spell Dispel: a summoned creature (common/summon.lua) the
---   caster picks may be undone, in a puff, with the chance (50 + 100 a point of
---   Magery above its difficulty / twice its focus) per cent: the Blade Spirits
---   are easy, the elementals and the daemon hard. A creature that holds out is
---   told so and the caster is its aggressor. Anything that is no summoned
---   creature is refused, before anything is spent: "That cannot be dispelled".
---   Called by the spell service with the caster, the target ({ kind = "mobile",
---   serial }) and the data of the spell.
+--   The sixth circle spell Dispel: a summoned creature (common/summon.lua) the caster picks may be undone, in a
+--   puff, with the chance (50 + 100 a point of Magery above its difficulty / twice its focus) per cent: the
+--   Blade Spirits are easy, the elementals and the daemon hard. A creature that holds out is told so and the
+--   caster is its aggressor. Anything that is no summoned creature is refused, before anything is spent: "That
+--   cannot be dispelled". Called by the spell service with the caster, the target ({ kind = "mobile", serial })
+--   and the data of the spell.
 --
 -- Functions:
 --   dispel.check(caster, target, info)   a cliloc number that refuses the cast

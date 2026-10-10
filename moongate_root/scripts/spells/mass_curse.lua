@@ -2,15 +2,12 @@
 -- Moongate - scripts/spells/mass_curse.lua
 --
 -- What it is for:
---   The sixth circle spell Mass Curse: the Curse of the second circle on everyone
---   within two tiles of the place picked: the three stats lowered for 1.2 seconds
---   a point of the caster's Magery, and the cast of each ruined. It does not
---   touch the caster, the dead, the invulnerable, the caster's own creatures nor
---   a player that looks innocent (unless the caster is a murderer); the caster is
---   the aggressor of each. It is refused, before anything is spent, at a guarded
---   town and when no one is there to curse. Called by the spell service with the
---   caster, the target ({ kind = "location", map, x, y, z }) and the data of the
---   spell.
+--   The sixth circle spell Mass Curse: the Curse of the second circle on everyone within two tiles of the place
+--   picked: the three stats lowered for 1.2 seconds a point of the caster's Magery, and the cast of each
+--   ruined. It does not touch the caster, the dead, the invulnerable, the caster's own creatures nor a player
+--   that looks innocent (unless the caster is a murderer); the caster is the aggressor of each. It is refused,
+--   before anything is spent, at a guarded town and when no one is there to curse. Called by the spell service
+--   with the caster, the target ({ kind = "location", map, x, y, z }) and the data of the spell.
 --
 -- Functions:
 --   mass_curse.check(caster, target, info)   a cliloc number that refuses the

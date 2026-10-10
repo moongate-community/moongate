@@ -2,13 +2,11 @@
 -- Moongate - scripts/spells/flame_strike.lua
 --
 -- What it is for:
---   The seventh circle spell Flame Strike: a pillar of fire stands on the target
---   and, half a second later, does 27 to 48 damage. A target that resists takes
---   three fifths of it; then it is scaled by the caster's Evaluating
---   Intelligence against the target's Resisting Spells, by the Magery of the
---   caster, and doubled against a monster or an animal. The caster is the
---   aggressor of the target. Called by the spell service with the caster, the
---   target ({ kind = "mobile", serial }) and the data of the spell.
+--   The seventh circle spell Flame Strike: a pillar of fire stands on the target and, half a second later, does
+--   27 to 48 damage. A target that resists takes three fifths of it; then it is scaled by the caster's
+--   Evaluating Intelligence against the target's Resisting Spells, by the Magery of the caster, and doubled
+--   against a monster or an animal. The caster is the aggressor of the target. Called by the spell service with
+--   the caster, the target ({ kind = "mobile", serial }) and the data of the spell.
 --
 -- Functions:
 --   flame_strike.check(caster, target, info)   a cliloc number that refuses the

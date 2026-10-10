@@ -2,18 +2,15 @@
 -- Moongate - scripts/spells/gate_travel.lua
 --
 -- What it is for:
---   The seventh circle spell Gate Travel: a gate opens where the caster stands
---   and another at the place a marked recall rune holds, each leading to the
---   other, for thirty seconds (items/moongate.lua takes whoever steps onto one
---   and takes the gate away when its time is up; Dispel Field takes both).
---   The rune is an item of the template recall_rune (see Recall). It is refused,
---   before anything is spent, for what is not a rune, a rune not marked, a
---   criminal, a rune of another map, a region that does not let a gate out of it or into it (the gate_out
---   and gate_in flags of data/regions), a place that a mobile or an item fills,
---   and a gate that is there already at either place. Not built: the check for a
---   fight in progress (the engine has no combat heat to ask), the sigil and the
---   runebook. Called by the spell service with the caster, the target
---   ({ kind = "item", serial }) and the data of the spell.
+--   The seventh circle spell Gate Travel: a gate opens where the caster stands and another at the place a
+--   marked recall rune holds, each leading to the other, for thirty seconds (items/moongate.lua takes whoever
+--   steps onto one and takes the gate away when its time is up; Dispel Field takes both). The rune is an item
+--   of the template recall_rune (see Recall). It is refused, before anything is spent, for what is not a rune,
+--   a rune not marked, a criminal, a rune of another map, a region that does not let a gate out of it or into
+--   it (the gate_out and gate_in flags of data/regions), a place that a mobile or an item fills, and a gate
+--   that is there already at either place. Not built: the check for a fight in progress (the engine has no
+--   combat heat to ask), the sigil and the runebook. Called by the spell service with the caster, the target ({
+--   kind = "item", serial }) and the data of the spell.
 --
 -- Functions:
 --   gate_travel.check(caster, target, info)   a cliloc number that refuses the

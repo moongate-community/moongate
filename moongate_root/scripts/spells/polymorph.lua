@@ -2,20 +2,18 @@
 -- Moongate - scripts/spells/polymorph.lua
 --
 -- What it is for:
---   The seventh circle spell Polymorph: the caster takes the body of an animal, a
---   monster or a man for 1.2 seconds a point of its Magery (a skin hue of a
---   human when the body is a man's, its own name still), by mobile.disguise; when
---   the time is up, or the caster dies, its own come back. A rider that takes a
---   body that is not a man's is dismounted.
+--   The seventh circle spell Polymorph: the caster takes the body of an animal, a monster or a man for 1.2
+--   seconds a point of its Magery (a skin hue of a human when the body is a man's, its own name still), by
+--   mobile.disguise; when the time is up, or the caster dies, its own come back. A rider that takes a body that
+--   is not a man's is dismounted.
 --
---   The form is picked from a list. The first cast has no form: it opens the
---   list (templates/gumps/polymorph_forms.xml, scripts/gumps/polymorph_forms.lua) and spends
---   nothing; the pick casts the spell again with the body kept in the props
---   magic.polymorph_body and magic.polymorph_until, and that cast costs as any.
+--   The form is picked from a list. The first cast has no form: it opens the list
+--   (templates/gumps/polymorph_forms.xml, scripts/gumps/polymorph_forms.lua) and spends nothing; the pick casts
+--   the spell again with the body kept in the props magic.polymorph_body and magic.polymorph_until, and that
+--   cast costs as any.
 --
---   A caster that is disguised already, by Polymorph or by Incognito, is refused,
---   before anything is spent. Called by the spell service with the caster, the
---   target (none) and the data of the spell.
+--   A caster that is disguised already, by Polymorph or by Incognito, is refused, before anything is spent.
+--   Called by the spell service with the caster, the target (none) and the data of the spell.
 --
 -- Functions:
 --   polymorph.check(caster, target, info)   a cliloc number that refuses the

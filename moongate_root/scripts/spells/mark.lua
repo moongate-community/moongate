@@ -2,15 +2,13 @@
 -- Moongate - scripts/spells/mark.lua
 --
 -- What it is for:
---   The sixth circle spell Mark: the recall rune the caster picks, which it must
---   carry in its backpack, is marked with the place where the caster stands,
---   as the staff command .mark_rune does (the props rune.marked, rune.x, rune.y,
---   rune.z, rune.map, and the name "a recall rune for Britain"). A rune can be
---   marked again. It is refused, before anything is spent, for what is not a
---   rune, a rune that is not in the backpack, a region that does not let a rune
---   be marked in it (the mark flag of data/regions) and a place where a mobile
---   stands that is not the caster's. Called by the spell service with the caster,
---   the target ({ kind = "item", serial }) and the data of the spell.
+--   The sixth circle spell Mark: the recall rune the caster picks, which it must carry in its backpack, is
+--   marked with the place where the caster stands, as the staff command .mark_rune does (the props rune.marked,
+--   rune.x, rune.y, rune.z, rune.map, and the name "a recall rune for Britain"). A rune can be marked again. It
+--   is refused, before anything is spent, for what is not a rune, a rune that is not in the backpack, a region
+--   that does not let a rune be marked in it (the mark flag of data/regions) and a place where a mobile stands
+--   that is not the caster's. Called by the spell service with the caster, the target ({ kind = "item", serial
+--   }) and the data of the spell.
 --
 -- Functions:
 --   mark.check(caster, target, info)   a cliloc number that refuses the cast

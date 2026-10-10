@@ -2,13 +2,11 @@
 -- Moongate - scripts/spells/paralyze.lua
 --
 -- What it is for:
---   The fifth circle spell Paralyze: the target is frozen for seven seconds and a
---   fifth of a second a point of the caster's Magery (27 at 100 points), three
---   quarters of it when it resists, and cannot step, turn or cast meanwhile; its
---   own cast is ruined. A target already frozen is told so and nothing is
---   spent. The caster is the aggressor of the target. Called by the spell
---   service with the caster, the target ({ kind = "mobile", serial }) and the
---   data of the spell.
+--   The fifth circle spell Paralyze: the target is frozen for seven seconds and a fifth of a second a point of
+--   the caster's Magery (27 at 100 points), three quarters of it when it resists, and cannot step, turn or cast
+--   meanwhile; its own cast is ruined. A target already frozen is told so and nothing is spent. The caster is
+--   the aggressor of the target. Called by the spell service with the caster, the target ({ kind = "mobile",
+--   serial }) and the data of the spell.
 --
 -- Functions:
 --   paralyze.check(caster, target, info)   a cliloc number that refuses the cast

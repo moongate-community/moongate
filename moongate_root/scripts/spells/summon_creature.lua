@@ -2,16 +2,13 @@
 -- Moongate - scripts/spells/summon_creature.lua
 --
 -- What it is for:
---   The fifth circle spell Summon Creature: an animal picked at random from a
---   fixed list (a polar bear, a brown bear, a black bear, a horse, a walrus, a
---   chicken, a scorpion, a giant serpent, a llama, an alligator, a grey wolf, a
---   slime, an eagle, a gorilla, a snow leopard, a pig, a hind or a rabbit) is
---   called beside the caster and fights for it, by the pet order guard, for as
---   many seconds as the caster has points of Magery, or until it is dispelled or
---   killed. It is refused, before anything is spent, when the caster has fewer
---   than two followers' room left and when no place beside the caster is free.
---   Called by the spell service with the caster, the target (none) and the data
---   of the spell.
+--   The fifth circle spell Summon Creature: an animal picked at random from a fixed list (a polar bear, a brown
+--   bear, a black bear, a horse, a walrus, a chicken, a scorpion, a giant serpent, a llama, an alligator, a
+--   grey wolf, a slime, an eagle, a gorilla, a snow leopard, a pig, a hind or a rabbit) is called beside the
+--   caster and fights for it, by the pet order guard, for as many seconds as the caster has points of Magery,
+--   or until it is dispelled or killed. It is refused, before anything is spent, when the caster has fewer than
+--   two followers' room left and when no place beside the caster is free. Called by the spell service with the
+--   caster, the target (none) and the data of the spell.
 --
 -- Functions:
 --   summon_creature.check(caster, target, info)   a cliloc number that refuses

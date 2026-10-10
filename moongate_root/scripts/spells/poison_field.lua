@@ -2,15 +2,12 @@
 -- Moongate - scripts/spells/poison_field.lua
 --
 -- What it is for:
---   The fifth circle spell Poison Field: five pieces of poison are raised in a
---   line across the way from the caster to the place picked, for twenty seconds.
---   Whoever steps onto a piece, or stands in it, once a second, is poisoned at
---   the regular level, if the caster may harm it (not a player that looks
---   innocent, unless the caster is a murderer; not the caster's own creatures);
---   the caster is the aggressor. The poison does not block the way. It is
---   refused, before anything is spent, at a guarded town. Called by the spell
---   service with the caster, the target ({ kind = "location", map, x, y, z })
---   and the data of the spell.
+--   The fifth circle spell Poison Field: five pieces of poison are raised in a line across the way from the
+--   caster to the place picked, for twenty seconds. Whoever steps onto a piece, or stands in it, once a second,
+--   is poisoned at the regular level, if the caster may harm it (not a player that looks innocent, unless the
+--   caster is a murderer; not the caster's own creatures); the caster is the aggressor. The poison does not
+--   block the way. It is refused, before anything is spent, at a guarded town. Called by the spell service with
+--   the caster, the target ({ kind = "location", map, x, y, z }) and the data of the spell.
 --
 -- Functions:
 --   poison_field.check(caster, target, info)   a cliloc number that refuses the
