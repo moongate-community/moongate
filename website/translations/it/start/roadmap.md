@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"9b7238ff0be5d2dc4d7fb6f98c6ea6f0d73f03fc5c47b09ab593262640961252","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"a0f709f48b64b95a56d627eceaf915cd67431b6027e47477fe283c5596257ee8","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -130,7 +130,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 | 4.2 | ❌ | **Scambio sicuro** tra giocatori | Economia dei giocatori | |
 | 4.3 | ❌ | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebook** | Il modo in cui i giocatori viaggiano; richiede le regole delle regioni di 3.5 | |
-| 4.5 | 🟡 | **Pozioni ed effetti alchemici**. Fatto: [cura, rinvigorimento, forza, agilità, visione notturna, veleno e antidoti](potions.md); poi esplosione | Piccolo quando esistono effetti temporanei e incantesimi | |
+| 4.5 | 🟡 | **Pozioni ed effetti alchemici**. Fatto: [cura, rinvigorimento, forza, agilità, visione notturna, veleno, antidoti ed esplosione](potions.md); poi il mestiere dell'alchimia | Piccolo quando esistono effetti temporanei e incantesimi | |
 
 ## Fase 5: professioni
 

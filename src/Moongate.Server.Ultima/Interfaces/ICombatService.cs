@@ -23,6 +23,14 @@ public interface ICombatService : IMoongateStartupService
     bool Attack(MobileEntity attacker, MobileEntity target);
 
     /// <summary>
+    ///     Hurts <paramref name="target" /> by <paramref name="damage" /> without a swing, as an explosion does: the rules of
+    ///     a blow (a crime against an innocent, the murder report, the hurt sound and gesture, the damage shown, a death
+    ///     with its killer, an NPC fighting back) without war mode. False for an invulnerable, dead or absent target, or a
+    ///     negative damage.
+    /// </summary>
+    bool Harm(MobileEntity? attacker, MobileEntity target, int damage);
+
+    /// <summary>
     ///     Ends the fight of <paramref name="mobile" />: it swings no more, and its player is told it fights no one.
     /// </summary>
     void Stop(MobileEntity mobile);

@@ -1157,6 +1157,19 @@ public sealed class MobileModule
             : LuaValue.Nil;
     }
 
+    /// <summary>
+    ///     The mobile says text overhead to everyone around, as a countdown over a held potion;
+    ///     <c>mobile.say(user, "3")</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "The mobile says text overhead, seen by the players around it, as a countdown over a held explosion potion. False for an unknown mobile or blank text."
+    )]
+    public bool Say(long serial, string text)
+    {
+        return !string.IsNullOrWhiteSpace(text) && TryGetMobile(serial, out var mobile) && _speech.Say(mobile, text) >= 0;
+    }
+
     private bool TryGetMobile(long serial, [NotNullWhen(true)] out MobileEntity? mobile)
     {
         mobile = null;

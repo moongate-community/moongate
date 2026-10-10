@@ -152,6 +152,19 @@ public sealed class EffectModuleTests
     }
 
     [Fact]
+    public void MovingTo_FliesFromAnObjectToAPlaceOfItsMap()
+    {
+        Assert.True(Run("return effect.moving_to(2, 1500, 1610, 5, 0x0F0D)")[0].Read<bool>());
+        Assert.False(Run("return effect.moving_to(999, 1500, 1610, 5, 0x0F0D)")[0].Read<bool>());
+
+        var moving = Assert.Single(_effects.Moving);
+        Assert.Equal(
+            (MapType.Felucca, _aria.Id, Serial.Zero, new Point3D(1500, 1610, 5)),
+            (moving.Map, moving.Source, moving.Target, moving.To)
+        );
+    }
+
+    [Fact]
     public void Moving_BetweenTwoMaps_IsFalse()
     {
         _orc.Map = MapType.Trammel;

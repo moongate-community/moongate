@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Effects;
 using Moongate.Server.Ultima.Data.Internal.Combat;
 using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Server.Ultima.Data.Mounts;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
@@ -194,6 +195,42 @@ public sealed class CombatService : ICombatService
 
         var now = _time.GetUtcNow();
         Fight(attacker, target, now, true);
+
+        return true;
+    }
+
+    public bool Harm(MobileEntity? attacker, MobileEntity target, int damage)
+    {
+        if (damage < 0 ||
+            target.Notoriety == NotorietyType.Invulnerable ||
+            target.IsDead ||
+            !_mobiles.IsInWorld(target.Id))
+        {
+            return false;
+        }
+
+        // A ghost, or one gone to another map, is to blame for nothing.
+        if (attacker is not null && (attacker.IsDead || attacker.Map != target.Map))
+        {
+            attacker = null;
+        }
+
+        // One's own pet is no innocent to the blast that catches it, and it does not turn on its master.
+        var ownPet = attacker is not null && target.GetProp(MountProps.Owner, 0L) == attacker.Id.Value;
+
+        // As an attack: a player who harms an innocent that is not fighting it is a criminal; not for harming itself.
+        if (attacker is { IsNpc: false } &&
+            !ownPet &&
+            attacker.Id != target.Id &&
+            target.ShownNotoriety == NotorietyType.Innocent &&
+            TargetOf(target)?.Id != attacker.Id &&
+            TargetOf(attacker)?.Id != target.Id)
+        {
+            _crimes.MakeCriminal(attacker);
+            _murders?.Aggressed(attacker, target);
+        }
+
+        Wound(attacker, target, damage, _time.GetUtcNow(), !ownPet);
 
         return true;
     }
@@ -510,8 +547,15 @@ public sealed class CombatService : ICombatService
             return;
         }
 
-        var damage = DamageOf(attacker, target, weapon);
+        if (Wound(attacker, target, DamageOf(attacker, target, weapon), now))
+        {
+            Stop(attacker);
+        }
+    }
 
+    // What a blow does once it lands: the hurt sound and gesture, the damage, and a death; true when it killed.
+    private bool Wound(MobileEntity? attacker, MobileEntity target, int damage, DateTimeOffset now, bool fightBack = true)
+    {
         if (SoundsOf(target)?.Hurt is { } hurt and > 0)
         {
             _speech.PlaySound(target, hurt);
@@ -526,15 +570,23 @@ public sealed class CombatService : ICombatService
             _blood?.Splash(target);
         }
 
-        _murders?.Struck(attacker, target);
+        if (attacker is not null)
+        {
+            _murders?.Struck(attacker, target);
+        }
+
         var hits = target.Hits - damage;
 
         if (hits > 0)
         {
             _state.SetStats(target, new MobileStatsChange { Hits = hits });
-            FightBack(target, attacker, now);
 
-            return;
+            if (fightBack && attacker is not null && attacker.Id != target.Id)
+            {
+                FightBack(target, attacker, now);
+            }
+
+            return false;
         }
 
         _state.SetStats(target, new MobileStatsChange { Hits = 0 });
@@ -545,8 +597,9 @@ public sealed class CombatService : ICombatService
             _state.SetStats(target, new MobileStatsChange { Hits = 1 });
         }
 
-        Stop(attacker);
         Stop(target);
+
+        return true;
     }
 
     // The NPC that is hit, or missed, fights the one who swings, if it fights no one; whoever hit it keeps it at it.
@@ -675,7 +728,7 @@ public sealed class CombatService : ICombatService
         return _random.Next(CombatFormulas.FistsMaximumDamage) + CombatFormulas.FistsMinimumDamage;
     }
 
-    private void ShowDamage(MobileEntity attacker, MobileEntity target, int damage)
+    private void ShowDamage(MobileEntity? attacker, MobileEntity target, int damage)
     {
         if (!_config.DisplayDamageNumbers)
         {
@@ -684,7 +737,7 @@ public sealed class CombatService : ICombatService
 
         foreach (var player in new[] { attacker, target })
         {
-            if (!player.IsNpc && _sessions.TryGetByCharacterId(player.Id, out var session))
+            if (player is not null && !player.IsNpc && _sessions.TryGetByCharacterId(player.Id, out var session))
             {
                 _sender.TrySend(session.SessionId, new DamagePacket(target.Id, damage));
             }

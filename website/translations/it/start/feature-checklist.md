@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"62a5bde1af941233488a3e3cb83589c4436ea6f9f00a0a29094f88bbf6d732c2","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"91bf14a5431c39f7e3ee80e93f3099be94d3eccae901041c873b0749a10e643d","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -186,7 +186,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Porte | ✅ | Apertura e chiusura; porte doppie collegate; una porta chiusa blocca il passaggio, lo staff la attraversa; umani e mostri che camminano verso un luogo aprono quelle non a chiave |
 | Serrature e chiavi | ✅ | Le porte chiuse a chiave si aprono per un giocatore che porta la loro chiave |
 | Luci | ✅ | Accensione e spegnimento; i lampioni si accendono di notte |
-| Pozioni e cibo | 🟡 | Il cibo si mangia: fame, stamina, suono e gesto. Le bevande si bevono a sorsi, lasciando una brocca o un bicchiere vuoto; nessun riempimento, nessuna ubriachezza. Le [pozioni](potions.md) di cura, rinvigorimento, forza, agilità, visione notturna, veleno e antidoti si bevono, con una mano libera, e lasciano una bottiglia; ancora niente esplosioni |
+| Pozioni e cibo | 🟡 | Il cibo si mangia: fame, stamina, suono e gesto. Le bevande si bevono a sorsi, lasciando una brocca o un bicchiere vuoto; nessun riempimento, nessuna ubriachezza. Le [pozioni](potions.md) di cura, rinvigorimento, forza, agilità, visione notturna, veleno e antidoti si bevono, con una mano libera, e lasciano una bottiglia; le pozioni esplosive si lanciano ed esplodono su un'area |
 | Libri | 🟡 | Creazione da parte dello staff con [`.book`](commands/book.md) e pergamene leggibili da [template di testo TOML](data-files/books.md), variabili del destinatario congelate, titolo/autore/testo salvati e [allegati alle lettere ritirabili una sola volta](data-files/books.md#letter-attachments); [62 libri di lore in otto lingue](book-content-import.md), che aprono il [libro](data-files/books.md#books-and-parchments) del client con copertina e pagine; [libri in cui il giocatore scrive](data-files/books.md#books-a-player-writes-in), uno per ogni nuovo personaggio; copia e firma dei libri non realizzate |
 | Mappe e mappe del tesoro | 🟡 | Le [mappe](maps.md) si aprono sulla loro area, con un percorso fino a 50 puntine; le 33 mappe pronte; un modulo Lua `map`; la [cartografia](cartography.md) le disegna. Niente mappe del tesoro o SOS per ora |
 | Rune, recall e portali | ❌ | |

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e30b5baffb07a8ee36489f2328e9bb94b014328e6c68b01369186b1ea1b6d044","title":"Pozioni"} -->
+<!-- translation: {"sourceHash":"eb1a2dd72e85c56665d1a5e3efe3786881f895c79b7d89f7f3f71d426c336940","title":"Pozioni"} -->
 
 # Pozioni
 
@@ -21,7 +21,7 @@ come una tenuta sul cursore, non fa nulla.
 Una seconda pozione di forza (o di agilità) mentre dura la prima viene rifiutata: "You are already under a similar effect.";
 così anche una seconda visione notturna. Quando un bonus finisce, i punti ferita o la stamina sopra il nuovo massimo se ne vanno.
 
-Le pozioni esplosive non si bevono: verranno lanciate.
+Le pozioni esplosive si lanciano, non si bevono: vedi [Esplosione](#explosion).
 
 ## Veleno
 
@@ -55,6 +55,30 @@ ailment!"), e viene rifiutato quando chi beve non è avvelenato ("You are not po
 
 Gli script avvelenano e curano con `mobile.poison(user, 2)`, `mobile.cure(user)` e `mobile.poison_level(user)`.
 
+## Esplosione
+
+Una pozione esplosiva non si beve ma si lancia. Fai doppio clic su di essa nello zaino o entro 1 casella: una pozione della pila viene
+innescata nello zaino ("You should throw it now!"), si apre un cursore, e un conto alla rovescia 3, 2, 1 scorre sopra chi la tiene, visto
+da chi è vicino, il primo numero dopo 0,75 secondi, poi uno al secondo. A 0 esplode dove si trova: in mano, sopra chi la
+tiene; una tenuta sul cursore esplode appena viene lasciata.
+
+Lanciala entro 10 caselle e in vista ("That is too far away.", "Target cannot be seen." la lasciano in mano, innescata;
+fai di nuovo doppio clic per mirare). Vola un decimo di secondo per casella e il conto alla rovescia continua dove atterra.
+
+L'esplosione ferisce ogni mobile vivo entro 2 caselle, anche chi la lancia, con le regole di un colpo: ferire un innocente che
+non stava combattendo con chi lancia lo rende criminale, e una morte lo indica come uccisore. Le altre pozioni esplosive entro 2
+caselle esplodono con essa, senza l'Alchemy di chi lancia. Chi lancia e poi esce dal gioco non viene incolpato di nulla, e i propri
+animali non sono innocenti per un'esplosione né si rivoltano contro il padrone.
+
+| Pozione | Danno |
+| --- | --- |
+| Esplosiva minore | da 5 a 10 |
+| Esplosiva | da 10 a 20 |
+| Esplosiva maggiore | da 15 a 30 |
+
+L'Alchemy di chi lancia aggiunge un decimo dei suoi punti; un'esplosione fa al massimo 40. Gli script feriscono allo stesso modo con
+`combat.harm(target, damage, attacker)`.
+
 ## Bonus e visione notturna
 
 Un bonus di statistica si somma alla statistica base: lo stato mostra la somma, il danno in combattimento e il peso che un giocatore può portare
@@ -68,17 +92,18 @@ Gli script li danno con `mobile.add_stat_bonus(user, "strength", 10, 120)` e
 ## Cambiare le regole
 
 - Le pozioni sono `scripts/items/potion.lua`: la tabella `EFFECTS` associa un template al suo effetto.
-- I template con `script_id = "potion"` sono i dieci qui sopra, in `templates/items/magic/potions.toml`.
+- I template con `script_id = "potion"` sono le pozioni qui sopra, in `templates/items/magic/potions.toml`; le
+  pozioni esplosive hanno `script_id = "explosion_potion"` (`scripts/items/explosion_potion.lua`).
 
 ## Root esistenti
 
-`mgctl init` non sostituisce mai un file che potresti aver modificato. Copia dalla distribuzione `scripts/items/potion.lua` e
-`templates/items/magic/potions.toml`, oppure dai `script_id = "potion"` alle tue pozioni di cura, rinvigorimento, forza, agilità e
-visione notturna.
+`mgctl init` non sostituisce mai un file che potresti aver modificato. Copia dalla distribuzione `scripts/items/potion.lua`,
+`scripts/items/explosion_potion.lua` e `templates/items/magic/potions.toml`, oppure dai `script_id = "potion"` alle
+pozioni che si bevono e `script_id = "explosion_potion"` alle pozioni esplosive.
 
 ## Non ancora
 
-Esplosione (fetta 3), alchimia, armi avvelenate e l'abilità Poisoning, mostri velenosi, bende che curano, la barra
+Alchimia, armi avvelenate e l'abilità Poisoning, mostri velenosi, bende che curano, la barra
 dei buff, i barili di pozioni.
 
 ## Vedi anche

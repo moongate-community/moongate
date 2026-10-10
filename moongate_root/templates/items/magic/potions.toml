@@ -24,6 +24,7 @@ id = "lesserexplosionpotion"
 base_id = "0x0f0d_purple_potion"
 item_id = 0
 rarity = "common"
+script_id = "explosion_potion"
 
 [[item]]
 id = "0x0f0d_b_purple_potion"
@@ -42,6 +43,7 @@ id = "explosionpotion"
 base_id = "0x0f0d_b_purple_potion"
 item_id = 0
 rarity = "common"
+script_id = "explosion_potion"
 
 [[item]]
 id = "0x0f0d_c_purple_potion"
@@ -60,6 +62,7 @@ id = "greaterexplosionpotion"
 base_id = "0x0f0d_c_purple_potion"
 item_id = 0
 rarity = "common"
+script_id = "explosion_potion"
 
 [[item]]
 id = "0x0f0b_red_potion"

@@ -41,6 +41,25 @@ public sealed class CombatModule
     }
 
     /// <summary>
+    ///     Hurts a mobile without a swing, as an explosion does; <c>combat.harm(target, 15, thrower)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Hurts the target by damage without a swing, as an explosion does, with the rules of a blow when an attacker is given: a player who harms an innocent that is not fighting it is a criminal (not for harming itself), the murder report is told, the target shows the hurt and the damage, dies with the attacker as its killer, and an NPC fights back. The attacker may be left out, as for a trap. No war mode, and the attacker fights no one for it. False for a target not in the world, dead or invulnerable, an attacker given but not in the world, or a negative damage."
+    )]
+    public bool Harm(long target, int damage, long? attacker = null)
+    {
+        MobileEntity? who = null;
+
+        if (attacker is { } serial && !TryGet(serial, out who))
+        {
+            return false;
+        }
+
+        return TryGet(target, out var other) && _combat.Harm(who, other, damage);
+    }
+
+    /// <summary>
     ///     Ends the fight of a mobile; <c>combat.stop(npc)</c>.
     /// </summary>
     [ScriptFunction(helpText: "Ends the fight of the mobile: it swings no more. False for a mobile not in the world.")]

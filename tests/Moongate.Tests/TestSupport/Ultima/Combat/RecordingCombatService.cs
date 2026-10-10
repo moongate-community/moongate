@@ -32,6 +32,15 @@ public sealed class RecordingCombatService : ICombatService
         return Allows;
     }
 
+    public List<(MobileEntity? Attacker, MobileEntity Target, int Damage)> Harmed { get; } = [];
+
+    public bool Harm(MobileEntity? attacker, MobileEntity target, int damage)
+    {
+        Harmed.Add((attacker, target, damage));
+
+        return Allows;
+    }
+
     public void Stop(MobileEntity mobile)
     {
         Stopped.Add(mobile);

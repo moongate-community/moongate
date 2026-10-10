@@ -48,6 +48,15 @@ public sealed class CombatModuleTests
     }
 
     [Fact]
+    public void Harm_HurtsWithOrWithoutAnAttacker()
+    {
+        var result = Run("return combat.harm(2, 12, 256), combat.harm(2, 5), combat.harm(999, 5, 256), combat.harm(2, 5, 999)");
+
+        Assert.Equal([true, true, false, false], result.Select(value => value.Read<bool>()));
+        Assert.Equal([((MobileEntity?)_orc, _aria, 12), (null, _aria, 5)], _combat.Harmed);
+    }
+
+    [Fact]
     public void Attack_TheServiceRefuses_IsFalse()
     {
         _combat.Allows = false;

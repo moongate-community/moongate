@@ -147,3 +147,14 @@ if level and level >= 3 then
     mobile.message(user, "Come back when you are cured.")
 end
 ```
+
+## say
+
+A countdown over the player who holds a lit fuse:
+
+```lua
+for count = 3, 1, -1 do
+    mobile.say(user, tostring(count))
+    wait(1)
+end
+```

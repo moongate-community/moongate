@@ -828,7 +828,8 @@ def test_the_potions_a_player_drinks_get_the_potion_script_and_explosion_waits(u
 
     assert uox_workspace.run() == 0, uox_workspace.combined
 
-    # What a player drinks: scripts/items/potion.lua. Explosion potions are thrown, and come with throwing.
+    # What a player drinks: scripts/items/potion.lua.
     items = uox_workspace.items()
     assert [items[name]["script_id"] for name in ("healpotion", "nightsightpotion", "poisonpotion", "curepotion")] == ["potion"] * 4
-    assert "script_id" not in items["explosionpotion"]
+    # Explosion potions are thrown: scripts/items/explosion_potion.lua.
+    assert items["explosionpotion"]["script_id"] == "explosion_potion"
