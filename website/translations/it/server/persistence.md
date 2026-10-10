@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"a28717d126226b5066ed19f06b09a8eed010dc708a8164f76dcae6340a77a15d","title":"Entità e accesso ai dati"} -->
+<!-- translation: {"sourceHash":"5715a8225c872d09dd60d11ba32a58153cad7b544108eebdb3c8f0c8a4ac422f","title":"Entità e accesso ai dati"} -->
 
 # Persistenza PostgreSQL: entità e accesso ai dati
 
@@ -320,7 +320,7 @@ item.RemoveProp(ItemPropKeys.Charges);
 ```
 
 `ItemPropKeys` definisce i nomi delle chiavi lette dal server (`loot_type`, `charges`,
-`durability`, `max_durability`, `quality`, `crafter_id`, `crafter_name`, `uses_remaining`); gli script possono usare
+`durability`, `max_durability`, `quality`, `crafter_id`, `crafter_name`, `uses_remaining`, `label_number`, `bank.worth`); gli script possono usare
 qualsiasi altra chiave. `quality` contiene un `ItemQualityType` (`Low`, `Regular`,
 `Exceptional`, come ModernUO); un oggetto senza questa proprietà è `Regular`.
 Una proprietà contiene una stringa, un numero, un bool o un enum; qualsiasi altro
@@ -356,8 +356,8 @@ account create <username> <password> [Regular|GameMaster|Administrator]
 
 Il livello predefinito è `Regular`. La console interattiva maschera la password durante
 la digitazione, e l'output del comando non la ripete mai. Il comando è registrato anche
-per gli amministratori in gioco, ma l'input dei comandi in gioco non è ancora collegato;
-quell'input deve proteggere la password prima di esporre il comando. Nome utente e
+per gli amministratori in gioco, che lo scrivono con un punto davanti (vedi [Comandi del server](commands.md)); il sottocomando `api-access`
+rifiuta l'uso in gioco. Nome utente e
 password devono essere ciascuno un token perché il sistema dei comandi separa gli
 argomenti sugli spazi.
 

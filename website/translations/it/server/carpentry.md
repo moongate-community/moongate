@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"74a88eda0bab64db42eed21fad1e72d2a6326c2948c123de4b2c80480c82f9a3","title":"Falegnameria"} -->
+<!-- translation: {"sourceHash":"a1291500e045924b9652226373d964c82b63493eb7e3d379f8cb8f0bffd05aff","title":"Falegnameria"} -->
 
 # Falegnameria
 
@@ -28,8 +28,8 @@ La riga in basso mostra il legno che lavori e quante assi di quel tipo porti. Ch
 | Ogni materiale nello zaino e nelle sue borse: non nella cassetta in banca, non una pila sul cursore | "You do not have sufficient wood to make that.", "You don't have enough cloth to make that." oppure "You don't have the components needed to make that." |
 | Non stai già creando qualcosa | "You must wait to perform another action." |
 
-Quando un tentativo viene rifiutato non si toglie nulla. Al secondo colpo si ricontrolla tutto: assi spostate nel
-frattempo non creano nulla.
+Quando un tentativo viene rifiutato non si toglie nulla. I materiali e l'attrezzo si ricontrollano al secondo colpo: assi spostate nel
+frattempo non creano nulla. L'abilità e il tipo di legno si controllano solo all'inizio.
 
 ## La probabilità
 

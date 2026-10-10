@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"8046cafc68e0fb454dc7e3fea031858e07288fedd545a53d1faa0152bd3a1f9a","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"b07a773c61ac9bc5bf67b118bacf7c41185f0ae9accebc62424ee1347400087f","title":"Mestieri"} -->
 
 # Mestieri
 
@@ -64,7 +64,7 @@ templates = ["0x1bd7_board", "0x1bda_board"]
 Il server si ferma all'avvio, indicando il file, per: un id che non è un identificatore in minuscolo o è usato due volte, un'abilità
 sconosciuta, un gruppo o una ricetta senza nome, un oggetto o materiale che non è né un template di oggetto né un elenco, una
 quantità sotto 1, una ricetta che non richiede nulla, limiti di abilità fuori da 0 a 150 o il minimo sopra il massimo, oppure un elenco
-senza template o che ne nomina uno inesistente. Senza la cartella non si può creare nulla.
+senza template o che ne nomina uno inesistente, un mestiere senza nome, senza `[[group]]` o con un gruppo senza ricette. Senza la cartella non si può creare nulla.
 
 ## Da dove vengono i file
 

@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"8de15d0403166f5c3eceb918739c1f1bc7175550bfeea9d426a8b8882e4eb57a","title":"Estrazione e fusione"} -->
+<!-- translation: {"sourceHash":"b93b3972e3006c840a52a623c44a940aa5f91bf97e747a147942a5fc477a368d","title":"Estrazione e fusione"} -->
 
 # Estrazione e fusione
 
@@ -17,6 +17,7 @@ doppio clic nel frattempo non fa nulla.
 
 | Leggi | Perché |
 | --- | --- |
+| `You can't mine while riding.` | Sei su una [cavalcatura](mounts.md): scendi prima |
 | `You can't mine there.` | Il luogo non è roccia: erba, sabbia, una strada, o uno statico che non è il pavimento di una grotta |
 | `You can't mine that.` | Hai scelto un oggetto o qualcuno |
 | `That is too far away.` | La roccia è a più di 2 caselle |
