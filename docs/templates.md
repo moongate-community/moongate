@@ -349,6 +349,7 @@ to 120; a constant is a bare integer.
 | `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death`; a mobile script plays them by kind with `npc.play_sound(serial, "idle")` |
 | `BloodHue` | The hue of the blood the creature leaves when it is hit: 0 for red, `-1` for one that does not bleed, as ServUO's `BloodHue` and Source-X's `BLOODCOLOR`; a base template's is inherited. Unset: red. The undead and the golems have `-1`. See [Combat](combat.md#the-damage) |
 | `FleeAt` | The percent of its hit points (0 to 100) under which a creature that fights runs from the fight, `-1` for one that never does, as UOX3's `FLEEAT`; a base template's is inherited. Unset: the script's own, 20 for a monster and 10 for an animal. See [Creature scripts](scripting/shipped-scripts.md#commoncreaturelua) |
+| `ControlSlots` | How many followers the creature counts for once a player owns it, 1 to 10, as UOX3's `CONTROLSLOTS`. Only the creatures the spells of Magery summon (`templates/mobiles/magicsummon.toml`) set it; a tamable creature takes its slots from `data/taming.toml`. A base template's is inherited. Unset: 1. See [Magery](magery.md#summoned-creatures) |
 | `NpcGuild` | The guild this guildmaster takes members for: `mages`, `warriors`, `thieves`, `rangers`, `healers`, `miners`, `merchants`, `tinkers`, `tailors`, `fishermen`, `bards` or `blacksmiths`. Unset: the NPC is no guildmaster. See [Guildmasters](skills.md#guildmasters) |
 | `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death` and `on_drag_drop` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting/mobile-scripts.md) |
 | `Visibility` | As in `ItemTemplate` |
@@ -360,7 +361,7 @@ to 120; a constant is a bare integer.
 `base_orc` sets the five sounds once and every orc keeps them; every other field a child
 sets replaces the base's. `Validate()` rejects dice that can roll below 0 (karma apart),
 an unknown skill, a skill above 120, a resistance above 100, a negative sound, an
-equipment entry with no item or an empty item id, an empty tag key, a `blood_hue` outside -1 to 65535, a `flee_at` outside -1 to 100 and a malformed `script_id`.
+equipment entry with no item or an empty item id, an empty tag key, a `blood_hue` outside -1 to 65535, a `flee_at` outside -1 to 100, a `control_slots` outside 1 to 10 and a malformed `script_id`.
 
 ```toml
 [[mobile]]

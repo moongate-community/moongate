@@ -1,11 +1,10 @@
-<!-- translation: {"sourceHash":"9f336c053b119869667772af43997cfa0eecff1813a10d3130b8ef526921a1ae","title":"Magery"} -->
+<!-- translation: {"sourceHash":"91c54caf44c1018ca04549386f7363f84090fd6e64df3a7baee5ea6c486a145d","title":"Magery"} -->
 
 # Magery
 
 Un mago lancia gli incantesimi di Magery da un libro degli incantesimi o li legge da una pergamena, con le regole del gioco
 classico: parole di potere, un ritardo in cui il lanciatore sta fermo, un cursore di mira, reagenti, mana e una prova di
-abilità. Comprende il libro, il motore di lancio, i primi quattro cerchi e Reactive Armor; gli altri cerchi
-seguiranno.
+abilità. Comprende il libro, il motore di lancio, gli otto cerchi (salvo gli incantesimi di lucchetti e trappole) e Reactive Armor.
 
 ## Il libro degli incantesimi
 
@@ -62,7 +61,7 @@ pergamena (i tipi 0x27 e 0x56 del comando di testo e il comando esteso 0x1C del 
 | Magic Arrow | cenere sulfurea | Dopo mezzo secondo, da 4 a 7 danni da fuoco, tre quarti se resistito, scalati da Evaluating Intelligence contro Resisting Spells e dalla Magery, raddoppiati contro un mostro o un animale |
 | Night Sight | cenere sulfurea, seta di ragno | Vede al buio per 15-39 minuti, con la luminosità che dice la Magery (26 a 100) |
 | Weaken | aglio, nightshade | Come Clumsy, sulla forza: i punti ferita massimi di un giocatore calano di conseguenza |
-| Reactive Armor | aglio, seta di ragno, cenere sulfurea | Per 25 secondi e mezzo secondo a punto di Magery del lanciatore, una parte di ogni colpo in mischia che arriva da distanza di un braccio torna a chi lo ha dato: il 10 per cento e un quarto di per cento a punto della Magery di chi la indossa quando viene colpito (35 a 100). Una freccia non torna indietro, una guardia non ne è mai ferita, e un attaccante che cade per questo termina il colpo |
+| Reactive Armor | aglio, cenere sulfurea, seta di ragno | Per 25 secondi e mezzo secondo a punto di Magery del lanciatore, una parte di ogni colpo in mischia che arriva da distanza di un braccio torna a chi lo ha dato: il 10 per cento e un quarto di per cento a punto della Magery di chi la indossa quando viene colpito (35 a 100). Una freccia non torna indietro, una guardia non ne è mai ferita, e un attaccante che cade per questo termina il colpo |
 
 Un incantesimo dannoso rende il lanciatore l'aggressore del bersaglio: un criminale contro un innocente che non combatte, e
 un PNG reagisce. Una maledizione su una statistica che è forte uguale o di più resta. Un incantesimo dannoso su un bersaglio
@@ -108,8 +107,8 @@ disturbato).
 | --- | --- | --- |
 | Arch Cure | aglio, ginseng, radice di mandragora | Cure su chiunque sia vivo entro due caselle dal punto scelto, con una probabilità un poco più bassa, l'uno per cento in meno |
 | Arch Protection | aglio, ginseng, radice di mandragora, cenere sulfurea | Protection su chiunque sia vivo entro tre caselle dal punto scelto e non l'abbia già |
-| Curse | nightshade, aglio, cenere sulfurea | Abbassa le tre statistiche del bersaglio insieme, come fanno Clumsy, Feeblemind e Weaken ciascuno |
-| Fire Field | perla nera, seta di ragno, cenere sulfurea | Cinque pezzi di fuoco di traverso sulla via, per 20 secondi: chi calpesta un pezzo o ci sta dentro brucia per 2 danni una volta al secondo (1 quando una prova di Resisting Spells riesce); il fuoco non blocca. Nessun pezzo dove il lanciatore non vede o dove giace un oggetto invalicabile. Rifiutato in una città sorvegliata |
+| Curse | aglio, nightshade, cenere sulfurea | Abbassa le tre statistiche del bersaglio insieme, come fanno Clumsy, Feeblemind e Weaken ciascuno |
+| Fire Field | perla nera, cenere sulfurea, seta di ragno | Cinque pezzi di fuoco di traverso sulla via, per 20 secondi: chi calpesta un pezzo o ci sta dentro brucia per 2 danni una volta al secondo (1 quando una prova di Resisting Spells riesce); il fuoco non blocca. Nessun pezzo dove il lanciatore non vede o dove giace un oggetto invalicabile. Rifiutato in una città sorvegliata |
 | Greater Heal | aglio, ginseng, radice di mandragora, seta di ragno | Quattro decimi della Magery e da 1 a 10 punti ferita, con i rifiuti di Heal |
 | Lightning | radice di mandragora, cenere sulfurea | Subito, un fulmine da 12 a 20 danni, scalati come Fireball |
 | Mana Drain | perla nera, radice di mandragora, seta di ragno | Toglie da 1 a 100 mana al bersaglio (al massimo quello che ha) se non resiste, cosa che fa 99 volte su cento qualunque sia la sua abilità |
@@ -124,7 +123,7 @@ criminale, un PNG reagisce, e un invulnerabile o un morto viene lasciato in pace
 
 Una runa di richiamo è l'oggetto `recall_rune`; segnata, contiene un punto (`rune.x`, `rune.y`, `rune.z`, `rune.map`). Lo
 staff ne segna una con [`.mark_rune`](commands/mark_rune.md) nel punto in cui si trova; l'incantesimo Mark, del sesto cerchio,
-lo farà per i giocatori. Recall viene rifiutato, prima che si spenda qualcosa, per ciò che non è una runa, una runa non
+lo fa per i giocatori. Recall viene rifiutato, prima che si spenda qualcosa, per ciò che non è una runa, una runa non
 segnata, un criminale, un lanciatore troppo carico per muoversi, una runa di un'altra mappa, un punto in cui nulla può
 stare o che un mobile o un oggetto invalicabile occupa, e una regione che non permette un richiamo in uscita dal suo punto
 o in entrata nella destinazione (i flag `recall_out` e `recall_in` delle regioni).
@@ -159,10 +158,108 @@ la Second Dawn), Protection e Arch Protection aggiungono armatura, Reactive Armo
 secondo la Magery di chi la indossa, e Fire Field dura 20 secondi qualunque sia la Magery. Le regole successive (una
 Reactive Armor che assorbe, una Protection che protegge dal disturbo, un Fire Field più lungo) non sono costruite.
 
+## Il quinto cerchio
+
+| Incantesimo | Reagenti | Cosa fa |
+| --- | --- | --- |
+| Blade Spirits | perla nera, radice di mandragora, nightshade | Viene evocato uno spirito di lama nel punto scelto: combatte per il lanciatore per 80-119 secondi. Rifiutato in una città sorvegliata, in un punto bloccato e quando i seguaci non hanno posto per lui |
+| Dispel Field | perla nera, aglio, cenere sulfurea, seta di ragno | Un pezzo di un campo degli incantesimi, o un portale di Gate Travel (e il portale all'altro capo), sparisce in uno sbuffo. Un moongate semplice è "troppo caotico"; nient'altro può essere dissolto |
+| Incognito | blood moss, aglio, nightshade | Una tonalità della pelle a caso e un nome a caso del sesso del lanciatore per 1,2 secondi a punto di Magery (al massimo 144); capelli e barba restano come sono. Termina con il tempo, o con una morte |
+| Magic Reflection | aglio, radice di mandragora, seta di ragno | Il lanciatore è avvolto in un riflesso che rimanda indietro, una volta, il primo incantesimo dannoso riflettibile che lo ha per bersaglio: l'incantesimo raggiunge il suo lanciatore, da parte di chi era il bersaglio. Non ha tempo, un secondo lancio viene rifiutato e una morte lo termina |
+| Mind Blast | perla nera, radice di mandragora, nightshade, cenere sulfurea | Dopo mezzo secondo, metà della differenza tra la statistica più alta e quella più bassa del bersaglio (ciascuna al massimo 150), scalata come Magic Arrow, al massimo 45; la metà se il bersaglio resiste |
+| Paralyze | aglio, radice di mandragora, seta di ragno | Il bersaglio resta immobile per 7 secondi più un quinto di secondo a punto di Magery (27 a 100), tre quarti se resiste. Non può camminare, girarsi né lanciare; il suo lancio è rovinato. Un bersaglio già immobile viene avvisato e non si spende nulla |
+| Poison Field | perla nera, nightshade, seta di ragno | Cinque pezzi di veleno di traverso sulla via, per 20 secondi: chi calpesta un pezzo o ci sta dentro viene avvelenato al livello normale una volta al secondo. Rifiutato in una città sorvegliata |
+| Summon Creature | blood moss, radice di mandragora, seta di ragno | Un orso polare, un orso bruno, un orso nero, un cavallo, un tricheco, un pollo, uno scorpione, un serpente gigante, un lama, un alligatore, un lupo grigio, una melma, un'aquila, un gorilla, un leopardo delle nevi, un maiale, una cerva o un coniglio, scelto a caso, accanto al lanciatore, per tanti secondi quanti sono i punti di Magery. Vale due seguaci |
+
+## Il sesto cerchio
+
+| Incantesimo | Reagenti | Cosa fa |
+| --- | --- | --- |
+| Dispel | aglio, radice di mandragora, cenere sulfurea | Una creatura evocata viene disfatta, in uno sbuffo, con la probabilità (50 + 100 a punto di Magery sopra la sua difficoltà / il doppio del suo fuoco) per cento. Una che resiste lo dice al lanciatore e il lanciatore ne è l'aggressore. Ciò che non è un'evocazione non può essere dissolto |
+| Energy Bolt | perla nera, nightshade | Un dardo vola al bersaglio e, mezzo secondo dopo, fa da 24 a 41 danni, scalati come Fireball |
+| Explosion | blood moss, radice di mandragora | Due secondi e mezzo dopo il lancio, da 23 a 44 danni al bersaglio se è ancora vivo, scalati come Fireball |
+| Invisibility | blood moss, nightshade | Il bersaglio viene nascosto, come con l'abilità Hiding, per 1,2 secondi a punto di Magery, e può camminare finché dura; correre, un colpo o un lancio lo mostrano. Il suo combattimento si ferma. Rifiutato per lo staff e per una creatura invulnerabile, come un venditore |
+| Mark | perla nera, blood moss, radice di mandragora | La runa di richiamo nello zaino viene segnata con il punto del lanciatore, come fa [`.mark_rune`](commands/mark_rune.md). Rifiutato per ciò che non è una runa, una runa che non è nello zaino e una regione con il flag `mark` spento |
+| Mass Curse | aglio, radice di mandragora, nightshade, cenere sulfurea | Curse su chiunque sia entro due caselle dal punto scelto |
+| Paralyze Field | perla nera, ginseng, seta di ragno | Cinque pezzi di traverso sulla via, per 20 secondi: chi calpesta un pezzo resta immobile per 7 secondi più un quinto di secondo a punto di Magery. Rifiutato in una città sorvegliata |
+| Reveal | blood moss, cenere sulfurea | Chi è nascosto entro 1 casella più un ventesimo della Magery dal punto scelto viene mostrato, con uno sbuffo e un suono (lo staff nascosto resta tale) |
+
+## Il settimo cerchio
+
+| Incantesimo | Reagenti | Cosa fa |
+| --- | --- | --- |
+| Chain Lightning | perla nera, blood moss, radice di mandragora, cenere sulfurea | Un fulmine su chiunque sia entro due caselle dal punto scelto, mezzo secondo dopo, per 27-48 danni divisi per il loro numero quando sono più di due; la metà della parte se il bersaglio resiste |
+| Energy Field | perla nera, radice di mandragora, cenere sulfurea, seta di ragno | Cinque pezzi di energia di traverso sulla via, per 2 secondi più 0,28 di secondo a punto di Magery (30 a 100), che bloccano il movimento. Rifiutato in una città sorvegliata |
+| Flame Strike | cenere sulfurea, seta di ragno | Una colonna di fuoco sul bersaglio e, mezzo secondo dopo, da 27 a 48 danni; tre quinti se il bersaglio resiste |
+| Gate Travel | perla nera, radice di mandragora, cenere sulfurea | Un portale si apre dove sta il lanciatore e un altro nel punto di una runa segnata, ciascuno verso l'altro, per 30 secondi |
+| Mana Vampire | perla nera, blood moss, radice di mandragora, seta di ragno | Tutto il mana del bersaglio passa al lanciatore, fino al suo massimo, se il bersaglio non resiste (98 volte su cento); la sua paralisi finisce e il suo lancio è rovinato |
+| Mass Dispel | perla nera, aglio, radice di mandragora, cenere sulfurea | Dispel su ogni creatura evocata entro otto caselle dal punto scelto, ciascuna con la sua probabilità |
+| Meteor Swarm | blood moss, radice di mandragora, cenere sulfurea, seta di ragno | Una palla di fuoco per chiunque sia entro due caselle dal punto scelto, mezzo secondo dopo, da 27 a 48 danni divisi per il loro numero; la metà della parte se il bersaglio resiste |
+| Polymorph | blood moss, radice di mandragora, seta di ragno | Il lanciatore prende il corpo di una di diciotto forme (un pollo, un cane, un lupo, una pantera, un gorilla, tre orsi, un uomo, una melma, un orco, un uomo-lucertola, una gargolla, un orco gigante, un troll, un ettin, un demone o una donna), scelta da un elenco, per 1,2 secondi a punto di Magery. Il primo lancio apre l'elenco e non spende nulla; la scelta lancia l'incantesimo |
+
+## L'ottavo cerchio
+
+| Incantesimo | Reagenti | Cosa fa |
+| --- | --- | --- |
+| Earthquake | blood moss, ginseng, radice di mandragora, cenere sulfurea | Chiunque sia entro una casella più un quindicesimo della Magery del lanciatore perde sei decimi dei suoi punti ferita, subito: almeno 10 per una creatura che non è un giocatore, al massimo 75. Rifiutato in una città sorvegliata |
+| Energy Vortex | perla nera, blood moss, radice di mandragora, nightshade | Viene evocato un vortice nel punto scelto: combatte per il lanciatore per 80-119 secondi. Vale due seguaci |
+| Resurrection | blood moss, aglio, ginseng | Al fantasma di un giocatore entro una casella dal lanciatore viene chiesto di tornare in vita (il gump degli ankh e dei guaritori), con il costo che lì hanno |
+| Summon Air Elemental, Summon Earth Elemental | blood moss, radice di mandragora, seta di ragno | Un elementale accanto al lanciatore, per tanti secondi quanti sono i punti di Magery. Vale due seguaci |
+| Summon Water Elemental | blood moss, radice di mandragora, seta di ragno | Come sopra, per tre seguaci |
+| Summon Fire Elemental | blood moss, radice di mandragora, cenere sulfurea, seta di ragno | Come sopra, per quattro seguaci |
+| Summon Daemon | blood moss, radice di mandragora, cenere sulfurea, seta di ragno | Un demone, come sopra, per quattro seguaci; costa al lanciatore 70 punti di karma |
+
+### Creature evocate
+
+Una creatura evocata è fatta da un template di mobile (`bladespirit_summon`, `energyvortex_summon`, `airele_summon`,
+`earthele_summon`, `firele_summon`, `waterele_summon`, `daemon_summon`, o un animale dell'elenco di Summon Creature) ed è un
+seguace del lanciatore: ha la proprietà `owner` e vale i `control_slots` del suo template, quindi gli incantesimi che ne
+evocano una vengono rifiutati, prima che si spenda qualcosa, quando i seguaci del lanciatore non hanno posto per lei (un
+animale domato vale come prima). Ha l'ordine `guard` di un animale: resta vicina al lanciatore e combatte chi combatte lei o
+il lanciatore, e le parole del lanciatore (stay, come, release...) la comandano. Se ne va in uno sbuffo quando il suo tempo è
+finito, quando il suo padrone muore, lascia il gioco o la lascia andare, e quando un Dispel la disfa; una che viene uccisa
+non lascia cadavere. Il tempo è la proprietà `summon.until`, quindi una creatura salvata se ne va al momento giusto dopo un
+riavvio, al suo primo pensiero vicino a un giocatore.
+
+### Incantesimi d'area
+
+Chain Lightning, Meteor Swarm, Mass Curse, Earthquake, Mass Dispel e i campi di veleno e di paralisi risparmiano il
+lanciatore, i morti, gli invulnerabili, le creature del lanciatore e un giocatore che appare innocente (blu), a meno che il
+lanciatore non sia un assassino; una creatura dal nome blu che nessun giocatore possiede non viene risparmiata. Il
+lanciatore è l'aggressore di ciascuno che viene colpito, come per un colpo. Vengono rifiutati, prima che si spenda qualcosa,
+quando non c'è nulla da toccare ("This spell won't work on that!") e, tranne Mass Dispel, in una città sorvegliata.
+
+### Paralisi e travestimento
+
+Paralyze, Paralyze Field e Mana Vampire usano due stati di un mobile. `mobile.paralyze(who, seconds)` lo immobilizza, cosa
+che un mobile immobile non può annullare camminando e un lancio non può iniziare; il tempo di fine è conservato con il mobile
+e un giocatore che entra dopo un riavvio viene liberato al momento giusto.
+`mobile.disguise(who, { name, name_list, body, hue }, seconds)` sostituisce il suo aspetto e lo restituisce allo scadere del
+tempo, a una morte, o all'accesso dopo un riavvio; Incognito e Polymorph lo usano. Una morte termina anche una paralisi e una Magic Reflection.
+
+### Semplificato nei cerchi dal quinto all'ottavo
+
+- Magic Reflection è l'uso singolo classico dei primi giorni: rimanda un incantesimo, poi sparisce. L'incantesimo raggiunge
+  il suo lanciatore come se chi riflette lo avesse lanciato, e chi riflette ne è l'aggressore.
+- Polymorph lancia due volte: il primo lancio apre l'elenco, il secondo, dopo la scelta, è il lancio. Incognito non cambia i
+  capelli né la barba.
+- Invisibility è lo stato nascosto dell'abilità Hiding con un'ampia concessione di passi; dopo un riavvio un giocatore
+  ancora nascosto viene mostrato dal suo primo passo.
+- Gate Travel non chiede un combattimento in corso (il motore non ha un calore di combattimento), un sigillo né un libro di
+  rune, e dice al lanciatore "You are not allowed to travel there." per un punto in cui una regione vieta un portale.
+- Il lancio delle evocazioni, Blade Spirits ed Energy Vortex impiega il ritardo del suo cerchio: il gioco classico lo rendeva
+  quattro o cinque volte più lungo.
+- Chain Lightning, Mass Curse e gli altri incantesimi d'area risparmiano il lanciatore, cosa che il gioco classico dei primi
+  giorni non faceva per alcuni.
+- Un'evocazione, una Chain Lightning, un Earthquake e simili che non trovano nessuno da colpire vengono rifiutati prima che
+  si spenda qualcosa. Il gioco classico spendeva il mana.
+- I seguaci di una creatura evocata si contano con i `control_slots` del template, che UOX3 dice (uno spirito di lama 2, un
+  vortice 2, un elementale d'aria e di terra 2, uno d'acqua 3, uno di fuoco 4, un demone 4).
+
 ## Provalo
 
-`.add test_kit_magery` dà una sacca che, alla prima apertura, si riempie con un libro completo, 20 di ogni reagente tre
-pergamene per ogni incantesimo costruito dei primi quattro cerchi e due rune di richiamo. L'abilità si imposta a parte con
+`.add test_kit_magery` dà una sacca che, alla prima apertura, si riempie con un libro completo, 20 di ogni reagente, tre
+pergamene per ogni incantesimo costruito e quattro rune di richiamo. L'abilità si imposta a parte con
 `.set skill magery 100`, e una runa si segna con `.mark_rune`.
 
 ## Cambiare le regole
@@ -179,16 +276,19 @@ pergamene per ogni incantesimo costruito dei primi quattro cerchi e due rune di 
 ## Root esistenti
 
 `mgctl init` non sostituisce mai un file che potresti aver modificato. Copia dalla distribuzione `data/spells.toml`,
-`scripts/spells/`, `scripts/common/magic.lua`, `scripts/common/field.lua`, `scripts/items/spellbook.lua`,
-`scripts/items/spell_scroll.lua`, `scripts/items/magic_field.lua`, `scripts/items/test_kit.lua`,
-`templates/items/magic/misc_magic.toml`, `templates/items/magic/scrolls.toml`, `templates/items/magic/fields.toml` e
-`templates/items/test_kits.toml`, e i nuovi messaggi di `data/messages`. Un libro già creato conserva ciò che contiene; un
+`scripts/spells/`, `scripts/common/magic.lua`, `scripts/common/field.lua`, `scripts/common/summon.lua`,
+`scripts/common/creature.lua`, `scripts/items/spellbook.lua`, `scripts/items/spell_scroll.lua`,
+`scripts/items/magic_field.lua`, `scripts/items/moongate.lua`, `scripts/items/test_kit.lua`,
+`scripts/gumps/resurrect.lua`, `scripts/gumps/polymorph_forms.lua`, `templates/gumps/resurrect.xml`,
+`templates/gumps/polymorph_forms.xml`, `templates/items/magic/misc_magic.toml`, `templates/items/magic/scrolls.toml`,
+`templates/items/magic/fields.toml`, `templates/items/test_kits.toml` e `templates/mobiles/magicsummon.toml`, e i
+nuovi messaggi di `data/messages`. Un libro già creato conserva ciò che contiene; un
 nuovo `spellbook` è vuoto.
 
 ## Non ancora
 
-I cerchi da 5 a 8, Magic Lock, Unlock, Magic Trap e Magic Untrap, Magic Reflection, inscription (scrivere pergamene), le
-bacchette, un PNG che lancia, liberare le mani al lancio.
+Magic Lock, Unlock, Magic Trap e Magic Untrap, inscription (scrivere pergamene), le bacchette, un PNG che lancia,
+liberare le mani al lancio, il ritardo più lungo delle evocazioni, i capelli di Incognito.
 
 ## Vedi anche
 

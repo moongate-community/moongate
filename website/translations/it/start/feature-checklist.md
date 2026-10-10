@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"31a91e46395ba58a611342a2cd4249e34e2ab2801fad927cb5871be530d9622b","title":"Checklist delle funzionalità"} -->
+<!-- translation: {"sourceHash":"37f2d0f887689b364632623414c1a1c155a568fb6eefb1e1b51673d2f1252d7a","title":"Checklist delle funzionalità"} -->
 
 # Checklist delle funzionalità
 
@@ -9,9 +9,9 @@ realizzati i sistemi mancanti.
 
 ✅ completato · 🟡 parzialmente completato · ❌ non ancora realizzato
 
-**271 sistemi:** ✅ 91 completati, 🟡 72 parzialmente completati, ❌ 108 non ancora realizzati.
+**271 sistemi:** ✅ 93 completati, 🟡 72 parzialmente completati, ❌ 106 non ancora realizzati.
 
-**Copertura: 34%** dei sistemi completati, **47%** contando un sistema parzialmente completato come metà.
+**Copertura: 34%** dei sistemi completati, **48%** contando un sistema parzialmente completato come metà.
 
 Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte; restano i sistemi di gioco (combattimento, magia, abilità, economia, case).
 
@@ -94,12 +94,12 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 
 | Sistema | Moongate | Note |
 | --- | --- | --- |
-| Lancio degli incantesimi: mana, reagenti, fallimento, resistenza | 🟡 | [Magery](magery.md): le parole di potere, un ritardo del cerchio in cui il lanciatore sta fermo, il cursore di mira, reagenti e mana, la finestra di Magery di un libro o di una pergamena, il fallimento che fa perdere i reagenti, il recupero, e il danno che rovina un lancio sopra il primo cerchio; dall'icona dell'incantesimo, da una macro o da una pergamena. Resisting Spells indebolisce un incantesimo dannoso. Le regole di viaggio delle regioni sono lette da Teleport e Recall. Nessun riflesso, nessun PNG che lancia |
-| Incantesimi di magery | 🟡 | 28 dei 64 incantesimi, ognuno uno script in `scripts/spells`: il primo cerchio, Reactive Armor, e dal secondo al quarto tranne Magic Trap, Untrap, Lock e Unlock (i contenitori non hanno ancora uno stato di lucchetto o trappola); i 64 sono in [`spells.toml`](data-files/spells.md). Campi di fuoco e di pietra, Teleport, Telekinesis e Recall con le rune (`.mark_rune`) ci sono. I cerchi da 5 a 8 sono i prossimi |
+| Lancio degli incantesimi: mana, reagenti, fallimento, resistenza | 🟡 | [Magery](magery.md): le parole di potere, un ritardo del cerchio in cui il lanciatore sta fermo, il cursore di mira, reagenti e mana, la finestra di Magery di un libro o di una pergamena, il fallimento che fa perdere i reagenti, il recupero, e il danno che rovina un lancio sopra il primo cerchio; dall'icona dell'incantesimo, da una macro o da una pergamena. Resisting Spells indebolisce un incantesimo dannoso. Le regole di viaggio delle regioni sono lette da Teleport, Recall, Mark e Gate Travel. Magic Reflection rimanda il primo incantesimo dannoso che ha per bersaglio chi la porta. Nessun PNG che lancia |
+| Incantesimi di magery | 🟡 | 60 dei 64 incantesimi, ognuno uno script in `scripts/spells`: gli otto cerchi e Reactive Armor, tranne Magic Trap, Untrap, Lock e Unlock (i contenitori non hanno ancora uno stato di lucchetto o trappola); i 64 sono in [`spells.toml`](data-files/spells.md). Campi di fuoco, pietra, veleno, paralisi ed energia, Teleport, Telekinesis, Recall, Mark e Gate Travel con le rune (`.mark_rune`), le creature evocate che combattono per il lanciatore, Dispel, Incognito, Polymorph, Invisibility e Resurrection ci sono |
 | Necromancy | ❌ | |
 | Libri degli incantesimi, pergamene e bacchette | 🟡 | Un libro che contiene fino a 64 incantesimi, si apre con un doppio clic, prende l'incantesimo di una pergamena lasciata su di esso; una pergamena si lancia dallo zaino, senza reagenti e una se ne consuma in caso di successo. Niente bacchette, e le pergamene non si possono ancora scrivere |
-| Campi ed evocazioni | ❌ | |
-| Regole magiche delle regioni (no recall, no gate) | ❌ | |
+| Campi ed evocazioni | ✅ | I campi degli incantesimi (pietra, fuoco, veleno, paralisi, energia) e le creature che chiamano: spiriti di lama, un vortice di energia, un animale a caso, i quattro elementali e un demone, ciascuno un seguace del lanciatore che lo sorveglia e se ne va con il suo tempo, il suo padrone o un Dispel. Vedi [Magery](magery.md#summoned-creatures) |
+| Regole magiche delle regioni (no recall, no gate) | ✅ | I flag `recall_in`, `recall_out`, `gate_in`, `gate_out`, `teleport_in`, `teleport_out` e `mark` delle [regioni](data-files/regions.md) sono letti da Recall, Gate Travel, Teleport e Mark |
 | Chivalry | ❌ | |
 | Bushido | ❌ | |
 | Ninjitsu | ❌ | |
@@ -349,7 +349,7 @@ Le fondamenta (rete, login, persistenza, scripting, dati del mondo) sono pronte;
 | Barra dei buff | ❌ | |
 | Controlli della sequenza e della velocità di camminata | ✅ | |
 | Peso e sovraccarico | ✅ | Ciò che un mobile trasporta e può trasportare (40 e 3.5 per punto di forza) viene conteggiato e mostrato; un giocatore sovraccarico si stanca a ogni passo |
-| Effetti temporanei (buff e debuff) | 🟡 | Bonus e maledizioni di forza, destrezza e intelligenza (pozioni e incantesimi) e visione notturna, a tempo, mai salvati; veleno, salvato; l'armatura di Protection e Reactive Armor, conservate con il mobile fino alla scadenza; ancora niente barra dei buff |
+| Effetti temporanei (buff e debuff) | 🟡 | Bonus e maledizioni di forza, destrezza e intelligenza (pozioni e incantesimi) e visione notturna, a tempo, mai salvati; veleno, salvato; l'armatura di Protection e Reactive Armor, conservate con il mobile fino alla scadenza; una paralisi e un travestimento (Incognito, Polymorph), conservati con il mobile e ripresi all'accesso; ancora niente barra dei buff |
 | Richieste di testo e input | ✅ | Prompt Unicode (0xC2), dagli script con il modulo `prompt` |
 | Effetti visivi: movimento, fulmini, particelle | ✅ | Dagli script con il modulo `effect`; particelle per l'Enhanced Client |
 | Suoni e musica | ✅ | Suoni dagli script, tuoni e musica delle regioni |

@@ -175,3 +175,47 @@ for count = 3, 1, -1 do
     wait(1)
 end
 ```
+
+## paralyze
+
+A paralysis lasts a few seconds, is kept with the mobile, and does not stack or extend; `release_paralysis` ends it at once:
+
+```lua
+if mobile.paralyze(target, 7 + magery * 0.2) then
+    spell.disturb(target)
+end
+```
+
+## is_paralyzed
+
+```lua
+if mobile.is_paralyzed(who) then mobile.release_paralysis(who) end
+```
+
+## release_paralysis
+
+```lua
+mobile.release_paralysis(who)
+```
+
+## disguise
+
+The options may name a body, a hue, a name or the id of a list of names; what is left out stays. The mobile gets its own
+back when the time is up, when it dies and at login after a restart:
+
+```lua
+mobile.disguise(caster, { name_list = "male", hue = 0x3F0 }, 120)
+mobile.disguise(caster, { body = 0xE1 }, 60) -- a wolf; a rider is dismounted
+```
+
+## is_disguised
+
+```lua
+if mobile.is_disguised(caster) then return 1061631 end
+```
+
+## end_disguise
+
+```lua
+mobile.end_disguise(who)
+```
