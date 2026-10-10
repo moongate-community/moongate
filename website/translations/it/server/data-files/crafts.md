@@ -1,8 +1,8 @@
-<!-- translation: {"sourceHash":"4ecd772b584a8a65950853bc730998eb923e545eb7fdd4b5ecdf883fc0ab3d3e","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"edfb39bd81eb1349c6cbab4317468748146a52099b39ba839e0efc1c4f39a3d7","title":"Mestieri"} -->
 
 # Mestieri
 
-`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml`, `tailoring.toml`, `tinkering.toml`, `fletching.toml`, `cooking.toml`, `cartography.toml` e `alchemy.toml`), e
+`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`, `blacksmithing.toml`, `tailoring.toml`, `tinkering.toml`, `fletching.toml`, `cooking.toml`, `cartography.toml`, `alchemy.toml` e `inscription.toml`), e
 `resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole e
 [Fabbro](../blacksmithing.md). Ciò a cui un mestiere deve stare vicino, come l'incudine e la forgia del fabbro, non è un dato:
 è la tabella `NEEDS` di `scripts/common/crafting.lua`, che può indicarlo solo per alcuni gruppi (il forno di Baking, il
@@ -38,10 +38,12 @@ skills = []
 | `[[group.recipe]]` | Una ricetta del gruppo, in ordine. |
 | `name` | Ciò che mostra il gump. |
 | `item` | Il template dell'oggetto creato. |
-| `skill_min` | Il minimo dell'abilità principale per provarla: lì la probabilità è una su due. Da 0 a 150. |
+| `skill_min` | Il minimo dell'abilità principale per provarla: lì la probabilità è una su due. Da -50 a 150; sotto 0 viene sempre tentata (il primo cerchio di [Inscription](../inscription.md) parte da -25). |
 | `skill_max` | L'abilità a cui non fallisce mai. Non sotto `skill_min`, al massimo 150. UOX3 ne mette alcune sopra 100 (la tunica borchiata, il teschio con candela): quelle non diventano mai certe, né eccezionali sotto `skill_max - 60`. |
 | `resources` | Cosa richiede: `resource` è un elenco di `resources.toml` o un template di oggetto, `amount` almeno 1. Almeno uno. |
 | `skills` | Altre abilità richieste: `skill`, `min` (il minimo per provarla) e `max`, rispetto a cui viene provata. |
+| `spell` | Facoltativo. La chiave di un incantesimo di `data/spells.toml` che chi crea deve avere in un libro che indossa o porta nello zaino, altrimenti "You don't have that spell!". Un identificatore in minuscolo; omesso per nessuno. |
+| `mana` | Facoltativo, 0 o più. Il mana che costa un tentativo, controllato all'inizio e al secondo colpo, pagato una volta da un tentativo che viene fatto (anche un fallimento). |
 
 ## resources.toml
 
@@ -64,7 +66,7 @@ lingotti di quel tipo, come dicono `scripts/common/woods.lua` e `scripts/common/
 
 Il server si ferma all'avvio, indicando il file, per: un id che non è un identificatore in minuscolo o è usato due volte, un'abilità
 sconosciuta, un gruppo o una ricetta senza nome, un oggetto o materiale che non è né un template di oggetto né un elenco, una
-quantità sotto 1, una ricetta che non richiede nulla, limiti di abilità fuori da 0 a 150 o il minimo sopra il massimo, oppure un elenco
+quantità sotto 1, una ricetta che non richiede nulla, limiti di abilità fuori da -50 a 150 (il massimo da 0) o il minimo sopra il massimo, uno `spell` che non è un identificatore in minuscolo, un `mana` sotto 0, oppure un elenco
 senza template o che ne nomina uno inesistente, un mestiere senza nome, senza `[[group]]` o con un gruppo senza ricette. Senza la cartella non si può creare nulla.
 
 ## Da dove vengono i file
@@ -84,3 +86,7 @@ gli attrezzi da tinker, non la cassetta degli attrezzi da 10 pietre di UOX3. Le 
 primo gruppo, una seconda radice (le frecce e i dardi dell'attrezzo da fletcher) si visita dopo, e i lotti di UOX3 (cinque, venti, cinquanta) sono esclusi. Un oggetto venduto singolo e a
 pile sotto una sola grafica, come un reagente (0x0f85_ginseng e 0x0f85_10_ginseng), diventa un elenco a sé (`ginseng`);
 una ricetta di alchimia richiede anche una bottiglia vuota, che UOX3 non mette.
+
+L'inscription non è nei menu di UOX3 come dati che il server possa usare: `uox-crafts --spells moongate_root/data/spells.toml`
+la costruisce da `spells.toml` (una pergamena per ogni incantesimo abilitato, nel gruppo del suo cerchio, i reagenti
+dell'incantesimo, una pergamena vuota dell'elenco `blank_scrolls`, il mana e la finestra classici del cerchio), e scrive `spell` e `mana`.

@@ -2,7 +2,8 @@
 
 A mage casts the spells of Magery from a spellbook or reads them from a scroll, by the rules of the classic game: words
 of power, a delay in which the caster stands still, a target cursor, reagents, mana and a skill check. It has the
-spellbook, the casting engine, the eight circles (but for the spells of locks and traps) and Reactive Armor.
+spellbook, the casting engine, the eight circles (but for the spells of locks and traps) and Reactive Armor. A scribe
+writes the scrolls with [Inscription](inscription.md).
 
 ## The spellbook
 
@@ -293,11 +294,12 @@ new messages of `data/messages`. A book already made keeps what it holds; a new
 
 ## Not yet
 
-Magic Lock, Unlock, Magic Trap and Magic Untrap, inscription (writing scrolls), wands, an NPC that casts, clearing the
+Magic Lock, Unlock, Magic Trap and Magic Untrap, wands, an NPC that casts, clearing the
 hands on a cast, the hair of Incognito.
 
 ## See also
 
+- [Inscription](inscription.md)
 - [Combat](combat.md)
 - [Potions](potions.md)
 - [Skills](skills.md)

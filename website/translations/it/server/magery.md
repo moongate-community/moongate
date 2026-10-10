@@ -1,10 +1,11 @@
-<!-- translation: {"sourceHash":"b1f432fb8816da6a2a090d329e95f52ec5ad31ff6f7a423fb60530a927524b2a","title":"Magery"} -->
+<!-- translation: {"sourceHash":"e6019f352c84280f3ea03305a4a12320ab1a877ddab5f8bd28027cd5f3e4d55a","title":"Magery"} -->
 
 # Magery
 
 Un mago lancia gli incantesimi di Magery da un libro degli incantesimi o li legge da una pergamena, con le regole del gioco
 classico: parole di potere, un ritardo in cui il lanciatore sta fermo, un cursore di mira, reagenti, mana e una prova di
-abilità. Comprende il libro, il motore di lancio, gli otto cerchi (salvo gli incantesimi di lucchetti e trappole) e Reactive Armor.
+abilità. Comprende il libro, il motore di lancio, gli otto cerchi (salvo gli incantesimi di lucchetti e trappole) e Reactive Armor. Uno scriba
+scrive le pergamene con [Inscription](inscription.md).
 
 ## Il libro degli incantesimi
 
@@ -303,11 +304,12 @@ nuovo `spellbook` è vuoto.
 
 ## Non ancora
 
-Magic Lock, Unlock, Magic Trap e Magic Untrap, inscription (scrivere pergamene), le bacchette, un PNG che lancia,
+Magic Lock, Unlock, Magic Trap e Magic Untrap, le bacchette, un PNG che lancia,
 liberare le mani al lancio, i capelli di Incognito.
 
 ## Vedi anche
 
+- [Inscription](inscription.md)
 - [Combattimento](combat.md)
 - [Pozioni](potions.md)
 - [Abilità](skills.md)

@@ -277,6 +277,12 @@ within 2 tiles it opens the map on its area with the `map` module (see [Maps](..
 it opens the crafting gump of cartography (see [Cartography](../cartography.md)); a map made is drawn by
 `scripts/common/cartography.lua`.
 
+## inscription_tool.lua
+
+`scripts/items/inscription_tool.lua` is the script of the pen and ink (`script_id = "inscription_tool"`): from the
+backpack it opens the crafting gump of inscription (see [Inscription](../inscription.md)). `scripts/common/crafting.lua`
+asks the book and the mana of a recipe with the `spell` and `mobile` modules.
+
 ## potion.lua
 
 `scripts/items/potion.lua` is the script of the potions a player drinks (`script_id = "potion"`): heal, refresh,
@@ -295,7 +301,7 @@ item is, the plain potions vendors sell included, for `potion.lua` and `explosio
 `script_id = "test_kit"`): `.add test_kit_alchemy` gives a bag that fills, the first time it is opened, with the tool, the
 materials and the items to try a craft, the potions or the spells of Magery; then it is a plain bag. The bags are
 `test_kit_alchemy`, `test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`,
-`test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking` and `test_kit_magery` (a full spellbook, 20 of each
+`test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking`, `test_kit_inscription` (a pen and ink, 100 blank scrolls, 50 of each reagent and a full spellbook) and `test_kit_magery` (a full spellbook, 20 of each
 reagent, three scrolls of each built spell of the first four circles and two recall runes); the table `KITS` says what each holds. The skill is set apart, as
 `.set skill alchemy 100`.
 

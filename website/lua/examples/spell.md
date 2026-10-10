@@ -40,6 +40,18 @@ if not spell.has(book, "heal") then
 end
 ```
 
+## find_book
+
+The spellbook a mobile wears or carries that holds a spell, as a cast would find it; nil when it has none:
+
+```lua
+local book = spell.find_book(user, "recall")
+
+if not book then
+    mobile.message_cliloc(user, 1042404) -- You don't have that spell!
+end
+```
+
 ## add
 
 Writes a spell in a book, as a scroll dropped on it does; false when the book holds it already:

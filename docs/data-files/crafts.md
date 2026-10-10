@@ -1,7 +1,7 @@
 # Crafts
 
 `data/crafts` holds the crafts players make things with, one file a craft (`carpentry.toml`, `blacksmithing.toml`,
-`tailoring.toml`, `tinkering.toml`, `fletching.toml`, `cooking.toml`, `cartography.toml` and `alchemy.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
+`tailoring.toml`, `tinkering.toml`, `fletching.toml`, `cooking.toml`, `cartography.toml`, `alchemy.toml` and `inscription.toml` today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
 [Blacksmithing](../blacksmithing.md). What a craft must stand near, such as the anvil and the forge of blacksmithing, is not data:
 it is the table `NEEDS` of `scripts/common/crafting.lua`, which may name it for some groups only (the oven of Baking, the
 fire of Barbecue).
@@ -36,10 +36,12 @@ skills = []
 | `[[group.recipe]]` | A recipe of the group, in order. |
 | `name` | What the gump shows. |
 | `item` | The item template made. |
-| `skill_min` | The least of the main skill to try it: the chance there is one in two. 0 to 150. |
+| `skill_min` | The least of the main skill to try it: the chance there is one in two. -50 to 150; below 0 it is always tried (the first circle of [Inscription](../inscription.md) starts at -25). |
 | `skill_max` | The skill at which it never fails. Not below `skill_min`, at most 150. UOX3 sets some above 100 (the studded tunic, the skull with candle): those never become certain, nor exceptional below `skill_max - 60`. |
 | `resources` | What it takes: `resource` is a list of `resources.toml` or an item template, `amount` at least 1. At least one. |
 | `skills` | Other skills it asks for: `skill`, `min` (the least to try it) and `max`, which its try is measured against. |
+| `spell` | Optional. The key of a spell of `data/spells.toml` the crafter must have in a spellbook it wears or carries in its backpack, else "You don't have that spell!". A lower-case identifier; left out for none. |
+| `mana` | Optional, 0 or more. The mana a try takes, checked at the start and at the second stroke, paid once by a try that is made (a failure too). |
 
 ## resources.toml
 
@@ -62,7 +64,7 @@ ingots of that kind instead, as `scripts/common/woods.lua` and `scripts/common/m
 
 The server stops at startup, naming the file, for: an id that is not a lower-case identifier or is used twice, an
 unknown skill, a group or recipe without a name, an item or resource that is neither an item template nor a list, an
-amount below 1, a recipe that takes nothing, skill bounds outside 0 to 150 or the least above the most, or a list
+amount below 1, a recipe that takes nothing, skill bounds outside -50 to 150 (the most from 0) or the least above the most, a `spell` that is not a lower-case identifier, a `mana` below 0, or a list
 without templates or naming one that does not exist, a craft with no name, with no `[[group]]` or with a group that has no recipe. Without the folder nothing can be crafted.
 
 ## Where the files come from
@@ -82,3 +84,7 @@ the tinker's tools, not UOX3's 10-stone tool kit. A root menu's own recipes (the
 (the arrows and bolts of the fletching tool) is walked after it, and UOX3's batches (five, twenty, fifty) are left out. An item sold alone and in
 stacks under one graphic, as a reagent (0x0f85_ginseng and 0x0f85_10_ginseng), becomes a list of its own (`ginseng`);
 an alchemy recipe also takes an empty bottle, which UOX3 leaves out.
+
+Inscription is not in UOX3's menus as data the server can use: `uox-crafts --spells moongate_root/data/spells.toml`
+builds it from `spells.toml` (a scroll for each enabled spell, in the group of its circle, the reagents of the spell, a
+blank scroll of the list `blank_scrolls`, the classic mana and window of the circle), and writes `spell` and `mana`.
