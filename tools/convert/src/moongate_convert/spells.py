@@ -57,6 +57,12 @@ NAMES = {
     "Flamestrike": ("flame_strike", "Flame Strike"),
 }
 
+# The words of a spell by its key where UOX3 has a typo; every other spell keeps the words of its file.
+MANTRAS = {
+    "create_food": "In Mani Ylem",
+    "flame_strike": "Kal Vas Flam",
+}
+
 # The reagents of UOX3, by the field that counts them, as the item templates of this server.
 REAGENTS: list[tuple[str, str]] = [
     ("PEARL", "0x0f7a_black_pearl"),
@@ -265,7 +271,7 @@ def read(source: Path, scrolls: dict[int, str], templates: set[str]) -> list[dic
             "key": key,
             "name": name,
             "circle": number(fields.get("CIRCLE")),
-            "mantra": trim(fields.get("MANTRA", "")),
+            "mantra": MANTRAS.get(key) or trim(fields.get("MANTRA", "")),
             "action": number(fields.get("ACTION")),
             "reagents": reagents,
             "target": kind,

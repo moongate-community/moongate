@@ -54,7 +54,7 @@ id = 2
 key = "create_food"
 name = "Create Food"
 circle = 1
-mantra = "In Mani Yelm"
+mantra = "In Mani Ylem"
 action = 17
 reagents = [{ template = "0x0f84_garlic", amount = 1 }, { template = "0x0f85_ginseng", amount = 1 }, { template = "0x0f86_mandrake_root", amount = 1 }]
 target = "none"
@@ -1083,7 +1083,7 @@ id = 51
 key = "flame_strike"
 name = "Flame Strike"
 circle = 7
-mantra = "Kal Vas Vlam"
+mantra = "Kal Vas Flam"
 action = 17
 reagents = [{ template = "0x0f8c_sulfurous_ash", amount = 1 }, { template = "0x0f8d_spider_silk", amount = 1 }]
 target = "mobile"

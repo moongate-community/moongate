@@ -137,6 +137,16 @@ def test_the_british_names_are_the_clients(tmp_path: Path):
     assert data["spell"][6]["name"] == "Reactive Armor"
 
 
+def test_the_words_UOX3_misspells_are_the_classic_ones(tmp_path: Path):
+    food = spell_block(2, "Create Food", "MANTRA=In Mani Yelm\n")
+    strike = spell_block(51, "Flamestrike", "MANTRA=Kal Vas Vlam\n")
+    _, _, _, data = convert(tmp_path, full_source(tmp_path, {2: food, 51: strike}))
+
+    assert data["spell"][1]["mantra"] == "In Mani Ylem"
+    assert data["spell"][50]["mantra"] == "Kal Vas Flam"
+    assert data["spell"][0]["mantra"] == "Uus Jux"
+
+
 def test_a_missing_spell_stops_the_run(tmp_path: Path):
     source = tmp_path / "spells.dfn"
     source.write_text(spell_block(1, "Clumsy"), encoding="utf-8")
