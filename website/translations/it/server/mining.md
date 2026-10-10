@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"814e403afc4a2932570fb6b0430f1d1bc9390f15f32af241d52bf8b1b03e034f","title":"Estrazione e fusione"} -->
+<!-- translation: {"sourceHash":"8de15d0403166f5c3eceb918739c1f1bc7175550bfeea9d426a8b8882e4eb57a","title":"Estrazione e fusione"} -->
 
 # Estrazione e fusione
 
@@ -81,7 +81,8 @@ Una root creata prima che l'estrazione esistesse ha bisogno di tre cose. Esegui 
 risorsa `ore` al tuo `data/harvest.toml`, e gli script ai template: `script_id = "pickaxe"` ai
 picconi e alle pale di `templates/items/skills/tools/mining.toml`, `script_id = "ore"` ai quattro mucchi di
 minerale di ferro di `templates/items/skills/resources/mining.toml`. Oppure copia i tre file dalla distribuzione:
-`mgctl init` non sostituisce mai un file che potresti aver modificato.
+`mgctl init` non sostituisce mai un file che potresti aver modificato. `scripts/items/ore.lua` ora legge le forge da
+`scripts/common/smithy.lua`: copialo insieme.
 
 ## Non ancora
 

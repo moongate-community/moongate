@@ -221,6 +221,15 @@ makes the item (`item.give`, else `item.create` at the player's feet), with the 
 `scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` on the carpentry tools) opens the crafting gump
 from the backpack; the gump is `templates/gumps/craft_menu.xml` with `scripts/gumps/craft_menu.lua`, one for every craft.
 
+## smithing_tool.lua and common/smithy.lua
+
+`scripts/items/smithing_tool.lua` is the script of the smith's hammers, sledge hammers and tongs
+(`script_id = "smithing_tool"`): it opens the crafting gump of blacksmithing (see [Blacksmithing](../blacksmithing.md)),
+the rules being those of `crafting.lua`. `scripts/common/smithy.lua` holds the graphics of the anvils and forges and
+finds them within a range of a player, among the statics of the map (`world.statics`) and the ground items
+(`world.items_in_range`, `item.item_id`); the engine's table `NEEDS` asks blacksmithing for an anvil and a forge within
+2 tiles, and `ore.lua` reads its forges from there.
+
 ## fishing_pole.lua
 
 `scripts/items/fishing_pole.lua` is the script of the fishing poles (`0x0dbf_fishing_pole`, `0x0dc0_fishing_pole`,

@@ -1,9 +1,11 @@
-<!-- translation: {"sourceHash":"c32756e7c1c8991a880e8bb932d5cb7fe17208c962cfedc59d5295ab28d576d4","title":"Mestieri"} -->
+<!-- translation: {"sourceHash":"8046cafc68e0fb454dc7e3fea031858e07288fedd545a53d1faa0152bd3a1f9a","title":"Mestieri"} -->
 
 # Mestieri
 
-`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml`), e
-`resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole.
+`data/crafts` contiene i mestieri con cui i giocatori creano oggetti, un file per mestiere (oggi `carpentry.toml` e `blacksmithing.toml`), e
+`resources.toml`, gli elenchi di template di oggetti che una ricetta può richiedere. Vedi [Falegnameria](../carpentry.md) per le regole e
+[Fabbro](../blacksmithing.md). Ciò a cui un mestiere deve stare vicino, come l'incudine e la forgia del fabbro, non è un dato:
+è la tabella `NEEDS` di `scripts/common/crafting.lua`.
 
 ## Un mestiere
 
@@ -74,4 +76,5 @@ uv run --project tools/convert moongate-convert uox-crafts --source <UOX3>/data/
 ```
 
 Il convertitore esclude i gruppi che creano deed e la ricetta delle assi, trasforma i decimi di abilità di UOX3 in
-punti, e conta come legno solo le assi.
+punti, e conta come legno solo le assi. UOX3 annida i suoi menu (Blacksmithing, Armor, Ringmail): ogni menu che contiene
+ricette diventa un gruppo, nell'ordine in cui i menu si incontrano. Il nome di una ricetta inizia con la maiuscola.

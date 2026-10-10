@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"42bcd08e37c416e9e300ab7af7891fcf554f5b3220fcdfe3892fcf929a95ef90","title":"Combattimento"} -->
+<!-- translation: {"sourceHash":"d82156df04b1d6f5a483003795c5d27ce5f7a2a85a72a1d89e8065ec5cbe929d","title":"Combattimento"} -->
 
 # Combattimento
 
@@ -117,6 +117,10 @@ i suoni e il colpo del suo tipo:
 Con un'arma senza tipo, che UOX3 non elenca, si combatte con Wrestling e suona come i pugni. La skill per colpire del
 difensore è quella della sua arma, Wrestling quando non ne impugna. Un arco, una balestra e un'arma da lancio vengono letti e
 **non** usati ancora per combattere: un giocatore così combatte a mani nude. Un NPC combatte con il suo template, qualunque cosa indossi.
+
+La qualità di un oggetto creato conta: un'arma eccezionale fa il 20% di danno in più e una di bassa qualità il 20% in meno, sommati ai bonus
+qui sopra; un pezzo d'armatura o uno scudo eccezionale dà 8 di armatura in più e uno di bassa qualità 8 in meno, mai sotto 0. Vedi
+[Fabbro](blacksmithing.md).
 
 Il valore di armatura dell'intero giocatore, mostrato dalla finestra di stato, è l'armatura di ogni parte pesata con la quota
 dei colpi che riceve (arrotondata), e il danno mostrato lì è quello dell'arma, con i bonus. I numeri sono quelli delle ere

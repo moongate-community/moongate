@@ -44,7 +44,8 @@ the most. A stool asks for 11 to 36: at 23.5 the chance is three in four. Every 
 A success is exceptional as often as its chance minus six tenths: at the most of a recipe four times in ten, never
 with a chance of six tenths or less. An item that joins a stack you carry is never exceptional. You read "You create an exceptional quality item." and its tooltip says exceptional.
 Made at 100 Carpentry, an exceptional item also bears your mark: "You create an exceptional quality item and affix
-your maker's mark.", and its tooltip says crafted by your name.
+your maker's mark.", and its tooltip says crafted by your name. An exceptional item is uncommon, a marked one rare,
+and an exceptional staff or shield is stronger in a fight, as [blacksmithing](blacksmithing.md) says.
 
 ## Tools wear out
 
@@ -102,7 +103,7 @@ exist: they are left out. So is the recipe of boards, which an axe already saws.
 ## Existing roots
 
 `mgctl init` never replaces a file you may have changed. Copy from the distribution `data/crafts/`,
-`scripts/common/crafting.lua`, `scripts/common/woods.lua`, `scripts/items/carpentry_tool.lua`,
+`scripts/common/crafting.lua`, `scripts/common/woods.lua`, `scripts/common/smithy.lua` (the engine reads it), `scripts/items/carpentry_tool.lua`,
 `scripts/items/axe.lua` (it now reads `woods.lua`), `templates/gumps/craft_menu.xml`, `scripts/gumps/craft_menu.lua`,
 and `templates/items/skills/tools/carpenty.toml`, or give `script_id = "carpentry_tool"` to your carpentry tools.
 

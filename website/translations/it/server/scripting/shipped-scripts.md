@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"bdb4d7f42b42a112f0c09f86c06eea1215f1a0b30efb42880b673b4b73385744","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"65d2b4927bfc92f0c9350b1923ada5b8a73126500de20a767ac8109e63a5aff4","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -221,6 +221,15 @@ crea l'oggetto (`item.give`, altrimenti `item.create` ai piedi del giocatore), c
 (passando il colore del tipo di legno a `item.give`, oppure `item.set_hue` ai piedi). Una riuscita può essere eccezionale (`crafting.roll`, le proprietà `quality`, `crafter_id`, `crafter_name`), e ogni tentativo la cui abilità viene provata toglie un uso all'attrezzo (la proprietà `uses_remaining`, estratta tra 25 e 75, `item.delete` all'ultimo). Chi sta creando, il gruppo e il legno scelti da ogni giocatore e l'ultima ricetta iniziata da ciascuno (`crafting.make_last`) sono tenuti in memoria.
 `scripts/items/carpentry_tool.lua` (`script_id = "carpentry_tool"` sugli attrezzi da falegname) apre il gump di creazione
 dallo zaino; il gump è `templates/gumps/craft_menu.xml` con `scripts/gumps/craft_menu.lua`, uno per tutti i mestieri.
+
+## smithing_tool.lua e common/smithy.lua
+
+`scripts/items/smithing_tool.lua` è lo script dei martelli da fabbro, delle mazze e delle tenaglie
+(`script_id = "smithing_tool"`): apre il gump di creazione del fabbro (vedi [Fabbro](../blacksmithing.md)),
+con le regole di `crafting.lua`. `scripts/common/smithy.lua` contiene le grafiche delle incudini e delle forge e
+le trova entro una distanza da un giocatore, tra gli elementi fissi della mappa (`world.statics`) e gli oggetti a terra
+(`world.items_in_range`, `item.item_id`); la tabella `NEEDS` del motore chiede al fabbro un'incudine e una forgia entro
+2 caselle, e `ore.lua` legge le sue forge da lì.
 
 ## fishing_pole.lua
 
@@ -498,6 +507,20 @@ mantiene il suo negozio e le sue lezioni tramite `scripts/common/shop.lua` e `tr
 `scripts/gumps/stable_claim.lua` riempie il gump con un pulsante e il nome dell'animale per ogni animale di `stable.pets`,
 otto per pagina; un pulsante controlla che il giocatore sia entro 12 celle dall'addestratore e chiama `stable.claim`; un elenco
 cambiato da quando è stato mostrato viene mostrato di nuovo.
+
+## pet_orders.lua e pet_release.lua
+
+`scripts/common/pet_orders.lua` è ciò che `common/creature.lua` esegue per una creatura che ha un `owner`: `think` segue
+l'ordine nella proprietà `pet.order` (`follow`, `come`, `stay` o `guard`; `follow` se non ne ha), e `listen`, dall'
+`on_speech` degli script delle creature, legge le parole del padrone (`SpeechKeywordType.PetCome`, `AllStay` e le altre)
+entro 14 caselle. Le parole "all" vengono eseguite dal primo animale che chiede `pet.attend(owner)`, per ogni animale del padrone
+a portata; `kill` chiede un bersaglio con `target.pick`; `release` apre il gump `pet_release`
+(`templates/gumps/pet_release.xml`), il cui pulsante Release chiama `pet.release` dopo aver controllato che l'animale sia ancora del giocatore e
+entro 14 caselle. Ogni ordine tranne `release` tira prima `pet.obey(owner, pet)` (la probabilità è `pet.control_chance`): un animale che
+rifiuta ringhia, si agita e non esegue l'ordine. `feed(serial, giver, given)` è ciò che gli script delle creature restituiscono da
+`on_drag_drop`: il cibo del padrone va a `pet.feed`, che prende la pila e alza la lealtà (`pet.loyalty`); il cibo che la
+creatura non mangia viene restituito. Vedi [Domatura degli animali](../animal-taming.md#what-you-can-tell-it) e
+[lealtà, cibo e obbedienza](../animal-taming.md#loyalty-food-and-obedience).
 
 ## animal_taming.lua
 

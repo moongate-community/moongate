@@ -1,7 +1,9 @@
 # Crafts
 
-`data/crafts` holds the crafts players make things with, one file a craft (`carpentry.toml` today), and
-`resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules.
+`data/crafts` holds the crafts players make things with, one file a craft (`carpentry.toml` and `blacksmithing.toml`
+today), and `resources.toml`, the lists of item templates a recipe may take. See [Carpentry](../carpentry.md) for the rules and
+[Blacksmithing](../blacksmithing.md). What a craft must stand near, such as the anvil and the forge of blacksmithing, is not data:
+it is the table `NEEDS` of `scripts/common/crafting.lua`.
 
 ## A craft
 
@@ -72,4 +74,5 @@ uv run --project tools/convert moongate-convert uox-crafts --source <UOX3>/data/
 ```
 
 The converter leaves out the groups that make deeds and the recipe of boards, turns UOX3's tenths of skill into
-points, and counts only boards as wood.
+points, and counts only boards as wood. UOX3 nests its menus (Blacksmithing, Armor, Ringmail): each menu that holds
+recipes becomes a group, in the order the menus are met. A recipe's name starts with a capital.
