@@ -7,9 +7,9 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**271 systems:** ✅ 91 done, 🟡 69 partly done, ❌ 111 not built yet.
+**271 systems:** ✅ 91 done, 🟡 72 partly done, ❌ 108 not built yet.
 
-**Coverage: 34%** of the systems done, **46%** counting a partly done system as half.
+**Coverage: 34%** of the systems done, **47%** counting a partly done system as half.
 
 The foundations (network, login, persistence, scripting, world data) are in place; the gameplay systems (combat, magic, skills, economy, housing) are what is left.
 
@@ -92,10 +92,10 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 
 | System | Moongate | Notes |
 | --- | --- | --- |
-| Spell casting: mana, reagents, fizzle, resist | ❌ | |
-| The magery spells | ❌ | |
+| Spell casting: mana, reagents, fizzle, resist | 🟡 | [Magery](magery.md): the words of power, a delay of the circle in which the caster stands still, the target cursor, reagents and mana, the Magery window of a book or a scroll, the fizzle that loses the reagents, the recovery, and damage that ruins a cast above the first circle; from the spell icon, a macro or a scroll. Resisting Spells weakens a harmful spell. No reflection, no casting NPCs, no places where magic is refused |
+| The magery spells | 🟡 | The seven spells of the first circle: Clumsy, Create Food, Feeblemind, Heal, Magic Arrow, Night Sight and Weaken, each a script in `scripts/spells`; the 64 are in [`spells.toml`](data-files/spells.md). Circles 2 to 8 and Reactive Armor are next |
 | Necromancy | ❌ | |
-| Spellbooks, scrolls and wands | ❌ | |
+| Spellbooks, scrolls and wands | 🟡 | A spellbook that holds up to 64 spells, opens on a double click, takes the spell of a scroll dropped on it; a scroll is cast from the backpack, with no reagents and one used up on a success. No wands, and scrolls cannot be written yet |
 | Fields and summons | ❌ | |
 | Region magic rules (no recall, no gate) | ❌ | |
 | Chivalry | ❌ | |

@@ -305,18 +305,18 @@
         "name": "Kind",
         "type": "byte",
         "size": "1",
-        "description": "0x24 uses a skill; 0x56 casts a spell, 0x58 opens a door and 0xC7 plays an action, not handled yet"
+        "description": "0x24 uses a skill; 0x27 casts a spell of the spellbook, 0x56 casts one from a macro, 0x43 opens the spellbook; 0x58 opens a door and 0xC7 plays an action, not handled yet"
       },
       {
         "offset": "4",
         "name": "Text",
         "type": "ascii",
         "size": "variable",
-        "description": "ASCII, ended by a zero byte. For kind 0x24 it starts with the number of the skill, as \"21 0\" for Hiding"
+        "description": "ASCII, ended by a zero byte. For kind 0x24 it starts with the number of the skill, as \"21 0\" for Hiding; for 0x27 the number of the spell from 1 and maybe the serial of the book, as \"5 1073741825\"; for 0x56 the number of the spell; for 0x43 the kind of book, 1 for Magery"
       }
     ],
-    "notes": "A text command of the client. Using a skill from the skill window or a macro sends kind 0x24.",
-    "handler": "TextCommandPacketHandler: kind 0x24 runs on_use of scripts/skills/<skill>.lua after the wait between two skills; the other kinds are ignored for now (Debug log)."
+    "notes": "A text command of the client. Using a skill from the skill window or a macro sends kind 0x24; casting from the spellbook or a macro sends 0x27 or 0x56, and the spellbook button of the paperdoll 0x43.",
+    "handler": "TextCommandPacketHandler: kind 0x24 runs on_use of scripts/skills/<skill>.lua after the wait between two skills; 0x27 and 0x56 go to SpellCastService.CastFromBook, 0x43 opens the first spellbook the character carries; the other kinds are ignored for now (Debug log)."
   },
   "0x13:incoming": {
     "category": "Items",
@@ -796,8 +796,8 @@
         "description": "Present in the nine-byte variant."
       }
     ],
-    "notes": "Seven bytes for older clients; nine bytes from client 7.0.9.0. This version-dependent packet has no on-wire length header.",
-    "handler": "UseRequestPacketHandler: opens a carried container, or one on the ground within reach; BankService: opens the bank box."
+    "notes": "Seven bytes for older clients; nine bytes from client 7.0.9.0. This version-dependent packet has no on-wire length header. The gump 0xFFFF is a spellbook: the client opens its spellbook window and the spells follow in a 0x3C.",
+    "handler": "UseRequestPacketHandler: opens a carried container, or one on the ground within reach; BankService: opens the bank box; SpellbookService: opens a spellbook with the gump 0xFFFF."
   },
   "0x25:outgoing": {
     "category": "Items",
@@ -973,8 +973,8 @@
         "description": "Repeated container item entries."
       }
     ],
-    "notes": "Each item uses 19 bytes, or 20 with the grid byte for newer clients: the item's slot (0 to 124) in the grid the Enhanced Client shows.",
-    "handler": "UseRequestPacketHandler: the contents of a carried container, or of one on the ground within reach; BankService: those of the bank box."
+    "notes": "Each item uses 19 bytes, or 20 with the grid byte for newer clients: the item's slot (0 to 124) in the grid the Enhanced Client shows. After a 0x24 with the gump 0xFFFF the entries are the spells of a spellbook, as the classic servers send them: the serial counts down from 0x7FFFFFFF, the graphic is 0, the amount is the number of the spell from 1 and the container is the book.",
+    "handler": "UseRequestPacketHandler: the contents of a carried container, or of one on the ground within reach; BankService: those of the bank box; SpellbookService: the spells a book holds."
   },
   "0x4E:outgoing": {
     "category": "World",
@@ -2168,8 +2168,8 @@
         "description": "Subcommand data."
       }
     ],
-    "notes": "Subcommand 0x10 asks for one tooltip and 0x1A sets the lock of a stat (a byte for the stat, 0 strength, 1 dexterity, 2 intelligence, and a byte for the lock, 0 up, 1 down, 2 locked). Subcommand 0x13 asks for the context menu of a mobile or an item (its serial, four bytes) and 0x15 chooses an entry of it (the serial and the index of the entry, two bytes). The others are ignored for now. Outgoing 0xBF/0x08, 0xBF/0x14 and 0xBF/0x19 are separate subcommands.",
-    "handler": "ExtendedCommandPacketHandler: subcommand 0x10 answers the tooltip; subcommand 0x1A sets the stat lock of the character in the world (a lock past locked reads as up); subcommands 0x13 and 0x15 go to ContextMenuService.Request and Select"
+    "notes": "Subcommand 0x10 asks for one tooltip and 0x1A sets the lock of a stat (a byte for the stat, 0 strength, 1 dexterity, 2 intelligence, and a byte for the lock, 0 up, 1 down, 2 locked). Subcommand 0x13 asks for the context menu of a mobile or an item (its serial, four bytes) and 0x15 chooses an entry of it (the serial and the index of the entry, two bytes). Subcommand 0x1C casts the spell of one of the client's icons: two bytes with 1 when the serial of a spellbook follows (four bytes), then two bytes with the number of the spell from 1. The others are ignored for now. Outgoing 0xBF/0x08, 0xBF/0x14 and 0xBF/0x19 are separate subcommands.",
+    "handler": "ExtendedCommandPacketHandler: subcommand 0x10 answers the tooltip; subcommand 0x1A sets the stat lock of the character in the world (a lock past locked reads as up); subcommands 0x13 and 0x15 go to ContextMenuService.Request and Select; subcommand 0x1C goes to SpellCastService.CastFromBook"
   },
   "0xC8:incoming": {
     "category": "World",

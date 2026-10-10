@@ -8,6 +8,16 @@ if combat.target(guard_serial) ~= criminal then
 end
 ```
 
+## aggress
+
+A curse makes the caster the aggressor of the target without hurting it: an innocent who is not fighting back makes the
+caster a criminal, and an NPC fights it:
+
+```lua
+combat.aggress(caster, target)
+mobile.add_stat_curse(target, "strength", 11, 120)
+```
+
 ## stop
 
 Ends the fight of a mobile:

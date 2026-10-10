@@ -95,6 +95,17 @@ if not mobile.add_stat_bonus(user, "strength", 10, 120) then
 end
 ```
 
+## add_stat_curse
+
+A curse of the dexterity, as Clumsy casts it: 11 points for two minutes. A curse of the same stat that is as strong or
+stronger stays:
+
+```lua
+if mobile.add_stat_curse(target, "dexterity", 11, 120) then
+    mobile.message(target, "Your hands feel clumsy.")
+end
+```
+
 ## set_night_sight
 
 A torch-bearer's blessing that lets a player see in the dark for twenty minutes:

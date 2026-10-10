@@ -62,6 +62,7 @@ The loaders run in the order of the "Load order" column, the number each one is 
 | 29 | [`data/crafts`](data-files/crafts.md) | `CraftResourceList`, `CraftDefinition` | after the item templates; the resource lists (29) before the crafts (30) | Yes, by the shared crafting engine; see [Carpentry](carpentry.md) |
 | 31 | [`taming.toml`](data-files/taming.md) | `TamingCreature` | optional; after the mobile templates | Yes, through `ITamingService`: the creatures of [animal taming](animal-taming.md) |
 | 32 | [`pet_food.toml`](data-files/pet-food.md) | `PetFood` | optional; after the item templates | Yes, through `IPetFoodService`: what the pets of [animal taming](animal-taming.md) eat |
+| 33 | [`spells.toml`](data-files/spells.md) | `SpellDefinition` | optional; after the item templates | Yes, through `ISpellCatalogService`: the 64 spells of [Magery](magery.md) |
 
 A file that no game system reads yet is loaded and validated all the same: a
 mistake in it still stops the server. The pages of the files say which of their

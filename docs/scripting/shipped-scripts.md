@@ -293,10 +293,29 @@ item is, the plain potions vendors sell included, for `potion.lua` and `explosio
 
 `scripts/items/test_kit.lua` is the script of the staff's test bags (`templates/items/test_kits.toml`,
 `script_id = "test_kit"`): `.add test_kit_alchemy` gives a bag that fills, the first time it is opened, with the tool, the
-materials and the items to try a craft or the potions; then it is a plain bag. The bags are `test_kit_alchemy`,
-`test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`, `test_kit_tinkering`,
-`test_kit_fletching` and `test_kit_cooking`; the table `KITS` says what each holds. The skill is set apart, as
+materials and the items to try a craft, the potions or the first circle of Magery; then it is a plain bag. The bags are
+`test_kit_alchemy`, `test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`,
+`test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking` and `test_kit_magery` (a full spellbook, 20 of each
+reagent and three scrolls of each first circle spell); the table `KITS` says what each holds. The skill is set apart, as
 `.set skill alchemy 100`.
+
+## spellbook.lua and spell_scroll.lua
+
+`scripts/items/spellbook.lua` is the script of the spellbooks (`script_id = "spellbook"`): a double click opens the book
+when the player wears it or carries it in its backpack, else it says the book must be carried. A scroll dropped on the
+book is written in it by the server. `scripts/items/spell_scroll.lua` is the script of the scrolls of the spells
+(`script_id = "spell_scroll"`): a double click casts the spell of the scroll, which must lie in the backpack. Both only
+call the [`spell` module](https://moongate.sh/lua/spell/); see [Magery](../magery.md).
+
+## The spell scripts and common/magic.lua
+
+`scripts/spells/<key>.lua` is the script of a spell, a global table named after the key of
+[`spells.toml`](../data-files/spells.md). `cast(caster, target, info)` is the effect, called once the cast succeeded;
+`check(caster, target, info)` may refuse before anything is spent by returning a cliloc number or a text. The target is
+`{ kind = "mobile" | "item", serial }`, `{ kind = "location", map, x, y, z }` or `{ kind = "none" }`, and `info` the data
+of the spell with `scroll` true for a cast from a scroll. The seven scripts of the first circle are `clumsy`,
+`create_food`, `feeblemind`, `heal`, `magic_arrow`, `night_sight` and `weaken`. `scripts/common/magic.lua` is what they
+share: the chance a target resists, the damage scalar, the curse and its time, the effect and the sound of a spell.
 
 ## fishing_pole.lua
 

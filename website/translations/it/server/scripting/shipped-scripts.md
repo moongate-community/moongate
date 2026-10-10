@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"3d8fc3ebdcc03b91f7240cc9da9e4b66ed98b847f76c74c7dc5e73cbbf9a52f9","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"11baafdd3c428a2f664fb21f9f6b2562757b85dcd6707f169a4df20b88d5cc61","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -293,10 +293,30 @@ oggetto, comprese le pozioni semplici dei venditori, per `potion.lua` ed `explos
 
 `scripts/items/test_kit.lua` è lo script delle sacche di prova per lo staff (`templates/items/test_kits.toml`,
 `script_id = "test_kit"`): `.add test_kit_alchemy` dà una sacca che si riempie, la prima volta che si apre, con l'attrezzo, i
-materiali e gli oggetti per provare un mestiere o le pozioni; poi è una sacca normale. Le sacche sono `test_kit_alchemy`,
-`test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`, `test_kit_tinkering`,
-`test_kit_fletching` e `test_kit_cooking`; la tabella `KITS` dice cosa contiene ognuna. L'abilità si imposta a parte, come
-`.set skill alchemy 100`.
+materiali e gli oggetti per provare un mestiere, le pozioni o il primo cerchio di Magery; poi è una sacca normale. Le sacche
+sono `test_kit_alchemy`, `test_kit_potions`, `test_kit_explosion`, `test_kit_cartography`, `test_kit_tailoring`,
+`test_kit_tinkering`, `test_kit_fletching`, `test_kit_cooking` e `test_kit_magery` (un libro completo, 20 di ogni reagente e
+tre pergamene per ogni incantesimo del primo cerchio); la tabella `KITS` dice cosa contiene ognuna. L'abilità si imposta a
+parte, come `.set skill alchemy 100`.
+
+## spellbook.lua e spell_scroll.lua
+
+`scripts/items/spellbook.lua` è lo script dei libri degli incantesimi (`script_id = "spellbook"`): un doppio clic apre il
+libro se il giocatore lo indossa o lo porta nello zaino, altrimenti dice che il libro deve essere portato con sé. Una
+pergamena lasciata sul libro viene scritta in esso dal server. `scripts/items/spell_scroll.lua` è lo script delle pergamene
+degli incantesimi (`script_id = "spell_scroll"`): un doppio clic lancia l'incantesimo della pergamena, che deve stare nello
+zaino. Entrambi chiamano soltanto il [modulo `spell`](https://moongate.sh/lua/spell/); vedi [Magery](../magery.md).
+
+## Gli script degli incantesimi e common/magic.lua
+
+`scripts/spells/<key>.lua` è lo script di un incantesimo, una tabella globale con il nome della chiave di
+[`spells.toml`](../data-files/spells.md). `cast(caster, target, info)` è l'effetto, chiamato quando il lancio è riuscito;
+`check(caster, target, info)` può rifiutare prima che si spenda qualcosa restituendo un numero di cliloc o un testo. Il
+bersaglio è `{ kind = "mobile" | "item", serial }`, `{ kind = "location", map, x, y, z }` oppure `{ kind = "none" }`, e `info`
+i dati dell'incantesimo con `scroll` vero per un lancio da pergamena. I sette script del primo cerchio sono `clumsy`,
+`create_food`, `feeblemind`, `heal`, `magic_arrow`, `night_sight` e `weaken`. `scripts/common/magic.lua` è ciò che
+condividono: la probabilità che un bersaglio resista, il fattore del danno, la maledizione e la sua durata, l'effetto e il
+suono di un incantesimo.
 
 ## fishing_pole.lua
 
@@ -327,6 +347,10 @@ scelto viene curato, o resuscitato.
   ogni 100 punti vita. Chi non è ferito legge "That being is not damaged!" e la benda resta.
 - **Un fantasma:** servono 80 punti di Healing e di Anatomy e una probabilità di (Healing − 68) / 50; poi al
   fantasma viene chiesto, nel gump degli ankh, se vuole tornare, e gli costa un decimo della fama, come a un ankh.
+- **Il cadavere di un animale legato:** servono 80 punti di Veterinary e di Animal Lore e una probabilità di
+  (Veterinary − 68) / 50, l'attesa è quella di un fantasma (5 secondi in più), e il proprietario deve essere il curatore o
+  stare entro 3 caselle dal cadavere; l'animale rinasce dove giace il cadavere, con il suo proprietario, la lealtà e il
+  legame, e 10 punti vita. Il cadavere di un animale non legato non può essere bendato.
 - **Abilità:** entrambe vengono provate per la crescita dopo una cura, anche se il tiro non è riuscito, e dopo una
   resurrezione riuscita.
 
@@ -346,6 +370,7 @@ Nascondersi o essere mostrati di nuovo azzera i passi.
 - **Il controllo** va da -20 a 80 punti, ciascuno aumentato del doppio del valore di armatura. Un successo legge "You begin
   to move quietly." (502730); un fallimento legge "You fail in your attempt to move unnoticed." (502731) e mostra il
   giocatore. L'abilità aspetta 10 secondi in ogni caso.
+- **In sella:** chi è in sella viene rifiutato con "You cannot stealth while mounted." (500837).
 - **Non c'è ancora:** le regole di Stealth delle versioni successive (il costo dei passi per armatura, il furtivo in sella).
 
 ## snooping.lua
@@ -521,7 +546,7 @@ script sono sostituiti manualmente ne ha bisogno, altrimenti banchieri e assegni
 teletrasporta il giocatore alle props `teleport.x`, `teleport.y` e `teleport.z` con
 `mobile.teleport`, mostra uno sbuffo di fumo dove il giocatore è partito (prop `source_effect`) e
 arrivato (prop `dest_effect`), poi vi riproduce la prop `sound_id` quando il teletrasporto ne ha una. La prop
-`active = false` disattiva un teletrasporto. Viaggiano solo i giocatori, a meno che la prop `creatures` sia true: allora viaggia anche un NPC che vi cammina sopra. Un teletrasporto con la prop `teleport.map`, un numero `MapType`,
+`active = false` disattiva un teletrasporto, e la prop `deny_mounted` gli fa rifiutare un cavaliere ("You must dismount before proceeding.", 1077252). Viaggiano solo i giocatori, a meno che la prop `creatures` sia true: allora viaggia anche un NPC che vi cammina sopra. Un teletrasporto con la prop `teleport.map`, un numero `MapType`,
 porta il giocatore su quella mappa: il client cambia mappa, poi riceve la stagione quando differisce
 da quella mostrata, la luce, il meteo e la musica del luogo; quando la mappa non è caricata non succede nulla. Il template ha `visibility = "game_master"`: un oggetto a terra viene inviato solo agli
 account consentiti dalla sua visibilità, quindi i giocatori camminano su un teletrasporto che non vedono mai.
@@ -555,7 +580,7 @@ al think precedente viene guardato (`npc.look_at`), riceve il suono `0x1F2` e le
 il gump `resurrect` con l'argomento `healer`, come il `BaseHealer` di ModernUO. Un guaritore aspetta 2 secondi (4 think)
 tra due offerte, e un fantasma incontrato durante l'attesa riceve l'offerta quando finisce. Un criminale viene rifiutato con il
 testo del client 501222, e un assassino (rosso) con 501223, e un giocatore con karma negativo si sente dire 501224 e riceve comunque l'offerta. Un guaritore malvagio, il cui id di template inizia con `evil` (`evilhealer`, `evilwhealer`), non rifiuta nessuno e non dice nulla. Un guaritore di un
-template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think. Un guaritore con un negozio vende e compra come un venditore, tramite `scripts/common/shop.lua`: bende, pozioni, ginseng e aglio.
+template che finisce con `whealer`, uno errante, fa un passo con `npc.wander` a ogni quarto think. Un guaritore con un negozio vende e compra come un venditore, tramite `scripts/common/shop.lua`: bende, pozioni, ginseng e aglio. Insegna anche le abilità che possiede, tramite `scripts/common/training.lua` (vedi [Istruttori](../skills.md#trainers)).
 
 ## ethereal_mount.lua
 
@@ -580,8 +605,8 @@ cambiato da quando è stato mostrato viene mostrato di nuovo.
 `scripts/common/pet_orders.lua` è ciò che `common/creature.lua` esegue per una creatura che ha un `owner`: `think` segue
 l'ordine nella prop `pet.order` (`follow`, `come`, `stay` o `guard`; `follow` se non ne ha), e `listen`, dall'
 `on_speech` degli script delle creature, legge le parole del proprietario (`SpeechKeywordType.PetCome`, `AllStay` e le altre)
-entro 14 tile. Le parole "all" sono eseguite dal primo animale che chiama `pet.attend(owner)`, per ogni animale del proprietario
-a portata; `kill` chiede un bersaglio con `target.pick`; `release` apre il gump `pet_release`
+entro 14 tile. Delle parole "all" solo `all kill` è eseguita dal primo animale che chiama `pet.attend(owner)`, per ogni animale del
+proprietario a portata, dato che c'è un solo cursore; ogni altro ordine "all" è obbedito da ogni animale per conto suo; `kill` chiede un bersaglio con `target.pick`; `release` apre il gump `pet_release`
 (`templates/gumps/pet_release.xml`), il cui pulsante Release chiama `pet.release` dopo aver verificato che l'animale sia ancora del giocatore e
 entro 14 tile. Ogni ordine tranne `release` tira prima `pet.obey(owner, pet)` (la probabilità è `pet.control_chance`): un animale che
 rifiuta ringhia e si agita e non esegue l'ordine. `feed(serial, giver, given)` è ciò che gli script delle creature restituiscono da
@@ -769,3 +794,76 @@ Titolo, autore e corpo salvati restano fissi quando un altro giocatore la legge.
 oggetto del template `readable_book`, `book.open` invia il libro del client, la copertina e ogni pagina,
 invece della pergamena ([libri e pergamene](../data-files/books.md#books-and-parchments)).
 I testi importati da ModernUO lo usano: `book.give(player, "grammar_of_orcish")`.
+
+## bank_check.lua
+
+`scripts/items/bank_check.lua` è lo script degli assegni della banca, che un banchiere scrive per l'oro della banca ("check
+5000"). Un doppio clic su un assegno dentro il forziere aperto della banca lo trasforma di nuovo in monete del forziere, in
+pile da 60000. Un forziere con spazio per una parte dell'oro prende ciò che ci sta e l'assegno tiene il resto. Fuori dal
+forziere della banca un assegno è soltanto un pezzo di carta che vale quanto dice il suo suggerimento. Vedi [Banca](../bank.md).
+
+## snow_pile.lua
+
+`scripts/items/snow_pile.lua` è la palla di neve dell'evento di Natale. Un doppio clic su una pila nello zaino chiede un
+bersaglio; la palla vola verso un mobile che porta a sua volta una pila, lo colpisce, ed entrambi lo leggono. Un giocatore
+aspetta 5 secondi tra due palle di neve e non può lanciarne una in sella. Un template di oggetto la usa con
+`script_id = "snow_pile"`.
+
+## banker.lua
+
+`scripts/mobiles/banker.lua` è lo script dei banchieri. Un giocatore entro 12 caselle dice una parola e il banchiere apre il
+suo forziere ("bank"), dice il saldo ("balance"), consegna oro ("withdraw 500"), lo prende ("deposit 500") o scrive un assegno
+("check 5000"). Il client trasforma la maggior parte di queste parole in parole chiave del discorso in qualsiasi lingua;
+"deposit" è solo in inglese. L'oro e gli assegni lasciati sul banchiere vanno in banca (`on_drag_drop`). Un banchiere non fa
+affari con un criminale. Quanto consegna in una volta è l'impostazione `ultima.bank.max_withdraw`. Vedi [Banca](../bank.md).
+
+## shopkeeper.lua
+
+`scripts/mobiles/shopkeeper.lua` è lo script dei venditori PNG. Un giocatore sceglie Buy o Sell nel menu contestuale del
+venditore, oppure dice "vendor buy" o "vendor sell" entro 4 caselle, e si apre la finestra del negozio. Cosa vende un
+venditore è il suo negozio in `templates/shops`; la finestra, i prezzi e l'acquisto sono lavoro del server (il modulo
+`vendor`), non dello script. I venditori insegnano anche abilità (`common/training.lua`), e mentre l'evento `halloween` è
+attivo rispondono a "trick or treat" (`common/trick_or_treat.lua`). Vedi [Venditori](../vendors.md).
+
+## common/guild.lua
+
+`scripts/common/guild.lua` è ciò che condividono gli script dei maestri di gilda. Un giocatore entro 2 celle dice il nome del
+maestro di gilda e "join" o "member" per sapere il prezzo della sua gilda (500 monete d'oro), lascia esattamente quell'oro
+su di lui per entrare, e dice il suo nome e "resign" o "quit" per uscire, al più presto una settimana dopo essere entrato. Il
+server tiene l'iscrizione (il modulo `npcguild`). `guild.listen(serial, speaker, text, keywords)` gestisce le parole e
+`guild.drop(serial, giver, item)` l'oro.
+
+## common/holiday_decor.lua
+
+`scripts/common/holiday_decor.lua` mette le decorazioni di un evento festivo intorno al centro delle città principali, su
+Felucca e su Trammel. `place(event_id, templates)` viene eseguita quando un evento inizia, `remove(event_id)` quando finisce.
+I serial sono conservati nella prop del mondo `holiday.<event_id>.items`, quindi gli oggetti spariscono anche dopo un
+riavvio, e posizionare due volte non mette nulla due volte.
+
+## common/trick_or_treat.lua
+
+`scripts/common/trick_or_treat.lua` è il gioco di Halloween. Mentre l'evento `halloween` è attivo (`data/schedule.toml`), un
+giocatore che dice "trick or treat" entro 4 caselle da un negoziante riceve una caramella, o uno scherzo. Ogni negoziante
+riposa da 5 a 10 minuti dopo aver risposto, e una frase viene raccolta da un solo negoziante. `shopkeeper.lua` chiama
+`listen` dal suo `on_speech`.
+
+## events/christmas.lua e events/halloween.lua
+
+Gli hook degli eventi stagionali di `data/schedule.toml`: `on_start(id, name)` decora le città
+(`common/holiday_decor.lua`) e avvisa tutti, `on_end(id, name)` toglie le decorazioni e avvisa tutti. Halloween ha solo questi due; il gioco in sé è
+`common/trick_or_treat.lua`. Natale ha anche `on_login(id, name, player)`: un personaggio che entra durante l'evento riceve
+un regalo una volta (due pile di neve, una candela festiva e una decorazione), e non di nuovo per 200 giorni. Vedi
+[Programmazione](../schedule.md).
+
+## gumps/go.lua
+
+`scripts/gumps/go.lua` è lo script del gump dei luoghi con nome (`templates/gumps/go.xml`) che [`.go`](../commands/go.md)
+apre. `rows(g, player, args)` riempie lo slot "rows" con un livello di `data/locations.toml`, prima le categorie e poi i
+luoghi, dodici per pagina. Una categoria apre il gump un livello più in basso, un luogo porta lì il viaggiatore. Solo per lo
+staff: chiunque altro vede un gump vuoto.
+
+## definitions.lua
+
+Tra gli script distribuiti non c'è nessun `definitions.lua`: il motore lo genera all'avvio, per il completamento
+dell'editor, dai moduli, dalle funzioni e dalle enum registrati (vedi [Scrivere un modulo Lua](../lua-modules.md)). Non
+modificarlo.

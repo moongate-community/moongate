@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"06e65eaff8b1240b14214ad028805b92eef6f20f2ec500c12c4a17bec0f27bc8","title":"Roadmap"} -->
+<!-- translation: {"sourceHash":"e5eb77a26fce8f0f4f03932928e54df1b11ee7c770b3e349690bd5214c512d1a","title":"Roadmap"} -->
 
 # Roadmap
 
@@ -107,8 +107,8 @@ creazione. La [guida di riferimento API Lua](https://moongate.sh/lua/) elenca ci
 | 2.2 | ❌ | **Elenchi degli aggressori**. Oggi solo il [rapporto di omicidio](death.md#murder-counts) ricorda chi ha attaccato un innocente, per `aggressor_seconds`; nessun timeout degli attacchi e nessun diritto sul bottino | Notorietà, guardie e diritti sul bottino si basano su di essi |
 | 2.3 | 🟡 | **Morte, cadavere, fantasma, resurrezione**; NPC guaritori e santuari. Completato: un NPC o un giocatore muore in combattimento, con `.kill` o `mobile.kill` e lascia il proprio [cadavere](death.md) con ciò che trasportava; un giocatore resta come [fantasma](death.md#death-of-a-player) e torna in vita a un ankh o da un guaritore, con `.resurrect` o `mobile.resurrect`. Restano: ossa, taglie e le postazioni dei guaritori malvagi | Dà un risultato al combattimento |
 | 2.4 | 🟡 | **Bende e guarigione**. Completato: la [benda](scripting/shipped-scripts.md#bandagelua) pulita cura un giocatore o una creatura e resuscita un fantasma, con le formule della Healing classica di ModernUO. Il cadavere di un animale legato viene resuscitato dal Veterinario. Restano: veleno e sanguinamento da curare | Necessarie appena esiste il danno |
-| 2.5 | ❌ | **Eventi di combattimento per Lua**: attacco, colpo riuscito, colpo mancato, danno, morte, resurrezione | Permette ai contenuti di modificare le regole |
-| 2.6 | ❌ | **Impostazioni del combattimento**: velocità dei colpi, regole del danno, decadimento dei cadaveri | Un proprietario di shard si aspetta di regolarle |
+| 2.5 | 🟡 | **Eventi di combattimento per Lua**: attacco, colpo riuscito, colpo mancato, danno, morte, resurrezione. Fatto: la morte (`on_death`, `on_mobile_killed`). Resta: attacco, colpo riuscito, colpo mancato, danno, resurrezione | Permette ai contenuti di modificare le regole |
+| 2.6 | 🟡 | **Impostazioni del combattimento**: velocità dei colpi, regole del danno, decadimento dei cadaveri. Fatto: la sezione `ultima.combat` (velocità dei colpi, tasso di danno degli NPC, costo di stamina, portata, tiro con l'arco). Resta: il decadimento dei cadaveri | Un proprietario di shard si aspetta di regolarle |
 
 ## Fase 3: un mondo che risponde agli attacchi
 
@@ -128,7 +128,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 | --- | --- | --- | --- | --- |
 | 4.1 | 🟡 | **Venditori**: acquisto, vendita, rifornimento; istruttori delle abilità. Completato: cassetta di banca, saldo, deposito e prelievo tramite parlato, assegni bancari, oro consegnato al banchiere, [acquisto e vendita ai venditori](vendors.md) con i negozi di ModernUO, rifornimento e rivendita; [istruttori di abilità](skills.md#trainers) per venditori e guaritori; i [maestri di gilda](skills.md#guildmasters) con le loro gilde | Dà un uso all'oro | UOX3 `shoplist.dfn` (38 elenchi usati da 86 NPC); i prezzi sono già convertiti |
 | 4.2 | ❌ | **Scambio sicuro** tra giocatori | Economia dei giocatori | |
-| 4.3 | ❌ | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
+| 4.3 | 🟡 | **Lancio degli incantesimi e Magery**: libri degli incantesimi, reagenti, pergamene, parole di potere, i 64 incantesimi. Fatto: il [libro, il motore di lancio e il primo cerchio](magery.md). Resta: i cerchi da 2 a 8, Reactive Armor, inscription | Metà dei personaggi lancia incantesimi | UOX3 `spells.dfn` (mana, reagenti, ritardo, mantra) |
 | 4.4 | ❌ | **Recall, mark, gate, runebook** | Il modo in cui i giocatori viaggiano; richiede le regole delle regioni di 3.5 | |
 | 4.5 | ✅ | **Pozioni ed effetti alchemici**. Fatto: [cura, rinvigorimento, forza, agilità, visione notturna, veleno, antidoti ed esplosione](potions.md), e l'[alchimia](alchemy.md) | Piccolo quando esistono effetti temporanei e incantesimi | |
 
@@ -147,7 +147,7 @@ I venditori richiedono solo la fase 1, quindi possono essere realizzati in paral
 | --- | --- | --- | --- |
 | 6.1 | ❌ | **Gruppo** | Non richiede altro; un piccolo shard vive del gioco di gruppo |
 | 6.2 | ❌ | **Gilde**, con colori di guerra e alleanza | Richiede notorietà (3.4) |
-| 6.3 | 🟡 | **Chat, bacheche, libri, profilo** | Indipendente, piccolo. Le [bacheche](bulletin-boards.md) sono completate |
+| 6.3 | 🟡 | **Chat, bacheche, libri, profilo** | Indipendente, piccolo. Le [bacheche](bulletin-boards.md) e i [libri](data-files/books.md) sono completati; la chat e il profilo no |
 
 ## Fase 7: case e barche
 
