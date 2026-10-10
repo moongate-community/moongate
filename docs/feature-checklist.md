@@ -7,7 +7,7 @@ built.
 
 ✅ done · 🟡 partly done · ❌ not built yet
 
-**271 systems:** ✅ 91 done, 🟡 66 partly done, ❌ 114 not built yet.
+**271 systems:** ✅ 91 done, 🟡 67 partly done, ❌ 113 not built yet.
 
 **Coverage: 34%** of the systems done, **46%** counting a partly done system as half.
 
@@ -186,7 +186,7 @@ The foundations (network, login, persistence, scripting, world data) are in plac
 | Lights | ✅ | Lit and doused; lamp posts light up at night |
 | Potions and food | 🟡 | Food is eaten: hunger, stamina, sound and gesture. Drinks are drunk by sips, and a pitcher or a glass is left empty; no refilling, no drunkenness. A sample potion is drunk and used up, with no effect yet |
 | Books | 🟡 | Staff [`.book`](commands/book.md) creation and readable scrolls from [TOML text templates](data-files/books.md), frozen recipient variables and saved title/author/body and [once-only letter attachments](data-files/books.md#letter-attachments); [62 lore books in eight languages](book-content-import.md), which open the client's own [book](data-files/books.md#books-and-parchments) with its cover and pages; [books a player writes in](data-files/books.md#books-a-player-writes-in), one for every new character; copying and signing a book are not built |
-| Maps and treasure maps | ❌ | |
+| Maps and treasure maps | 🟡 | [Maps](maps.md) open on their area, with a course of up to 50 pins; the 33 preset maps; a `map` Lua module. No cartography, treasure maps or SOS yet |
 | Runes, recall and gates | ❌ | |
 | Moongates and teleporters | 🟡 | Walk-on teleporters and those that answer a word, also across maps, placed by `.decorate` with ModernUO's world and dungeon ones; public moongates with a destination gump; plain moongates with one destination (`.moongate`); no Gate Travel |
 | Dyes and dye tubs | 🟡 | Dyes give a dye tub the hue picked in the client's hue picker, the tub gives it to what is dyeable, as clothing is; no leather, furniture, black or metallic tubs |

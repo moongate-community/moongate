@@ -11,8 +11,16 @@ base_id = "base_map"
 item_id = 0
 name = "small world map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "1"
+map_width = "200"
+map_height = "200"
+map_x1 = "0"
+map_y1 = "0"
+map_x2 = "5119"
+map_y2 = "4095"
+map_facet = "0"
 
 [[item]]
 id = "largeworldmap"
@@ -20,8 +28,16 @@ base_id = "base_map"
 item_id = 0
 name = "large world map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "2"
+map_width = "400"
+map_height = "400"
+map_x1 = "0"
+map_y1 = "0"
+map_x2 = "5119"
+map_y2 = "4095"
+map_facet = "0"
 
 [[item]]
 id = "britainmap"
@@ -29,8 +45,16 @@ base_id = "base_map"
 item_id = 0
 name = "britain map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "3"
+map_width = "200"
+map_height = "200"
+map_x1 = "1092"
+map_y1 = "1396"
+map_x2 = "1736"
+map_y2 = "1924"
+map_facet = "0"
 
 [[item]]
 id = "britaintoskarabraemap"
@@ -38,8 +62,16 @@ base_id = "base_map"
 item_id = 0
 name = "britain to skara brae map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "4"
+map_width = "200"
+map_height = "200"
+map_x1 = "256"
+map_y1 = "1792"
+map_x2 = "1736"
+map_y2 = "2560"
+map_facet = "0"
 
 [[item]]
 id = "britaintotrinsicmap"
@@ -47,8 +79,16 @@ base_id = "base_map"
 item_id = 0
 name = "britain to trinsic map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "5"
+map_width = "200"
+map_height = "200"
+map_x1 = "1024"
+map_y1 = "1280"
+map_x2 = "2304"
+map_y2 = "3072"
+map_facet = "0"
 
 [[item]]
 id = "bucsdenmap"
@@ -56,8 +96,16 @@ base_id = "base_map"
 item_id = 0
 name = "bucs den map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "6"
+map_width = "200"
+map_height = "200"
+map_x1 = "2500"
+map_y1 = "1900"
+map_x2 = "3000"
+map_y2 = "2400"
+map_facet = "0"
 
 [[item]]
 id = "bucsdentomaginciamap"
@@ -65,8 +113,16 @@ base_id = "base_map"
 item_id = 0
 name = "bucs den to magincia map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "7"
+map_width = "200"
+map_height = "200"
+map_x1 = "2560"
+map_y1 = "1792"
+map_x2 = "3840"
+map_y2 = "2560"
+map_facet = "0"
 
 [[item]]
 id = "bucsdentoocllomap"
@@ -74,8 +130,16 @@ base_id = "base_map"
 item_id = 0
 name = "bucs den to ocllo map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "8"
+map_width = "200"
+map_height = "200"
+map_x1 = "2560"
+map_y1 = "1792"
+map_x2 = "3840"
+map_y2 = "3072"
+map_facet = "0"
 
 [[item]]
 id = "jhelommap"
@@ -83,8 +147,16 @@ base_id = "base_map"
 item_id = 0
 name = "jhelom map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "9"
+map_width = "200"
+map_height = "200"
+map_x1 = "1088"
+map_y1 = "3572"
+map_x2 = "1528"
+map_y2 = "4056"
+map_facet = "0"
 
 [[item]]
 id = "maginciamap"
@@ -92,8 +164,16 @@ base_id = "base_map"
 item_id = 0
 name = "magincia map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "10"
+map_width = "200"
+map_height = "200"
+map_x1 = "3530"
+map_y1 = "2022"
+map_x2 = "3818"
+map_y2 = "2298"
+map_facet = "0"
 
 [[item]]
 id = "maginciatoocllomap"
@@ -101,8 +181,16 @@ base_id = "base_map"
 item_id = 0
 name = "magincia to ocllo map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "11"
+map_width = "200"
+map_height = "200"
+map_x1 = "3328"
+map_y1 = "1792"
+map_x2 = "3840"
+map_y2 = "2304"
+map_facet = "0"
 
 [[item]]
 id = "minocmap"
@@ -110,8 +198,16 @@ base_id = "base_map"
 item_id = 0
 name = "minoc map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "12"
+map_width = "200"
+map_height = "200"
+map_x1 = "2360"
+map_y1 = "356"
+map_x2 = "2706"
+map_y2 = "702"
+map_facet = "0"
 
 [[item]]
 id = "minoctoyewmap"
@@ -119,8 +215,16 @@ base_id = "base_map"
 item_id = 0
 name = "minoc to yew map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "13"
+map_width = "200"
+map_height = "200"
+map_x1 = "0"
+map_y1 = "256"
+map_x2 = "2304"
+map_y2 = "3072"
+map_facet = "0"
 
 [[item]]
 id = "minoctovespermap"
@@ -128,8 +232,16 @@ base_id = "base_map"
 item_id = 0
 name = "minoc to vesper map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "14"
+map_width = "200"
+map_height = "200"
+map_x1 = "2467"
+map_y1 = "572"
+map_x2 = "2878"
+map_y2 = "746"
+map_facet = "0"
 
 [[item]]
 id = "moonglowmap"
@@ -137,8 +249,16 @@ base_id = "base_map"
 item_id = 0
 name = "moonglow map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "15"
+map_width = "200"
+map_height = "200"
+map_x1 = "4156"
+map_y1 = "808"
+map_x2 = "4732"
+map_y2 = "1528"
+map_facet = "0"
 
 [[item]]
 id = "moonglowtonujelmmap"
@@ -146,8 +266,16 @@ base_id = "base_map"
 item_id = 0
 name = "moonglow to nujelm map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "16"
+map_width = "200"
+map_height = "200"
+map_x1 = "3328"
+map_y1 = "768"
+map_x2 = "4864"
+map_y2 = "1536"
+map_facet = "0"
 
 [[item]]
 id = "nujelmmap"
@@ -155,8 +283,16 @@ base_id = "base_map"
 item_id = 0
 name = "nujelm map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "17"
+map_width = "200"
+map_height = "200"
+map_x1 = "3446"
+map_y1 = "1030"
+map_x2 = "3832"
+map_y2 = "1424"
+map_facet = "0"
 
 [[item]]
 id = "nujelmtomaginciamap"
@@ -164,8 +300,16 @@ base_id = "base_map"
 item_id = 0
 name = "nujelm to magincia map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "18"
+map_width = "200"
+map_height = "200"
+map_x1 = "3328"
+map_y1 = "1024"
+map_x2 = "3840"
+map_y2 = "2304"
+map_facet = "0"
 
 [[item]]
 id = "occlomap"
@@ -173,8 +317,16 @@ base_id = "base_map"
 item_id = 0
 name = "occlo map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "19"
+map_width = "200"
+map_height = "200"
+map_x1 = "3582"
+map_y1 = "2456"
+map_x2 = "3770"
+map_y2 = "2742"
+map_facet = "0"
 
 [[item]]
 id = "serpentsholdmap"
@@ -182,8 +334,16 @@ base_id = "base_map"
 item_id = 0
 name = "serpents hold map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "20"
+map_width = "200"
+map_height = "200"
+map_x1 = "2714"
+map_y1 = "3329"
+map_x2 = "3100"
+map_y2 = "3639"
+map_facet = "0"
 
 [[item]]
 id = "serpentsholdtoocllomap"
@@ -191,8 +351,16 @@ base_id = "base_map"
 item_id = 0
 name = "serpents hold to ocllo map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "21"
+map_width = "200"
+map_height = "200"
+map_x1 = "2560"
+map_y1 = "2560"
+map_x2 = "3840"
+map_y2 = "3840"
+map_facet = "0"
 
 [[item]]
 id = "skarabraemap"
@@ -200,8 +368,16 @@ base_id = "base_map"
 item_id = 0
 name = "skara brae map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "22"
+map_width = "200"
+map_height = "200"
+map_x1 = "524"
+map_y1 = "2064"
+map_x2 = "960"
+map_y2 = "2452"
+map_facet = "0"
 
 [[item]]
 id = "trinsicmap"
@@ -209,8 +385,16 @@ base_id = "base_map"
 item_id = 0
 name = "trinsic map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "23"
+map_width = "200"
+map_height = "200"
+map_x1 = "1792"
+map_y1 = "2630"
+map_x2 = "2118"
+map_y2 = "2952"
+map_facet = "0"
 
 [[item]]
 id = "trinsictobucsdenmap"
@@ -218,8 +402,16 @@ base_id = "base_map"
 item_id = 0
 name = "trinsic to bucs den map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "24"
+map_width = "200"
+map_height = "200"
+map_x1 = "1792"
+map_y1 = "1792"
+map_x2 = "3072"
+map_y2 = "3072"
+map_facet = "0"
 
 [[item]]
 id = "trinsictojhelommap"
@@ -227,8 +419,16 @@ base_id = "base_map"
 item_id = 0
 name = "trinsic to jhelom map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "25"
+map_width = "200"
+map_height = "200"
+map_x1 = "256"
+map_y1 = "1792"
+map_x2 = "2304"
+map_y2 = "4095"
+map_facet = "0"
 
 [[item]]
 id = "vespermap"
@@ -236,8 +436,16 @@ base_id = "base_map"
 item_id = 0
 name = "vesper map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "26"
+map_width = "200"
+map_height = "200"
+map_x1 = "2636"
+map_y1 = "592"
+map_x2 = "3064"
+map_y2 = "1012"
+map_facet = "0"
 
 [[item]]
 id = "vespertonujelmmap"
@@ -245,8 +453,16 @@ base_id = "base_map"
 item_id = 0
 name = "vesper to nujelm map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "27"
+map_width = "200"
+map_height = "200"
+map_x1 = "2636"
+map_y1 = "592"
+map_x2 = "3840"
+map_y2 = "1536"
+map_facet = "0"
 
 [[item]]
 id = "yewmap"
@@ -254,8 +470,16 @@ base_id = "base_map"
 item_id = 0
 name = "yew map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "28"
+map_width = "200"
+map_height = "200"
+map_x1 = "236"
+map_y1 = "741"
+map_x2 = "766"
+map_y2 = "1269"
+map_facet = "0"
 
 [[item]]
 id = "yewtobritainmap"
@@ -263,8 +487,16 @@ base_id = "base_map"
 item_id = 0
 name = "yew to britain map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "29"
+map_width = "200"
+map_height = "200"
+map_x1 = "0"
+map_y1 = "512"
+map_x2 = "1792"
+map_y2 = "2048"
+map_facet = "0"
 
 [[item]]
 id = "tokunomap"
@@ -272,8 +504,16 @@ base_id = "base_map"
 item_id = 0
 name = "tokunomap"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "30"
+map_width = "400"
+map_height = "400"
+map_x1 = "0"
+map_y1 = "0"
+map_x2 = "1448"
+map_y2 = "1430"
+map_facet = "4"
 
 [[item]]
 id = "malasmap"
@@ -281,8 +521,16 @@ base_id = "base_map"
 item_id = 0
 name = "malas map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "31"
+map_width = "400"
+map_height = "400"
+map_x1 = "520"
+map_y1 = "0"
+map_x2 = "2580"
+map_y2 = "2050"
+map_facet = "3"
 
 [[item]]
 id = "ilshenarmap"
@@ -290,8 +538,16 @@ base_id = "base_map"
 item_id = 0
 name = "ilshenar map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "32"
+map_width = "400"
+map_height = "400"
+map_x1 = "130"
+map_y1 = "136"
+map_x2 = "1927"
+map_y2 = "1468"
+map_facet = "2"
 
 [[item]]
 id = "termurmap"
@@ -299,8 +555,16 @@ base_id = "base_map"
 item_id = 0
 name = "termur map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "33"
+map_width = "400"
+map_height = "400"
+map_x1 = "260"
+map_y1 = "2780"
+map_x2 = "1280"
+map_y2 = "4090"
+map_facet = "5"
 
 [[item]]
 id = "craftedlocalmap"
@@ -308,6 +572,7 @@ base_id = "base_map"
 item_id = 0
 name = "local map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "50"
 
@@ -317,6 +582,7 @@ base_id = "base_map"
 item_id = 0
 name = "city map"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "50"
 
@@ -326,5 +592,6 @@ base_id = "base_map"
 item_id = 0
 name = "sea chart"
 rarity = "common"
+script_id = "map_item"
 [item.tags]
 Map = "50"

@@ -5505,5 +5505,266 @@
     ],
     "notes": "What the player chose to sell. A count that does not match the size is refused.",
     "handler": "VendorSellReplyPacketHandler: VendorService.Sell checks the window, the distance and the items, and either pays everything or nothing."
+  },
+  "0x56:outgoing": {
+    "category": "Maps",
+    "tags": [
+      "Maps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the map item"
+      },
+      {
+        "offset": "5",
+        "name": "Command",
+        "type": "byte",
+        "size": "1",
+        "description": "5 shows the map, 1 adds a pin, 7 answers whether the course may be changed"
+      },
+      {
+        "offset": "6",
+        "name": "Flag",
+        "type": "byte",
+        "size": "1",
+        "description": "For 7: 1 when the course may be changed"
+      },
+      {
+        "offset": "7",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Pin x in pixels of the drawing"
+      },
+      {
+        "offset": "9",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Pin y in pixels of the drawing"
+      }
+    ],
+    "notes": "Shows a map item, one pin of its course at a time, and whether its course may be changed.",
+    "handler": "MapDisplayService: sent after 0xF5 or 0x90 when a map opens, and as the answer to a toggle."
+  },
+  "0x56:incoming": {
+    "category": "Maps",
+    "tags": [
+      "Maps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the map item"
+      },
+      {
+        "offset": "5",
+        "name": "Command",
+        "type": "byte",
+        "size": "1",
+        "description": "1 add, 2 insert, 3 change, 4 remove, 5 clear, 6 toggle whether the course may be changed"
+      },
+      {
+        "offset": "6",
+        "name": "Number",
+        "type": "byte",
+        "size": "1",
+        "description": "Index of the pin for insert, change and remove"
+      },
+      {
+        "offset": "7",
+        "name": "X",
+        "type": "short",
+        "size": "2",
+        "description": "Pin x in pixels of the drawing"
+      },
+      {
+        "offset": "9",
+        "name": "Y",
+        "type": "short",
+        "size": "2",
+        "description": "Pin y in pixels of the drawing"
+      }
+    ],
+    "notes": "A player's change to the course of an open map: at most 50 pins, inside the drawing.",
+    "handler": "MapCommandRequestPacketHandler: applied when the map is in the player's backpack or within 2 tiles, movable and not protected, and, but for the toggle, while the course may be changed."
+  },
+  "0x90:outgoing": {
+    "category": "Maps",
+    "tags": [
+      "Maps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the map item"
+      },
+      {
+        "offset": "5",
+        "name": "Gump",
+        "type": "ushort",
+        "size": "2",
+        "description": "0x139D, the map gump"
+      },
+      {
+        "offset": "7",
+        "name": "X1",
+        "type": "ushort",
+        "size": "2",
+        "description": "West edge of the area, in tiles"
+      },
+      {
+        "offset": "9",
+        "name": "Y1",
+        "type": "ushort",
+        "size": "2",
+        "description": "North edge"
+      },
+      {
+        "offset": "11",
+        "name": "X2",
+        "type": "ushort",
+        "size": "2",
+        "description": "East edge"
+      },
+      {
+        "offset": "13",
+        "name": "Y2",
+        "type": "ushort",
+        "size": "2",
+        "description": "South edge"
+      },
+      {
+        "offset": "15",
+        "name": "Width",
+        "type": "ushort",
+        "size": "2",
+        "description": "Width of the drawing in pixels"
+      },
+      {
+        "offset": "17",
+        "name": "Height",
+        "type": "ushort",
+        "size": "2",
+        "description": "Height of the drawing in pixels"
+      }
+    ],
+    "notes": "The area a map item shows, for clients older than 7.0.13: Felucca and Trammel only.",
+    "handler": "MapDisplayService: sent when a map opens on an older client."
+  },
+  "0xF5:outgoing": {
+    "category": "Maps",
+    "tags": [
+      "Maps",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Serial of the map item"
+      },
+      {
+        "offset": "5",
+        "name": "Gump",
+        "type": "ushort",
+        "size": "2",
+        "description": "0x139D, the map gump"
+      },
+      {
+        "offset": "7",
+        "name": "X1",
+        "type": "ushort",
+        "size": "2",
+        "description": "West edge of the area, in tiles"
+      },
+      {
+        "offset": "9",
+        "name": "Y1",
+        "type": "ushort",
+        "size": "2",
+        "description": "North edge"
+      },
+      {
+        "offset": "11",
+        "name": "X2",
+        "type": "ushort",
+        "size": "2",
+        "description": "East edge"
+      },
+      {
+        "offset": "13",
+        "name": "Y2",
+        "type": "ushort",
+        "size": "2",
+        "description": "South edge"
+      },
+      {
+        "offset": "15",
+        "name": "Width",
+        "type": "ushort",
+        "size": "2",
+        "description": "Width of the drawing in pixels"
+      },
+      {
+        "offset": "17",
+        "name": "Height",
+        "type": "ushort",
+        "size": "2",
+        "description": "Height of the drawing in pixels"
+      },
+      {
+        "offset": "19",
+        "name": "Facet",
+        "type": "ushort",
+        "size": "2",
+        "description": "Client map id: 0 Felucca to 5 Ter Mur"
+      }
+    ],
+    "notes": "The area a map item shows, with its facet, for clients 7.0.13 and newer.",
+    "handler": "MapDisplayService: sent when a map opens."
   }
 }

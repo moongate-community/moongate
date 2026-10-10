@@ -1064,6 +1064,24 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedPresetMaps_OpenWithTheMapScript_OnTheirArea()
+    {
+        var directories = Directories();
+        var templates = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+        var presets = templates.Values.Where(template => template.Tags?.ContainsKey("map_x1") == true).ToArray();
+
+        Assert.Equal(33, presets.Length);
+        Assert.All(presets, preset => Assert.Equal("map_item", preset.ScriptId));
+        Assert.Equal("1092", templates["britainmap"].Tags!["map_x1"]);
+        Assert.Equal("3", templates["malasmap"].Tags!["map_facet"]);
+        // A crafted map waits for its cartographer: the script, but no area.
+        Assert.Equal("map_item", templates["craftedcitymap"].ScriptId);
+        Assert.False(templates["craftedcitymap"].Tags!.ContainsKey("map_x1"));
+        // A blank map says it is blank.
+        Assert.Equal("map_item", templates["0x14ec_blank_map"].ScriptId);
+    }
+
+    [Fact]
     public async Task ShippedJailChestsAndNote_AreWhatTheJailNeeds()
     {
         TomlUtils.AddTomlConverter(new Point3DTomlConverter());
