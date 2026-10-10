@@ -195,7 +195,7 @@ public sealed class MobileModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "The mobile's numbers as a table: body, strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma; nil for a mobile not in the world. Read only; change them with mobile.set_stats."
+        "The mobile's numbers as a table: body, strength, dexterity, intelligence, hits, hits_max, mana, mana_max, stamina, stamina_max, fame, karma, base_strength, base_dexterity, base_hits_max, base_stamina_max; nil for a mobile not in the world. Strength, dexterity and the maximums count the timed bonuses (mobile.add_stat_bonus); the base_ ones are what mobile.set_stats sets. Read only; change them with mobile.set_stats."
     )]
     public LuaTable? Stats(long serial)
     {
@@ -206,17 +206,21 @@ public sealed class MobileModule
 
         var table = new LuaTable();
         table["body"] = mobile.Body;
-        table["strength"] = mobile.Strength;
-        table["dexterity"] = mobile.Dexterity;
+        table["strength"] = mobile.EffectiveStrength;
+        table["dexterity"] = mobile.EffectiveDexterity;
         table["intelligence"] = mobile.Intelligence;
         table["hits"] = mobile.Hits;
-        table["hits_max"] = mobile.HitsMax;
+        table["hits_max"] = mobile.EffectiveHitsMax;
         table["mana"] = mobile.Mana;
         table["mana_max"] = mobile.ManaMax;
         table["stamina"] = mobile.Stamina;
-        table["stamina_max"] = mobile.StaminaMax;
+        table["stamina_max"] = mobile.EffectiveStaminaMax;
         table["fame"] = mobile.Fame;
         table["karma"] = mobile.Karma;
+        table["base_strength"] = mobile.Strength;
+        table["base_dexterity"] = mobile.Dexterity;
+        table["base_hits_max"] = mobile.HitsMax;
+        table["base_stamina_max"] = mobile.StaminaMax;
 
         return table;
     }

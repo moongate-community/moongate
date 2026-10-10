@@ -81,6 +81,42 @@ public class MobileEntity : IMoongateEntity
     public int Intelligence { get; set; }
 
     /// <summary>
+    ///     Gets or sets the strength a timed effect adds, such as a strength potion; never saved, so a restart leaves none.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int StrengthBonus { get; set; }
+
+    /// <summary>
+    ///     Gets or sets the dexterity a timed effect adds, such as an agility potion; never saved.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int DexterityBonus { get; set; }
+
+    /// <summary>
+    ///     Gets the strength with its bonus: what the status shows and combat and carrying read.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int EffectiveStrength => Strength + StrengthBonus;
+
+    /// <summary>
+    ///     Gets the dexterity with its bonus.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int EffectiveDexterity => Dexterity + DexterityBonus;
+
+    /// <summary>
+    ///     Gets the most hit points with the strength bonus: a player's maximum is its strength.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int EffectiveHitsMax => HitsMax + StrengthBonus;
+
+    /// <summary>
+    ///     Gets the most stamina with the dexterity bonus: a player's maximum is its dexterity.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public int EffectiveStaminaMax => StaminaMax + DexterityBonus;
+
+    /// <summary>
     ///     The item id of the hair style; 0 means no hair.
     /// </summary>
     public int HairStyle { get; set; }

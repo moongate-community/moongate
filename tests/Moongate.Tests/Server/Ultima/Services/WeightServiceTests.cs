@@ -144,6 +144,16 @@ public sealed class WeightServiceTests : IAsyncLifetime
         Assert.Equal(9, _weight.Carried(_aria));
     }
 
+    [Fact]
+    public void MaxCarried_CountsAStrengthBonus()
+    {
+        _aria.Strength = 100;
+        var without = _weight.MaxCarried(_aria);
+        _aria.StrengthBonus = 20;
+
+        Assert.Equal(without + 70, _weight.MaxCarried(_aria));
+    }
+
     [Theory, InlineData(100, 390), InlineData(25, 127), InlineData(0, 40)]
     public void MaxCarried_IsFortyStonesAndThreeAndAHalfAPointOfStrength(int strength, int stones)
     {

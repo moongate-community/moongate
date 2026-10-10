@@ -242,13 +242,13 @@ public sealed class MobileService : IMobileService
             Serial = mobile.Id,
             Name = mobile.Name,
             Hits = mobile.Hits,
-            HitsMax = mobile.HitsMax,
+            HitsMax = mobile.EffectiveHitsMax,
             Female = mobile.Gender == GenderType.Female,
-            Strength = mobile.Strength,
-            Dexterity = mobile.Dexterity,
+            Strength = mobile.EffectiveStrength,
+            Dexterity = mobile.EffectiveDexterity,
             Intelligence = mobile.Intelligence,
             Stamina = mobile.Stamina,
-            StaminaMax = mobile.StaminaMax,
+            StaminaMax = mobile.EffectiveStaminaMax,
             Mana = mobile.Mana,
             ManaMax = mobile.ManaMax,
             PhysicalResistance = mobile.ResistPhysical,
@@ -301,8 +301,8 @@ public sealed class MobileService : IMobileService
         var anatomy = Points(mobile, SkillType.Anatomy);
 
         return (
-            Math.Max(CombatFormulas.ScaleDamage(CombatFormulas.FistsMinimumDamage, tactics, mobile.Strength, anatomy), 1),
-            Math.Max(CombatFormulas.ScaleDamage(CombatFormulas.FistsMaximumDamage, tactics, mobile.Strength, anatomy), 1)
+            Math.Max(CombatFormulas.ScaleDamage(CombatFormulas.FistsMinimumDamage, tactics, mobile.EffectiveStrength, anatomy), 1),
+            Math.Max(CombatFormulas.ScaleDamage(CombatFormulas.FistsMaximumDamage, tactics, mobile.EffectiveStrength, anatomy), 1)
         );
     }
 

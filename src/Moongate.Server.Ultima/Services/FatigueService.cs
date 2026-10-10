@@ -146,6 +146,6 @@ public sealed class FatigueService : IFatigueService
     // Nearly spent, every running step costs a point: below a tenth of the stamina, once the other loss is taken.
     private static int SpentLoss(MobileEntity mobile, int loss)
     {
-        return (mobile.Stamina - loss) * 10 < mobile.StaminaMax ? 1 : 0;
+        return (mobile.Stamina - loss) * 10 < mobile.EffectiveStaminaMax ? 1 : 0;
     }
 }

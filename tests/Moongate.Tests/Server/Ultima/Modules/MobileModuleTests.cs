@@ -129,6 +129,16 @@ public sealed class MobileModuleTests
     }
 
     [Fact]
+    public void Stats_CountTheTimedBonuses_AndGiveTheBaseToo()
+    {
+        _orc.StrengthBonus = 10;
+
+        var result = Run("local stats = mobile.stats(256) return stats.strength, stats.hits_max, stats.base_strength, stats.base_hits_max");
+
+        Assert.Equal([106, 68, 96, 58], result.Select(value => value.Read<int>()));
+    }
+
+    [Fact]
     public void BackpackRegionAndLight_ComeFromTheWorld()
     {
         var result = Run(

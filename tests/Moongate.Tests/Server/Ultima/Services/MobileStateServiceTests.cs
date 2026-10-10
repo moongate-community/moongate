@@ -146,6 +146,19 @@ public sealed class MobileStateServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public void SetStats_HitsAndStamina_ReachTheMaximumWithTheBonusesOnTop()
+    {
+        _aria.StrengthBonus = 10;
+        _aria.DexterityBonus = 5;
+
+        Assert.True(_service.SetStats(_aria, new() { Hits = 100, Stamina = 100 }));
+
+        Assert.Equal((70, 25), (_aria.Hits, _aria.Stamina));
+        var hits = Assert.IsType<MobileHitsPacket>(_fixture.Sender.Sent[0]);
+        Assert.Equal(70, hits.HitsMax);
+    }
+
+    [Fact]
     public void SetStats_ThatChangeNothing_SendNothing()
     {
         Assert.True(_service.SetStats(_aria, new() { Hits = 50, Strength = 60 }));

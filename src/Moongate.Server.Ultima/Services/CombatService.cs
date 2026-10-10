@@ -629,7 +629,7 @@ public sealed class CombatService : ICombatService
         damage = CombatFormulas.ScaleDamage(
             damage,
             Points(attacker, SkillType.Tactics),
-            attacker.Strength,
+            attacker.EffectiveStrength,
             Points(attacker, SkillType.Anatomy),
             // One who fells trees hits harder with an axe; the skill is not tried, it grows on trees.
             weapon?.Type == WeaponType.Axe ? Points(attacker, SkillType.Lumberjacking) : 0,
