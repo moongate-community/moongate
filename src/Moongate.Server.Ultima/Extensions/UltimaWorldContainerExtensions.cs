@@ -125,6 +125,7 @@ public static class UltimaWorldContainerExtensions
         container.Register<IMountService, MountService>(Reuse.Singleton);
         container.Register<IStableService, StableService>(Reuse.Singleton);
         container.Register<IHuePickerService, HuePickerService>(Reuse.Singleton);
+        container.Register<IMapDisplayService, MapDisplayService>(Reuse.Singleton);
         container.RegisterMapping<ISessionClosedListener, IHuePickerService>();
         container.RegisterMapping<ISessionClosedListener, IVendorService>();
         container.RegisterMapping<ISessionClosedListener, ITrainingService>();
