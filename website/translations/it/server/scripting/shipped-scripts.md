@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"4a468d8179564b5e86c743d78e0d9fd4564d02c0d25dec5f4de928678faa2957","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"34b45d63f98597e667a107d092d8c7518ca77d8584a1aa05f0734ad6e7ab36bb","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -282,6 +282,12 @@ apre il gump di creazione della cartografia (vedi [Cartografia](../cartography.m
 `scripts/items/potion.lua` è lo script delle pozioni che un giocatore beve (`script_id = "potion"`): cura, rinvigorimento,
 forza, agilità e visione notturna, scelte dal template nella sua tabella `EFFECTS`; controlla la distanza e una mano libera,
 e lascia una bottiglia vuota (vedi [Pozioni](../potions.md)).
+
+## alchemy_tool.lua
+
+`scripts/items/alchemy_tool.lua` è lo script di mortaio e pestello (`script_id = "alchemy_tool"`): dallo zaino
+apre il gump di creazione dell'alchimia (vedi [Alchimia](../alchemy.md)). `scripts/common/potions.lua` dice quale pozione è un
+oggetto, comprese le pozioni semplici dei venditori, per `potion.lua` ed `explosion_potion.lua`.
 
 ## fishing_pole.lua
 
