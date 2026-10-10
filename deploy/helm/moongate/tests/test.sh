@@ -90,5 +90,11 @@ expect_absent "external: no postgres" "t-moongate-postgresql" -f ci/external.yam
 expect_absent "external: no redis" "t-moongate-redis" -f ci/external.yaml
 expect_contains "bundled: second realm roles" "provision_role moongate_realm_2_runtime" -f ci/bundled.yaml --set 'realms[1].id=realm-2' --set 'realms[1].name=R2' --set 'realms[1].serverIndex=2' --set 'realms[1].advertisedAddress=192.168.255.31'
 
+# Task 6: network policy and notes
+expect_absent "network policy off by default" "kind: NetworkPolicy" -f ci/bundled.yaml
+expect_contains "network policy on" "kind: NetworkPolicy" -f ci/bundled.yaml --set networkPolicy.enabled=true
+if helm install t . -f ci/bundled.yaml --dry-run=client -n ns 2>&1 | grep -q "advertisedAddress"; then pass "notes mention advertisedAddress"; else fail "notes mention advertisedAddress"; fi
+if helm install t . -f ci/bundled.yaml --dry-run=client -n ns 2>&1 | grep -qi "trial"; then pass "notes warn about trial dependencies"; else fail "notes warn about trial dependencies"; fi
+
 # TASK-MARKER: assertions of the next tasks are appended above this line.
 exit $status

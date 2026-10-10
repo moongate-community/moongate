@@ -1,0 +1,23 @@
+{{- if .Values.networkPolicy.enabled }}
+{{- if or .Values.postgresql.enabled .Values.redis.enabled }}
+# The trial PostgreSQL and Redis accept connections from this release's pods only.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "moongate.fullname" . }}-dependencies
+  labels:
+    {{- include "moongate.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchExpressions:
+      - {key: app.kubernetes.io/instance, operator: In, values: [{{ .Release.Name | quote }}]}
+      - {key: app.kubernetes.io/component, operator: In, values: [postgresql, redis]}
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: moongate
+              app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+{{- end }}
