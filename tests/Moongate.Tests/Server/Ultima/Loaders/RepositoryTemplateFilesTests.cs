@@ -640,6 +640,7 @@ public sealed class RepositoryTemplateFilesTests
         var data = new StubDataLoaderService().With(items);
         var lists = (await new CraftResourcesLoader(directories, data).LoadDataAsync()).Entities.ToArray();
         data.With(lists);
+        data.With((await new SpellsLoader(directories, data).LoadDataAsync()).Entities.ToArray());
         var crafts = (await new CraftsLoader(directories, data).LoadDataAsync()).Entities.ToDictionary(craft => craft.Id);
         var craft = crafts["carpentry"];
 

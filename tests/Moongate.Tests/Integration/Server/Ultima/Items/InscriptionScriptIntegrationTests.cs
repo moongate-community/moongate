@@ -156,6 +156,7 @@ public sealed class InscriptionScriptIntegrationTests : IAsyncLifetime
         var loaded = new StubDataLoaderService().With(shipped);
         var lists = (await new CraftResourcesLoader(directories, loaded).LoadDataAsync()).Entities.ToArray();
         loaded.With(lists);
+        loaded.With(spells.ToArray());
         _craft = (await new CraftsLoader(directories, loaded).LoadDataAsync()).Entities.Single(craft => craft.Id == "inscription");
         _crafts = new(new StubDataLoaderService().With(_craft).With(lists));
 
