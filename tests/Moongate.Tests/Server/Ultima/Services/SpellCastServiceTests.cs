@@ -33,6 +33,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
     private const int MagicArrow = 5;
     private const int Fireball = 18;
     private const int CreateFood = 2;
+    private const int Recall = 32;
 
     private readonly RecordingTimerService _timers = new();
     private readonly SettableClock _clock = new();
@@ -80,7 +81,8 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
         _books.Add(_book, MagicArrow);
         _books.Add(_book, Fireball);
         _books.Add(_book, CreateFood);
-        _scripts.Keys.UnionWith(["magic_arrow", "fireball", "create_food"]);
+        _books.Add(_book, Recall);
+        _scripts.Keys.UnionWith(["magic_arrow", "fireball", "create_food", "recall"]);
 
         var templates = new ItemTemplateService(
             new StubDataLoaderService().With(
@@ -106,6 +108,11 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
                 {
                     Id = CreateFood, Key = "create_food", Name = "Create Food", Circle = 1, Mantra = "In Mani Yelm",
                     Action = 17, Target = SpellTargetType.None, Scroll = "createfoodscroll"
+                },
+                new SpellDefinition
+                {
+                    Id = Recall, Key = "recall", Name = "Recall", Circle = 4, Mantra = "Kal Ort Por", Action = 17,
+                    Target = SpellTargetType.Item, Scroll = "recallscroll"
                 }
             ),
             templates
@@ -402,6 +409,43 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
 
         Assert.Equal([500446, 500237], Told());
         Assert.Equal((3, 20), (_ash.Amount, _aria.Mana));
+    }
+
+    [Fact]
+    public void AnItemSpell_TakesAnItemTheCasterCarries_AtTheCastersPlace()
+    {
+        var rune = new ItemEntity { Id = new Serial(0x40000020), TemplateId = "rune", ItemId = 0x1F14, Amount = 1 };
+        rune.PutInContainer(_backpack.Id, new Point2D(3, 3));
+        _items.Add([rune]);
+        _casts.CastFromBook(_aria, Recall);
+        FireDelay();
+
+        _targets.Answer(TargetResult.ForObject(rune.Id));
+
+        var cast = Assert.Single(_scripts.Casts);
+        Assert.Equal(("recall", SpellTargetType.Item, rune.Id), (cast.Key, cast.Target.Kind, cast.Target.Serial));
+        Assert.Equal(_aria.Location, cast.Target.Location);
+    }
+
+    [Fact]
+    public void AnItemSpell_TakesAnItemOnTheGroundInRange_AndRefusesAMobile()
+    {
+        _aria.Mana = _aria.ManaMax = 40;
+        var rune = new ItemEntity { Id = new Serial(0x40000020), TemplateId = "rune", ItemId = 0x1F14, Amount = 1 };
+        _items.Add([rune]);
+        _items.PlaceOnGround(rune, _aria.Map, new Point3D(11, 10, 0));
+        _casts.CastFromBook(_aria, Recall);
+        FireDelay();
+        _targets.Answer(TargetResult.ForObject(rune.Id));
+
+        Assert.Equal(new Point3D(11, 10, 0), Assert.Single(_scripts.Casts).Target.Location);
+
+        _clock.Advance(TimeSpan.FromSeconds(1));
+        _casts.CastFromBook(_aria, Recall);
+        FireDelay();
+        _targets.Answer(TargetResult.ForObject(_bran.Id));
+
+        Assert.Equal([501857], Told());
     }
 
     [Fact]

@@ -338,7 +338,7 @@ public sealed class SpellCastService : ISpellCastService
             return;
         }
 
-        if (!TryResolve(cast.Spell.Target, result, out var target, out var eye))
+        if (!TryResolve(caster, cast.Spell.Target, result, out var target, out var eye))
         {
             _speech.TellCliloc(caster, ISpellCastService.WontWorkMessage);
             End(caster, cast);
@@ -373,7 +373,13 @@ public sealed class SpellCastService : ISpellCastService
     }
 
     // What the cursor picked, as the spell asks for it: a mobile, an item, or a place (an object gives its own).
-    private bool TryResolve(SpellTargetType wanted, TargetResult result, out SpellTargetInfo target, out Point3D eye)
+    private bool TryResolve(
+        MobileEntity caster,
+        SpellTargetType wanted,
+        TargetResult result,
+        out SpellTargetInfo target,
+        out Point3D eye
+    )
     {
         target = SpellTargetInfo.None;
         eye = default;
@@ -406,20 +412,34 @@ public sealed class SpellCastService : ISpellCastService
             return true;
         }
 
-        if (result.Serial.IsItem &&
-            _items.TryGet(result.Serial, out var item) &&
-            wanted is SpellTargetType.Item or SpellTargetType.Location &&
-            _items.GetGroundRoot(item) is { GroundLocation: { } place, Map: { } map })
+        if (!result.Serial.IsItem ||
+            !_items.TryGet(result.Serial, out var item) ||
+            wanted is not (SpellTargetType.Item or SpellTargetType.Location))
         {
-            target = wanted == SpellTargetType.Item
-                ? new(SpellTargetType.Item, item.Id, map, place)
-                : new(SpellTargetType.Location, Serial.Zero, map, place);
-            eye = place;
-
-            return true;
+            return false;
         }
 
-        return false;
+        // An item the caster carries, such as a rune, is where the caster stands; any other must lie on the ground.
+        var place = caster.Location;
+        var map = caster.Map;
+
+        if (_items.GetWornRoot(item)?.MobileId != caster.Id)
+        {
+            if (_items.GetGroundRoot(item) is not { GroundLocation: { } ground, Map: { } groundMap })
+            {
+                return false;
+            }
+
+            place = ground;
+            map = groundMap;
+        }
+
+        target = wanted == SpellTargetType.Item
+            ? new(SpellTargetType.Item, item.Id, map, place)
+            : new(SpellTargetType.Location, Serial.Zero, map, place);
+        eye = place;
+
+        return true;
     }
 
     // The checks of the cast, in the order the classic game makes them, then the spell takes effect or fizzles.
