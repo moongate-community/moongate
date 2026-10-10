@@ -61,7 +61,7 @@ publishes to Lua: the modules and enums `AddUltimaScriptModules` registers and t
 `website/scripts/build-lua.mjs` turns that list into Markdown under
 `website/src/content/docs/lua/`, which Git ignores. Nothing is written by hand: a module's
 description comes from `[ScriptModule]`, a function's text from the `helpText` of
-`[ScriptFunction]`, and the same description feeds `scripts/definitions.lua`, so the editor and
+`[ScriptFunction]`, and the same description feeds `moongate_root/scripts/definitions.lua`, so the editor and
 the site agree. Build fails when a module has no description, a function has no help text, or a
 name repeats. Each function has an anchor named after it, such as `/lua/npc/#walk_to`. The dump
 requires the .NET 10 SDK.

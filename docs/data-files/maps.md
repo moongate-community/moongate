@@ -19,7 +19,7 @@ weather = "temperate"
 | `file_index` | The number of the client map files: `map{n}.mul` or `map{n}LegacyMUL.uop`, `staidx{n}.mul` and `statics{n}.mul`. |
 | `name` | The name shown in logs and commands. |
 | `size` | Width and height in tiles, a `Point2D`. |
-| `rules` | The name of the rule set of the map. |
+| `rules` | The name of the rule set of the map. No system reads it yet. |
 | `season` | The season of packet 0xBC: `spring`, `summer`, `fall`, `winter` or `desolation`; the starting point of the rotation, see [Seasons](#seasons). Defaults to `spring`. |
 | `weather` | The profile of `weather.toml` used where no region covers a place. Defaults to `none`. |
 | `music` | The music track, a `MusicType` name such as `Britain1`, played where no region with music covers a place. Left out, the music stops there; no shipped map sets one, so outside the regions it is silent, as in ModernUO. |

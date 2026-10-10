@@ -1,13 +1,13 @@
 # Mounts
 
-A player rides a tamed horse, llama or ostard: it walks and runs twice as fast. This is the first slice of the
-mounts; the stable, the bola and the ethereal mounts are not built yet.
+A player rides a tamed horse, llama or ostard: it walks and runs twice as fast. The stable and the
+ethereal mounts are built too; the bola is not.
 
 ## How to ride
 
-1. Get a creature that is yours. A game master gives it with [`tame`](commands/tame.md); the skill of taming does
-   not exist yet. A creature with no owner is nobody's to ride, a game master's included.
-2. Stand within one tile of it, on its level, and double click it. Its owner sits on it; a game master can sit on a
+1. Get a creature that is yours. Tame it with the [taming skill](animal-taming.md), or a game master gives it with
+   [`tame`](commands/tame.md). A creature with no owner is nobody's to ride, a game master's included.
+2. Stand within one tile of it, at about its height (up to 8 levels apart), and double click it. Its owner sits on it; a game master can sit on a
    creature that belongs to someone else.
 3. Walk or run. A rider takes a step every 200 ms walking and every 100 ms running, a rider on foot every 400 and 200.
    The horse runs, not the rider: running costs a rider no stamina, and an overloaded rider tires as if it walked.
@@ -24,7 +24,7 @@ The horse does not stay alive off the map: it turns into data on the mount item 
 the mount layer (25). The item keeps the template of the horse and its owner, is saved with the rider, and nothing is
 left behind after a restart or a logout. Getting off removes the item at once and makes the horse again, from its
 template, on the tile of the rider, with its owner. The horse gets a new serial, and it keeps neither its hit points,
-its hue nor what it carried.
+its hue nor what it carried; its loyalty and its bond are kept on the mount item and come back with it.
 
 The row of the mount item is deleted before the horse is made, so a crash between the two leaves the rider on foot
 and the horse in the world, never both. If the horse cannot be made it is tried three times, a second apart, each
@@ -50,7 +50,7 @@ mounts, the nightmares and the other creatures of `templates/mobiles/mounts.toml
 
 ## What a rider cannot do
 
-A rider cannot mine with a pickaxe, fish with a pole or use the Stealth skill: each is refused with the client's own
+A rider cannot mine with a pickaxe, fish with a pole or use the Stealth skill or a snow pile: each is refused with the client's own
 text and nothing starts. The axe and the Hiding skill are left alone. A script asks `mobile.is_mounted(serial)`.
 
 ## Teleporters that refuse a rider
@@ -82,7 +82,8 @@ and the lessons stay.
 
 Only a pet that can be ridden and is yours can be stabled, not one that is dying. A claimed pet is made again from its
 template, with you as its owner, and keeps neither its hit points, hue nor what it carried; the spawn is tried three
-times, and a pet that cannot be made goes back to your stable. The stable is the prop `stabled` of your character (the template ids, joined by `;`), saved with it. The limit
+times, and a pet that cannot be made goes back to your stable. The stable is the prop `stabled` of your character (the template ids, joined by `;`), saved with it; the prop
+`stabled_loyalty` keeps the loyalty and the bond of each pet in the same order, so a claimed pet is as loyal as it was. The limit
 and the fee are in [`[ultima.stable]`](server-configuration.md).
 
 ## Ethereal mounts
@@ -100,6 +101,24 @@ makes one with `.add ethereal_horse_statue`. The statuette is a template with `s
 
 A rider who attacks plays the actions of a mount: one hand, two hands, bow or crossbow. The animation that tells a
 blow was taken is the usual one. The ids are those of the client's animation table; they were not tried with a client.
+
+## For scripts
+
+The `stable` module is what a stablemaster's script uses (`scripts/mobiles/stablemaster.lua`):
+
+| Function | What it does |
+|---|---|
+| `stable.attend(player)` | True for the stablemaster that serves now; false for whoever asks again within half a second. Several trainers in one square hear the same words, one answers. |
+| `stable.pets(player)` | The stabled pets as a list of `{ template, name }`, in the order they were left; places count from 1. `nil` for an NPC. |
+| `stable.stable(player, pet)` | Leaves the pet in the stable and takes the fee. Gives `Ok`, `NotAPet`, `NotYours`, `TooFar`, `Dying`, `Full`, `NoGold`, `NoPlayer` or `Failed`. |
+| `stable.claim(player, place, template)` | Takes the pet at that place out and makes it again beside the player. The template must match the place. Gives `Ok`, `NoPlayer`, `BadIndex` or `Failed`. |
+| `stable.max_pets()` | How many pets a player may leave (`ultima.stable.max_pets`). |
+| `stable.fee()` | The gold one pet costs (`ultima.stable.fee`); 0 is free. |
+
+`mount.ride_ethereal(player, statuette)` puts the player on the ethereal mount of a statuette in its backpack. It
+returns false, with the reason told to the player, when the statuette is not in the backpack or the player already
+rides; false and silent for a ghost or an item that is no statuette. `mobile.is_mounted(serial)` tells whether a
+mobile rides.
 
 ## Not built yet
 

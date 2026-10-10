@@ -60,7 +60,7 @@ templates = ["0x1bd7_board", "0x1bda_board"]
 The server stops at startup, naming the file, for: an id that is not a lower-case identifier or is used twice, an
 unknown skill, a group or recipe without a name, an item or resource that is neither an item template nor a list, an
 amount below 1, a recipe that takes nothing, skill bounds outside 0 to 150 or the least above the most, or a list
-without templates or naming one that does not exist. Without the folder nothing can be crafted.
+without templates or naming one that does not exist, a craft with no name, with no `[[group]]` or with a group that has no recipe. Without the folder nothing can be crafted.
 
 ## Where the files come from
 

@@ -28,8 +28,8 @@ A map that is not loaded, or a spot outside the map, is refused with
 `No moongate can lead there: tokuno is not loaded or the spot is outside it.` and no gate is
 made. Anything else that is not three numbers and at most a map name prints the usage.
 
-The gate does not go away by itself, and [`remove`](remove.md) takes NPCs only: no command
-deletes a gate yet.
+The gate does not go away by itself, and [`remove`](remove.md) takes it away, as a gate is an item
+on the ground.
 
 ## See also
 

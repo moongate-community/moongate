@@ -27,15 +27,15 @@ script = "cleanup"
 [[event]]
 id = "halloween"
 name = "Halloween"
-from = "10-20"
-to = "11-02"
+from = "10-24"
+to = "11-15"
 ```
 
 ## Tasks
 
 | Key | Meaning |
 | --- | --- |
-| `id` | The name of the task and of the event. Lower case letters, digits and `_`, at most 40, unique in the file. |
+| `id` | The name of the task and of the event. Lower case letters, digits and `_`, starting with a letter, at most 40, unique in the file. |
 | `when.every` | `hour`, `day` or `week`. |
 | `when.at` | `"HH:MM"` (24 hours); for `hour`, `":MM"`. |
 | `when.days` | For `week`: `mon` to `sun`; every day when missing. |
@@ -132,5 +132,5 @@ action is a task with `action = "lua"`.
 ## What is not there
 
 Cron expressions, running late the tasks missed while the server was off, a restart that starts
-the process again, and the content of the events (decorations, monsters, treats): the events only
-tell the scripts when to start and stop.
+the process again, and monsters for the events. The events only tell the scripts when to start and stop;
+the decorations and the treats of Halloween and Christmas are scripts of their own (see [Holidays](holidays.md)).

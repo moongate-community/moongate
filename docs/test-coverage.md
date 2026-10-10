@@ -13,7 +13,7 @@ The full CI pipeline (pull requests into `main` and pushes to `main`) executes t
 through `scripts/coverage.sh`, which collects coverage
 with coverlet and merges it with ReportGenerator. The run page shows the per-assembly
 table, and the HTML report is kept as the `coverage-report` artifact: 90 days for
-`main`, 14 days for release pull requests. Publishing the documentation downloads that
+runs on `main`, 14 days for any other ref (pull requests into `main` included). Publishing the documentation downloads that
 artifact for the published commit.
 
 To produce the same report locally:

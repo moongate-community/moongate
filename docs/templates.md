@@ -162,7 +162,7 @@ Call `AddUltimaDataLoader<TLoader, TEntity>` from a plugin's `Register`, the sam
 place services and metric providers are registered:
 
 ```csharp
-container.AddUltimaDataLoader<ItemTemplateLoader, ItemTemplate>(priority: 0);
+container.AddUltimaDataLoader<ItemTemplatesLoader, ItemTemplate>(priority: 0);
 ```
 
 The loader is a singleton, reachable both by its concrete type and as
@@ -259,9 +259,9 @@ values such as `"0x03EA-0x0422"`; `ItemTemplate.Hue` uses it. See
 
 ## Registering a TOML converter
 
-`EnumValueSpec<TEnum>`, `RangeValueSpec<T>`, `HueSpec`, `Serial` and the point types
+`EnumValueSpec<TEnum>`, `RangeValueSpec<T>`, `HueSpec`, `Serial`, the point types, `Rectangle2D` and `DiceSpec`
 read and write through converters that `MoongateUltimaPlugin` registers once with
-`TomlUtils.AddTomlConverter`; `Visibility` uses a converter named by an attribute.
+`TomlUtils.AddTomlConverter`; enums such as `Visibility` go through the shared enum converter factory.
 A template needs nothing more than the field type. For the accepted and written
 forms of every type, the errors, and how to write and register a converter of your
 own, see [TOML value types](toml-types.md).
@@ -302,7 +302,7 @@ movability) are overrides: unset means tiledata, as in POL and ModernUO. The ext
 in `ItemTemplateExtensions` give the value a new item gets, such as
 `template.EffectiveWeight(tileDataService)`, and `Validate()` rejects a negative weight or
 price, a weight with more than two decimals, an amount below 1, gold that can roll below 0, a decay time
-below one minute, an empty tag key and a malformed `script_id`.
+below one minute, a `use_range` outside 1 to the maximum, a `damage_min` or `damage_max` outside its range (or `damage_min` above `damage_max`), a `speed`, `armor_rating`, `strength_required` or `max_hits` outside its range, an empty tag key and a malformed `script_id`.
 
 Spawners, for example, are for staff only, and their children inherit it:
 
@@ -352,6 +352,7 @@ to 120; a constant is a bare integer.
 | `NpcGuild` | The guild this guildmaster takes members for: `mages`, `warriors`, `thieves`, `rangers`, `healers`, `miners`, `merchants`, `tinkers`, `tailors`, `fishermen`, `bards` or `blacksmiths`. Unset: the NPC is no guildmaster. See [Guildmasters](skills.md#guildmasters) |
 | `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn`, `on_mobile_in_range`, `on_death` and `on_drag_drop` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting/mobile-scripts.md) |
 | `Visibility` | As in `ItemTemplate` |
+| `OpensDoors` | Whether it opens the closed doors in its way when it walks to a place. Unset: a human or a monster body does, an animal or a sea creature does not |
 | `Movement` | `land`, `water` (a dolphin: it spawns and swims on the water only) or `both` (a walrus: it walks and swims, and spawns on land else on the water); unset is `land` |
 | `Tags` | Free script values; child keys add to and override parent keys |
 
@@ -359,7 +360,7 @@ to 120; a constant is a bare integer.
 `base_orc` sets the five sounds once and every orc keeps them; every other field a child
 sets replaces the base's. `Validate()` rejects dice that can roll below 0 (karma apart),
 an unknown skill, a skill above 120, a resistance above 100, a negative sound, an
-equipment entry with no item or an empty item id, an empty tag key and a malformed `script_id`.
+equipment entry with no item or an empty item id, an empty tag key, a `blood_hue` outside -1 to 65535, a `flee_at` outside -1 to 100 and a malformed `script_id`.
 
 ```toml
 [[mobile]]
@@ -442,6 +443,7 @@ id = "felucca_0"                      # unique
 name = "The Hammer And Anvil"
 mobile_ids = ["weaponsmith"]          # mobile templates, picked at random with the lists' entries
 npc_list_ids = []                     # npc lists
+# item_ids = []                       # item templates spawned on the ground instead of NPCs; see Spawns
 max = 1                               # NPCs alive at once
 min_minutes = 480                     # a new one every min_minutes to max_minutes
 max_minutes = 600
@@ -527,6 +529,7 @@ A `PublicMoongate` takes the template `decoration_public_moongate`, with
 `script_id = "public_moongate"` and the light `circle300` in its props unless the data gives
 another; `.decorate` also places one on every destination of
 [`moongates.toml`](data-files/moongates.md).
+A `TrainingDummy` and an `ArcheryButte` take the templates `decoration_training_dummy` and `decoration_archery_butte`, with the scripts that make them train a weapon.
 Spawners, mark containers, addons and every other kind whose name ends in
 `Teleporter`, those that ask for a skill, a quest or a double click (`SkillTeleporter`,
 `InteractionTeleporter`, ...), are not placed yet. The doors of the towns are in no file:

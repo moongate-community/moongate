@@ -86,7 +86,7 @@ valid `0x91`. Options are snapshotted at construction, including endpoint object
    coordinator, so it is not registered for automatic startup a second time.
    Reverse shutdown keeps both roles' dependencies alive through session retirement.
 
-The sender capacity defaults to 128 waiting encoded frames per connection, plus one
+The sender capacity defaults to 4096 waiting encoded frames per connection, plus one
 active write. It snapshots packets before a successful `TrySend` returns and preserves
 FIFO order. Overflow or encoding/send failure closes admission and requests closure.
 No new outbox can admit sends while closure is pending. The sender atomically captures

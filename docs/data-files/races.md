@@ -33,7 +33,9 @@ beard = []
 
 At character creation a hue outside the allowed ones becomes the nearest allowed hue,
 and a style not listed is dropped (`CharacterCreationRules`). A race the client
-sends that is not loaded becomes human.
+sends that is not loaded becomes human. An NPC whose mobile template names a race takes
+its body, hair, beard and hues from the same file when the template gives none
+(`MobileFactoryService`).
 
 ## Validation at startup
 

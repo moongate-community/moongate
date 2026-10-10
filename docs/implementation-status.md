@@ -14,9 +14,9 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
 | Characters | ✅ Works | Create, delete and restore, enter the world, walk and run |
 | Other players | ✅ Works | See each other, talk |
 | Items | 🟡 Partial | Backpack, paperdoll, ground, tooltips; containers on the ground open, and items go in and out of them |
-| NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering, walking a path; no combat |
+| NPCs | 🟡 Partial | Spawn regions, Lua scripts, wandering, walking a path, monsters that chase, flee and fight, guards, vendors, trainers, healers |
 | World | 🟡 Partial | Decoration, doors and keys, teleporters and public moongates (also across maps), day and night, weather, seasons, dungeon treasure chests that respawn and town containers that fill up; no houses |
-| Combat, death, skill gain | ❌ Not yet | |
+| Combat, death, skills | 🟡 Partial | Melee and archery, death and corpses, skill use and gain, mounts, taming; no spells or parry |
 | Lua scripting | ✅ Works | NPC and item scripts, sandboxed |
 | Persistence | ✅ Works | PostgreSQL, world saves, migrations, rotating SQL backups |
 | Administration | 🟡 Partial | Console and in-game commands, gRPC API; no web panel |
@@ -49,6 +49,11 @@ The [roadmap](roadmap.md) gives the order in which the missing systems are built
   choose in the window and pay with the gold of the backpack, or of the bank from 2000: [Vendors](vendors.md).
 - Learn skills from the vendors and healers: pick *Train* in their menu or say *train*, then drop the gold they quote on
   them: [Trainers](skills.md#trainers).
+- Fight with melee weapons and bows, die and leave a corpse, become a ghost and be brought back: [Combat](combat.md), [Death and resurrection](death.md).
+- Use skills, which rise with use, and learn them from trainers: [Skills](skills.md).
+- Tame animals, have them follow and obey, leave them in a stable, and ride mounts, ethereal statuettes included: [Animal taming](animal-taming.md), [Mounts](mounts.md).
+- Fish, mine and cut wood, and craft carpentry with a tool: [Fishing](fishing.md), [Mining](mining.md), [Lumberjacking](lumberjacking.md), [Carpentry](carpentry.md).
+- Ask for help from the help menu, and see the Halloween and Christmas events: [Help](help.md), [Holidays](holidays.md).
 - Get hit points, mana and stamina back with time, get hungry and thirsty, eat and drink; tire by running or by carrying too much.
 - Open the treasure chests of the dungeons and the shop crates that fill up; read a clock; switch war mode.
 - Dye clothes: dyes give a dye tub the hue picked in the client's hue picker, and the tub gives it to the clothing.
@@ -82,14 +87,14 @@ See all of them in [Commands](commands.md).
 
 ## Not built yet
 
-- Combat, death, corpses and skill gain.
+- Spells, parry, weapon durability in combat and bounties.
 - A built-in AI: NPCs only run their Lua script (`on_think`, `on_speech`, `on_spawn`,
   `on_mobile_in_range`), which can walk them along a [path](scripting/mobile-scripts.md#walking-a-path) with
-  `npc.walk_to`; nothing chases, flees or fights by itself.
-- Recall and gate travel, and mounts.
+  `npc.walk_to`; chasing, fleeing and fighting come from the shipped `creature.lua` and `monster.lua`, not from the engine.
+- Recall and runebooks (the public moongates work).
 - Houses and boats (placement, and multis in movement and line of sight).
-- Weight limits of the containers on the ground, dressing other characters, strength requirements.
-- Region rules: guards and housing. Regions drive the weather, the dungeon light, the music and the season.
+- Dressing other characters and strength requirements. Weight limits of containers are enforced.
+- Region rules for housing. Regions drive the weather, the dungeon light, the music, the season and the guards' protection.
 - Spawner items (the [spawn regions](spawns.md) do the respawning).
 - Per-player language, a restore command for the SQL backups, a web administration panel.
 - Old Kingdom Reborn AES/E3 encryption. The Enhanced Client logs in, creates a character, enters the world and
@@ -134,17 +139,22 @@ See all of them in [Commands](commands.md).
 - Sandboxed Lua 5.2 with an instruction budget, `wait`, timers, events, hot reload and editor
   definitions. See [Writing Lua scripts](scripting.md).
 - Modules: `engine`, `log`, `timer`, `events`, and in the Ultima plugin `dice`, `localization`,
-  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail`, `board`, `book` and `commands`.
+  `npc`, `item`, `world`, `mobile`, `target`, `prompt`, `gump`, `bank`, `effect`, `moongates`, `locations`, `jail`, `board`, `book`, `commands`,
+  `combat`, `craft`, `harvest`, `help`, `hue_picker`, `mount`, `npcguild`, `pet`, `schedule`, `skill`, `stable`, `trainer` and `vendor`: 34 modules in all.
   Every function they give scripts is listed in the [Lua API reference](https://moongate.sh/lua/),
   generated from the server's code.
 - Gumps: XML layouts checked by `gump.xsd`, a Lua script per gump for the answers, slots and whole
   gumps built in Lua, and gumps chained with `bind` and `open`; see [Gumps](gumps.md) and
   [Your first gump](gump-tutorial.md).
-- Mobile and item scripts are bound from their templates by `script_id`. Shipped scripts:
-  `door.lua`, `light.lua`, `potion.lua`, `teleporter.lua`, `keyword_teleport.lua`, `public_moongate.lua`, `moongate.lua`, `clock.lua`, `fillable.lua`, `jail_note.lua`, `readable_book.lua`, `readable_scroll.lua`, `bulletin_board.lua`, `gumps/go.lua`, `gumps/jail_sentence.lua`, `wander.lua`, `monster.lua`, `guard.lua`,
-  `banker.lua`, `shopkeeper.lua`, and the cats Orione and Vega; the tutorial gumps have `gumps/tutorial_greeting.lua`
-  and `gumps/tutorial_list.lua`.
-- Not yet: timers on mobiles, combat and skill events.
+- Mobile and item scripts are bound from their templates by `script_id`. The root ships 82 Lua files in `scripts/`:
+  32 item scripts (doors, lights, teleporters and moongates, clocks, books and scrolls, bulletin boards, food and drink, dyes,
+  tools such as axe, pickaxe and fishing pole, ore and forge, ethereal mounts, treasure chests, training dummies),
+  11 mobile scripts (`wander.lua`, `monster.lua`, `guard.lua`, `banker.lua`, `shopkeeper.lua`, `healer.lua`, `stablemaster.lua`,
+  animals and the cats Orione and Vega), 9 skill scripts, 13 gump scripts, 14 shared helpers in `common/`, the Halloween and
+  Christmas events and `definitions.lua`. `potion.lua` only consumes the item.
+- Hooks scripts can implement include `on_use`, `on_speech`, `on_think`, `on_spawn`, `on_death`, `on_mobile_killed`,
+  `on_mobile_in_range`, `on_drop`, `on_equip`, `on_login` and `on_timer`.
+- Not yet: timers on mobiles, and events for attacks, hits and damage.
 
 ### Data and templates
 
@@ -162,7 +172,7 @@ See all of them in [Commands](commands.md).
 ### Persistence
 
 - Two PostgreSQL databases (accounts and world) with transactions and versioned SQL migrations,
-  applied by `mgctl migrate`.
+  applied by `mgctl migrate`, or at startup when `persistence.auto_apply_migrations` is on.
 - Characters, their items, ground items and NPCs are kept in memory and written by the periodic
   world save; characters are also saved when they leave.
 - Not yet: a restore command; restoring a [SQL backup](persistence-operations.md#database-backups) is a manual `psql` step.
