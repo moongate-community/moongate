@@ -140,6 +140,7 @@ class ShopIndex:
     graphics_of_type: dict[str, list[int]]
     by_name: dict[str, list[str]]
     twins: dict[int, list[int]] = field(default_factory=dict)
+    ids: set[str] = field(default_factory=set)
 
 
 # --- reading the C# ---
@@ -407,6 +408,11 @@ def _family_of(graphic: int, index: ShopIndex) -> list[str] | None:
 
 def _item_of(line: BuyLine, index: ShopIndex, report: ConversionReport) -> str | None:
     """The template of a graphic: the one named like the type, else the only one, else the first (and the report says so)."""
+    # A template named exactly like the type is that item, whatever graphic pair it shares: the mapmaker's pen
+    # and the scribe's pen are one pair of graphics and two items.
+    if line.type_name.lower() in index.ids:
+        return line.type_name.lower()
+
     candidates = _family_of(line.graphic, index)
     wanted = TYPE_ALIASES.get(snake_case(line.type_name), snake_case(line.type_name))
 
@@ -642,7 +648,7 @@ def run(source: Path, items: Path, mobiles: Path, destination: Path, output: Tex
             vendors += _read_all(root.parent / HEALERS_FOLDER, lambda text, path: read_vendors(text, path, report))
 
         by_graphic = items_by_graphic(items)
-        index = ShopIndex(by_graphic, _graphics_of_type(sb_infos.values()), _items_by_name(by_graphic), twins_of(source / ITEMS_FOLDER))
+        index = ShopIndex(by_graphic, _graphics_of_type(sb_infos.values()), _items_by_name(by_graphic), twins_of(source / ITEMS_FOLDER), ids_of(items))
         mobile_ids = ids_of(mobiles)
         claimed: dict[str, str] = {}
         files: list[tuple[Path, Shop]] = []

@@ -925,6 +925,39 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedShops_SellTheMapmakersPenToTheMapmaker_AndThePenAndInkToTheScribeAndTheMage()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync())
+            .Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(
+                directories,
+                new StubDataLoaderService().With(names).With(items).With(loots)
+            )
+            .LoadDataAsync()).Entities.ToArray();
+        var shops = (await new ShopsLoader(directories, new StubDataLoaderService().With(items).With(mobiles))
+            .LoadDataAsync()).Entities;
+        var scripts = items.ToDictionary(template => template.Id, template => template.ScriptId);
+
+        string[] ScriptsSoldBy(string shopId, bool buy)
+        {
+            var shop = shops.Single(candidate => candidate.Id == shopId);
+
+            return (buy ? shop.Buy : shop.Sell).Select(line => scripts[line.Item] ?? "").ToArray();
+        }
+
+        // The cartographer's pen opens cartography, so the mapmaker both sells and buys it, and no pen and ink.
+        Assert.Contains("cartography_tool", ScriptsSoldBy("mapmaker", true));
+        Assert.Contains("cartography_tool", ScriptsSoldBy("mapmaker", false));
+        Assert.DoesNotContain("inscription_tool", ScriptsSoldBy("mapmaker", true));
+        // The scribe's pen opens inscription: the scribe and the mage sell it.
+        Assert.Contains("inscription_tool", ScriptsSoldBy("scribe", true));
+        Assert.Contains("inscription_tool", ScriptsSoldBy("mage", true));
+    }
+
+    [Fact]
     public async Task ShippedGuildmasters_AreVendorsOfTheirTrade_WithAManAWomanAndAList()
     {
         var directories = Directories();

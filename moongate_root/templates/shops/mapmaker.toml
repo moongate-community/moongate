@@ -27,7 +27,7 @@ hue = 0
 name = ""
 
 [[shop.buy]]
-item = "0x0fc0_pen_and_ink"
+item = "mapmakerspen"
 price = 8
 amount = 20
 hue = 0
@@ -47,7 +47,7 @@ hue = 0
 name = ""
 
 [[shop.sell]]
-item = "0x0fc0_pen_and_ink"
+item = "mapmakerspen"
 price = 4
 amount = 1
 hue = 0
