@@ -18,10 +18,11 @@ CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "tailoring": ("tailoring", "Tailoring", "tailoring", 39),
     "tinkering": ("tinkering", "Tinkering", "tinkering", 59),
     "bowcraft": ("fletching", "Bowcraft and Fletching", "bowcraft_fletching", 49),
+    "cooking": ("cooking", "Cooking", "cooking", 750),
 }
 
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055}
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055, "cooking": 0x0057}
 
 # The groups that make deeds, which mean nothing until houses exist.
 SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons", "traps"}
@@ -47,6 +48,27 @@ ITEM_FIXES = {
     "0x1bd4": "0x1bd4_shaft",
     "0x0f3f": "0x0f3f_arrow",
     "0x1bfb": "0x1bfb_crossbow_bolt",
+}
+
+# The resources UOX3 tells apart by hue and MORE, which Moongate's templates tell apart by id, by the recipe's name and the
+# resource's graphic. UOX3 bakes the pizzas from the quiche and the meat pie: they take the uncooked pizzas. A raw cut
+# is in UOX3's list of raw meat: each one cooks its own cut.
+RESOURCE_FIXES = {
+    ("cake mix", "0x103d"): "sweet_dough",
+    ("cookie mix", "0x103d"): "sweet_dough",
+    ("muffin", "0x103d"): "sweet_dough",
+    ("cake", "0x103f"): "cake_mix",
+    ("baked quiche", "0x1042"): "unbaked_quiche",
+    ("baked meat pie", "0x1042"): "unbaked_meat_pie",
+    ("sausage pizza", "0x1042"): "uncooked_sausage_pizza",
+    ("cheese pizza", "0x1042"): "uncooked_cheese_pizza",
+    ("baked fruit pie", "0x1042"): "unbaked_fruit_pie",
+    ("baked peach cobbler", "0x1042"): "unbaked_peach_cobbler",
+    ("baked apple pie", "0x1042"): "unbaked_apple_pie",
+    ("baked pumpkin pie", "0x1042"): "unbaked_pumpkin_pie",
+    ("chicken leg", "0x1607"): "0x1607_raw_chicken_leg",
+    ("leg of lamb", "0x1609"): "0x1609_raw_leg_of_lamb",
+    ("cut of ribs", "0x09f1"): "0x09f1_cut_of_raw_ribs",
 }
 
 # The groups whose names UOX3 misspells.
@@ -277,10 +299,12 @@ def _recipe(
     resources = []
 
     for value in _values(block, "RESOURCE"):
-        what, amount = value.split()[:2]
+        what, amount = (value.split() + ["1"])[:2]
         graphic = dfn.uox_number(what) if what.lower().startswith("0x") else None
 
-        if graphic is None:
+        if (name.lower(), what.lower()) in RESOURCE_FIXES:
+            resource = RESOURCE_FIXES[(name.lower(), what.lower())]
+        elif graphic is None:
             resource = what.lower()
 
             if resource not in lists:
