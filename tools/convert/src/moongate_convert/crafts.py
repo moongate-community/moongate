@@ -4,6 +4,7 @@ recipes, and ``resources.toml`` with the lists of templates a recipe's resource 
 from __future__ import annotations
 
 import os
+import re
 import tomllib
 from pathlib import Path
 from typing import TextIO
@@ -20,10 +21,11 @@ CRAFTS: dict[str, tuple[str, str, str, int]] = {
     "bowcraft": ("fletching", "Bowcraft and Fletching", "bowcraft_fletching", 49),
     "cooking": ("cooking", "Cooking", "cooking", 750),
     "cartography": ("cartography", "Cartography", "cartography", 80),
+    "alchemy": ("alchemy", "Alchemy", "alchemy", 89),
 }
 
 # The sound UOX3 plays for every recipe of a craft, by the craft's id.
-SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055, "cooking": 0x0057, "cartography": 0x0249}
+SOUNDS: dict[str, int] = {"carpentry": 0x023D, "blacksmithing": 0x002A, "tailoring": 0x0248, "tinkering": 0x023B, "fletching": 0x0055, "cooking": 0x0057, "cartography": 0x0249, "alchemy": 0x0242}
 
 # The groups that make deeds, which mean nothing until houses exist.
 SKIPPED_GROUPS = {"house additions", "blacksmith add-ons", "tailor add-ons", "cooking add-ons", "traps"}
@@ -51,6 +53,9 @@ SKILL_FIXES = {
     ("cartography", "world map"): "12 395 995",
 }
 
+# What every recipe of a craft takes besides UOX3's list: an alchemist pours each potion into an empty bottle.
+RECIPE_EXTRAS = {"alchemy": [("0x0f0e_empty_bottle", 1)]}
+
 # The names of the recipes UOX3 names alike, by the item they make: the world maps of each facet.
 NAMES_BY_ITEM = {
     "ilshenarmap": "World map of Ilshenar",
@@ -63,6 +68,15 @@ NAMES_BY_ITEM = {
 # single shaft, arrow and bolt among the stacks that share their graphic.
 ITEM_FIXES = {
     "0x1eb9": "0x1ebc_tinker's_tools",
+    # The plain potions, which UOX3 names by their graphic alone: the stronger ones of that graphic share it.
+    "0x0f06": "0x0f06_black_potion",
+    "0x0f07": "0x0f07_orange_potion",
+    "0x0f08": "0x0f08_blue_potion",
+    "0x0f09": "0x0f09_white_potion",
+    "0x0f0a": "0x0f0a_green_potion",
+    "0x0f0b": "0x0f0b_red_potion",
+    "0x0f0c": "0x0f0c_yellow_potion",
+    "0x0f0d": "0x0f0d_purple_potion",
     "0x1bd4": "0x1bd4_shaft",
     "0x0f3f": "0x0f3f_arrow",
     "0x1bfb": "0x1bfb_crossbow_bolt",
@@ -165,7 +179,8 @@ def _template_ids(items: Path) -> list[str]:
 
 def _resolve(value: str, templates: list[str]) -> list[str]:
     """The templates of a UOX3 item id: the one named so, else every one whose id is the graphic followed by its name."""
-    key = ITEM_FIXES.get(value.lower(), value.lower())
+    # UOX3 names the stronger potions of a graphic with a letter after a dash (0x0F0C-b): the template has an underscore.
+    key = ITEM_FIXES.get(value.lower(), value.lower()).replace("-", "_")
 
     if key in templates:
         return [key]
@@ -344,18 +359,48 @@ def _recipe(
             resource = list_of_graphic[graphic]
         else:
             found = _resolve(what, templates)
+            stacked = _one_item_in_stacks(found)
 
-            if len(found) != 1:
+            if stacked is not None:
+                # The same item sold one by one and by the ten, as a reagent: both count, as a list of its own.
+                lists[stacked] = sorted(found)
+                resource = stacked
+            elif len(found) != 1:
                 raise ConversionError(f"the recipe {name} names the resource {what}, which is not one item template")
-
-            resource = found[0]
+            else:
+                resource = found[0]
 
         resources.append((resource, int(amount)))
+
+    for extra, amount in RECIPE_EXTRAS.get(craft_skill, []):
+        if extra not in templates:
+            raise ConversionError(f"the recipe {name} takes {extra}, which is no item template")
+
+        resources.append((extra, amount))
 
     shown = NAMES_BY_ITEM.get(added.lower(), NAME_FIXES.get(name, name))
 
     # The gump shows it as a title: UOX3 writes some in lower case.
     return {"name": shown[:1].upper() + shown[1:], "item": item[0], "skills": skills, "resources": resources}
+
+
+def _one_item_in_stacks(found: list[str]) -> str | None:
+    """The name of the item several templates of one graphic are, one alone and some in stacks (0x0f85_ginseng and
+    0x0f85_10_ginseng); None when they are not that."""
+    if len(found) < 2:
+        return None
+
+    names = set()
+
+    for template in found:
+        match = re.match(r"^0x[0-9a-f]{4}_(?:\d+_)?(.+)$", template)
+
+        if match is None:
+            return None
+
+        names.add(match.group(1))
+
+    return names.pop() if len(names) == 1 else None
 
 
 def _write_lists(lists: dict[str, list[str]]) -> str:

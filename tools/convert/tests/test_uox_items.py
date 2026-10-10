@@ -833,3 +833,21 @@ def test_the_potions_a_player_drinks_get_the_potion_script_and_explosion_waits(u
     assert [items[name]["script_id"] for name in ("healpotion", "nightsightpotion", "poisonpotion", "curepotion")] == ["potion"] * 4
     # Explosion potions are thrown: scripts/items/explosion_potion.lua.
     assert items["explosionpotion"]["script_id"] == "explosion_potion"
+
+
+def test_the_potions_vendors_sell_get_the_scripts_of_the_named_ones(uox_workspace):
+    uox_workspace.write_source(
+        "items.dfn",
+        "[0x0F0C-b]\n{\nname=yellow potion\nid=0x0f0c\n}\n"
+        "[0x0F0D-c]\n{\nname=purple potion\nid=0x0f0d\n}\n"
+        "[0x0e9b]\n{\nname=mortar & pestle\nid=0x0e9b\n}\n",
+    )
+
+    assert uox_workspace.run() == 0, uox_workspace.combined
+
+    # A vendor sells the plain heal potion, not the named one: it works all the same.
+    by_name = {item.get("name"): item for item in uox_workspace.items().values()}
+    assert by_name["yellow potion"]["script_id"] == "potion"
+    assert by_name["purple potion"]["script_id"] == "explosion_potion"
+    # What an alchemist grinds with: scripts/items/alchemy_tool.lua.
+    assert by_name["mortar & pestle"]["script_id"] == "alchemy_tool"
