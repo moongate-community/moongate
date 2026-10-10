@@ -94,6 +94,20 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.MarkRuneDescription
         );
+        container.RegisterCommand<AddSpellCommand>(
+            "add_spell",
+            "Adds a spell, a circle's spells or all 64 to the spellbook you target: add_spell <key | number | circle N | all>.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.AddSpellDescription
+        );
+        container.RegisterCommand<AddReagentsCommand>(
+            "add_reagents",
+            "Puts the reagents of a spell, a circle or all in your backpack: add_reagents <key | number | circle N | all> [amount].",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.AddReagentsDescription
+        );
         container.RegisterCommand<ResurrectCommand>(
             "resurrect",
             "Raises the NPC whose corpse you target: it is born again where the corpse lies.",

@@ -179,4 +179,14 @@ public static class CommandMessages
     public const int MarkRuneDescription = 30241;
     public const int RuneMarked = 30242;
     public const int NotARune = 30243;
+    public const int AddSpellDescription = 30244;
+    public const int SpellsAdded = 30245;
+    public const int UnknownSpell = 30246;
+    public const int UnknownCircle = 30247;
+    public const int NoSpellbook = 30248;
+    public const int NotASpellbookOrMobile = 30249;
+    public const int AddReagentsDescription = 30250;
+    public const int ReagentsAdded = 30251;
+    public const int ReagentsAtFeet = 30252;
+    public const int NoReagents = 30253;
 }
