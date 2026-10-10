@@ -70,6 +70,7 @@ public sealed class CartographyScriptIntegrationTests : IAsyncLifetime
     private const int LocalMap = 1;
     private const int SeaChart = 2;
     private const int WorldMap = 3;
+    private const int CityMap = 4;
 
     private const int Created = 1044154;
     private const int NoComponents = 1044253;
@@ -102,6 +103,7 @@ public sealed class CartographyScriptIntegrationTests : IAsyncLifetime
             new ItemTemplate { Id = "0x14ec_blank_map", ItemId = new Serial(0x14EC), ScriptId = "map_item" },
             new ItemTemplate { Id = "craftedlocalmap", ItemId = new Serial(0x14EC), ScriptId = "map_item" },
             new ItemTemplate { Id = "craftedseachart", ItemId = new Serial(0x14EC), ScriptId = "map_item" },
+            new ItemTemplate { Id = "craftedcitymap", ItemId = new Serial(0x14EC), ScriptId = "map_item" },
             new ItemTemplate
             {
                 Id = "largeworldmap", ItemId = new Serial(0x14EC), ScriptId = "map_item",
@@ -140,6 +142,11 @@ public sealed class CartographyScriptIntegrationTests : IAsyncLifetime
                                 new()
                                 {
                                     Name = "World map", Item = "largeworldmap", SkillMin = 39.5, SkillMax = 99.5,
+                                    Resources = [new() { Resource = "maps", Amount = 1 }]
+                                },
+                                new()
+                                {
+                                    Name = "City map", Item = "craftedcitymap", SkillMin = 25, SkillMax = 85,
                                     Resources = [new() { Resource = "maps", Amount = 1 }]
                                 }
                             ]
@@ -362,7 +369,7 @@ public sealed class CartographyScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void AWorldMap_KeepsTheAreaOfItsTemplate()
+    public void AWorldMap_IsDrawnAroundBritain_LargerWithSkill()
     {
         Rolls(0.99);
         Carry("0x14ec_blank_map", 0x14EC, 1);
@@ -371,7 +378,76 @@ public sealed class CartographyScriptIntegrationTests : IAsyncLifetime
         Fire(1.25);
 
         Assert.Empty(_errors);
-        Assert.False(MapItemProps.TryGetArea(Assert.Single(Made("largeworldmap")), null, out _));
+        Assert.True(MapItemProps.TryGetArea(Assert.Single(Made("largeworldmap")), null, out var area));
+        // 20 tiles a point of skill around Britain, wherever the cartographer stands; drawn on the facet it opens in.
+        Assert.Equal(new MapArea(0, 0, 3472, 3728, 400, 400, (int)MapType.Felucca), area);
+    }
+
+    [Fact]
+    public void ACityMap_ReachesFartherThanALocalMap()
+    {
+        Rolls(0.99);
+        Carry("0x14ec_blank_map", 0x14EC, 1);
+
+        Call("make", Aria, Maps, CityMap);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.True(MapItemProps.TryGetArea(Assert.Single(Made("craftedcitymap")), null, out var area));
+        Assert.Equal(new MapArea(1036, 1136, 1964, 2064, 232, 232, (int)MapType.Trammel), area);
+    }
+
+    [Fact]
+    public void ALocalMapInIlshenar_StopsAtTheEdgeOfThatWorld()
+    {
+        Skill(700);
+        Rolls(0.99);
+        _aria.Map = MapType.Ilshenar;
+        _aria.Location = new Point3D(2290, 10, 0);
+        Carry("0x14ec_blank_map", 0x14EC, 1);
+
+        Call("make", Aria, Maps, LocalMap);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        Assert.True(MapItemProps.TryGetArea(Assert.Single(Made("craftedlocalmap")), null, out var area));
+        Assert.Equal(new MapArea(2086, 0, 2303, 214, 200, 200, (int)MapType.Ilshenar), area);
+    }
+
+    [Fact]
+    public void AMap_IsNeverExceptional_NorMarked()
+    {
+        Rolls(0.0);
+        Carry("0x14ec_blank_map", 0x14EC, 1);
+
+        Call("make", Aria, Maps, LocalMap);
+        Fire(1.25);
+
+        Assert.Empty(_errors);
+        var map = Assert.Single(Made("craftedlocalmap"));
+        Assert.False(map.TryGetProp<int>("quality", out _));
+        Assert.False(map.TryGetProp<long>("crafter_id", out _));
+        Assert.Equal([Created], Told());
+    }
+
+    [Fact]
+    public void ADrawingThatFails_StillFinishesTheCraft_AndSaysSo()
+    {
+        _scripts.Write(
+            "common/cartography.lua",
+            "return { draw = function() error(\"no ink\") end }"
+        );
+        Rolls(0.99);
+        Carry("0x14ec_blank_map", 0x14EC, 2);
+
+        Call("make", Aria, Maps, LocalMap);
+        Fire(1.25);
+        Call("make", Aria, Maps, LocalMap);
+        Fire(1.25);
+
+        // The second attempt is not refused as busy: the first one ended.
+        Assert.Equal(2, Made("craftedlocalmap").Count);
+        Assert.Equal(2, _speech.Told.Count(told => told.Text == "You could not finish what you made."));
     }
 
     public async Task DisposeAsync()

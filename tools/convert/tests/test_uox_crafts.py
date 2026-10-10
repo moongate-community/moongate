@@ -759,6 +759,8 @@ ADDITEM=ilshenarmap
 
 CARTOGRAPHY_ITEMS = """
 [[item]]
+id = "0x0e34_a_blank_scroll"
+[[item]]
 id = "0x14eb_map"
 [[item]]
 id = "0x14ec_blank_map"
@@ -775,7 +777,7 @@ def test_cartography_has_the_classic_numbers_names_by_facet_and_takes_blank_maps
     source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
     source.mkdir()
     items.mkdir()
-    (source / "resources.dfn").write_text("[RESOURCE MAPS]\n{\nID=0x14eb\n}\n")
+    (source / "resources.dfn").write_text("[RESOURCE MAPS]\n{\nID=0x14eb\nID=0x0e34\n}\n")
     (source / "cartography.dfn").write_text(CARTOGRAPHY)
     (items / "all.toml").write_text(CARTOGRAPHY_ITEMS)
     output, error = io.StringIO(), io.StringIO()
@@ -792,6 +794,6 @@ def test_cartography_has_the_classic_numbers_names_by_facet_and_takes_blank_maps
     assert (local["name"], local["skill_min"], local["skill_max"]) == ("Local map", 10.0, 70.0)
     assert (world["name"], world["skill_min"], world["skill_max"]) == ("World map", 39.5, 99.5)
     assert ilshenar["name"] == "World map of Ilshenar"
-    # A blank map, as vendors sell it, is a map to draw on.
+    # A blank map, as vendors sell it, is a map to draw on; a blank scroll is the scribe's.
     lists = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}
     assert lists["maps"] == ["0x14eb_map", "0x14ec_blank_map"]

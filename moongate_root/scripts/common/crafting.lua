@@ -146,6 +146,13 @@ local MADE = {
     cartography = "common.cartography",
 }
 
+-- The crafts whose items have no quality: never exceptional nor marked, as a map.
+local NO_QUALITY = {
+    cartography = true,
+}
+
+local NOT_DRAWN = "You could not finish what you made."
+
 -- What a craft asks to stand near, by its id: a test of the player, and the client text when it fails.
 local NEEDS = {
     blacksmithing = { test = smithy.at_anvil_and_forge, missing = NOT_AT_FORGE },
@@ -558,13 +565,24 @@ local function finish(user, tool, craft_id, craft, group, recipe, kind)
         mobile.message(user, AT_YOUR_FEET)
     end
 
+    -- A fault in it must not leave the craft half done: it is logged and the player told.
     if MADE[craft_id] then
-        require(MADE[craft_id]).draw(user, made, recipe, points(user, craft.skill))
+        local ok, finished = pcall(function()
+            return require(MADE[craft_id]).draw(user, made, recipe, points(user, craft.skill))
+        end)
+
+        if not ok and log then
+            log.error("Finishing {Item} of {Craft} failed: {Error}", recipe.item, craft_id, tostring(finished))
+        end
+
+        if not ok or not finished then
+            mobile.message(user, NOT_DRAWN)
+        end
     end
 
     local outcome = CREATED
 
-    if not joined and not plain and crafting.roll() < chance - EXCEPTIONAL_MARGIN then
+    if not joined and not plain and not NO_QUALITY[craft_id] and crafting.roll() < chance - EXCEPTIONAL_MARGIN then
         item.set_prop(made, "quality", EXCEPTIONAL_QUALITY)
         item.set_rarity(made, "uncommon")
         outcome = EXCEPTIONAL

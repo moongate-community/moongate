@@ -46,10 +46,10 @@ public sealed class MapItemPropsTests
     [Fact]
     public void SetArea_KeepsTheCornersInTheWorld_AndTheSizeDrawable()
     {
-        MapItemProps.SetArea(_map, new(-5, -5, 9000, 9000, 0, 5000, 2));
+        MapItemProps.SetArea(_map, new(-5, -5, 9000, 9000, 0, 5000, 0));
 
         Assert.True(MapItemProps.TryGetArea(_map, null, out var area));
-        Assert.Equal(new MapArea(0, 0, 5119, 4095, 1, 800, 2), area);
+        Assert.Equal(new MapArea(0, 0, 5119, 4095, 1, 800, 0), area);
     }
 
     [Fact]
@@ -102,6 +102,19 @@ public sealed class MapItemPropsTests
         var area = new MapArea(100, 100, 300, 300, 200, 200, 0);
 
         Assert.Equal((199, 199), MapItemProps.WorldToPixel(area, 300, 300));
+    }
+
+    [Theory]
+    [InlineData(2, 2303, 1599)]
+    [InlineData(3, 2559, 2047)]
+    [InlineData(4, 1447, 1447)]
+    [InlineData(5, 1279, 4095)]
+    [InlineData(1, 5119, 4095)]
+    public void Clamp_KeepsTheAreaInsideItsOwnFacet(int facet, int lastX, int lastY)
+    {
+        var area = MapItemProps.Clamp(new(-10, -10, 9000, 9000, 200, 200, facet));
+
+        Assert.Equal((0, 0, lastX, lastY), (area.X1, area.Y1, area.X2, area.Y2));
     }
 
     [Fact]

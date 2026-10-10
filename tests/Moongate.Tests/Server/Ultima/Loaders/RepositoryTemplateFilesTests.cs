@@ -721,6 +721,7 @@ public sealed class RepositoryTemplateFilesTests
         Assert.All(maps.Skip(3), recipe => Assert.Equal((39.5, 99.5), (recipe.SkillMin, recipe.SkillMax)));
         Assert.All(new[] { "mapmakerspen", "0x0fc0_pen_and_ink" }, id => Assert.Equal("cartography_tool", byId[id].ScriptId));
         Assert.Contains("0x14ec_blank_map", lists.Single(list => list.Id == "maps").Templates);
+        Assert.DoesNotContain("0x0e34_a_blank_scroll", lists.Single(list => list.Id == "maps").Templates);
     }
 
     [Fact]

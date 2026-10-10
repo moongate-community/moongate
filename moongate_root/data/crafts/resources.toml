@@ -78,4 +78,4 @@ templates = ["0x09b9_raw_bird", "0x09ba_raw_bird"]
 
 [[resource]]
 id = "maps"
-templates = ["0x0e34_a_blank_scroll", "0x14eb_map", "0x14ec_blank_map"]
+templates = ["0x14eb_map", "0x14ec_blank_map"]

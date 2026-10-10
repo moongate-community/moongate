@@ -77,15 +77,18 @@ public static class MapItemProps
     }
 
     /// <summary>
-    ///     The area kept within the world (0 to 5119, 0 to 4095) and a drawing of 1 to 800 pixels.
+    ///     The area kept within its facet (Felucca and Trammel 0 to 5119 and 0 to 4095, the smaller worlds their own
+    ///     edges) and a drawing of 1 to 800 pixels.
     /// </summary>
     public static MapArea Clamp(MapArea area)
     {
+        var (lastX, lastY) = LastTile(area.Facet);
+
         return new(
-            Math.Clamp(area.X1, 0, MaxWorldX),
-            Math.Clamp(area.Y1, 0, MaxWorldY),
-            Math.Clamp(area.X2, 0, MaxWorldX),
-            Math.Clamp(area.Y2, 0, MaxWorldY),
+            Math.Clamp(area.X1, 0, lastX),
+            Math.Clamp(area.Y1, 0, lastY),
+            Math.Clamp(area.X2, 0, lastX),
+            Math.Clamp(area.Y2, 0, lastY),
             Math.Clamp(area.Width, 1, MaxDrawing),
             Math.Clamp(area.Height, 1, MaxDrawing),
             area.Facet
@@ -185,6 +188,19 @@ public static class MapItemProps
         {
             return false;
         }
+    }
+
+    // The last tile of each facet: Ilshenar, Malas, Tokuno and Ter Mur are smaller than Felucca and Trammel.
+    private static (int X, int Y) LastTile(int facet)
+    {
+        return facet switch
+        {
+            2 => (2303, 1599),
+            3 => (2559, 2047),
+            4 => (1447, 1447),
+            5 => (1279, 4095),
+            _ => (MaxWorldX, MaxWorldY)
+        };
     }
 
     // A flag set by hand to text that is no bool reads as false.

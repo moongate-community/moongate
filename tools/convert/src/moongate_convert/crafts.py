@@ -93,6 +93,9 @@ RESOURCE_FIXES = {
 # the blank map vendors sell.
 LIST_EXTRAS = {"flour": [0x1039, 0x1045], "maps": [0x14EC]}
 
+# The graphics a resource list leaves out of UOX3's: the blank scroll is what a scribe writes on, not a map.
+LIST_SKIPS = {"maps": [0x0E34]}
+
 # The groups whose names UOX3 misspells.
 GROUP_FIXES = {"Miscellaneuos": "Miscellaneous"}
 
@@ -188,7 +191,7 @@ def _resource_lists(path: Path, templates: list[str], error: TextIO) -> tuple[di
         for value in ids + [f"0x{extra:04x}" for extra in LIST_EXTRAS.get(name, [])]:
             graphic = dfn.uox_number(value)
 
-            if graphic is None or (name == "wood" and graphic in NOT_WOOD):
+            if graphic is None or (name == "wood" and graphic in NOT_WOOD) or graphic in LIST_SKIPS.get(name, []):
                 continue
 
             list_of_graphic.setdefault(graphic, name)
