@@ -670,6 +670,42 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedMetals_AreThere_WithTheHueOfTheirMetal_AndTheVeinsTheScriptsKnow()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToDictionary(item => item.Id);
+        var metals = await File.ReadAllTextAsync(
+            Path.Combine(FindRepositoryRoot(), "moongate_root", "scripts", "common", "metals.lua")
+        );
+        var hues = new Dictionary<string, int>
+        {
+            ["dull_copper"] = 0x973, ["shadow_iron"] = 0x966, ["copper"] = 0x96D, ["bronze"] = 0x972, ["gold"] = 0x8A5,
+            ["agapite"] = 0x979, ["verite"] = 0x89F, ["valorite"] = 0x8AB
+        };
+
+        foreach (var (metal, hue) in hues)
+        {
+            var (ore, ingot) = (items["ore_" + metal], items["ingot_" + metal]);
+
+            Assert.Equal((0x19B9u, 0x1BF2u), (ore.ItemId.Value, ingot.ItemId.Value));
+            Assert.Equal(((int?)hue, (int?)hue), (ore.Hue?.Min, ingot.Hue?.Min));
+            Assert.Equal("ore", ore.ScriptId);
+            Assert.Equal(((bool?)true, (bool?)true), (ore.Stackable, ingot.Stackable));
+        }
+
+        // Every template the metals module names is shipped, and every vein of the ore but iron is a metal it knows.
+        var named = System.Text.RegularExpressions.Regex.Matches(metals, "\"((?:ore|ingot)_[a-z_]+|0x[0-9a-f]{4}_iron_(?:ore|ingot))\"")
+            .Select(match => match.Groups[1].Value)
+            .ToArray();
+        Assert.Equal(22, named.Length);
+        Assert.All(named, id => Assert.True(items.ContainsKey(id), id));
+        var veins = (await new HarvestLoader(directories).LoadDataAsync()).Entities.Single(resource => resource.Id == "ore").Vein;
+        Assert.Equal(1000, veins.Sum(vein => vein.Weight));
+        Assert.Equal("iron", veins[0].Id);
+        Assert.All(veins.Skip(1), vein => Assert.Contains($"{{ id = \"{vein.Id}\",", metals));
+    }
+
+    [Fact]
     public async Task ShippedMiningToolsAndOre_UseTheirScripts_AndWhatTheyGiveIsThere()
     {
         var directories = Directories();
@@ -690,8 +726,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(4, piles.Length);
         Assert.All(piles, pile => Assert.Equal(("ore", true), (items[pile].ScriptId, items[pile].Stackable)));
 
+        // The ingots of iron are the first the metals module names.
         var ingot = System.Text.RegularExpressions.Regex
-            .Match(await File.ReadAllTextAsync(Path.Combine(scripts, "ore.lua")), "local INGOT = \"([^\"]+)\"")
+            .Match(await File.ReadAllTextAsync(Path.Combine(scripts, "..", "common", "metals.lua")), "ingot = \"([^\"]+)\"")
             .Groups[1]
             .Value;
         Assert.True(items[ingot].Stackable);
