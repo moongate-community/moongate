@@ -17,6 +17,18 @@ public class AdminContractsTests
     }
 
     [Fact]
+    public void UpdateAccountAccess_WirePresence_DistinguishesNotSentFromFalse()
+    {
+        var request = UpdateAccountAccessRequest.Parser.ParseFrom(Array.Empty<byte>());
+        Assert.False(request.HasAccountType || request.HasCanAccessApi || request.HasIsLocked);
+        request.IsLocked = false;
+        var copy = UpdateAccountAccessRequest.Parser.ParseFrom(request.ToByteArray());
+        Assert.True(copy.HasIsLocked);
+        Assert.False(copy.IsLocked);
+        Assert.False(copy.HasCanAccessApi);
+    }
+
+    [Fact]
     public void AccountSummary_WireFields_ContainOnlyPublicAccountInformation()
     {
         var fields = AccountSummary.Descriptor.Fields.InFieldNumberOrder();

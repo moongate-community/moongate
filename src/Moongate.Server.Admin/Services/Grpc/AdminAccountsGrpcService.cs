@@ -1,17 +1,69 @@
+using System.Globalization;
+using System.Security.Claims;
+using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Moongate.Admin.Contracts.V1;
 using Moongate.Server.Admin.Internal;
 using Moongate.Server.Ultima.Interfaces;
+using DomainAccountType = Moongate.Server.Core.Types.Accounts.AccountType;
 
 namespace Moongate.Server.Admin.Services.Grpc;
 
 public sealed class AdminAccountsGrpcService : AdminAccounts.AdminAccountsBase
 {
     private readonly IAccountService _accounts;
+    private readonly IAccountAdminAccessService _authority;
 
-    public AdminAccountsGrpcService(IAccountService accounts)
+    public AdminAccountsGrpcService(IAccountService accounts, IAccountAdminAccessService authority)
     {
         _accounts = accounts;
+        _authority = authority;
+    }
+
+    public override async Task<Empty> ChangeAccountPassword(ChangeAccountPasswordRequest request, ServerCallContext context)
+    {
+        if (request.AccountId == 0)
+        {
+            throw new RpcException(new(StatusCode.InvalidArgument, "Account ID must be nonzero."));
+        }
+
+        AdminAccountMapper.ValidatePassword(request.NewPassword);
+        context.GetHttpContext().Items["AdminTargetId"] = request.AccountId;
+
+        // Changing a password revokes the sessions of the account, as every security change does.
+        await _authority.ChangePasswordAsync(new(request.AccountId), request.NewPassword, context.CancellationToken);
+
+        return new();
+    }
+
+    public override async Task<AccountSummary> UpdateAccountAccess(UpdateAccountAccessRequest request, ServerCallContext context)
+    {
+        if (request.AccountId == 0)
+        {
+            throw new RpcException(new(StatusCode.InvalidArgument, "Account ID must be nonzero."));
+        }
+
+        if (!request.HasAccountType && !request.HasCanAccessApi && !request.HasIsLocked)
+        {
+            throw new RpcException(new(StatusCode.InvalidArgument, "At least one setting must be sent."));
+        }
+
+        var patch = AdminAccountMapper.ToAccessPatch(request);
+        var http = context.GetHttpContext();
+        http.Items["AdminTargetId"] = request.AccountId;
+
+        // Nobody locks itself out: the account of the caller keeps its lock, its API access and its type.
+        if (http.User.FindFirstValue(ClaimTypes.NameIdentifier) == request.AccountId.ToString(CultureInfo.InvariantCulture) &&
+            (patch.IsLocked == true ||
+             patch.CanAccessApi == false ||
+             patch.AccountType is { } type && type != DomainAccountType.Administrator))
+        {
+            throw new RpcException(new(StatusCode.FailedPrecondition, "An administrator cannot lock out its own account."));
+        }
+
+        var account = await _authority.PatchAccessAsync(new(request.AccountId), patch, context.CancellationToken);
+
+        return AdminAccountMapper.ToSummary(account);
     }
 
     public override async Task<AccountSummary> CreateAccount(CreateAccountRequest request, ServerCallContext context)

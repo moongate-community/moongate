@@ -76,6 +76,8 @@ Accounts created by `account create` have API access disabled. `CreateAccount` a
 | `AdminServer.GetServerInfo` | Yes | Yes | Any valid administrative session |
 | `AdminAccounts.ListAccounts` | Yes | No | Administrator |
 | `AdminAccounts.CreateAccount` | Yes | No | Administrator |
+| `AdminAccounts.UpdateAccountAccess` | Yes | No | Administrator |
+| `AdminAccounts.ChangeAccountPassword` | Yes | No | Administrator |
 | `AdminAccountSessions.RevokeAccountSessions` | Yes | No | Administrator |
 
 Game hosts never resolve Accounts services or connect to the Accounts database. Unavailable role-specific services return `UNIMPLEMENTED`. Configure endpoint addresses in the panel backend; administration endpoints are not advertised in realm discovery.
@@ -97,6 +99,8 @@ Runnable examples: [C# client](../samples/Moongate.Admin.Client/README.md), [Pyt
 
 `ListAccounts` uses database keyset pagination: start with `after_account_id = 0`, send the returned `next_after_account_id` on the next call, stop when it is zero. Default page size is 50; maximum is 200. IDs are nonzero `uint32` for existing accounts. Summaries contain username, ID, role, access/lock flags and UTC creation time, never passwords, hashes or email.
 
+`UpdateAccountAccess` changes the lock, the API access and the account type of an account: only the fields that are sent change (the fields have presence, so sending `is_locked = false` unlocks and leaving it out leaves it alone), and at least one must be sent. It returns the summary of the account as it is after the change. The account of the caller cannot lock itself, lose its API access or lower its type (`FAILED_PRECONDITION`): nobody is locked out by their own call. `ChangeAccountPassword` sets a new password (the same rules as creating an account); the password is never logged. Both revoke every session of the target account, as any supported security change does.
+
 Omitting `CreateAccount.account_type` means Regular. Explicit `UNSPECIFIED` and unknown enum values fail. `can_access_api` defaults to false. Usernames must be nonblank and at most 255 characters; passwords are nonblank and at most 1024 UTF-8 bytes. NUL characters are rejected. Username matching retains existing case-sensitive account semantics.
 
 ## Sessions, revocation and failures
@@ -105,7 +109,7 @@ Tokens have 256 random bits and an absolute lifetime of 30 minutes by default. T
 
 Each protected call checks Redis. Logout and account-wide revocation apply across hosts immediately for newly admitted requests. An ephemeral Redis restart invalidates sessions; a server restart does not renew their expiry. A Redis outage fails closed with `UNAVAILABLE`. Login is limited across hosts to 10 attempts/minute per exact username and 30/minute per direct peer address; forwarded-address headers are not trusted.
 
-Supported account security changes go through `IAccountAdminAccessService.SetApiAccessAsync`, `UpdateAccessAsync`, `ChangePasswordAsync`, or `RevokeSessionsAsync`. These coordinate PostgreSQL row locks with Redis authorization generations. A login racing a security change cannot retain a stale privileged session. A partially failed mutation leaves access blocked; a later valid login recovers against the authoritative committed account state. **Direct SQL and generic `IDataAccess` updates bypass immediate revocation.** Use the supported service methods for security changes.
+Supported account security changes go through `IAccountAdminAccessService.SetApiAccessAsync`, `UpdateAccessAsync`, `PatchAccessAsync`, `ChangePasswordAsync`, or `RevokeSessionsAsync`. These coordinate PostgreSQL row locks with Redis authorization generations. A login racing a security change cannot retain a stale privileged session. A partially failed mutation leaves access blocked; a later valid login recovers against the authoritative committed account state. **Direct SQL and generic `IDataAccess` updates bypass immediate revocation.** Use the supported service methods for security changes.
 
 | Status | Meaning |
 | --- | --- |
@@ -113,7 +117,8 @@ Supported account security changes go through `IAccountAdminAccessService.SetApi
 | `UNAUTHENTICATED` | Invalid credentials or missing, expired or revoked token |
 | `PERMISSION_DENIED` | Valid session lacks the required role |
 | `ALREADY_EXISTS` | Username already exists |
-| `NOT_FOUND` | Revocation target does not exist |
+| `NOT_FOUND` | Revocation, update or password target does not exist |
+| `FAILED_PRECONDITION` | The call would lock the caller out of its own account |
 | `RESOURCE_EXHAUSTED` | Login/session/concurrent-call limit reached, or request too large |
 | `UNAVAILABLE` | Dependency outage or endpoint not ready/stopping |
 | `UNIMPLEMENTED` | This server role does not expose the RPC |

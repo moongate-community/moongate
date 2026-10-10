@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Account;
+using Moongate.Server.Ultima.Entities.Auth;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
@@ -25,6 +26,12 @@ public interface IAccountAdminAccessService
     ///     Changes lock, role and API access while revoking prior sessions.
     /// </summary>
     Task UpdateAccessAsync(Serial accountId, AccountAccessOptions options, CancellationToken token = default);
+
+    /// <summary>
+    ///     Changes only the settings set in <paramref name="patch" />, inside the same transaction, and revokes prior sessions.
+    ///     Gives the account as it is after the change. Missing accounts throw KeyNotFoundException.
+    /// </summary>
+    Task<AccountEntity> PatchAccessAsync(Serial accountId, AccountAccessPatch patch, CancellationToken token = default);
 
     /// <summary>
     ///     Changes a password while revoking prior administrative sessions.

@@ -91,6 +91,52 @@ public sealed class AccountAdminAccessServiceTests
     }
 
     [Fact]
+    public async Task PatchAccessAsync_ChangesOnlyTheFieldsSent_AndRevokesSessions()
+    {
+        await using var fixture = await AccountAdminFixture.CreateAsync();
+        var created = await fixture.Accounts.Service.CreateAccountAsync(
+            new() { Username = "admin", Password = fixture.Accounts.Password, AccountType = AccountType.Administrator, CanAccessApi = true }
+        );
+        Assert.NotNull(await fixture.Authority.LoginAsync("admin", fixture.Accounts.Password));
+        var digest = fixture.Store.LastDigest!;
+
+        var updated = await fixture.Authority.PatchAccessAsync(created.Account!.Id, new() { IsLocked = true });
+
+        Assert.True(updated.IsLocked);
+        Assert.Equal((AccountType.Administrator, true), (updated.AccountType, updated.CanAccessApi));
+        Assert.Null(await fixture.Redis.Store.FindAsync(digest));
+        Assert.True((await fixture.Accounts.Accounts.GetByIdAsync(created.Account.Id))!.IsLocked);
+    }
+
+    [Fact]
+    public async Task PatchAccessAsync_TypeAndApiAccess_KeepTheLock_AndAnEmptyPatchChangesNothing()
+    {
+        await using var fixture = await AccountAdminFixture.CreateAsync();
+        var created = await fixture.Accounts.Service.CreateAccountAsync("player", fixture.Accounts.Password, AccountType.Regular);
+
+        var updated = await fixture.Authority.PatchAccessAsync(
+            created.Account!.Id,
+            new() { AccountType = AccountType.GameMaster, CanAccessApi = true }
+        );
+        var same = await fixture.Authority.PatchAccessAsync(created.Account.Id, new());
+
+        Assert.Equal((AccountType.GameMaster, true, false), (updated.AccountType, updated.CanAccessApi, updated.IsLocked));
+        Assert.Equal((AccountType.GameMaster, true, false), (same.AccountType, same.CanAccessApi, same.IsLocked));
+    }
+
+    [Fact]
+    public async Task PatchAccessAsync_UnknownAccountOrUndefinedType_Throws()
+    {
+        await using var fixture = await AccountAdminFixture.CreateAsync();
+        var created = await fixture.Accounts.Service.CreateAccountAsync("player", fixture.Accounts.Password, AccountType.Regular);
+
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => fixture.Authority.PatchAccessAsync(new(0x7777), new() { IsLocked = true }));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => fixture.Authority.PatchAccessAsync(created.Account!.Id, new() { AccountType = (AccountType)99 })
+        );
+    }
+
+    [Fact]
     public async Task LoginAsync_DisabledApiAccess_DoesNotIssueSession()
     {
         await using var fixture = await AccountAdminFixture.CreateAsync();

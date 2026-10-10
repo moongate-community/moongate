@@ -154,6 +154,27 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
         );
     }
 
+    public Task<AccountEntity> PatchAccessAsync(Serial accountId, AccountAccessPatch patch, CancellationToken token = default)
+    {
+        ArgumentNullException.ThrowIfNull(patch);
+
+        if (patch.AccountType is { } type && !Enum.IsDefined(type))
+        {
+            throw new ArgumentOutOfRangeException(nameof(patch));
+        }
+
+        return MutateAsync(
+            accountId,
+            account =>
+            {
+                account.AccountType = patch.AccountType ?? account.AccountType;
+                account.CanAccessApi = patch.CanAccessApi ?? account.CanAccessApi;
+                account.IsLocked = patch.IsLocked ?? account.IsLocked;
+            },
+            token
+        );
+    }
+
     public Task ChangePasswordAsync(Serial accountId, string password, CancellationToken token = default)
     {
         var hash = HashUtils.HashPassword(password);
@@ -182,9 +203,10 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
         return accounts.Count == 0 ? null : accounts[0].Id;
     }
 
-    private async Task MutateAsync(Serial accountId, Action<AccountEntity> mutation, CancellationToken token)
+    private async Task<AccountEntity> MutateAsync(Serial accountId, Action<AccountEntity> mutation, CancellationToken token)
     {
         AdminAccountGate? fenced = null;
+        AccountEntity? changed = null;
         await _persistence.ExecuteInTransactionAsync(
             PersistenceDatabaseTarget.Accounts,
             async tx =>
@@ -195,6 +217,7 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
                 mutation(account);
                 account.UpdatedAt = DateTime.UtcNow;
                 await tx.GetDataAccess<AccountEntity>().UpsertAsync(account, token);
+                changed = account;
             },
             token
         );
@@ -214,5 +237,7 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
             },
             token
         );
+
+        return changed!;
     }
 }
