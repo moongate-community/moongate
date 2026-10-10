@@ -861,7 +861,28 @@ def test_alchemy_makes_the_potions_vendors_sell_each_in_an_empty_bottle(tmp_path
     # UOX3 names the plain potion by its graphic, the stronger one with a letter after a dash.
     assert (lesser["item"], heal["item"]) == ("0x0f0c_yellow_potion", "0x0f0c_b_yellow_potion")
     # Ginseng is sold one by one and ten at a time: both are the reagent, a list of its own.
-    assert heal["resources"] == [{"resource": "ginseng", "amount": 3}, {"resource": "0x0f0e_empty_bottle", "amount": 1}]
+    assert heal["resources"] == [{"resource": "ginseng", "amount": 3}, {"resource": "bottles", "amount": 1}]
     lists = {entry["id"]: entry["templates"] for entry in tomllib.loads((destination / "resources.toml").read_text())["resource"]}
     assert lists["ginseng"] == ["0x0f85_10_ginseng", "0x0f85_ginseng"]
+    # The bottles a potion is poured in: a list, so another empty bottle can join it.
+    assert lists["bottles"] == ["0x0f0e_empty_bottle"]
     assert (heal["skill_min"], heal["skill_max"]) == (15.1, 65.0)
+
+
+def test_a_stack_list_never_replaces_a_list_of_another_kind(tmp_path):
+    source, items, destination = tmp_path / "create", tmp_path / "items", tmp_path / "crafts"
+    source.mkdir()
+    items.mkdir()
+    (source / "resources.dfn").write_text("[RESOURCE GINSENG]\n{\nID=0x0f85\n}\n")
+    (source / "alchemy.dfn").write_text(ALCHEMY.replace("RESOURCE=0x0f85 3", "RESOURCE=0x0f86 3"))
+    (items / "all.toml").write_text(ALCHEMY_ITEMS + '[[item]]\nid = "0x0f86_ginseng"\n[[item]]\nid = "0x0f86_10_ginseng"\n')
+    output, error = io.StringIO(), io.StringIO()
+
+    assert crafts.run(source, items, destination, output, error) == 2
+    assert "ginseng" in error.getvalue()
+
+
+def test_a_name_that_starts_with_a_number_is_no_stack():
+    assert crafts._one_item_in_stacks(["0x1234_3_wise_men", "0x1234_wise_men"]) == "wise_men"
+    # Two templates both with a number and no single one: no stack of one item.
+    assert crafts._one_item_in_stacks(["0x1234_3_wise_men", "0x1234_5_wise_men"]) is None

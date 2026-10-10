@@ -1,10 +1,11 @@
-<!-- translation: {"sourceHash":"63d18d93bd472f9511a5b67db82aa93061a411dcab01f26a6dfd84b5d2c1cff0","title":"Alchimia"} -->
+<!-- translation: {"sourceHash":"56130a48c034b391f8ec9369661edeb456c9b8eea8f5f21a21029e2a5c5df6b6","title":"Alchimia"} -->
 
 # Alchimia
 
 Un alchimista macina i reagenti con mortaio e pestello e versa ogni pozione in una bottiglia vuota. Le regole sono quelle
-di ogni mestiere (vedi [Falegnameria](carpentry.md)): la probabilità, i fallimenti che fanno perdere metà dei reagenti, gli attrezzi che si consumano
-e Make last. Una pozione si impila, quindi non è mai eccezionale né marchiata e crearla non consuma il mortaio. Cosa fa ogni
+di ogni mestiere (vedi [Falegnameria](carpentry.md)): la probabilità, una su due all'abilità minima e certa alla massima, i fallimenti
+che fanno perdere metà dei reagenti ("You fail to create a useful potion.", la bottiglia resta), un mortaio che si consuma, e
+Make last. Una pozione si impila, quindi non è mai eccezionale né marchiata; un successo fa sentire la pozione versata. Cosa fa ogni
 pozione è spiegato in [Pozioni](potions.md).
 
 ## Come creare una pozione
@@ -15,7 +16,8 @@ pozione è spiegato in [Pozioni](potions.md).
 
 ## Le ricette
 
-20 pozioni in otto gruppi, convertite da UOX3; ognuna richiede anche una bottiglia vuota.
+20 pozioni in otto gruppi, convertite da UOX3 con i suoi numeri di abilità e le sue quantità di reagenti (differiscono un po' da
+altri shard: Refresh da 15,1, Nightsight con 5 seta di ragno); ognuna richiede anche una bottiglia vuota.
 
 | Gruppo | Pozioni (Alchemy, reagenti) |
 | --- | --- |
@@ -29,7 +31,8 @@ pozione è spiegato in [Pozioni](potions.md).
 | Nightsight | Nightsight 0-50 (5 seta di ragno) |
 
 Un reagente conta sia venduto singolo sia a gruppi di dieci. Le pozioni create sono quelle che vendono i venditori, quindi si impilano insieme; le
-pozioni semplici vendute dai venditori o trovate nei bottini funzionano come quelle con il nome (`scripts/common/potions.lua`).
+pozioni semplici vendute dai venditori o trovate nei bottini funzionano come quelle con il nome (`scripts/common/potions.lua`), anche se una pozione
+con il nome trovata in un forziere non si impila con loro.
 
 ## Cambiare le regole
 

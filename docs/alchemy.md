@@ -1,8 +1,9 @@
 # Alchemy
 
 An alchemist grinds reagents with a mortar and pestle and pours each potion into an empty bottle. The rules are the ones
-of every craft (see [Carpentry](carpentry.md)): the chance, failures that lose half of the reagents, tools that wear out
-and Make last. A potion stacks, so it is never exceptional nor marked and making it does not wear the mortar. What each
+of every craft (see [Carpentry](carpentry.md)): the chance, one in two at the least skill and sure at the most, failures
+that lose half of the reagents ("You fail to create a useful potion.", the bottle is kept), a mortar that wears out, and
+Make last. A potion stacks, so it is never exceptional nor marked; a success plays the pour of the potion. What each
 potion does is told in [Potions](potions.md).
 
 ## How to make a potion
@@ -13,7 +14,8 @@ potion does is told in [Potions](potions.md).
 
 ## The recipes
 
-20 potions in eight groups, converted from UOX3; each also takes an empty bottle.
+20 potions in eight groups, converted from UOX3 with its skill numbers and reagent amounts (they differ a little from
+other shards: Refresh from 15.1, Nightsight with 5 spider silk); each also takes an empty bottle.
 
 | Group | Potions (Alchemy, reagents) |
 | --- | --- |
@@ -27,7 +29,8 @@ potion does is told in [Potions](potions.md).
 | Nightsight | Nightsight 0-50 (5 spider silk) |
 
 A reagent counts sold one by one or by the ten. The potions made are the ones vendors sell, so they stack together; the
-plain potions vendors sell and loot drops work as the named ones (`scripts/common/potions.lua`).
+plain potions vendors sell and loot drops work as the named ones (`scripts/common/potions.lua`), though a named potion
+from a chest does not stack with them.
 
 ## Change the rules
 

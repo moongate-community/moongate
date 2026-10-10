@@ -731,7 +731,7 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Equal(20, alchemy.Group.Sum(group => group.Recipe.Count));
         Assert.All(
             alchemy.Group.SelectMany(group => group.Recipe),
-            recipe => Assert.Contains(recipe.Resources, resource => resource.Resource == "0x0f0e_empty_bottle")
+            recipe => Assert.Contains(recipe.Resources, resource => resource.Resource == "bottles")
         );
         Assert.All(
             alchemy.Group.SelectMany(group => group.Recipe),

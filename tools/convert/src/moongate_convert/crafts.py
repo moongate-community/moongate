@@ -54,7 +54,10 @@ SKILL_FIXES = {
 }
 
 # What every recipe of a craft takes besides UOX3's list: an alchemist pours each potion into an empty bottle.
-RECIPE_EXTRAS = {"alchemy": [("0x0f0e_empty_bottle", 1)]}
+RECIPE_EXTRAS = {"alchemy": [("bottles", 1)]}
+
+# The lists the extras name, by id: the templates each holds.
+EXTRA_LISTS = {"bottles": ["0x0f0e_empty_bottle"]}
 
 # The names of the recipes UOX3 names alike, by the item they make: the world maps of each facet.
 NAMES_BY_ITEM = {
@@ -363,6 +366,9 @@ def _recipe(
 
             if stacked is not None:
                 # The same item sold one by one and by the ten, as a reagent: both count, as a list of its own.
+                if lists.get(stacked, sorted(found)) != sorted(found):
+                    raise ConversionError(f"the recipe {name} makes a list {stacked}, which is another list already")
+
                 lists[stacked] = sorted(found)
                 resource = stacked
             elif len(found) != 1:
@@ -373,8 +379,13 @@ def _recipe(
         resources.append((resource, int(amount)))
 
     for extra, amount in RECIPE_EXTRAS.get(craft_skill, []):
-        if extra not in templates:
+        held = EXTRA_LISTS.get(extra, [extra])
+
+        if any(template not in templates for template in held):
             raise ConversionError(f"the recipe {name} takes {extra}, which is no item template")
+
+        if extra in EXTRA_LISTS:
+            lists[extra] = held
 
         resources.append((extra, amount))
 
@@ -390,17 +401,18 @@ def _one_item_in_stacks(found: list[str]) -> str | None:
     if len(found) < 2:
         return None
 
-    names = set()
+    # One template alone (0x0f85_ginseng), the others its name after a number (0x0f85_10_ginseng).
+    singles = [template for template in found if re.match(r"^0x[0-9a-f]{4}_[a-z]", template)]
 
-    for template in found:
-        match = re.match(r"^0x[0-9a-f]{4}_(?:\d+_)?(.+)$", template)
+    if len(singles) != 1:
+        return None
 
-        if match is None:
-            return None
+    name = singles[0][7:]
 
-        names.add(match.group(1))
+    if all(template == singles[0] or re.match(rf"^0x[0-9a-f]{{4}}_\d+_{re.escape(name)}$", template) for template in found):
+        return name
 
-    return names.pop() if len(names) == 1 else None
+    return None
 
 
 def _write_lists(lists: dict[str, list[str]]) -> str:

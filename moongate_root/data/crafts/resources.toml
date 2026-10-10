@@ -85,6 +85,10 @@ id = "blood_moss"
 templates = ["0x0f7b_10_blood_moss", "0x0f7b_blood_moss"]
 
 [[resource]]
+id = "bottles"
+templates = ["0x0f0e_empty_bottle"]
+
+[[resource]]
 id = "garlic"
 templates = ["0x0f84_10_garlic", "0x0f84_garlic"]
 

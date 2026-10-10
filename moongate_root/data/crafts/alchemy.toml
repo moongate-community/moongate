@@ -33,7 +33,7 @@ name = "Agility"
 item = "0x0f08_blue_potion"
 skill_min = 15.1
 skill_max = 65.0
-resources = [{ resource = "blood_moss", amount = 1 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "blood_moss", amount = 1 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -41,7 +41,7 @@ name = "Greater Agility"
 item = "0x0f08_b_blue_potion"
 skill_min = 35.1
 skill_max = 85.0
-resources = [{ resource = "blood_moss", amount = 3 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "blood_moss", amount = 3 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group]]
@@ -52,7 +52,7 @@ name = "Lesser Cure"
 item = "0x0f07_orange_potion"
 skill_min = 0.0
 skill_max = 50.0
-resources = [{ resource = "garlic", amount = 1 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "garlic", amount = 1 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -60,7 +60,7 @@ name = "Cure"
 item = "0x0f07_b_orange_potion"
 skill_min = 25.1
 skill_max = 75.0
-resources = [{ resource = "garlic", amount = 3 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "garlic", amount = 3 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -68,7 +68,7 @@ name = "Greater Cure"
 item = "0x0f07_c_orange_potion"
 skill_min = 65.1
 skill_max = 115.0
-resources = [{ resource = "garlic", amount = 6 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "garlic", amount = 6 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group]]
@@ -79,7 +79,7 @@ name = "Lesser Explosion"
 item = "0x0f0d_purple_potion"
 skill_min = 5.1
 skill_max = 55.0
-resources = [{ resource = "sulfurous_ash", amount = 3 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "sulfurous_ash", amount = 3 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -87,7 +87,7 @@ name = "Explosion"
 item = "0x0f0d_b_purple_potion"
 skill_min = 35.1
 skill_max = 85.0
-resources = [{ resource = "sulfurous_ash", amount = 5 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "sulfurous_ash", amount = 5 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -95,7 +95,7 @@ name = "Greater Explosion"
 item = "0x0f0d_c_purple_potion"
 skill_min = 65.1
 skill_max = 115.0
-resources = [{ resource = "sulfurous_ash", amount = 10 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "sulfurous_ash", amount = 10 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group]]
@@ -106,7 +106,7 @@ name = "Lesser Heal"
 item = "0x0f0c_yellow_potion"
 skill_min = 0.0
 skill_max = 50.0
-resources = [{ resource = "ginseng", amount = 1 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "ginseng", amount = 1 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -114,7 +114,7 @@ name = "Heal"
 item = "0x0f0c_b_yellow_potion"
 skill_min = 15.1
 skill_max = 65.0
-resources = [{ resource = "ginseng", amount = 3 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "ginseng", amount = 3 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -122,7 +122,7 @@ name = "Greater Heal"
 item = "0x0f0c_c_yellow_potion"
 skill_min = 55.1
 skill_max = 105.0
-resources = [{ resource = "ginseng", amount = 7 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "ginseng", amount = 7 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group]]
@@ -133,7 +133,7 @@ name = "Lesser Poison"
 item = "0x0f0a_green_potion"
 skill_min = 0.0
 skill_max = 50.0
-resources = [{ resource = "nightshade", amount = 1 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "nightshade", amount = 1 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -141,7 +141,7 @@ name = "Poison"
 item = "0x0f0a_b_green_potion"
 skill_min = 15.1
 skill_max = 65.0
-resources = [{ resource = "nightshade", amount = 2 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "nightshade", amount = 2 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -149,7 +149,7 @@ name = "Greater Poison"
 item = "0x0f0a_c_green_potion"
 skill_min = 55.1
 skill_max = 105.0
-resources = [{ resource = "nightshade", amount = 4 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "nightshade", amount = 4 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -157,7 +157,7 @@ name = "Deadly Poison"
 item = "0x0f0a_d_green_potion"
 skill_min = 90.1
 skill_max = 140.0
-resources = [{ resource = "nightshade", amount = 8 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "nightshade", amount = 8 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group]]
@@ -168,7 +168,7 @@ name = "Refresh"
 item = "0x0f0b_red_potion"
 skill_min = 15.1
 skill_max = 65.0
-resources = [{ resource = "black_pearl", amount = 1 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "black_pearl", amount = 1 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -176,7 +176,7 @@ name = "Total Refresh"
 item = "0x0f0b_b_red_potion"
 skill_min = 25.1
 skill_max = 75.0
-resources = [{ resource = "black_pearl", amount = 5 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "black_pearl", amount = 5 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group]]
@@ -187,7 +187,7 @@ name = "Strength"
 item = "0x0f09_white_potion"
 skill_min = 25.1
 skill_max = 75.0
-resources = [{ resource = "mandrake_root", amount = 2 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "mandrake_root", amount = 2 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group.recipe]]
@@ -195,7 +195,7 @@ name = "Greater Strength"
 item = "0x0f09_b_white_potion"
 skill_min = 45.1
 skill_max = 95.0
-resources = [{ resource = "mandrake_root", amount = 5 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "mandrake_root", amount = 5 }, { resource = "bottles", amount = 1 }]
 skills = []
 
 [[group]]
@@ -206,5 +206,5 @@ name = "Nightsight"
 item = "0x0f06_black_potion"
 skill_min = 0.0
 skill_max = 50.0
-resources = [{ resource = "spider_silk", amount = 5 }, { resource = "0x0f0e_empty_bottle", amount = 1 }]
+resources = [{ resource = "spider_silk", amount = 5 }, { resource = "bottles", amount = 1 }]
 skills = []
