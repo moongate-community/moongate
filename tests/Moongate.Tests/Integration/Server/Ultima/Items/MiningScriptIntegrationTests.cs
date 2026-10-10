@@ -184,6 +184,7 @@ public sealed class MiningScriptIntegrationTests : IAsyncLifetime
             """
         );
         _scripts.Write("items/ore.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "items", "ore.lua")));
+        _scripts.Write("common/smithy.lua", await File.ReadAllTextAsync(Path.Combine(root, "scripts", "common", "smithy.lua")));
         var options = new ScriptEngineOptions
         {
             ScriptsDirectory = _scripts.Path, MaxInstructionsPerResume = 20_000, MaxInstructionsPerChunk = 100_000,

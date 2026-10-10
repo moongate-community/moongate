@@ -9,6 +9,7 @@ namespace Moongate.Tests.TestSupport.Ultima.Maps;
 /// </summary>
 public sealed class FakeMapService : IMapService
 {
+    private readonly MapType _map;
     private readonly int _width;
     private readonly int _height;
     private readonly ushort[,] _landIds;
@@ -59,7 +60,7 @@ public sealed class FakeMapService : IMapService
 
     public bool Contains(MapType map, int x, int y)
     {
-        return map == MapType.Felucca && (uint)x < (uint)_width && (uint)y < (uint)_height;
+        return map == _map && (uint)x < (uint)_width && (uint)y < (uint)_height;
     }
 
     public MapLandTile GetLand(MapType map, int x, int y)
@@ -88,10 +89,13 @@ public sealed class FakeMapService : IMapService
 
     private readonly Dictionary<(int X, int Y), MapStaticTile[]> _statics = new();
 
-    public IReadOnlyList<MapType> Maps { get; } = [MapType.Felucca];
+    public IReadOnlyList<MapType> Maps { get; }
 
-    public FakeMapService(int width, int height)
+    // Felucca unless a test needs the map its mobiles stand on.
+    public FakeMapService(int width, int height, MapType map = MapType.Felucca)
     {
+        _map = map;
+        Maps = [map];
         _width = width;
         _height = height;
         _landIds = new ushort[width, height];
@@ -101,7 +105,7 @@ public sealed class FakeMapService : IMapService
 
     private void Check(MapType map, int x, int y)
     {
-        if (map != MapType.Felucca)
+        if (map != _map)
         {
             throw new KeyNotFoundException($"Map {map} is not loaded.");
         }
