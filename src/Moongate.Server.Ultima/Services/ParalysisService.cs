@@ -69,6 +69,21 @@ public sealed class ParalysisService : IParalysisService
         return true;
     }
 
+    public bool Detach(MobileEntity mobile)
+    {
+        ArgumentNullException.ThrowIfNull(mobile);
+
+        if (!mobile.TryGetProp<long>(UntilProp, out _))
+        {
+            return false;
+        }
+
+        Stop(mobile.Id);
+        mobile.RemoveProp(UntilProp);
+
+        return true;
+    }
+
     public void Resume(MobileEntity mobile)
     {
         ArgumentNullException.ThrowIfNull(mobile);

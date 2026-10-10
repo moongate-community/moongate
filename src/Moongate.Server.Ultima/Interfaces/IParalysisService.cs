@@ -25,6 +25,12 @@ public interface IParalysisService
     bool Release(MobileEntity mobile);
 
     /// <summary>
+    ///     Ends the mobile's paralysis without freeing it: someone freezes or frees the mobile on its own account, so the
+    ///     time that was running no longer lifts a freeze that is not its own; false when it was not paralyzed.
+    /// </summary>
+    bool Detach(MobileEntity mobile);
+
+    /// <summary>
     ///     Takes a saved paralysis up again, as a paralyzed player comes back: ended when its time passed, else timed for
     ///     what is left.
     /// </summary>

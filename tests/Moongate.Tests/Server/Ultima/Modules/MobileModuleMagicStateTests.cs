@@ -48,6 +48,30 @@ public sealed class MobileModuleMagicStateTests
     }
 
     [Fact]
+    public void SetFrozen_OfAParalyzedMobile_TakesTheFreezeOver_TheParalysisNoLongerFreesIt()
+    {
+        var result = Run(
+            "return mobile.paralyze(2, 12), mobile.set_frozen(2, true), mobile.is_paralyzed(2), mobile.release_paralysis(2)"
+        );
+
+        Assert.Equal([true, true, false, false], result.Select(value => value.Read<bool>()));
+        Assert.True(_aria.Frozen);
+        Assert.Single(_timers.Unregistered);
+    }
+
+    [Fact]
+    public void SetFrozen_ToFreeAParalyzedMobile_EndsTheParalysis_ASecondFreezeIsNotUndoneByIt()
+    {
+        var result = Run(
+            "return mobile.paralyze(2, 12), mobile.set_frozen(2, false), mobile.set_frozen(2, true), mobile.is_paralyzed(2)"
+        );
+
+        Assert.Equal([true, true, true, false], result.Select(value => value.Read<bool>()));
+        Assert.True(_aria.Frozen);
+        Assert.False(_aria.TryGetProp<long>(ParalysisService.UntilProp, out _));
+    }
+
+    [Fact]
     public void Disguise_ChangesTheNameBodyAndHue_AndEndDisguiseGivesThemBack()
     {
         var result = Run(

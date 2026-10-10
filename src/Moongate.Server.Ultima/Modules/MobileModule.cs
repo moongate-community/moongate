@@ -481,7 +481,7 @@ public sealed class MobileModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Freezes or frees the mobile: frozen, it neither steps nor turns; saved with the mobile. False for a mobile not in the world."
+        "Freezes or frees the mobile: frozen, it neither steps nor turns; saved with the mobile. A paralysis that was running is ended by it, so its time does not lift the freeze. False for a mobile not in the world."
     )]
     public bool SetFrozen(long serial, bool frozen)
     {
@@ -490,6 +490,8 @@ public sealed class MobileModule
             return false;
         }
 
+        // The freeze is the script's from now on: the time of a paralysis that was running no longer lifts it.
+        _paralysis?.Detach(mobile);
         _state.SetFrozen(mobile, frozen);
 
         return true;
