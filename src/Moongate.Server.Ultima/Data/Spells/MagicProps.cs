@@ -21,4 +21,10 @@ public static class MagicProps
     ///     Prop of a mobile: the time, in seconds since 1970, Reactive Armor lasts to.
     /// </summary>
     public const string ReactiveUntil = "magic.reactive_until";
+
+    /// <summary>
+    ///     Prop of a mobile: true while Magic Reflection is on it. The first harmful spell aimed at the mobile that can be
+    ///     reflected is turned back on its caster and the prop is gone. A death ends it.
+    /// </summary>
+    public const string Reflect = "magic.reflect";
 }

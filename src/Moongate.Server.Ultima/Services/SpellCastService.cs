@@ -34,6 +34,9 @@ public sealed class SpellCastService : ISpellCastService
     private const int FizzleSpeed = 6;
     private const int FizzleDuration = 30;
     private const int FizzleSound = 0x5C;
+    private const int ReflectGraphic = 0x37B9;
+    private const int ReflectSpeed = 10;
+    private const int ReflectDuration = 5;
     private const int FirstCircle = 1;
     private const int EyeHeight = 14;
     private const int DefaultSkillCap = 1000;
@@ -542,12 +545,48 @@ public sealed class SpellCastService : ISpellCastService
             _handling.Consume(scroll);
         }
 
-        var result = _scripts.Cast(spell, caster, target, scroll is not null);
+        // A spell Magic Reflection turns back reaches its caster from the one it was aimed at.
+        var source = caster;
+
+        if (TryReflect(caster, spell, ref target) is { } wearer)
+        {
+            source = wearer;
+        }
+
+        var result = _scripts.Cast(spell, source, target, scroll is not null);
 
         if (result.Kind is not (ScriptResultKind.Completed or ScriptResultKind.Suspended))
         {
             _logger.Warning("The script of the spell {Spell} did not run: {Result}", spell.Key, result.Kind);
         }
+    }
+
+    // Magic Reflection, as the classic single-use rule has it: the first harmful spell that can be reflected, aimed at
+    // someone else who wears it, is turned on its caster and the reflection is gone. The reflected spell is not
+    // reflected again, since the swap is made once, here. Gives who reflected it.
+    private MobileEntity? TryReflect(MobileEntity caster, SpellDefinition spell, ref SpellTargetInfo target)
+    {
+        if (!spell.Harmful ||
+            !spell.Reflectable ||
+            target.Kind != SpellTargetType.Mobile ||
+            target.Serial == caster.Id ||
+            !_mobiles.TryGet(target.Serial, out var wearer) ||
+            !_mobiles.IsInWorld(wearer.Id) ||
+            !wearer.GetProp(MagicProps.Reflect, false))
+        {
+            return null;
+        }
+
+        wearer.RemoveProp(MagicProps.Reflect);
+        _effects.PlayOn(
+            wearer.Id,
+            wearer.Map,
+            wearer.Location,
+            new EffectOptions { Graphic = ReflectGraphic, Speed = ReflectSpeed, Duration = ReflectDuration }
+        );
+        target = new(SpellTargetType.Mobile, caster.Id, caster.Map, caster.Location);
+
+        return wearer;
     }
 
     // The script of a spell may refuse before anything is spent: a cliloc number or a text is told to the caster, false

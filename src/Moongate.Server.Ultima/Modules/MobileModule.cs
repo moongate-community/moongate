@@ -58,6 +58,9 @@ public sealed class MobileModule
     private readonly IStatBonusService? _bonuses;
     private readonly IItemTemplateService? _templates;
     private readonly IPoisonService? _poison;
+    private readonly IParalysisService? _paralysis;
+    private readonly IDisguiseService? _disguise;
+    private readonly INameService? _names;
 
     public MobileModule(
         IMobileService mobiles,
@@ -78,9 +81,15 @@ public sealed class MobileModule
         IMountService? mounts = null,
         IStatBonusService? bonuses = null,
         IItemTemplateService? templates = null,
-        IPoisonService? poison = null
+        IPoisonService? poison = null,
+        IParalysisService? paralysis = null,
+        IDisguiseService? disguise = null,
+        INameService? names = null
     )
     {
+        _paralysis = paralysis;
+        _disguise = disguise;
+        _names = names;
         _mounts = mounts;
         _bonuses = bonuses;
         _templates = templates;
@@ -1183,6 +1192,95 @@ public sealed class MobileModule
     }
 
     /// <summary>
+    ///     Paralyzes the mobile for a few seconds; <c>mobile.paralyze(target, 12)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Paralyzes the mobile for the seconds given: it neither steps, turns nor casts until they pass, and the time is saved with it, so a player that logs out is freed at the right moment. False, with nothing changed, for a mobile already frozen or dead, a time that is not positive or a mobile that is not in the world; a paralysis does not stack or extend."
+    )]
+    public bool Paralyze(long serial, double seconds)
+    {
+        return _paralysis is not null &&
+               double.IsFinite(seconds) &&
+               seconds > 0 &&
+               TryGetMobile(serial, out var mobile) &&
+               _paralysis.Paralyze(mobile, TimeSpan.FromSeconds(seconds));
+    }
+
+    /// <summary>
+    ///     Whether the mobile is held by a paralysis; <c>mobile.is_paralyzed(target)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the mobile is frozen by a paralysis that has not ended; a mobile frozen by mobile.set_frozen is not.")]
+    public bool IsParalyzed(long serial)
+    {
+        return _paralysis is not null && TryGetMobile(serial, out var mobile) && _paralysis.IsParalyzed(mobile);
+    }
+
+    /// <summary>
+    ///     Frees a paralyzed mobile; <c>mobile.release_paralysis(target)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Ends the mobile's paralysis and frees it at once; false when it was not paralyzed.")]
+    public bool ReleaseParalysis(long serial)
+    {
+        return _paralysis is not null && TryGetMobile(serial, out var mobile) && _paralysis.Release(mobile);
+    }
+
+    /// <summary>
+    ///     Changes the looks of the mobile for a while; <c>mobile.disguise(who, { name_list = "male", hue = 0x3F0 }, 60)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Disguises the mobile for the seconds given: the options table may hold name (a text of at most 30 characters), name_list (the id of a list of data/names.toml, such as 'male', to take a random name from), body (0 to 65535) and hue (0 to 65535); what it lacks stays. When the time is up, the mobile dies or logs in after a restart that took longer, its own looks come back. A rider that takes a body that is not a human one is dismounted. False, with nothing changed, for a mobile already disguised, dead or not in the world, an empty table, a bad value or a time that is not positive."
+    )]
+    public bool Disguise(long serial, LuaTable options, double seconds)
+    {
+        if (_disguise is null || !double.IsFinite(seconds) || seconds <= 0 || !TryGetMobile(serial, out var mobile))
+        {
+            return false;
+        }
+
+        var name = options["name"].TryRead<string>(out var text) ? text : null;
+
+        if (options["name_list"].TryRead<string>(out var list))
+        {
+            if (_names is null || !_names.HasList(list))
+            {
+                return false;
+            }
+
+            name = _names.RandomName(list);
+        }
+
+        var body = ReadWhole(options["body"]);
+        var hue = ReadWhole(options["hue"]);
+
+        if (body is < 0 or > ushort.MaxValue || hue is < 0 or > ushort.MaxValue)
+        {
+            return false;
+        }
+
+        return _disguise.Disguise(mobile, new DisguiseLooks(body, hue, name), TimeSpan.FromSeconds(seconds));
+    }
+
+    /// <summary>
+    ///     Whether the mobile is disguised; <c>mobile.is_disguised(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether a mobile.disguise is on the mobile now.")]
+    public bool IsDisguised(long serial)
+    {
+        return _disguise is not null && TryGetMobile(serial, out var mobile) && _disguise.IsDisguised(mobile);
+    }
+
+    /// <summary>
+    ///     Ends a disguise; <c>mobile.end_disguise(who)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Gives the mobile its own name, body and hue back at once; false when it was not disguised.")]
+    public bool EndDisguise(long serial)
+    {
+        return _disguise is not null && TryGetMobile(serial, out var mobile) && _disguise.End(mobile);
+    }
+
+    /// <summary>
     ///     The mobile says text overhead to everyone around, as a countdown over a held potion;
     ///     <c>mobile.say(user, "3")</c>.
     /// </summary>
@@ -1193,6 +1291,13 @@ public sealed class MobileModule
     public bool Say(long serial, string text)
     {
         return !string.IsNullOrWhiteSpace(text) && TryGetMobile(serial, out var mobile) && _speech.Say(mobile, text) >= 0;
+    }
+
+    private static int? ReadWhole(LuaValue value)
+    {
+        return value.TryRead<double>(out var number) && double.IsFinite(number) && number is >= int.MinValue and <= int.MaxValue
+            ? (int)number
+            : null;
     }
 
     private bool TryGetMobile(long serial, [NotNullWhen(true)] out MobileEntity? mobile)
