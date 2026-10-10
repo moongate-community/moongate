@@ -545,15 +545,11 @@ public sealed class SpellCastService : ISpellCastService
             _handling.Consume(scroll);
         }
 
-        // A spell Magic Reflection turns back reaches its caster from the one it was aimed at.
-        var source = caster;
+        // A spell Magic Reflection turns back keeps its caster, who is now its target: it hurts itself, with its own
+        // skills, and the wearer it was aimed at is told to the script as the reflector.
+        var reflector = TryReflect(caster, spell, ref target);
 
-        if (TryReflect(caster, spell, ref target) is { } wearer)
-        {
-            source = wearer;
-        }
-
-        var result = _scripts.Cast(spell, source, target, scroll is not null);
+        var result = _scripts.Cast(spell, caster, target, scroll is not null, reflector);
 
         if (result.Kind is not (ScriptResultKind.Completed or ScriptResultKind.Suspended))
         {
@@ -563,7 +559,8 @@ public sealed class SpellCastService : ISpellCastService
 
     // Magic Reflection, as the classic single-use rule has it: the first harmful spell that can be reflected, aimed at
     // someone else who wears it, is turned on its caster and the reflection is gone. The reflected spell is not
-    // reflected again, since the swap is made once, here. Gives who reflected it.
+    // reflected again, since the swap is made once, here. Only the target is swapped: the caster stays the caster and the
+    // script makes it the aggressor of the wearer. Gives who reflected it.
     private MobileEntity? TryReflect(MobileEntity caster, SpellDefinition spell, ref SpellTargetInfo target)
     {
         if (!spell.Harmful ||

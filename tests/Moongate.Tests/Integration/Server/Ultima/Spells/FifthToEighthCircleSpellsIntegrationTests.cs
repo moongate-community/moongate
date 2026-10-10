@@ -76,7 +76,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         "summon_creature", "dispel", "energy_bolt", "explosion", "invisibility", "mark", "mass_curse", "paralyze_field",
         "reveal", "chain_lightning", "energy_field", "flame_strike", "gate_travel", "mana_vampire", "mass_dispel",
         "meteor_swarm", "polymorph", "earthquake", "energy_vortex", "resurrection", "summon_air_elemental",
-        "summon_daemon", "summon_earth_elemental", "summon_fire_elemental", "summon_water_elemental"
+        "summon_daemon", "curse", "summon_earth_elemental", "summon_fire_elemental", "summon_water_elemental"
     ];
 
     private static readonly string[] Summons =
@@ -487,7 +487,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
-    public void AnEnergyBolt_AtAWearerOfMagicReflection_HurtsItsCaster_FromTheWearer_AndTheReflectionIsGone()
+    public void AnEnergyBolt_AtAWearerOfMagicReflection_HurtsItsCaster_NoOneToBlame_AndTheWearerIsAggressed()
     {
         _bran.SetProp("magic.reflect", true);
 
@@ -496,9 +496,48 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
 
         Assert.Empty(_errors);
         Assert.False(_bran.TryGetProp<bool>("magic.reflect", out _));
-        Assert.Equal([(_bran, _aria)], _combat.Aggressed);
+        // The caster is the aggressor of the wearer it aimed at, and hurts itself: no one is a criminal for it.
+        Assert.Equal([(_aria, _bran)], _combat.Aggressed);
         var harm = Assert.Single(_combat.Harmed);
-        Assert.Equal((_bran, _aria), (harm.Attacker, harm.Target));
+        Assert.Equal((_aria, _aria), (harm.Attacker, harm.Target));
+    }
+
+    [Fact]
+    public void AParalyze_AtAWearerOfMagicReflection_FreezesItsCaster_ForTheDurationOfItsOwnMagery()
+    {
+        _bran.SetProp("magic.reflect", true);
+
+        Cast("paralyze");
+
+        Assert.Empty(_errors);
+        Assert.True(_aria.Frozen);
+        Assert.False(_bran.Frozen);
+        Assert.Equal([(_aria, _bran)], _combat.Aggressed);
+    }
+
+    [Fact]
+    public void AManaVampire_AtAWearerOfMagicReflection_TakesNothingFromTheWearer()
+    {
+        _bran.SetProp("magic.reflect", true);
+        Roll(pick: 0, roll: 1);
+
+        Cast("mana_vampire");
+
+        Assert.Equal(50, _bran.Mana);
+        Assert.Equal(20, _aria.Mana);
+    }
+
+    [Fact]
+    public void ACurse_AtAWearerOfMagicReflection_CursesItsCaster_AndTheWearerIsAggressed()
+    {
+        _bran.SetProp("magic.reflect", true);
+
+        Cast("curse");
+
+        Assert.Empty(_errors);
+        Assert.Equal([(_aria, _bran)], _combat.Aggressed);
+        Assert.True(_bonuses.Bonus(_aria, StatBonusType.Strength) < 0);
+        Assert.Equal(0, _bonuses.Bonus(_bran, StatBonusType.Strength));
     }
 
     [Fact]

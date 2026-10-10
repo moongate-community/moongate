@@ -745,7 +745,7 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public void AHarmfulReflectableSpell_AtAMobileWithReflection_ReachesItsCaster_FromTheOneThatWasAimedAt()
+    public void AHarmfulReflectableSpell_AtAMobileWithReflection_ReachesItsCaster_WhoStaysTheCaster()
     {
         var casts = WithSpell(Bolt(reflectable: true));
         _bran.SetProp(MagicProps.Reflect, true);
@@ -755,8 +755,9 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
         _targets.Answer(TargetResult.ForObject(_bran.Id));
 
         var cast = Assert.Single(_scripts.Casts);
-        Assert.Equal((_bran, SpellTargetType.Mobile, _aria.Id), (cast.Caster, cast.Target.Kind, cast.Target.Serial));
+        Assert.Equal((_aria, SpellTargetType.Mobile, _aria.Id), (cast.Caster, cast.Target.Kind, cast.Target.Serial));
         Assert.Equal(_aria.Location, cast.Target.Location);
+        Assert.Same(_bran, Assert.Single(_scripts.Reflectors));
         Assert.False(_bran.TryGetProp<bool>(MagicProps.Reflect, out _));
         // The caster paid for it, and the one that reflected shows the flash.
         Assert.Equal(16, _aria.Mana);
@@ -777,7 +778,8 @@ public sealed class SpellCastServiceTests : IAsyncLifetime
         FireDelay();
         _targets.Answer(TargetResult.ForObject(_bran.Id));
 
-        Assert.Equal([_bran, _aria], _scripts.Casts.Select(cast => cast.Caster));
+        Assert.Equal([_aria, _aria], _scripts.Casts.Select(cast => cast.Caster));
+        Assert.Equal([_bran, null], _scripts.Reflectors);
     }
 
     [Fact]

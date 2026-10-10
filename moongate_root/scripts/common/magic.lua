@@ -71,6 +71,13 @@
 --                                      done, with no one to blame, when the
 --                                      caster has left the game
 --   magic.harm_after(caster, who, damage, seconds)   the same, a while later
+--   magic.aggress(caster, who, info)   makes the caster the aggressor of who and
+--                                      says whether the spell goes on; false for
+--                                      one that cannot be harmed. A spell that
+--                                      Magic Reflection turned back (info.reflected)
+--                                      has the caster for who: it is the aggressor
+--                                      of the wearer (info.reflector) it aimed at
+--                                      and hurts itself, with no crime
 --   magic.dispel_chance(caster, difficulty, focus)   the chance, 0 to 1 or
 --                                      more, that a Dispel undoes a summoned
 --                                      creature of that difficulty and focus
@@ -260,6 +267,16 @@ function magic.indirect_targets(caster, map, x, y, range)
     return found
 end
 
+function magic.aggress(caster, who, info)
+    if info.reflected then
+        combat.aggress(caster, info.reflector)
+
+        return true
+    end
+
+    return combat.aggress(caster, who)
+end
+
 function magic.harm(caster, who, damage)
     -- A caster that left the game in the meantime is to blame for nothing, but the damage is done all the same.
     if not combat.harm(who, damage, caster) and not mobile.location(caster) then
@@ -293,7 +310,7 @@ end
 
 function magic.curse(caster, target, info, stat)
     -- A target that cannot be harmed, as an invulnerable or a dead one, takes no curse.
-    if not combat.aggress(caster, target) then
+    if not magic.aggress(caster, target, info) then
         return
     end
 
@@ -321,7 +338,7 @@ end
 local STATS = { "strength", "dexterity", "intelligence" }
 
 function magic.curse_all(caster, target, info)
-    if not combat.aggress(caster, target) then
+    if not magic.aggress(caster, target, info) then
         return
     end
 

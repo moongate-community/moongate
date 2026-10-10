@@ -34,11 +34,11 @@ end
 function energy_bolt.cast(caster, target, info)
     local who = target.serial
 
-    if not combat.aggress(caster, who) then
+    if not magic.aggress(caster, who, info) then
         return
     end
 
-    effect.moving(caster, who, info.projectile ~= 0 and info.projectile or BOLT, {
+    effect.moving(info.reflector or caster, who, info.projectile ~= 0 and info.projectile or BOLT, {
         speed = info.projectile_speed ~= 0 and info.projectile_speed or BOLT_SPEED,
     })
 

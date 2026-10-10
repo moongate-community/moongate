@@ -26,7 +26,15 @@ public interface ISpellScriptService
 
     /// <summary>
     ///     Calls <c>cast(caster, target, spell)</c> of the spell's script, once the cast succeeded;
-    ///     <see cref="ScriptResult.Missing" /> when the spell has no script or no such function.
+    ///     <see cref="ScriptResult.Missing" /> when the spell has no script or no such function. A spell that Magic
+    ///     Reflection turned back has the caster for its target and gives who reflected it as <paramref name="reflector" />:
+    ///     the caster stays the caster, so the damage, the resist and the duration are its own.
     /// </summary>
-    ScriptResult Cast(SpellDefinition spell, MobileEntity caster, SpellTargetInfo target, bool fromScroll);
+    ScriptResult Cast(
+        SpellDefinition spell,
+        MobileEntity caster,
+        SpellTargetInfo target,
+        bool fromScroll,
+        MobileEntity? reflector = null
+    );
 }

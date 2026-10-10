@@ -47,7 +47,7 @@ end
 function poison.cast(caster, target, info)
     local who = target.serial
 
-    if not combat.aggress(caster, who) then
+    if not magic.aggress(caster, who, info) then
         return
     end
 

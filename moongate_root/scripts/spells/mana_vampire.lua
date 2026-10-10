@@ -5,7 +5,8 @@
 --   The seventh circle spell Mana Vampire: all the mana of the target goes to the caster (up to its own
 --   maximum), unless the target resists, which it does nearly always (98 times in a hundred, whatever its
 --   skill) and is told so. The target's own cast is ruined and its paralysis, if it had one, is ended. The
---   caster is the aggressor of the target. Called by the spell service with the caster, the target ({ kind =
+--   caster is the aggressor of the target. Turned back by Magic Reflection it drains the caster into itself,
+--   which is nothing. Called by the spell service with the caster, the target ({ kind =
 --   "mobile", serial }) and the data of the spell.
 --
 -- Functions:
@@ -28,7 +29,7 @@ end
 function mana_vampire.cast(caster, target, info)
     local who = target.serial
 
-    if not combat.aggress(caster, who) then
+    if not magic.aggress(caster, who, info) then
         return
     end
 
@@ -41,7 +42,8 @@ function mana_vampire.cast(caster, target, info)
         local theirs = mobile.stats(who)
         local ours = mobile.stats(caster)
 
-        if theirs and ours and theirs.mana > 0 then
+        -- A vampire that was turned back on itself drains its own mana into its own: nothing moves.
+        if who ~= caster and theirs and ours and theirs.mana > 0 then
             local taken = math.min(theirs.mana, ours.mana_max - ours.mana)
 
             mobile.set_stats(who, { mana = 0 })
