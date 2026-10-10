@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Randomness;
 using Moongate.Tests.TestSupport.Scripting;
 using Moongate.Tests.TestSupport.Ultima.Death;
+using Moongate.Tests.TestSupport.Ultima.Magic;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 
@@ -25,6 +26,7 @@ public sealed class PoisonServiceTests : IAsyncLifetime
     private readonly StubDeathService _death = new();
     private readonly RecordingSpeechService _speech = new();
     private readonly ScriptedRandom _random = new();
+    private readonly RecordingSpellCastService _casts = new();
 
     private BroadcastFixture _fixture = null!;
     private GameSession _session = null!;
@@ -52,7 +54,8 @@ public sealed class PoisonServiceTests : IAsyncLifetime
             _speech,
             new CombatConfig { DisplayDamageNumbers = true },
             _random,
-            _fixture.Mobiles
+            _fixture.Mobiles,
+            _casts
         );
     }
 
@@ -97,6 +100,17 @@ public sealed class PoisonServiceTests : IAsyncLifetime
 
         Assert.Equal(87, _aria.Hits);
         Assert.Contains(_fixture.Sender.Sent.OfType<DamagePacket>(), damage => damage.Damage == 13);
+    }
+
+    [Fact]
+    public void ATick_ThatLeavesTheMobileAlive_DisturbsItsCast()
+    {
+        _poison.Apply(_aria, 3);
+        _random.Integers(1);
+
+        Fire();
+
+        Assert.Equal([_aria], _casts.Hurts);
     }
 
     [Fact]
