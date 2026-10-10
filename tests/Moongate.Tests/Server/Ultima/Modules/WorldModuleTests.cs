@@ -23,6 +23,7 @@ using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Server.Ultima.Types.Weather;
 using Moongate.Tests.TestSupport.Ultima.Commands;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Modules;
@@ -58,6 +59,11 @@ public sealed class WorldModuleTests : IAsyncLifetime
     private readonly RecordingLightService _light = new();
     private readonly ControlledBroadcastService _broadcast = new();
     private readonly RecordingSpeechService _speech = new();
+
+    private readonly FakeTileDataService _tiles = new FakeTileDataService()
+        .Item(0x0692, TileFlagType.Impassable, 20)
+        .Item(0x0EED, TileFlagType.None, 0);
+
     private BroadcastFixture _fixture = null!;
 
     public WorldModuleTests()
@@ -241,6 +247,25 @@ public sealed class WorldModuleTests : IAsyncLifetime
         );
 
         Assert.Equal([1, 0x40000050, 0], result.Select(value => value.Read<long>()));
+    }
+
+    [Fact]
+    public void CanFit_IsFalseWhereAMobileStandsOrAnImpassableItemLies_ButNotForTheMobileAsked()
+    {
+        var wall = new ItemEntity { Id = new Serial(0x40000060), TemplateId = "door", ItemId = 0x0692, Amount = 1 };
+        var gold = new ItemEntity { Id = new Serial(0x40000061), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        var items = TestItems.Create(_sectors);
+        items.Add([wall, gold]);
+        items.PlaceOnGround(wall, MapType.Trammel, new Point3D(1601, 1600, 0));
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1602, 1600, 0));
+
+        var result = Run(
+            "return world.can_fit('Trammel', 1600, 1600, 0, 0), world.can_fit('Trammel', 1600, 1600, 0, 0x100), " +
+            "world.can_fit('Trammel', 1601, 1600, 0, 0), world.can_fit('Trammel', 1601, 1600, 25, 0), " +
+            "world.can_fit('Trammel', 1602, 1600, 0, 0), world.can_fit('Trammel', 1603, 1600, 0, 0)"
+        );
+
+        Assert.Equal([false, true, false, true, true, true], result.Select(value => value.Read<bool>()));
     }
 
     [Fact]
@@ -568,7 +593,8 @@ public sealed class WorldModuleTests : IAsyncLifetime
                 _props,
                 _light,
                 _speech,
-                _maps
+                _maps,
+                _tiles
             )
         );
         binder.BindEnum(state, typeof(MapType));

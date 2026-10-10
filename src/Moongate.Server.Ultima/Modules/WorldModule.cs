@@ -31,6 +31,7 @@ public sealed class WorldModule
 
     // A smithy, not a region: the statics of a wider square cost a read of each of its cells.
     private const int MaxStaticsRange = 18;
+    private const int PersonHeight = 16;
 
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
@@ -48,6 +49,7 @@ public sealed class WorldModule
     private readonly ILightService? _light;
     private readonly ISpeechService? _speech;
     private readonly IMapService? _maps;
+    private readonly ITileDataService? _tiles;
     private readonly ILogger _logger = Log.ForContext<WorldModule>();
 
     public WorldModule(
@@ -66,9 +68,11 @@ public sealed class WorldModule
         IWorldPropsService? props = null,
         ILightService? light = null,
         ISpeechService? speech = null,
-        IMapService? maps = null
+        IMapService? maps = null,
+        ITileDataService? tiles = null
     )
     {
+        _tiles = tiles;
         _maps = maps;
         _speech = speech;
         _light = light;
@@ -205,6 +209,56 @@ public sealed class WorldModule
     public bool IsOccupied(MapType map, int x, int y)
     {
         return _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0).Count > 0;
+    }
+
+    /// <summary>
+    ///     Gets whether a mobile could be put at <paramref name="x" />, <paramref name="y" />, <paramref name="z" />
+    ///     without being on top of another mobile or inside an impassable or surface item lying on the ground, such as
+    ///     a closed door; <c>world.can_fit(map, x, y, z, caster)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "Whether a mobile fits at the place x, y, z of the map: no other mobile than the one asked (0 for none) stands there at that height, and no impassable or surface item on the ground fills the space above z. Statics are not asked (see world.standing_z)."
+    )]
+    public bool CanFit(MapType map, int x, int y, int z, long except)
+    {
+        if (!_sectors.IsInside(map, x, y))
+        {
+            return false;
+        }
+
+        foreach (var mobile in _sectors.GetMobilesInRange(map, new Point3D(x, y, 0), 0))
+        {
+            if ((long)mobile.Id.Value != except && mobile.Location.Z + PersonHeight > z && z + PersonHeight > mobile.Location.Z)
+            {
+                return false;
+            }
+        }
+
+        if (_tiles is null)
+        {
+            return true;
+        }
+
+        var items = _sectors.GetItemsAt(map, x, y);
+
+        for (var index = 0; index < items.Count; index++)
+        {
+            var found = items[index];
+
+            if (found.GroundLocation is not { } spot || !_tiles.TryGetItem(found.ItemId, out var data) ||
+                (data.Flags & (TileFlagType.Impassable | TileFlagType.Surface)) == 0)
+            {
+                continue;
+            }
+
+            if (spot.Z + data.StandHeight > z && z + PersonHeight > spot.Z)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /// <summary>

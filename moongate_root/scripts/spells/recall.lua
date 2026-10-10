@@ -7,8 +7,9 @@
 --   the template recall_rune whose props say where: rune.marked (true), and
 --   rune.x, rune.y, rune.z and rune.map. It is refused, before anything is spent,
 --   for what is not a rune, a rune not marked, a criminal, a caster too loaded
---   to move, a rune of another map, a place no one can stand on, and a region
---   that does not let a recall out of it or into it (the recall_out and
+--   to move, a rune of another map, a place no one can stand on or that a
+--   mobile or an item fills, and a region that does not let a recall out of it
+--   or into it (the recall_out and
 --   recall_in flags of data/regions). Not built: a check for a fight in
 --   progress (the classic game has none before the AOS) and the pets that
 --   follow. Called by the spell service with the caster, the target
@@ -85,7 +86,8 @@ function recall.check(caster, target, info)
 
     local z = world.standing_z(place.map, place.x, place.y, place.z)
 
-    if not z then
+    -- Nor where a mobile stands, or an impassable item lies on the ground, such as a shut door.
+    if not z or not world.can_fit(place.map, place.x, place.y, z, caster) then
         return BLOCKED
     end
 

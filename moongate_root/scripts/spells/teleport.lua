@@ -5,11 +5,11 @@
 --   The third circle spell Teleport: the caster stands at the place it picked,
 --   in sight and within the reach of a spell, with a puff at both places and the
 --   sound. It is refused, before anything is spent, for a caster too loaded to
---   move, a place no one can stand on ("that location is blocked") and a region
---   that does not let a teleport out of it or into it (the teleport_out and
---   teleport_in flags of data/regions). Called by the spell service with the
---   caster, the target ({ kind = "location", map, x, y, z }) and the data of
---   the spell.
+--   move, a place no one can stand on or that a mobile or an item fills ("that
+--   location is blocked") and a region that does not let a teleport out of it
+--   or into it (the teleport_out and teleport_in flags of data/regions).
+--   Called by the spell service with the caster, the target
+--   ({ kind = "location", map, x, y, z }) and the data of the spell.
 --
 -- Functions:
 --   teleport.check(caster, target, info)   a cliloc number that refuses the
@@ -42,7 +42,8 @@ function teleport.check(caster, target, info)
 
     local z = world.standing_z(target.map, target.x, target.y, target.z)
 
-    if not z then
+    -- Nor where a mobile stands, or an impassable item lies on the ground, such as a shut door.
+    if not z or not world.can_fit(target.map, target.x, target.y, z, caster) then
         return BLOCKED
     end
 

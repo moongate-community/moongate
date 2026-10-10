@@ -177,7 +177,8 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
         );
         _container.RegisterInstance<IItemFactoryService>(new FakeItemFactoryService(_templates, new FakeTileDataService()));
         _container.RegisterInstance<IItemSerialPool>(_serials);
-        _container.RegisterInstance<ITileDataService>(new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0));
+        _container.RegisterInstance<ITileDataService>(new FakeTileDataService().Item(0x0E75, TileFlagType.Container, 0).Item(0x0692, TileFlagType.Impassable, 20)
+        );
         _container.RegisterInstance<IContainerCapacityService>(_capacity);
         _container.RegisterInstance<IInventoryMutationGuard>(_guard);
         _container.RegisterInstance<TimeProvider>(_time);
@@ -704,6 +705,38 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
 
         Assert.Equal(new Point3D(10, 10, 0), _aria.Location);
         Assert.Contains(501942, ToldTo(_aria));
+        Assert.Equal(30, _aria.Mana);
+    }
+
+    [Fact]
+    public void Teleport_ToAPlaceWhereAMobileStandsOrADoorIsShut_IsRefusedBeforeAnythingIsSpent()
+    {
+        _movement.SpawnZ = (_, _) => 0;
+        Place(_bran, new Point3D(14, 10, 0));
+        Ground("door", 0x0692, new Point3D(14, 12, 0));
+
+        CastAt("teleport", new Point3D(14, 10, 0));
+        _time.Advance(TimeSpan.FromSeconds(2));
+        CastAt("teleport", new Point3D(14, 12, 0));
+
+        Assert.Empty(_errors);
+        Assert.Equal(new Point3D(10, 10, 0), _aria.Location);
+        Assert.Equal(2, ToldTo(_aria).Count(told => told == 501942));
+        Assert.Equal(30, _aria.Mana);
+    }
+
+    [Fact]
+    public void Recall_ToAPlaceWhereAMobileStands_IsRefusedBeforeAnythingIsSpent()
+    {
+        _movement.SpawnZ = (_, _) => 0;
+        var rune = Rune(30, 30, 0, marked: true);
+        Place(_bran, new Point3D(30, 30, 0));
+
+        Cast("recall", rune.Id);
+
+        Assert.Empty(_errors);
+        Assert.Contains(501942, ToldTo(_aria));
+        Assert.Equal(new Point3D(10, 10, 0), _aria.Location);
         Assert.Equal(30, _aria.Mana);
     }
 
