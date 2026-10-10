@@ -194,6 +194,11 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
                     },
                     new RegionContent
                     {
+                        Map = MapType.Trammel, Name = "Town", Guarded = true,
+                        Areas = [new RegionAreaContent { X1 = 18, Y1 = 0, X2 = 24, Y2 = 12 }]
+                    },
+                    new RegionContent
+                    {
                         Map = MapType.Trammel, Name = "Shut", TeleportOut = false, RecallOut = false,
                         Areas = [new RegionAreaContent { X1 = 0, Y1 = 40, X2 = 20, Y2 = 60 }]
                     }
@@ -774,6 +779,23 @@ public sealed class SecondToFourthCircleSpellsIntegrationTests : IAsyncLifetime
         CastAt("wall_of_stone", new Point3D(14, 10, 0));
 
         Assert.Equal(2, PiecesNear(14, 10, "magic_wall_of_stone").Count);
+    }
+
+    [Theory]
+    [InlineData("wall_of_stone", "magic_wall_of_stone")]
+    [InlineData("fire_field", "magic_fire_field_ew")]
+    public void AField_AimedAtAGuardedTown_IsRefusedBeforeAnythingIsSpent(string key, string template)
+    {
+        _movement.SpawnZ = (_, _) => 0;
+
+        CastAt(key, new Point3D(20, 10, 0));
+
+        Assert.Empty(_errors);
+        Assert.Contains(500946, ToldTo(_aria));
+        Assert.Equal(30, _aria.Mana);
+        Assert.Empty(PiecesNear(20, 10, template));
+        Assert.Empty(PiecesNear(20, 10, "magic_fire_field_ns"));
+        Assert.Empty(PiecesNear(20, 10, "magic_wall_of_stone"));
     }
 
     [Fact]

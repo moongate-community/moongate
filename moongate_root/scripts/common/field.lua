@@ -17,6 +17,9 @@
 --   field.east_to_west(from, x, y)   whether a line raised at x, y lies from east
 --                                    to west when raised by someone at from,
 --                                    as the classic spells decide it
+--   field.check(caster, target, info)   the check of a spell of a field: the
+--                                    cliloc 500946 that refuses a cast at a guarded
+--                                    town, as the classic spells do; nil for none
 --   field.place(caster, target, options)   puts the pieces down; the list of
 --                                    their serials, which may be empty
 --       options.east_west, options.north_south   the templates of the two ways
@@ -39,6 +42,14 @@ function field.east_to_west(from, x, y)
     local ry = (dx + dy) * 44
 
     return (rx >= 0 and ry < 0) or (ry >= 0 and rx < 0)
+end
+
+local IN_TOWN = 500946   -- You cannot cast this in town!
+
+function field.check(caster, target, info)
+    if world.is_guarded(target.map, target.x, target.y, target.z) then
+        return IN_TOWN
+    end
 end
 
 local function standing(map, x, y, z)
