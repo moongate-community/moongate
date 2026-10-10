@@ -1,0 +1,67 @@
+{{- if .Values.redis.enabled }}
+{{- $name := printf "%s-redis" (include "moongate.fullname" .) -}}
+{{- $gen := include "moongate.generatedName" . -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "moongate.labels" . | nindent 4 }}
+spec:
+  selector:
+    {{- include "moongate.selectorLabels" (dict "root" . "component" "redis") | nindent 4 }}
+  ports:
+    - {name: redis, port: 6379, targetPort: redis}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "moongate.labels" . | nindent 4 }}
+    app.kubernetes.io/component: redis
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "moongate.selectorLabels" (dict "root" . "component" "redis") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "moongate.labels" . | nindent 8 }}
+        app.kubernetes.io/component: redis
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: redis
+          image: {{ .Values.redis.image }}
+          args:
+            - redis-server
+            - --requirepass
+            - $(REDIS_PASSWORD)
+            - --maxmemory-policy
+            - noeviction
+            - --appendonly
+            - "no"
+            - --save
+            - ""
+          env:
+            {{- include "moongate.secretEnv" (dict "name" "REDIS_PASSWORD" "secret" $gen "key" "redis") | nindent 12 }}
+            {{- include "moongate.secretEnv" (dict "name" "REDISCLI_AUTH" "secret" $gen "key" "redis") | nindent 12 }}
+          ports:
+            - {name: redis, containerPort: 6379}
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "redis-cli ping | grep -q PONG"]
+            periodSeconds: 5
+          securityContext:
+            {{- include "moongate.containerSecurityContext" . | nindent 12 }}
+{{- end }}

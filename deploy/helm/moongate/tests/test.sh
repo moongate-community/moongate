@@ -75,5 +75,20 @@ expect_contains "realms: service port" "port: 2595" -f ci/two-realms.yaml
 expect_contains "realms: custom advertised port" "advertised_port = 2600" -f ci/two-realms.yaml --set 'realms[0].advertisedPort=2600'
 expect_contains "realms: config checksum" "checksum/config:" -f ci/two-realms.yaml
 
+# Task 5: bundled dependencies
+expect_contains "bundled: postgres statefulset" "name: t-moongate-postgresql$" -f ci/bundled.yaml
+expect_contains "bundled: postgres admin password" "name: POSTGRES_PASSWORD" -f ci/bundled.yaml
+expect_contains "bundled: init creates the realm roles" "provision_role moongate_realm_1_schema" -f ci/bundled.yaml
+expect_contains "bundled: init creates the accounts roles" "provision_role moongate_accounts_runtime" -f ci/bundled.yaml
+expect_contains "bundled: world schema" "provision_schema moongate_realm_1 world" -f ci/bundled.yaml
+expect_contains "bundled: auth schema" "provision_schema moongate_accounts auth" -f ci/bundled.yaml
+expect_contains "bundled: postgres volume" "storage: 5Gi" -f ci/bundled.yaml
+expect_contains "bundled: redis deployment" "name: t-moongate-redis$" -f ci/bundled.yaml
+expect_contains "bundled: redis password" "--requirepass" -f ci/bundled.yaml
+expect_contains "bundled: redis eviction" "noeviction" -f ci/bundled.yaml
+expect_absent "external: no postgres" "t-moongate-postgresql" -f ci/external.yaml
+expect_absent "external: no redis" "t-moongate-redis" -f ci/external.yaml
+expect_contains "bundled: second realm roles" "provision_role moongate_realm_2_runtime" -f ci/bundled.yaml --set 'realms[1].id=realm-2' --set 'realms[1].name=R2' --set 'realms[1].serverIndex=2' --set 'realms[1].advertisedAddress=192.168.255.31'
+
 # TASK-MARKER: assertions of the next tasks are appended above this line.
 exit $status
