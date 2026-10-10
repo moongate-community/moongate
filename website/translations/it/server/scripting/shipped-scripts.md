@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"64598267138f84a683f3851d8de59795083a5948c6f9497c7f302af9ffe0eb3f","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"2d4e223306c78f8b37b2c434f455c2328b029c9c67db30cb079c5808bc4697fb","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -258,6 +258,12 @@ dallo zaino apre il gump di creazione della meccanica (vedi [Meccanica](../tinke
 `scripts/items/fletching_tool.lua` è lo script degli attrezzi da fletcher (`script_id = "fletching_tool"`): dallo
 zaino apre il gump di creazione di archi e frecce (vedi [Archi e frecce](../fletching.md)), con le
 regole di `crafting.lua` e il legno scelto.
+
+## cooking_tool.lua
+
+`scripts/items/cooking_tool.lua` è lo script delle padelle, dei setacci per la farina e dei mattarelli
+(`script_id = "cooking_tool"`): dallo zaino apre il gump di creazione della cucina (vedi [Cucina](../cooking.md)),
+con le regole di `crafting.lua` e i forni e fuochi di `scripts/common/heat.lua`.
 
 ## fishing_pole.lua
 
