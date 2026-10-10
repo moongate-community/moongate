@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"bdb4d7f42b42a112f0c09f86c06eea1215f1a0b30efb42880b673b4b73385744","title":"Script forniti"} -->
+<!-- translation: {"sourceHash":"0e0a282e83c4ec8f6c283cca64f7d34a419ecbebafbc443c1fb7f129ec32deef","title":"Script forniti"} -->
 
 # Script forniti
 
@@ -186,6 +186,14 @@ di `data/skills.toml`.
   cercatore più un tiro da -10 a 10 non è inferiore al suo Hiding più il proprio; legge "You have been revealed!". Lo staff
   viene trovato solo da altro staff; l'abilità aspetta 10 secondi.
   Trappole, case e fazioni non ci sono ancora.
+
+## animal_lore.lua
+
+`scripts/skills/animal_lore.lua` è l'abilità Animal Lore: `on_use` dice "What animal should I look at?" (500328), dà un
+cursore e rifiuta una creatura fuori portata o fuori vista (500446, 1049654), una che non è un animale (`mobile.body_type`; una creatura morta ha lasciato il mondo) e, in base all'abilità, una creatura non
+addomesticata sotto i 100 punti o non addomesticabile sotto i 110. Il controllo è `skill.check(user, "animal_lore", 0, 120)`; se riesce costruisce un
+gump a due pagine con `gump.create` da `pet.lore`, `mobile.stats` e `mobile.skills`, con tutte le etichette prese dai cliloc del client. Vedi
+[Animal taming](../animal-taming.md#animal-lore).
 
 ## pickaxe.lua e ore.lua
 
@@ -498,6 +506,20 @@ mantiene il suo negozio e le sue lezioni tramite `scripts/common/shop.lua` e `tr
 `scripts/gumps/stable_claim.lua` riempie il gump con un pulsante e il nome dell'animale per ogni animale di `stable.pets`,
 otto per pagina; un pulsante controlla che il giocatore sia entro 12 celle dall'addestratore e chiama `stable.claim`; un elenco
 cambiato da quando è stato mostrato viene mostrato di nuovo.
+
+## pet_orders.lua e pet_release.lua
+
+`scripts/common/pet_orders.lua` è ciò che `common/creature.lua` esegue per una creatura che ha un `owner`: `think` segue
+l'ordine nella prop `pet.order` (`follow`, `come`, `stay` o `guard`; `follow` se non ne ha), e `listen`, dall'
+`on_speech` degli script delle creature, legge le parole del proprietario (`SpeechKeywordType.PetCome`, `AllStay` e le altre)
+entro 14 tile. Le parole "all" sono eseguite dal primo animale che chiama `pet.attend(owner)`, per ogni animale del proprietario
+a portata; `kill` chiede un bersaglio con `target.pick`; `release` apre il gump `pet_release`
+(`templates/gumps/pet_release.xml`), il cui pulsante Release chiama `pet.release` dopo aver verificato che l'animale sia ancora del giocatore e
+entro 14 tile. Ogni ordine tranne `release` tira prima `pet.obey(owner, pet)` (la probabilità è `pet.control_chance`): un animale che
+rifiuta ringhia e si agita e non esegue l'ordine. `feed(serial, giver, given)` è ciò che gli script delle creature restituiscono da
+`on_drag_drop`: il cibo del proprietario va a `pet.feed`, che prende la pila e aumenta la lealtà (`pet.loyalty`); il cibo che la
+creatura non mangia viene restituito. Il cibo può anche legare l'animale (al proprietario viene detto 1049666). Vedi [Animal taming](../animal-taming.md#what-you-can-tell-it) e
+[lealtà, cibo e obbedienza](../animal-taming.md#loyalty-food-and-obedience).
 
 ## animal_taming.lua
 

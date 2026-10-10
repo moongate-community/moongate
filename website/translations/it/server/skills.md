@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"e4aa95fd6be0a8ec1ea24f381204ebd4fcb4dd82597b866942606c1b7dc936e4","title":"Skill"} -->
+<!-- translation: {"sourceHash":"da45d828d77938723e045adcb2a46001079e76c87cb92dc144214161b7774e1e","title":"Skill"} -->
 
 # Skill
 
@@ -175,6 +175,7 @@ Il campo di template `npc_guild` (`blacksmiths`, `thieves`...) rende un PNG un m
 
 - [`hiding.lua`](scripting/shipped-scripts.md#hidinglua)
 - [`bandage.lua`](scripting/shipped-scripts.md#bandagelua): Healing, con le bende
+- [Animal Taming](animal-taming.md): l'abilità che rende una creatura selvatica proprietà del giocatore
 - [Le abilità di osservazione](scripting/shipped-scripts.md#the-lore-skills): Anatomy, Evaluating Intelligence, Forensic Evaluation e Detecting Hidden
 - [Configurazione del server](server-configuration.md): `[ultima.skills]`
 - [Roadmap](roadmap.md): 1.2

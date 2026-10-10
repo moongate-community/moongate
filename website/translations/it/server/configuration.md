@@ -1,4 +1,4 @@
-<!-- translation: {"sourceHash":"f4eb50634f57ab726fbe8aea72debab9ff860fd008ac40a6ab35e7df317e1a03","title":"Configurazione"} -->
+<!-- translation: {"sourceHash":"012fb40c8259fe9a2c7c988d101210ad1a162cdd800fdee0d7a93f6de60d19da","title":"Configurazione"} -->
 
 # Configurazione del server
 
@@ -166,6 +166,15 @@ max_withdraw = 60000                  # Coins a banker hands out at one time.
 min_check = 5000                      # The smallest bank check a banker writes.
 max_check = 1000000                   # The largest.
 
+[ultima.pets]
+max_followers = 5                     # Followers a player may have, from 1 to 50: the slots of the creatures it tamed that are in the world, and of the one it rides.
+loyalty_drain_minutes = 60            # Minutes between two drains of the loyalty of the pets in the world, from 1 to 1440.
+loyalty_drain = 10                    # Loyalty a pet loses at each drain, from 1 to 100; at 0 it goes wild.
+food_gain = 10                        # Loyalty a pet gains for each item of food it eats, from 1 to 100.
+obey_gain = 1                         # Loyalty a pet gains when it obeys an order it could have refused, from 0 to 100.
+disobey_loss = 3                      # Loyalty a pet loses when it refuses one, from 0 to 100.
+bonding_days = 7                      # Days between the first food of its owner and the food that bonds a pet, from 0 to 365.
+
 [ultima.stable]
 max_pets = 10                         # Pets a player may leave with the stablemasters, from 1 to 50.
 fee = 30                              # Gold a pet costs when it is stabled, from the backpack and then the bank; 0 makes it free.
@@ -310,6 +319,8 @@ Vedi [Persistenza PostgreSQL](persistence.md).
 | `ultima.bulletin_boards.expire_days`, `max_messages`, `thread_seconds`, `reply_seconds` | Valori predefiniti 7 (da 0 a 3650; 0 conserva per sempre le discussioni), 50 (da 1 a 200), 120 e 30 (da 0 a 86400). Durata di una discussione su una [bacheca](bulletin-boards.md) dall'ultima risposta, numero di messaggi contenuti, e attesa di un personaggio tra due nuove discussioni e tra due interventi sulla stessa bacheca. |
 | `ultima.bank.max_items`, `max_withdraw`, `min_check`, `max_check` | Valori predefiniti 125 (da 0 a 10000; 0 senza limite), 60000 (da 1 a 60000), 5000 e 1.000.000 (`min_check` da 1 a `max_check`, `max_check` fino a 2.000.000.000). Oggetti contenuti in una [cassetta bancaria](bank.md), compresi quelli nelle borse; monete consegnate da un banchiere per un *prelievo*; valore degli assegni emessi dal banchiere. |
 | `ultima.stable.max_pets`, `ultima.stable.fee` | Valori predefiniti 10 (da 1 a 50) e 30 (da 0 a 100000). I animali che un giocatore può lasciare a un addestratore, e quanto costa ciascuno quando viene messo in stalla: vedi la [stalla](mounts.md#the-stable). |
+| `ultima.pets.max_followers` | Valore predefinito 5 (da 1 a 50). I seguaci che un giocatore può avere: vedi [addomesticare gli animali](animal-taming.md#followers). |
+| `ultima.pets.loyalty_drain_minutes`, `loyalty_drain`, `food_gain`, `obey_gain`, `disobey_loss`, `bonding_days` | Valori predefiniti 60 (da 1 a 1440), 10 (da 1 a 100), 10 (da 1 a 100), 1 (da 0 a 100), 3 (da 0 a 100) e 7 (da 0 a 365). Ogni quanto e di quanto cala la fedeltà di un animale, cosa restituiscono un pezzo di cibo e un ordine eseguito, quanto costa un rifiuto, e i giorni di nutrimento che legano un animale: vedi [addomesticare gli animali](animal-taming.md#loyalty-food-and-obedience) e [il legame](animal-taming.md#bonding-and-raising-a-pet). |
 
 Le impostazioni di gioco si trovano sotto `[ultima]` come sottotabelle (`[ultima.world]`,
 `[ultima.characters]`, ...). L'oro iniziale non è un'impostazione: è un oggetto
