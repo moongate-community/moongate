@@ -43,6 +43,7 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
     private readonly ICrimeService? _crimes;
     private readonly ICombatGearService? _gear;
     private readonly IMurderService? _murders;
+    private readonly IPoisonService? _poison;
     private readonly IPetService? _pets;
 
     public CharacterEnterWorldService(
@@ -59,10 +60,12 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
         ICrimeService? crimes = null,
         ICombatGearService? gear = null,
         IMurderService? murders = null,
-        IPetService? pets = null
+        IPetService? pets = null,
+        IPoisonService? poison = null
     )
     {
         _murders = murders;
+        _poison = poison;
         _pets = pets;
         _gear = gear;
         _crimes = crimes;
@@ -112,6 +115,8 @@ public sealed class CharacterEnterWorldService : ICharacterEnterWorldService
                 // Before the packets that show it: a criminal that comes back is grey from the first one.
                 _crimes?.Restore(character);
                 _murders?.Restore(character);
+                // A poison it logged out with takes its hits again.
+                _poison?.Resume(character);
 
                 // Its rows are as its last save left them: what another player took or merged since stays out, and
                 // is not shown on the character either.
