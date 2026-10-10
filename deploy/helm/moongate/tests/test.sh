@@ -7,8 +7,9 @@ pass() { echo "ok   - $1"; }
 fail() { echo "FAIL - $1"; status=1; }
 render() { helm template t . --namespace ns "$@"; }
 # expect_contains <description> <pattern> <helm args...>
-expect_contains() { local d=$1 p=$2; shift 2; if render "$@" 2>&1 | grep -Eq -- "$p"; then pass "$d"; else fail "$d"; fi; }
-expect_absent() { local d=$1 p=$2; shift 2; if render "$@" 2>&1 | grep -Eq -- "$p"; then fail "$d"; else pass "$d"; fi; }
+# The output is captured first: with pipefail, grep -q closing the pipe early can make helm fail with SIGPIPE.
+expect_contains() { local d=$1 p=$2 out; shift 2; out=$(render "$@" 2>&1 || true); if grep -Eq -- "$p" <<<"$out"; then pass "$d"; else fail "$d"; fi; }
+expect_absent() { local d=$1 p=$2 out; shift 2; out=$(render "$@" 2>&1 || true); if grep -Eq -- "$p" <<<"$out"; then fail "$d"; else pass "$d"; fi; }
 # expect_error <description> <message pattern> <helm args...>
 expect_error() { local d=$1 p=$2; shift 2; local out; if out=$(render "$@" 2>&1); then fail "$d (rendered)"; elif grep -Eq -- "$p" <<<"$out"; then pass "$d"; else fail "$d: $out"; fi; }
 
@@ -93,8 +94,9 @@ expect_contains "bundled: second realm roles" "provision_role moongate_realm_2_r
 # Task 6: network policy and notes
 expect_absent "network policy off by default" "kind: NetworkPolicy" -f ci/bundled.yaml
 expect_contains "network policy on" "kind: NetworkPolicy" -f ci/bundled.yaml --set networkPolicy.enabled=true
-if helm install t . -f ci/bundled.yaml --dry-run=client -n ns 2>&1 | grep -q "advertisedAddress"; then pass "notes mention advertisedAddress"; else fail "notes mention advertisedAddress"; fi
-if helm install t . -f ci/bundled.yaml --dry-run=client -n ns 2>&1 | grep -qi "trial"; then pass "notes warn about trial dependencies"; else fail "notes warn about trial dependencies"; fi
+notes=$(helm install t . -f ci/bundled.yaml --dry-run=client -n ns 2>&1 || true)
+if grep -q "advertisedAddress" <<<"$notes"; then pass "notes mention advertisedAddress"; else fail "notes mention advertisedAddress"; fi
+if grep -qi "trial" <<<"$notes"; then pass "notes warn about trial dependencies"; else fail "notes warn about trial dependencies"; fi
 
 # Review fixes
 expect_contains "realm id that looks like a number stays a string label" 'app.kubernetes.io/component: "1"' -f ci/two-realms.yaml --set-string 'realms[1].id=1' --show-only templates/realms.yaml
