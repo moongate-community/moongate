@@ -230,12 +230,15 @@ public sealed class SpellModule
     /// </summary>
     [ScriptFunction(
         helpText:
-        "Whether the player could use the item from afar, as the Telekinesis spell does: it has an on_use in its script, or is a container the player carries or that lies on the ground. False for a player or an item that is none, an NPC, or an item another mobile carries."
+        "Whether the player could use the item from afar, as the Telekinesis spell does: it has an on_use in its script, or is a container the player carries or that lies on the ground, and a double click would not be refused (a bank that is not open, an inventory kept shut). False for a player or an item that is none, an NPC, or an item another mobile carries."
     )]
     public bool CanUseFromAfar(long player, long item)
     {
-        return _uses is not null && TryMobile(player, out var who) && TryItem(item, out var found) &&
-               _uses.Value.CanUseFromAfar(who, found);
+        return _uses is not null &&
+               TryMobile(player, out var who) &&
+               _sessions.TryGetByCharacterId(who.Id, out var session) &&
+               TryItem(item, out var found) &&
+               _uses.Value.CanUseFromAfar(session, found);
     }
 
     /// <summary>

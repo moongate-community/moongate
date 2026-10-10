@@ -547,6 +547,32 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task CanUseFromAfar_AnItemInABankThatIsNotOpen_OrOneTheInventoryGuardRefuses_IsFalse()
+    {
+        var (chest, _) = GroundChest(1011);
+        _bank.Locked.Add(chest.Id);
+        await StartAsync(Aria);
+        var handler = Handler();
+        var allowed = true;
+        await _fixture.ExecuteOnLoopAsync(() => allowed = handler.CanUseFromAfar(_session, chest));
+
+        Assert.False(allowed);
+    }
+
+    [Fact]
+    public async Task CanUseFromAfar_AContainerOnTheGround_IsTrue_AndNothingIsOpened()
+    {
+        var (chest, _) = GroundChest(1011);
+        await StartAsync(Aria);
+        var handler = Handler();
+        var allowed = false;
+        await _fixture.ExecuteOnLoopAsync(() => allowed = handler.CanUseFromAfar(_session, chest));
+
+        Assert.True(allowed);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
     public async Task Handle_ABagInsideAContainerOnTheGround_Opens()
     {
         var (chest, ruby) = GroundChest(1001);

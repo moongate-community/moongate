@@ -20,11 +20,11 @@ public interface IUseService
     void Use(GameSession session, Serial target);
 
     /// <summary>
-    ///     Gets whether <paramref name="item" /> can be used from afar by <paramref name="user" />, as the Telekinesis
-    ///     spell does: it has an <c>on_use</c> in its script, or is a container the user carries or that lies on the
-    ///     ground.
+    ///     Gets whether <paramref name="item" /> can be used from afar by the session's character, as the Telekinesis
+    ///     spell does: it has an <c>on_use</c> in its script, or is a container the character carries or that lies on the
+    ///     ground, and a double click would not be refused for a bank that is not open or an inventory that is kept shut.
     /// </summary>
-    bool CanUseFromAfar(MobileEntity user, ItemEntity item);
+    bool CanUseFromAfar(GameSession session, ItemEntity item);
 
     /// <summary>
     ///     Does what a double click of the session's character on the item <paramref name="target" /> does, with no

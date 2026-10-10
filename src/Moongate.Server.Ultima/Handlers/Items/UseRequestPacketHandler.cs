@@ -183,9 +183,20 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         Handle(session, new UseRequestPacket { Target = target });
     }
 
-    public bool CanUseFromAfar(MobileEntity user, ItemEntity item)
+    public bool CanUseFromAfar(GameSession session, ItemEntity item)
     {
-        if (user.IsDead || !IsAccessible(user, item))
+        if (!session.CharacterId.IsValid ||
+            !_mobiles.TryGet(session.CharacterId, out var user) ||
+            user.IsDead ||
+            !IsAccessible(user, item))
+        {
+            return false;
+        }
+
+        // What a double click would be refused too: a bank that is not open, an inventory the guard keeps shut.
+        if (_inventory?.AllowsOwner(user.Id) == false ||
+            _inventory?.Allows(item) == false ||
+            (_bank is not null && !_bank.CanAccess(session, user, item)))
         {
             return false;
         }
@@ -203,10 +214,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>, 
         if (!session.CharacterId.IsValid ||
             !_mobiles.TryGet(session.CharacterId, out var character) ||
             !_items.TryGet(target, out var item) ||
-            !CanUseFromAfar(character, item) ||
-            _inventory?.AllowsOwner(character.Id) == false ||
-            _inventory?.Allows(item) == false ||
-            (_bank is not null && !_bank.CanAccess(session, character, item)))
+            !CanUseFromAfar(session, item))
         {
             return false;
         }

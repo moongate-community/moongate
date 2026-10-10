@@ -29,7 +29,7 @@ public sealed class RecordingUseService : IUseService
     /// </summary>
     public bool CanUse { get; set; } = true;
 
-    public bool CanUseFromAfar(MobileEntity user, ItemEntity item)
+    public bool CanUseFromAfar(GameSession session, ItemEntity item)
     {
         return CanUse;
     }
