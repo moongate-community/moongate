@@ -35,6 +35,10 @@ local TAMING_RANGE = 7
 local BELOW = 0.1
 local ABOVE = 49.9
 
+-- The window of the Animal Lore try that taming makes, in points.
+local LORE_FROM = 0
+local LORE_TO = 120
+
 -- Seconds before the next use of a skill when it is used again at once: the cursor is the wait.
 local DELAY = 1
 
@@ -174,6 +178,9 @@ local TAME_REFUSALS = {
 
 local function roll(user, creature)
     local min = pet.info(creature).min_skill
+
+    -- Looking after the creature teaches what it is: a try at Animal Lore, won or lost, as in ModernUO.
+    skill.check(user, "animal_lore", LORE_FROM, LORE_TO)
 
     if not skill.check(user, "animal_taming", min - BELOW, min + ABOVE) then
         mobile.message_cliloc(user, FAILED)

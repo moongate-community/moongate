@@ -24,6 +24,7 @@ public sealed class PetModule
     private readonly TimeProvider _time;
     private readonly IItemService? _items;
     private readonly IItemHandlingService? _handling;
+    private readonly IMobileTemplateService? _templates;
     // Several pets hear the same words in the same moment: the first to ask answers for them all.
     private readonly Attendance _attendance = new();
 
@@ -35,7 +36,8 @@ public sealed class PetModule
         ISessionService sessions,
         TimeProvider? time = null,
         IItemService? items = null,
-        IItemHandlingService? handling = null
+        IItemHandlingService? handling = null,
+        IMobileTemplateService? templates = null
     )
     {
         _pets = pets;
@@ -46,6 +48,7 @@ public sealed class PetModule
         _sessions = sessions;
         _items = items;
         _handling = handling;
+        _templates = templates;
     }
 
     /// <summary>
@@ -69,6 +72,49 @@ public sealed class PetModule
         table["min_skill"] = entry.MinSkill;
         table["slots"] = entry.Slots;
         table["owner"] = mobile.GetProp(MountProps.Owner, 0L);
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Gets what Animal Lore reads of a creature; <c>pet.lore(creature)</c>.
+    /// </summary>
+    [ScriptFunction(
+        helpText:
+        "What Animal Lore reads of a creature, as { armor, damage_min, damage_max, foods, loyalty, min_skill, slots, owner }: its armor rating, the least and most damage of its template (0 when it has none), the kinds of food it eats (meat, fruit, grain, fish, eggs) as a list, its loyalty 0 to 100 (nil when it has no owner), the Animal Taming it asks and its slots (nil when it cannot be tamed) and the serial of its owner, 0 when it has none. nil for a player or a serial that is not a mobile in the world."
+    )]
+    public LuaTable? Lore(long creature)
+    {
+        if (!TryGet(creature, out var mobile) || !mobile.IsNpc)
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        var owner = mobile.GetProp(MountProps.Owner, 0L);
+        var damage = mobile.TemplateId is { } id && _templates?.TryGet(id, out var template) == true ? template.Damage : null;
+        var foods = new LuaTable();
+        table["armor"] = mobile.Armor;
+        table["damage_min"] = damage?.Min ?? 0;
+        table["damage_max"] = damage?.Max ?? 0;
+        table["owner"] = owner;
+        table["foods"] = foods;
+
+        if (owner != 0)
+        {
+            table["loyalty"] = _pets.Loyalty(mobile);
+        }
+
+        if (mobile.TemplateId is { } templateId && _taming.TryGet(templateId, out var entry))
+        {
+            table["min_skill"] = entry.MinSkill;
+            table["slots"] = entry.Slots;
+
+            for (var index = 0; index < entry.Food.Count; index++)
+            {
+                foods[index + 1] = entry.Food[index];
+            }
+        }
 
         return table;
     }
