@@ -451,6 +451,31 @@ def _apply_numbers(block: DfnBlock, template: Mobile, context: BuildContext) -> 
                 template.skills = template.skills if template.skills is not None else {}
                 template.skills[snake_case(skill)] = points
 
+    _apply_classic_summon(block, template)
+
+
+# What the earliest game, with no expansion, gives three summons that UOX3's data makes far stronger: the hits and the
+# followers it counts for. A daemon keeps the hits of UOX3 and counts for five.
+_CLASSIC_SUMMONS = {
+    "energyvortex-summon": (70, 1),
+    "bladespirit-summon": (80, 1),
+    "daemon-summon": (None, 5),
+}
+
+
+def _apply_classic_summon(block: DfnBlock, template: Mobile) -> None:
+    classic = _CLASSIC_SUMMONS.get(block.header.lower())
+
+    if classic is None:
+        return
+
+    hits, slots = classic
+
+    if hits is not None:
+        template.hits = DiceSpec.from_value(hits)
+
+    template.control_slots = slots
+
 
 def _apply_element_resist(value: str, template: Mobile, context: BuildContext) -> None:
     """``ELEMENTRESIST=heat cold lightning poison``."""

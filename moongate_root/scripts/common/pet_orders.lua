@@ -18,6 +18,9 @@
 --   Taming and Animal Lore against the skill it asks, and its loyalty). One that obeys gains a point of loyalty; one that
 --   does not shows its anger, loses three, and goes wild when it has none left.
 --
+--   A creature with the prop pet.uncontrollable (a blade spirit, an energy vortex) hears no word and takes no food: it
+--   guards its owner and nothing else.
+--
 --   The words, said by the owner within 14 tiles: come, follow, follow me, stay, stop, guard, kill, attack and release,
 --   with "all" before them for every pet that hears, or with the name of the pet first for that pet. Kill and attack ask
 --   for a target (one pet asks for all, and the owner is a criminal when it sends them against an innocent); release asks
@@ -320,7 +323,8 @@ local function carry_out(command, speaker, pets)
 end
 
 function pet_orders.listen(serial, speaker, text, keywords)
-    if owner_of(serial) ~= speaker or mobile.is_dead(speaker) then
+    -- A blade spirit or a vortex is nobody's to command.
+    if owner_of(serial) ~= speaker or mobile.is_dead(speaker) or npc.get_prop(serial, "pet.uncontrollable") then
         return
     end
 
@@ -356,7 +360,7 @@ end
 -- Food an owner dropped on its pet. True tells the server the item was taken, anything else gives it back. Only the
 -- food the creature eats (data/pet_food.toml against its food in data/taming.toml) is taken, whole stack.
 function pet_orders.feed(serial, giver, given)
-    if owner_of(serial) ~= giver then
+    if owner_of(serial) ~= giver or npc.get_prop(serial, "pet.uncontrollable") then
         return false
     end
 

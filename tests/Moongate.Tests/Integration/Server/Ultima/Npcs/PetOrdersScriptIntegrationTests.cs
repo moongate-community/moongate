@@ -372,6 +372,17 @@ public sealed class PetOrdersScriptIntegrationTests : IAsyncLifetime
     }
 
     [Fact]
+    public void AnUncontrollableCreature_DoesNotHearTheWordsOfItsOwner()
+    {
+        _horse.SetProp("pet.uncontrollable", true);
+
+        Say("all stay", SpeechKeywordType.AllStay);
+
+        Assert.Empty(_errors.Select(error => error.ToString()));
+        Assert.Equal("follow", _horse.GetProp("pet.order", "follow"));
+    }
+
+    [Fact]
     public void TheWordStop_StopsTheFight_AndMakesThePetStay()
     {
         _combat.Attacks.Add((_horse, _orc));

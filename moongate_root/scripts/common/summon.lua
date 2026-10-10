@@ -16,6 +16,9 @@
 --   owner            the serial of the caster
 --   pet.order        guard
 --   summon.until     the time, as world.now(), it goes away at
+--   pet.uncontrollable   true for a creature nobody commands, as a blade spirit
+--                    and an energy vortex: it guards its master and does not hear
+--                    the words of a pet (common/pet_orders.lua)
 --   summon.difficulty and summon.focus   what a Dispel weighs it by
 --
 -- Functions:
@@ -26,10 +29,11 @@
 --                                     mobile template counts for
 --   summon.near(caster)               a free place beside the caster as { map,
 --                                     x, y, z }, nil when there is none
---   summon.create(caster, template, place, seconds, sound)   asks for a
---                                     creature of the template at the place
---                                     ({ map, x, y, z }); false when it could
---                                     not be asked for
+--   summon.create(caster, template, place, seconds, sound, uncontrollable)
+--                                     asks for a creature of the template at the
+--                                     place ({ map, x, y, z }); false when it
+--                                     could not be asked for. An uncontrollable
+--                                     one is deaf to the words of a pet
 --   summon.is_summoned(serial)        whether the creature is a summon
 --   summon.dispel_data(serial)        its difficulty and its focus, nil for a
 --                                     creature that is not a summon
@@ -83,13 +87,18 @@ function summon.near(caster)
     return world.spot_beside(here.map, here.x, here.y, here.z)
 end
 
-function summon.create(caster, template, place, seconds, sound)
+function summon.create(caster, template, place, seconds, sound, uncontrollable)
     local asked = npc.spawn(template, place.map, place.x, place.y, place.z, function(serial)
         local data = DISPEL[template] or { DEFAULT_DIFFICULTY, DEFAULT_FOCUS }
 
         npc.set_prop(serial, "owner", caster)
         npc.set_prop(serial, "pet.order", "guard")
         npc.set_prop(serial, UNTIL, world.now() + seconds)
+
+        if uncontrollable then
+            npc.set_prop(serial, "pet.uncontrollable", true)
+        end
+
         npc.set_prop(serial, "summon.difficulty", data[1])
         npc.set_prop(serial, "summon.focus", data[2])
 

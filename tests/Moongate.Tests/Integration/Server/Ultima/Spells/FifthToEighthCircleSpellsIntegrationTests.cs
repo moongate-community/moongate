@@ -672,9 +672,11 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         Assert.Equal(("bladespirit_summon", new Point3D(13, 12, 0)), (_npcService.Spawns.Single().TemplateId, _npcService.Spawns.Single().Location));
         Assert.Equal(46, _aria.Mana);
         Assert.Equal(
-            (Aria, "guard", 2),
+            (Aria, "guard", 1),
             (spirit.GetProp("owner", 0L), spirit.GetProp<string>("pet.order"), _pets.Followers(_aria))
         );
+        // Nobody commands a blade spirit: it guards its master and does not hear the words of a pet.
+        Assert.True(spirit.GetProp("pet.uncontrollable", false));
         Assert.Equal(_time.GetUtcNow().ToUnixTimeSeconds() + 80, spirit.GetProp<long>("summon.until"));
         Assert.Contains(_timers.Timers, timer => timer.Name.StartsWith("lua-timer:") && timer.Interval == TimeSpan.FromSeconds(80));
         Assert.Equal((0L, 20L), (spirit.GetProp<long>("summon.difficulty"), spirit.GetProp<long>("summon.focus")));
@@ -771,8 +773,8 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
     {
         _movement.SpawnZ = (_, _) => 0;
 
-        // Four followers, and two more for a blade spirit: more than five.
-        for (var index = 0; index < 4; index++)
+        // Five followers, and one more for a blade spirit: more than five.
+        for (var index = 0; index < 5; index++)
         {
             Npc(0x600 + (uint)index, OrcBody).SetProp("owner", Aria);
         }
@@ -1351,6 +1353,7 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
         Assert.Equal(("energyvortex_summon", new Point3D(14, 12, 0)), (_npcService.Spawns.Single().TemplateId, _npcService.Spawns.Single().Location));
         Assert.Equal(_time.GetUtcNow().ToUnixTimeSeconds() + 90, vortex.GetProp<long>("summon.until"));
         Assert.Equal((80.0, 20.0), (vortex.GetProp<double>("summon.difficulty"), vortex.GetProp<double>("summon.focus")));
+        Assert.True(vortex.GetProp("pet.uncontrollable", false));
         Assert.Equal(10, _aria.Mana);
     }
 
@@ -1521,9 +1524,10 @@ public sealed class FifthToEighthCircleSpellsIntegrationTests : IAsyncLifetime
     {
         return template switch
         {
-            "airele_summon" or "earthele_summon" or "bladespirit_summon" or "energyvortex_summon" => 2,
+            "airele_summon" or "earthele_summon" => 2,
             "waterele_summon" => 3,
-            "firele_summon" or "daemon_summon" => 4,
+            "firele_summon" => 4,
+            "daemon_summon" => 5,
             _ => 1
         };
     }
